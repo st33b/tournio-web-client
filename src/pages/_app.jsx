@@ -1,7 +1,6 @@
 import App from 'next/app';
 import {AuthContextProvider} from "../store/AuthContext";
 
-
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 

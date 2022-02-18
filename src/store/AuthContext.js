@@ -3,35 +3,42 @@ import {useState, useCallback, createContext, useContext} from 'react';
 const AuthContext = createContext({
   token: '',
   isLoggedIn: false,
-  login: (token) => {},
+  login: (token, userData) => {},
   logout: () => {},
   user: null,
 });
 
 export const AuthContextProvider = ({children}) => {
-  const tokenData = typeof window !== "undefined" ? localStorage.getItem('token') : null;
+  let tokenData;
+  let userData;
+  if (typeof window !== "undefined") {
+    tokenData = localStorage.getItem('token');
+    userData = JSON.parse(localStorage.getItem('currentUser'));
+  }
 
-  let initialToken;
+  let initialToken, initialUser;
   if (tokenData) {
     initialToken = tokenData;
+    initialUser = userData;
   }
 
   const [token, setToken] = useState(initialToken);
-  const [userData, setUserData] = useState(null);
+  const [currentUser, setCurrentUser] = useState(initialUser);
 
   const userIsLoggedIn = !!token;
 
   const logoutHandler = useCallback(() => {
-    // Send logout (delete) request over to the server
-
     setToken(null);
+    setCurrentUser(null);
     localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
   }, []);
 
-  const loginHandler = (token, userDetails) => {
-    setToken(token);
-    setUserData(userDetails);
-    localStorage.setItem('token', token);
+  const loginHandler = (newToken, userDetails) => {
+    setToken(newToken);
+    setCurrentUser(userDetails);
+    localStorage.setItem('token', newToken);
+    localStorage.setItem('currentUser', JSON.stringify(userDetails));
   }
 
   const contextValue = {
@@ -39,7 +46,7 @@ export const AuthContextProvider = ({children}) => {
     isLoggedIn: userIsLoggedIn,
     login: loginHandler,
     logout: logoutHandler,
-    user: userData,
+    user: currentUser,
   }
 
   return (

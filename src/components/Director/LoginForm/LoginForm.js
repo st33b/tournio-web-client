@@ -1,11 +1,11 @@
-import {useState, useRef, useContext} from "react";
+import {useState, useRef} from "react";
 import {useRouter} from "next/router";
 
 import axios from "axios";
 
 import {Button, Card, FloatingLabel, Form} from "react-bootstrap";
 
-import {useAuthContext} from '../../store/AuthContext';
+import {useAuthContext} from '../../../store/AuthContext';
 
 import classes from './LoginForm.module.scss';
 

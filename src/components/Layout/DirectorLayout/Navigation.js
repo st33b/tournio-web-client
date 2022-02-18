@@ -1,3 +1,4 @@
+import {useState, useEffect} from 'react';
 import {useRouter} from "next/router";
 
 import {Nav, Navbar} from "react-bootstrap";
@@ -7,11 +8,17 @@ import {useAuthContext} from "../../../store/AuthContext";
 import classes from './Navigation.module.scss';
 import axios from "axios";
 
-const navigation = (props) => {
+const navigation = () => {
   const authContext = useAuthContext();
   const router = useRouter();
-  const isLoggedIn = authContext.isLoggedIn;
-  const isSuperuser = authContext.user && authContext.user.role === 'superuser';
+
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [isSuperuser, setIsSuperuser] = useState(false);
+
+  useEffect(() => {
+    setLoggedIn(authContext.isLoggedIn);
+    setIsSuperuser(authContext.user && authContext.user.role === 'superuser');
+  }, [authContext.isLoggedIn, authContext.user]);
 
   const logoutHandler = (event) => {
     event.preventDefault();
@@ -43,28 +50,24 @@ const navigation = (props) => {
             </div>
           </Navbar.Brand>
         </div>
-        {isLoggedIn && (
-        <Navbar.Collapse id={'basic-navbar-nav'}>
-          <Nav className={'me-auto'}>
-            {isSuperuser && (
-              <Nav.Link href={'/director/users'}>
-                User Accounts
-              </Nav.Link>
-            )}
-            {(
+        {loggedIn && (
+          <Navbar.Collapse id={'basic-navbar-nav'}>
+            <Nav className={'me-auto'}>
+              {isSuperuser && (
+                <Nav.Link href={'/director/users'}>
+                  User Accounts
+                </Nav.Link>
+              )}
               <Nav.Link href={'/director/profile'}>
                 My Profile
               </Nav.Link>
-            )}
-          </Nav>
-          <Nav className={'ms-auto pe-2'}>
-            {(
+            </Nav>
+            <Nav className={'ms-auto pe-2'}>
               <Nav.Link onClick={logoutHandler} href={'#'}>
                 Log Out
               </Nav.Link>
-            )}
-          </Nav>
-        </Navbar.Collapse>
+            </Nav>
+          </Navbar.Collapse>
         )}
       </Navbar>
     </div>
