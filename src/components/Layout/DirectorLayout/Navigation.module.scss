@@ -1,7 +1,11 @@
 .Navigation {
   .BrandWrapper {
-    background: url('../../../images/bowling.svg') no-repeat left top;
     line-height: 2;
     margin-left: 0.5rem;
+  }
+  @media (min-width: 768px) {
+    .BrandWrapper {
+      background: url('../../../images/bowling.svg') no-repeat left top;
+    }
   }
 }

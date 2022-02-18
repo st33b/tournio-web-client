@@ -15,6 +15,7 @@ const loginForm = () => {
   const passwordInputRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
   const [loginFailed, setLoginFailed] = useState(false);
+  const [validated, setValidated] = useState(false);
 
   const authContext = useAuthContext();
 
@@ -23,8 +24,12 @@ const loginForm = () => {
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
 
-    setIsLoading(true);
+    if (!enteredEmail || !enteredPassword) {
+      setValidated(true);
+      return;
+    }
 
+    setIsLoading(true);
     const url = 'http://localhost:5000/login';
     const postBody = {
       user: {
@@ -37,7 +42,9 @@ const loginForm = () => {
         setIsLoading(false);
         setLoginFailed(false);
         const authHeader = response.headers.authorization;
-        authContext.login(authHeader);
+        const userData = response.data;
+        authContext.login(authHeader, userData);
+
         router.push('/director')
       })
       .catch(error => {
@@ -55,19 +62,27 @@ const loginForm = () => {
           </Card.Title>
         </Card.Header>
         <Card.Body>
-          <Form onSubmit={submitHandler}>
+          <Form onSubmit={submitHandler} noValidate validated={validated}>
             <FloatingLabel label={'Email address'}
                            className={'mb-3'}
                            controlId={'emailAddress'}>
               <Form.Control type={'email'}
+                            required
                             placeholder={'name@example.com'}
                             ref={emailInputRef}/>
+              <Form.Control.Feedback type={'invalid'}>
+                Can't log in without an email.
+              </Form.Control.Feedback>
             </FloatingLabel>
             <FloatingLabel label={'Password'}
                            controlId={'password'}>
               <Form.Control type={'password'}
+                            required
                             placeholder={'Password'}
                             ref={passwordInputRef}/>
+              <Form.Control.Feedback type={'invalid'}>
+                Can't log in without a password.
+              </Form.Control.Feedback>
             </FloatingLabel>
             <div className={classes.Actions}>
               {!isLoading && <Button variant={'primary'} type={'submit'}>Log In</Button>}

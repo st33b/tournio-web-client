@@ -5,6 +5,7 @@ const AuthContext = createContext({
   isLoggedIn: false,
   login: (token) => {},
   logout: () => {},
+  user: null,
 });
 
 export const AuthContextProvider = ({children}) => {
@@ -16,6 +17,7 @@ export const AuthContextProvider = ({children}) => {
   }
 
   const [token, setToken] = useState(initialToken);
+  const [userData, setUserData] = useState(null);
 
   const userIsLoggedIn = !!token;
 
@@ -26,9 +28,9 @@ export const AuthContextProvider = ({children}) => {
     localStorage.removeItem('token');
   }, []);
 
-  const loginHandler = (token) => {
-    console.log('Logging in.');
+  const loginHandler = (token, userDetails) => {
     setToken(token);
+    setUserData(userDetails);
     localStorage.setItem('token', token);
   }
 
@@ -37,6 +39,7 @@ export const AuthContextProvider = ({children}) => {
     isLoggedIn: userIsLoggedIn,
     login: loginHandler,
     logout: logoutHandler,
+    user: userData,
   }
 
   return (
