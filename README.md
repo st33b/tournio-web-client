@@ -1,37 +1,24 @@
-# Example app with next-sass
+# README
 
-This example demonstrates how to use Next.js' built-in Global Sass/Scss imports and Component-Level Sass/Scss modules support.
+This README would normally document whatever steps are necessary to get the
+application up and running.
 
-## Preview
+Things you may want to cover:
 
-Preview the example live on [StackBlitz](http://stackblitz.com/):
+* Ruby version
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-next-sass)
+* System dependencies
 
-## Deploy your own
+* Configuration
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example):
+* Database creation
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-next-sass&project-name=with-next-sass&repository-name=with-next-sass)
+* Database initialization
 
-## How to use
+* How to run the test suite
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
+* Services (job queues, cache servers, search engines, etc.)
 
-```bash
-npx create-next-app --example with-next-sass with-next-sass-app
-# or
-yarn create next-app --example with-next-sass with-next-sass-app
-```
+* Deployment instructions
 
-Run production build with:
-
-```bash
-npm run build
-npm run start
-# or
-yarn build
-yarn start
-```
-
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+* ...
