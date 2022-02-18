@@ -1,11 +1,10 @@
-// The top-level page for bowlers
-
 import DirectorLayout from '../../components/Layout/DirectorLayout/DirectorLayout';
+import LoginForm from '../../components/LoginForm/LoginForm';
 
 const login = () => {
   return (
     <div>
-      <p>Login page content!</p>
+      <LoginForm />
     </div>
   );
 }

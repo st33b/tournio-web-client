@@ -1,19 +1,22 @@
 import {useState, useRef, useContext} from "react";
-import {useHistory} from 'react-router-dom';
+import {useRouter} from "next/router";
+
+import axios from "axios";
 
 import {Button, Card, FloatingLabel, Form} from "react-bootstrap";
 
-import AuthContext from '../../store/AuthContext';
+import {useAuthContext} from '../../store/AuthContext';
 
 import classes from './LoginForm.module.scss';
 
-const LoginForm = () => {
-  const history = useHistory();
+const loginForm = () => {
+  const router = useRouter();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
+  const [loginFailed, setLoginFailed] = useState(false);
 
-  const authContext = useContext(AuthContext);
+  const authContext = useAuthContext();
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -21,7 +24,26 @@ const LoginForm = () => {
     const enteredPassword = passwordInputRef.current.value;
 
     setIsLoading(true);
-    // make request to server
+
+    const url = 'http://localhost:5000/login';
+    const postBody = {
+      user: {
+        email: enteredEmail,
+        password: enteredPassword,
+      }
+    };
+    axios.post(url, postBody)
+      .then(response => {
+        setIsLoading(false);
+        setLoginFailed(false);
+        const authHeader = response.headers.authorization;
+        authContext.login(authHeader);
+        router.push('/director')
+      })
+      .catch(error => {
+        setIsLoading(false);
+        setLoginFailed(true);
+      });
   }
 
   return (
@@ -39,21 +61,28 @@ const LoginForm = () => {
                            controlId={'emailAddress'}>
               <Form.Control type={'email'}
                             placeholder={'name@example.com'}
-                            ref={emailInputRef} />
+                            ref={emailInputRef}/>
             </FloatingLabel>
-            <FloatingLabel label={'password'}
+            <FloatingLabel label={'Password'}
                            controlId={'password'}>
               <Form.Control type={'password'}
                             placeholder={'Password'}
-                            ref={passwordInputRef} />
+                            ref={passwordInputRef}/>
             </FloatingLabel>
             <div className={classes.Actions}>
-              {!isLoading && <Button variant={'primary'} type={'submit'}>Log In</Button> }
-              {isLoading && <Button variant={'secondary'} disabled={true}>Logging you in...</Button> }
+              {!isLoading && <Button variant={'primary'} type={'submit'}>Log In</Button>}
+              {isLoading && <Button variant={'secondary'} disabled={true}>Logging you in...</Button>}
             </div>
           </Form>
         </Card.Body>
+        {loginFailed && (
+          <Card.Body className={'pt-0 text-center text-danger'}>
+            Invalid username and/or password. Try again.
+          </Card.Body>
+        )}
       </Card>
     </div>
   );
-}
+};
+
+export default loginForm;
