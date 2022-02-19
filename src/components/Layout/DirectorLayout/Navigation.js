@@ -58,9 +58,11 @@ const navigation = () => {
                   User Accounts
                 </Nav.Link>
               )}
-              <Nav.Link href={'/director/profile'}>
-                My Profile
-              </Nav.Link>
+              {authContext.user && (
+                <Nav.Link href={'/director/users/' + authContext.user.identifier}>
+                  My Profile
+                </Nav.Link>
+              )}
             </Nav>
             <Nav className={'ms-auto pe-2'}>
               <Nav.Link onClick={logoutHandler} href={'#'}>

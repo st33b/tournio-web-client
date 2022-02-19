@@ -25,14 +25,10 @@ const userListing = () => {
   let errorMessage = '';
 
   useEffect(() => {
-    console.log("Feeling the effect...");
     if (data.length === 0) {
-      console.log("Data is empty, so fetching.");
-      // setLoading(false);
       axios.get(theUrl, requestConfig)
         .then(response => {
           const users = response.data;
-          console.log('Got a list of users, length ' + users.length);
           setData(users);
           setLoading(false);
         })
@@ -70,13 +66,15 @@ const userListing = () => {
             return (
               <tr key={row.identifier}>
                 <td>
-                  {row.email}
+                  <a href={'/director/users/' + row.identifier}>
+                    {row.email}
+                  </a>
                 </td>
                 <td>
                   {row.role}
                 </td>
                 <td>
-                  {row.tournaments}
+                  {row.tournaments.map(t => (t.name)).join(', ')}
                 </td>
               </tr>
             );
