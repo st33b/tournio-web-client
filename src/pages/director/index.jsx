@@ -1,12 +1,23 @@
 // The top-level page for directors
 
 import DirectorLayout from "../../components/Layout/DirectorLayout/DirectorLayout";
+import TournamentListing from '../../components/Director/TournamentListing/TournamentListing';
+import {useEffect} from "react";
+import {useRouter} from "next/router";
+import {useAuthContext} from "../../store/AuthContext";
 
 const page = () => {
+  const router = useRouter();
+  const authContext = useAuthContext();
+
+  useEffect(() => {
+    if (!authContext.isLoggedIn) {
+      router.push('/director/login');
+    }
+  });
+
   return (
-    <div>
-      <p>Director index page content!</p>
-    </div>
+    <TournamentListing />
   );
 }
 
