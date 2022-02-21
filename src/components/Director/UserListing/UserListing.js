@@ -5,6 +5,7 @@ import axios from "axios";
 
 import {Button, Card, Col, Row, Table} from "react-bootstrap";
 
+import {apiHost} from "../../../utils";
 import {useAuthContext} from '../../../store/AuthContext';
 
 import classes from './UserListing.module.scss';
@@ -12,7 +13,7 @@ import classes from './UserListing.module.scss';
 const userListing = () => {
   const authContext = useAuthContext();
 
-  const theUrl = 'http://localhost:5000/director/users';
+  const theUrl = `${apiHost}/director/users`;
   const requestConfig = {
     headers: {
       'Accept': 'application/json',

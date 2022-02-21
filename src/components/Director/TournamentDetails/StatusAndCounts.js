@@ -5,6 +5,7 @@ import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
 
+import {apiHost} from "../../../utils";
 import {useAuthContext} from "../../../store/AuthContext";
 import classes from './TournamentDetails.module.scss';
 
@@ -67,8 +68,7 @@ const statusAndCounts = ({tournament}) => {
       return;
     }
 
-    // fetch the tournament details
-    const theUrl = `http://localhost:5000/director/tournaments/${tournament.identifier}/clear_test_data`;
+    const theUrl = `${apiHost}/director/tournaments/${tournament.identifier}/clear_test_data`;
     const requestConfig = {
       url: theUrl,
       headers: {

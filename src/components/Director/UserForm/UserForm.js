@@ -3,6 +3,7 @@ import {Alert, Button, Card, FloatingLabel, Form, FormGroup} from "react-bootstr
 import axios from "axios";
 import {useRouter} from "next/router";
 
+import {apiHost} from "../../../utils";
 import {useAuthContext} from "../../../store/AuthContext";
 
 import classes from './UserForm.module.scss';
@@ -58,7 +59,7 @@ const userForm = ({user}) => {
 
   // Retrieve list of available tournaments
   useEffect(() => {
-    const theUrl = 'http://localhost:5000/director/tournaments?upcoming';
+    const theUrl = `${apiHost}/director/tournaments?upcoming`;
     const requestConfig = {
       headers: {
         'Accept': 'application/json',
@@ -85,7 +86,7 @@ const userForm = ({user}) => {
 
     const enteredEmail = emailInputRef.current.value;
 
-    let url = 'http://localhost:5000/director/users';
+    let url = `${apiHost}/director/users`;
     let method = 'post';
     const userData = {
       email: enteredEmail,

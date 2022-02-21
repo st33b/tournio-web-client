@@ -6,6 +6,7 @@ import axios from "axios";
 import {Button, Card, FloatingLabel, Form} from "react-bootstrap";
 
 import {useAuthContext} from '../../../store/AuthContext';
+import {apiHost} from "../../../utils";
 
 import classes from './LoginForm.module.scss';
 
@@ -30,7 +31,7 @@ const loginForm = () => {
     }
 
     setIsLoading(true);
-    const url = 'http://localhost:5000/login';
+    const url = `${apiHost}/login`;
     const postBody = {
       user: {
         email: enteredEmail,

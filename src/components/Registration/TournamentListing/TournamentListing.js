@@ -1,6 +1,8 @@
 import {useState, useEffect} from "react";
 import axios from 'axios';
 
+import {apiHost} from "../../../utils";
+
 import classes from './TournamentListing.module.scss';
 
 const tournamentListing = () => {
@@ -10,7 +12,7 @@ const tournamentListing = () => {
   useEffect(() => {
     const requestConfig = {
       method: 'get',
-      url: 'http://localhost:5000/tournaments',
+      url: `${apiHost}/tournaments`,
       headers: {
         'Accept': 'application/json',
       }

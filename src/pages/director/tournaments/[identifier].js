@@ -4,6 +4,7 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import axios from "axios";
 
+import {apiHost} from "../../../utils";
 import {useAuthContext} from '../../../store/AuthContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentDetails from '../../../components/Director/TournamentDetails/TournamentDetails';
@@ -31,7 +32,7 @@ const tournament = () => {
     }
 
     // fetch the tournament details
-    const theUrl = `http://localhost:5000/director/tournaments/${identifier}`;
+    const theUrl = `${apiHost}/director/tournaments/${identifier}`;
     const requestConfig = {
       headers: {
         'Accept': 'application/json',
@@ -45,6 +46,10 @@ const tournament = () => {
         setLoading(false);
       })
       .catch(error => {
+        if (error.response.status === 401) {
+          authContext.logout();
+          router.push('/director/login');
+        }
         errorMessage = error;
         setLoading(false);
       });
@@ -53,7 +58,7 @@ const tournament = () => {
 
   const stateChangeInitiated = (stateChangeAction) => {
     // fetch the tournament details
-    const theUrl = `http://localhost:5000/director/tournaments/${identifier}/state_change`;
+    const theUrl = `${apiHost}/director/tournaments/${identifier}/state_change`;
     const requestConfig = {
       url: theUrl,
       headers: {
@@ -72,6 +77,10 @@ const tournament = () => {
         setTournament(response.data);
       })
       .catch(error => {
+        if (error.response.status === 401) {
+          authContext.logout();
+          router.push('/director/login');
+        }
       });
   }
 

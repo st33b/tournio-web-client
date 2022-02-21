@@ -1,11 +1,13 @@
 // The top-level page for bowlers
-import {useRouter} from "next/router";
-
-import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import classes from "../../components/Registration/TournamentDetails/TournamentDetails.module.scss";
+import {useRouter} from "next/router";
+
+import {apiHost} from "../../utils";
+import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentDetails from "../../components/Registration/TournamentDetails/TournamentDetails";
+
+import classes from "../../components/Registration/TournamentDetails/TournamentDetails.module.scss";
 
 const page = () => {
   const router = useRouter();
@@ -23,12 +25,12 @@ const page = () => {
 
     const requestConfig = {
       method: 'get',
-      url: `http://localhost:5000/tournaments/${identifier}`,
+      url: `${apiHost}/tournaments/${identifier}`,
       headers: {
         'Accept': 'application/json',
       }
     }
-
+    console.log(requestConfig.url);
     axios(requestConfig)
       .then(response => {
         setTournament(response.data);

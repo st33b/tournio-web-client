@@ -3,6 +3,7 @@ import {useRouter} from "next/router";
 
 import {Nav, Navbar} from "react-bootstrap";
 
+import {apiHost} from "../../../utils";
 import {useAuthContext} from "../../../store/AuthContext";
 
 import classes from './Navigation.module.scss';
@@ -23,7 +24,7 @@ const navigation = () => {
   const logoutHandler = (event) => {
     event.preventDefault();
 
-    const url = 'http://localhost:5000/logout';
+    const url = `${apiHost}/logout`;
     axios.delete(url)
       .then(response => {
         console.log('We have been logged out from the server.')

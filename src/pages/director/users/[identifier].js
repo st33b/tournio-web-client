@@ -5,6 +5,7 @@ import {useRouter} from "next/router";
 
 import {Col, Row} from "react-bootstrap";
 
+import {apiHost} from "../../../utils";
 import {useAuthContext} from '../../../store/AuthContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import UserForm from '../../../components/Director/UserForm/UserForm';
@@ -34,7 +35,7 @@ const index = () => {
       return;
     }
     const requestConfig = {
-      url: 'http://localhost:5000/director/users/' + identifier,
+      url: `${apiHost}/director/users/${identifier}`,
       headers: {
         'Accept': 'application/json',
         'Authorization': authContext.token,

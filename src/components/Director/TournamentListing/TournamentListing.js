@@ -3,6 +3,7 @@ import axios from "axios";
 
 import {Col, Row} from "react-bootstrap";
 
+import {apiHost} from "../../../utils";
 import {useAuthContext} from '../../../store/AuthContext';
 
 import classes from './TournamentListing.module.scss';
@@ -12,7 +13,7 @@ const tournamentListing = () => {
   const authContext = useAuthContext();
   const router = useRouter();
 
-  const theUrl = 'http://localhost:5000/director/tournaments';
+  const theUrl = `${apiHost}/director/tournaments`;
   const requestConfig = {
     headers: {
       'Accept': 'application/json',
