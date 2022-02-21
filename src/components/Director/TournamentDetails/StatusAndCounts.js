@@ -150,7 +150,7 @@ const statusAndCounts = ({tournament}) => {
 
   const frontPageLink = (
     <Card.Body className={'bg-white text-dark'}>
-      <a href={`/tournaments/${tournament.identifier}`}>
+      <a href={`/tournaments/${tournament.identifier}`} target={'_new'}>
         Front Page
         <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
       </a>

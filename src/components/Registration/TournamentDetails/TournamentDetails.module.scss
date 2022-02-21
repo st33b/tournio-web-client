@@ -1,0 +1,38 @@
+.TournamentDetails {
+  dl {
+    margin-bottom: 1rem;
+  }
+  dt {
+    font-weight: normal;
+    text-align: right;
+  }
+  dd {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+  .WebsiteLink {
+    font-size: 90%;
+  }
+
+  .Deadline {
+    font-weight: bold;
+  }
+
+  .ExternalLink {
+    font-size: 80%;
+    padding-left: 0.5rem;
+  }
+
+  .TestingEnvironment {
+    padding-top: 0.5rem;
+    padding-left: 0.5rem;
+    background-color: burlywood;
+  }
+  .ContactItem {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    p {
+      margin-bottom: 0;
+    }
+  }
+}

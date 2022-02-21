@@ -1,5 +1,3 @@
-import {useEffect} from 'react';
-
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
 
 import classes from './TournamentDetails.module.scss';

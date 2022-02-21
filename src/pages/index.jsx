@@ -1,12 +1,11 @@
 // The top-level page for bowlers
 
 import RegistrationLayout from '../components/Layout/RegistrationLayout/RegistrationLayout';
+import TournamentListing from "../components/Registration/TournamentListing/TournamentListing";
 
 const page = () => {
   return (
-    <div>
-      <p>Registration index page content!</p>
-    </div>
+    <TournamentListing />
   );
 }
 

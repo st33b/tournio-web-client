@@ -3,7 +3,6 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import axios from "axios";
-import {Col, Row} from "react-bootstrap";
 
 import {useAuthContext} from '../../../store/AuthContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
