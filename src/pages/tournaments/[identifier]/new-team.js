@@ -5,13 +5,21 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import TeamForm from "../../../components/Registration/TeamForm/TeamForm";
 import Summary from "../../../components/Registration/Summary/Summary";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
+import {useRouter} from "next/router";
+import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 const page = () => {
+  const context = useRegistrationContext();
+  const router = useRouter();
+  const moveToBowlerForm = () => {
+    router.push(`/tournaments/${context.tournament.identifier}/new-team-bowler`);
+  }
+
   return (
     <Row>
       <Col lg={8}>
         <ProgressIndicator active={'team'} />
-        <TeamForm />
+        <TeamForm teamFormCompleted={moveToBowlerForm} />
       </Col>
       <Col>
         <Summary />

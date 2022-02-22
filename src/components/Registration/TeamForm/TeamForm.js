@@ -7,7 +7,7 @@ import {updateObject} from "../../../utils";
 
 import classes from './TeamForm.module.scss';
 
-const teamForm = (props) => {
+const teamForm = ({teamFormCompleted}) => {
   const context = useRegistrationContext();
   const initialFormState = {
     teamName: '',
@@ -34,8 +34,8 @@ const teamForm = (props) => {
     // - store the entered team name somewhere
     context.dispatch(teamInfoAdded(teamForm.teamName));
 
-    // - move on to the next step. This should probably come in from our parent; we
-    // have no business deciding where to navigate next.
+    // - move on to the next step.
+    teamFormCompleted();
   }
 
   const isValid = (value) => {

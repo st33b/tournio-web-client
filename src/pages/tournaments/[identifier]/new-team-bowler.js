@@ -2,16 +2,19 @@
 import {Row, Col} from "react-bootstrap";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
-import ProgressSummary from "../../../components/Registration/Summary/Summary";
+import Summary from "../../../components/Registration/Summary/Summary";
+import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
+import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 
 const page = () => {
   return (
     <Row>
       <Col lg={8}>
-        <TeamForm />
+        <ProgressIndicator active={'bowlers'} />
+        <BowlerForm />
       </Col>
       <Col>
-        <ProgressSummary />
+        <Summary />
       </Col>
     </Row>
   );
