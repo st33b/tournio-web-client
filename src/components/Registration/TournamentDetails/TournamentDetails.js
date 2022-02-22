@@ -1,14 +1,22 @@
 import {useRouter} from "next/router";
 
+import {useRegistrationContext} from "../../../store/RegistrationContext";
+
 import classes from './TournamentDetails.module.scss';
 import {Card, Col, ListGroup, Row} from "react-bootstrap";
+import {useEffect, useState} from "react";
 
 const USBC_ID_LOOKUP_URL = 'https://webapps.bowl.com/USBCFindA/Home/Member';
 const IGBO_ID_LOOKUP_URL = 'http://igbo.org/tournaments/igbots-id-lookup/';
 
-const tournamentDetails = ({tournament}) => {
+const tournamentDetails = () => {
   const router = useRouter();
-  const identifier = router.query;
+  const registrationContext = useRegistrationContext();
+
+  const [tournament, setTournament] = useState(null);
+  useEffect(() => {
+    setTournament(registrationContext.tournament);
+  }, [registrationContext.tournament]);
 
   if (!tournament) {
     return '';
@@ -147,10 +155,11 @@ const tournamentDetails = ({tournament}) => {
   let joinTeamLink = '';
   let soloRegistrationLink = '';
   if (tournament.state === 'testing' || tournament.state === 'active') {
-    const linkClasses = 'list-group-item list-group-item-action text-primary'
+    console.log(router.pathname);
+    console.log(router.asPath);
     registrationLink = (
       <ListGroup.Item className={'text-primary'}
-                      href={`${router.pathname}/team-form`}
+                      href={`${router.asPath}/new-team`}
                       action>
         Register a New Team
       </ListGroup.Item>
@@ -158,7 +167,7 @@ const tournamentDetails = ({tournament}) => {
 
     joinTeamLink = (
       <ListGroup.Item className={'text-primary'}
-                      href={`${router.pathname}/teams?which=incomplete`}
+                      href={`${router.asPath}/teams?which=incomplete`}
                       action>
         Join an Existing Team
       </ListGroup.Item>
@@ -166,7 +175,7 @@ const tournamentDetails = ({tournament}) => {
 
     soloRegistrationLink = (
       <ListGroup.Item className={'text-primary'}
-                      href={`${router.pathname}/solo-bowler`}
+                      href={`${router.asPath}/solo-bowler`}
                       action>
         Register as a Solo Bowler
       </ListGroup.Item>
@@ -174,7 +183,7 @@ const tournamentDetails = ({tournament}) => {
   }
 
   const payFeeLink = (
-    <a href={`${router.pathname}/teams?which=all`}
+    <a href={`${router.asPath}/teams?which=all`}
        className={''}>
       Choose Events &amp; Pay
     </a>

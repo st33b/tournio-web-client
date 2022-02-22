@@ -1,5 +1,6 @@
 import App from 'next/app';
 import {AuthContextProvider} from "../store/AuthContext";
+import {RegistrationContextProvider} from "../store/RegistrationContext";
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -14,7 +15,9 @@ class MyApp extends App  {
 
     return (
       <AuthContextProvider>
-        {getLayout(<Component {...pageProps} />)}
+        <RegistrationContextProvider>
+          {getLayout(<Component {...pageProps} />)}
+        </RegistrationContextProvider>
       </AuthContextProvider>
     );
   }

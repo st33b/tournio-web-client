@@ -1,0 +1,1 @@
+export const TEAM_INFO_ADDED = 'TEAM_INFO_ADDED';

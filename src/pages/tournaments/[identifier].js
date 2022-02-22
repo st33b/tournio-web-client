@@ -7,17 +7,18 @@ import {apiHost} from "../../utils";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentDetails from "../../components/Registration/TournamentDetails/TournamentDetails";
 
-import classes from "../../components/Registration/TournamentDetails/TournamentDetails.module.scss";
+import {useRegistrationContext} from "../../store/RegistrationContext";
 
 const page = () => {
   const router = useRouter();
   const { identifier } = router.query;
 
-  const [tournament, setTournament] = useState(null);
+  const registrationContext = useRegistrationContext();
+
   const [loading, setLoading] = useState(true);
   let errorMessage = '';
 
-  // fetch the tournament details
+  // fetch the tournament details and put the tournament into context
   useEffect(() => {
     if (identifier === undefined) {
       return;
@@ -30,10 +31,9 @@ const page = () => {
         'Accept': 'application/json',
       }
     }
-    console.log(requestConfig.url);
     axios(requestConfig)
       .then(response => {
-        setTournament(response.data);
+        registrationContext.useTournament(response.data);
         setLoading(false);
       })
       .catch(error => {
@@ -44,7 +44,7 @@ const page = () => {
 
   if (loading) {
     return (
-      <div className={classes.TournamentDetails}>
+      <div>
         <p>
           Retrieving tournament details...
         </p>
@@ -52,12 +52,7 @@ const page = () => {
     );
   }
 
-  return (
-    <>
-      <TournamentDetails tournament={tournament} />
-      {errorMessage}
-    </>
-  );
+  return <TournamentDetails />;
 }
 
 page.getLayout = function getLayout(page) {
