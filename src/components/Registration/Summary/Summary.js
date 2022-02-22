@@ -28,6 +28,19 @@ const summary = (props) => {
 
   // list the names of bowlers added so far
   let bowlersText = '';
+  if (context.state.bowlers && context.state.bowlers.length > 0) {
+    bowlersText = (
+      <ol>
+        {context.state.bowlers.map((b, i) => {
+          return (
+            <li key={i}>
+              {b.first_name} {b.last_name}
+            </li>
+          )
+        })}
+      </ol>
+    );
+  }
 
   // e.g., finished with bowlers, submit registration
   let nextStepButton = '';

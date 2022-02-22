@@ -29,6 +29,7 @@ export const RegistrationContextProvider = ({children}) => {
 
   const initialReducerState = {
     teamName: '',
+    bowlers: [],
   }
   const [state, dispatch] = useReducer(registrationReducer, initialReducerState);
 
