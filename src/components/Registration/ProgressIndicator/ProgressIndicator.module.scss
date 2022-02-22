@@ -1,0 +1,13 @@
+.ProgressIndicator {
+  margin-bottom: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+
+  .Step {
+    font-size: 120%;
+
+    .Active {
+      font-weight: bold;
+    }
+  }
+}

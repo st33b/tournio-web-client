@@ -2,9 +2,9 @@ import Card from "react-bootstrap/Card";
 
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 
-import classes from './ProgressSummary.module.scss';
+import classes from './Summary.module.scss';
 
-const progressSummary = (props) => {
+const summary = (props) => {
   const context = useRegistrationContext();
 
   const tournament = context.tournament;
@@ -13,7 +13,18 @@ const progressSummary = (props) => {
   }
 
   let teamText = '';
-  // should the team info come from props or context? hmm...
+  if (context.state.teamName) {
+    teamText = (
+      <p>
+        <span>
+          Team name:{' '}
+        </span>
+        <span className={'fw-bold'}>
+          {context.state.teamName}
+        </span>
+      </p>
+    );
+  }
 
   // list the names of bowlers added so far
   let bowlersText = '';
@@ -33,8 +44,6 @@ const progressSummary = (props) => {
         <Card.Title>
           {tournament.name}
         </Card.Title>
-        Summary data goes here.
-
         {teamText}
         {bowlersText}
         {doublesLink}
@@ -44,4 +53,4 @@ const progressSummary = (props) => {
   );
 };
 
-export default progressSummary;
+export default summary;
