@@ -1,22 +1,13 @@
 import {useRouter} from "next/router";
-
-import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {Card, Col, ListGroup, Row} from "react-bootstrap";
 
 import classes from './TournamentDetails.module.scss';
-import {Card, Col, ListGroup, Row} from "react-bootstrap";
-import {useEffect, useState} from "react";
 
 const USBC_ID_LOOKUP_URL = 'https://webapps.bowl.com/USBCFindA/Home/Member';
 const IGBO_ID_LOOKUP_URL = 'http://igbo.org/tournaments/igbots-id-lookup/';
 
-const tournamentDetails = () => {
+const tournamentDetails = ({tournament}) => {
   const router = useRouter();
-  const registrationContext = useRegistrationContext();
-
-  const [tournament, setTournament] = useState(null);
-  useEffect(() => {
-    setTournament(registrationContext.tournament);
-  }, [registrationContext.tournament]);
 
   if (!tournament) {
     return '';

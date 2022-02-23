@@ -6,14 +6,8 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import classes from './BowlerSummary.module.scss';
 
 const bowlerSummary = ({bowler, editClicked}) => {
-  const context = useRegistrationContext();
-
-  const [tournament, setTournament] = useState(null);
-  useEffect(() => {
-    setTournament(context.tournament);
-  });
-
-  if (!tournament) {
+  const {entry} = useRegistrationContext();
+  if (!bowler || !entry.tournament) {
     return '';
   }
 
@@ -38,9 +32,9 @@ const bowlerSummary = ({bowler, editClicked}) => {
 
   // Get labels and responses for additional questions, if any
   const aqResponses = {};
-  for (let key in tournament.additional_questions) {
-    labels[key] = tournament.additional_questions[key].label;
-    aqResponses[key] = tournament.additional_questions[key].elementConfig.value;
+  for (let key in entry.tournament.additional_questions) {
+    labels[key] = entry.tournament.additional_questions[key].label;
+    aqResponses[key] = entry.tournament.additional_questions[key].elementConfig.value;
   }
 
   const editClickHandler = (event) => {

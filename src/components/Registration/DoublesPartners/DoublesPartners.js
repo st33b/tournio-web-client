@@ -5,14 +5,9 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import classes from './DoublesPartners.module.scss';
 
 const doublesPartners = ({partnersChosen}) => {
-  const context = useRegistrationContext();
+  const {entry} = useRegistrationContext();
 
-  const [bowlers, setBowlers] = useState(null);
-  useEffect(() => {
-    setBowlers(context.state.bowlers);
-  });
-
-  if (!bowlers) {
+  if (!entry.bowlers) {
     return '';
   }
 
@@ -33,8 +28,8 @@ const doublesPartners = ({partnersChosen}) => {
         </tr>
         </thead>
         <tbody>
-        {bowlers.map(bowler => {
-          const teammates = bowlers.filter((value) => { return value.position !== bowler.position });
+        {entry.bowlers.map(bowler => {
+          const teammates = entry.bowlers.filter((value) => { return value.position !== bowler.position });
           return <PartnerSelectionRow key={bowler.position}
                                       bowler={bowler}
                                       teammates={teammates}

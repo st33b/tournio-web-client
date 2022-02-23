@@ -1,48 +1,20 @@
-import {useState, createContext, useContext, useReducer} from 'react';
-import registrationReducer from "./registrationReducer";
+import {createContext, useContext, useEffect, useReducer} from 'react';
+import {registrationReducer, initializer} from "./registrationReducer";
 
 const RegistrationContext = createContext({
-  tournament: null,
-  useTournament: (tournament) => {},
-  state: null,
+  entry: null,
   dispatch: null,
 });
 
 export const RegistrationContextProvider = ({children}) => {
-  let tournamentData;
-  if (typeof window !== "undefined") {
-    tournamentData = JSON.parse(localStorage.getItem('tournament'));
-  }
+  const [entry, dispatch] = useReducer(registrationReducer, {}, initializer);
 
-  let initialTournament;
-  if (tournamentData) {
-    initialTournament = tournamentData;
-  }
-
-  const [tournament, setTournament] = useState(initialTournament);
-
-  const useTournamentHandler = (t) => {
-    setTournament(t);
-    localStorage.setItem('tournament', JSON.stringify(t));
-  }
-
-  const initialReducerState = {
-    teamName: '',
-    bowlers: [],
-  }
-  const [state, dispatch] = useReducer(registrationReducer, initialReducerState);
-
-  ///////////////////////
-
-  const contextValue = {
-    tournament: tournament,
-    useTournament: useTournamentHandler,
-    state: state,
-    dispatch: dispatch,
-  }
+  useEffect(() => {
+    localStorage.setItem('registration', JSON.stringify(entry));
+  }, [entry]);
 
   return (
-    <RegistrationContext.Provider value={contextValue}>
+    <RegistrationContext.Provider value={{entry, dispatch}}>
       {children}
     </RegistrationContext.Provider>
   );

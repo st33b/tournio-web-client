@@ -8,7 +8,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
 
 const page = () => {
-  const context = useRegistrationContext();
+  const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   const editBowlerClicked = (bowler) => {

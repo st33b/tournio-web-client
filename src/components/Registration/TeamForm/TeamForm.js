@@ -1,26 +1,16 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {Form, Row, Col, Button} from "react-bootstrap";
 
-import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {updateObject} from "../../../utils";
 
 import classes from './TeamForm.module.scss';
 
 const teamForm = ({teamFormCompleted}) => {
-  const context = useRegistrationContext();
   const initialFormState = {
     teamName: '',
     valid: false,
   }
   const [teamForm, setTeamForm] = useState(initialFormState);
-  const [tournament, setTournament] = useState(null);
-
-  useEffect(() => {
-    setTournament(context.tournament);
-  });
-  if (!tournament) {
-    return '';
-  }
 
   const formHandler = (event) => {
     event.preventDefault();

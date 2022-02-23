@@ -1,3 +1,4 @@
+import {useRouter} from "next/router";
 import {Row, Col} from "react-bootstrap";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
@@ -6,20 +7,19 @@ import ProgressIndicator from "../../../components/Registration/ProgressIndicato
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamBowlerInfoAdded} from "../../../store/actions/registrationActions";
-import {useRouter} from "next/router";
 
 const page = () => {
-  const context = useRegistrationContext();
+  const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   const onFinishedWithBowlers = () => {
     // Move on to doubles partner selection!
-    router.push(`/tournaments/${context.tournament.identifier}/doubles-partners`);
+    router.push(`/tournaments/${entry.tournament.identifier}/doubles-partners`);
   }
 
   const onNewBowlerAdded = (bowlerInfo) => {
-    context.dispatch(newTeamBowlerInfoAdded(bowlerInfo));
-    if (bowlerInfo.position === context.tournament.max_bowlers) {
+    dispatch(newTeamBowlerInfoAdded(bowlerInfo));
+    if (bowlerInfo.position === entry.tournament.max_bowlers) {
       // Move on to doubles partner selection
       onFinishedWithBowlers();
     }

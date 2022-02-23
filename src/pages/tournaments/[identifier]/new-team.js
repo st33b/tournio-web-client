@@ -7,14 +7,20 @@ import Summary from "../../../components/Registration/Summary/Summary";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {teamInfoAdded} from "../../../store/actions/registrationActions";
+import {newTeamRegistrationInitiated, teamInfoAdded} from "../../../store/actions/registrationActions";
+import {useEffect} from "react";
 
 const page = () => {
-  const context = useRegistrationContext();
+  const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
+
+  useEffect(() => {
+    dispatch(newTeamRegistrationInitiated());
+  }, [])
+
   const onTeamFormCompleted = (teamName) => {
-    context.dispatch(teamInfoAdded(teamName));
-    router.push(`/tournaments/${context.tournament.identifier}/new-team-bowler`);
+    dispatch(teamInfoAdded(teamName));
+    router.push(`/tournaments/${entry.tournament.identifier}/new-team-bowler`);
   }
 
   return (

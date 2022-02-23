@@ -1,5 +1,18 @@
 import * as actionTypes from './actionTypes';
 
+export const tournamentDetailsRetrieved = (tournament) => {
+  return {
+    type: actionTypes.TOURNAMENT_DETAILS_RETRIEVED,
+    tournament: tournament,
+  }
+}
+
+export const newTeamRegistrationInitiated = () => {
+  return {
+    type: actionTypes.NEW_TEAM_REGISTRATION_INITIATED,
+  };
+};
+
 export const teamInfoAdded = (teamName) => {
   return {
     type: actionTypes.TEAM_INFO_ADDED,

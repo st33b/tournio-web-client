@@ -9,11 +9,11 @@ import DoublesPartners from "../../../components/Registration/DoublesPartners/Do
 import {newTeamPartnersChosen} from "../../../store/actions/registrationActions";
 
 const page = () => {
-  const context = useRegistrationContext();
+  const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   const moveOnToReview = () => {
-    router.push(`/tournaments/${context.tournament.identifier}/review-entries`);
+    router.push(`/tournaments/${entry.tournament.identifier}/review-entries`);
   }
 
   // When a doubles partner is clicked, what needs to happen:
@@ -24,7 +24,7 @@ const page = () => {
   //  - set C and D to be partners (the remaining two)
   const gimmeNewDoublesPartners = (bowlerNum, partnerNum) => {
     // create a copy of the bowlers array
-    const newBowlers = context.state.bowlers.slice(0);
+    const newBowlers = entry.bowlers.slice(0);
 
     // these are index-based, which is position-1
 
@@ -53,7 +53,7 @@ const page = () => {
       newBowlers[bowlersLeftToUpdate[0]].doubles_partner_num = null;
     }
 
-    context.dispatch(newTeamPartnersChosen(newBowlers));
+    dispatch(newTeamPartnersChosen(newBowlers));
   }
 
   return (

@@ -1,27 +1,25 @@
-import Card from "react-bootstrap/Card";
+import {Button, Card} from "react-bootstrap";
 
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './Summary.module.scss';
-import {Button} from "react-bootstrap";
 
 const summary = ({nextStepClicked, nextStepText}) => {
-  const context = useRegistrationContext();
+  const {entry} = useRegistrationContext();
 
-  const tournament = context.tournament;
-  if (!tournament) {
-    return <div />;
+  if (!entry.tournament) {
+    return '';
   }
 
   let teamText = '';
-  if (context.state.teamName) {
+  if (entry.teamName) {
     teamText = (
       <p>
         <span>
           Team name:{' '}
         </span>
         <span className={'fw-bold'}>
-          {context.state.teamName}
+          {entry.teamName}
         </span>
       </p>
     );
@@ -30,10 +28,10 @@ const summary = ({nextStepClicked, nextStepText}) => {
   // list the names of bowlers added so far
   let bowlersText = '';
   let nextStepButton = '';
-  if (context.state.bowlers && context.state.bowlers.length > 0) {
+  if (entry.bowlers && entry.bowlers.length > 0) {
     bowlersText = (
       <ol>
-        {context.state.bowlers.map((b, i) => {
+        {entry.bowlers.map((b, i) => {
           return (
             <li key={i}>
               {b.first_name} {b.last_name}
@@ -63,11 +61,11 @@ const summary = ({nextStepClicked, nextStepText}) => {
   return (
     <Card className={`${classes.Summary} border-0`}>
       <Card.Img variant={'top'}
-                src={tournament.image_path}
+                src={entry.tournament.image_path}
                 className={'d-none d-sm-block'}/>
       <Card.Body>
         <Card.Title>
-          {tournament.name}
+          {entry.tournament.name}
         </Card.Title>
         {teamText}
         {bowlersText}

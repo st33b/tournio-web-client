@@ -4,19 +4,18 @@ import axios from "axios";
 import {useRouter} from "next/router";
 
 import {apiHost} from "../../utils";
+import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentDetails from "../../components/Registration/TournamentDetails/TournamentDetails";
-
-import {useRegistrationContext} from "../../store/RegistrationContext";
+import {tournamentDetailsRetrieved} from "../../store/actions/registrationActions";
 
 const page = () => {
   const router = useRouter();
+  const { dispatch } = useRegistrationContext();
   const { identifier } = router.query;
 
-  const registrationContext = useRegistrationContext();
-
   const [loading, setLoading] = useState(true);
-  let errorMessage = '';
+  const [tournament, setTournament] = useState(null);
 
   // fetch the tournament details and put the tournament into context
   useEffect(() => {
@@ -33,12 +32,13 @@ const page = () => {
     }
     axios(requestConfig)
       .then(response => {
-        registrationContext.useTournament(response.data);
+        setTournament(response.data);
+        dispatch(tournamentDetailsRetrieved(response.data));
         setLoading(false);
       })
       .catch(error => {
         setLoading(false);
-        errorMessage = 'Whoops!';
+        // Display some kind of error message
       });
   }, [identifier]);
 
@@ -52,7 +52,7 @@ const page = () => {
     );
   }
 
-  return <TournamentDetails />;
+  return <TournamentDetails tournament={tournament} />;
 }
 
 page.getLayout = function getLayout(page) {

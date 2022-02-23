@@ -1,20 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {CountryDropdown} from "react-country-region-selector";
 
 import Input from "../../ui/Input/Input";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {bowlerInfoAdded} from "../../../store/actions/registrationActions";
 
 import classes from './BowlerForm.module.scss';
 
 const bowlerForm = ({bowlerInfoAdded}) => {
-  const context = useRegistrationContext();
-
-  const [tournament, setTournament] = useState(null);
-
-  useEffect(() => {
-    setTournament(context.tournament);
-  });
+  const {entry} = useRegistrationContext();
 
   const initialFormState = {
     formFields: {
@@ -235,14 +228,14 @@ const bowlerForm = ({bowlerInfoAdded}) => {
     valid: false,
   }
 
-  if (tournament) {
+  if (entry.tournament) {
     // For each of the additional questions, we need to deep-copy the nested objects that we care about
     // (elementConfig, in this case. helper and validation won't change.)
-    for (let key in tournament.additionalQuestions) {
-      initialFormState.formFields[key] = { ...tournament.additionalQuestions[key] }
+    for (let key in entry.tournament.additionalQuestions) {
+      initialFormState.formFields[key] = { ...entry.tournament.additionalQuestions[key] }
       initialFormState.formFields[key].valid = false;
       initialFormState.formFields[key].touched = false;
-      initialFormState.formFields[key].elementConfig = { ...tournament.additionalQuestions[key].elementConfig }
+      initialFormState.formFields[key].elementConfig = { ...entry.tournament.additionalQuestions[key].elementConfig }
     }
   }
 
@@ -251,7 +244,7 @@ const bowlerForm = ({bowlerInfoAdded}) => {
   const [bowlerForm, setBowlerForm] = useState(initialFormState);
 
   // This'll need to change for the solo, joining, and editing scenarios.
-  let position = context.state.bowlers.length + 1;
+  let position = entry.bowlers.length + 1;
 
   // mode: new team, joining team, solo bowler -- I imagine this will come from props, since there'll be
   // separate pages/routes for each scenario
@@ -376,7 +369,6 @@ const bowlerForm = ({bowlerInfoAdded}) => {
   );
 
   let headerText = 'Bowler #' + position;
-
 
   return (
     <div className={classes.BowlerForm}>
