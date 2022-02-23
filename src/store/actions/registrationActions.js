@@ -33,3 +33,10 @@ export const newTeamPartnersChosen = (bowlers) => {
     bowlers: bowlers,
   }
 }
+
+export const newTeamBowlerEdited = (bowler) => {
+  return {
+    type: actionTypes.NEW_TEAM_BOWLER_UPDATED,
+    bowler: bowler,
+  }
+}

@@ -1,33 +1,34 @@
 import {useRouter} from "next/router";
-import {Col, Row} from "react-bootstrap";
+import {Row, Col} from "react-bootstrap";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import Summary from "../../../components/Registration/Summary/Summary";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
+import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
+import {newTeamBowlerEdited} from "../../../store/actions/registrationActions";
 
 const page = () => {
   const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
+  const { bowler } = router.query;
 
-  const editBowlerClicked = (bowler) => {
-    router.push(`/tournaments/${entry.tournament.identifier}/edit-new-team-bowler?bowler=${bowler.position}`)
-  }
-
-  const submitRegistration = () => {
-    console.log("Now to submit it all");
+  const onBowlerInfoUpdated = (bowlerInfo) => {
+    dispatch(newTeamBowlerEdited(bowlerInfo));
+    router.push(`/tournaments/${entry.tournament.identifier}/review-entries`);
   }
 
   return (
     <Row>
       <Col lg={8}>
-        <ProgressIndicator active={'review'} />
-        <ReviewEntries editBowler={editBowlerClicked} />
+        <ProgressIndicator active={'bowlers'} />
+        <BowlerForm editBowlerNum={bowler}
+                    bowlerInfoSaved={onBowlerInfoUpdated} />
       </Col>
       <Col>
-        <Summary nextStepClicked={submitRegistration}
-                 nextStepText={'Submit Registration'}
+        <Summary nextStepClicked={null}
+                 nextStepText={'Finished With Bowlers'}
+                 buttonDisabled={true}
         />
       </Col>
     </Row>

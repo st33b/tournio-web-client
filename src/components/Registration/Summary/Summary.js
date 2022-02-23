@@ -4,7 +4,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './Summary.module.scss';
 
-const summary = ({nextStepClicked, nextStepText}) => {
+const summary = ({nextStepClicked, nextStepText, buttonDisabled}) => {
   const {entry} = useRegistrationContext();
 
   if (!entry.tournament) {
@@ -47,6 +47,7 @@ const summary = ({nextStepClicked, nextStepText}) => {
       nextStepButton = (
         <Button variant={'success'}
                 size={'lg'}
+                disabled={buttonDisabled}
                 onClick={nextStepClicked}>
           {nextStepText}
         </Button>

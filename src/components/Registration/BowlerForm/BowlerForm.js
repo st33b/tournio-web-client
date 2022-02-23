@@ -6,7 +6,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './BowlerForm.module.scss';
 
-const bowlerForm = ({bowlerInfoAdded}) => {
+const bowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
   const {entry} = useRegistrationContext();
 
   const initialFormState = {
@@ -226,6 +226,11 @@ const bowlerForm = ({bowlerInfoAdded}) => {
       },
     },
     valid: false,
+    touched: false,
+  }
+
+  if (!entry.bowlers) {
+    return '';
   }
 
   if (entry.tournament) {
@@ -237,36 +242,6 @@ const bowlerForm = ({bowlerInfoAdded}) => {
       initialFormState.formFields[key].touched = false;
       initialFormState.formFields[key].elementConfig = { ...entry.tournament.additionalQuestions[key].elementConfig }
     }
-  }
-
-  // Soon we'll populate initialFormState values for editing a bowler...
-
-  const [bowlerForm, setBowlerForm] = useState(initialFormState);
-
-  // This'll need to change for the solo, joining, and editing scenarios.
-  let position = entry.bowlers.length + 1;
-
-  // mode: new team, joining team, solo bowler -- I imagine this will come from props, since there'll be
-  // separate pages/routes for each scenario
-
-  const formHandler = (event) => {
-    event.preventDefault();
-
-    if (!bowlerForm.valid) {
-      return;
-    }
-
-    // Grab all the values from the form so they can be stored
-    const bowlerData = {};
-    for (let formElementIdentifier in bowlerForm.formFields) {
-      bowlerData[formElementIdentifier] = bowlerForm.formFields[formElementIdentifier].elementConfig.value;
-    }
-    bowlerData.position = position;
-
-    // Reset the form to take in the next bowler's info
-    setBowlerForm(initialFormState);
-
-    bowlerInfoAdded(bowlerData);
   }
 
   const checkValidity = (value, rules) => {
@@ -285,6 +260,47 @@ const bowlerForm = ({bowlerInfoAdded}) => {
     }
 
     return isValid;
+  }
+
+  // This'll need to change for the solo and joining scenarios.
+  let position = entry.bowlers.length + 1;
+  let buttonText = 'Save Bowler';
+
+  // In the event we're editing a bowler, populate initialFormState with their values
+  if (editBowlerNum) {
+    position = editBowlerNum;
+    const bowlerToEdit = entry.bowlers[position - 1];
+    for (const inputIdentifier in initialFormState.formFields) {
+      initialFormState.formFields[inputIdentifier].elementConfig.value = bowlerToEdit[inputIdentifier];
+      initialFormState.formFields[inputIdentifier].valid = checkValidity(
+        bowlerToEdit[inputIdentifier],
+        initialFormState.formFields[inputIdentifier].validation
+      );
+    }
+
+    buttonText = 'Save Changes';
+  }
+
+  const [bowlerForm, setBowlerForm] = useState(initialFormState);
+
+  const formHandler = (event) => {
+    event.preventDefault();
+
+    if (!bowlerForm.valid) {
+      return;
+    }
+
+    // Grab all the values from the form so they can be stored
+    const bowlerData = {};
+    for (let formElementIdentifier in bowlerForm.formFields) {
+      bowlerData[formElementIdentifier] = bowlerForm.formFields[formElementIdentifier].elementConfig.value;
+    }
+    bowlerData.position = position;
+
+    // Reset the form to take in the next bowler's info
+    setBowlerForm(initialFormState);
+
+    bowlerInfoSaved(bowlerData);
   }
 
   const inputChangedHandler = (event, inputIdentifier) => {
@@ -325,6 +341,8 @@ const bowlerForm = ({bowlerInfoAdded}) => {
     }
     updatedBowlerForm.valid = formIsValid;
 
+    updatedBowlerForm.touched = true;
+
     // Replace the form in state, to reflect changes based on the value that changed, and resulting validity
     setBowlerForm(updatedBowlerForm);
   }
@@ -359,8 +377,8 @@ const bowlerForm = ({bowlerInfoAdded}) => {
         {/*<div className="invalid-form-warning alert alert-warning" role="alert">*/}
         {/*  There are some errors in your form. Please correct them and try again.*/}
         {/*</div>*/}
-        <button className="btn btn-primary btn-lg" type="submit" disabled={!bowlerForm.valid}>
-          Save Bowler{' '}
+        <button className="btn btn-primary btn-lg" type="submit" disabled={!bowlerForm.valid || !bowlerForm.touched}>
+          {buttonText}{' '}
           <i className="bi-chevron-double-right pl-3" aria-hidden="true"/>
         </button>
 

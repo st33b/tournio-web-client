@@ -29,7 +29,7 @@ const page = () => {
     <Row>
       <Col lg={8}>
         <ProgressIndicator active={'bowlers'} />
-        <BowlerForm bowlerInfoAdded={onNewBowlerAdded} />
+        <BowlerForm bowlerInfoSaved={onNewBowlerAdded} />
       </Col>
       <Col>
         <Summary nextStepClicked={onFinishedWithBowlers}

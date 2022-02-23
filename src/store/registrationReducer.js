@@ -38,6 +38,13 @@ export const registrationReducer = (state, action) => {
       return updateObject(state, {
         bowlers: action.bowlers.slice(0),
       });
+    case actionTypes.NEW_TEAM_BOWLER_UPDATED:
+      const updatedBowlers = state.bowlers.slice(0);
+      const bowlerIndex = action.bowler.position - 1;
+      updatedBowlers[bowlerIndex] = updateObject(state.bowlers[bowlerIndex], action.bowler);
+      return updateObject(state, {
+        bowlers: updatedBowlers,
+      });
     default:
       console.log("Nope!");
       break;
