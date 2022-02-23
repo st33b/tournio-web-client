@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {CountryDropdown} from "react-country-region-selector";
 
 import Input from "../../ui/Input/Input";
@@ -7,7 +7,7 @@ import {bowlerInfoAdded} from "../../../store/actions/registrationActions";
 
 import classes from './BowlerForm.module.scss';
 
-const bowlerForm = (props) => {
+const bowlerForm = ({bowlerInfoAdded}) => {
   const context = useRegistrationContext();
 
   const [tournament, setTournament] = useState(null);
@@ -209,7 +209,7 @@ const bowlerForm = (props) => {
             valueType: 'short',
             priorityOptions: ['US', 'CA', 'NZ'],
             defaultOptionLabel: '-- Choose your country',
-            classes: 'form-control',
+            classes: 'form-select',
           },
         },
         label: 'Country',
@@ -273,13 +273,7 @@ const bowlerForm = (props) => {
     // Reset the form to take in the next bowler's info
     setBowlerForm(initialFormState);
 
-    // Ok, we're good to go. We need to:
-    // - store the entered bowler data somewhere
-    // context.dispatch(bowlerInfoAdded(bowlerData));
-
-
-    // - move on to the next step. This should come in from our parent; we
-    // have no business deciding where to navigate next.
+    bowlerInfoAdded(bowlerData);
   }
 
   const checkValidity = (value, rules) => {
@@ -392,7 +386,7 @@ const bowlerForm = (props) => {
       </h2>
 
       <p>
-        <span className={classes.RequiredLabel}>*</span>
+        <i className={`${classes.RequiredLabel} align-top bi-asterisk`} />
         {' '}indicates a required field
       </p>
 

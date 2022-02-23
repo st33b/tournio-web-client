@@ -7,11 +7,13 @@ import Summary from "../../../components/Registration/Summary/Summary";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {teamInfoAdded} from "../../../store/actions/registrationActions";
 
 const page = () => {
   const context = useRegistrationContext();
   const router = useRouter();
-  const moveToBowlerForm = () => {
+  const onTeamFormCompleted = (teamName) => {
+    context.dispatch(teamInfoAdded(teamName));
     router.push(`/tournaments/${context.tournament.identifier}/new-team-bowler`);
   }
 
@@ -19,7 +21,7 @@ const page = () => {
     <Row>
       <Col lg={8}>
         <ProgressIndicator active={'team'} />
-        <TeamForm teamFormCompleted={moveToBowlerForm} />
+        <TeamForm teamFormCompleted={onTeamFormCompleted} />
       </Col>
       <Col>
         <Summary />

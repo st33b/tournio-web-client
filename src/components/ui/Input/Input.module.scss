@@ -6,6 +6,7 @@
   .RequiredLabel {
     margin-left: 5px;
     color: darkred;
+    font-size: 60%;
   }
 
   .InputElement {
@@ -14,5 +15,9 @@
 
   .InvalidFeedback {
     margin-left: 5px;
+  }
+
+  .ExternalLink {
+    font-size: 80%;
   }
 }

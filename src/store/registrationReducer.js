@@ -9,6 +9,11 @@ const registrationReducer = (state, action) => {
       return updateObject(state, {
         teamName: action.teamName
       });
+    case actionTypes.NEW_TEAM_BOWLER_INFO_ADDED:
+      const newBowler = {...action.bowler}
+      return updateObject(state, {
+        bowlers: state.bowlers.concat(newBowler),
+      })
     default:
       console.log("Nope!");
       break;

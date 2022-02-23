@@ -3,13 +3,14 @@ import Card from "react-bootstrap/Card";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './Summary.module.scss';
+import {Button} from "react-bootstrap";
 
-const summary = (props) => {
+const summary = ({nextStepClicked, nextStepText}) => {
   const context = useRegistrationContext();
 
   const tournament = context.tournament;
   if (!tournament) {
-    return '';
+    return <div />;
   }
 
   let teamText = '';
@@ -28,6 +29,7 @@ const summary = (props) => {
 
   // list the names of bowlers added so far
   let bowlersText = '';
+  let nextStepButton = '';
   if (context.state.bowlers && context.state.bowlers.length > 0) {
     bowlersText = (
       <ol>
@@ -40,16 +42,25 @@ const summary = (props) => {
         })}
       </ol>
     );
+
+    // e.g., finished with bowlers, submit registration
+    // we only want to show this button if we have at least one bowler
+    if (nextStepText) {
+      nextStepButton = (
+        <Button variant={'success'}
+                size={'lg'}
+                onClick={nextStepClicked()}>
+          {nextStepText}
+        </Button>
+      );
+    }
   }
 
-  // e.g., finished with bowlers, submit registration
-  let nextStepButton = '';
 
   // for editing doubles partners
   let doublesLink = '';
-
   return (
-    <Card className={'border-0'}>
+    <Card className={`${classes.Summary} border-0`}>
       <Card.Img variant={'top'}
                 src={tournament.image_path}
                 className={'d-none d-sm-block'}/>

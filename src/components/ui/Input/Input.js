@@ -5,9 +5,9 @@ import classes from './Input.module.scss';
 const input = (props) => {
   let inputElement = null;
 
-  const inputClasses = [classes.Input, "form-control"];
+  let invalidClass = '';
   if (props.invalid && props.shouldValidate && props.touched) {
-    inputClasses.push('is-invalid');
+    invalidClass = 'is-invalid';
   }
 
   switch (props.elementType) {
@@ -15,7 +15,7 @@ const input = (props) => {
       inputElement = <input
         id={props.identifier}
         name={props.identifier}
-        className={inputClasses.join(' ')}
+        className={`form-control ${invalidClass}`}
         maxLength="100"
         {...props.elementConfig}
         onChange={props.changed}
@@ -33,7 +33,7 @@ const input = (props) => {
       inputElement = <select
         id={props.identifier}
         name={props.identifier}
-        className={inputClasses.join(' ')}
+        className={`form-select ${invalidClass}`}
         onChange={props.changed}
         required={props.validationRules.required}
         value={props.elementConfig.value}
@@ -75,7 +75,7 @@ const input = (props) => {
       <small className="form-text text-muted">
         <a href={props.helper.url} target="_new">
           {props.helper.text}{' '}
-          <i className="bi-box-arrow-up-right pl-2" aria-hidden="true"/>
+          <i className={`${classes.ExternalLink} bi-box-arrow-up-right pl-2`} aria-hidden="true"/>
         </a>
       </small>
     );
@@ -96,8 +96,8 @@ const input = (props) => {
     );
     requiredLabel = (
       <div className="d-inline">
-        <span className={classes.RequiredLabel}>*</span>
-        <span className="sr-only">
+        <i className={`${classes.RequiredLabel} align-top bi-asterisk`} />
+        <span className="visually-hidden">
           This field is required.
         </span>
       </div>
@@ -105,8 +105,8 @@ const input = (props) => {
   }
 
   return (
-    <div className="row mb-1 mb-sm-2">
-      <label className="col-sm-6 col-lg-4 col-form-label text-sm-end pb-0" htmlFor={props.identifier}>
+    <div className={`${classes.Input} row mb-1 mb-sm-2`}>
+      <label className="col-12 col-sm-4 col-form-label text-sm-end pb-0" htmlFor={props.identifier}>
         {props.label}
         {requiredLabel}
       </label>

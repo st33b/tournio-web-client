@@ -2,7 +2,6 @@ import {useEffect, useState} from "react";
 import {Form, Row, Col, Button} from "react-bootstrap";
 
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {teamInfoAdded} from "../../../store/actions/registrationActions";
 import {updateObject} from "../../../utils";
 
 import classes from './TeamForm.module.scss';
@@ -30,12 +29,7 @@ const teamForm = ({teamFormCompleted}) => {
       return;
     }
 
-    // Ok, we're good to go. We need to:
-    // - store the entered team name somewhere
-    context.dispatch(teamInfoAdded(teamForm.teamName));
-
-    // - move on to the next step.
-    teamFormCompleted();
+    teamFormCompleted(teamForm.teamName);
   }
 
   const isValid = (value) => {
