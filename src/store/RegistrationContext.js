@@ -22,7 +22,6 @@ export const RegistrationContextProvider = ({children}) => {
   const [tournament, setTournament] = useState(initialTournament);
 
   const useTournamentHandler = (t) => {
-    console.log("Using tournament: " + t.identifier);
     setTournament(t);
     localStorage.setItem('tournament', JSON.stringify(t));
   }

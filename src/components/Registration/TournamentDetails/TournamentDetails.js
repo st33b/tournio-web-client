@@ -155,8 +155,6 @@ const tournamentDetails = () => {
   let joinTeamLink = '';
   let soloRegistrationLink = '';
   if (tournament.state === 'testing' || tournament.state === 'active') {
-    console.log(router.pathname);
-    console.log(router.asPath);
     registrationLink = (
       <ListGroup.Item className={'text-primary'}
                       href={`${router.asPath}/new-team`}

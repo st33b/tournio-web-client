@@ -49,16 +49,17 @@ const summary = ({nextStepClicked, nextStepText}) => {
       nextStepButton = (
         <Button variant={'success'}
                 size={'lg'}
-                onClick={nextStepClicked()}>
+                onClick={nextStepClicked}>
           {nextStepText}
         </Button>
       );
     }
   }
 
-
   // for editing doubles partners
   let doublesLink = '';
+
+
   return (
     <Card className={`${classes.Summary} border-0`}>
       <Card.Img variant={'top'}

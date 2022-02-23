@@ -13,3 +13,10 @@ export const newTeamBowlerInfoAdded = (bowlerInfo) => {
     bowler: bowlerInfo,
   }
 }
+
+export const newTeamPartnersChosen = (bowlers) => {
+  return {
+    type: actionTypes.NEW_TEAM_PARTNERS_SELECTED,
+    bowlers: bowlers,
+  }
+}
