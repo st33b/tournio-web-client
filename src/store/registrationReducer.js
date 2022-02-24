@@ -45,8 +45,11 @@ export const registrationReducer = (state, action) => {
       return updateObject(state, {
         bowlers: updatedBowlers,
       });
+    case actionTypes.NEW_TEAM_ENTRY_SUBMITTED:
+
     default:
       console.log("Nope!");
       break;
   }
 }
+
