@@ -2,6 +2,8 @@ import {useRouter} from "next/router";
 import {Card, Col, ListGroup, Row} from "react-bootstrap";
 
 import classes from './TournamentDetails.module.scss';
+import Contacts from "../Contacts/Contacts";
+import TournamentLogo from "../TournamentLogo/TournamentLogo";
 
 const USBC_ID_LOOKUP_URL = 'https://webapps.bowl.com/USBCFindA/Home/Member';
 const IGBO_ID_LOOKUP_URL = 'http://igbo.org/tournaments/igbots-id-lookup/';
@@ -12,36 +14,6 @@ const tournamentDetails = ({tournament}) => {
   if (!tournament) {
     return '';
   }
-
-  /////////////////////////////////////////////////////
-  // Contacts
-
-  const contacts = (
-    <div>
-      <h5 className={'mt-4'}>
-        Contacts
-      </h5>
-      <ListGroup variant={'flush'}>
-        {tournament.contacts.map((c, i) => {
-          return (
-            <ListGroup.Item className={classes.ContactItem} key={i}>
-              <p className={'lead'}>
-                {c.name}
-              </p>
-              <p>
-                {c.role}
-              </p>
-              <p>
-                <a href={`mailto:${c.email}`} title={'Tournament inquiry'}>
-                  {c.email}
-                </a>
-              </p>
-            </ListGroup.Item>
-          );
-        })}
-      </ListGroup>
-    </div>
-  );
 
   /////////////////////////////////////////////////////
   // State banner, to indicate states other than active
@@ -238,9 +210,8 @@ const tournamentDetails = ({tournament}) => {
     <div className={classes.TournamentDetails}>
       <div className={'row'}>
         <div className={'d-none d-md-block col-md-4'}>
-        {/* logo and contacts */}
-          <img className="img-fluid" alt="Tournament logo" src={tournament.image_path} />
-          {contacts}
+          <TournamentLogo />
+          <Contacts />
         </div>
         <div className={'col'}>
         {/* the rest */}

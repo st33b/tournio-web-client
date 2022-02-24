@@ -46,3 +46,10 @@ export const newTeamEntryCompleted = () => {
     type: actionTypes.NEW_TEAM_ENTRY_COMPLETED,
   }
 }
+
+export const teamDetailsRetrieved = (team) => {
+  return {
+    type: actionTypes.TEAM_DETAILS_RETRIEVED,
+    team: team,
+  }
+}

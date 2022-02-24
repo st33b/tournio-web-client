@@ -1,4 +1,3 @@
-// The top-level page for bowlers
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {useRouter} from "next/router";
@@ -11,11 +10,10 @@ import {tournamentDetailsRetrieved} from "../../store/actions/registrationAction
 
 const page = () => {
   const router = useRouter();
-  const { dispatch } = useRegistrationContext();
+  const { entry, dispatch } = useRegistrationContext();
   const { identifier } = router.query;
 
   const [loading, setLoading] = useState(true);
-  const [tournament, setTournament] = useState(null);
 
   // fetch the tournament details and put the tournament into context
   useEffect(() => {
@@ -32,8 +30,8 @@ const page = () => {
     }
     axios(requestConfig)
       .then(response => {
-        setTournament(response.data);
         dispatch(tournamentDetailsRetrieved(response.data));
+
         setLoading(false);
       })
       .catch(error => {
@@ -52,7 +50,11 @@ const page = () => {
     );
   }
 
-  return <TournamentDetails tournament={tournament} />;
+  if (!entry || !entry.tournament) {
+    return '';
+  }
+
+  return <TournamentDetails tournament={entry.tournament} />;
 }
 
 page.getLayout = function getLayout(page) {

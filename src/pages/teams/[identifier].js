@@ -1,16 +1,20 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {useRouter} from "next/router";
+import {Col, Row} from "react-bootstrap";
 
 import {apiHost} from "../../utils";
-import {useTournamentContext} from "../../store/TournamentContext";
+import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
-import {teamDetailsRetrieved} from "../../store/actions/tournamentActions";
+import {teamDetailsRetrieved} from "../../store/actions/registrationActions";
+import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
+import Contacts from "../../components/Registration/Contacts/Contacts";
+import TeamDetails from "../../components/Registration/TeamDetails/TeamDetails";
 
 const page = () => {
   const router = useRouter();
-  const { details, dispatch } = useTournamentContext();
-  const { identifier } = router.query;
+  const { entry, dispatch } = useRegistrationContext();
+  const { identifier, success } = router.query;
 
   const [loading, setLoading] = useState(false);
   const [team, setTeam] = useState(null);
@@ -21,9 +25,9 @@ const page = () => {
       return;
     }
 
-    if (details.team) {
+    if (entry.team) {
       console.log("Getting team out of tournament context");
-      setTeam(details.team);
+      setTeam(entry.team);
     } else {
       console.log("Retrieving team deets from server");
       const requestConfig = {
@@ -59,10 +63,24 @@ const page = () => {
     return '';
   }
 
+  if (!entry) {
+    return '';
+  }
+
   return (
-    <>
-      <p>Team name: {team.name}</p>
-    </>
+    <div>
+      <Row>
+        <Col md={4} className={'d-none d-md-block'}>
+          <a href={`/tournaments/${entry.tournament.identifier}`} title={'To tournament page'}>
+            <TournamentLogo />
+          </a>
+          <Contacts />
+        </Col>
+        <Col>
+          <TeamDetails successType={success}/>
+        </Col>
+      </Row>
+    </div>
   );
 }
 

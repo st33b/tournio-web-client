@@ -8,25 +8,21 @@ import ProgressIndicator from "../../../components/Registration/ProgressIndicato
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
 import {submitNewTeamRegistration} from "../../../utils";
-import {useTournamentContext} from "../../../store/TournamentContext";
-import {teamDetailsRetrieved, tournamentDetailsRetrieved} from "../../../store/actions/tournamentActions";
-import {newTeamEntryCompleted} from "../../../store/actions/registrationActions";
-
+import {teamDetailsRetrieved, tournamentDetailsRetrieved, newTeamEntryCompleted} from "../../../store/actions/registrationActions";
 
 const page = () => {
-  const registrationContext = useRegistrationContext();
-  const tournamentContext = useTournamentContext();
+  const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   const editBowlerClicked = (bowler) => {
-    router.push(`/tournaments/${registrationContext.entry.tournament.identifier}/edit-new-team-bowler?bowler=${bowler.position}`)
+    router.push(`/tournaments/${entry.tournament.identifier}/edit-new-team-bowler?bowler=${bowler.position}`)
   }
 
   const newTeamRegistrationSuccess = (teamData) => {
-    tournamentContext.dispatch(tournamentDetailsRetrieved(registrationContext.entry.tournament));
-    tournamentContext.dispatch(teamDetailsRetrieved(teamData));
-    registrationContext.dispatch(newTeamEntryCompleted());
-    router.push(`/teams/${teamData.identifier}`);
+    dispatch(tournamentDetailsRetrieved(entry.tournament));
+    dispatch(teamDetailsRetrieved(teamData));
+    dispatch(newTeamEntryCompleted());
+    router.push(`/teams/${teamData.identifier}?success=new_team`);
   }
 
   const [error, setError] = useState(null);
@@ -37,9 +33,9 @@ const page = () => {
   }
 
   const submitRegistration = () => {
-    submitNewTeamRegistration(registrationContext.entry.tournament,
-      registrationContext.entry.teamName,
-      registrationContext.entry.bowlers,
+    submitNewTeamRegistration(entry.tournament,
+      entry.teamName,
+      entry.bowlers,
       newTeamRegistrationSuccess,
       newTeamRegistrationFailure);
     setProcessing(true);
@@ -71,7 +67,6 @@ const page = () => {
       </>
     )
   }
-
 
   return (
     <Row>

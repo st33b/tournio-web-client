@@ -5,6 +5,7 @@ const initialState = {
   tournament: null,
   teamName: null,
   bowlers: [],
+  team: null,
 }
 
 export const initializer = (initialValue = initialState) => {
@@ -49,6 +50,10 @@ export const registrationReducer = (state, action) => {
       return updateObject(state, {
         teamName: null,
         bowlers: [],
+      });
+    case actionTypes.TEAM_DETAILS_RETRIEVED:
+      return updateObject(state, {
+        team: action.team,
       });
     default:
       console.log("Nope!");
