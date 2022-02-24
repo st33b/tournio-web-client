@@ -9,6 +9,10 @@ import classes from './BowlerForm.module.scss';
 const bowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
   const {entry} = useRegistrationContext();
 
+  if (!entry.tournament || !entry.bowlers) {
+    return '';
+  }
+
   const initialFormState = {
     formFields: {
       first_name: {
@@ -229,19 +233,14 @@ const bowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
     touched: false,
   }
 
-  if (!entry.bowlers) {
-    return '';
-  }
-
-  if (entry.tournament) {
-    // For each of the additional questions, we need to deep-copy the nested objects that we care about
-    // (elementConfig, in this case. helper and validation won't change.)
-    for (let key in entry.tournament.additionalQuestions) {
-      initialFormState.formFields[key] = { ...entry.tournament.additionalQuestions[key] }
-      initialFormState.formFields[key].valid = false;
-      initialFormState.formFields[key].touched = false;
-      initialFormState.formFields[key].elementConfig = { ...entry.tournament.additionalQuestions[key].elementConfig }
-    }
+  // For each of the additional questions, we need to deep-copy the nested objects that we care about
+  // (elementConfig, in this case. helper and validation won't change.)
+  for (let key in entry.tournament.additional_questions) {
+    console.log(key);
+    initialFormState.formFields[key] = { ...entry.tournament.additional_questions[key] }
+    initialFormState.formFields[key].valid = false;
+    initialFormState.formFields[key].touched = false;
+    initialFormState.formFields[key].elementConfig = { ...entry.tournament.additional_questions[key].elementConfig }
   }
 
   const checkValidity = (value, rules) => {
@@ -391,9 +390,9 @@ const bowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
   return (
     <div className={classes.BowlerForm}>
 
-      <h2>
+      <h3>
         {headerText}
-      </h2>
+      </h3>
 
       <p>
         <i className={`${classes.RequiredLabel} align-top bi-asterisk`} />
