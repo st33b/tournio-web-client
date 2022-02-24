@@ -45,8 +45,11 @@ export const registrationReducer = (state, action) => {
       return updateObject(state, {
         bowlers: updatedBowlers,
       });
-    case actionTypes.NEW_TEAM_ENTRY_SUBMITTED:
-
+    case actionTypes.NEW_TEAM_ENTRY_COMPLETED:
+      return updateObject(state, {
+        teamName: null,
+        bowlers: [],
+      });
     default:
       console.log("Nope!");
       break;
