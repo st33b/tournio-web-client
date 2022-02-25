@@ -16,11 +16,9 @@ const teamDetails = ({successType}) => {
   if (successType) {
     let content = '';
     if (successType === 'new_team') {
-      content = (
-        <p className={classes.SuccessMessage}>
-          Your registration was received. Each bowler may now pay their fees and choose additional events.
-        </p>
-      );
+      content = 'Your registration was received. Each bowler may now pay their fees and choose additional events.';
+    } else if (successType === 'join') {
+      content = 'You have successfully joined this team! You may now pay your fees and choose additional events.';
     }
 
     successBanner = (
@@ -29,7 +27,9 @@ const teamDetails = ({successType}) => {
           <i className={'bi-check-circle-fill pe-2'} aria-hidden={true} />
           Success!
         </h5>
-        {content}
+        <p className={classes.SuccessMessage}>
+          {content}
+        </p>
       </div>
     );
   }

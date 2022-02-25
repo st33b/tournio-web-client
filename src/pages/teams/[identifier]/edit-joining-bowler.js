@@ -6,7 +6,7 @@ import Summary from "../../../components/Registration/Summary/Summary";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {newTeamBowlerEdited} from "../../../store/actions/registrationActions";
+import {existingTeamBowlerEdited} from "../../../store/actions/registrationActions";
 
 const page = () => {
   const {entry, dispatch} = useRegistrationContext();
@@ -16,8 +16,7 @@ const page = () => {
     return'';
   }
 
-  const bowlerNum = entry.team.bowlers.length;
-
+  const bowlerNum = entry.bowlers.length;
   const onBowlerInfoUpdated = (bowlerInfo) => {
     dispatch(existingTeamBowlerEdited(bowlerInfo));
     router.push(`/teams/${entry.team.identifier}/review-joining-bowler`);
@@ -26,7 +25,6 @@ const page = () => {
   return (
     <Row>
       <Col lg={8}>
-        <ProgressIndicator active={'bowlers'} />
         <BowlerForm editBowlerNum={bowlerNum}
                     bowlerInfoSaved={onBowlerInfoUpdated} />
       </Col>

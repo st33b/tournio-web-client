@@ -23,7 +23,7 @@ const page = () => {
 
   const onNewBowlerAdded = (bowlerInfo) => {
     dispatch(existingTeamBowlerInfoAdded(bowlerInfo));
-    router.push(`/teams/${entry.team.identifier}/add-bowler-review`);
+    router.push(`/teams/${entry.team.identifier}/review-joining-bowler`);
   }
 
   return (

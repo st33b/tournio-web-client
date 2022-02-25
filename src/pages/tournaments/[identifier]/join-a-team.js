@@ -8,9 +8,10 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import TeamListing from "../../../components/Registration/TeamListing/TeamListing";
+import {joinTeamRegistrationInitiated} from "../../../store/actions/registrationActions";
 
 const page = () => {
-  const { entry } = useRegistrationContext();
+  const { entry, dispatch } = useRegistrationContext();
 
   if (!entry.tournament) {
     return '';
@@ -21,7 +22,7 @@ const page = () => {
 
   // fetch the team details
   useEffect(() => {
-    console.log("Retrieving available teams");
+    dispatch(joinTeamRegistrationInitiated());
     const requestConfig = {
       method: 'get',
       url: `${apiHost}/tournaments/${entry.tournament.identifier}/teams?incomplete=true`,

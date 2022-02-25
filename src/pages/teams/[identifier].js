@@ -68,10 +68,10 @@ const page = () => {
   }
 
   let joinLink = '';
-  if (team.size < entry.tournament.max_bowlers) {
+  if (team.size < entry.tournament.max_bowlers && !success) {
     joinLink = (
       <p className={'text-center mt-2'}>
-        <a href={`${router.asPath}/join`}
+        <a href={`/teams/${team.identifier}/join`}
            className={'btn btn-outline-info'}>
           Join this Team
         </a>

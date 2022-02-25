@@ -4,11 +4,10 @@ import {Alert, Col, Row} from "react-bootstrap";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import Summary from "../../../components/Registration/Summary/Summary";
-import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
 import {submitJoinTeamRegistration} from "../../../utils";
-import {teamDetailsRetrieved, tournamentDetailsRetrieved, newTeamEntryCompleted} from "../../../store/actions/registrationActions";
+import {submitJoinTeamCompleted} from "../../../store/actions/registrationActions";
 
 const page = () => {
   const {entry, dispatch} = useRegistrationContext();
@@ -18,11 +17,10 @@ const page = () => {
     router.push(`/teams/${entry.team.identifier}/edit-joining-bowler`)
   }
 
-  const joinTeamSuccess = (teamData) => {
-    // dispatch(tournamentDetailsRetrieved(entry.tournament));
-    // dispatch(teamDetailsRetrieved(teamData));
-    // dispatch(newTeamEntryCompleted());
-    // router.push(`/teams/${teamData.identifier}?success=new_team`);
+  const joinTeamSuccess = (bowlerIdentifier) => {
+    const teamIdentifier = entry.team.identifier;
+    dispatch(submitJoinTeamCompleted(bowlerIdentifier));
+    router.push(`/teams/${teamIdentifier}?success=join`);
   }
 
   const [error, setError] = useState(null);
@@ -33,7 +31,7 @@ const page = () => {
   }
 
   const submitRegistration = () => {
-    submitJoiningTeamRegistration(entry.tournament,
+    submitJoinTeamRegistration(entry.tournament,
       entry.team,
       entry.bowlers[entry.bowlers.length - 1],
       joinTeamSuccess,
@@ -54,16 +52,14 @@ const page = () => {
   if (processing) {
     output = (
       <>
-        <ProgressIndicator active={'review'} />
         <h1 className={'display-6 text-center'}>Processing, sit tight...</h1>
       </>
     )
   } else {
     output = (
       <>
-        <ProgressIndicator active={'review'} />
         {errorMessage}
-        <ReviewEntries editBowler={editBowlerClicked} />
+        <ReviewEntries editBowler={editBowlerClicked} context={'join'} />
       </>
     )
   }

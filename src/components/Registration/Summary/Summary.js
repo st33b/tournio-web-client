@@ -29,11 +29,9 @@ const summary = ({nextStepClicked, nextStepText, buttonDisabled}) => {
   let bowlersText = '';
   let nextStepButton = '';
   if (entry.bowlers && entry.bowlers.length > 0) {
-    const bowlers = !!entry.team ? entry.team.bowlers : entry.bowlers;
-
     bowlersText = (
       <ol>
-        {bowlers.map((b, i) => {
+        {entry.bowlers.map((b, i) => {
           return (
             <li key={i}>
               {b.first_name} {b.last_name}

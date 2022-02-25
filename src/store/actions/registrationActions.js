@@ -47,6 +47,12 @@ export const newTeamEntryCompleted = () => {
   }
 }
 
+export const joinTeamRegistrationInitiated = () => {
+  return {
+    type: actionTypes.JOIN_TEAM_REGISTRATION_INITIATED,
+  }
+}
+
 export const teamDetailsRetrieved = (team) => {
   return {
     type: actionTypes.TEAM_DETAILS_RETRIEVED,
@@ -65,5 +71,12 @@ export const existingTeamBowlerEdited = (bowlerInfo) => {
   return {
     type: actionTypes.EXISTING_TEAM_BOWLER_EDITED,
     bowler: bowlerInfo,
+  }
+}
+
+export const submitJoinTeamCompleted = (bowlerIdentifier) => {
+  return {
+    type: actionTypes.SUBMIT_JOIN_TEAM_COMPLETED,
+    bowlerIdentifier: bowlerIdentifier,
   }
 }
