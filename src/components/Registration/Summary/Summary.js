@@ -4,7 +4,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './Summary.module.scss';
 
-const summary = ({nextStepClicked, nextStepText, buttonDisabled}) => {
+const summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEdit}) => {
   const {entry} = useRegistrationContext();
 
   if (!entry.tournament) {
@@ -57,7 +57,17 @@ const summary = ({nextStepClicked, nextStepText, buttonDisabled}) => {
 
   // for editing doubles partners
   let doublesLink = '';
-
+  if (enableDoublesEdit && entry.bowlers && entry.bowlers.length > 1) {
+    doublesLink = (
+      <div className='text-start pb-4'>
+        <a
+          href={`/tournaments/${entry.tournament.identifier}/doubles-partners`}
+          className=''>
+          Edit doubles partners
+        </a>
+      </div>
+    );
+  }
 
   return (
     <Card className={`${classes.Summary} border-0`}>

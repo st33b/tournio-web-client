@@ -44,7 +44,7 @@ const page = () => {
   if (error) {
     errorMessage = (
       <Alert variant={'danger'}>
-        <h1 className={'display-6 text-center text-danger'}>Well, shit...</h1>
+        <h3 className={'display-6 text-center text-danger'}>Uh oh...</h3>
         <p className={'text-center'}>{error}</p>
       </Alert>
     );
@@ -52,7 +52,7 @@ const page = () => {
   if (processing) {
     output = (
       <>
-        <h1 className={'display-6 text-center'}>Processing, sit tight...</h1>
+        <h3 className={'display-6 text-center pt-2'}>Processing, sit tight...</h3>
       </>
     )
   } else {

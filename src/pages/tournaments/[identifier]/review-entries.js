@@ -76,6 +76,7 @@ const page = () => {
       <Col>
         <Summary nextStepClicked={submitRegistration}
                  nextStepText={'Submit Registration'}
+                 enableDoublesEdit={true}
         />
       </Col>
     </Row>
