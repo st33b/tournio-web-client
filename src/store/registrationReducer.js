@@ -6,6 +6,7 @@ const initialState = {
   teamName: null,
   bowlers: [],
   team: null,
+
 }
 
 export const initializer = (initialValue = initialState) => {
@@ -55,6 +56,19 @@ export const registrationReducer = (state, action) => {
     case actionTypes.TEAM_DETAILS_RETRIEVED:
       return updateObject(state, {
         team: action.team,
+        teamName: action.team.name,
+        bowlers: action.team.bowlers,
+      });
+    case actionTypes.EXISTING_TEAM_BOWLER_INFO_ADDED:
+      return updateObject(state, {
+        bowlers: state.team.bowlers.concat(action.bowler),
+      });
+    case actionTypes.EXISTING_TEAM_BOWLER_EDITED:
+      const bowlers = state.bowlers.slice(0);
+      bowlers.pop(); // remove the last bowler, which is the one who's been edited
+      bowlers.push(action.bowler);
+      return updateObject({
+        bowlers: bowlers,
       });
     default:
       console.log("Nope!");

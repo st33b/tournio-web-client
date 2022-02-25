@@ -128,7 +128,7 @@ const tournamentDetails = ({tournament}) => {
 
     joinTeamLink = (
       <ListGroup.Item className={'text-primary'}
-                      href={`${router.asPath}/teams?which=incomplete`}
+                      href={`${router.asPath}/join-a-team`}
                       action>
         Join an Existing Team
       </ListGroup.Item>

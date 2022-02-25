@@ -46,6 +46,24 @@ export const submitNewTeamRegistration = (tournament, teamName, bowlers, onSucce
     });
 
 }
+
+export const submitJoinTeamRegistration = (tournament, team, bowler, onSuccess, onFailure) => {
+  // make the post
+  const bowlerData = { bowler: convertBowlerDataForPost(tournament, bowler) };
+  const teamId = team.identifier;
+  axios.post('/teams/' + teamId + '/bowlers', bowlerData)
+    .then(response => {
+      const newBowlerIdentifier = response.data.identifier;
+      dispatch(submitAddBowlerSuccess(teamId, newBowlerIdentifier));
+    })
+    .catch(error => {
+      console.log('womp womp');
+      console.log(error);
+      dispatch(submitAddBowlerFail());
+    });
+
+}
+
 ///////////////////////////////////////////////
 
 const convertTeamDataForServer = (tournament, teamName, bowlers) => {

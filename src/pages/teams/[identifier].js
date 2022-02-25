@@ -47,7 +47,7 @@ const page = () => {
           // Display some kind of error message
         });
     }
-  }, [identifier]);
+  }, [identifier, entry]);
 
   if (loading) {
     return (
@@ -67,6 +67,18 @@ const page = () => {
     return '';
   }
 
+  let joinLink = '';
+  if (team.size < entry.tournament.max_bowlers) {
+    joinLink = (
+      <p className={'text-center mt-2'}>
+        <a href={`${router.asPath}/join`}
+           className={'btn btn-outline-info'}>
+          Join this Team
+        </a>
+      </p>
+    );
+  }
+
   return (
     <div>
       <Row>
@@ -78,6 +90,7 @@ const page = () => {
         </Col>
         <Col>
           <TeamDetails successType={success}/>
+          {joinLink}
         </Col>
       </Row>
     </div>

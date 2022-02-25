@@ -53,3 +53,17 @@ export const teamDetailsRetrieved = (team) => {
     team: team,
   }
 }
+
+export const existingTeamBowlerInfoAdded = (bowlerInfo) => {
+  return {
+    type: actionTypes.EXISTING_TEAM_BOWLER_INFO_ADDED,
+    bowler: bowlerInfo,
+  }
+}
+
+export const existingTeamBowlerEdited = (bowlerInfo) => {
+  return {
+    type: actionTypes.EXISTING_TEAM_BOWLER_EDITED,
+    bowler: bowlerInfo,
+  }
+}

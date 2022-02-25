@@ -236,7 +236,6 @@ const bowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
   // For each of the additional questions, we need to deep-copy the nested objects that we care about
   // (elementConfig, in this case. helper and validation won't change.)
   for (let key in entry.tournament.additional_questions) {
-    console.log(key);
     initialFormState.formFields[key] = { ...entry.tournament.additional_questions[key] }
     initialFormState.formFields[key].valid = false;
     initialFormState.formFields[key].touched = false;
@@ -264,6 +263,9 @@ const bowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
   // This'll need to change for the solo and joining scenarios.
   let position = entry.bowlers.length + 1;
   let buttonText = 'Save Bowler';
+  if (entry.team) {
+    position = entry.team.bowlers.length + 1;
+  }
 
   // In the event we're editing a bowler, populate initialFormState with their values
   if (editBowlerNum) {
