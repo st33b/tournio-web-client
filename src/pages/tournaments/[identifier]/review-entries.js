@@ -19,7 +19,6 @@ const page = () => {
   }
 
   const newTeamRegistrationSuccess = (teamData) => {
-    dispatch(tournamentDetailsRetrieved(entry.tournament));
     dispatch(teamDetailsRetrieved(teamData));
     dispatch(newTeamEntryCompleted());
     router.push(`/teams/${teamData.identifier}?success=new_team`);

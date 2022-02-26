@@ -6,36 +6,37 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import Summary from "../../../components/Registration/Summary/Summary";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
-import {submitJoinTeamRegistration} from "../../../utils";
-import {submitJoinTeamCompleted} from "../../../store/actions/registrationActions";
+import {newTeamEntryCompleted, teamDetailsRetrieved} from "../../../store/actions/registrationActions";
+import {submitNewTeamRegistration} from "../../../utils";
+import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 
 const page = () => {
   const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   const editBowlerClicked = () => {
-    router.push(`/teams/${entry.team.identifier}/edit-joining-bowler`)
+    router.push(`/tournaments/${entry.tournament.identifier}/solo-bowler-edit`);
   }
 
-  const joinTeamSuccess = (bowlerIdentifier) => {
-    const teamIdentifier = entry.team.identifier;
-    dispatch(submitJoinTeamCompleted(bowlerIdentifier));
-    router.push(`/teams/${teamIdentifier}?success=join`);
+  const soloRegistrationSuccess = (teamData) => {
+    dispatch(teamDetailsRetrieved(teamData));
+    dispatch(newTeamEntryCompleted());
+    router.push(`/teams/${teamData.identifier}?success=solo`);
   }
 
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const joinTeamFailure = (errorMessage) => {
+  const soloRegistrationFailure = (errorMessage) => {
     setProcessing(false);
     setError(errorMessage);
   }
 
   const submitRegistration = () => {
-    submitJoinTeamRegistration(entry.tournament,
-      entry.team,
-      entry.bowlers[entry.bowlers.length - 1],
-      joinTeamSuccess,
-      joinTeamFailure);
+    submitNewTeamRegistration(entry.tournament,
+      '',
+      entry.bowlers,
+      soloRegistrationSuccess,
+      soloRegistrationFailure);
     setProcessing(true);
   }
 
@@ -58,8 +59,9 @@ const page = () => {
   } else {
     output = (
       <>
+        <ProgressIndicator active={'review'} />
         {errorMessage}
-        <ReviewEntries editBowler={editBowlerClicked} context={'join'} />
+        <ReviewEntries editBowler={editBowlerClicked} context={'solo'} />
       </>
     )
   }

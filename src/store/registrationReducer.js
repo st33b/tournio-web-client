@@ -81,6 +81,17 @@ export const registrationReducer = (state, action) => {
         teamName: null,
         bowlers: [],
       });
+    case actionTypes.NEW_SOLO_REGISTRATION_INITIATED:
+      return updateObject(state, {
+        team: null,
+        teamName: '',
+        bowlers: [],
+      });
+    case actionTypes.SOLO_BOWLER_INFO_ADDED:
+    case actionTypes.SOLO_BOWLER_INFO_UPDATED:
+      return updateObject(state, {
+        bowlers: [action.bowler],
+      });
     default:
       console.log("Nope!");
       break;

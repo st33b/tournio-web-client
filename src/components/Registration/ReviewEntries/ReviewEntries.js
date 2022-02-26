@@ -13,7 +13,7 @@ const reviewEntries = ({editBowler, context}) => {
   }
 
   let content = '';
-  if (context === 'join') {
+  if (context === 'join' || 'solo') {
     content = (
       <Col className={'px-lg-2'}>
         <BowlerSummary bowler={entry.bowlers[entry.bowlers.length - 1]}

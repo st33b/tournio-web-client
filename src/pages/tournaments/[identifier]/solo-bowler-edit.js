@@ -1,35 +1,38 @@
+import {useRouter} from "next/router";
 import {Row, Col} from "react-bootstrap";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
-import TeamForm from "../../../components/Registration/TeamForm/TeamForm";
 import Summary from "../../../components/Registration/Summary/Summary";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
-import {useRouter} from "next/router";
+import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {newTeamRegistrationInitiated, teamInfoAdded} from "../../../store/actions/registrationActions";
-import {useEffect} from "react";
+import {existingTeamBowlerEdited, soloBowlerInfoUpdated} from "../../../store/actions/registrationActions";
 
 const page = () => {
   const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
 
-  useEffect(() => {
-    dispatch(newTeamRegistrationInitiated());
-  }, [])
+  if (!entry || !entry.bowlers) {
+    return'';
+  }
 
-  const onTeamFormCompleted = (teamName) => {
-    dispatch(teamInfoAdded(teamName));
-    router.push(`/tournaments/${entry.tournament.identifier}/new-team-bowler`);
+  const bowlerNum = 1;
+  const onBowlerInfoUpdated = (bowlerInfo) => {
+    dispatch(soloBowlerInfoUpdated(bowlerInfo));
+    router.push(`/tournaments/${entry.tournament.identifier}/solo-bowler-review`);
   }
 
   return (
     <Row>
       <Col lg={8}>
-        <ProgressIndicator active={'team'} />
-        <TeamForm teamFormCompleted={onTeamFormCompleted} />
+        <BowlerForm editBowlerNum={bowlerNum}
+                    bowlerInfoSaved={onBowlerInfoUpdated} />
       </Col>
       <Col>
-        <Summary />
+        <Summary nextStepClicked={null}
+                 nextStepText={'Submit Registration'}
+                 buttonDisabled={true}
+        />
       </Col>
     </Row>
   );

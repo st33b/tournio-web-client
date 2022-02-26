@@ -1,11 +1,8 @@
-import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './TeamDetails.module.scss';
-import {Row} from "react-bootstrap";
 
 const teamDetails = ({successType}) => {
-  const router = useRouter();
   const {entry} = useRegistrationContext();
 
   if (!entry.tournament || !entry.team) {
@@ -15,10 +12,18 @@ const teamDetails = ({successType}) => {
   let successBanner = '';
   if (successType) {
     let content = '';
-    if (successType === 'new_team') {
-      content = 'Your registration was received. Each bowler may now pay their fees and choose additional events.';
-    } else if (successType === 'join') {
-      content = 'You have successfully joined this team! You may now pay your fees and choose additional events.';
+    switch (successType) {
+      case 'new_team':
+        content = 'Your registration was received. Each bowler may now pay their fees and choose additional events.';
+        break;
+      case 'join':
+        content = 'You have successfully joined this team! You may now pay your fees and choose additional events.';
+        break;
+      case 'solo':
+        content = 'Your registration was received. You may now pay your fees and choose additional events.';
+        break;
+      default:
+        break;
     }
 
     successBanner = (

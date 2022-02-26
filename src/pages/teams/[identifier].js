@@ -85,6 +85,9 @@ const page = () => {
         <Col md={4} className={'d-none d-md-block'}>
           <a href={`/tournaments/${entry.tournament.identifier}`} title={'To tournament page'}>
             <TournamentLogo />
+            <h3 className={'text-center'}>
+              {entry.tournament.name}
+            </h3>
           </a>
           <Contacts />
         </Col>
