@@ -53,6 +53,12 @@ export const joinTeamRegistrationInitiated = () => {
   }
 }
 
+export const teamListRetrieved = () => {
+  return {
+    type: actionTypes.TEAM_LIST_RETRIEVED,
+  }
+}
+
 export const teamDetailsRetrieved = (team) => {
   return {
     type: actionTypes.TEAM_DETAILS_RETRIEVED,

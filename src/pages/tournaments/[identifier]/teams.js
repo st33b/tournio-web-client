@@ -7,7 +7,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import TeamListing from "../../../components/Registration/TeamListing/TeamListing";
-import {joinTeamRegistrationInitiated} from "../../../store/actions/registrationActions";
+import {teamListRetrieved} from "../../../store/actions/registrationActions";
 
 const page = () => {
   const { entry, dispatch } = useRegistrationContext();
@@ -21,7 +21,6 @@ const page = () => {
 
   // fetch the list of teams
   useEffect(() => {
-    // dispatch(joinTeamRegistrationInitiated());
     const requestConfig = {
       method: 'get',
       url: `${apiHost}/tournaments/${entry.tournament.identifier}/teams`,
@@ -31,6 +30,7 @@ const page = () => {
     }
     axios(requestConfig)
       .then(response => {
+        dispatch(teamListRetrieved());
         setTeams(response.data);
         setLoading(false);
       })

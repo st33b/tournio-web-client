@@ -22,10 +22,13 @@ export const registrationReducer = (state, action) => {
         tournament: action.tournament,
       });
     case actionTypes.NEW_TEAM_REGISTRATION_INITIATED:
+    case actionTypes.JOIN_TEAM_REGISTRATION_INITIATED:
+    case actionTypes.SUBMIT_JOIN_TEAM_COMPLETED:
+    case actionTypes.TEAM_LIST_RETRIEVED:
       return updateObject(state, {
+        team: null,
         teamName: null,
         bowlers: [],
-        team: null,
       });
     case actionTypes.TEAM_INFO_ADDED:
       return updateObject(state, {
@@ -52,12 +55,6 @@ export const registrationReducer = (state, action) => {
         teamName: null,
         bowlers: [],
       });
-    case actionTypes.JOIN_TEAM_REGISTRATION_INITIATED:
-      return updateObject(state, {
-        team: null,
-        teamName: null,
-        bowlers: [],
-      });
     case actionTypes.TEAM_DETAILS_RETRIEVED:
       return updateObject(state, {
         team: action.team,
@@ -74,12 +71,6 @@ export const registrationReducer = (state, action) => {
       bowlers.push(action.bowler);
       return updateObject(state,{
         bowlers: bowlers,
-      });
-    case actionTypes.SUBMIT_JOIN_TEAM_COMPLETED:
-      return updateObject(state, {
-        team: null,
-        teamName: null,
-        bowlers: [],
       });
     case actionTypes.NEW_SOLO_REGISTRATION_INITIATED:
       return updateObject(state, {
