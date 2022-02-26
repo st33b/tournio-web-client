@@ -1,9 +1,9 @@
 .Navigation {
-  h1 {
-    line-height: 2;
-    background: url('../../../images/bowling.svg') no-repeat left top;
+  .HomeLink {
+    font-size: 2rem;
   }
-  h1 a {
-    margin-left: 4.5rem;
+  .HomeLinkMd {
+    background: url('../../../images/bowling.svg') no-repeat left top;
+    a { margin-left: 5rem; }
   }
 }

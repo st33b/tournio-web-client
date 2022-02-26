@@ -8,7 +8,7 @@ import ProgressIndicator from "../../../components/Registration/ProgressIndicato
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
 import {submitNewTeamRegistration} from "../../../utils";
-import {teamDetailsRetrieved, tournamentDetailsRetrieved, newTeamEntryCompleted} from "../../../store/actions/registrationActions";
+import {teamDetailsRetrieved, newTeamEntryCompleted} from "../../../store/actions/registrationActions";
 
 const page = () => {
   const {entry, dispatch} = useRegistrationContext();

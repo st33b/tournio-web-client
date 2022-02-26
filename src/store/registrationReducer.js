@@ -8,7 +8,7 @@ const initialState = {
   team: null,
 }
 
-export const initializer = (initialValue = initialState) => {
+export const regInitializer = (initialValue = initialState) => {
   if (typeof window !== "undefined") {
     return JSON.parse(localStorage.getItem('registration'));
   }

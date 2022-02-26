@@ -13,20 +13,20 @@ const contacts = () => {
 
   return (
     <div className={classes.Contacts}>
-      <h5 className={'mt-4'}>
+      <h5 className={'mt-2'}>
         Contacts
       </h5>
       <ListGroup variant={'flush'}>
         {entry.tournament.contacts.map((c, i) => {
           return (
             <ListGroup.Item className={classes.ContactItem} key={i}>
-              <p className={'lead'}>
+              <p className={classes.Name}>
                 {c.name}
               </p>
-              <p>
+              <p className={classes.Role}>
                 {c.role}
               </p>
-              <p>
+              <p className={classes.Email}>
                 <a href={`mailto:${c.email}`} title={'Tournament inquiry'}>
                   {c.email}
                 </a>

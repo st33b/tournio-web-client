@@ -47,10 +47,10 @@ const teamDetails = ({successType}) => {
       {successBanner}
       <div className={'table-responsive'}>
         <table className={'table table-striped caption-top'}>
-          <caption>{entry.team.name}</caption>
+          <caption>Team: {entry.team.name}</caption>
           <thead>
-            <tr>
-              <th>Position</th>
+            <tr className={'align-middle'}>
+              <th><span className={'d-none d-sm-block'}>Position</span></th>
               <th>Name</th>
               {/* conditionally display this? */}
               <th>Amount Due</th>
@@ -69,7 +69,12 @@ const teamDetails = ({successType}) => {
                 <td>{b.position}</td>
                 <td>{name}</td>
                 <td>{b.amount_due}</td>
-                <td>(Choose Events &amp; Pay)</td>
+                <td>
+                  <a href={`/bowlers/${b.identifier}`}
+                     className={'btn btn-sm btn-outline-success'}>
+                    Choose Events &amp; Pay
+                  </a>
+                </td>
               </tr>
             )
           })}

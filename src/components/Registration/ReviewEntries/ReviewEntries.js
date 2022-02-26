@@ -1,4 +1,3 @@
-import {useEffect, useState} from "react";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import BowlerSummary from "./BowlerSummary";
 
@@ -13,7 +12,7 @@ const reviewEntries = ({editBowler, context}) => {
   }
 
   let content = '';
-  if (context === 'join' || 'solo') {
+  if (context === 'join' || context === 'solo') {
     content = (
       <Col className={'px-lg-2'}>
         <BowlerSummary bowler={entry.bowlers[entry.bowlers.length - 1]}

@@ -1,20 +1,24 @@
 import {createContext, useContext, useEffect, useReducer} from 'react';
-import {registrationReducer, initializer} from "./registrationReducer";
+import {registrationReducer, regInitializer} from "./registrationReducer";
+import {commerceReducer, comInitializer} from "./commerceReducer";
 
 const RegistrationContext = createContext({
   entry: null,
+  commerce: null,
   dispatch: null,
 });
 
 export const RegistrationContextProvider = ({children}) => {
-  const [entry, dispatch] = useReducer(registrationReducer, {}, initializer);
+  const [entry, dispatch] = useReducer(registrationReducer, {}, regInitializer);
+  const [commerce, commerceDispatch] = useReducer(commerceReducer, {}, comInitializer);
 
   useEffect(() => {
     localStorage.setItem('registration', JSON.stringify(entry));
-  }, [entry]);
+    localStorage.setItem('commerce', JSON.stringify(commerce));
+  }, [entry, commerce]);
 
   return (
-    <RegistrationContext.Provider value={{entry, dispatch}}>
+    <RegistrationContext.Provider value={{entry, dispatch, commerce, commerceDispatch}}>
       {children}
     </RegistrationContext.Provider>
   );

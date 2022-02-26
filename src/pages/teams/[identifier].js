@@ -13,7 +13,7 @@ import TeamDetails from "../../components/Registration/TeamDetails/TeamDetails";
 
 const page = () => {
   const router = useRouter();
-  const { entry, dispatch } = useRegistrationContext();
+  const { entry, dispatch, commerceDispatch } = useRegistrationContext();
   const { identifier, success } = router.query;
 
   const [loading, setLoading] = useState(false);
@@ -25,11 +25,9 @@ const page = () => {
       return;
     }
 
-    if (entry.team) {
-      console.log("Getting team out of tournament context");
+    if (entry.team && entry.team.identifier === identifier) {
       setTeam(entry.team);
     } else {
-      console.log("Retrieving team deets from server");
       const requestConfig = {
         method: 'get',
         url: `${apiHost}/teams/${identifier}`,
@@ -40,6 +38,7 @@ const page = () => {
       axios(requestConfig)
         .then(response => {
           dispatch(teamDetailsRetrieved(response.data));
+          commerceDispatch(teamDetailsRetrieved(response.data));
           setLoading(false);
         })
         .catch(error => {
@@ -47,6 +46,7 @@ const page = () => {
           // Display some kind of error message
         });
     }
+
   }, [identifier, entry]);
 
   if (loading) {
@@ -82,6 +82,13 @@ const page = () => {
   return (
     <div>
       <Row>
+        <Col xs={12} className={'d-md-none'}>
+          <a href={`/tournaments/${entry.tournament.identifier}`} title={'To tournament page'}>
+            <h4 className={'text-center'}>
+              {entry.tournament.name}
+            </h4>
+          </a>
+        </Col>
         <Col md={4} className={'d-none d-md-block'}>
           <a href={`/tournaments/${entry.tournament.identifier}`} title={'To tournament page'}>
             <TournamentLogo />

@@ -60,10 +60,15 @@ const page = () => {
         <Col md={4} className={'d-none d-md-block'}>
           <a href={`/tournaments/${entry.tournament.identifier}`} title={'To tournament page'}>
             <TournamentLogo />
+            <h4 className={'text-center'}>{entry.tournament.name}</h4>
           </a>
-          <h4 className={'text-center'}>{entry.tournament.name}</h4>
         </Col>
         <Col>
+          <a href={`/tournaments/${entry.tournament.identifier}`} title={'To tournament page'}>
+            <h4 className={'d-md-none text-center'}>
+              {entry.tournament.name}
+            </h4>
+          </a>
           <TeamListing caption={'First, find your team...'} teams={teams} />
         </Col>
       </Row>

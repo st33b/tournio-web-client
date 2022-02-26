@@ -209,17 +209,21 @@ const tournamentDetails = ({tournament}) => {
   return (
     <div className={classes.TournamentDetails}>
       <div className={'row'}>
+        {/*<div className={'d-none d-md-block col-md-4'}>*/}
+        {/*  <TournamentLogo />*/}
+        {/*  <Contacts />*/}
+        {/*</div>*/}
         <div className={'d-none d-md-block col-md-4'}>
           <TournamentLogo />
           <Contacts />
         </div>
-        <div className={'col'}>
+        <div className={'col-12 col-md-8'}>
         {/* the rest */}
-          {stateBanner}
           <h2>
             {tournament.name} ({tournament.year})
           </h2>
           {website}
+          {stateBanner}
           {testingEnvironment}
 
           {dates}
@@ -264,6 +268,9 @@ const tournamentDetails = ({tournament}) => {
 
             </Col>
           </Row>
+        </div>
+        <div className={'d-md-none col-12'}>
+          <Contacts />
         </div>
       </div>
     </div>

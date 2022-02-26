@@ -106,3 +106,11 @@ export const soloBowlerInfoUpdated = (bowlerInfo) => {
     bowler: bowlerInfo,
   }
 }
+
+export const bowlerCommerceDetailsRetrieved = (data) => {
+  return {
+    type: actionTypes.BOWLER_DETAILS_RETRIEVED,
+    bowler: data.bowler,
+    availableItems: data.available_items,
+  }
+}

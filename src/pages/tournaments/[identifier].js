@@ -10,7 +10,7 @@ import {tournamentDetailsRetrieved} from "../../store/actions/registrationAction
 
 const page = () => {
   const router = useRouter();
-  const { entry, dispatch } = useRegistrationContext();
+  const { entry, dispatch, commerceDispatch } = useRegistrationContext();
   const { identifier } = router.query;
 
   const [loading, setLoading] = useState(true);
@@ -31,6 +31,7 @@ const page = () => {
     axios(requestConfig)
       .then(response => {
         dispatch(tournamentDetailsRetrieved(response.data));
+        commerceDispatch(tournamentDetailsRetrieved(response.data));
 
         setLoading(false);
       })
