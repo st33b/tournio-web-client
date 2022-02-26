@@ -23,7 +23,7 @@ const teamListing = ({teams, caption}) => {
   return (
     <div className={classes.TeamListing}>
       <div className={'table-responsive'}>
-        <table className={'table table-striped caption-top'}>
+        <table className={'table table-striped table-hover caption-top'}>
           <caption>
             {caption}
           </caption>

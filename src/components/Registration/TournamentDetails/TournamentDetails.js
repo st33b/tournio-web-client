@@ -144,7 +144,7 @@ const tournamentDetails = ({tournament}) => {
   }
 
   const payFeeLink = (
-    <a href={`${router.asPath}/teams?which=all`}
+    <a href={`${router.asPath}/teams`}
        className={''}>
       Choose Events &amp; Pay
     </a>
