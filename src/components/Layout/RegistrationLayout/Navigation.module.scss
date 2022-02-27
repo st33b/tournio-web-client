@@ -1,9 +1,15 @@
 .Navigation {
-  .HomeLink {
+  .HomeLinks {
     font-size: 2rem;
   }
   .HomeLinkMd {
     background: url('../../../images/bowling.svg') no-repeat left top;
     a { margin-left: 5rem; }
+  }
+  .Bag {
+    .Badge {
+      font-size: 0.4em;
+      font-style: normal;
+    }
   }
 }

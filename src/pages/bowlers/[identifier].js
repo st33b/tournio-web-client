@@ -8,6 +8,7 @@ import {useRegistrationContext} from "../../store/RegistrationContext";
 import {bowlerCommerceDetailsRetrieved} from "../../store/actions/registrationActions";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
+import Menu from '../../components/Commerce/Menu';
 
 const page = () => {
   const router = useRouter();
@@ -78,13 +79,13 @@ const page = () => {
             <TournamentLogo/>
           </a>
         </Col>
-        <Col md={10} className={'d-flex flex-column justify-content-center'}>
+        <Col md={10} className={'d-flex flex-column justify-content-center text-center text-md-start'}>
           <h3 className={'p-0 m-0'}>
             <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
               {commerce.tournament.name}
             </a>
           </h3>
-          <h4 className={'p-0 my-3'}>
+          <h4 className={'p-0 my-2 my-md-3'}>
             Bowler: {name}
           </h4>
           <p className={'p-0 m-0'}>
@@ -96,18 +97,14 @@ const page = () => {
         </Col>
       </Row>
       <hr />
-      <Row>
-        <Col>
-          <p>bowler details and purchase details go here...</p>
-        </Col>
-      </Row>
+      <Menu />
     </div>
   );
 }
 
 page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout>
+    <RegistrationLayout cart={2}>
       {page}
     </RegistrationLayout>
   );

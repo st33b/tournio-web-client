@@ -1,5 +1,3 @@
-// The top-level page for bowlers
-
 import RegistrationLayout from '../components/Layout/RegistrationLayout/RegistrationLayout';
 import TournamentListing from "../components/Registration/TournamentListing/TournamentListing";
 

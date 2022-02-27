@@ -1,0 +1,26 @@
+.Item {
+  p {
+    margin: 0.5rem auto;
+  }
+
+  .AddLink {
+    font-size: 2rem;
+    //color: #248033;
+  }
+
+  .Selected {
+    background-color: #ccc;
+  }
+
+  .NotSelected:hover {
+    background-color: #f3f3f3;
+  }
+
+  .Name {
+    font-size: 120%;
+  }
+
+  .Note {
+    font-size: 90%;
+  }
+}

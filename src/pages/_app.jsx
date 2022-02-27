@@ -1,26 +1,27 @@
-import App from 'next/app';
-import {AuthContextProvider} from "../store/AuthContext";
-import {RegistrationContextProvider} from "../store/RegistrationContext";
-
-import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/scss/bootstrap.scss';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+
+import {useEffect} from "react";
 
 import '../styles.scss';
 
-class MyApp extends App  {
-  render () {
-    const { Component, pageProps} = this.props;
+import {AuthContextProvider} from "../store/AuthContext";
+import {RegistrationContextProvider} from "../store/RegistrationContext";
 
-    const getLayout = Component.getLayout || ((page) => page);
+function MyApp({Component, pageProps})  {
+  useEffect(() => {
+    import('bootstrap');
+  }, []);
 
-    return (
-      <AuthContextProvider>
-        <RegistrationContextProvider>
-          {getLayout(<Component {...pageProps} />)}
-        </RegistrationContextProvider>
-      </AuthContextProvider>
-    );
-  }
+  const getLayout = Component.getLayout || ((page) => page);
+
+  return (
+    <AuthContextProvider>
+      <RegistrationContextProvider>
+        {getLayout(<Component {...pageProps} />)}
+      </RegistrationContextProvider>
+    </AuthContextProvider>
+  );
 }
 
 export default MyApp;
