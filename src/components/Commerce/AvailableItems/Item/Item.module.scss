@@ -7,14 +7,6 @@
     font-size: 2rem;
   }
 
-  .Selected {
-    background-color: #ccc;
-  }
-
-  .NotSelected:hover {
-    background-color: #f3f3f3;
-  }
-
   .Name {
     font-size: 120%;
   }
@@ -22,4 +14,12 @@
   .Note {
     font-size: 90%;
   }
+}
+
+.Selected {
+  background-color: #cacaca;
+}
+
+.NotSelected:hover {
+  background-color: #f3f3f3;
 }

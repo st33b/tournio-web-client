@@ -52,6 +52,12 @@ const cart = ({itemAddedToCart, itemRemovedFromCart}) => {
       <p className={classes.TotalFees}>
         Total: ${totalFees}
       </p>
+      <div className={'d-flex flex-row-reverse pb-3 pb-md-0'}>
+        <a href={`/bowlers/${commerce.bowler.identifier}/checkout`}
+           className={'btn btn-success btn-lg'}>
+          Check Out
+        </a>
+      </div>
     </div>
   );
 }

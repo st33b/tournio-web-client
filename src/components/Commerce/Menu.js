@@ -8,40 +8,34 @@ import AvailableItems from "./AvailableItems/AvailableItems";
 import Cart from "./Cart/Cart";
 
 const menu = () => {
-  const {commerce, commerceDispatch} = useRegistrationContext();
+  const {commerceDispatch} = useRegistrationContext();
 
   let successMessage = '';
 
   const itemAdded = (item) => {
-    console.log('Item added to cart. Dispatching to reducer');
-    console.log(item);
     commerceDispatch(itemAddedToCart(item));
   }
 
   const itemRemoved = (item) => {
-    console.log('Item removed from cart. Dispatching to reducer');
-    console.log(item);
     commerceDispatch(itemRemovedFromCart(item));
   }
-
-
 
   return (
     <div className={classes.Menu}>
       <Row>
-        <Col className={'collapse d-md-none'}
+        <Col className={'collapse d-md-none order-1'}
              id={'mobile_cart'}>
           <Cart itemAddedToCart={itemAdded}
                 itemRemovedFromCart={itemRemoved} />
         </Col>
-        <Col md={4}>
+        <Col md={4} className={'order-4 order-md-2'}>
           <PreviousPurchases/>
         </Col>
-        <Col md={4}>
+        <Col md={4} className={'order-2 order-md-3'}>
           <AvailableItems itemAddedToCart={itemAdded}/>
         </Col>
         <Col md={4}
-             className={'d-none d-md-block'}
+             className={'d-none d-md-block order-3 order-md-4'}
              id={'cart'}>
           <Cart itemAddedToCart={itemAdded}
                 itemRemovedFromCart={itemRemoved} />

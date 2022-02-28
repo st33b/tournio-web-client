@@ -32,6 +32,7 @@ const singleUseItem = ({item, removed}) => {
         <p>
           {item.name}
         </p>
+        {note}
         <p>
           ${item.value}
         </p>
