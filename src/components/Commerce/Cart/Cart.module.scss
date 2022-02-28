@@ -16,4 +16,9 @@
       margin-bottom: 1rem;
     }
   }
+  @media (min-width: 768px) {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+  }
 }
