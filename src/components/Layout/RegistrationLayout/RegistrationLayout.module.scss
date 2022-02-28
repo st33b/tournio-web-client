@@ -1,4 +1,17 @@
 .RegistrationLayout {
+  header {
+    background-color: #ddd;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+  }
+  @media (min-width: 768px) {
+    header {
+      background-color: inherit;
+      position: static;
+    }
+  }
+
   h1 {
     font-size: 1.5rem;
     line-height: 1.7;

@@ -1,9 +1,13 @@
-import classes from './Navigation.module.scss';
 import {Row} from "react-bootstrap";
+import {useRegistrationContext} from "../../../store/RegistrationContext";
 
-const navigation = ({cart}) => {
+import classes from './Navigation.module.scss';
+
+const navigation = ({showCart}) => {
+  const {commerce} = useRegistrationContext();
+
   let cartText = '';
-  if (cart) {
+  if (showCart && commerce && commerce.cart) {
     cartText = (
       <a href={'#mobile_cart'}
          title={'Cart'}
@@ -15,14 +19,14 @@ const navigation = ({cart}) => {
         <i className={'bi-cart text-success position-relative'} aria-hidden={true}>
           {/*Cart*/}
           <span className={`${classes.Badge} position-absolute top-0 start-50 badge rounded-pill bg-danger`}>
-            {cart}
+            {commerce.cart.length}
           </span>
         </i>
       </a>
     );
   }
   return (
-    <div className={classes.Navigation}>
+    <div className={`${classes.Navigation}`}>
       <Row>
         <div className={`${classes.HomeLinks} d-flex d-md-none`}>
           <a href={'/'} title={'To tournament listing'} className={'link-dark'}>

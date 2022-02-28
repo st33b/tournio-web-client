@@ -89,22 +89,25 @@ const page = () => {
             Bowler: {name}
           </h4>
           <p className={'p-0 m-0'}>
-            <a href={`/teams/${commerce.bowler.team_identifier}`}>
+            <a href={`/teams/${bowler.team_identifier}`}>
               <i className={'bi-arrow-left pe-2'} aria-hidden={true} />
               back to team
             </a>
           </p>
         </Col>
       </Row>
+
       <hr />
+
       <Menu />
+
     </div>
   );
 }
 
 page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout cart={2}>
+    <RegistrationLayout showCart={true}>
       {page}
     </RegistrationLayout>
   );

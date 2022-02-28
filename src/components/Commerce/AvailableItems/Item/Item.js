@@ -4,17 +4,18 @@ import classes from "./Item.module.scss";
 
 const item = ({item, added}) => {
   const addClickedHandler = (event) => {
+    console.log('Adding...');
     event.preventDefault();
     added(item);
   }
 
   let addLink = '';
-  if (!item.added) {
+  if (!item.addedToCart) {
     addLink = (
       <div className={'ms-auto align-self-center'}>
         <a href={'#'}
            onClick={addClickedHandler}
-           className={`${classes.AddLink} pe-3 link-success`}>
+           className={`${classes.AddLink} pe-3 text-success text-opacity-75`}>
           <i className={`bi-plus-square-fill`} />
           <span className={'visually-hidden'}>Add</span>
         </a>
@@ -52,7 +53,7 @@ const item = ({item, added}) => {
 
   let attachedClasses = [classes.Item, 'rounded', 'border', 'border-secondary', 'mb-3', 'mx-0', 'd-flex'];
   let tooltipText = 'Click the + to select this item';
-  if (item.added) {
+  if (item.addedToCart) {
     attachedClasses.push(classes.Selected);
     tooltipText = 'This item has been chosen';
   } else {

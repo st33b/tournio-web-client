@@ -5,13 +5,13 @@ import Navigation from './Navigation';
 import Footer from './Footer';
 import classes from './RegistrationLayout.module.scss';
 
-const registrationLayout = ({children, cart}) => {
+const registrationLayout = ({children, showCart}) => {
   return (
     <div className={classes.RegistrationLayout}>
       <SiteHeader/>
       <header>
         <Container fluid={'md'}>
-          <Navigation cart={cart}/>
+          <Navigation showCart={showCart}/>
         </Container>
       </header>
 

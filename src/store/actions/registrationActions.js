@@ -114,3 +114,17 @@ export const bowlerCommerceDetailsRetrieved = (data) => {
     availableItems: data.available_items,
   }
 }
+
+export const itemAddedToCart = (item) => {
+  return {
+    type: actionTypes.ITEM_ADDED_TO_CART,
+    item: item,
+  }
+}
+
+export const itemRemovedFromCart = (item) => {
+  return {
+    type: actionTypes.ITEM_REMOVED_FROM_CART,
+    item: item,
+  }
+}
