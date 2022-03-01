@@ -10,8 +10,6 @@ import Cart from "./Cart/Cart";
 const menu = () => {
   const {commerceDispatch} = useRegistrationContext();
 
-  let successMessage = '';
-
   const itemAdded = (item) => {
     commerceDispatch(itemAddedToCart(item));
   }

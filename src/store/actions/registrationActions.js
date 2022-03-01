@@ -128,3 +128,17 @@ export const itemRemovedFromCart = (item) => {
     item: item,
   }
 }
+
+export const purchaseCompleted = (newPaidPurchases) => {
+  return {
+    type: actionTypes.PURCHASE_COMPLETED,
+    newPaidPurchases: newPaidPurchases,
+  }
+}
+
+export const purchaseFailed = (error) => {
+  return {
+    type: actionTypes.PURCHASE_FAILED,
+    error: error,
+  }
+}

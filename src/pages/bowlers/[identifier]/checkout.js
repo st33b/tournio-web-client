@@ -3,12 +3,13 @@ import axios from "axios";
 import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
-import {apiHost} from "../../../utils";
+import {apiHost, fetchBowlerDetails} from "../../../utils";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import ItemSummary from "../../../components/Commerce/Checkout/ItemSummary";
 import PayPalExpressCheckout from "../../../components/Commerce/Checkout/PayPalExpressCheckout";
+import {purchaseCompleted} from "../../../store/actions/registrationActions";
 
 const page = () => {
   const router = useRouter();
@@ -96,7 +97,35 @@ const page = () => {
   }
 
   const purchaseSucceeded = (details) => {
-    // convey paypal details over to our backend
+    if (!details) {
+      return;
+    }
+
+    const requestConfig = {
+      method: 'post',
+      url: `${apiHost}/bowlers/${identifier}/purchases`,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      data: {
+        paypal_details: details,
+        ...purchaseDetailsPostData(commerce.cart)
+      },
+    }
+    axios(requestConfig)
+      .then(response => {
+        commerceDispatch(purchaseCompleted(response.data));
+        fetchBowlerDetails(identifier, commerceDispatch);
+        router.push(`/bowlers/${identifier}?success=purchase`);
+      })
+      .catch(error => {
+        commerceDispatch(purchaseFailed(error));
+        router.push(`/bowlers/${identifier}?error=purchase`);
+        // redirect to team listing with error message
+        // trigger an email to treasurer and admin that paypal transaction went through, but
+        // we failed to connect it to our catalog.
+      })
   }
 
   let displayed_name = commerce.bowler.first_name;

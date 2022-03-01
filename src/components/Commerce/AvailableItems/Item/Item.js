@@ -4,7 +4,6 @@ import classes from "./Item.module.scss";
 
 const item = ({item, added}) => {
   const addClickedHandler = (event) => {
-    console.log('Adding...');
     event.preventDefault();
     added(item);
   }

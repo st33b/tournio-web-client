@@ -8,6 +8,7 @@ const initialState = {
   cart: [],
   availableItems: {},
   purchasedItems: [],
+  error: null,
 }
 
 export const comInitializer = (initialValue = initialState) => {
@@ -23,10 +24,12 @@ export const commerceReducer = (state, action) => {
       return updateObject(state, {
         tournament: action.tournament,
         bowler: null,
+        error: null,
       });
     case actionTypes.TEAM_DETAILS_RETRIEVED:
       return updateObject(state, {
         bowler: null,
+        error: null,
       })
     case actionTypes.BOWLER_DETAILS_RETRIEVED:
       let unpaidItems = action.bowler.unpaid_purchases.slice(0);
@@ -41,13 +44,25 @@ export const commerceReducer = (state, action) => {
         bowler: action.bowler,
         availableItems: action.availableItems,
         cart: unpaidItems,
+        purchasedItems: action.bowler.paid_purchases,
+        error: null,
       });
     case actionTypes.ITEM_ADDED_TO_CART:
       return itemAdded(state, action.item);
-      break;
     case actionTypes.ITEM_REMOVED_FROM_CART:
       return itemRemoved(state, action.item);
-      break;
+    case actionTypes.PURCHASE_COMPLETED:
+      return updateObject(state, {
+          cart: [],
+          purchasedItems: state.purchasedItems.concat(action.newPaidPurchases),
+          availableItems: {},
+          error: null,
+        }
+      );
+    case actionTypes.PURCHASE_FAILED:
+      return updateObject(state, {
+        error: action.error,
+      });
     default:
       console.log('Haha, no');
       break;
@@ -56,11 +71,11 @@ export const commerceReducer = (state, action) => {
 
 const itemAdded = (state, item) => {
   const newQuantity = (item.quantity || 0) + 1;
-  const addedItem = updateObject(item, { quantity: newQuantity });
+  const addedItem = updateObject(item, {quantity: newQuantity});
   let newCart;
 
   const identifier = item.identifier;
-  const newAvailableItems = { ...state.availableItems}
+  const newAvailableItems = {...state.availableItems}
 
   if (item.determination === 'single_use') {
     addedItem.addedToCart = true;
@@ -85,7 +100,7 @@ const itemAdded = (state, item) => {
 
 const itemRemoved = (state, item) => {
   const newQuantity = item.quantity - 1;
-  const removedItem = updateObject(item, { quantity: newQuantity});
+  const removedItem = updateObject(item, {quantity: newQuantity});
   const identifier = item.identifier;
   let newCart;
 
@@ -97,7 +112,7 @@ const itemRemoved = (state, item) => {
     reducedItem.quantity--;
   }
 
-  const newAvailableItems = { ...state.availableItems }
+  const newAvailableItems = {...state.availableItems}
   newAvailableItems[identifier] = removedItem;
 
   if (removedItem.determination === 'single_use') {

@@ -1,4 +1,6 @@
 import axios from "axios";
+import {bowlerCommerceDetailsRetrieved} from "./store/actions/registrationActions";
+import {useRegistrationContext} from "./store/RegistrationContext";
 
 export const updateObject = (oldObject, updatedProperties) => {
   return {
@@ -118,4 +120,24 @@ const convertAdditionalQuestionResponsesForPost = (tournament, bowler) => {
     });
   }
   return responses;
+}
+
+////////////////////////////////////////////////
+
+export const fetchBowlerDetails = (bowlerIdentifier, dispatch) => {
+  const requestConfig = {
+    method: 'get',
+    url: `${apiHost}/bowlers/${bowlerIdentifier}`,
+    headers: {
+      'Accept': 'application/json',
+    }
+  }
+  axios(requestConfig)
+    .then(response => {
+      dispatch(bowlerCommerceDetailsRetrieved(response.data));
+    })
+    .catch(error => {
+      // Display some kind of error message
+    });
+
 }

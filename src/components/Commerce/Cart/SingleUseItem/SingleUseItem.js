@@ -6,16 +6,19 @@ const singleUseItem = ({item, removed}) => {
     removed(item);
   }
 
-  const removeLink = (
-    <div className={'ms-auto align-self-center'}>
-      <a href={'#'}
-         onClick={removeClickedHandler}
-         className={`${classes.RemoveLink} pe-3 text-danger text-opacity-75`}>
-        <i className={'bi-x-circle-fill'} />
-        <span className={'visually-hidden'}>Remove</span>
-      </a>
-    </div>
-  );
+  let removeLink = '';
+  if (item.category !== 'ledger') {
+    removeLink = (
+      <div className={'ms-auto align-self-center'}>
+        <a href={'#'}
+           onClick={removeClickedHandler}
+           className={`${classes.RemoveLink} pe-3 text-danger text-opacity-75`}>
+          <i className={'bi-x-circle-fill'} />
+          <span className={'visually-hidden'}>Remove</span>
+        </a>
+      </div>
+    );
+  }
 
   let note = '';
   if (item.configuration.division) {
@@ -26,8 +29,22 @@ const singleUseItem = ({item, removed}) => {
     );
   }
 
+  const outerClasses = [
+    classes.SingleUseItem,
+    'rounded',
+    'border',
+    'border-secondary',
+    'mb-3',
+    'mx-0',
+    'd-flex',
+  ];
+
+  if (item.category === 'ledger') {
+    outerClasses.push(classes.Sticky);
+  }
+
   return (
-    <div className={`${classes.SingleUseItem} rounded border border-secondary mb-3 mx-0 d-flex`}>
+    <div className={outerClasses.join(' ')}>
       <div className={'ps-2'}>
         <p>
           {item.name}

@@ -1,17 +1,16 @@
 import {useEffect, useState} from "react";
-import axios from "axios";
 import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
-import {apiHost} from "../../utils";
+import {fetchBowlerDetails} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
-import {bowlerCommerceDetailsRetrieved} from "../../store/actions/registrationActions";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import Menu from '../../components/Commerce/Menu';
 
 const page = () => {
   const router = useRouter();
+  const {success, error} = router.query;
   const {commerce, commerceDispatch} = useRegistrationContext();
   const {identifier} = router.query;
 
@@ -28,22 +27,7 @@ const page = () => {
       setBowler(commerce.bowler);
       setLoading(false);
     } else {
-      const requestConfig = {
-        method: 'get',
-        url: `${apiHost}/bowlers/${identifier}`,
-        headers: {
-          'Accept': 'application/json',
-        }
-      }
-      axios(requestConfig)
-        .then(response => {
-          commerceDispatch(bowlerCommerceDetailsRetrieved(response.data));
-          setLoading(false);
-        })
-        .catch(error => {
-          setLoading(false);
-          // Display some kind of error message
-        });
+      fetchBowlerDetails(identifier, commerceDispatch);
     }
   }, [identifier, commerce]);
 
@@ -71,6 +55,23 @@ const page = () => {
   }
   const name = displayed_name + ' ' + commerce.bowler.last_name;
 
+  let successMessage = '';
+  let errorMessage = '';
+  if (success) {
+    successMessage = (
+      <div className={'col-12 alert alert-success alert-dismissible fade show d-flex align-items-center'} role={'alert'}>
+        <i className={'bi-cash-coin pe-2'} aria-hidden={true}/>
+        <div className={'me-auto'}>
+          <strong>
+            Success!
+          </strong>
+          {' '}Your purchase was completed. Thank you for supporting our tournament!
+        </div>
+        <button type={'button'} className={'btn-close'} data-bs-dismiss={'alert'} aria-label={'Close'}/>
+      </div>
+    );
+  }
+
   return (
     <div>
       <Row className={'pt-2'}>
@@ -90,16 +91,19 @@ const page = () => {
           </h4>
           <p className={'p-0 m-0'}>
             <a href={`/teams/${bowler.team_identifier}`}>
-              <i className={'bi-arrow-left pe-2'} aria-hidden={true} />
+              <i className={'bi-arrow-left pe-2'} aria-hidden={true}/>
               back to team
             </a>
           </p>
         </Col>
       </Row>
 
-      <hr />
+      <hr/>
 
-      <Menu />
+      {successMessage}
+      {errorMessage}
+
+      <Menu/>
 
     </div>
   );
