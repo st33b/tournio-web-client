@@ -142,3 +142,25 @@ export const purchaseFailed = (error) => {
     error: error,
   }
 }
+
+export const freeEntryDeclared = () => {
+  return {
+    type: actionTypes.FREE_ENTRY_DECLARED,
+  }
+}
+
+export const freeEntrySuccess = (code, message) => {
+  return {
+    type: actionTypes.FREE_ENTRY_SUCCESS,
+    code: code,
+    message: message,
+  }
+}
+
+export const freeEntryFailure = (code, error) => {
+  return {
+    type: actionTypes.FREE_ENTRY_FAILURE,
+    code: code,
+    error: error
+  }
+}

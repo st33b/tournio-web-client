@@ -6,9 +6,14 @@ import classes from './Menu.module.scss';
 import PreviousPurchases from "./PreviousPurchases/PreviousPurchases";
 import AvailableItems from "./AvailableItems/AvailableItems";
 import Cart from "./Cart/Cart";
+import FreeEntryForm from "../FreeEntryForm/FreeEntryForm";
 
 const menu = () => {
-  const {commerceDispatch} = useRegistrationContext();
+  const {commerce, commerceDispatch} = useRegistrationContext();
+
+  if (!commerce || !commerce.bowler) {
+    return '';
+  }
 
   const itemAdded = (item) => {
     commerceDispatch(itemAddedToCart(item));
@@ -16,6 +21,13 @@ const menu = () => {
 
   const itemRemoved = (item) => {
     commerceDispatch(itemRemovedFromCart(item));
+  }
+
+  let freeEntryForm = '';
+  if (!commerce.bowler.has_free_entry) {
+    freeEntryForm = (
+      <FreeEntryForm />
+    );
   }
 
   return (
@@ -35,6 +47,7 @@ const menu = () => {
         <Col md={4}
              className={'d-none d-md-block order-3 order-md-4'}
              id={'cart'}>
+          {freeEntryForm}
           <Cart itemAddedToCart={itemAdded}
                 itemRemovedFromCart={itemRemoved} />
         </Col>

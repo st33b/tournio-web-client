@@ -1,6 +1,5 @@
 import * as actionTypes from './actions/actionTypes';
 import {updateObject} from "../utils";
-import availableItems from "../components/Commerce/AvailableItems/AvailableItems";
 
 const initialState = {
   tournament: null,
@@ -8,6 +7,7 @@ const initialState = {
   cart: [],
   availableItems: {},
   purchasedItems: [],
+  freeEntry: null,
   error: null,
 }
 
@@ -24,11 +24,13 @@ export const commerceReducer = (state, action) => {
       return updateObject(state, {
         tournament: action.tournament,
         bowler: null,
+        freeEntry: null,
         error: null,
       });
     case actionTypes.TEAM_DETAILS_RETRIEVED:
       return updateObject(state, {
         bowler: null,
+        freeEntry: null,
         error: null,
       })
     case actionTypes.BOWLER_DETAILS_RETRIEVED:
@@ -45,6 +47,7 @@ export const commerceReducer = (state, action) => {
         availableItems: action.availableItems,
         cart: unpaidItems,
         purchasedItems: action.bowler.paid_purchases,
+        freeEntry: null,
         error: null,
       });
     case actionTypes.ITEM_ADDED_TO_CART:
@@ -62,6 +65,34 @@ export const commerceReducer = (state, action) => {
     case actionTypes.PURCHASE_FAILED:
       return updateObject(state, {
         error: action.error,
+      });
+    case actionTypes.FREE_ENTRY_DECLARED:
+      return updateObject(state, {
+        freeEntry: {
+          code: '',
+          message: '',
+          error: '',
+        }
+      });
+    case actionTypes.FREE_ENTRY_SUCCESS:
+      // Remove ledger items, so we don't force the bowler to buy an entry fee
+      // when they've just indicated they have a free entry code.
+      const newCart = state.cart.filter((item) => item.category !== 'ledger')
+      return updateObject(state, {
+        cart: newCart,
+        freeEntry: {
+          code: action.code,
+          message: action.message,
+          error: '',
+        }
+      });
+    case actionTypes.FREE_ENTRY_FAILURE:
+      return updateObject(state, {
+        freeEntry: {
+          code: action.code,
+          message: '',
+          error: action.error,
+        }
       });
     default:
       console.log('Haha, no');

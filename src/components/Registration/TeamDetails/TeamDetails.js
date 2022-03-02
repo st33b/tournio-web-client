@@ -3,9 +3,13 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import classes from './TeamDetails.module.scss';
 
 const teamDetails = ({successType}) => {
-  const {entry} = useRegistrationContext();
+  const {entry, commerce} = useRegistrationContext();
 
   if (!entry.tournament || !entry.team) {
+    return '';
+  }
+
+  if (!commerce) {
     return '';
   }
 
@@ -39,9 +43,6 @@ const teamDetails = ({successType}) => {
     );
   }
 
-  let joinTeamText = '';
-  // TODO: add support for joining a partial team from here.
-
   return (
     <div className={classes.TeamDetails}>
       {successBanner}
@@ -64,11 +65,18 @@ const teamDetails = ({successType}) => {
               displayed_name = b.preferred_name;
             }
             const name = displayed_name + ' ' + b.last_name;
+
+            // We might've come here from the checkout page, in which case that amount_due
+            // is more up-to-date than the one on the entry.team object.
+            let amountDue = b.amount_due;
+            if (commerce.bowler && commerce.bowler.identifier === b.identifier) {
+              amountDue = commerce.bowler.amount_due;
+            }
             return (
               <tr key={i}>
                 <td>{b.position}</td>
                 <td>{name}</td>
-                <td>{b.amount_due}</td>
+                <td>{amountDue}</td>
                 <td>
                   <a href={`/bowlers/${b.identifier}`}
                      className={'btn btn-sm btn-outline-success'}>
