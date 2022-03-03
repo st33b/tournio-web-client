@@ -5,7 +5,7 @@ import {useEffect} from "react";
 
 import '../styles.scss';
 
-import {AuthContextProvider} from "../store/AuthContext";
+import {DirectorContextProvider} from "../store/DirectorContext";
 import {RegistrationContextProvider} from "../store/RegistrationContext";
 
 function MyApp({Component, pageProps})  {
@@ -16,11 +16,11 @@ function MyApp({Component, pageProps})  {
   const getLayout = Component.getLayout || ((page) => page);
 
   return (
-    <AuthContextProvider>
+    <DirectorContextProvider>
       <RegistrationContextProvider>
         {getLayout(<Component {...pageProps} />)}
       </RegistrationContextProvider>
-    </AuthContextProvider>
+    </DirectorContextProvider>
   );
 }
 

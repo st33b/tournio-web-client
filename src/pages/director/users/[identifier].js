@@ -6,18 +6,18 @@ import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
 import {apiHost} from "../../../utils";
-import {useAuthContext} from '../../../store/AuthContext';
+import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import UserForm from '../../../components/Director/UserForm/UserForm';
 import axios from "axios";
 
 const index = () => {
-  const authContext = useAuthContext();
+  const directorContext = useDirectorContext();
   const router = useRouter();
   const { identifier } = router.query;
 
-  const isSuperuser = authContext.user && authContext.user.role === 'superuser';
-  const isEditingSelf = authContext.user && authContext.user.identifier === identifier;
+  const isSuperuser = directorContext.user && directorContext.user.role === 'superuser';
+  const isEditingSelf = directorContext.user && directorContext.user.identifier === identifier;
   useEffect(() => {
     if (identifier === undefined) {
       return;
@@ -38,7 +38,7 @@ const index = () => {
       url: `${apiHost}/director/users/${identifier}`,
       headers: {
         'Accept': 'application/json',
-        'Authorization': authContext.token,
+        'Authorization': directorContext.token,
       },
       method: 'get',
     }
@@ -50,7 +50,7 @@ const index = () => {
       .catch(error => {
         setIsLoading(false);
         if (error.response.status === 401) {
-          authContext.logout();
+          directorContext.logout();
           router.push('/director/login');
         }
       });

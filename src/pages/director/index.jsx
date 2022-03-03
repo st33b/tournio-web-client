@@ -4,14 +4,14 @@ import DirectorLayout from "../../components/Layout/DirectorLayout/DirectorLayou
 import TournamentListing from '../../components/Director/TournamentListing/TournamentListing';
 import {useEffect} from "react";
 import {useRouter} from "next/router";
-import {useAuthContext} from "../../store/AuthContext";
+import {useDirectorContext} from "../../store/DirectorContext";
 
 const page = () => {
   const router = useRouter();
-  const authContext = useAuthContext();
+  const directorContext = useDirectorContext();
 
   useEffect(() => {
-    if (!authContext.isLoggedIn) {
+    if (!directorContext.isLoggedIn) {
       router.push('/director/login');
     }
   });

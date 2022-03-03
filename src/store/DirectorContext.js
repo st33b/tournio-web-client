@@ -1,29 +1,37 @@
 import {useState, useCallback, createContext, useContext} from 'react';
 
-const AuthContext = createContext({
+const DirectorContext = createContext({
   token: '',
   isLoggedIn: false,
   login: (token, userData) => {},
   logout: () => {},
   user: null,
+  tournament: null,
+  setTournament: (t) => {},
 });
 
-export const AuthContextProvider = ({children}) => {
+export const DirectorContextProvider = ({children}) => {
   let tokenData;
   let userData;
+  let tournamentData;
   if (typeof window !== "undefined") {
     tokenData = localStorage.getItem('token');
     userData = JSON.parse(localStorage.getItem('currentUser'));
+    tournamentData = JSON.parse(localStorage.getItem('tournament'));
   }
 
-  let initialToken, initialUser;
+  let initialToken, initialUser, initialTournament;
   if (tokenData) {
     initialToken = tokenData;
     initialUser = userData;
   }
+  if (tournamentData) {
+    initialTournament = tournamentData;
+  }
 
   const [token, setToken] = useState(initialToken);
   const [currentUser, setCurrentUser] = useState(initialUser);
+  const [tournament, setTournament] = useState(initialTournament);
 
   const userIsLoggedIn = !!token;
 
@@ -41,19 +49,26 @@ export const AuthContextProvider = ({children}) => {
     localStorage.setItem('currentUser', JSON.stringify(userDetails));
   }
 
+  const tournamentHandler = (newTournament) => {
+    setTournament(newTournament);
+    localStorage.setItem('tournament', JSON.stringify(newTournament));
+  }
+
   const contextValue = {
     token: token,
     isLoggedIn: userIsLoggedIn,
     login: loginHandler,
     logout: logoutHandler,
     user: currentUser,
+    setTournament: tournamentHandler,
+    tournament: tournament,
   }
 
   return (
-    <AuthContext.Provider value={contextValue}>
+    <DirectorContext.Provider value={contextValue}>
       {children}
-    </AuthContext.Provider>
+    </DirectorContext.Provider>
   );
 }
 
-export const useAuthContext = () => useContext(AuthContext);
+export const useDirectorContext = () => useContext(DirectorContext);

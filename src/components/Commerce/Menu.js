@@ -6,7 +6,7 @@ import classes from './Menu.module.scss';
 import PreviousPurchases from "./PreviousPurchases/PreviousPurchases";
 import AvailableItems from "./AvailableItems/AvailableItems";
 import Cart from "./Cart/Cart";
-import FreeEntryForm from "../FreeEntryForm/FreeEntryForm";
+import FreeEntryForm from "./FreeEntryForm/FreeEntryForm";
 
 const menu = () => {
   const {commerce, commerceDispatch} = useRegistrationContext();

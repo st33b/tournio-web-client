@@ -4,12 +4,12 @@ import axios from "axios";
 import {useRouter} from "next/router";
 
 import {apiHost} from "../../../utils";
-import {useAuthContext} from "../../../store/AuthContext";
+import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './UserForm.module.scss';
 
 const userForm = ({user}) => {
-  const authContext = useAuthContext();
+  const directorContext = useDirectorContext();
   const router = useRouter();
 
   let formTitle = 'New User';
@@ -31,7 +31,7 @@ const userForm = ({user}) => {
   let areWeCreating = true;
   if (user) {
     areWeCreating = false;
-    isSelf = user.identifier === authContext.user.identifier;
+    isSelf = user.identifier === directorContext.user.identifier;
 
     initialState.fields.email = user.email;
     initialState.fields.role = user.role;
@@ -63,7 +63,7 @@ const userForm = ({user}) => {
     const requestConfig = {
       headers: {
         'Accept': 'application/json',
-        'Authorization': authContext.token,
+        'Authorization': directorContext.token,
       },
     }
     setIsLoading(true);
@@ -75,7 +75,7 @@ const userForm = ({user}) => {
       .catch(error => {
         setIsLoading(false);
         if (error.response.status === 401) {
-          authContext.logout();
+          directorContext.logout();
           router.push('/director/login');
         }
       });
@@ -112,7 +112,7 @@ const userForm = ({user}) => {
       url: url,
       headers: {
         'Accept': 'application/json',
-        'Authorization': authContext.token,
+        'Authorization': directorContext.token,
       },
       method: method,
       data: {
@@ -139,7 +139,7 @@ const userForm = ({user}) => {
       .catch(error => {
         setIsSubmitting(false);
         if (error.response.status === 401) {
-          authContext.logout();
+          directorContext.logout();
           router.push('/director/login');
         }
         setBanner(<Alert variant={'danger'} className={'mt-3'}>Failed for some reason. :(</Alert>);

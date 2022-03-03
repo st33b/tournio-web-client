@@ -6,18 +6,18 @@ import axios from "axios";
 import {Button, Card, Col, Row, Table} from "react-bootstrap";
 
 import {apiHost} from "../../../utils";
-import {useAuthContext} from '../../../store/AuthContext';
+import {useDirectorContext} from '../../../store/DirectorContext';
 
 import classes from './UserListing.module.scss';
 
 const userListing = () => {
-  const authContext = useAuthContext();
+  const directorContext = useDirectorContext();
 
   const theUrl = `${apiHost}/director/users`;
   const requestConfig = {
     headers: {
       'Accept': 'application/json',
-      'Authorization': authContext.token,
+      'Authorization': directorContext.token,
     },
   }
 

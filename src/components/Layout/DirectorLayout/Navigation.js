@@ -4,22 +4,22 @@ import {useRouter} from "next/router";
 import {Nav, Navbar} from "react-bootstrap";
 
 import {apiHost} from "../../../utils";
-import {useAuthContext} from "../../../store/AuthContext";
+import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './Navigation.module.scss';
 import axios from "axios";
 
 const navigation = () => {
-  const authContext = useAuthContext();
+  const directorContext = useDirectorContext();
   const router = useRouter();
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [isSuperuser, setIsSuperuser] = useState(false);
 
   useEffect(() => {
-    setLoggedIn(authContext.isLoggedIn);
-    setIsSuperuser(authContext.user && authContext.user.role === 'superuser');
-  }, [authContext.isLoggedIn, authContext.user]);
+    setLoggedIn(directorContext.isLoggedIn);
+    setIsSuperuser(directorContext.user && directorContext.user.role === 'superuser');
+  }, [directorContext.isLoggedIn, directorContext.user]);
 
   const logoutHandler = (event) => {
     event.preventDefault();
@@ -34,7 +34,7 @@ const navigation = () => {
         console.log(error);
       });
 
-    authContext.logout();
+    directorContext.logout();
     router.push('/director/login');
   }
 
@@ -59,8 +59,8 @@ const navigation = () => {
                   User Accounts
                 </Nav.Link>
               )}
-              {authContext.user && (
-                <Nav.Link href={'/director/users/' + authContext.user.identifier}>
+              {directorContext.user && (
+                <Nav.Link href={'/director/users/' + directorContext.user.identifier}>
                   My Profile
                 </Nav.Link>
               )}

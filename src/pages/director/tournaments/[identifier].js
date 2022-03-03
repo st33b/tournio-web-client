@@ -5,26 +5,25 @@ import {useRouter} from "next/router";
 import axios from "axios";
 
 import {apiHost} from "../../../utils";
-import {useAuthContext} from '../../../store/AuthContext';
+import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentDetails from '../../../components/Director/TournamentDetails/TournamentDetails';
 
 const tournament = () => {
-  const authContext = useAuthContext();
+  const directorContext = useDirectorContext();
   const router = useRouter();
   const { identifier } = router.query;
 
   useEffect(() => {
-    if (!authContext.isLoggedIn) {
+    if (!directorContext.isLoggedIn) {
       router.push('/director/login');
     }
   });
 
-  const [tournament, setTournament] = useState(null);
   const [loading, setLoading] = useState(true);
   let errorMessage = '';
   useEffect(() => {
-    if (!authContext.user) {
+    if (!directorContext.user) {
       return;
     }
     if (identifier === undefined) {
@@ -36,25 +35,27 @@ const tournament = () => {
     const requestConfig = {
       headers: {
         'Accept': 'application/json',
-        'Authorization': authContext.token,
+        'Authorization': directorContext.token,
       },
     }
     axios.get(theUrl, requestConfig)
       .then(response => {
         const tournament = response.data;
-        setTournament(tournament);
+        directorContext.setTournament(tournament);
         setLoading(false);
       })
       .catch(error => {
         if (error.response.status === 401) {
-          authContext.logout();
+          directorContext.logout();
           router.push('/director/login');
         }
         errorMessage = error;
         setLoading(false);
       });
 
-  }, [identifier, authContext.token]);
+  }, [identifier, directorContext.token]);
+
+  const tournament = directorContext.tournament;
 
   const stateChangeInitiated = (stateChangeAction) => {
     // fetch the tournament details
@@ -64,7 +65,7 @@ const tournament = () => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': authContext.token,
+        'Authorization': directorContext.token,
       },
       data: {
         state_action: stateChangeAction,
@@ -74,18 +75,17 @@ const tournament = () => {
     setLoading(true);
     axios(requestConfig)
       .then(response => {
-        setTournament(response.data);
+        directorContext.setTournament(response.data);
       })
       .catch(error => {
         if (error.response.status === 401) {
-          authContext.logout();
+          directorContext.logout();
           router.push('/director/login');
         }
       });
   }
 
-  return <TournamentDetails tournament={tournament}
-                            stateChangeInitiated={stateChangeInitiated} />;
+  return <TournamentDetails stateChangeInitiated={stateChangeInitiated} />;
 }
 
 tournament.getLayout = function getLayout(page) {

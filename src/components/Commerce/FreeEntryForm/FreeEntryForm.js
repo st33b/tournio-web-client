@@ -1,10 +1,10 @@
 import axios from "axios";
 import {useState} from "react";
-import {useRegistrationContext} from "../../store/RegistrationContext";
+import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './FreeEntryForm.module.scss';
-import {apiHost, updateObject} from "../../utils";
-import {freeEntryDeclared, freeEntryFailure, freeEntrySuccess} from "../../store/actions/registrationActions";
+import {apiHost, updateObject} from "../../../utils";
+import {freeEntryDeclared, freeEntryFailure, freeEntrySuccess} from "../../../store/actions/registrationActions";
 
 const freeEntryForm = () => {
   const {commerce, commerceDispatch} = useRegistrationContext();

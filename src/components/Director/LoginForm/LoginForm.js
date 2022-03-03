@@ -5,7 +5,7 @@ import axios from "axios";
 
 import {Button, Card, FloatingLabel, Form} from "react-bootstrap";
 
-import {useAuthContext} from '../../../store/AuthContext';
+import {useDirectorContext} from '../../../store/DirectorContext';
 import {apiHost} from "../../../utils";
 
 import classes from './LoginForm.module.scss';
@@ -18,7 +18,7 @@ const loginForm = () => {
   const [loginFailed, setLoginFailed] = useState(false);
   const [validated, setValidated] = useState(false);
 
-  const authContext = useAuthContext();
+  const directorContext = useDirectorContext();
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -44,7 +44,7 @@ const loginForm = () => {
         setLoginFailed(false);
         const authHeader = response.headers.authorization;
         const userData = response.data;
-        authContext.login(authHeader, userData);
+        directorContext.login(authHeader, userData);
 
         router.push('/director')
       })

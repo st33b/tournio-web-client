@@ -1,6 +1,5 @@
 import axios from "axios";
 import {bowlerCommerceDetailsRetrieved} from "./store/actions/registrationActions";
-import {useRegistrationContext} from "./store/RegistrationContext";
 
 export const updateObject = (oldObject, updatedProperties) => {
   return {

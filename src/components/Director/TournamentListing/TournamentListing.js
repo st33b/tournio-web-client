@@ -4,20 +4,20 @@ import axios from "axios";
 import {Col, Row} from "react-bootstrap";
 
 import {apiHost} from "../../../utils";
-import {useAuthContext} from '../../../store/AuthContext';
+import {useDirectorContext} from '../../../store/DirectorContext';
 
 import classes from './TournamentListing.module.scss';
 import {useRouter} from "next/router";
 
 const tournamentListing = () => {
-  const authContext = useAuthContext();
+  const directorContext = useDirectorContext();
   const router = useRouter();
 
   const theUrl = `${apiHost}/director/tournaments`;
   const requestConfig = {
     headers: {
       'Accept': 'application/json',
-      'Authorization': authContext.token,
+      'Authorization': directorContext.token,
     },
   }
 
@@ -26,7 +26,7 @@ const tournamentListing = () => {
   let errorMessage = '';
 
   useEffect(() => {
-    if (!authContext.user) {
+    if (!directorContext.user) {
       return;
     }
     if (data.length === 0) {
@@ -36,7 +36,7 @@ const tournamentListing = () => {
           if (tournaments.length === 1) {
             // Go ahead and take them to the details page for their one tournament.
             const identifier = tournaments[0]['identifier'];
-            router.push('/director/tournaments/'+ identifier);
+            router.push(`'/director/tournaments/${identifier}`);
             return;
           }
           setData(tournaments);
@@ -51,9 +51,9 @@ const tournamentListing = () => {
 
   let list = '';
   if (loading) {
-    list = <p>Retrieving tournaments...</p>;
+    list = <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>;
   } else if (data.length === 0) {
-    list = <p>No tournaments to display.</p>;
+    list = <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>;
   } else {
     list = (
       <div className={'table-responsive'}>

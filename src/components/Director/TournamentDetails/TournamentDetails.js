@@ -9,10 +9,16 @@ import StatusAndCounts from "./StatusAndCounts";
 import PurchasableItems from "./PurchasableItems";
 import Contacts from "./Contacts";
 import StateChangeButton from "./StateChangeButton";
+import {useDirectorContext} from "../../../store/DirectorContext";
 
-const tournamentDetails = ({tournament, stateChangeInitiated}) => {
+const tournamentDetails = ({stateChangeInitiated}) => {
+  const directorContext = useDirectorContext();
+  const tournament = directorContext.tournament;
+
   if (!tournament) {
-    return <div className={classes.TournamentDetails}>Loading tournament details...</div>;
+    return <div className={classes.TournamentDetails}>
+      <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
+    </div>;
   }
 
   const ladder = [{ text: 'Tournaments', path: '/director' }];

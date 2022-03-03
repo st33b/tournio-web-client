@@ -6,7 +6,7 @@ import Button from "react-bootstrap/Button";
 import axios from "axios";
 
 import {apiHost} from "../../../utils";
-import {useAuthContext} from "../../../store/AuthContext";
+import {useDirectorContext} from "../../../store/DirectorContext";
 import classes from './TournamentDetails.module.scss';
 
 const statusAndCounts = ({tournament}) => {
@@ -14,7 +14,7 @@ const statusAndCounts = ({tournament}) => {
     return '';
   }
 
-  const authContext = useAuthContext();
+  const directorContext = useDirectorContext();
 
   const downloads = (
     <Card.Body className={'bg-white text-dark'}>
@@ -73,7 +73,7 @@ const statusAndCounts = ({tournament}) => {
       url: theUrl,
       headers: {
         'Accept': 'application/json',
-        'Authorization': authContext.token,
+        'Authorization': directorContext.token,
       },
       data: {},
       method: 'post',
