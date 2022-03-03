@@ -2,9 +2,11 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from "react-bootstrap/ListGroup";
 
 import classes from './TournamentDetails.module.scss';
+import {useDirectorContext} from "../../../store/DirectorContext";
 
-const contacts = ({tournament}) => {
-  if (!tournament) {
+const contacts = () => {
+  const context = useDirectorContext();
+  if (!context || !context.tournament) {
     return '';
   }
 
@@ -14,7 +16,7 @@ const contacts = ({tournament}) => {
         Contacts
       </Card.Header>
       <ListGroup variant={'flush'}>
-        {tournament.contacts.map((contact, i) => {
+        {context.tournament.contacts.map((contact, i) => {
           return (
             <ListGroup.Item key={i}>
               <p className={'fw-bold m-0'}>

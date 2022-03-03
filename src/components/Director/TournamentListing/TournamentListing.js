@@ -36,7 +36,7 @@ const tournamentListing = () => {
           if (tournaments.length === 1) {
             // Go ahead and take them to the details page for their one tournament.
             const identifier = tournaments[0]['identifier'];
-            router.push(`'/director/tournaments/${identifier}`);
+            router.push(`/director/tournaments/${identifier}`);
             return;
           }
           setData(tournaments);

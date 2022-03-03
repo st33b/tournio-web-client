@@ -1,16 +1,18 @@
 import Card from 'react-bootstrap/Card';
 
 import classes from './TournamentDetails.module.scss';
+import {useDirectorContext} from "../../../store/DirectorContext";
 
-const tournamentLogo = ({tournament}) => {
-  if (!tournament) {
+const tournamentLogo = () => {
+  const context = useDirectorContext();
+  if (!context || !context.tournament) {
     return '';
   }
 
   return (
     <Card border={'0'} className={'d-none d-lg-block text-center'}>
       <Card.Body>
-        <Card.Img variant={'top'} src={tournament.image_path} className={classes.Logo}/>
+        <Card.Img variant={'top'} src={context.tournament.image_path} className={classes.Logo}/>
       </Card.Body>
     </Card>
   );

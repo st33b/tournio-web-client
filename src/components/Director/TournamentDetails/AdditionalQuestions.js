@@ -2,9 +2,11 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from "react-bootstrap/ListGroup";
 
 import classes from './TournamentDetails.module.scss';
+import {useDirectorContext} from "../../../store/DirectorContext";
 
-const additionalQuestions = ({tournament}) => {
-  if (!tournament) {
+const additionalQuestions = () => {
+  const context = useDirectorContext();
+  if (!context || !context.tournament) {
     return '';
   }
 
@@ -14,9 +16,9 @@ const additionalQuestions = ({tournament}) => {
         Additional Form Questions
       </Card.Header>
       <ListGroup variant={'flush'}>
-        {tournament.additional_questions.length === 0
+        {context.tournament.additional_questions.length === 0
           ? <ListGroup.Item>None configured</ListGroup.Item>
-          : tournament.additional_questions.map((q, i) => {
+          : context.tournament.additional_questions.map((q, i) => {
           return (
             <ListGroup.Item key={i}>
               {q.label}

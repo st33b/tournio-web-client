@@ -9,12 +9,11 @@ import {apiHost} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import classes from './TournamentDetails.module.scss';
 
-const statusAndCounts = ({tournament}) => {
-  if (!tournament) {
+const statusAndCounts = () => {
+  const context = useDirectorContext();
+  if (!context || !context.tournament) {
     return '';
   }
-
-  const directorContext = useDirectorContext();
 
   const downloads = (
     <Card.Body className={'bg-white text-dark'}>
@@ -22,11 +21,11 @@ const statusAndCounts = ({tournament}) => {
         Downloads
       </Card.Subtitle>
       <Card.Link className={'btn btn-sm btn-outline-primary'}
-                 href={`/api/director/tournaments/${tournament.identifier}/csv_download`}>
+                 href={`/api/director/tournaments/${context.tournament.identifier}/csv_download`}>
         CSV
       </Card.Link>
       <Card.Link className={'btn btn-sm btn-outline-primary'}
-                 href={`/api/director/tournaments/${tournament.identifier}/igbots_download`}>
+                 href={`/api/director/tournaments/${context.tournament.identifier}/igbots_download`}>
         IGBO-TS
       </Card.Link>
     </Card.Body>
@@ -36,26 +35,26 @@ const statusAndCounts = ({tournament}) => {
     <ListGroup variant={'flush'}>
       <ListGroup.Item className={'d-flex'}
                       action
-                      href={`/director/tournaments/${tournament.identifier}/bowlers`}>
+                      href={`/director/tournaments/${context.tournament.identifier}/bowlers`}>
         Bowlers
         <Badge bg={'light'} text={'dark'} className={'ms-auto'}>
-          {tournament.bowler_count}
+          {context.tournament.bowler_count}
         </Badge>
       </ListGroup.Item>
       <ListGroup.Item className={'d-flex'}
                       action
-                      href={`/director/tournaments/${tournament.identifier}/teams`}>
+                      href={`/director/tournaments/${context.tournament.identifier}/teams`}>
         Teams
         <Badge bg={'light'} text={'dark'} className={'ms-auto'}>
-          {tournament.team_count}
+          {context.tournament.team_count}
         </Badge>
       </ListGroup.Item>
       <ListGroup.Item className={'d-flex'}
                       action
-                      href={`/director/tournaments/${tournament.identifier}/free_entries`}>
+                      href={`/director/tournaments/${context.tournament.identifier}/free_entries`}>
         Free Entries
         <Badge bg={'light'} text={'dark'} className={'ms-auto'}>
-          {tournament.free_entry_count}
+          {context.tournament.free_entry_count}
         </Badge>
       </ListGroup.Item>
     </ListGroup>
@@ -63,12 +62,12 @@ const statusAndCounts = ({tournament}) => {
 
   const [loading, setLoading] = useState(false);
   const clearTestDataClickHandler = () => {
-    if (tournament.state !== 'testing') {
+    if (context.tournament.state !== 'testing') {
       console.log('Cannot clear data for a tournament that is not in setup or testing.');
       return;
     }
 
-    const theUrl = `${apiHost}/director/tournaments/${tournament.identifier}/clear_test_data`;
+    const theUrl = `${apiHost}/director/tournaments/${context.tournament.identifier}/clear_test_data`;
     const requestConfig = {
       url: theUrl,
       headers: {
@@ -93,7 +92,7 @@ const statusAndCounts = ({tournament}) => {
   let testingStatusContent = '';
   let bgColor = '';
   let textColor = 'white';
-  switch (tournament.state) {
+  switch (context.tournament.state) {
     case 'setup':
       bgColor = 'info';
       textColor = 'dark';
@@ -122,7 +121,7 @@ const statusAndCounts = ({tournament}) => {
             Testing Environment
           </Card.Title>
           <dl>
-            {tournament.testing_environment.settings.map((condition) => {
+            {context.tournament.testing_environment.settings.map((condition) => {
               return (
                 <div className={'row'} key={condition.name}>
                   <dt className={'col-6 text-end'}>
@@ -150,7 +149,7 @@ const statusAndCounts = ({tournament}) => {
 
   const frontPageLink = (
     <Card.Body className={'bg-white text-dark'}>
-      <a href={`/tournaments/${tournament.identifier}`} target={'_new'}>
+      <a href={`/tournaments/${context.tournament.identifier}`} target={'_new'}>
         Front Page
         <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
       </a>
@@ -160,7 +159,7 @@ const statusAndCounts = ({tournament}) => {
   return (
     <Card bg={bgColor} text={textColor} className={classes.Card + ' text-center'}>
       <Card.Header as={'h4'}>
-        {tournament.status}
+        {context.tournament.status}
       </Card.Header>
       {counts}
       {frontPageLink}

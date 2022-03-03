@@ -1,7 +1,7 @@
 import {useState, useEffect, useMemo} from 'react';
 import {useRouter} from "next/router";
-import {useTable, useSortBy, useFilters} from 'react-table';
 import axios from "axios";
+import {useTable, useSortBy, useFilters} from 'react-table';
 
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
 import BowlerFilterForm from "../BowlerFilterForm/BowlerFilterForm";
@@ -14,21 +14,16 @@ import classes from './BowlerListing.module.scss';
 const bowlerListing = () => {
   const router = useRouter();
   const directorContext = useDirectorContext();
-  if (!directorContext.tournament) {
-    return '';
-  }
-
   const {identifier} = router.query;
-
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   let errorMessage = '';
-
   useEffect(() => {
     if (!identifier) {
       return;
     }
+
     const requestConfig = {
       method: 'get',
       url: `${apiHost}/director/tournaments/${identifier}/bowlers`,
@@ -39,8 +34,7 @@ const bowlerListing = () => {
     }
     axios(requestConfig)
       .then(response => {
-        const bowlers = response.data;
-        setData(bowlers);
+        setData(response.data);
         setLoading(false);
       })
       .catch(error => {
@@ -56,7 +50,7 @@ const bowlerListing = () => {
         accessor: (props) => props.last_name + ', ' + props.first_name,
         Cell: ({row, cell}) => {
           return (
-            <a href={`'/director/tournaments/${identifier}/bowlers/${row.original.identifier}`}>
+            <a href={`/director/tournaments/${identifier}/bowlers/${row.original.identifier}`}>
               {cell.value}
             </a>
           )
@@ -105,9 +99,7 @@ const bowlerListing = () => {
         accessor: 'amount_due',
         filter: doesNotEqual,
       },
-    ],
-    []
-  );
+    ], [identifier]);
 
   // tell react-table which things we want to use (sorting, filtering)
   // and retrieve properties/functions they let us hook into
@@ -136,15 +128,16 @@ const bowlerListing = () => {
   //   );
   // }
 
-  let list = '';
-
-  if (loading) {
-    list = (
-      <>
+  if (!directorContext.tournament || loading) {
+    return (
+      <div className={classes.BowlerListing}>
         <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
-      </>
+      </div>
     );
-  } else if (data.length === 0) {
+  }
+  
+  let list = '';
+  if (data.length === 0) {
     list = (
       <div className={'display-6 text-center'}>
         No bowlers to display.
@@ -196,8 +189,8 @@ const bowlerListing = () => {
   }
 
   const ladder = [
-    { text: 'Tournaments', path: '/director/tournaments'},
-    { text: directorContext.tournament.name, path: `/director/tournaments/${directorContext.tournament.identifier}` },
+    {text: 'Tournaments', path: '/director/tournaments'},
+    {text: directorContext.tournament.name, path: `/director/tournaments/${directorContext.tournament.identifier}`},
   ];
 
   return (

@@ -6,12 +6,12 @@ import classes from './Breadcrumbs.module.scss';
 // - activeText (string to display at the end)
 // - ladder (array of {text, path} pairs to display in sequence
 // Breadcrumbs ladder=[{text: 'Tournaments', path: '/director/tournaments'}] active={'Big D Classic 2023'}
-const breadcrumbs = (props) => {
+const breadcrumbs = ({ladder, activeText}) => {
   return (
     <div className={classes.Breadcrumbs}>
       <Breadcrumb className={'bg-light py-2 ps-2'}>
         {/* sequential list of crumbs... */}
-        {props.ladder.map((item, i) => {
+        {ladder.map((item, i) => {
           return (
             <Breadcrumb.Item href={item.path} key={i}>
               {item.text}
@@ -19,7 +19,7 @@ const breadcrumbs = (props) => {
           );
         })}
         <Breadcrumb.Item active={true} className={classes.ActiveItem}>
-          {props.activeText}
+          {activeText}
         </Breadcrumb.Item>
       </Breadcrumb>
     </div>

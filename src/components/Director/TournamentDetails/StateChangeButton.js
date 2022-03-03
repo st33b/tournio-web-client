@@ -1,16 +1,18 @@
 import Button from 'react-bootstrap/Button';
 
 import classes from './TournamentDetails.module.scss';
+import {useDirectorContext} from "../../../store/DirectorContext";
 
-const stateChangeButton = ({tournament, stateChangeInitiated}) => {
-  if (!tournament) {
+const stateChangeButton = ({stateChangeInitiated}) => {
+  const context = useDirectorContext();
+  if (!context || !context.tournament) {
     return '';
   }
 
   let variant = '';
   let stateChangeText = '';
   let stateChangeValue = '';
-  switch (tournament.state) {
+  switch (context.tournament.state) {
     case 'setup':
       variant = 'warning';
       stateChangeText = 'Begin Testing';

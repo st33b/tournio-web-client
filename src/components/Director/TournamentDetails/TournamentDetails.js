@@ -12,10 +12,8 @@ import StateChangeButton from "./StateChangeButton";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 const tournamentDetails = ({stateChangeInitiated}) => {
-  const directorContext = useDirectorContext();
-  const tournament = directorContext.tournament;
-
-  if (!tournament) {
+  const context = useDirectorContext();
+  if (!context || !context.tournament) {
     return <div className={classes.TournamentDetails}>
       <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
     </div>;
@@ -24,25 +22,24 @@ const tournamentDetails = ({stateChangeInitiated}) => {
   const ladder = [{ text: 'Tournaments', path: '/director' }];
   return (
     <div className={classes.TournamentDetails}>
-      <Breadcrumbs ladder={ladder} activeText={tournament.name} className={classes.Breadcrumbs} />
+      <Breadcrumbs ladder={ladder} activeText={context.tournament.name} className={classes.Breadcrumbs} />
 
       <div className={'row'}>
         <div className={'col-12 col-md-6 col-lg-4'}>
-          <Basics tournament={tournament} />
-          <Configuration tournament={tournament} />
-          <AdditionalQuestions tournament={tournament} />
+          <Basics />
+          <Configuration />
+          <AdditionalQuestions />
         </div>
 
         <div className={'col-12 col-md-6 col-lg-4'}>
-          <StatusAndCounts tournament={tournament} />
-          <PurchasableItems tournament={tournament} />
+          <StatusAndCounts />
+          <PurchasableItems />
         </div>
 
         <div className={'col-12 col-md-6 col-lg-4'}>
-          <TournamentLogo tournament={tournament} />
-          <StateChangeButton tournament={tournament}
-                             stateChangeInitiated={stateChangeInitiated} />
-          <Contacts tournament={tournament} />
+          <TournamentLogo />
+          <StateChangeButton stateChangeInitiated={stateChangeInitiated} />
+          <Contacts />
         </div>
       </div>
     </div>

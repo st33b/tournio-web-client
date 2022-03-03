@@ -2,9 +2,11 @@ import Card from 'react-bootstrap/Card';
 import {format} from 'date-fns';
 
 import classes from './TournamentDetails.module.scss';
+import {useDirectorContext} from "../../../store/DirectorContext";
 
-const purchasableItems = ({tournament}) => {
-  if (!tournament) {
+const purchasableItems = () => {
+  const context = useDirectorContext();
+  if (!context || !context.tournament) {
     return '';
   }
 
@@ -15,7 +17,7 @@ const purchasableItems = ({tournament}) => {
     product: [],
   };
   const datetimeFormat = 'LLL d, yyyy h:mmaaa';
-  tournament.purchasable_items.map((pi) => {
+  context.tournament.purchasable_items.map((pi) => {
     let item = {
       name: pi.name,
       value: pi.value,

@@ -55,8 +55,6 @@ const tournament = () => {
 
   }, [identifier, directorContext.token]);
 
-  const tournament = directorContext.tournament;
-
   const stateChangeInitiated = (stateChangeAction) => {
     // fetch the tournament details
     const theUrl = `${apiHost}/director/tournaments/${identifier}/state_change`;

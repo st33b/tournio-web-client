@@ -2,7 +2,7 @@ import {useEffect} from "react";
 import {useRouter} from "next/router";
 import {useDirectorContext} from "../../../../../store/DirectorContext";
 import DirectorLayout from "../../../../../components/Layout/DirectorLayout/DirectorLayout";
-import BowlerListing from "../../../../../components/Director/BowlerListing/BowlerListing";
+import TeamListing from "../../../../../components/Director/TeamListing/TeamListing";
 
 const page = () => {
   const router = useRouter();
@@ -27,7 +27,7 @@ const page = () => {
   }, [identifier]);
 
   return (
-    <BowlerListing />
+    <TeamListing />
   );
 }
 
