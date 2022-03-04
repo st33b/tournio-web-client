@@ -8,9 +8,11 @@ import {useRouter} from "next/router";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 const newTeamForm = ({submitted}) => {
-  const router = useRouter();
   const directorContext = useDirectorContext();
-  const {identifier} = router.query;
+  let identifier;
+  if (directorContext && directorContext.tournament) {
+    identifier = directorContext.tournament.identifier;
+  }
 
   const initialState = {
     name: '',
@@ -18,7 +20,7 @@ const newTeamForm = ({submitted}) => {
   const formClass = 'needs-validation';
   const [newTeamForm, setNewTeamForm] = useState(initialState);
 
-  if (!identifier || !directorContext) {
+  if (!identifier) {
     return '';
   }
 

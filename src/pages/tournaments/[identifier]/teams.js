@@ -19,7 +19,7 @@ const page = () => {
   const [loading, setLoading] = useState(false);
   const [teams, setTeams] = useState(null);
 
-  // fetch the list of teams
+  // fetch the list of teams-deprecated
   useEffect(() => {
     const requestConfig = {
       method: 'get',
