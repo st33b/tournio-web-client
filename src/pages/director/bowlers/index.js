@@ -5,17 +5,17 @@ import axios from "axios";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
-import TeamListing from "../../../components/Director/TeamListing/TeamListing";
+import BowlerListing from "../../../components/Director/BowlerListing/BowlerListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
-import NewTeamForm from "../../../components/Director/NewTeamForm/NewTeamForm";
 import {apiHost} from "../../../utils";
+import TeamListing from "../../../components/Director/TeamListing/TeamListing";
 
 const page = () => {
   const router = useRouter();
   const directorContext = useDirectorContext();
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [teams, setTeams] = useState(null);
+  const [bowlers, setBowlers] = useState(null);
   const [loading, setLoading] = useState(true);
 
   let identifier;
@@ -23,7 +23,7 @@ const page = () => {
     identifier = directorContext.tournament.identifier;
   }
 
-  // This effect ensures we're logged in with appropriate permissions
+  // Ensure we're logged in, with appropriate permission
   useEffect(() => {
     if (!identifier) {
       return;
@@ -36,7 +36,7 @@ const page = () => {
     }
   }, [identifier]);
 
-  // This effect fetches the teams from the backend
+  // Fetch the bowlers from the backend
   useEffect(() => {
     if (!identifier) {
       return;
@@ -44,7 +44,7 @@ const page = () => {
 
     const requestConfig = {
       method: 'get',
-      url: `${apiHost}/director/tournaments/${identifier}/teams`,
+      url: `${apiHost}/director/tournaments/${identifier}/bowlers`,
       headers: {
         'Accept': 'application/json',
         'Authorization': directorContext.token,
@@ -52,7 +52,7 @@ const page = () => {
     }
     axios(requestConfig)
       .then(response => {
-        setTeams(response.data);
+        setBowlers(response.data);
         setLoading(false);
       })
       .catch(error => {
@@ -65,37 +65,10 @@ const page = () => {
   useEffect(() => {
     const {success} = router.query;
     if (success === 'deleted') {
-      setSuccessMessage('The team has been removed.');
+      setSuccessMessage('The bowler has been removed.');
       router.replace(router.pathname, null, { shallow: true });
     }
   });
-
-  const newTeamSubmitted = (teamName) => {
-    const requestConfig = {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': directorContext.token
-      },
-      url: `${apiHost}/director/tournaments/${identifier}/teams`,
-      data: {
-        team: {
-          name: teamName,
-        }
-      }
-    }
-    axios(requestConfig)
-      .then(response => {
-        setSuccessMessage('New team created!');
-        const newData = teams.splice(0);
-        newData.push(response.data);
-        setTeams(newData);
-      })
-      .catch(error => {
-        setErrorMessage('Failed to create a new team. Why? ' + error);
-      });
-  }
 
   let success = '';
   let error = '';
@@ -128,17 +101,6 @@ const page = () => {
     );
   }
 
-  const newTeam = (
-    <Card>
-      <Card.Header as={'h4'}>
-        New Team
-      </Card.Header>
-      <Card.Body>
-        <NewTeamForm submitted={newTeamSubmitted} />
-      </Card.Body>
-    </Card>
-  );
-
   const ladder = [{text: 'Tournaments', path: '/director'}];
   if (directorContext.tournament) {
     ladder.push({text: directorContext.tournament.name, path: `/director/tournaments/${identifier}`});
@@ -154,15 +116,12 @@ const page = () => {
 
   return (
     <div>
-      <Breadcrumbs ladder={ladder} activeText={'Teams'}/>
+      <Breadcrumbs ladder={ladder} activeText={'Bowlers'}/>
       <div className={'row'}>
-        <div className={'order-2 order-md-1 col'}>
+        <div className={'col-12'}>
           {success}
           {error}
-          <TeamListing teams={teams} />
-        </div>
-        <div className={'order-1 order-md-2 col-12 col-md-4'}>
-          {newTeam}
+          <BowlerListing bowlers={bowlers} />
         </div>
       </div>
     </div>

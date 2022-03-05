@@ -1,47 +1,20 @@
-import {useState, useEffect, useMemo} from 'react';
-import {useRouter} from "next/router";
-import axios from "axios";
+import {useMemo} from 'react';
 import {useTable, useSortBy, useFilters} from 'react-table';
 
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
 import BowlerFilterForm from "../BowlerFilterForm/BowlerFilterForm";
-import {apiHost, doesNotEqual} from "../../../utils";
-import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
+import {doesNotEqual} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './BowlerListing.module.scss';
 
-const bowlerListing = () => {
-  const router = useRouter();
+const bowlerListing = ({bowlers}) => {
   const directorContext = useDirectorContext();
-  const {identifier} = router.query;
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  let errorMessage = '';
-  useEffect(() => {
-    if (!identifier) {
-      return;
-    }
-
-    const requestConfig = {
-      method: 'get',
-      url: `${apiHost}/director/tournaments/${identifier}/bowlers`,
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': directorContext.token,
-      }
-    }
-    axios(requestConfig)
-      .then(response => {
-        setData(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        errorMessage = error;
-        setLoading(false);
-      });
-  }, [identifier]);
+  let identifier;
+  if (directorContext && directorContext.tournament) {
+    identifier = directorContext.tournament.identifier;
+  }
 
   const columns = useMemo(() => [
       {
@@ -64,6 +37,11 @@ const bowlerListing = () => {
       {
         Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
         accessor: 'team_name',
+        Cell: ({row, cell}) => (
+          <a href={`/director/teams/${row.original.team_identifier}`}>
+            {cell.value}
+          </a>
+        ),
       },
       {
         Header: 'Position',
@@ -101,6 +79,8 @@ const bowlerListing = () => {
       },
     ], [identifier]);
 
+  const data = bowlers;
+
   // tell react-table which things we want to use (sorting, filtering)
   // and retrieve properties/functions they let us hook into
   const {
@@ -116,26 +96,6 @@ const bowlerListing = () => {
     useSortBy,
   );
 
-  let alertMessage = '';
-  // if (props.location.state && props.location.state.bowlerDeleteSuccess) {
-  //   alertMessage = (
-  //     <div className="col-12 alert alert-success alert-dismissible fade show" role="alert">
-  //       <span>
-  //         <strong>Success!</strong> Bowler deleted.
-  //       </span>
-  //       <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"/>
-  //     </div>
-  //   );
-  // }
-
-  if (!directorContext.tournament || loading) {
-    return (
-      <div className={classes.BowlerListing}>
-        <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
-      </div>
-    );
-  }
-  
   let list = '';
   if (data.length === 0) {
     list = (
@@ -146,7 +106,7 @@ const bowlerListing = () => {
   } else {
     list = (
       <div className={'table-responsive'}>
-        <table className={'table table-striped'} {...getTableProps}>
+        <table className={'table table-striped table-hover'} {...getTableProps}>
           <thead className={'table-light'}>
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -188,21 +148,10 @@ const bowlerListing = () => {
     setFilter('has_free_entry', criteria.has_free_entry)
   }
 
-  const ladder = [
-    {text: 'Tournaments', path: '/director/tournaments'},
-    {text: directorContext.tournament.name, path: `/director/tournaments/${directorContext.tournament.identifier}`},
-  ];
-
   return (
-    <div className={classes.BowlerList}>
-      <Breadcrumbs ladder={ladder} activeText={'Bowlers'}/>
-      <div className={'row'}>
-        {alertMessage}
-        <div className={'col'}>
-          <BowlerFilterForm onFilterApplication={filterThatData}/>
-          {list}
-        </div>
-      </div>
+    <div className={classes.BowlerListing}>
+      <BowlerFilterForm onFilterApplication={filterThatData}/>
+      {list}
     </div>
   );
 };

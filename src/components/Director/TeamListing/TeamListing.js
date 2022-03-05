@@ -65,7 +65,7 @@ const teamListing = ({teams}) => {
   } else {
     list = (
       <div className={'table-responsive'}>
-        <table className={'table table-striped'} {...getTableProps}>
+        <table className={'table table-striped table-hover'} {...getTableProps}>
           <thead className={'table-light'}>
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
