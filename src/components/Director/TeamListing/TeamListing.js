@@ -1,8 +1,7 @@
-import {useEffect, useState, useMemo} from "react";
-import axios from "axios";
+import {useMemo} from "react";
 import {useFilters, useSortBy, useTable} from "react-table";
 
-import {apiHost, lessThan} from "../../../utils";
+import {lessThan} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import TeamFilterForm from "../TeamFilterForm/TeamFilterForm";
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
@@ -11,7 +10,6 @@ import classes from './TeamListing.module.scss';
 
 const teamListing = ({teams}) => {
   const directorContext = useDirectorContext();
-  const [errorMessage, setErrorMessage] = useState(null);
 
   let identifier;
   if (directorContext && directorContext.tournament) {
@@ -22,7 +20,7 @@ const teamListing = ({teams}) => {
         Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
         accessor: 'name',
         Cell: ({row, value}) => (
-          <a href={`/director/tournaments/${identifier}/teams/${row.original.identifier}`}>
+          <a href={`/director/teams/${row.original.identifier}`}>
             {value}
           </a>
         )
@@ -106,24 +104,8 @@ const teamListing = ({teams}) => {
     }
   }
 
-  let error = '';
-  if (errorMessage) {
-    error = (
-      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
-        <i className={'bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-        <div className={'me-auto'}>
-          <strong>
-            Oh no!
-          </strong>
-          {' '}{errorMessage}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={classes.TeamListing}>
-      {error}
       <TeamFilterForm onFilterApplication={filterThatData}/>
       {list}
     </div>

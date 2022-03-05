@@ -55,6 +55,14 @@ const page = () => {
       });
   }, [identifier]);
 
+  useEffect(() => {
+    const {success} = router.query;
+    if (success === 'deleted') {
+      setSuccessMessage('The team has been eliminated.');
+      router.replace(router.pathname, null, { shallow: true });
+    }
+  });
+
   const newTeamSubmitted = (teamName) => {
     const requestConfig = {
       method: 'post',
@@ -118,8 +126,6 @@ const page = () => {
       </Card.Header>
       <Card.Body>
         <NewTeamForm submitted={newTeamSubmitted} />
-        {success}
-        {error}
       </Card.Body>
     </Card>
   );
@@ -142,6 +148,8 @@ const page = () => {
       <Breadcrumbs ladder={ladder} activeText={'Teams'}/>
       <div className={'row'}>
         <div className={'order-2 order-md-1 col'}>
+          {success}
+          {error}
           <TeamListing teams={teams} />
         </div>
         <div className={'order-1 order-md-2 col-12 col-md-4'}>
