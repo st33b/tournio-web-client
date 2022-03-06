@@ -27,7 +27,6 @@ const navigation = () => {
     const url = `${apiHost}/logout`;
     axios.delete(url)
       .then(response => {
-        console.log('We have been logged out from the server.')
       })
       .catch(error => {
         console.log('uhh...');

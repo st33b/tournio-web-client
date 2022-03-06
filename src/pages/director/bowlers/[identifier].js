@@ -349,6 +349,41 @@ const page = () => {
     </Card>
   );
 
+  const convertBowlerDataForPatch = (bowlerData) => {
+    return {
+      person_attributes: {
+        first_name: bowlerData.first_name,
+        last_name: bowlerData.last_name,
+        usbc_id: bowlerData.usbc_id,
+        igbo_id: bowlerData.igbo_id,
+        birth_month: bowlerData.birth_month,
+        birth_day: bowlerData.birth_day,
+        nickname: bowlerData.nickname,
+        phone: bowlerData.phone,
+        email: bowlerData.email,
+        address1: bowlerData.address1,
+        address2: bowlerData.address2,
+        city: bowlerData.city,
+        state: bowlerData.state,
+        country: bowlerData.country,
+        postal_code: bowlerData.postal_code,
+      },
+      additional_question_responses: convertAdditionalQuestionResponsesForPatch(bowlerData),
+    };
+  }
+
+  const convertAdditionalQuestionResponsesForPatch = (bowlerData) => {
+    const responses = [];
+    directorContext.tournament.additional_questions.forEach(aq => {
+      const key = aq.name;
+      responses.push({
+        name: key,
+        response: bowlerData[key] || '',
+      });
+    });
+    return responses;
+  }
+
   const updateSubmitHandler = (bowlerData) => {
     const requestConfig = {
       method: 'patch',
@@ -359,7 +394,7 @@ const page = () => {
         'Authorization': directorContext.token,
       },
       data: {
-        bowler: bowlerData,
+        bowler: convertBowlerDataForPatch(bowlerData),
       },
     }
     setLoading(true);
