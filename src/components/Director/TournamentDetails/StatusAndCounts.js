@@ -51,7 +51,7 @@ const statusAndCounts = () => {
       </ListGroup.Item>
       <ListGroup.Item className={'d-flex'}
                       action
-                      href={`/director/tournaments/${context.tournament.identifier}/free_entries`}>
+                      href={`/director/free_entries`}>
         Free Entries
         <Badge bg={'light'} text={'dark'} className={'ms-auto'}>
           {context.tournament.free_entry_count}

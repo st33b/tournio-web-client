@@ -8,7 +8,6 @@ import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLa
 import BowlerListing from "../../../components/Director/BowlerListing/BowlerListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import {apiHost} from "../../../utils";
-import TeamListing from "../../../components/Director/TeamListing/TeamListing";
 
 const page = () => {
   const router = useRouter();

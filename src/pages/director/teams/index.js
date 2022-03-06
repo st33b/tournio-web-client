@@ -109,7 +109,7 @@ const page = () => {
           </strong>
           {' '}{successMessage}
         </div>
-        <button type={"button"} className={"btn-close"} data-bs-dismiss={"alert"} aria-label={"Close"}></button>
+        <button type={"button"} className={"btn-close"} data-bs-dismiss={"alert"} aria-label={"Close"} />
       </div>
     );
   }
@@ -123,7 +123,7 @@ const page = () => {
           </strong>
           {' '}{errorMessage}
         </div>
-        <button type={"button"} className={"btn-close"} data-bs-dismiss={"alert"} aria-label={"Close"}></button>
+        <button type={"button"} className={"btn-close"} data-bs-dismiss={"alert"} aria-label={"Close"} />
       </div>
     );
   }
