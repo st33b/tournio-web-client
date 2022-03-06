@@ -176,16 +176,11 @@ const page = () => {
 
   const bowlerSummary = (
     <Card className={'mb-2'}>
+      <Card.Header as={'h3'}>
+        {bowler.display_name}
+      </Card.Header>
       <Card.Body>
         <dl className={'mb-0'}>
-          <div className={'row'}>
-            <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>
-              Name
-            </dt>
-            <dd className={'col'}>
-              {bowler.display_name}
-            </dd>
-          </div>
           <div className={'row'}>
             <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
             <dd className={'col'}>
@@ -267,7 +262,7 @@ const page = () => {
 
   let moveToTeamCard = (
     <Card className={'mb-3'}>
-      <Card.Header as={'h4'}>
+      <Card.Header as={'h5'} className={'fw-light'}>
         Move to another team
       </Card.Header>
       <Card.Body>
@@ -281,7 +276,7 @@ const page = () => {
 
     moveToTeamCard = (
       <Card className={'mb-3'}>
-        <Card.Header as={'h4'}>
+        <Card.Header as={'h5'} className={'fw-light'}>
           Move to another team
         </Card.Header>
         <Card.Body>
@@ -290,7 +285,7 @@ const page = () => {
               <option value={''}>Choose their new team</option>
               {options.map(t => <option key={t.identifier} value={t.identifier}>{t.name}</option>)}
             </select>
-            <Button variant={'outline-primary'}
+            <Button variant={'primary'}
                     className={'mt-3'}
                     disabled={newTeamFormData.destinationTeam === ''}
                     type={'submit'}>
@@ -304,7 +299,7 @@ const page = () => {
 
   const purchases = (
     <Card className={'mb-3'}>
-      <Card.Header as={'h4'}>
+      <Card.Header as={'h5'} className={'fw-light'}>
         Purchases
       </Card.Header>
       <ListGroup variant={'flush'}>
@@ -329,7 +324,7 @@ const page = () => {
 
   const ledgerEntries = (
     <Card className={'mb-3'}>
-      <Card.Header as={'h4'}>
+      <Card.Header as={'h5'} className={'fw-light'}>
         Ledger Entries
       </Card.Header>
       <ListGroup variant={'flush'}>
@@ -353,12 +348,6 @@ const page = () => {
       </ListGroup>
     </Card>
   );
-
-  const ladder = [
-    {text: 'Tournaments', path: '/director/tournaments'},
-    {text: directorContext.tournament.name, path: `/director/tournaments/${directorContext.tournament.identifier}`},
-    {text: 'Bowlers', path: `/director/bowlers`},
-  ];
 
   const updateSubmitHandler = (bowlerData) => {
     const requestConfig = {
@@ -398,11 +387,20 @@ const page = () => {
     bowlerName = bowler.display_name;
   }
 
+  const ladder = [
+    {text: 'Tournaments', path: '/director/tournaments'},
+    {text: directorContext.tournament.name, path: `/director/tournaments/${directorContext.tournament.identifier}`},
+    {text: 'Bowlers', path: `/director/bowlers`},
+  ];
+
   return (
     <div>
       <Breadcrumbs ladder={ladder} activeText={bowlerName}/>
       <Row>
         <Col md={8}>
+          {/*<h3>*/}
+          {/*  {bowlerName}*/}
+          {/*</h3>*/}
           {bowlerSummary}
           <BowlerDetails bowler={bowler}
                          bowlerUpdateSubmitted={updateSubmitHandler}
