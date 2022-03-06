@@ -23,7 +23,7 @@ const bowlerListing = ({bowlers}) => {
         accessor: (props) => props.last_name + ', ' + props.first_name,
         Cell: ({row, cell}) => {
           return (
-            <a href={`/director/tournaments/${identifier}/bowlers/${row.original.identifier}`}>
+            <a href={`/director/bowlers/${row.original.identifier}`}>
               {cell.value}
             </a>
           )

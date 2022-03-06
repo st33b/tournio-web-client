@@ -118,7 +118,7 @@ const teamDetails = ({team, teamUpdateSubmitted}) => {
       Header: 'Name',
       accessor: 'name',
       Cell: ({row, value}) => (
-        <a href={`/director/tournaments/${identifier}/bowlers/${row.original.identifier}`}>
+        <a href={`/director/bowlers/${row.original.identifier}`}>
           {value}
         </a>
       )
