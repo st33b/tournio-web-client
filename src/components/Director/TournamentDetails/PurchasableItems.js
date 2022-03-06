@@ -48,7 +48,7 @@ const purchasableItems = () => {
 
   return (
     <Card className={[classes.Card, classes.PurchasableItems].join(' ')}>
-      <Card.Header as={'h4'}>
+      <Card.Header as={'h5'} className={'fw-light'}>
         Purchasable Items
       </Card.Header>
       {Object.values(items).map((itemSet, i) => {

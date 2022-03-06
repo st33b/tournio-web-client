@@ -12,7 +12,7 @@ const configuration = () => {
 
   return (
     <Card className={classes.Card}>
-      <Card.Header as={'h4'}>
+      <Card.Header as={'h5'} className={'fw-light'}>
         Configuration
       </Card.Header>
       <Card.Body>

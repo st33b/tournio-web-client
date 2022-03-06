@@ -21,9 +21,11 @@ const registrationLayout = ({children, showCart}) => {
         </Container>
       </main>
 
-      <Container fluid={'md'}>
-        <Footer/>
-      </Container>
+      <footer>
+        <Container fluid={'md'}>
+          <Footer/>
+        </Container>
+      </footer>
     </div>
   )
 }

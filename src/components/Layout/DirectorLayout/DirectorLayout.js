@@ -21,9 +21,11 @@ const directorLayout = ({children}) => {
         </Container>
       </main>
 
-      <Container fluid={'lg'}>
-        <Footer/>
-      </Container>
+      <footer>
+        <Container fluid={'lg'}>
+          <Footer/>
+        </Container>
+      </footer>
     </div>
   )
 }

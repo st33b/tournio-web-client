@@ -106,7 +106,7 @@ const teamListing = ({teams}) => {
 
   return (
     <div className={classes.TeamListing}>
-      <TeamFilterForm onFilterApplication={filterThatData}/>
+      {!!data.length && <TeamFilterForm onFilterApplication={filterThatData}/>}
       {list}
     </div>
   );

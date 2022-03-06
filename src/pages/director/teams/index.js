@@ -130,7 +130,7 @@ const page = () => {
 
   const newTeam = (
     <Card>
-      <Card.Header as={'h4'}>
+      <Card.Header as={'h5'} className={'fw-light'}>
         New Team
       </Card.Header>
       <Card.Body>

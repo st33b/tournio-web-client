@@ -11,7 +11,7 @@ const basics = () => {
 
   return (
     <Card className={classes.Card}>
-      <Card.Header as={'h4'}>
+      <Card.Header as={'h5'} className={'fw-light'}>
         Basics
       </Card.Header>
       <Card.Body>

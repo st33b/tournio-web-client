@@ -12,7 +12,7 @@ const additionalQuestions = () => {
 
   return (
     <Card className={classes.Card}>
-      <Card.Header as={'h4'}>
+      <Card.Header as={'h5'} className={'fw-light'}>
         Additional Form Questions
       </Card.Header>
       <ListGroup variant={'flush'}>

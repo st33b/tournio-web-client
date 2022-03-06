@@ -158,7 +158,7 @@ const statusAndCounts = () => {
 
   return (
     <Card bg={bgColor} text={textColor} className={classes.Card + ' text-center'}>
-      <Card.Header as={'h4'}>
+      <Card.Header as={'h5'}>
         {context.tournament.status}
       </Card.Header>
       {counts}

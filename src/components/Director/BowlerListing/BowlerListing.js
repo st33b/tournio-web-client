@@ -150,7 +150,7 @@ const bowlerListing = ({bowlers}) => {
 
   return (
     <div className={classes.BowlerListing}>
-      <BowlerFilterForm onFilterApplication={filterThatData}/>
+      {!!data.length && <BowlerFilterForm onFilterApplication={filterThatData}/>}
       {list}
     </div>
   );
