@@ -156,7 +156,7 @@ const tournamentDetails = ({tournament}) => {
       <div className={classes.TestingEnvironment}>
         <h3>Current test setup</h3>
         <dl>
-          {tournament.testing_environment.settings.map((setting) => {
+          {Object.values(tournament.testing_environment.settings).map(setting => {
             return (
               <div key={setting.name} className="row">
                 <dt className="col-4 text-end pe-1">

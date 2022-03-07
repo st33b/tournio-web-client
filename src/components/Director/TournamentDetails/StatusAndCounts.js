@@ -9,7 +9,7 @@ import {apiHost} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import classes from './TournamentDetails.module.scss';
 
-const statusAndCounts = () => {
+const statusAndCounts = ({testEnvironmentUpdated}) => {
   const context = useDirectorContext();
   if (!context || !context.tournament) {
     return '';
@@ -88,6 +88,35 @@ const statusAndCounts = () => {
       });
   }
 
+  const testEnvFormInitialData = {
+    registration_period: 'regular',
+  }
+  if (context.tournament.state === 'testing') {
+    Object.keys(context.tournament.available_conditions).forEach(name => {
+      testEnvFormInitialData[name] = context.tournament.testing_environment.settings[name].value;
+    });
+  }
+
+  const [testEnvFormData, setTestEnvFormData] = useState(testEnvFormInitialData);
+
+  const testSettingOptionClicked = (event) => {
+    const settingName = event.target.name;
+    const newValue = event.target.value;
+    const newForm = {...testEnvFormData};
+    newForm[settingName] = newValue;
+    setTestEnvFormData(newForm);
+  }
+
+  const [successMessage, setSuccessMessage] = useState(null);
+  const testEnvSaveSuccess = () => {
+    setSuccessMessage('Testing environment updated.');
+  }
+
+  const testEnvSaved = (event) => {
+    event.preventDefault();
+    testEnvironmentUpdated(testEnvFormData, testEnvSaveSuccess);
+  }
+
   let clearTestData = '';
   let testingStatusContent = '';
   let bgColor = '';
@@ -115,25 +144,59 @@ const statusAndCounts = () => {
           </Card.Text>
         </Card.Body>
       )
+      let success = '';
+      if (successMessage) {
+        success = (
+          <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
+            <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
+            <div className={'me-auto'}>
+              {successMessage}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" />
+            </div>
+          </div>
+        );
+      }
       testingStatusContent = (
-        <Card.Body className={'bg-white text-dark'}>
-          <Card.Title>
+        <Card.Body className={'bg-white text-dark border-bottom border-top'}>
+          <Card.Title as={'h6'} className={'fw-light mb-3'}>
             Testing Environment
           </Card.Title>
-          <dl>
-            {context.tournament.testing_environment.settings.map((condition) => {
-              return (
-                <div className={'row'} key={condition.name}>
-                  <dt className={'col-6 text-end'}>
-                    {condition.display_name}
-                  </dt>
-                  <dd className={'col text-start'}>
-                    {condition.display_value}
-                  </dd>
+
+          <form onSubmit={testEnvSaved}>
+            {Object.values(context.tournament.testing_environment.settings).map(setting => (
+              <div className={'row text-start d-flex align-items-center py-3'} key={setting.name}>
+                <label className={'col-6 text-end fst-italic'}>
+                  {setting.display_name}
+                </label>
+                <div className={'col'}>
+                  {context.tournament.available_conditions[setting.name].options.map(option => (
+                    <div className={'form-check'} key={option.value}>
+                      <input type={'radio'}
+                             name={setting.name}
+                             id={`${setting.name}-${setting.value}`}
+                             className={'form-check-input'}
+                             value={option.value}
+                             checked={testEnvFormData[setting.name] === option.value}
+                             onChange={(event) => testSettingOptionClicked(event)}
+                      />
+                      <label className={'form-check-label'}
+                             htmlFor={`${setting.name}-${setting.value}`}>
+                        {option.display_value}
+                      </label>
+                    </div>
+                  ))}
                 </div>
-              );
-            })}
-          </dl>
+              </div>
+            ))}
+            <div className={'row mt-3'}>
+              <div className={'col-12'}>
+                <button type={'submit'} className={'btn btn-primary'}>
+                  Save
+                </button>
+                {success}
+              </div>
+            </div>
+          </form>
         </Card.Body>
       )
       break;

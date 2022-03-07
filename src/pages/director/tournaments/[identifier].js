@@ -83,7 +83,40 @@ const tournament = () => {
       });
   }
 
-  return <TournamentDetails stateChangeInitiated={stateChangeInitiated} />;
+  const testEnvironmentUpdated = (testEnvFormData, onSuccess) => {
+    const requestConfig = {
+      method: 'patch',
+      url: `${apiHost}/director/tournaments/${identifier}/testing_environment`,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': directorContext.token,
+      },
+      data: {
+        testing_environment: {
+          conditions: testEnvFormData,
+        },
+      },
+    };
+    axios(requestConfig)
+      .then(response => {
+        const tournament = {...directorContext.tournament}
+        tournament.testing_environment = response.data;
+        directorContext.setTournament(tournament);
+        onSuccess();
+      })
+      .catch(error => {
+        if (error.response && error.response.status === 401) {
+          directorContext.logout();
+          router.push('/director/login');
+        }
+        console.log('Whoops');
+        console.log(error);
+      });
+  }
+
+  return <TournamentDetails stateChangeInitiated={stateChangeInitiated}
+                            testEnvironmentUpdated={testEnvironmentUpdated} />;
 }
 
 tournament.getLayout = function getLayout(page) {

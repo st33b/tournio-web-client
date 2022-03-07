@@ -11,7 +11,7 @@ import Contacts from "./Contacts";
 import StateChangeButton from "./StateChangeButton";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
-const tournamentDetails = ({stateChangeInitiated}) => {
+const tournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated}) => {
   const context = useDirectorContext();
   if (!context || !context.tournament) {
     return <div className={classes.TournamentDetails}>
@@ -32,7 +32,7 @@ const tournamentDetails = ({stateChangeInitiated}) => {
         </div>
 
         <div className={'col-12 col-md-6 col-lg-4'}>
-          <StatusAndCounts />
+          <StatusAndCounts testEnvironmentUpdated={testEnvironmentUpdated}/>
           <PurchasableItems />
         </div>
 
