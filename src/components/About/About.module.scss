@@ -1,0 +1,22 @@
+.About {
+  padding-top: 0.5rem;
+  img {
+    max-width: 175px;
+  }
+  @media (min-width: 576px) {
+    img {
+      max-width: 300px;
+    }
+  }
+  @media (min-width: 768px) {
+    img {
+      max-width: 400px;
+    }
+  }
+  @media (min-width: 1200px) {
+    img {
+      max-width: 500px;
+    }
+  }
+
+}

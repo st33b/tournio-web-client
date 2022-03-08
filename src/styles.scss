@@ -4,69 +4,6 @@ html {
   font-size: 1rem;
 }
 
-h1 { font-size: 2rem; }
-h2 { font-size: 1.9rem; }
-h3 { font-size: 1.8rem; }
-h4 { font-size: 1.7rem; }
-h5 { font-size: 1.6rem; }
-h6 { font-size: 1.5rem; }
-
-@media (min-width: 576px) {
-  .navbar-brand {
-    font-size: 1.4rem;
-    margin-left: 4rem;
-  }
-  h1 { font-size: 1.65rem; }
-  h2 { font-size: 1.55rem; }
-  h3 { font-size: 1.45rem; }
-  h4 { font-size: 1.35rem; }
-  h5 { font-size: 1.25rem; }
-  h6 { font-size: 1.1rem; }
-}
-@media (min-width: 768px) {
-  .navbar-brand {
-    font-size: 1.5rem;
-    margin-left: 4rem;
-  }
-  h1 { font-size: 2rem; }
-  h2 { font-size: 1.8rem; }
-  h3 { font-size: 1.6rem; }
-  h4 { font-size: 1.4rem; }
-  h5 { font-size: 1.3rem; }
-  h6 { font-size: 1.2rem; }
-}
-
 .line {
   display: block;
-}
-
-.display-1 {
-  font-size: calc(1.2rem + 4vw);
-}
-.display-4 {
-  font-size: calc(1.4rem + 4vw);
-}
-@media (min-width: 576px) {
-  .display-1 {
-    font-size: calc(1.4rem + 4vw);
-  }
-  .display-4 {
-    font-size: calc(1.8rem + 4vw);
-  }
-}
-@media (min-width: 768px) {
-  .display-1 {
-    font-size: calc(2.2rem + 4vw);
-  }
-  .display-4 {
-    font-size: calc(2rem + 4vw);
-  }
-}
-@media (min-width: 992px) {
-  .display-1 {
-    font-size: 6rem;
-  }
-  .display-4 {
-    font-size: 3rem;
-  }
 }
