@@ -23,15 +23,14 @@ export const commerceReducer = (state, action) => {
     case actionTypes.TOURNAMENT_DETAILS_RETRIEVED:
       return updateObject(state, {
         tournament: action.tournament,
-        bowler: null,
         freeEntry: null,
         error: null,
       });
     case actionTypes.TEAM_DETAILS_RETRIEVED:
       return updateObject(state, {
-        bowler: null,
         freeEntry: null,
         error: null,
+        bowler: null,
       })
     case actionTypes.BOWLER_DETAILS_RETRIEVED:
       let unpaidItems = action.bowler.unpaid_purchases.slice(0);

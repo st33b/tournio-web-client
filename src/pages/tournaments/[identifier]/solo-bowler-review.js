@@ -33,7 +33,7 @@ const page = () => {
 
   const submitRegistration = () => {
     submitNewTeamRegistration(entry.tournament,
-      '',
+      'A Solo Bowler',
       entry.bowlers,
       soloRegistrationSuccess,
       soloRegistrationFailure);

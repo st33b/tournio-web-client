@@ -116,7 +116,7 @@ const page = () => {
     axios(requestConfig)
       .then(response => {
         commerceDispatch(purchaseCompleted(response.data));
-        fetchBowlerDetails(identifier, commerceDispatch);
+        fetchBowlerDetails(identifier, commerce, commerceDispatch);
         router.push(`/bowlers/${identifier}?success=purchase`);
       })
       .catch(error => {
@@ -143,7 +143,7 @@ const page = () => {
       <Row className={'pt-2'}>
         <Col md={2} className={'d-none d-md-block'}>
           <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
-            <TournamentLogo/>
+            <TournamentLogo tournament={commerce.tournament}/>
           </a>
         </Col>
         <Col md={10} className={'d-flex flex-column justify-content-center text-center text-md-start'}>

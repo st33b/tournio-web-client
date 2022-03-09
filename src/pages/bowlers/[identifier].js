@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
-import {fetchBowlerDetails} from "../../utils";
+import {fetchBowlerDetails, retrieveTournamentDetails} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
@@ -14,38 +14,31 @@ const page = () => {
   const {commerce, commerceDispatch} = useRegistrationContext();
   const {identifier} = router.query;
 
-  const [loading, setLoading] = useState(true);
-  const [bowler, setBowler] = useState(null);
-
   // fetch the bowler details
   useEffect(() => {
     if (identifier === undefined) {
       return;
     }
 
-    if (commerce.bowler && commerce.bowler.identifier === identifier) {
-      setBowler(commerce.bowler);
-      setLoading(false);
-    } else {
-      fetchBowlerDetails(identifier, commerceDispatch);
+    if (!commerce.bowler || commerce.bowler.identifier !== identifier) {
+      fetchBowlerDetails(identifier, commerce, commerceDispatch);
     }
   }, [identifier, commerce]);
 
-  if (loading) {
-    return (
-      <div>
-        <p>
-          Retrieving bowler details...
-        </p>
-      </div>
-    );
-  }
+  // ensure that the tournament in context matches the bowler's
+  useEffect(() => {
+    if (identifier === undefined || !commerce) {
+      return;
+    }
+    if (!commerce.bowler || !commerce.tournament) {
+      return;
+    }
+    if (commerce.bowler.tournament.identifier !== commerce.tournament.identifier) {
+      retrieveTournamentDetails(commerce.bowler.tournament.identifier, commerceDispatch);
+    }
+  }, [identifier, commerce]);
 
-  if (!bowler) {
-    return '';
-  }
-
-  if (!commerce) {
+  if (!commerce || !commerce.bowler) {
     return '';
   }
 
@@ -77,7 +70,7 @@ const page = () => {
       <Row className={'pt-2'}>
         <Col md={2} className={'d-none d-md-block'}>
           <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
-            <TournamentLogo/>
+            <TournamentLogo tournament={commerce.tournament}/>
           </a>
         </Col>
         <Col md={10} className={'d-flex flex-column justify-content-center text-center text-md-start'}>
@@ -90,7 +83,7 @@ const page = () => {
             Bowler: {name}
           </h4>
           <p className={'p-0 m-0'}>
-            <a href={`/teams/${bowler.team_identifier}`}>
+            <a href={`/teams/${commerce.bowler.team_identifier}`}>
               <i className={'bi-arrow-left pe-2'} aria-hidden={true}/>
               back to team
             </a>

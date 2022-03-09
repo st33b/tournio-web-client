@@ -1,5 +1,5 @@
 import axios from "axios";
-import {bowlerCommerceDetailsRetrieved} from "./store/actions/registrationActions";
+import {bowlerCommerceDetailsRetrieved, tournamentDetailsRetrieved} from "./store/actions/registrationActions";
 
 export const updateObject = (oldObject, updatedProperties) => {
   return {
@@ -23,6 +23,26 @@ export const lessThan = (rows, id, filterValue) => {
 };
 
 export const apiHost = `${process.env.NEXT_PUBLIC_API_PROTOCOL}://${process.env.NEXT_PUBLIC_API_HOSTNAME}:${process.env.NEXT_PUBLIC_API_PORT}`;
+
+export const retrieveTournamentDetails = (identifier, ...dispatches) => {
+  const requestConfig = {
+    method: 'get',
+    url: `${apiHost}/tournaments/${identifier}`,
+    headers: {
+      'Accept': 'application/json',
+    }
+  }
+  axios(requestConfig)
+    .then(response => {
+      dispatches.map(dispatch => {
+        dispatch(tournamentDetailsRetrieved(response.data));
+      });
+    })
+    .catch(error => {
+      // Let's dispatch a failure, because that's a big deal
+    });
+
+}
 
 export const submitNewTeamRegistration = (tournament, teamName, bowlers, onSuccess, onFailure) => {
   const postData = convertTeamDataForServer(tournament, teamName, bowlers);
@@ -123,7 +143,7 @@ const convertAdditionalQuestionResponsesForPost = (tournament, bowler) => {
 
 ////////////////////////////////////////////////
 
-export const fetchBowlerDetails = (bowlerIdentifier, dispatch) => {
+export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, commerceDispatch) => {
   const requestConfig = {
     method: 'get',
     url: `${apiHost}/bowlers/${bowlerIdentifier}`,
@@ -133,10 +153,24 @@ export const fetchBowlerDetails = (bowlerIdentifier, dispatch) => {
   }
   axios(requestConfig)
     .then(response => {
-      dispatch(bowlerCommerceDetailsRetrieved(response.data));
+      const bowlerData = response.data.bowler;
+      const availableItems = response.data.available_items;
+      commerceDispatch(bowlerCommerceDetailsRetrieved(bowlerData, availableItems));
+
+      // Make sure the tournament in context matches that of the bowler.
+      // If it doesn't, retrieve the bowler's tournament so we can put it
+      // into context.
+      if (commerceObj.tournament) {
+        const contextTournamentId = commerceObj.tournament.identifier;
+        const bowlerTournamentId = bowlerData.tournament.identifier;
+
+        if (contextTournamentId !== bowlerTournamentId) {
+          retrieveTournamentDetails(bowlerTournamentId, commerceDispatch);
+        }
+      }
     })
     .catch(error => {
       // Display some kind of error message
+      console.log('Whoops!');
     });
-
 }

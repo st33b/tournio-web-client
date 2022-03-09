@@ -107,11 +107,11 @@ export const soloBowlerInfoUpdated = (bowlerInfo) => {
   }
 }
 
-export const bowlerCommerceDetailsRetrieved = (data) => {
+export const bowlerCommerceDetailsRetrieved = (bowler, availableItems) => {
   return {
     type: actionTypes.BOWLER_DETAILS_RETRIEVED,
-    bowler: data.bowler,
-    availableItems: data.available_items,
+    bowler: bowler,
+    availableItems: availableItems,
   }
 }
 

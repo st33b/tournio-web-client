@@ -1,13 +1,9 @@
 import {ListGroup} from "react-bootstrap";
 
-import {useRegistrationContext} from "../../../store/RegistrationContext";
-
 import classes from './Contacts.module.scss';
 
-const contacts = () => {
-  const {entry} = useRegistrationContext();
-
-  if (!entry.tournament) {
+const contacts = ({tournament}) => {
+  if (!tournament) {
     return '';
   }
 
@@ -17,7 +13,7 @@ const contacts = () => {
         Contacts
       </h5>
       <ListGroup variant={'flush'}>
-        {entry.tournament.contacts.map((c, i) => {
+        {tournament.contacts.map((c, i) => {
           return (
             <ListGroup.Item className={classes.ContactItem} key={i}>
               <p className={classes.Name}>

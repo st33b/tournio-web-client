@@ -8,6 +8,7 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import TeamListing from "../../../components/Registration/TeamListing/TeamListing";
 import {teamListRetrieved} from "../../../store/actions/registrationActions";
+import Contacts from "../../../components/Registration/Contacts/Contacts";
 
 const page = () => {
   const { entry, dispatch } = useRegistrationContext();
@@ -59,9 +60,10 @@ const page = () => {
       <Row>
         <Col md={4} className={'d-none d-md-block'}>
           <a href={`/tournaments/${entry.tournament.identifier}`} title={'To tournament page'}>
-            <TournamentLogo />
-            <h4 className={'text-center'}>{entry.tournament.name}</h4>
+            <TournamentLogo tournament={entry.tournament}/>
+            <h4 className={'text-center py-3'}>{entry.tournament.name}</h4>
           </a>
+          <Contacts tournament={entry.tournament}/>
         </Col>
         <Col>
           <a href={`/tournaments/${entry.tournament.identifier}`} title={'To tournament page'}>

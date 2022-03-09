@@ -37,7 +37,7 @@ const tournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated}) => {
         </div>
 
         <div className={'col-12 col-md-6 col-lg-4'}>
-          <TournamentLogo />
+          <TournamentLogo tournament={context.tournament} />
           <StateChangeButton stateChangeInitiated={stateChangeInitiated} />
           <Contacts />
         </div>
