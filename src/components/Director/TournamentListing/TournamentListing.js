@@ -23,7 +23,7 @@ const tournamentListing = () => {
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  let errorMessage = '';
+  const [errorMessage, setErrorMessage] = useState();
 
   useEffect(() => {
     if (!directorContext.user) {
@@ -43,7 +43,15 @@ const tournamentListing = () => {
           setLoading(false);
         })
         .catch(error => {
-          errorMessage = error;
+          if (error.response) {
+            if (error.response.status === 401) {
+              directorContext.logout();
+              router.push('/director/login');
+            }
+            setErrorMessage(error.statusText);
+          } else {
+            setErrorMessage('An unknown error occurred!');
+          }
           setLoading(false);
         });
     }

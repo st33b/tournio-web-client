@@ -1,49 +1,12 @@
-import {useState, useEffect, useMemo} from "react";
-import {useTable, useSortBy} from 'react-table';
-
-import axios from "axios";
-
-import {Button, Card, Col, Row, Table} from "react-bootstrap";
-
-import {apiHost} from "../../../utils";
-import {useDirectorContext} from '../../../store/DirectorContext';
+import {Col, Row} from "react-bootstrap";
 
 import classes from './UserListing.module.scss';
 
-const userListing = () => {
-  const directorContext = useDirectorContext();
-
-  const theUrl = `${apiHost}/director/users`;
-  const requestConfig = {
-    headers: {
-      'Accept': 'application/json',
-      'Authorization': directorContext.token,
-    },
-  }
-
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  let errorMessage = '';
-
-  useEffect(() => {
-    if (data.length === 0) {
-      axios.get(theUrl, requestConfig)
-        .then(response => {
-          const users = response.data;
-          setData(users);
-          setLoading(false);
-        })
-        .catch(error => {
-          errorMessage = error;
-          setLoading(false);
-        });
-    }
-  });
-
+const userListing = ({users}) => {
   let list = '';
-  if (loading) {
+  if (!users) {
     list = <p>Retrieving users...</p>;
-  } else if (data.length === 0) {
+  } else if (users.length === 0) {
     list = <p>No users to display.</p>;
   } else {
     list = (
@@ -63,7 +26,7 @@ const userListing = () => {
           </tr>
           </thead>
           <tbody>
-          {data.map((row) => {
+          {users.map((row) => {
             return (
               <tr key={row.identifier}>
                 <td>
@@ -88,15 +51,6 @@ const userListing = () => {
 
   return (
     <div className={classes.UserListing}>
-      {errorMessage && (
-        <Row>
-          <Col>
-            <p className={'text-danger'}>
-              {errorMessage}
-            </p>
-          </Col>
-        </Row>
-      )}
       <Row>
         <Col>
           {list}

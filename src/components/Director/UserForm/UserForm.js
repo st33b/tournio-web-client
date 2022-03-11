@@ -1,14 +1,13 @@
-import {useRef, useState, useEffect} from "react";
-import {Alert, Button, Card, FloatingLabel, Form, FormGroup} from "react-bootstrap";
-import axios from "axios";
+import {useState, useEffect} from "react";
+import {Alert, Button, Card, Form, FormGroup} from "react-bootstrap";
 import {useRouter} from "next/router";
 
-import {apiHost} from "../../../utils";
+import {directorApiRequest} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './UserForm.module.scss';
 
-const userForm = ({user}) => {
+const userForm = ({user, tournaments, userDeleteInitiated}) => {
   const directorContext = useDirectorContext();
   const router = useRouter();
 
@@ -21,98 +20,126 @@ const userForm = ({user}) => {
   const initialState = {
     fields: {
       email: '',
-      role: 'director',
+      role: '',
       tournamentIds: [],
     },
-    valid: true,
+    valid: false,
     touched: false,
+  };
+
+  const deleteHandler = (event) => {
+    event.preventDefault();
+
+    // ...
+
+    userDeleteInitiated();
   }
 
   let areWeCreating = true;
+  let deleteButton = '';
   if (user) {
     areWeCreating = false;
     isSelf = user.identifier === directorContext.user.identifier;
 
-    initialState.fields.email = user.email;
-    initialState.fields.role = user.role;
-    initialState.fields.tournamentIds = user.tournaments.map(t => t.id);
-
-    if (isSelf) {
-      delete initialState.fields.role;
-      delete initialState.fields.tournamentIds;
-    }
-
     formTitle = 'User Details';
     submitButtonText = 'Update';
     submittingButtonText = 'Updating...';
+
+    if (!isSelf) {
+      deleteButton = (
+        <Card className={'mt-3'}>
+          <Card.Body className={'text-center'}>
+            <form onSubmit={deleteHandler}>
+              <Button variant={'danger'}
+                      type={'submit'}
+              >
+                Delete User
+              </Button>
+            </form>
+          </Card.Body>
+        </Card>
+      );
+    }
   }
 
-  const emailInputRef = useRef();
-  const roleInputRef = useRef();
-  const tournamentsInputRef = useRef();
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [tournaments, setTournaments] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userFormData, setUserFormData] = useState(initialState);
   const [banner, setBanner] = useState(null);
 
-  // Retrieve list of available tournaments
+  if (!tournaments) {
+    return 'Retrieving list of tournaments...';
+  }
+
+  // If we're editing an existing user, then put the existing user's values into the form
   useEffect(() => {
-    const theUrl = `${apiHost}/director/tournaments?upcoming`;
-    const requestConfig = {
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': directorContext.token,
-      },
+    if (!user) {
+      return;
     }
-    setIsLoading(true);
-    axios.get(theUrl, requestConfig)
-      .then(response => {
-        setTournaments(response.data);
-        setIsLoading(false);
-      })
-      .catch(error => {
-        setIsLoading(false);
-        if (error.response.status === 401) {
-          directorContext.logout();
-          router.push('/director/login');
-        }
-      });
-  }, []);
+
+    const newUserFormData = {...userFormData};
+
+    newUserFormData.fields.email = user.email;
+    newUserFormData.fields.role = user.role;
+    newUserFormData.fields.tournamentIds = user.tournaments.map(t => t.id);
+
+    if (isSelf) {
+      delete newUserFormData.fields.role;
+      delete newUserFormData.fields.tournamentIds;
+    }
+
+    setUserFormData(newUserFormData);
+  }, [user]);
+
+  const onSubmitSuccess = (data) => {
+    setIsSubmitting(false);
+    setBanner(<Alert variant={'success'}
+                     className={'mt-3 mb-0'}>{areWeCreating ? 'User has been created!' : 'User details updated.'}</Alert>);
+
+    // Update the touched attribute in the userDataForm back to false.
+    const updatedForm = {...userFormData};
+    updatedForm.fields = {...userFormData.fields};
+    updatedForm.touched = false;
+    setUserFormData(updatedForm);
+
+    // Call a passed-in "new user created" or "user updated" function
+    // so that our parent page can update accordingly, if desired.
+  }
+
+  const onSubmitFailure = (data) => {
+    setIsSubmitting(false);
+    setBanner(<Alert variant={'danger'} className={'mt-3'}>Failed to save. {data.error}</Alert>);
+  }
 
   const submitHandler = (event) => {
     event.preventDefault();
 
-    const enteredEmail = emailInputRef.current.value;
+    const enteredEmail = userFormData.fields.email;
 
-    let url = `${apiHost}/director/users`;
+    let uri = `/director/users`;
     let method = 'post';
     const userData = {
       email: enteredEmail,
     }
 
     if (!areWeCreating) {
-      url += '/' + user.identifier;
+      uri += `/${user.identifier}`;
       method = 'patch';
     }
 
     if (!isSelf) {
-      const enteredRole = roleInputRef.current.value;
+      const enteredRole = userFormData.fields.role;
 
       const tournamentIds = [];
-      for (const option of tournamentsInputRef.current.selectedOptions) {
-        tournamentIds.push(option.value);
+      for (const option of userFormData.fields.tournamentIds) {
+        tournamentIds.push(option);
       }
       userData.role = enteredRole;
       userData.tournament_ids = tournamentIds;
     }
 
     const requestConfig = {
-      url: url,
       headers: {
-        'Accept': 'application/json',
-        'Authorization': directorContext.token,
+        'Content-Type': 'application/json',
       },
       method: method,
       data: {
@@ -121,29 +148,14 @@ const userForm = ({user}) => {
     }
 
     setIsSubmitting(true);
-    axios(requestConfig)
-      .then(response => {
-        setIsSubmitting(false);
-        setBanner(<Alert variant={'success'}
-                         className={'mt-3'}>{areWeCreating ? 'User has been created!' : 'User details updated.'}</Alert>);
-
-        // Update the touch attribute in the userDataForm back to false.
-        const updatedForm = {...userFormData};
-        updatedForm.fields = {...userFormData.fields};
-        updatedForm.touched = false;
-        setUserFormData(updatedForm);
-
-        // Call a passed-in "new user created" or "user updated" function
-        // so that our parent page can update accordingly, if desired.
-      })
-      .catch(error => {
-        setIsSubmitting(false);
-        if (error.response.status === 401) {
-          directorContext.logout();
-          router.push('/director/login');
-        }
-        setBanner(<Alert variant={'danger'} className={'mt-3'}>Failed for some reason. :(</Alert>);
-      });
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: onSubmitSuccess,
+      onFailure: onSubmitFailure,
+    });
   }
 
   const inputChangedHandler = (event, elementId) => {
@@ -160,7 +172,7 @@ const userForm = ({user}) => {
     // Value of Tournament IDs element is handled differently than the others
     if (elementId === 'tournamentIds') {
       const tournamentIds = [];
-      for (const option of tournamentsInputRef.current.selectedOptions) {
+      for (const option of event.target.selectedOptions) {
         tournamentIds.push(option.value);
       }
       updatedForm.fields.tournamentIds = tournamentIds;
@@ -175,80 +187,6 @@ const userForm = ({user}) => {
     setUserFormData(updatedForm);
   }
 
-  let whatToDisplay = 'Retrieving list of tournaments...';
-  if (!isLoading) {
-    whatToDisplay = (
-      <Form noValidate onSubmit={submitHandler} validated={userFormData.touched}>
-        <FormGroup controlId={'emailAddress'} className={'mb-3'}>
-          <Form.Label>
-            Email Address
-          </Form.Label>
-          <Form.Control type={'email'}
-                        required
-                        value={userFormData.fields.email}
-                        placeholder={'name@domain.com'}
-                        onChange={(event) => inputChangedHandler(event, 'email')}
-                        ref={emailInputRef}/>
-          <Form.Control.Feedback type={'invalid'}>
-            Gotta have a valid email address.
-          </Form.Control.Feedback>
-        </FormGroup>
-        {!isSelf && (
-          <FormGroup controlId={'role'} className={'mb-3'}>
-            <Form.Label>
-              Role
-            </Form.Label>
-            <Form.Select name={'role'}
-                         ref={roleInputRef}
-                         onChange={(event) => inputChangedHandler(event, 'role')}
-                         defaultValue={userFormData.fields.role}>
-              <option value={'superuser'}>
-                Superuser
-              </option>
-              <option value={'director'}>
-                Director
-              </option>
-              <option value={'unpermitted'}>
-                No role yet
-              </option>
-            </Form.Select>
-          </FormGroup>
-        )}
-        {!isSelf && (
-          <FormGroup controlId={'tournamentIds'}>
-            <Form.Label>
-              Tournament(s)
-            </Form.Label>
-            <Form.Select name={'tournamentIds'}
-                         multiple
-                         ref={tournamentsInputRef}
-                         htmlSize={Math.min(10, tournaments.length)}
-                         onChange={(event) => inputChangedHandler(event, 'tournamentIds')}
-                         defaultValue={userFormData.fields.tournamentIds}>
-              {tournaments.map((t) => {
-                return (
-                  <option key={t.identifier} value={t.id}>
-                    {t.name} ({t.year})
-                  </option>
-                );
-              })}
-            </Form.Select>
-          </FormGroup>
-          )}
-        <div className={classes.Actions}>
-          {!isSubmitting && (
-            <Button variant={'primary'}
-                    type={'submit'}
-                    disabled={!userFormData.touched || !userFormData.valid}>
-              {submitButtonText}
-            </Button>
-          )}
-          {isSubmitting && <Button variant={'secondary'} disabled={true}>{submittingButtonText}</Button>}
-        </div>
-        {banner}
-      </Form>
-    );
-  }
   return (
     <div className={classes.UserForm}>
       <Card className={classes.Card}>
@@ -258,9 +196,74 @@ const userForm = ({user}) => {
           </Card.Title>
         </Card.Header>
         <Card.Body>
-          {whatToDisplay}
+          <Form noValidate onSubmit={submitHandler} validated={userFormData.touched}>
+            <FormGroup controlId={'emailAddress'} className={'mb-3'}>
+              <Form.Label>
+                Email Address
+              </Form.Label>
+              <Form.Control type={'email'}
+                            required
+                            value={userFormData.fields.email}
+                            placeholder={'name@domain.com'}
+                            onChange={(event) => inputChangedHandler(event, 'email')}
+              />
+              <Form.Control.Feedback type={'invalid'}>
+                Gotta have a valid email address.
+              </Form.Control.Feedback>
+            </FormGroup>
+            {!isSelf && (
+              <FormGroup controlId={'role'} className={'mb-3'}>
+                <Form.Label>
+                  Role
+                </Form.Label>
+                <Form.Select name={'role'}
+                             onChange={(event) => inputChangedHandler(event, 'role')}
+                             value={userFormData.fields.role}>
+                  {['superuser', 'director', 'unpermitted'].map((role) => (
+                    <option value={role}
+                            key={role}
+                    >
+                      {role}
+                    </option>
+                  ))};
+                </Form.Select>
+              </FormGroup>
+            )}
+            {!isSelf && (
+              <FormGroup controlId={'tournamentIds'}>
+                <Form.Label>
+                  Tournament(s)
+                </Form.Label>
+                <Form.Select name={'tournamentIds'}
+                             multiple
+                             htmlSize={Math.min(10, tournaments.length)}
+                             onChange={(event) => inputChangedHandler(event, 'tournamentIds')}
+                             value={userFormData.fields.tournamentIds}>
+                  {tournaments.map((t) => {
+                    return (
+                      <option key={t.identifier} value={t.id}>
+                        {t.name} ({t.year})
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              </FormGroup>
+            )}
+            <div className={classes.Actions}>
+              {!isSubmitting && (
+                <Button variant={'primary'}
+                        type={'submit'}
+                        disabled={!userFormData.touched || !userFormData.valid}>
+                  {submitButtonText}
+                </Button>
+              )}
+              {isSubmitting && <Button variant={'secondary'} disabled={true}>{submittingButtonText}</Button>}
+            </div>
+            {banner}
+          </Form>
         </Card.Body>
       </Card>
+      {deleteButton}
     </div>
   );
 }

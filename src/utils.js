@@ -174,3 +174,35 @@ export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, commerceDispat
       console.log('Whoops!');
     });
 }
+
+////////////////////////////////////////////////////
+
+export const directorApiRequest = ({uri, requestConfig, context, router, onSuccess = null, onFailure = null}) => {
+  const url = `${apiHost}${uri}`;
+  const config = {...requestConfig};
+  config.url = url;
+  config.headers = {...requestConfig.headers}
+  config.headers['Accept'] = 'application/json';
+  config.headers['Authorization'] = context.token;
+  config.validateStatus = (status) => { return status < 500 }
+  axios(config)
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        onSuccess(response.data);
+      } else if (response.status === 401) {
+        context.logout();
+        router.push('/director/login');
+      } else {
+        onFailure(response.data);
+      }
+    })
+    .catch(error => {
+      if (error.request) {
+        console.log('No response was received.');
+        onFailure({error: 'The server did not respond'});
+      } else {
+        console.log('Exceptional error', error.message);
+        onFailure({error: error.message});
+      }
+    });
+}

@@ -2,10 +2,16 @@
   .BrandWrapper {
     line-height: 2;
     margin-left: 0.5rem;
+    .Brand {
+
+    }
   }
   @media (min-width: 768px) {
     .BrandWrapper {
       background: url('../../../images/bowling.svg') no-repeat left top;
+      .Brand {
+        margin-left: 4rem;
+      }
     }
   }
 }

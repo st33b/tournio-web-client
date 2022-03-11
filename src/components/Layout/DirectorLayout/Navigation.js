@@ -41,7 +41,7 @@ const navigation = () => {
     <div className={classes.Navigation}>
       <Navbar variant={'dark'} bg={'dark'}>
         <div className={classes.BrandWrapper}>
-          <Navbar.Brand href={'/director'}>
+          <Navbar.Brand href={'/director'} className={classes.Brand}>
             <div className={'d-none d-sm-inline'}>
               Tournament Director
             </div>
