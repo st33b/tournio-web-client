@@ -1,5 +1,3 @@
-
-
 import classes from './TeamListing.module.scss';
 
 const teamListing = ({teams, caption}) => {

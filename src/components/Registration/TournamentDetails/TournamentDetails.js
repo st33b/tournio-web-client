@@ -1,9 +1,10 @@
 import {useRouter} from "next/router";
 import {Card, Col, ListGroup, Row} from "react-bootstrap";
 
-import classes from './TournamentDetails.module.scss';
 import Contacts from "../Contacts/Contacts";
 import TournamentLogo from "../TournamentLogo/TournamentLogo";
+
+import classes from './TournamentDetails.module.scss';
 
 const USBC_ID_LOOKUP_URL = 'https://webapps.bowl.com/USBCFindA/Home/Member';
 const IGBO_ID_LOOKUP_URL = 'http://igbo.org/tournaments/igbots-id-lookup/';
@@ -108,7 +109,7 @@ const tournamentDetails = ({tournament}) => {
       <p className={classes.WebsiteLink}>
         <a href={tournament.website}>
           Tournament website
-          <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
+          <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>
         </a>
       </p>
     )
@@ -191,13 +192,13 @@ const tournamentDetails = ({tournament}) => {
             <li>
               <a href={USBC_ID_LOOKUP_URL} target="_new">
                 Find a USBC identifier
-                <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
+                <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>
               </a>
             </li>
             <li>
               <a href={IGBO_ID_LOOKUP_URL} target="_new">
                 Find an IGBO identifier
-                <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
+                <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>
               </a>
             </li>
           </ul>
@@ -208,67 +209,55 @@ const tournamentDetails = ({tournament}) => {
 
   return (
     <div className={classes.TournamentDetails}>
-      <div className={'row'}>
-        <div className={'d-none d-md-block col-md-4'}>
-          <TournamentLogo tournament={tournament}/>
-          <Contacts tournament={tournament}/>
-        </div>
-        <div className={'col-12 col-md-8'}>
-        {/* the rest */}
-          <h2>
-            {tournament.name} ({tournament.year})
-          </h2>
-          {website}
-          {stateBanner}
-          {testingEnvironment}
+      <h2>
+        {tournament.name} ({tournament.year})
+      </h2>
+      {website}
+      {stateBanner}
+      {testingEnvironment}
 
-          {dates}
+      {dates}
 
-          {youWillNeed}
+      {youWillNeed}
 
-          <Row className={'mt-4'}>
-            <Col md={6}>
-              <Card>
-                <Card.Header as={'h6'}>
-                  Registration Options
-                </Card.Header>
-                <ListGroup variant={'flush'}>
-                  {registrationLink}
-                  {joinTeamLink}
-                  {soloRegistrationLink}
-                </ListGroup>
-              </Card>
-            </Col>
-            <Col>
-              <h6 className="my-2">
-                Already registered?
-              </h6>
-              <ul>
-                <li className={'my-2'}>
-                  {payFeeLink}
-                </li>
-              </ul>
+      <Row className={'mt-4'}>
+        <Col md={6}>
+          <Card>
+            <Card.Header as={'h6'}>
+              Registration Options
+            </Card.Header>
+            <ListGroup variant={'flush'}>
+              {registrationLink}
+              {joinTeamLink}
+              {soloRegistrationLink}
+            </ListGroup>
+          </Card>
+        </Col>
+        <Col>
+          <h6 className="my-2">
+            Already registered?
+          </h6>
+          <ul>
+            <li className={'my-2'}>
+              {payFeeLink}
+            </li>
+          </ul>
 
-              <h6 className="mt-4">
-                Not an IGBO member yet?
-              </h6>
-              <ul>
-                <li>
-                  <a href='https://reg.sportlomo.com/club/igbo/igboassociates'
-                     target='_new'>
-                    Apply for Associate Membership
-                    <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
-                  </a>
-                </li>
-              </ul>
+          <h6 className="mt-4">
+            Not an IGBO member yet?
+          </h6>
+          <ul>
+            <li>
+              <a href='https://reg.sportlomo.com/club/igbo/igboassociates'
+                 target='_new'>
+                Apply for Associate Membership
+                <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
+              </a>
+            </li>
+          </ul>
 
-            </Col>
-          </Row>
-        </div>
-        <div className={'d-md-none col-12'}>
-          <Contacts tournament={tournament}/>
-        </div>
-      </div>
+        </Col>
+      </Row>
     </div>
   );
 }
