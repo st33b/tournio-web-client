@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import FreeEntryListing from "../../../components/Director/FreeEntryListing/FreeEntryListing";
-import {apiHost} from "../../../utils";
+import {apiHost, directorApiRequest} from "../../../utils";
 import axios from "axios";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import NewFreeEntryForm from "../../../components/Director/NewFreeEntryForm/NewFreeEntryForm";
@@ -35,29 +35,34 @@ const page = () => {
     }
   }, [identifier]);
 
+  const freeEntriesFetched = (data) => {
+    setFreeEntries(data);
+    setLoading(false);
+  }
+
+  const freeEntriesFetchFailed = (data) => {
+    setErrorMessage(data.error);
+    setLoading(false);
+  }
+
   // Fetch the free entries from the backend
   useEffect(() => {
     if (!identifier) {
       return;
     }
 
+    const uri = `/director/tournaments/${identifier}/free_entries`;
     const requestConfig = {
       method: 'get',
-      url: `${apiHost}/director/tournaments/${identifier}/free_entries`,
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': directorContext.token,
-      }
     }
-    axios(requestConfig)
-      .then(response => {
-        setFreeEntries(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        setErrorMessage(error);
-        setLoading(false);
-      });
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: freeEntriesFetched,
+      onFailure: freeEntriesFetchFailed,
+    });
   }, [identifier]);
 
   // Do we have a success query parameter?
@@ -65,6 +70,7 @@ const page = () => {
     const {success} = router.query;
     if (success === 'deleted') {
       setSuccessMessage('The free entry has been deleted.');
+      router.replace(router.pathname, null, { shallow: true });
     }
   });
 
@@ -101,75 +107,95 @@ const page = () => {
     );
   }
 
+  const deleteFreeEntrySuccess = (data, i) => {
+    setSuccessMessage('Free entry deleted!');
+    const newFreeEntries = [...freeEntries];
+    newFreeEntries.splice(i, 1);
+    setFreeEntries(newFreeEntries);
+  }
+
+  const deleteFreeEntryFailure = (data) => {
+    setErrorMessage(data.error);
+    setLoading(false);
+  }
+
   const onDelete = (freeEntry) => {
+    const index = freeEntries.indexOf(freeEntry);
+    const uri = `/director/free_entries/${freeEntry.id}`;
     const requestConfig = {
       method: 'delete',
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': directorContext.token
-      },
-      url: `${apiHost}/director/free_entries/${freeEntry.id}`,
     }
-    axios(requestConfig)
-      .then(response => {
-        setSuccessMessage('Free entry deleted!');
-        const newFreeEntries = [...freeEntries];
-        const index = newFreeEntries.indexOf(freeEntry);
-        newFreeEntries.splice(index, 1);
-        setFreeEntries(newFreeEntries);
-      })
-      .catch(error => {
-        setErrorMessage('Failed to delete that free entry. Why? ' + error);
-      });
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: (data) => deleteFreeEntrySuccess(data, index),
+      onFailure: deleteFreeEntryFailure,
+    });
+  }
+
+  const confirmFreeEntrySuccess = (data, i) => {
+    setSuccessMessage('Free entry confirmed!');
+    const newFreeEntries = freeEntries.splice(0);
+    newFreeEntries[i].confirmed = true;
+    setFreeEntries(newFreeEntries);
+  }
+
+  const confirmFreeEntryFailure = (data) => {
+    setErrorMessage(data.error);
+    setLoading(false);
   }
 
   const onConfirm = (freeEntry) => {
+    const index = freeEntries.indexOf(freeEntry);
+    const uri = `/director/free_entries/${freeEntry.id}/confirm`;
     const requestConfig = {
       method: 'post',
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': directorContext.token
-      },
-      url: `${apiHost}/director/free_entries/${freeEntry.id}/confirm`,
     }
-    axios(requestConfig)
-      .then(response => {
-        setSuccessMessage('Free entry confirmed!');
-        const newFreeEntries = freeEntries.splice(0);
-        const index = newFreeEntries.indexOf(freeEntry);
-        newFreeEntries[index].confirmed = true;
-        setFreeEntries(newFreeEntries);
-      })
-      .catch(error => {
-        setErrorMessage('Failed to delete that free entry. Why? ' + error);
-      });
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: (data) => confirmFreeEntrySuccess(data, index),
+      onFailure: confirmFreeEntryFailure,
+    });
+  }
+
+  const newFreeEntrySuccess = (data) => {
+    setSuccessMessage('Free entry created!');
+    const newFreeEntries = [...freeEntries];
+    newFreeEntries.push(data);
+    setFreeEntries(newFreeEntries);
+  }
+
+  const newFreeEntryFailure = (data) => {
+    setErrorMessage(data.error);
+    setLoading(false);
   }
 
   const newFreeEntrySubmitted = (freeEntryCode) => {
+    const uri = `/director/tournaments/${identifier}/free_entries`;
     const requestConfig = {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': directorContext.token
       },
-      url: `${apiHost}/director/tournaments/${identifier}/free_entries`,
       data: {
         free_entry: {
           unique_code: freeEntryCode,
         }
       }
     }
-    axios(requestConfig)
-      .then(response => {
-        setSuccessMessage('Free entry created!');
-        const newFreeEntries = [...freeEntries];
-        newFreeEntries.push(response.data);
-        setFreeEntries(newFreeEntries);
-      })
-      .catch(error => {
-        setErrorMessage('Failed to create a free entry. Why? ' + error);
-      });
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: newFreeEntrySuccess,
+      onFailure: newFreeEntryFailure,
+    });
   }
 
   const newFreeEntry = (

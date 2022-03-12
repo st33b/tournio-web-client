@@ -7,11 +7,28 @@ import ProgressIndicator from "../../../components/Registration/ProgressIndicato
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamBowlerEdited} from "../../../store/actions/registrationActions";
+import {useEffect, useState} from "react";
 
 const page = () => {
   const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
   const { bowler } = router.query;
+
+  const [bowlerNum, setBowlerNum] = useState(null);
+
+  // Validate the 'bowler' query parameter
+  useEffect(() => {
+    const result = parseInt(bowler);
+    if (isNaN(result) || result <= 0 || result > entry.bowlers.length) {
+      router.push(`/tournaments/${entry.tournament.identifier}`);
+    } else {
+      setBowlerNum(result);
+    }
+  });
+
+  if (!bowlerNum) {
+    return '';
+  }
 
   const onBowlerInfoUpdated = (bowlerInfo) => {
     dispatch(newTeamBowlerEdited(bowlerInfo));
@@ -22,7 +39,7 @@ const page = () => {
     <Row>
       <Col lg={8}>
         <ProgressIndicator active={'bowlers'} />
-        <BowlerForm editBowlerNum={bowler}
+        <BowlerForm editBowlerNum={bowlerNum}
                     bowlerInfoSaved={onBowlerInfoUpdated} />
       </Col>
       <Col>

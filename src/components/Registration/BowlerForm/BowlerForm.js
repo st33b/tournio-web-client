@@ -260,7 +260,6 @@ const bowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
     return isValid;
   }
 
-  // This'll need to change for the solo and joining scenarios.
   let position = entry.bowlers.length + 1;
   let buttonText = 'Save Bowler';
   if (entry.team) {
