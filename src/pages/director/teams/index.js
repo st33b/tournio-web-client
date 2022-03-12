@@ -1,14 +1,13 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Card} from "react-bootstrap";
-import axios from "axios";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import TeamListing from "../../../components/Director/TeamListing/TeamListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import NewTeamForm from "../../../components/Director/NewTeamForm/NewTeamForm";
-import {apiHost} from "../../../utils";
+import {directorApiRequest} from "../../../utils";
 
 const page = () => {
   const router = useRouter();
@@ -36,29 +35,34 @@ const page = () => {
     }
   }, [identifier]);
 
+  const onFetchTeamsSuccess = (data) => {
+    setTeams(data);
+    setLoading(false);
+  }
+
+  const onFetchTeamsFailure = (data) => {
+    setErrorMessage(data.error);
+    setLoading(false);
+  }
+
   // This effect fetches the teams from the backend
   useEffect(() => {
     if (!identifier) {
       return;
     }
 
+    const uri = `/director/tournaments/${identifier}/teams`;
     const requestConfig = {
       method: 'get',
-      url: `${apiHost}/director/tournaments/${identifier}/teams`,
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': directorContext.token,
-      }
     }
-    axios(requestConfig)
-      .then(response => {
-        setTeams(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        setErrorMessage(error);
-        setLoading(false);
-      });
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: onFetchTeamsSuccess,
+      onFailure: onFetchTeamsFailure,
+    });
   }, [identifier]);
 
   // Do we have a success query parameter?
@@ -70,31 +74,38 @@ const page = () => {
     }
   });
 
+  const newTeamSubmitSuccess = (data) => {
+    setSuccessMessage('New team created!');
+    const newData = teams.splice(0);
+    newData.push(data);
+    setTeams(newData);
+  }
+
+  const newTeamSubmitFailure = (data) => {
+    setErrorMessage('Failed to create a new team. Why? ' + data.error);
+  }
+
   const newTeamSubmitted = (teamName) => {
+    const uri = `/director/tournaments/${identifier}/teams`;
     const requestConfig = {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': directorContext.token
       },
-      url: `${apiHost}/director/tournaments/${identifier}/teams`,
       data: {
         team: {
           name: teamName,
         }
       }
     }
-    axios(requestConfig)
-      .then(response => {
-        setSuccessMessage('New team created!');
-        const newData = teams.splice(0);
-        newData.push(response.data);
-        setTeams(newData);
-      })
-      .catch(error => {
-        setErrorMessage('Failed to create a new team. Why? ' + error);
-      });
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: newTeamSubmitSuccess,
+      onFailure: newTeamSubmitFailure,
+    });
   }
 
   let success = '';

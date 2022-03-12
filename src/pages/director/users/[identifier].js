@@ -1,15 +1,12 @@
-// The page for editing a single user's details
-
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 
 import {Col, Row} from "react-bootstrap";
 
-import {apiHost, directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../utils";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import UserForm from '../../../components/Director/UserForm/UserForm';
-import axios from "axios";
 
 const page = () => {
   const directorContext = useDirectorContext();

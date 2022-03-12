@@ -1,13 +1,12 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import axios from "axios";
 import {Card, Button, Row, Col} from "react-bootstrap";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import TeamDetails from "../../../components/Director/TeamDetails/TeamDetails";
-import {apiHost} from "../../../utils";
+import {directorApiRequest} from "../../../utils";
 
 const page = () => {
   const router = useRouter();
@@ -38,37 +37,34 @@ const page = () => {
     }
   }, [directorContext]);
 
+  const onFetchTeamSuccess = (data) => {
+    setLoading(false);
+    setTeam(data);
+  }
+
+  const onFetchTeamFailure = (data) => {
+    setLoading(false);
+    setErrorMessage(data.error);
+  }
+
   // This effect pulls the team details from the backend
   useEffect(() => {
     if (!identifier || !directorContext || !directorContext.token) {
       return;
     }
 
+    const uri = `/director/teams/${identifier}`;
     const requestConfig = {
       method: 'get',
-      url: `${apiHost}/director/teams/${identifier}`,
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': directorContext.token,
-      },
     }
-    axios(requestConfig)
-      .then(response => {
-        setLoading(false);
-        setTeam(response.data);
-      })
-      .catch(error => {
-        setLoading(false);
-        if (error.response) {
-          if (error.response.status === 401) {
-            directorContext.logout();
-            router.push('/director/login');
-          }
-          setErrorMessage(error.statusText);
-        } else {
-          setErrorMessage('An unknown error occurred!');
-        }
-      });
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: onFetchTeamSuccess,
+      onFailure: onFetchTeamFailure,
+    });
   }, [identifier, directorContext]);
 
   if (loading) {
@@ -97,40 +93,36 @@ const page = () => {
     );
   }
 
+  const onDeleteTeamSuccess = (_) => {
+    setLoading(false);
+    router.push('/director/teams?success=deleted');
+  }
+
+  const onDeleteTeamFailure = (data) => {
+    setLoading(false);
+    setErrorMessage(data.error);
+  }
+
   const deleteSubmitHandler = (event) => {
     event.preventDefault();
     if (confirm('This will remove the team and all its bowlers. Are you sure?')) {
       setLoading(true);
+      const uri = `/director/teams/${identifier}`;
       const requestConfig = {
         method: 'delete',
-        url: `${apiHost}/director/teams/${identifier}`,
         headers: {
-          'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': directorContext.token,
         },
       }
       setLoading(true);
-      axios(requestConfig)
-        .then(response => {
-          setLoading(false);
-          router.push('/director/teams?success=deleted');
-        })
-        .catch(error => {
-          setLoading(false);
-          if (error.response) {
-            if (error.response.status === 401) {
-              directorContext.logout();
-              router.push('/director/login');
-            } else if (error.response.status === 404) {
-              setErrorMessage('Could not find that team to delete it.');
-            } else {
-              setErrorMessage(error.response.errors.join(' '));
-            }
-          } else {
-            setErrorMessage('An unknown error occurred!');
-          }
-        });
+      directorApiRequest({
+        uri: uri,
+        requestConfig: requestConfig,
+        context: directorContext,
+        router: router,
+        onSuccess: onDeleteTeamSuccess,
+        onFailure: onDeleteTeamFailure,
+      });
     }
   }
 
@@ -159,37 +151,36 @@ const page = () => {
     teamName = team.name;
   }
 
+  const updateTeamSuccess = (data) => {
+    setLoading(false);
+    setTeam(data);
+  }
+
+  const updateTeamFailure = (data) => {
+    setLoading(false);
+    setErrorMessage(data.error);
+  }
+
   const updateSubmitHandler = (teamData) => {
+    const uri = `/director/teams/${identifier}`;
     const requestConfig = {
       method: 'patch',
-      url: `${apiHost}/director/teams/${identifier}`,
       headers: {
-        'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': directorContext.token,
       },
       data: {
         team: teamData,
       },
     }
     setLoading(true);
-    axios(requestConfig)
-      .then(response => {
-        setLoading(false);
-        setTeam(response.data);
-      })
-      .catch(error => {
-        setLoading(false);
-        if (error.response) {
-          if (error.response.status === 401) {
-            directorContext.logout();
-            router.push('/director/login');
-          }
-          setErrorMessage(error.response.errors.join(' '));
-        } else {
-          setErrorMessage('An unknown error occurred!');
-        }
-      });
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: updateTeamSuccess,
+      onFailure: updateTeamFailure,
+    });
   }
 
   return (
