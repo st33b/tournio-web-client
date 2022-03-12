@@ -1,10 +1,7 @@
-// The hub for a tournament's details
-
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import axios from "axios";
 
-import {apiHost} from "../../../utils";
+import {directorApiRequest} from "../../../utils";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentDetails from '../../../components/Director/TournamentDetails/TournamentDetails';
@@ -20,8 +17,16 @@ const tournament = () => {
     }
   });
 
-  const [loading, setLoading] = useState(true);
-  let errorMessage = '';
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const onTournamentFetchSuccess = (data) => {
+    directorContext.setTournament(data);
+  }
+
+  const onTournamentFetchFailure = (data) => {
+    setErrorMessage(data.error);
+  }
+
   useEffect(() => {
     if (!directorContext.user) {
       return;
@@ -29,68 +34,69 @@ const tournament = () => {
     if (identifier === undefined) {
       return;
     }
-
-    // fetch the tournament details
-    const theUrl = `${apiHost}/director/tournaments/${identifier}`;
+    const uri = `/director/tournaments/${identifier}`;
     const requestConfig = {
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': directorContext.token,
-      },
+      method: 'get',
     }
-    axios.get(theUrl, requestConfig)
-      .then(response => {
-        const tournament = response.data;
-        directorContext.setTournament(tournament);
-        setLoading(false);
-      })
-      .catch(error => {
-        if (error.response.status === 401) {
-          directorContext.logout();
-          router.push('/director/login');
-        }
-        errorMessage = error;
-        setLoading(false);
-      });
 
-  }, [identifier, directorContext.token]);
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: onTournamentFetchSuccess,
+      onFailure: onTournamentFetchFailure,
+    });
+  }, [identifier]);
+
+  const stateChangeSuccess = (data) => {
+    directorContext.setTournament(data);
+    setErrorMessage('Just making sure this works...');
+  }
+
+  const stateChangeFailure = (data) => {
+    setErrorMessage(data.error);
+  }
 
   const stateChangeInitiated = (stateChangeAction) => {
-    // fetch the tournament details
-    const theUrl = `${apiHost}/director/tournaments/${identifier}/state_change`;
+    const uri = `/director/tournaments/${identifier}/state_change`;
     const requestConfig = {
-      url: theUrl,
+      method: 'post',
       headers: {
-        'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': directorContext.token,
       },
       data: {
         state_action: stateChangeAction,
       },
-      method: 'post',
     }
-    setLoading(true);
-    axios(requestConfig)
-      .then(response => {
-        directorContext.setTournament(response.data);
-      })
-      .catch(error => {
-        if (error.response.status === 401) {
-          directorContext.logout();
-          router.push('/director/login');
-        }
-      });
+
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: stateChangeSuccess,
+      onFailure: stateChangeFailure,
+    });
+  }
+
+  const testEnvUpdateSuccess = (data, onSuccess) => {
+    const tournament = {...directorContext.tournament}
+    tournament.testing_environment = data;
+    directorContext.setTournament(tournament);
+    onSuccess();
+  }
+
+  const testEnvUpdateFailure = (data) => {
+    setErrorMessage(data.error);
   }
 
   const testEnvironmentUpdated = (testEnvFormData, onSuccess) => {
+    const uri = `/director/tournaments/${identifier}/testing_environment`;
     const requestConfig = {
       method: 'patch',
-      url: `${apiHost}/director/tournaments/${identifier}/testing_environment`,
       headers: {
-        'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': directorContext.token,
       },
       data: {
         testing_environment: {
@@ -98,25 +104,40 @@ const tournament = () => {
         },
       },
     };
-    axios(requestConfig)
-      .then(response => {
-        const tournament = {...directorContext.tournament}
-        tournament.testing_environment = response.data;
-        directorContext.setTournament(tournament);
-        onSuccess();
-      })
-      .catch(error => {
-        if (error.response && error.response.status === 401) {
-          directorContext.logout();
-          router.push('/director/login');
-        }
-        console.log('Whoops');
-        console.log(error);
-      });
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: (data) => testEnvUpdateSuccess(data, onSuccess),
+      onFailure: testEnvUpdateFailure,
+    });
   }
 
-  return <TournamentDetails stateChangeInitiated={stateChangeInitiated}
-                            testEnvironmentUpdated={testEnvironmentUpdated} />;
+  let error = '';
+  if (errorMessage) {
+    error = (
+      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center my-3'} role={'alert'}>
+        <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
+        <div className={'me-auto'}>
+          {errorMessage}
+          <button type="button"
+                  className={"btn-close"}
+                  data-bs-dismiss="alert"
+                  aria-label="Close" />
+        </div>
+      </div>
+    );
+  }
+
+
+  return (
+    <div>
+      {error}
+      <TournamentDetails stateChangeInitiated={stateChangeInitiated}
+                         testEnvironmentUpdated={testEnvironmentUpdated} />
+    </div>
+  );
 }
 
 tournament.getLayout = function getLayout(page) {

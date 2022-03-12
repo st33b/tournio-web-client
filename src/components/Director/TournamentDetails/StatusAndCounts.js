@@ -3,10 +3,11 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
-import axios from "axios";
 
-import {apiHost} from "../../../utils";
+import {directorApiRequest} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
+import {useRouter} from "next/router";
+
 import classes from './TournamentDetails.module.scss';
 
 const statusAndCounts = ({testEnvironmentUpdated}) => {
@@ -14,6 +15,7 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
   if (!context || !context.tournament) {
     return '';
   }
+  const router = useRouter();
 
   const downloads = (
     <Card.Body className={'bg-white text-dark'}>
@@ -60,6 +62,25 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
     </ListGroup>
   );
 
+  const [clearTestDataSuccessMessage, setClearTestDataSuccessMessage] = useState();
+  const onClearTestDataSuccess = (_) => {
+    setLoading(false);
+    const updatedTournament = {...context.tournament}
+    updatedTournament.bowler_count = 0;
+    updatedTournament.team_count = 0;
+    updatedTournament.free_entry_count = 0;
+    context.setTournament(updatedTournament);
+    setClearTestDataSuccessMessage('Test data cleared!');
+  }
+
+  const onClearTestDataFailure = (data) => {
+    setLoading(false);
+  }
+
+  const clearDataSuccessAlertClosed = () => {
+    setClearTestDataSuccessMessage(null);
+  }
+
   const [loading, setLoading] = useState(false);
   const clearTestDataClickHandler = () => {
     if (context.tournament.state !== 'testing') {
@@ -67,25 +88,20 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
       return;
     }
 
-    const theUrl = `${apiHost}/director/tournaments/${context.tournament.identifier}/clear_test_data`;
+    const uri = `/director/tournaments/${context.tournament.identifier}/clear_test_data`;
     const requestConfig = {
-      url: theUrl,
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': directorContext.token,
-      },
       data: {},
       method: 'post',
     }
     setLoading(true);
-    axios(requestConfig)
-      .then(response => {
-        setLoading(false);
-        alert('Test data cleared. Refresh the page to see counts go to zero.');
-      })
-      .catch(error => {
-        setLoading(false);
-      });
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      router: router,
+      onSuccess: onClearTestDataSuccess,
+      onFailure: onClearTestDataFailure,
+    });
   }
 
   const testEnvFormInitialData = {
@@ -107,14 +123,18 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
     setTestEnvFormData(newForm);
   }
 
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [testEnvSuccessMessage, setTestEnvSuccessMessage] = useState(null);
   const testEnvSaveSuccess = () => {
-    setSuccessMessage('Testing environment updated.');
+    setTestEnvSuccessMessage('Testing environment updated.');
   }
 
   const testEnvSaved = (event) => {
     event.preventDefault();
     testEnvironmentUpdated(testEnvFormData, testEnvSaveSuccess);
+  }
+
+  const testEnvAlertClosed = () => {
+    setTestEnvSuccessMessage(null);
   }
 
   let clearTestData = '';
@@ -128,6 +148,22 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
       break;
     case 'testing':
       bgColor = 'warning';
+      let success = '';
+      if (clearTestDataSuccessMessage) {
+        success = (
+          <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
+            <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
+            <div className={'me-auto'}>
+              {clearTestDataSuccessMessage}
+              <button type="button"
+                      className={"btn-close"}
+                      data-bs-dismiss="alert"
+                      onClick={clearDataSuccessAlertClosed}
+                      aria-label="Close" />
+            </div>
+          </div>
+        );
+      }
       clearTestData = (
         <Card.Body className={'bg-white text-dark'}>
           <Card.Text>
@@ -142,16 +178,21 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
               </Button>
             )}
           </Card.Text>
+          {success}
         </Card.Body>
       )
-      let success = '';
-      if (successMessage) {
+      success = '';
+      if (testEnvSuccessMessage) {
         success = (
           <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
             <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
             <div className={'me-auto'}>
-              {successMessage}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" />
+              {testEnvSuccessMessage}
+              <button type="button"
+                      className={"btn-close"}
+                      data-bs-dismiss="alert"
+                      onClick={testEnvAlertClosed}
+                      aria-label="Close" />
             </div>
           </div>
         );

@@ -32,7 +32,9 @@ const stateChangeButton = ({stateChangeInitiated}) => {
 
   const stateChangeSubmitHandler = (event) => {
     event.preventDefault();
-    stateChangeInitiated(event.target.children.state_action.value);
+    if (confirm("This step is irreversible. Are you sure?")) {
+      stateChangeInitiated(event.target.children.state_action.value);
+    }
   }
 
   let stateChangeButton = '';
