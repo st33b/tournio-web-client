@@ -1,12 +1,10 @@
 import {useState, useRef} from "react";
 import {useRouter} from "next/router";
 
-import axios from "axios";
-
 import {Button, Card, FloatingLabel, Form} from "react-bootstrap";
 
 import {useDirectorContext} from '../../../store/DirectorContext';
-import {apiHost} from "../../../utils";
+import {directorApiLoginRequest} from "../../../utils";
 
 import classes from './LoginForm.module.scss';
 
@@ -14,11 +12,22 @@ const loginForm = () => {
   const router = useRouter();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [loginFailed, setLoginFailed] = useState(false);
   const [validated, setValidated] = useState(false);
 
   const directorContext = useDirectorContext();
+
+  const loginSuccess = (data) => {
+    setLoading(false);
+    setLoginFailed(false);
+    router.push('/director')
+  }
+
+  const loginFailure = (_) => {
+    setLoading(false);
+    setLoginFailed(true);
+  }
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -30,28 +39,19 @@ const loginForm = () => {
       return;
     }
 
-    setIsLoading(true);
-    const url = `${apiHost}/login`;
-    const postBody = {
+    setLoading(true);
+    const userCreds = {
       user: {
         email: enteredEmail,
         password: enteredPassword,
       }
     };
-    axios.post(url, postBody)
-      .then(response => {
-        setIsLoading(false);
-        setLoginFailed(false);
-        const authHeader = response.headers.authorization;
-        const userData = response.data;
-        directorContext.login(authHeader, userData);
-
-        router.push('/director')
-      })
-      .catch(error => {
-        setIsLoading(false);
-        setLoginFailed(true);
-      });
+    directorApiLoginRequest({
+      userCreds: userCreds,
+      context: directorContext,
+      onSuccess: loginSuccess,
+      onFailure: loginFailure,
+    })
   }
 
   return (
@@ -86,8 +86,8 @@ const loginForm = () => {
               </Form.Control.Feedback>
             </FloatingLabel>
             <div className={classes.Actions}>
-              {!isLoading && <Button variant={'primary'} type={'submit'}>Log In</Button>}
-              {isLoading && <Button variant={'secondary'} disabled={true}>Logging you in...</Button>}
+              {!loading && <Button variant={'primary'} type={'submit'}>Log In</Button>}
+              {loading && <Button variant={'secondary'} disabled={true}>Logging you in...</Button>}
             </div>
           </Form>
         </Card.Body>

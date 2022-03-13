@@ -51,7 +51,6 @@ const tournament = () => {
 
   const stateChangeSuccess = (data) => {
     directorContext.setTournament(data);
-    setErrorMessage('Just making sure this works...');
   }
 
   const stateChangeFailure = (data) => {

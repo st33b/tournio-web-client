@@ -1,9 +1,8 @@
-import {useState, useEffect, useMemo} from "react";
-import axios from "axios";
+import {useState, useEffect} from "react";
 
 import {Col, Row} from "react-bootstrap";
 
-import {apiHost} from "../../../utils";
+import {directorApiRequest} from "../../../utils";
 import {useDirectorContext} from '../../../store/DirectorContext';
 
 import classes from './TournamentListing.module.scss';
@@ -13,49 +12,46 @@ const tournamentListing = () => {
   const directorContext = useDirectorContext();
   const router = useRouter();
 
-  const theUrl = `${apiHost}/director/tournaments`;
-  const requestConfig = {
-    headers: {
-      'Accept': 'application/json',
-      'Authorization': directorContext.token,
-    },
-  }
-
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState();
+
+  const fetchTournamentsSuccess = (data) => {
+    const tournaments = data;
+    if (tournaments.length === 1) {
+      // redirect to the details page for their one tournament.
+      const identifier = tournaments[0]['identifier'];
+      router.push(`/director/tournaments/${identifier}`);
+      return;
+    }
+    setData(tournaments);
+    setLoading(false);
+  }
+
+  const fetchTournamentsFailure = (data) => {
+    setLoading(false);
+    setErrorMessage(data.error);
+  }
 
   useEffect(() => {
     if (!directorContext.user) {
       return;
     }
-    if (data.length === 0) {
-      axios.get(theUrl, requestConfig)
-        .then(response => {
-          const tournaments = response.data;
-          if (tournaments.length === 1) {
-            // Go ahead and take them to the details page for their one tournament.
-            const identifier = tournaments[0]['identifier'];
-            router.push(`/director/tournaments/${identifier}`);
-            return;
-          }
-          setData(tournaments);
-          setLoading(false);
-        })
-        .catch(error => {
-          if (error.response) {
-            if (error.response.status === 401) {
-              directorContext.logout();
-              router.push('/director/login');
-            }
-            setErrorMessage(error.statusText);
-          } else {
-            setErrorMessage('An unknown error occurred!');
-          }
-          setLoading(false);
-        });
+    const uri = '/director/tournaments';
+    const requestConfig = {
+      method: 'get',
     }
-  });
+    if (data.length === 0) {
+      directorApiRequest({
+        uri: uri,
+        requestConfig: requestConfig,
+        context: directorContext,
+        router: router,
+        onSuccess: fetchTournamentsSuccess,
+        onFailure: fetchTournamentsFailure,
+      });
+    }
+  }, []);
 
   let list = '';
   if (loading) {

@@ -1,13 +1,12 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import axios from "axios";
 import {Card, Button, Row, Col, ListGroup} from "react-bootstrap";
 
+import {directorApiRequest} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import BowlerDetails from "../../../components/Director/BowlerDetails/BowlerDetails";
-import {apiHost} from "../../../utils";
 
 const page = () => {
   const router = useRouter();
@@ -44,38 +43,45 @@ const page = () => {
     }
   }, [directorContext]);
 
+  const fetchBowlerSuccess = (data) => {
+    setLoading(false);
+    setBowler(data);
+  }
+
+  const fetchBowlerFailure = (data) => {
+    setErrorMessage(data.error);
+    setLoading(false);
+  }
+
   // This effect pulls the bowler details from the backend
   useEffect(() => {
     if (!identifier || !directorContext || !directorContext.token) {
       return;
     }
 
+    const uri = `/director/bowlers/${identifier}`;
     const requestConfig = {
       method: 'get',
-      url: `${apiHost}/director/bowlers/${identifier}`,
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': directorContext.token,
-      },
     }
-    axios(requestConfig)
-      .then(response => {
-        setLoading(false);
-        setBowler(response.data);
-      })
-      .catch(error => {
-        setLoading(false);
-        if (error.response) {
-          if (error.response.status === 401) {
-            directorContext.logout();
-            router.push('/director/login');
-          }
-          setErrorMessage(error.statusText);
-        } else {
-          setErrorMessage('An unknown error occurred!');
-        }
-      });
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: fetchBowlerSuccess,
+      onFailure: fetchBowlerFailure,
+    });
   }, [identifier, directorContext]);
+
+  const fetchTeamsSuccess = (data) => {
+    setLoading(false);
+    setAvailableTeams(data);
+  }
+
+  const fetchTeamsFailure = (data) => {
+    setLoading(false);
+    setErrorMessage(data.error);
+  }
 
   // This effect retrieves the list of teams available to join
   useEffect(() => {
@@ -83,31 +89,18 @@ const page = () => {
       return;
     }
 
+    const uri = `/director/tournaments/${directorContext.tournament.identifier}/teams?partial=true`;
     const requestConfig = {
       method: 'get',
-      url: `${apiHost}/director/tournaments/${directorContext.tournament.identifier}/teams?partial=true`,
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': directorContext.token,
-      },
     }
-    axios(requestConfig)
-      .then(response => {
-        setLoading(false);
-        setAvailableTeams(response.data);
-      })
-      .catch(error => {
-        setLoading(false);
-        if (error.response) {
-          if (error.response.status === 401) {
-            directorContext.logout();
-            router.push('/director/login');
-          }
-          setErrorMessage(error.statusText);
-        } else {
-          setErrorMessage('An unknown error occurred!');
-        }
-      });
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: fetchTeamsSuccess,
+      onFailure: fetchTeamsFailure,
+    });
   }, [directorContext]);
 
   if (loading) {
@@ -137,40 +130,36 @@ const page = () => {
     );
   }
 
+  const deleteBowlerSuccess = (_) => {
+    setLoading(false);
+    router.push('/director/bowlers?success=deleted');
+  }
+
+  const deleteBowlerFailure = (data) => {
+    setLoading(false);
+    setErrorMessage(data.error);
+  }
+
   const deleteSubmitHandler = (event) => {
     event.preventDefault();
     if (confirm('This will remove the bowler and all their details. Are you sure?')) {
       setLoading(true);
+      const uri = `/director/bowlers/${identifier}`;
       const requestConfig = {
         method: 'delete',
-        url: `${apiHost}/director/bowlers/${identifier}`,
         headers: {
-          'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': directorContext.token,
         },
       }
       setLoading(true);
-      axios(requestConfig)
-        .then(response => {
-          setLoading(false);
-          router.push('/director/bowlers?success=deleted');
-        })
-        .catch(error => {
-          setLoading(false);
-          if (error.response) {
-            if (error.response.status === 401) {
-              directorContext.logout();
-              router.push('/director/login');
-            } else if (error.response.status === 404) {
-              setErrorMessage('Could not find that bowler to delete them.');
-            } else {
-              setErrorMessage(error.response.errors.join(' '));
-            }
-          } else {
-            setErrorMessage('An unknown error occurred!');
-          }
-        });
+      directorApiRequest({
+        uri: uri,
+        requestConfig: requestConfig,
+        context: directorContext,
+        router: router,
+        onSuccess: deleteBowlerSuccess,
+        onFailure: deleteBowlerFailure,
+      });
     }
   }
 
@@ -222,16 +211,23 @@ const page = () => {
     setNewTeamFormData(newFormData);
   }
 
+  const moveBowlerSuccess = (data) => {
+    setLoading(false);
+    setBowler(data);
+  }
+
+  const moveBowlerFailure = (data) => {
+    setLoading(false);
+    setErrorMessage(data.error);
+  }
+
   const bowlerMoveSubmitHandler = (event) => {
     event.preventDefault();
-    setLoading(true);
+    const uri = `/director/bowlers/${identifier}`;
     const requestConfig = {
       method: 'patch',
-      url: `${apiHost}/director/bowlers/${identifier}`,
       headers: {
-        'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': directorContext.token,
       },
       data: {
         bowler: {
@@ -241,23 +237,15 @@ const page = () => {
         }
       }
     }
-    axios(requestConfig)
-      .then(response => {
-        setLoading(false);
-        setBowler(response.data);
-      })
-      .catch(error => {
-        setLoading(false);
-        if (error.response) {
-          if (error.response.status === 401) {
-            directorContext.logout();
-            router.push('/director/login');
-          }
-          setErrorMessage(error.statusText);
-        } else {
-          setErrorMessage('An unknown error occurred!');
-        }
-      });
+    setLoading(true);
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: moveBowlerSuccess,
+      onFailure: moveBowlerFailure,
+    });
   }
 
   let moveToTeamCard = (
@@ -384,37 +372,36 @@ const page = () => {
     return responses;
   }
 
+  const bowlerUpdateSuccess = (data) => {
+    setLoading(false);
+    setBowler(data);
+  }
+
+  const bowlerUpdateFailure = (data) => {
+    setLoading(false);
+    setErrorMessage(data.error);
+  }
+
   const updateSubmitHandler = (bowlerData) => {
+    const uri = `/director/bowlers/${identifier}`;
     const requestConfig = {
       method: 'patch',
-      url: `${apiHost}/director/bowlers/${identifier}`,
       headers: {
-        'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': directorContext.token,
       },
       data: {
         bowler: convertBowlerDataForPatch(bowlerData),
       },
     }
     setLoading(true);
-    axios(requestConfig)
-      .then(response => {
-        setLoading(false);
-        setBowler(response.data);
-      })
-      .catch(error => {
-        setLoading(false);
-        if (error.response) {
-          if (error.response.status === 401) {
-            directorContext.logout();
-            router.push('/director/login');
-          }
-          setErrorMessage(error.response.errors.join(' '));
-        } else {
-          setErrorMessage('An unknown error occurred!');
-        }
-      });
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: bowlerUpdateSuccess,
+      onFailure: bowlerUpdateFailure,
+    });
   }
 
   let bowlerName = '';

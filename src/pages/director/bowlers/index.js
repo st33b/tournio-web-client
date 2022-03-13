@@ -1,13 +1,11 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import {Card} from "react-bootstrap";
-import axios from "axios";
 
+import {directorApiRequest} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import BowlerListing from "../../../components/Director/BowlerListing/BowlerListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
-import {apiHost} from "../../../utils";
 
 const page = () => {
   const router = useRouter();
@@ -35,29 +33,34 @@ const page = () => {
     }
   }, [identifier]);
 
+  const onFetchBowlersSuccess = (data) => {
+    setBowlers(data);
+    setLoading(false);
+  }
+
+  const onFetchBowlersFailure = (data) => {
+    setErrorMessage(data.error);
+    setLoading(false);
+  }
+
   // Fetch the bowlers from the backend
   useEffect(() => {
     if (!identifier) {
       return;
     }
 
+    const uri = `/director/tournaments/${identifier}/bowlers`;
     const requestConfig = {
       method: 'get',
-      url: `${apiHost}/director/tournaments/${identifier}/bowlers`,
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': directorContext.token,
-      }
     }
-    axios(requestConfig)
-      .then(response => {
-        setBowlers(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        setErrorMessage(error);
-        setLoading(false);
-      });
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: onFetchBowlersSuccess,
+      onFailure: onFetchBowlersFailure,
+    })
   }, [identifier]);
 
   // Do we have a success query parameter?

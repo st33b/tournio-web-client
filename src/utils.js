@@ -177,7 +177,7 @@ export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, commerceDispat
 
 ////////////////////////////////////////////////////
 
-export const directorApiRequest = ({uri, requestConfig, context, router, onSuccess = null, onFailure = null}) => {
+export const directorApiRequest = ({uri, requestConfig, context, router, onSuccess = null, onFailure = null, redirectOnUnauthorized = true}) => {
   const url = `${apiHost}${uri}`;
   const config = {...requestConfig};
   config.url = url;
@@ -189,9 +189,41 @@ export const directorApiRequest = ({uri, requestConfig, context, router, onSucce
     .then(response => {
       if (response.status >= 200 && response.status < 300) {
         onSuccess(response.data);
-      } else if (response.status === 401) {
+      } else if (response.status === 401 && redirectOnUnauthorized) {
         context.logout();
         router.push('/director/login');
+      } else {
+        onFailure(response.data);
+      }
+    })
+    .catch(error => {
+      if (error.request) {
+        console.log('No response was received.');
+        onFailure({error: 'The server did not respond'});
+      } else {
+        console.log('Exceptional error', error.message);
+        onFailure({error: error.message});
+      }
+    });
+}
+
+export const directorApiLoginRequest = ({userCreds, context, onSuccess = null, onFailure = null}) => {
+  const config = {
+    url: `${apiHost}/login`,
+    headers: {
+      'Accept': 'application/json',
+    },
+    method: 'post',
+    data: userCreds,
+    validateStatus: (status) => { return status < 500 },
+  };
+  axios(config)
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        const authHeader = response.headers.authorization;
+        const userData = response.data;
+        context.login(authHeader, userData);
+        onSuccess(response.data);
       } else {
         onFailure(response.data);
       }
