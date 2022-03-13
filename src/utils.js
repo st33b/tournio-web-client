@@ -238,3 +238,32 @@ export const directorApiLoginRequest = ({userCreds, context, onSuccess = null, o
       }
     });
 }
+
+export const directorApiLogoutRequest = ({context, onSuccess, onFailure}) => {
+  const config = {
+    url: `${apiHost}/logout`,
+    headers: {
+      'Accept': 'application/json',
+    },
+    method: 'delete',
+    validateStatus: (status) => { return status < 500 },
+  };
+  axios(config)
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        context.logout();
+        onSuccess();
+      } else {
+        onFailure({error: 'Got a strange response from the server.'});
+      }
+    })
+    .catch(error => {
+      if (error.request) {
+        console.log('No response was received.');
+        onFailure({error: 'The server did not respond'});
+      } else {
+        console.log('Exceptional error', error.message);
+        onFailure({error: error.message});
+      }
+    });
+}

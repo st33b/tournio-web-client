@@ -3,11 +3,10 @@ import {useRouter} from "next/router";
 
 import {Nav, Navbar} from "react-bootstrap";
 
-import {apiHost} from "../../../utils";
+import {directorApiLogoutRequest} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './Navigation.module.scss';
-import axios from "axios";
 
 const navigation = () => {
   const directorContext = useDirectorContext();
@@ -21,20 +20,17 @@ const navigation = () => {
     setIsSuperuser(directorContext.user && directorContext.user.role === 'superuser');
   }, [directorContext.isLoggedIn, directorContext.user]);
 
+  const onLogoutSuccess = () => {
+    router.push('/director/login');
+  }
+
   const logoutHandler = (event) => {
     event.preventDefault();
-
-    const url = `${apiHost}/logout`;
-    axios.delete(url)
-      .then(response => {
-      })
-      .catch(error => {
-        console.log('uhh...');
-        console.log(error);
-      });
-
-    directorContext.logout();
-    router.push('/director/login');
+    directorApiLogoutRequest({
+      context: directorContext,
+      onSuccess: onLogoutSuccess,
+      onFailure: (_) => {},
+    })
   }
 
   return (
