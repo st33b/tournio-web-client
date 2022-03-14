@@ -1,12 +1,10 @@
 import {useEffect, useState} from "react";
-import axios from "axios";
 import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
-import {apiHost, retrieveTournamentDetails} from "../../utils";
+import {fetchTeamDetails, retrieveTournamentDetails} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
-import {teamDetailsRetrieved} from "../../store/actions/registrationActions";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import Contacts from "../../components/Registration/Contacts/Contacts";
 import TeamDetails from "../../components/Registration/TeamDetails/TeamDetails";
@@ -18,6 +16,14 @@ const page = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const onTeamFetchSuccess = (data) => {
+    setLoading(false);
+  }
+
+  const onTeamFetchFailure = (data) => {
+    setLoading(false);
+  }
+
   // fetch the team details
   useEffect(() => {
     if (identifier === undefined || !entry) {
@@ -25,25 +31,13 @@ const page = () => {
     }
 
     if (!entry.team || entry.team.identifier !== identifier) {
-      const requestConfig = {
-        method: 'get',
-        url: `${apiHost}/teams/${identifier}`,
-        headers: {
-          'Accept': 'application/json',
-        }
-      }
-      axios(requestConfig)
-        .then(response => {
-          dispatch(teamDetailsRetrieved(response.data));
-          commerceDispatch(teamDetailsRetrieved(response.data));
-          setLoading(false);
-        })
-        .catch(error => {
-          setLoading(false);
-          // Display some kind of error message
-        });
+      fetchTeamDetails({
+        teamIdentifier: identifier,
+        onSuccess: onTeamFetchSuccess,
+        onFailure: onTeamFetchFailure,
+        dispatches: [dispatch, commerceDispatch],
+      })
     }
-
   }, [identifier, entry]);
 
   // ensure that the tournament in context matches the team's

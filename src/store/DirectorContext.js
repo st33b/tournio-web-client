@@ -38,8 +38,10 @@ export const DirectorContextProvider = ({children}) => {
   const logoutHandler = useCallback(() => {
     setToken(null);
     setCurrentUser(null);
+    setTournament(null);
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('tournament');
   }, []);
 
   const loginHandler = (newToken, userDetails) => {

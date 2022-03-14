@@ -1,5 +1,10 @@
 import axios from "axios";
-import {bowlerCommerceDetailsRetrieved, tournamentDetailsRetrieved} from "./store/actions/registrationActions";
+import {
+  bowlerCommerceDetailsRetrieved,
+  teamDetailsRetrieved,
+  teamListRetrieved,
+  tournamentDetailsRetrieved,
+} from "./store/actions/registrationActions";
 
 export const updateObject = (oldObject, updatedProperties) => {
   return {
@@ -22,6 +27,8 @@ export const lessThan = (rows, id, filterValue) => {
   });
 };
 
+///////////////////////////////////////////////////
+
 export const apiHost = `${process.env.NEXT_PUBLIC_API_PROTOCOL}://${process.env.NEXT_PUBLIC_API_HOSTNAME}:${process.env.NEXT_PUBLIC_API_PORT}`;
 
 export const retrieveTournamentDetails = (identifier, ...dispatches) => {
@@ -43,6 +50,94 @@ export const retrieveTournamentDetails = (identifier, ...dispatches) => {
     });
 
 }
+
+export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure, dispatches}) => {
+  const requestConfig = {
+    method: 'get',
+    url: `${apiHost}/teams/${teamIdentifier}`,
+    headers: {
+      'Accept': 'application/json',
+    },
+    validateStatus: (status) => { return status < 500 },
+  }
+  axios(requestConfig)
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        dispatches.map(dispatch => {
+          dispatch(teamDetailsRetrieved(response.data));
+        });
+        onSuccess(response.data);
+      } else {
+        onFailure(response.data);
+      }
+    })
+    .catch(error => {
+      onFailure({error: 'Unexpected error from the server'});
+    });
+
+}
+
+export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, commerceDispatch) => {
+  const requestConfig = {
+    method: 'get',
+    url: `${apiHost}/bowlers/${bowlerIdentifier}`,
+    headers: {
+      'Accept': 'application/json',
+    }
+  }
+  axios(requestConfig)
+    .then(response => {
+      const bowlerData = response.data.bowler;
+      const availableItems = response.data.available_items;
+      commerceDispatch(bowlerCommerceDetailsRetrieved(bowlerData, availableItems));
+
+      // Make sure the tournament in context matches that of the bowler.
+      // If it doesn't, retrieve the bowler's tournament so we can put it
+      // into context.
+      if (commerceObj.tournament) {
+        const contextTournamentId = commerceObj.tournament.identifier;
+        const bowlerTournamentId = bowlerData.tournament.identifier;
+
+        if (contextTournamentId !== bowlerTournamentId) {
+          retrieveTournamentDetails(bowlerTournamentId, commerceDispatch);
+        }
+      }
+    })
+    .catch(error => {
+      // Display some kind of error message
+      console.log('Whoops!');
+    });
+}
+
+export const fetchTeamList = ({tournamentIdentifier, dispatch, onSuccess, onFailure, incomplete = false}) => {
+  const queryParams = {};
+  if (incomplete) {
+    queryParams.incomplete = true;
+  }
+  const requestConfig = {
+    method: 'get',
+    url: `${apiHost}/tournaments/${tournamentIdentifier}/teams`,
+    headers: {
+      'Accept': 'application/json',
+    },
+    params: queryParams,
+    validateStatus: (status) => { return status < 500 },
+  }
+  axios(requestConfig)
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        dispatch(teamListRetrieved());
+        onSuccess(response.data);
+      } else {
+        onFailure(response.data);
+      }
+    })
+    .catch(error => {
+      onFailure({error: 'Unexpected error from the server'});
+    });
+}
+
+////////////////////////////////////////////////////
 
 export const submitNewTeamRegistration = (tournament, teamName, bowlers, onSuccess, onFailure) => {
   const postData = convertTeamDataForServer(tournament, teamName, bowlers);
@@ -86,8 +181,6 @@ export const submitJoinTeamRegistration = (tournament, team, bowler, onSuccess, 
     });
 
 }
-
-///////////////////////////////////////////////
 
 const convertTeamDataForServer = (tournament, teamName, bowlers) => {
   let postData = {
@@ -143,41 +236,57 @@ const convertAdditionalQuestionResponsesForPost = (tournament, bowler) => {
 
 ////////////////////////////////////////////////
 
-export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, commerceDispatch) => {
+export const postPurchaseDetails = (bowlerIdentifier, postData, onSuccess, onFailure) => {
   const requestConfig = {
-    method: 'get',
-    url: `${apiHost}/bowlers/${bowlerIdentifier}`,
+    method: 'post',
+    url: `${apiHost}/bowlers/${bowlerIdentifier}/purchase_details`,
     headers: {
       'Accept': 'application/json',
-    }
+      'Content-Type': 'application/json',
+    },
+    data: postData,
+    validateStatus: (status) => { return status < 500 },
   }
   axios(requestConfig)
     .then(response => {
-      const bowlerData = response.data.bowler;
-      const availableItems = response.data.available_items;
-      commerceDispatch(bowlerCommerceDetailsRetrieved(bowlerData, availableItems));
-
-      // Make sure the tournament in context matches that of the bowler.
-      // If it doesn't, retrieve the bowler's tournament so we can put it
-      // into context.
-      if (commerceObj.tournament) {
-        const contextTournamentId = commerceObj.tournament.identifier;
-        const bowlerTournamentId = bowlerData.tournament.identifier;
-
-        if (contextTournamentId !== bowlerTournamentId) {
-          retrieveTournamentDetails(bowlerTournamentId, commerceDispatch);
-        }
+      if (response.status >= 200 && response.status < 300) {
+        onSuccess(response.data);
+      } else {
+        onFailure(response.data);
       }
     })
     .catch(error => {
-      // Display some kind of error message
-      console.log('Whoops!');
+      onFailure({error: error.message});
     });
 }
 
-////////////////////////////////////////////////////
+export const postPurchasesCompleted = (bowlerIdentifier, postData, onSuccess, onFailure) => {
+  const requestConfig = {
+    method: 'post',
+    url: `${apiHost}/bowlers/${bowlerIdentifier}/purchases`,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    data: postData,
+    validateStatus: (status) => { return status < 500 },
+  }
+  axios(requestConfig)
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        onSuccess(response.data);
+      } else {
+        onFailure(response.data);
+      }
+    })
+    .catch(error => {
+      onFailure({error: error.message});
+    });
+}
 
-export const directorApiRequest = ({uri, requestConfig, context, router, onSuccess = null, onFailure = null, redirectOnUnauthorized = true}) => {
+////////////////////////////////////////////////
+
+export const directorApiRequest = ({uri, requestConfig, context, router, onSuccess = null, onFailure = null}) => {
   const url = `${apiHost}${uri}`;
   const config = {...requestConfig};
   config.url = url;
@@ -189,7 +298,7 @@ export const directorApiRequest = ({uri, requestConfig, context, router, onSucce
     .then(response => {
       if (response.status >= 200 && response.status < 300) {
         onSuccess(response.data);
-      } else if (response.status === 401 && redirectOnUnauthorized) {
+      } else if (response.status === 401) {
         context.logout();
         router.push('/director/login');
       } else {

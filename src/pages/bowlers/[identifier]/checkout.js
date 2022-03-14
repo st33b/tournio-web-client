@@ -1,15 +1,14 @@
 import {useEffect, useState} from "react";
-import axios from "axios";
 import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
-import {apiHost, fetchBowlerDetails} from "../../../utils";
+import {fetchBowlerDetails, postPurchaseDetails, postPurchasesCompleted} from "../../../utils";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import ItemSummary from "../../../components/Commerce/Checkout/ItemSummary";
 import PayPalExpressCheckout from "../../../components/Commerce/Checkout/PayPalExpressCheckout";
-import {purchaseCompleted} from "../../../store/actions/registrationActions";
+import {purchaseCompleted, purchaseFailed} from "../../../store/actions/registrationActions";
 
 const page = () => {
   const router = useRouter();
@@ -20,6 +19,18 @@ const page = () => {
   const [ready, setReady] = useState(false);
   const [paypalClientId, setPaypalClientId] = useState(null);
   const [serverTotal, setServerTotal] = useState(null);
+
+  const onPreparePurchaseSuccess = (data) => {
+    setLoading(false);
+    setPaypalClientId(data.paypal_client_id);
+    setServerTotal(data.total);
+    setReady(true);
+  }
+
+  const onPreparePurchaseFailure = (data) => {
+    setLoading(false);
+    // error?
+  }
 
   useEffect(() => {
     if (identifier === undefined) {
@@ -35,26 +46,12 @@ const page = () => {
       return;
     }
 
-    const requestConfig = {
-      method: 'post',
-      url: `${apiHost}/bowlers/${identifier}/purchase_details`,
-      headers: {
-        'Accept': 'application/json',
-      },
-      data: purchaseDetailsPostData(commerce.cart),
-    }
-    axios(requestConfig)
-      .then(response => {
-        setLoading(false);
-        setPaypalClientId(response.data.paypal_client_id);
-        setServerTotal(response.data.total);
-        setReady(true);
-      })
-      .catch(error => {
-        setLoading(false);
-        console.log("There was a problem.");
-        console.log(error);
-      });
+    postPurchaseDetails(identifier,
+      purchaseDetailsPostData(commerce.cart),
+      onPreparePurchaseSuccess,
+      onPreparePurchaseFailure
+    );
+
   }, [identifier, commerce]);
 
   const purchaseDetailsPostData = (items) => {
@@ -96,36 +93,29 @@ const page = () => {
     return '';
   }
 
+  const onCompletePurchaseSuccess = (data) => {
+    commerceDispatch(purchaseCompleted(data));
+    fetchBowlerDetails(identifier, commerce, commerceDispatch);
+    router.push(`/bowlers/${identifier}?success=purchase`);
+  }
+
+  const onCompletePurchaseFailure = (data) => {
+    commerceDispatch(purchaseFailed(data.error));
+    router.push(`/bowlers/${identifier}?error=purchase`);
+    // TODO: trigger an email to treasurer and admin that paypal transaction went through, but
+    // we failed to connect it to our catalog.
+  }
+
   const purchaseSucceeded = (details) => {
     if (!details) {
       return;
     }
 
-    const requestConfig = {
-      method: 'post',
-      url: `${apiHost}/bowlers/${identifier}/purchases`,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      data: {
-        paypal_details: details,
-        ...purchaseDetailsPostData(commerce.cart)
-      },
-    }
-    axios(requestConfig)
-      .then(response => {
-        commerceDispatch(purchaseCompleted(response.data));
-        fetchBowlerDetails(identifier, commerce, commerceDispatch);
-        router.push(`/bowlers/${identifier}?success=purchase`);
-      })
-      .catch(error => {
-        commerceDispatch(purchaseFailed(error));
-        router.push(`/bowlers/${identifier}?error=purchase`);
-        // redirect to team listing with error message
-        // trigger an email to treasurer and admin that paypal transaction went through, but
-        // we failed to connect it to our catalog.
-      })
+    const postData = {
+      paypal_details: details,
+      ...purchaseDetailsPostData(commerce.cart)
+    };
+    postPurchasesCompleted(identifier, postData, onCompletePurchaseSuccess, onCompletePurchaseFailure);
   }
 
   let displayed_name = commerce.bowler.first_name;

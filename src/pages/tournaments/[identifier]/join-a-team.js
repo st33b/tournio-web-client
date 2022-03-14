@@ -1,9 +1,7 @@
 import {useEffect, useState} from "react";
-import axios from "axios";
-import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
-import {apiHost} from "../../../utils";
+import {fetchTeamList} from "../../../utils";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
@@ -21,25 +19,29 @@ const page = () => {
   const [loading, setLoading] = useState(false);
   const [teams, setTeams] = useState(null);
 
+  const onTeamListRetrieved = (data) => {
+    setTeams(data);
+    setLoading(false);
+  }
+
+  const onTeamListFailed = (data) => {
+    setLoading(false);
+    // error!
+  }
+
   // fetch the team details
   useEffect(() => {
-    dispatch(joinTeamRegistrationInitiated());
-    const requestConfig = {
-      method: 'get',
-      url: `${apiHost}/tournaments/${entry.tournament.identifier}/teams?incomplete=true`,
-      headers: {
-        'Accept': 'application/json',
-      }
+    if (!entry || !entry.tournament) {
+      return;
     }
-    axios(requestConfig)
-      .then(response => {
-        setTeams(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        setLoading(false);
-        // Display some kind of error message
-      });
+    dispatch(joinTeamRegistrationInitiated());
+    fetchTeamList({
+      tournamentIdentifier: entry.tournament.identifier,
+      dispatch: dispatch,
+      onSuccess: onTeamListRetrieved,
+      onFailure: onTeamListFailed,
+      incomplete: true,
+    })
   }, []);
 
   if (loading) {

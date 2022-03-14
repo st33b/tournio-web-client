@@ -1,44 +1,41 @@
 import {useEffect, useState} from "react";
-import axios from "axios";
 import {Col, Row} from "react-bootstrap";
 
-import {apiHost} from "../../../utils";
+import {fetchTeamList} from "../../../utils";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import TeamListing from "../../../components/Registration/TeamListing/TeamListing";
-import {teamListRetrieved} from "../../../store/actions/registrationActions";
 import Contacts from "../../../components/Registration/Contacts/Contacts";
 
 const page = () => {
   const { entry, dispatch } = useRegistrationContext();
 
-  if (!entry.tournament) {
-    return '';
-  }
-
   const [loading, setLoading] = useState(false);
   const [teams, setTeams] = useState(null);
 
-  // fetch the list of teams-deprecated
+  const onTeamListRetrieved = (data) => {
+    setTeams(data);
+    setLoading(false);
+  }
+
+  const onTeamListFailed = (data) => {
+    setLoading(false);
+    // error!
+  }
+
+  // fetch the list of teams
   useEffect(() => {
-    const requestConfig = {
-      method: 'get',
-      url: `${apiHost}/tournaments/${entry.tournament.identifier}/teams`,
-      headers: {
-        'Accept': 'application/json',
-      }
+    if (!entry || !entry.tournament) {
+      return;
     }
-    axios(requestConfig)
-      .then(response => {
-        dispatch(teamListRetrieved());
-        setTeams(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        setLoading(false);
-        // Display some kind of error message
-      });
+    setLoading(true);
+    fetchTeamList({
+      tournamentIdentifier: entry.tournament.identifier,
+      dispatch: dispatch,
+      onSuccess: onTeamListRetrieved,
+      onFailure: onTeamListFailed,
+    });
   }, []);
 
   if (loading) {
@@ -51,7 +48,7 @@ const page = () => {
     );
   }
 
-  if (!teams) {
+  if (!teams || !entry || !entry.tournament) {
     return '';
   }
 

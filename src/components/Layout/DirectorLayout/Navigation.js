@@ -1,16 +1,12 @@
 import {useState, useEffect} from 'react';
-import {useRouter} from "next/router";
-
 import {Nav, Navbar} from "react-bootstrap";
 
-import {directorApiLogoutRequest} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './Navigation.module.scss';
 
 const navigation = () => {
   const directorContext = useDirectorContext();
-  const router = useRouter();
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [isSuperuser, setIsSuperuser] = useState(false);
@@ -19,19 +15,6 @@ const navigation = () => {
     setLoggedIn(directorContext.isLoggedIn);
     setIsSuperuser(directorContext.user && directorContext.user.role === 'superuser');
   }, [directorContext.isLoggedIn, directorContext.user]);
-
-  const onLogoutSuccess = () => {
-    router.push('/director/login');
-  }
-
-  const logoutHandler = (event) => {
-    event.preventDefault();
-    directorApiLogoutRequest({
-      context: directorContext,
-      onSuccess: onLogoutSuccess,
-      onFailure: (_) => {},
-    })
-  }
 
   return (
     <div className={classes.Navigation}>
@@ -61,7 +44,7 @@ const navigation = () => {
               )}
             </Nav>
             <Nav className={'ms-auto pe-2'}>
-              <Nav.Link onClick={logoutHandler} href={'#'}>
+              <Nav.Link href={'/director/logout'}>
                 Log Out
               </Nav.Link>
             </Nav>
