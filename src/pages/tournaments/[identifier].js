@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 import {useRouter} from "next/router";
 
-import {retrieveTournamentDetails} from "../../utils";
+import {fetchTournamentDetails} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentDetails from "../../components/Registration/TournamentDetails/TournamentDetails";
@@ -21,7 +21,7 @@ const page = () => {
       return;
     }
 
-    retrieveTournamentDetails(identifier, dispatch, commerceDispatch);
+    fetchTournamentDetails(identifier, dispatch, commerceDispatch);
    }, [identifier]);
 
   if (!entry || !entry.tournament) {

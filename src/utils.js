@@ -1,6 +1,6 @@
 import axios from "axios";
 import {
-  bowlerCommerceDetailsRetrieved,
+  bowlerCommerceDetailsRetrieved, freeEntryFailure, freeEntrySuccess,
   teamDetailsRetrieved,
   teamListRetrieved,
   tournamentDetailsRetrieved,
@@ -31,7 +31,30 @@ export const lessThan = (rows, id, filterValue) => {
 
 export const apiHost = `${process.env.NEXT_PUBLIC_API_PROTOCOL}://${process.env.NEXT_PUBLIC_API_HOSTNAME}:${process.env.NEXT_PUBLIC_API_PORT}`;
 
-export const retrieveTournamentDetails = (identifier, ...dispatches) => {
+export const fetchTournamentList = (onSuccess, onFailure) => {
+  const requestConfig = {
+    method: 'get',
+    url: `${apiHost}/tournaments`,
+    headers: {
+      'Accept': 'application/json',
+    },
+    validateStatus: (status) => { return status < 500 },
+  };
+  axios(requestConfig)
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        onSuccess(response.data);
+      } else {
+        onFailure(response.data);
+      }
+    })
+    .catch(error => {
+      onFailure({error: error.message});
+    });
+
+}
+
+export const fetchTournamentDetails = (identifier, ...dispatches) => {
   const requestConfig = {
     method: 'get',
     url: `${apiHost}/tournaments/${identifier}`,
@@ -99,7 +122,7 @@ export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, commerceDispat
         const bowlerTournamentId = bowlerData.tournament.identifier;
 
         if (contextTournamentId !== bowlerTournamentId) {
-          retrieveTournamentDetails(bowlerTournamentId, commerceDispatch);
+          fetchTournamentDetails(bowlerTournamentId, commerceDispatch);
         }
       }
     })
@@ -235,6 +258,30 @@ const convertAdditionalQuestionResponsesForPost = (tournament, bowler) => {
 }
 
 ////////////////////////////////////////////////
+
+export const postFreeEntry = (tournamentIdentifier, postData, onSuccess, onFailure) => {
+  const requestConfig = {
+    method: 'post',
+    url: `${apiHost}/tournaments/${tournamentIdentifier}/free_entries`,
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    data: postData,
+    validateStatus: (status) => { return status < 500 },
+  }
+  axios(requestConfig)
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        onSuccess(response.data);
+      } else {
+        onFailure(response.data);
+      }
+    })
+    .catch(error => {
+      onFailure({error: error.message});
+    });
+}
 
 export const postPurchaseDetails = (bowlerIdentifier, postData, onSuccess, onFailure) => {
   const requestConfig = {

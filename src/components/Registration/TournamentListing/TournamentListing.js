@@ -1,7 +1,6 @@
 import {useState, useEffect} from "react";
-import axios from 'axios';
 
-import {apiHost} from "../../../utils";
+import {fetchTournamentList} from "../../../utils";
 
 import classes from './TournamentListing.module.scss';
 
@@ -9,23 +8,17 @@ const tournamentListing = () => {
   const [tournaments, setTournaments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const requestConfig = {
-      method: 'get',
-      url: `${apiHost}/tournaments`,
-      headers: {
-        'Accept': 'application/json',
-      }
-    }
+  const onFetchSuccess = (data) => {
+    setTournaments(data);
+    setLoading(false);
+  }
 
-    axios(requestConfig)
-      .then(response => {
-        setTournaments(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        setLoading(false);
-      });
+  const onFetchFailure = (data) => {
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchTournamentList(onFetchSuccess, onFetchFailure);
   }, []);
 
   if (loading) {

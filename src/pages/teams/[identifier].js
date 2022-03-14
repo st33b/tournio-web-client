@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
-import {fetchTeamDetails, retrieveTournamentDetails} from "../../utils";
+import {fetchTeamDetails, fetchTournamentDetails} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
@@ -49,7 +49,7 @@ const page = () => {
       return;
     }
     if (entry.team.tournament.identifier !== entry.tournament.identifier) {
-      retrieveTournamentDetails(entry.team.tournament.identifier, dispatch, commerceDispatch);
+      fetchTournamentDetails(entry.team.tournament.identifier, dispatch, commerceDispatch);
     }
   }, [identifier, entry]);
 

@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
-import {fetchBowlerDetails, retrieveTournamentDetails} from "../../utils";
+import {fetchBowlerDetails, fetchTournamentDetails} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
@@ -34,7 +34,7 @@ const page = () => {
       return;
     }
     if (commerce.bowler.tournament.identifier !== commerce.tournament.identifier) {
-      retrieveTournamentDetails(commerce.bowler.tournament.identifier, commerceDispatch);
+      fetchTournamentDetails(commerce.bowler.tournament.identifier, commerceDispatch);
     }
   }, [identifier, commerce]);
 

@@ -1,10 +1,10 @@
-import axios from "axios";
 import {useState} from "react";
+
 import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {postFreeEntry, updateObject} from "../../../utils";
+import {freeEntryDeclared, freeEntryFailure, freeEntrySuccess} from "../../../store/actions/registrationActions";
 
 import classes from './FreeEntryForm.module.scss';
-import {apiHost, updateObject} from "../../../utils";
-import {freeEntryDeclared, freeEntryFailure, freeEntrySuccess} from "../../../store/actions/registrationActions";
 
 const freeEntryForm = () => {
   const {commerce, commerceDispatch} = useRegistrationContext();
@@ -26,32 +26,25 @@ const freeEntryForm = () => {
 
   const [freeEntryForm, setFreeEntryForm] = useState(initialState);
 
+  const onFreeEntryPostSuccess = (data) => {
+    commerceDispatch(freeEntrySuccess(data.unique_code, data.message));
+  }
+
+  const onFreeEntryPostFailure = (data) => {
+    commerceDispatch(freeEntryFailure(freeEntryForm.freeEntryCode, data.error));
+  }
+
   const freeEntryCompleted = () => {
     if (!freeEntryForm.freeEntryCode || !freeEntryForm.valid) {
       return;
     }
 
     const tournamentIdentifier = commerce.tournament.identifier;
-
-    const requestConfig = {
-      method: 'post',
-      url: `${apiHost}/tournaments/${tournamentIdentifier}/free_entries`,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      data: {
-        unique_code: freeEntryForm.freeEntryCode,
-        bowler_identifier: commerce.bowler.identifier,
-      }
-    }
-    axios(requestConfig)
-      .then(response => {
-        commerceDispatch(freeEntrySuccess(response.data.unique_code, response.data.message));
-      })
-      .catch(error => {
-        commerceDispatch(freeEntryFailure(freeEntryForm.freeEntryCode, error.response.data.error));
-      });
+    const postData = {
+      unique_code: freeEntryForm.freeEntryCode,
+      bowler_identifier: commerce.bowler.identifier,
+    };
+    postFreeEntry(tournamentIdentifier, postData, onFreeEntryPostSuccess, onFreeEntryPostFailure);
   }
 
   const formHandler = (event) => {
@@ -98,7 +91,7 @@ const freeEntryForm = () => {
     serverMessage = (
       <div className={'alert alert-success alert-dismissible fade show mt-3'} role={'alert'}>
         {commerce.freeEntry.message}
-        <button type={'button'} className={'btn-close'} data-bs-dismiss={'alert'} aria-label={'Close'}></button>
+        <button type={'button'} className={'btn-close'} data-bs-dismiss={'alert'} aria-label={'Close'} />
       </div>
     );
     formClass = 'd-none';
@@ -110,7 +103,7 @@ const freeEntryForm = () => {
     errorMessage = (
       <div className={'alert alert-danger alert-dismissible fade show mt-3'} role={'alert'}>
         {commerce.freeEntry.error}
-        <button type={'button'} className={'btn-close'} data-bs-dismiss={'alert'} aria-label={'Close'}></button>
+        <button type={'button'} className={'btn-close'} data-bs-dismiss={'alert'} aria-label={'Close'} />
       </div>
     );
   }
