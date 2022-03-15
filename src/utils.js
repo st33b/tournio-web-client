@@ -1,6 +1,6 @@
 import axios from "axios";
 import {
-  bowlerCommerceDetailsRetrieved, freeEntryFailure, freeEntrySuccess,
+  bowlerCommerceDetailsRetrieved,
   teamDetailsRetrieved,
   teamListRetrieved,
   tournamentDetailsRetrieved,
