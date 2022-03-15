@@ -56,7 +56,7 @@ const loginForm = () => {
 
   return (
     <div className={classes.LoginForm}>
-      <Card className={classes.Card + ' col-12 col-sm-8 col-md-6 offset-sm-2 offset-md-3'}>
+      <Card className={classes.Card}>
         <Card.Header>
           <Card.Title>
             Let's get you logged in...

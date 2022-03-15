@@ -333,6 +333,77 @@ export const postPurchasesCompleted = (bowlerIdentifier, postData, onSuccess, on
 
 ////////////////////////////////////////////////
 
+export const directorForgotPasswordRequest = (postData, onSuccess, onFailure) => {
+  const url = `${apiHost}/password`;
+  const requestConfig = {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    url: url,
+    validateStatus: (status) => { return status < 500 },
+    data: postData,
+  }
+  axios(requestConfig)
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        onSuccess();
+      } else if (response.status === 422) {
+        onSuccess();
+      } else {
+        console.log(response.data);
+        onFailure(response.data);
+      }
+    })
+    .catch(error => {
+      if (error.request) {
+        console.log('No response was received.');
+        onFailure({error: 'The server did not respond'});
+      } else {
+        console.log('Exceptional error', error.message);
+        onFailure({error: error.message});
+      }
+    });
+}
+
+export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => {
+  const url = `${apiHost}/password`;
+  const requestConfig = {
+    method: 'patch',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    url: url,
+    validateStatus: (status) => { return status < 500 },
+    data: postData,
+  }
+  axios(requestConfig)
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        console.log(response.headers)
+        onSuccess(response.data);
+      } else if (response.status === 422) {
+        onFailure(response.data.error);
+      } else {
+        console.log(response.data);
+        onFailure(response.data);
+      }
+    })
+    .catch(error => {
+      if (error.request) {
+        console.log('No response was received.');
+        onFailure({error: 'The server did not respond'});
+      } else {
+        console.log('Exceptional error', error.message);
+        onFailure({error: error.message});
+      }
+    });
+}
+
+////////////////////////////////////////////////
+
 export const directorApiRequest = ({uri, requestConfig, context, router, onSuccess = null, onFailure = null}) => {
   const url = `${apiHost}${uri}`;
   const config = {...requestConfig};
