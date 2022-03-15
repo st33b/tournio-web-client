@@ -1,18 +1,8 @@
 import RegistrationLayout from '../components/Layout/RegistrationLayout/RegistrationLayout';
 import TournamentListing from "../components/Registration/TournamentListing/TournamentListing";
 
-import {apiHost} from "../utils";
-
 const page = () => {
-  return (
-    <div>
-      <TournamentListing />
-      <p className={'text-center'}>
-        <code>{apiHost}</code>
-      </p>
-    </div>
-
-  );
+  return <TournamentListing />;
 }
 
 page.getLayout = function getLayout(page) {
