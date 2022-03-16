@@ -444,7 +444,7 @@ export const directorApiDownloadRequest = ({uri, context, router, onSuccess = nu
     },
     responseType: 'blob',
     validateStatus: (status) => {
-      return status < 500
+      return status < 500;
     },
   }
   axios(config)
@@ -455,7 +455,7 @@ export const directorApiDownloadRequest = ({uri, context, router, onSuccess = nu
         context.logout();
         router.push('/director/login');
       } else {
-        onFailure(response.data);
+        onFailure({error: 'The file did not download for some reason'});
       }
     })
     .catch(error => {

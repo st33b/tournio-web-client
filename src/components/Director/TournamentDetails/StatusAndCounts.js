@@ -1,6 +1,5 @@
 import {useState} from "react";
 import {useRouter} from "next/router";
-import {saveAs} from 'file-saver';
 import Card from 'react-bootstrap/Card';
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
@@ -18,11 +17,45 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
   }
   const router = useRouter();
 
+  const [downloadMessage, setDownloadMessage] = useState(null);
   const downloadSuccess = (data, name) => {
-    saveAs(data, name);
-    // router.push(data);
+    const url = URL.createObjectURL(data);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', name);
+    document.body.append(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    setDownloadMessage(
+      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
+        <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
+        <div className={'me-auto'}>
+          Download completed.
+          <button type="button"
+                  className={"btn-close"}
+                  data-bs-dismiss="alert"
+                  onClick={() => setDownloadMessage(null)}
+                  aria-label="Close" />
+        </div>
+      </div>
+    );
   }
-  const downloadFailure = (data, name) => {
+  const downloadFailure = (data) => {
+    setDownloadMessage(
+      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
+        <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
+        <div className={'me-auto'}>
+          Download failed. {data.error}
+          <button type="button"
+                  className={"btn-close"}
+                  data-bs-dismiss="alert"
+                  onClick={() => setDownloadMessage(null)}
+                  aria-label="Close" />
+        </div>
+      </div>
+    );
   }
   const downloadClicked = (event, uri, saveAsName) => {
     event.preventDefault();
@@ -31,7 +64,7 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
       context: context,
       router: router,
       onSuccess: (data) => downloadSuccess(data, saveAsName),
-      onFailure: (data) => downloadFailure(data, saveAsName),
+      onFailure: (data) => downloadFailure(data),
     });
   }
 
@@ -52,6 +85,7 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
       >
         IGBO-TS
       </Card.Link>
+      {downloadMessage}
     </Card.Body>
   );
 
