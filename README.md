@@ -1,24 +1,23 @@
-# README
+# igbo-registration-client
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is the code for the frontend of my registration system for IGBO bowling tournaments. The repository for the backend is at `igbo-registration-api`.
 
-Things you may want to cover:
+This was built using Create Next App.
 
-* Ruby version
+## Main Frameworks
 
-* System dependencies
+It's a React app built to run on [NextJS](https://nextjs.org).
 
-* Configuration
+I endeavor to be on the latest versions of the language and framework. As such, you can expect to see frequent updates for React, NextJS, Boostrap, and all the other libraries it uses.
 
-* Database creation
+## Dependencies
 
-* Database initialization
+The main libraries used in this system are:
+- NextJS
+- React
+- Bootstrap
+- Axios
 
-* How to run the test suite
+## More to come
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+As I flesh this out...
