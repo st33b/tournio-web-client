@@ -1,12 +1,13 @@
 import {useState} from "react";
+import {useRouter} from "next/router";
+import {saveAs} from 'file-saver';
 import Card from 'react-bootstrap/Card';
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 
-import {directorApiRequest} from "../../../utils";
+import {directorApiDownloadRequest, directorApiRequest} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {useRouter} from "next/router";
 
 import classes from './TournamentDetails.module.scss';
 
@@ -17,17 +18,38 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
   }
   const router = useRouter();
 
+  const downloadSuccess = (data, name) => {
+    saveAs(data, name);
+    // router.push(data);
+  }
+  const downloadFailure = (data, name) => {
+  }
+  const downloadClicked = (event, uri, saveAsName) => {
+    event.preventDefault();
+    directorApiDownloadRequest({
+      uri: uri,
+      context: context,
+      router: router,
+      onSuccess: (data) => downloadSuccess(data, saveAsName),
+      onFailure: (data) => downloadFailure(data, saveAsName),
+    });
+  }
+
   const downloads = (
     <Card.Body className={'bg-white text-dark'}>
       <Card.Subtitle className={'mb-3'}>
         Downloads
       </Card.Subtitle>
       <Card.Link className={'btn btn-sm btn-outline-primary'}
-                 href={`/api/director/tournaments/${context.tournament.identifier}/csv_download`}>
+                 href={'#'}
+                 onClick ={(event) => downloadClicked(event, `/director/tournaments/${context.tournament.identifier}/csv_download`, 'bowlers.csv')}
+      >
         CSV
       </Card.Link>
       <Card.Link className={'btn btn-sm btn-outline-primary'}
-                 href={`/api/director/tournaments/${context.tournament.identifier}/igbots_download`}>
+                 href={'#'}
+                 onClick ={(event) => downloadClicked(event, `/director/tournaments/${context.tournament.identifier}/igbots_download`, 'bowlers.xml')}
+      >
         IGBO-TS
       </Card.Link>
     </Card.Body>

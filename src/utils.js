@@ -434,6 +434,41 @@ export const directorApiRequest = ({uri, requestConfig, context, router, onSucce
     });
 }
 
+export const directorApiDownloadRequest = ({uri, context, router, onSuccess = null, onFailure = null}) => {
+  const url = `${apiHost}${uri}`;
+  const config = {
+    method: 'get',
+    url: url,
+    headers: {
+      'Authorization': context.token,
+    },
+    responseType: 'blob',
+    validateStatus: (status) => {
+      return status < 500
+    },
+  }
+  axios(config)
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        onSuccess(response.data);
+      } else if (response.status === 401) {
+        context.logout();
+        router.push('/director/login');
+      } else {
+        onFailure(response.data);
+      }
+    })
+    .catch(error => {
+      if (error.request) {
+        console.log('No response was received.');
+        onFailure({error: 'The server did not respond'});
+      } else {
+        console.log('Exceptional error', error.message);
+        onFailure({error: error.message});
+      }
+    });
+}
+
 export const directorApiLoginRequest = ({userCreds, context, onSuccess = null, onFailure = null}) => {
   const config = {
     url: `${apiHost}/login`,
