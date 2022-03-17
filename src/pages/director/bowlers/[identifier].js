@@ -18,15 +18,21 @@ const page = () => {
     return '';
   }
 
+  const newTeamFormInitialState = {
+    destinationTeam: '',
+  }
+  const linkFreeEntryInitialState = {
+    id: null,
+    confirm: false,
+  }
+
   const [bowler, setBowler] = useState(null);
   const [availableTeams, setAvailableTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
-
-  const newTeamFormInitialState = {
-    destinationTeam: '',
-  }
   const [newTeamFormData, setNewTeamFormData] = useState(newTeamFormInitialState);
+  const [linkFreeEntryFormData, setLinkFreeEntryFormData] = useState(linkFreeEntryInitialState);
+  const [availableFreeEntries, setAvailableFreeEntries] = useState([]);
 
   // This effect ensures that we're logged in and have permission to administer the current tournament
   useEffect(() => {
@@ -47,7 +53,6 @@ const page = () => {
     setLoading(false);
     setBowler(data);
   }
-
   const fetchBowlerFailure = (data) => {
     setErrorMessage(data.error);
     setLoading(false);
@@ -77,7 +82,6 @@ const page = () => {
     setLoading(false);
     setAvailableTeams(data);
   }
-
   const fetchTeamsFailure = (data) => {
     setLoading(false);
     setErrorMessage(data.error);
@@ -103,13 +107,40 @@ const page = () => {
     });
   }, [directorContext]);
 
+  const fetchFreeEntriesSuccess = (data) => {
+    setAvailableFreeEntries(data);
+  }
+  const fetchFreeEntriesFailure = (data) => {
+    setErrorMessage(data.error);
+  }
+
+  // This effect pulls the list of unassigned free entries from the backend
+  useEffect(() => {
+    if (!bowler) {
+      return;
+    }
+    const uri = `/director/tournaments/${directorContext.tournament.identifier}/free_entries?unassigned=true`;
+    const requestConfig = {
+      method: 'get',
+    }
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: fetchFreeEntriesSuccess,
+      onFailure: fetchFreeEntriesFailure,
+    });
+  }, [bowler]);
+
   if (loading) {
     return <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>;
   }
 
+  let displayedError = '';
   if (errorMessage) {
-    return (
-      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'}
+    displayedError = (
+      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-0 mb-3'}
            role={'alert'}>
         <i className={'bi-exclamation-circle-fill pe-2'} aria-hidden={true}/>
         <div className={'me-auto'}>
@@ -134,7 +165,6 @@ const page = () => {
     setLoading(false);
     router.push('/director/bowlers?success=deleted');
   }
-
   const deleteBowlerFailure = (data) => {
     setLoading(false);
     setErrorMessage(data.error);
@@ -215,7 +245,6 @@ const page = () => {
     setLoading(false);
     setBowler(data);
   }
-
   const moveBowlerFailure = (data) => {
     setLoading(false);
     setErrorMessage(data.error);
@@ -279,6 +308,86 @@ const page = () => {
                     type={'submit'}>
               Move Bowler
             </Button>
+          </form>
+        </Card.Body>
+      </Card>
+    );
+  }
+
+  const linkFreeEntryOptionChanged = (event) => {
+    const newFormData = {...linkFreeEntryFormData}
+    newFormData.id = event.target.value;
+    setLinkFreeEntryFormData(newFormData);
+  }
+
+  const confirmFreeEntryChanged = (event) => {
+    const newFormData = {...linkFreeEntryFormData}
+    newFormData.confirm = event.target.checked;
+    setLinkFreeEntryFormData(newFormData);
+  }
+
+  const linkFreeEntrySuccess = (data) => {
+    router.reload();
+  }
+  const linkFreeEntryFailure = (data) => {
+    setErrorMessage('Failed to link the free entry.');
+  }
+
+  const linkFreeEntrySubmitHandler = (event) => {
+    event.preventDefault();
+
+    const uri = `/director/free_entries/${linkFreeEntryFormData.id}`;
+    const requestConfig = {
+      method: 'patch',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        bowler_identifier: identifier,
+        confirm: linkFreeEntryFormData.confirm,
+      }
+    }
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: linkFreeEntrySuccess,
+      onFailure: linkFreeEntryFailure,
+    });
+  }
+
+  let linkFreeEntryCard = '';
+  if (!bowler.free_entry && availableFreeEntries.length > 0) {
+    linkFreeEntryCard = (
+      <Card className={'mb-3'}>
+        <Card.Header as={'h5'} className={'fw-light'}>
+          Link a Free Entry
+        </Card.Header>
+        <Card.Body>
+          <form onSubmit={linkFreeEntrySubmitHandler}>
+            <select className={'form-select'} name={'destinationTeam'} onChange={linkFreeEntryOptionChanged}>
+              <option value={''}>Choose a free entry code</option>
+              {availableFreeEntries.map(fe => <option key={fe.id} value={fe.id}>{fe.unique_code}</option>)}
+            </select>
+            <div className={'form-check pt-3'}>
+              <input className={'form-check-input'}
+                     type={'checkbox'}
+                     value={'1'}
+                     onChange={confirmFreeEntryChanged}
+                     id={'confirm'} />
+              <label className={'form-check-label'} htmlFor={'confirm'}>
+                Confirm it, too.
+              </label>
+            </div>
+            <div className={'text-center'}>
+              <Button variant={'primary'}
+                      className={'mt-3'}
+                      disabled={linkFreeEntryFormData.id === null}
+                      type={'submit'}>
+                Link Free Entry
+              </Button>
+            </div>
           </form>
         </Card.Body>
       </Card>
@@ -376,7 +485,6 @@ const page = () => {
     setLoading(false);
     setBowler(data);
   }
-
   const bowlerUpdateFailure = (data) => {
     setLoading(false);
     setErrorMessage(data.error);
@@ -420,25 +528,18 @@ const page = () => {
       <Breadcrumbs ladder={ladder} activeText={bowlerName}/>
       <Row>
         <Col md={8}>
-          {/*<h3>*/}
-          {/*  {bowlerName}*/}
-          {/*</h3>*/}
+          {displayedError}
           {bowlerSummary}
           <BowlerDetails bowler={bowler}
                          bowlerUpdateSubmitted={updateSubmitHandler}
           />
-          <Row>
-            <Col md={6}>
-              {deleteBowlerCard}
-            </Col>
-            <Col md={6}>
-              {moveToTeamCard}
-            </Col>
-          </Row>
         </Col>
         <Col md={4}>
+          {linkFreeEntryCard}
+          {moveToTeamCard}
           {purchases}
           {ledgerEntries}
+          {deleteBowlerCard}
         </Col>
       </Row>
     </div>

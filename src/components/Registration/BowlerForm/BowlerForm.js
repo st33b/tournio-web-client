@@ -51,7 +51,7 @@ const bowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
         validation: {
           required: false,
         },
-        valid: false,
+        valid: true,
         touched: false,
       },
       usbc_id: {
@@ -85,7 +85,7 @@ const bowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
           url: 'http://www.igbo.org/igbots-id-lookup/',
           text: 'Look up your IGBO ID; enter "n/a" if you don\'t have one',
         },
-        valid: false,
+        valid: true,
         touched: false,
       },
       birth_month: {
@@ -168,7 +168,7 @@ const bowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
         validation: {
           required: false,
         },
-        valid: false,
+        valid: true,
         touched: false,
       },
       city: {
