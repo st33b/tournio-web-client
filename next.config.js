@@ -5,8 +5,11 @@ module.exports = {
         source: '/director',
         destination: '/director/tournaments',
         permanent: true,
-      }
-    ]
+      },
+      process.env.MAINTENANCE_MODE === '1'
+        ? { source: "/((?!maint).*)", destination: "/maint.html", permanent: false }
+        : null,
+    ].filter(Boolean);
   },
   reactStrictMode: true,
-}
+};
