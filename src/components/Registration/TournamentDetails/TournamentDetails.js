@@ -48,12 +48,18 @@ const tournamentDetails = ({tournament}) => {
   let early_registration = '';
   if (tournament.early_registration_ends) {
     early_registration = (
-      <div className={'row'}>
+      <div className={'row pb-2'}>
         <dt className={dtClass}>
           Early registration deadline:
         </dt>
         <dd className={ddClass}>
           {tournament.early_registration_ends}
+        </dd>
+        <dt className={dtClass}>
+          Early registration discount:
+        </dt>
+        <dd className={ddClass}>
+          ${tournament.early_registration_discount}
         </dd>
       </div>
     )
@@ -62,12 +68,18 @@ const tournamentDetails = ({tournament}) => {
   let late_fee_date = '';
   if (tournament.late_fee_applies_at) {
     late_fee_date = (
-      <div className={'row'}>
+      <div className={'row pb-2'}>
         <dt className={dtClass}>
           Late fee applies:
         </dt>
         <dd className={ddClass}>
           {tournament.late_fee_applies_at}
+        </dd>
+        <dt className={dtClass}>
+          Late registration fee:
+        </dt>
+        <dd className={ddClass}>
+          ${tournament.late_registration_fee}
         </dd>
       </div>
     )
@@ -76,12 +88,20 @@ const tournamentDetails = ({tournament}) => {
   const dates = (
     <div className={''}>
       <h6>
-        Important dates:
+        Important details:
       </h6>
       <dl>
+        <div className={'row pb-2'}>
+          <dt className={dtClass}>
+            Registration fee:
+          </dt>
+          <dd className={ddClass}>
+            ${tournament.registration_fee}
+          </dd>
+        </div>
         {early_registration}
         {late_fee_date}
-        <div className={'row'}>
+        <div className={'row pb-2'}>
           <dt className={dtClass}>
             Registration deadline:
           </dt>
