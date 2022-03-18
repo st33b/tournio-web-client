@@ -23,6 +23,9 @@ const userListing = ({users}) => {
             <th>
               Tournament(s)
             </th>
+            <th>
+              Last signed in
+            </th>
           </tr>
           </thead>
           <tbody>
@@ -39,6 +42,9 @@ const userListing = ({users}) => {
                 </td>
                 <td>
                   {row.tournaments.map(t => (t.name)).join(', ')}
+                </td>
+                <td>
+                  {row.last_sign_in_at}
                 </td>
               </tr>
             );
