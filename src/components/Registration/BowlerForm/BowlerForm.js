@@ -237,7 +237,7 @@ const bowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
   // (elementConfig, in this case. helper and validation won't change.)
   for (let key in entry.tournament.additional_questions) {
     initialFormState.formFields[key] = { ...entry.tournament.additional_questions[key] }
-    initialFormState.formFields[key].valid = false;
+    initialFormState.formFields[key].valid = !entry.tournament.additional_questions[key].validation.required
     initialFormState.formFields[key].touched = false;
     initialFormState.formFields[key].elementConfig = { ...entry.tournament.additional_questions[key].elementConfig }
   }
