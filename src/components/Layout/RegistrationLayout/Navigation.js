@@ -27,7 +27,7 @@ const navigation = ({showCart}) => {
   }
   return (
     <div className={`${classes.Navigation}`}>
-      <Row>
+      <Row className={process.env.NODE_ENV === 'development' && classes.Development}>
         <div className={`${classes.HomeLinks} d-flex d-md-none`}>
           <a href={'/'} title={'To tournament listing'} className={'link-dark'}>
             <span className={'visually-hidden'}>Home</span>
