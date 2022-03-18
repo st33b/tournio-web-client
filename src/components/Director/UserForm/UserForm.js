@@ -165,8 +165,8 @@ const userForm = ({user, tournaments, userDeleteInitiated}) => {
     const newValue = event.target.value;
 
     // This is the only validation we need to do
-    if (elementId === 'email' && !newValue) {
-      updatedForm.valid = false;
+    if (elementId === 'email') {
+      updatedForm.valid = !!newValue;
     }
 
     // Value of Tournament IDs element is handled differently than the others
