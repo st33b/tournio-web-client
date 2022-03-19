@@ -1,0 +1,17 @@
+.AdditionalQuestions {
+  .Card {
+    margin-bottom: 1rem;
+  }
+  .EditIcon {
+    font-size: 1.2rem;
+  }
+  .SaveIcon {
+    font-size: 1.2rem;
+  }
+  .GrabHandle {
+    cursor: grab;
+  }
+  .GrabHandle:active {
+    cursor: grabbing;
+  }
+}
