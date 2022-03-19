@@ -27,11 +27,7 @@ const additionalQuestions = () => {
           );
         })}
       </ListGroup>
-      {context.tournament.available_questions.length > 0 && (
-        <Card.Body>
-          <AdditionalQuestionForm availableQuestions={context.tournament.available_questions} />
-        </Card.Body>
-      )}
+      <AdditionalQuestionForm />
     </Card>
   );
 }
