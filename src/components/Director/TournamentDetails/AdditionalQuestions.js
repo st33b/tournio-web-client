@@ -3,6 +3,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 
 import classes from './TournamentDetails.module.scss';
 import {useDirectorContext} from "../../../store/DirectorContext";
+import AdditionalQuestionForm from "../AdditionalQuestionForm/AdditionalQuestionForm";
 
 const additionalQuestions = () => {
   const context = useDirectorContext();
@@ -26,6 +27,11 @@ const additionalQuestions = () => {
           );
         })}
       </ListGroup>
+      {context.tournament.available_questions.length > 0 && (
+        <Card.Body>
+          <AdditionalQuestionForm availableQuestions={context.tournament.available_questions} />
+        </Card.Body>
+      )}
     </Card>
   );
 }
