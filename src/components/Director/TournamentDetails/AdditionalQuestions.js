@@ -1,6 +1,7 @@
 import {useState} from "react";
 import Card from 'react-bootstrap/Card';
 import ListGroup from "react-bootstrap/ListGroup";
+// import {DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 import AdditionalQuestionForm from "../AdditionalQuestionForm/AdditionalQuestionForm";
@@ -29,20 +30,20 @@ const additionalQuestions = () => {
   }
 
   const editLink = (
-    <a href={'#'}
-       className={`${classes.EditIcon} ms-auto align-middle`}
+    <button
+       className={`${classes.EditIcon} btn btn-sm btn-outline-primary ms-auto align-middle`}
        onClick={editClicked}>
       <i className={'bi-pencil'} aria-hidden={true}/>
       <span className={'visually-hidden'}>edit</span>
-    </a>
+    </button>
   );
   const saveLink = (
-    <a href={'#'}
-       className={`${classes.SaveIcon} ms-auto align-middle`}
+    <button
+       className={`${classes.SaveIcon} btn btn-sm btn-secondary ms-auto align-middle`}
        onClick={saveClicked}>
-      <i className={'bi-save'} aria-hidden={true}/>
+      <i className={'bi-pencil-fill'} aria-hidden={true}/>
       <span className={'visually-hidden'}>save</span>
-    </a>
+    </button>
   )
 
   let list = (
@@ -83,7 +84,7 @@ const additionalQuestions = () => {
     <div className={classes.AdditionalQuestions}>
       <Card className={classes.Card}>
         <Card.Header className={'d-flex'}>
-          <h5 className={'fw-light mb-0'}>
+          <h5 className={'fw-light mb-0 mt-1'}>
             Additional Form Questions
           </h5>
           {tournamentHasQuestions && editable && !editing && editLink}
