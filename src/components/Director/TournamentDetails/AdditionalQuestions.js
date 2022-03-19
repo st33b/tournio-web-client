@@ -3,6 +3,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 
 import classes from './TournamentDetails.module.scss';
 import {useDirectorContext} from "../../../store/DirectorContext";
+import AdditionalQuestionForm from "../AdditionalQuestionForm/AdditionalQuestionForm";
 
 const additionalQuestions = () => {
   const context = useDirectorContext();
@@ -26,6 +27,7 @@ const additionalQuestions = () => {
           );
         })}
       </ListGroup>
+      <AdditionalQuestionForm />
     </Card>
   );
 }
