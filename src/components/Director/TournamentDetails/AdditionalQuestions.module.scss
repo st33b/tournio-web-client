@@ -8,10 +8,7 @@
   .SaveIcon {
     font-size: 1rem;
   }
-  .GrabHandle {
-    cursor: grab;
-  }
-  .GrabHandle:active {
-    cursor: grabbing;
+  .OrderInput {
+    width: 4rem;
   }
 }
