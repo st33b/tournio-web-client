@@ -10,7 +10,7 @@ import ItemSummary from "../../../components/Commerce/Checkout/ItemSummary";
 import PayPalExpressCheckout from "../../../components/Commerce/Checkout/PayPalExpressCheckout";
 import {purchaseCompleted, purchaseFailed} from "../../../store/actions/registrationActions";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const {commerce, commerceDispatch} = useRegistrationContext();
   const {identifier} = router.query;
@@ -52,7 +52,7 @@ const page = () => {
       onPreparePurchaseFailure
     );
 
-  }, [identifier, commerce]);
+  }, [identifier, commerce, router]);
 
   const purchaseDetailsPostData = (items) => {
     const purchaseIdentifiers = [];
@@ -169,7 +169,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <RegistrationLayout>
       {page}
@@ -177,4 +177,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

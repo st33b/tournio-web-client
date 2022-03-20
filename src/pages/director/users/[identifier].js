@@ -8,7 +8,7 @@ import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import UserForm from '../../../components/Director/UserForm/UserForm';
 
-const page = () => {
+const Page = () => {
   const directorContext = useDirectorContext();
   const router = useRouter();
   const { identifier } = router.query;
@@ -141,7 +141,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <DirectorLayout>
       {page}
@@ -149,4 +149,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

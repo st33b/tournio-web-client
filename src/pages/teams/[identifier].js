@@ -9,7 +9,7 @@ import TournamentLogo from "../../components/Registration/TournamentLogo/Tournam
 import Contacts from "../../components/Registration/Contacts/Contacts";
 import TeamDetails from "../../components/Registration/TeamDetails/TeamDetails";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const { entry, dispatch, commerceDispatch } = useRegistrationContext();
   const { identifier, success } = router.query;
@@ -103,7 +103,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <RegistrationLayout>
       {page}
@@ -111,4 +111,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

@@ -9,7 +9,7 @@ import TeamListing from "../../../components/Registration/TeamListing/TeamListin
 import {joinTeamRegistrationInitiated} from "../../../store/actions/registrationActions";
 import Contacts from "../../../components/Registration/Contacts/Contacts";
 
-const page = () => {
+const Page = () => {
   const { entry, dispatch } = useRegistrationContext();
 
   if (!entry.tournament) {
@@ -76,7 +76,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <RegistrationLayout>
       {page}
@@ -84,4 +84,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

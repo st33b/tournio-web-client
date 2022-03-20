@@ -4,7 +4,7 @@ import {useEffect} from "react";
 import {useRouter} from "next/router";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const directorContext = useDirectorContext();
 
@@ -19,7 +19,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <DirectorLayout>
       {page}
@@ -27,4 +27,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

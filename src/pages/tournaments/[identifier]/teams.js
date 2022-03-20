@@ -8,7 +8,7 @@ import TournamentLogo from "../../../components/Registration/TournamentLogo/Tour
 import TeamListing from "../../../components/Registration/TeamListing/TeamListing";
 import Contacts from "../../../components/Registration/Contacts/Contacts";
 
-const page = () => {
+const Page = () => {
   const { entry, dispatch } = useRegistrationContext();
 
   const [loading, setLoading] = useState(false);
@@ -75,7 +75,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <RegistrationLayout>
       {page}
@@ -83,4 +83,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

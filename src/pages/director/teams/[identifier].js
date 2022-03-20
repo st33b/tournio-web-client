@@ -8,7 +8,7 @@ import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import TeamDetails from "../../../components/Director/TeamDetails/TeamDetails";
 import {directorApiRequest} from "../../../utils";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const directorContext = useDirectorContext();
 
@@ -200,7 +200,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <DirectorLayout>
       {page}
@@ -208,4 +208,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

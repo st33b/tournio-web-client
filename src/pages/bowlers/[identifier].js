@@ -8,7 +8,7 @@ import RegistrationLayout from "../../components/Layout/RegistrationLayout/Regis
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import Menu from '../../components/Commerce/Menu';
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const {success, error} = router.query;
   const {commerce, commerceDispatch} = useRegistrationContext();
@@ -23,7 +23,7 @@ const page = () => {
     if (!commerce.bowler || commerce.bowler.identifier !== identifier) {
       fetchBowlerDetails(identifier, commerce, commerceDispatch);
     }
-  }, [identifier, commerce]);
+  }, [identifier, commerce, commerceDispatch]);
 
   // ensure that the tournament in context matches the bowler's
   useEffect(() => {
@@ -36,7 +36,7 @@ const page = () => {
     if (commerce.bowler.tournament.identifier !== commerce.tournament.identifier) {
       fetchTournamentDetails(commerce.bowler.tournament.identifier, commerceDispatch);
     }
-  }, [identifier, commerce]);
+  }, [identifier, commerce, commerceDispatch]);
 
   if (!commerce || !commerce.bowler) {
     return '';
@@ -102,7 +102,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <RegistrationLayout showCart={true}>
       {page}
@@ -110,4 +110,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

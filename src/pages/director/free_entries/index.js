@@ -9,7 +9,7 @@ import FreeEntryListing from "../../../components/Director/FreeEntryListing/Free
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import NewFreeEntryForm from "../../../components/Director/NewFreeEntryForm/NewFreeEntryForm";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const directorContext = useDirectorContext();
   const [successMessage, setSuccessMessage] = useState(null);
@@ -245,7 +245,7 @@ const page = () => {
 
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <DirectorLayout>
       {page}
@@ -253,4 +253,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;
