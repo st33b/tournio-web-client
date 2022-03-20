@@ -98,6 +98,7 @@ const additionalQuestionForm = () => {
               validation_rules: {
                 required: formData.required,
               },
+              order: context.tournament.additional_questions.length + 1,
             },
           ],
         },
