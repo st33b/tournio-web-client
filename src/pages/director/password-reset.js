@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import {Card, Col, Row} from "react-bootstrap";
 import PasswordResetForm from "../../components/Director/PasswordResetForm/PasswordResetForm";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const {token} = router.query;
 
@@ -32,7 +32,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <DirectorLayout>
       {page}
@@ -40,4 +40,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

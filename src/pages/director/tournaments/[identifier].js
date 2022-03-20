@@ -6,7 +6,7 @@ import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentDetails from '../../../components/Director/TournamentDetails/TournamentDetails';
 
-const tournament = () => {
+const Tournament = () => {
   const directorContext = useDirectorContext();
   const router = useRouter();
   const { identifier } = router.query;
@@ -139,7 +139,7 @@ const tournament = () => {
   );
 }
 
-tournament.getLayout = function getLayout(page) {
+Tournament.getLayout = function getLayout(page) {
   return (
     <DirectorLayout>
       {page}
@@ -147,4 +147,4 @@ tournament.getLayout = function getLayout(page) {
   );
 }
 
-export default tournament;
+export default Tournament;

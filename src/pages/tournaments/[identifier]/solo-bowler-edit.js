@@ -3,12 +3,11 @@ import {Row, Col} from "react-bootstrap";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import Summary from "../../../components/Registration/Summary/Summary";
-import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {existingTeamBowlerEdited, soloBowlerInfoUpdated} from "../../../store/actions/registrationActions";
+import {soloBowlerInfoUpdated} from "../../../store/actions/registrationActions";
 
-const page = () => {
+const Page = () => {
   const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
 
@@ -38,7 +37,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <RegistrationLayout>
       {page}
@@ -46,4 +45,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

@@ -9,7 +9,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamRegistrationInitiated, teamInfoAdded} from "../../../store/actions/registrationActions";
 import {useEffect} from "react";
 
-const page = () => {
+const Page = () => {
   const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
 
@@ -35,7 +35,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <RegistrationLayout>
       {page}
@@ -43,4 +43,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

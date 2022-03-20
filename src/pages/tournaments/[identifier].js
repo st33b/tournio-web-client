@@ -1,16 +1,17 @@
 import {useEffect} from "react";
 import {useRouter} from "next/router";
+import {Row} from "react-bootstrap";
 
 import {fetchTournamentDetails} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentDetails from "../../components/Registration/TournamentDetails/TournamentDetails";
-import classes from "../../components/Registration/TournamentDetails/TournamentDetails.module.scss";
-import {Card, Col, ListGroup, Row} from "react-bootstrap";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import Contacts from "../../components/Registration/Contacts/Contacts";
 
-const page = () => {
+import classes from "../../components/Registration/TournamentDetails/TournamentDetails.module.scss";
+
+const Page = () => {
   const router = useRouter();
   const { entry, dispatch, commerceDispatch } = useRegistrationContext();
   const { identifier } = router.query;
@@ -53,7 +54,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <RegistrationLayout>
       {page}
@@ -61,4 +62,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

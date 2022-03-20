@@ -7,7 +7,7 @@ import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLa
 import BowlerListing from "../../../components/Director/BowlerListing/BowlerListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const directorContext = useDirectorContext();
   const [successMessage, setSuccessMessage] = useState(null);
@@ -130,7 +130,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <DirectorLayout>
       {page}
@@ -138,4 +138,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;
