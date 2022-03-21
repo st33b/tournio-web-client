@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import Card from 'react-bootstrap/Card';
 import ListGroup from "react-bootstrap/ListGroup";
@@ -14,9 +14,32 @@ const StatusAndCounts = ({testEnvironmentUpdated}) => {
   const context = useDirectorContext();
   const router = useRouter();
 
+  const testEnvFormInitialData = {
+    registration_period: 'regular',
+  }
+
   const [downloadMessage, setDownloadMessage] = useState(null);
   const [clearTestDataSuccessMessage, setClearTestDataSuccessMessage] = useState();
   const [loading, setLoading] = useState(false);
+  const [testEnvFormData, setTestEnvFormData] = useState(testEnvFormInitialData);
+  const [testEnvSuccessMessage, setTestEnvSuccessMessage] = useState(null);
+
+  // Update the state of testEnvFormData with what's in context
+  useEffect(() => {
+    if (!context) {
+      return;
+    }
+
+    if (context.tournament.state === 'testing') {
+      const formData = {...testEnvFormData};
+
+      Object.keys(context.tournament.available_conditions).forEach(name => {
+        formData[name] = context.tournament.testing_environment.settings[name].value;
+      });
+
+      setTestEnvFormData(formData);
+    }
+  }, [context]);
 
   if (!context || !context.tournament) {
     return '';
@@ -162,17 +185,6 @@ const StatusAndCounts = ({testEnvironmentUpdated}) => {
     });
   }
 
-  const testEnvFormInitialData = {
-    registration_period: 'regular',
-  }
-  if (context.tournament.state === 'testing') {
-    Object.keys(context.tournament.available_conditions).forEach(name => {
-      testEnvFormInitialData[name] = context.tournament.testing_environment.settings[name].value;
-    });
-  }
-
-  const [testEnvFormData, setTestEnvFormData] = useState(testEnvFormInitialData);
-
   const testSettingOptionClicked = (event) => {
     const settingName = event.target.name;
     const newValue = event.target.value;
@@ -181,7 +193,6 @@ const StatusAndCounts = ({testEnvironmentUpdated}) => {
     setTestEnvFormData(newForm);
   }
 
-  const [testEnvSuccessMessage, setTestEnvSuccessMessage] = useState(null);
   const testEnvSaveSuccess = () => {
     setTestEnvSuccessMessage('Testing environment updated.');
   }

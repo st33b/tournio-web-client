@@ -34,7 +34,7 @@ const TournamentListing = () => {
   }
 
   useEffect(() => {
-    if (!directorContext.user) {
+    if (!directorContext) {
       return;
     }
     const uri = '/director/tournaments';
@@ -51,7 +51,7 @@ const TournamentListing = () => {
         onFailure: fetchTournamentsFailure,
       });
     }
-  }, []);
+  }, [directorContext]);
 
   let list = '';
   if (loading) {

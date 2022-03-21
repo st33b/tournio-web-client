@@ -132,7 +132,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
       Header: 'Free Entry',
       accessor: freeEntryDeets,
     }
-  ], [identifier]);
+  ], [teamForm]);
 
   // tell react-table which things we want to use
   // and retrieve properties/functions they let us hook into

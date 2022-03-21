@@ -36,7 +36,7 @@ const ReviewEntries = ({editBowler, context}) => {
   return (
     <div className={classes.ReviewEntries}>
       <h3>
-        Let's Review...
+        Let&apos;s Review...
       </h3>
       <Alert variant={'info'}>
         Please check everything over for correctness. Clicking the <strong>Submit Registration</strong> button will

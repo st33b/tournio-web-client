@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {CountryDropdown} from "react-country-region-selector";
 
 import Input from "../../ui/Input/Input";
@@ -8,10 +8,6 @@ import classes from './BowlerForm.module.scss';
 
 const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
   const {entry} = useRegistrationContext();
-
-  if (!entry.tournament || !entry.bowlers) {
-    return '';
-  }
 
   const initialFormState = {
     formFields: {
@@ -232,14 +228,28 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
     valid: false,
     touched: false,
   }
+  const [bowlerForm, setBowlerForm] = useState(initialFormState);
 
-  // For each of the additional questions, we need to deep-copy the nested objects that we care about
-  // (elementConfig, in this case. helper and validation won't change.)
-  for (let key in entry.tournament.additional_questions) {
-    initialFormState.formFields[key] = { ...entry.tournament.additional_questions[key] }
-    initialFormState.formFields[key].valid = !entry.tournament.additional_questions[key].validation.required
-    initialFormState.formFields[key].touched = false;
-    initialFormState.formFields[key].elementConfig = { ...entry.tournament.additional_questions[key].elementConfig }
+  useEffect(() => {
+    if (!entry) {
+      return;
+    }
+
+    // For each of the additional questions, we need to deep-copy the nested objects that we care about
+    // (elementConfig, in this case. helper and validation won't change.)
+    const formData = {...bowlerForm}
+    for (let key in entry.tournament.additional_questions) {
+      formData.formFields[key] = { ...entry.tournament.additional_questions[key] }
+      formData.formFields[key].valid = !entry.tournament.additional_questions[key].validation.required
+      formData.formFields[key].touched = false;
+      formData.formFields[key].elementConfig = { ...entry.tournament.additional_questions[key].elementConfig }
+    }
+
+    setBowlerForm(formData);
+  }, [entry]);
+
+  if (!entry || !entry.tournament || !entry.bowlers) {
+    return '';
   }
 
   const checkValidity = (value, rules) => {
@@ -280,8 +290,6 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
 
     buttonText = 'Save Changes';
   }
-
-  const [bowlerForm, setBowlerForm] = useState(initialFormState);
 
   const formHandler = (event) => {
     event.preventDefault();

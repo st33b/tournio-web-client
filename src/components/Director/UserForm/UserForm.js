@@ -75,13 +75,14 @@ const UserForm = ({user, tournaments, userDeleteInitiated}) => {
     newUserFormData.fields.role = user.role;
     newUserFormData.fields.tournamentIds = user.tournaments.map(t => t.id);
 
+    const isSelf = user.identifier === directorContext.user.identifier;
     if (isSelf) {
       delete newUserFormData.fields.role;
       delete newUserFormData.fields.tournamentIds;
     }
 
     setUserFormData(newUserFormData);
-  }, [user]);
+  }, [user, directorContext]);
 
   const onSubmitSuccess = (data) => {
     setIsSubmitting(false);
