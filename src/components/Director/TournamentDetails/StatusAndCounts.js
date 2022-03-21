@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import Card from 'react-bootstrap/Card';
 import ListGroup from "react-bootstrap/ListGroup";
@@ -10,14 +10,41 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './TournamentDetails.module.scss';
 
-const statusAndCounts = ({testEnvironmentUpdated}) => {
+const StatusAndCounts = ({testEnvironmentUpdated}) => {
   const context = useDirectorContext();
+  const router = useRouter();
+
+  const testEnvFormInitialData = {
+    registration_period: 'regular',
+  }
+
+  const [downloadMessage, setDownloadMessage] = useState(null);
+  const [clearTestDataSuccessMessage, setClearTestDataSuccessMessage] = useState();
+  const [loading, setLoading] = useState(false);
+  const [testEnvFormData, setTestEnvFormData] = useState(testEnvFormInitialData);
+  const [testEnvSuccessMessage, setTestEnvSuccessMessage] = useState(null);
+
+  // Update the state of testEnvFormData with what's in context
+  useEffect(() => {
+    if (!context) {
+      return;
+    }
+
+    if (context.tournament.state === 'testing') {
+      const formData = {...testEnvFormData};
+
+      Object.keys(context.tournament.available_conditions).forEach(name => {
+        formData[name] = context.tournament.testing_environment.settings[name].value;
+      });
+
+      setTestEnvFormData(formData);
+    }
+  }, [context]);
+
   if (!context || !context.tournament) {
     return '';
   }
-  const router = useRouter();
 
-  const [downloadMessage, setDownloadMessage] = useState(null);
   const downloadSuccess = (data, name) => {
     const url = URL.createObjectURL(data);
     const link = document.createElement('a');
@@ -118,7 +145,6 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
     </ListGroup>
   );
 
-  const [clearTestDataSuccessMessage, setClearTestDataSuccessMessage] = useState();
   const onClearTestDataSuccess = (_) => {
     setLoading(false);
     const updatedTournament = {...context.tournament}
@@ -137,7 +163,6 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
     setClearTestDataSuccessMessage(null);
   }
 
-  const [loading, setLoading] = useState(false);
   const clearTestDataClickHandler = () => {
     if (context.tournament.state !== 'testing') {
       console.log('Cannot clear data for a tournament that is not in setup or testing.');
@@ -160,17 +185,6 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
     });
   }
 
-  const testEnvFormInitialData = {
-    registration_period: 'regular',
-  }
-  if (context.tournament.state === 'testing') {
-    Object.keys(context.tournament.available_conditions).forEach(name => {
-      testEnvFormInitialData[name] = context.tournament.testing_environment.settings[name].value;
-    });
-  }
-
-  const [testEnvFormData, setTestEnvFormData] = useState(testEnvFormInitialData);
-
   const testSettingOptionClicked = (event) => {
     const settingName = event.target.name;
     const newValue = event.target.value;
@@ -179,7 +193,6 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
     setTestEnvFormData(newForm);
   }
 
-  const [testEnvSuccessMessage, setTestEnvSuccessMessage] = useState(null);
   const testEnvSaveSuccess = () => {
     setTestEnvSuccessMessage('Testing environment updated.');
   }
@@ -330,4 +343,4 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
   );
 }
 
-export default statusAndCounts;
+export default StatusAndCounts;

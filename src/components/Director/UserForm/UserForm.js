@@ -7,7 +7,7 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './UserForm.module.scss';
 
-const userForm = ({user, tournaments, userDeleteInitiated}) => {
+const UserForm = ({user, tournaments, userDeleteInitiated}) => {
   const directorContext = useDirectorContext();
   const router = useRouter();
 
@@ -27,11 +27,12 @@ const userForm = ({user, tournaments, userDeleteInitiated}) => {
     touched: false,
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userFormData, setUserFormData] = useState(initialState);
+  const [banner, setBanner] = useState(null);
+
   const deleteHandler = (event) => {
     event.preventDefault();
-
-    // ...
-
     userDeleteInitiated();
   }
 
@@ -62,14 +63,6 @@ const userForm = ({user, tournaments, userDeleteInitiated}) => {
     }
   }
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [userFormData, setUserFormData] = useState(initialState);
-  const [banner, setBanner] = useState(null);
-
-  if (!tournaments) {
-    return 'Retrieving list of tournaments...';
-  }
-
   // If we're editing an existing user, then put the existing user's values into the form
   useEffect(() => {
     if (!user) {
@@ -82,13 +75,14 @@ const userForm = ({user, tournaments, userDeleteInitiated}) => {
     newUserFormData.fields.role = user.role;
     newUserFormData.fields.tournamentIds = user.tournaments.map(t => t.id);
 
+    const isSelf = user.identifier === directorContext.user.identifier;
     if (isSelf) {
       delete newUserFormData.fields.role;
       delete newUserFormData.fields.tournamentIds;
     }
 
     setUserFormData(newUserFormData);
-  }, [user]);
+  }, [user, directorContext]);
 
   const onSubmitSuccess = (data) => {
     setIsSubmitting(false);
@@ -187,6 +181,10 @@ const userForm = ({user, tournaments, userDeleteInitiated}) => {
     setUserFormData(updatedForm);
   }
 
+  if (!tournaments) {
+    return 'Retrieving list of tournaments...';
+  }
+
   return (
     <div className={classes.UserForm}>
       <Card className={classes.Card}>
@@ -268,4 +266,4 @@ const userForm = ({user, tournaments, userDeleteInitiated}) => {
   );
 }
 
-export default userForm;
+export default UserForm;

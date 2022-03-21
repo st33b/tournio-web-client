@@ -8,7 +8,7 @@ import {useDirectorContext} from '../../../store/DirectorContext';
 import classes from './TournamentListing.module.scss';
 import {useRouter} from "next/router";
 
-const tournamentListing = () => {
+const TournamentListing = () => {
   const directorContext = useDirectorContext();
   const router = useRouter();
 
@@ -34,7 +34,7 @@ const tournamentListing = () => {
   }
 
   useEffect(() => {
-    if (!directorContext.user) {
+    if (!directorContext) {
       return;
     }
     const uri = '/director/tournaments';
@@ -51,7 +51,7 @@ const tournamentListing = () => {
         onFailure: fetchTournamentsFailure,
       });
     }
-  }, []);
+  }, [directorContext]);
 
   let list = '';
   if (loading) {
@@ -145,4 +145,4 @@ const tournamentListing = () => {
   );
 };
 
-export default tournamentListing;
+export default TournamentListing;

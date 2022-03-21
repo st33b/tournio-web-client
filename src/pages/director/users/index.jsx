@@ -9,7 +9,7 @@ import UserListing from '../../../components/Director/UserListing/UserListing';
 import UserForm from '../../../components/Director/UserForm/UserForm';
 import {directorApiRequest} from "../../../utils";
 
-const page = () => {
+const Page = () => {
   const directorContext = useDirectorContext();
   const router = useRouter();
 
@@ -34,7 +34,7 @@ const page = () => {
       setSuccessMessage('The user has been removed.');
       router.replace(router.pathname, null, { shallow: true });
     }
-  });
+  }, [router]);
 
   const usersRetrieved = (data) => {
     setUsers(data);
@@ -60,7 +60,7 @@ const page = () => {
       onSuccess: usersRetrieved,
       onFailure: usersFailedToRetrieve,
     });
-  }, []);
+  }, [directorContext]);
 
   const onTournamentsFetched = (data) => {
     setTournaments(data);
@@ -87,7 +87,7 @@ const page = () => {
       onSuccess: onTournamentsFetched,
       onFailure: onTournamentsFetchFailure,
     });
-  }, []);
+  }, [directorContext, router]);
 
   if (loading) {
     return (
@@ -153,7 +153,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <DirectorLayout>
       {page}
@@ -161,4 +161,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

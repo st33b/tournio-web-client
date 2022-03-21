@@ -8,15 +8,11 @@ import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import TeamDetails from "../../../components/Director/TeamDetails/TeamDetails";
 import {directorApiRequest} from "../../../utils";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const directorContext = useDirectorContext();
 
   let {identifier} = router.query;
-
-  if (!directorContext) {
-    return '';
-  }
 
   const [team, setTeam] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,7 +31,7 @@ const page = () => {
     if (directorContext.user.role === 'director' && !directorContext.user.tournaments.some(t => t.identifier === tournament.identifier)) {
       router.push('/director');
     }
-  }, [directorContext]);
+  }, [directorContext, router]);
 
   const onFetchTeamSuccess = (data) => {
     setLoading(false);
@@ -65,7 +61,11 @@ const page = () => {
       onSuccess: onFetchTeamSuccess,
       onFailure: onFetchTeamFailure,
     });
-  }, [identifier, directorContext]);
+  }, [identifier, router]);
+
+  if (!directorContext) {
+    return '';
+  }
 
   if (loading) {
     return <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>;
@@ -200,7 +200,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <DirectorLayout>
       {page}
@@ -208,4 +208,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

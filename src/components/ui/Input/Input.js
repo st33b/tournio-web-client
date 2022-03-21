@@ -2,7 +2,7 @@ import React from 'react';
 
 import classes from './Input.module.scss';
 
-const input = (props) => {
+const Input = (props) => {
   let inputElement = null;
 
   let invalidClass = '';
@@ -119,4 +119,4 @@ const input = (props) => {
   )
 };
 
-export default input;
+export default Input;

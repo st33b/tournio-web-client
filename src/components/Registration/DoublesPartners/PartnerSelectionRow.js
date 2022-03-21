@@ -6,7 +6,7 @@ import classes from './PartnerSelectionRow.module.scss';
 // onPartnerSelected -- function to call when a partner has been clicked. It will automatically determine the rest of the assignments
 // values -- the bowlers_attributes from the team form (id, doubles_partner_id, position)
 
-const partnerSelectionRow = ({bowler, teammates, onPartnerSelected}) => {
+const PartnerSelectionRow = ({bowler, teammates, onPartnerSelected}) => {
   const bowlerPosition = bowler.position;
   return (
     <tr className={classes.PartnerSelectionRow}>
@@ -41,4 +41,4 @@ const partnerSelectionRow = ({bowler, teammates, onPartnerSelected}) => {
   )
 }
 
-export default partnerSelectionRow;
+export default PartnerSelectionRow;

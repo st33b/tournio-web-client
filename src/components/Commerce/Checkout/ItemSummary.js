@@ -3,7 +3,7 @@ import Item from "./Item";
 
 import classes from './ItemSummary.module.scss';
 
-const itemSummary = ({totalFees}) => {
+const ItemSummary = ({totalFees}) => {
   const {commerce} = useRegistrationContext();
 
   if (!commerce || !commerce.cart) {
@@ -32,4 +32,4 @@ const itemSummary = ({totalFees}) => {
   );
 }
 
-export default itemSummary;
+export default ItemSummary;

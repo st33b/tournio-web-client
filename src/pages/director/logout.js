@@ -4,24 +4,22 @@ import {useRouter} from "next/router";
 import {useDirectorContext} from "../../store/DirectorContext";
 import {directorApiLogoutRequest} from "../../utils";
 
-const logout = () => {
+const Logout = () => {
   const router = useRouter();
   const directorContext = useDirectorContext();
 
-  const onLogoutSuccess = () => {
-    router.push('/director/login');
-  }
-
   useEffect(() => {
-    if (!router || !directorContext) {
+    if (!directorContext) {
       return;
     }
     directorApiLogoutRequest({
       context: directorContext,
-      onSuccess: onLogoutSuccess,
+      onSuccess: () => {
+        router.push('/director/login')
+      },
       onFailure: (_) => {},
     })
-  }, []);
+  }, [directorContext, router]);
 
   return (
     <div>
@@ -30,7 +28,7 @@ const logout = () => {
   );
 }
 
-logout.getLayout = function getLayout(page) {
+Logout.getLayout = function getLayout(page) {
   return (
     <DirectorLayout>
       {page}
@@ -38,4 +36,4 @@ logout.getLayout = function getLayout(page) {
   );
 }
 
-export default logout;
+export default Logout;

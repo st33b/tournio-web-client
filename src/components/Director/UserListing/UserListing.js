@@ -2,7 +2,7 @@ import {Col, Row} from "react-bootstrap";
 
 import classes from './UserListing.module.scss';
 
-const userListing = ({users}) => {
+const UserListing = ({users}) => {
   let list = '';
   if (!users) {
     list = <p>Retrieving users...</p>;
@@ -66,4 +66,4 @@ const userListing = ({users}) => {
   );
 };
 
-export default userListing;
+export default UserListing;

@@ -4,7 +4,7 @@ import BowlerSummary from "./BowlerSummary";
 import classes from './ReviewEntries.module.scss';
 import {Alert, Col, Row} from "react-bootstrap";
 
-const reviewEntries = ({editBowler, context}) => {
+const ReviewEntries = ({editBowler, context}) => {
   const {entry} = useRegistrationContext();
 
   if (!entry.bowlers) {
@@ -36,7 +36,7 @@ const reviewEntries = ({editBowler, context}) => {
   return (
     <div className={classes.ReviewEntries}>
       <h3>
-        Let's Review...
+        Let&apos;s Review...
       </h3>
       <Alert variant={'info'}>
         Please check everything over for correctness. Clicking the <strong>Submit Registration</strong> button will
@@ -49,4 +49,4 @@ const reviewEntries = ({editBowler, context}) => {
   );
 }
 
-export default reviewEntries;
+export default ReviewEntries;

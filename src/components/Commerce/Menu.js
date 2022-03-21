@@ -8,7 +8,7 @@ import AvailableItems from "./AvailableItems/AvailableItems";
 import Cart from "./Cart/Cart";
 import FreeEntryForm from "./FreeEntryForm/FreeEntryForm";
 
-const menu = () => {
+const Menu = () => {
   const {commerce, commerceDispatch} = useRegistrationContext();
 
   if (!commerce || !commerce.bowler) {
@@ -56,4 +56,4 @@ const menu = () => {
   );
 }
 
-export default menu;
+export default Menu;

@@ -4,8 +4,8 @@ import Item from "./Item/Item";
 
 import classes from './AvailableItems.module.scss';
 
-const availableItems = ({itemAddedToCart}) => {
-  const {commerce, commerceDispatch} = useRegistrationContext();
+const AvailableItems = ({itemAddedToCart}) => {
+  const {commerce} = useRegistrationContext();
 
   if (!commerce || !commerce.availableItems) {
     return '';
@@ -92,4 +92,4 @@ const availableItems = ({itemAddedToCart}) => {
   )
 }
 
-export default availableItems;
+export default AvailableItems;

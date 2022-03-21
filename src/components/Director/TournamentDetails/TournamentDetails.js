@@ -11,7 +11,7 @@ import Contacts from "./Contacts";
 import StateChangeButton from "./StateChangeButton";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
-const tournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated}) => {
+const TournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated}) => {
   const context = useDirectorContext();
   if (!context || !context.tournament) {
     return <div className={classes.TournamentDetails}>
@@ -46,4 +46,4 @@ const tournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated}) => {
   );
 }
 
-export default tournamentDetails;
+export default TournamentDetails;

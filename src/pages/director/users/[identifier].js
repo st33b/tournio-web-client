@@ -8,13 +8,14 @@ import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import UserForm from '../../../components/Director/UserForm/UserForm';
 
-const page = () => {
+const Page = () => {
   const directorContext = useDirectorContext();
   const router = useRouter();
   const { identifier } = router.query;
 
   const isSuperuser = directorContext.user && directorContext.user.role === 'superuser';
   const isEditingSelf = directorContext.user && directorContext.user.identifier === identifier;
+
   useEffect(() => {
     if (identifier === undefined) {
       return;
@@ -58,7 +59,7 @@ const page = () => {
       router: router,
       onSuccess: onSuccess,
       onFailure: onFailure});
-  }, [identifier]);
+  }, [identifier, directorContext, router]);
 
   const onTournamentsFetched = (data) => {
     setTournaments(data);
@@ -85,7 +86,7 @@ const page = () => {
       onSuccess: onTournamentsFetched,
       onFailure: onTournamentsFetchFailure,
     });
-  }, []);
+  }, [directorContext, router]);
 
   const onDeleteSuccess = (_) => {
     setIsLoading(false);
@@ -141,7 +142,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <DirectorLayout>
       {page}
@@ -149,4 +150,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

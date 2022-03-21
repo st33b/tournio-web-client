@@ -4,7 +4,7 @@ import {fetchTournamentList} from "../../../utils";
 
 import classes from './TournamentListing.module.scss';
 
-const tournamentListing = () => {
+const TournamentListing = () => {
   const [tournaments, setTournaments] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -100,4 +100,4 @@ const tournamentListing = () => {
   )
 }
 
-export default tournamentListing;
+export default TournamentListing;

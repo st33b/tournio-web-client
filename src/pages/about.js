@@ -1,11 +1,11 @@
 import RegistrationLayout from '../components/Layout/RegistrationLayout/RegistrationLayout';
 import About from "../components/About/About";
 
-const page = () => (
+const Page = () => (
   <About />
 )
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <RegistrationLayout>
       {page}
@@ -13,4 +13,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

@@ -1,5 +1,3 @@
-import {useEffect, useState} from "react";
-import axios from "axios";
 import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
@@ -9,7 +7,7 @@ import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import Summary from "../../../components/Registration/Summary/Summary";
 import {existingTeamBowlerInfoAdded} from "../../../store/actions/registrationActions";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const { entry, dispatch } = useRegistrationContext();
 
@@ -38,7 +36,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <RegistrationLayout>
       {page}
@@ -46,4 +44,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

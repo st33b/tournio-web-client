@@ -5,7 +5,7 @@ import {directorForgotPasswordRequest} from "../../../utils";
 
 import classes from './ForgotPasswordForm.module.scss';
 
-const forgotPasswordForm = () => {
+const ForgotPasswordForm = () => {
   const emailInputRef = useRef();
   const [loading, setLoading] = useState(false);
   const [validated, setValidated] = useState(false);
@@ -72,7 +72,7 @@ const forgotPasswordForm = () => {
       <Card className={classes.Card}>
         <Card.Header>
           <Card.Title>
-            Let's reset your password...
+            Let&apos;s reset your password...
           </Card.Title>
         </Card.Header>
         <Card.Body>
@@ -84,7 +84,7 @@ const forgotPasswordForm = () => {
                             placeholder={'name@example.com'}
                             ref={emailInputRef}/>
               <Form.Control.Feedback type={'invalid'}>
-                Can't reset your password without an email.
+                Can&apos;t reset your password without an email.
               </Form.Control.Feedback>
             </FloatingLabel>
             <div className={classes.Actions}>
@@ -100,4 +100,4 @@ const forgotPasswordForm = () => {
   );
 };
 
-export default forgotPasswordForm;
+export default ForgotPasswordForm;

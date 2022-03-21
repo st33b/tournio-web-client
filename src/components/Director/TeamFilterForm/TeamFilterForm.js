@@ -4,7 +4,7 @@ import classes from './TeamFilterForm.module.scss';
 
 import Form from 'react-bootstrap/Form';
 
-const teamFilterForm = (props) => {
+const TeamFilterForm = (props) => {
   const initialState = {
     incomplete: false,
   }
@@ -48,4 +48,4 @@ const teamFilterForm = (props) => {
   )
 };
 
-export default teamFilterForm;
+export default TeamFilterForm;

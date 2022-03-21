@@ -9,7 +9,7 @@ import TournamentLogo from "../../components/Registration/TournamentLogo/Tournam
 import Contacts from "../../components/Registration/Contacts/Contacts";
 import TeamDetails from "../../components/Registration/TeamDetails/TeamDetails";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const { entry, dispatch, commerceDispatch } = useRegistrationContext();
   const { identifier, success } = router.query;
@@ -38,7 +38,7 @@ const page = () => {
         dispatches: [dispatch, commerceDispatch],
       })
     }
-  }, [identifier, entry]);
+  }, [identifier, entry, dispatch, commerceDispatch]);
 
   // ensure that the tournament in context matches the team's
   useEffect(() => {
@@ -51,7 +51,7 @@ const page = () => {
     if (entry.team.tournament.identifier !== entry.tournament.identifier) {
       fetchTournamentDetails(entry.team.tournament.identifier, dispatch, commerceDispatch);
     }
-  }, [identifier, entry]);
+  }, [identifier, entry, dispatch, commerceDispatch]);
 
   if (loading || !entry || !entry.team) {
     return (
@@ -103,7 +103,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <RegistrationLayout>
       {page}
@@ -111,4 +111,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

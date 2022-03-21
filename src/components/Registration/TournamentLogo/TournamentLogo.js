@@ -1,15 +1,18 @@
 import classes from './TournamentLogo.module.scss';
 
-const tournamentLogo = ({tournament}) => {
+const TournamentLogo = ({tournament}) => {
   if (!tournament) {
     return '';
   }
 
   return (
     <div className={classes.TournamentLogo}>
-      <img className="img-fluid" alt="Tournament logo" src={tournament.image_path} />
+      <img src={tournament.image_path}
+           alt={'Tournament logo'}
+           className={'img-fluid'}
+      />
     </div>
   );
 }
 
-export default tournamentLogo;
+export default TournamentLogo;

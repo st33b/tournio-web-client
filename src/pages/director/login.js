@@ -4,7 +4,7 @@ import {Card, Col, Row} from "react-bootstrap";
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 
-const login = () => {
+const Login = () => {
   const router = useRouter();
 
   const [successMessage, setSuccessMessage] = useState(null);
@@ -15,7 +15,7 @@ const login = () => {
       setSuccessMessage('Your password was successfully changed. You may now use it to log in.');
       router.replace(router.pathname, null, {shallow: true});
     }
-  });
+  }, [router]);
 
   let successAlert = '';
   if (successMessage) {
@@ -59,7 +59,7 @@ const login = () => {
   );
 }
 
-login.getLayout = function getLayout(page) {
+Login.getLayout = function getLayout(page) {
   return (
     <DirectorLayout>
       {page}
@@ -67,4 +67,4 @@ login.getLayout = function getLayout(page) {
   );
 }
 
-export default login;
+export default Login;

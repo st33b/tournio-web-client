@@ -9,12 +9,8 @@ import TeamListing from "../../../components/Registration/TeamListing/TeamListin
 import {joinTeamRegistrationInitiated} from "../../../store/actions/registrationActions";
 import Contacts from "../../../components/Registration/Contacts/Contacts";
 
-const page = () => {
+const Page = () => {
   const { entry, dispatch } = useRegistrationContext();
-
-  if (!entry.tournament) {
-    return '';
-  }
 
   const [loading, setLoading] = useState(false);
   const [teams, setTeams] = useState(null);
@@ -34,6 +30,7 @@ const page = () => {
     if (!entry || !entry.tournament) {
       return;
     }
+
     dispatch(joinTeamRegistrationInitiated());
     fetchTeamList({
       tournamentIdentifier: entry.tournament.identifier,
@@ -44,6 +41,10 @@ const page = () => {
     })
   }, []);
 
+  if (!entry || !entry.tournament || !teams) {
+    return '';
+  }
+
   if (loading) {
     return (
       <div>
@@ -52,10 +53,6 @@ const page = () => {
         </p>
       </div>
     );
-  }
-
-  if (!teams) {
-    return '';
   }
 
   return (
@@ -76,7 +73,7 @@ const page = () => {
   );
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <RegistrationLayout>
       {page}
@@ -84,4 +81,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;

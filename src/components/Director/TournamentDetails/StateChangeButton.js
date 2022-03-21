@@ -1,9 +1,10 @@
 import Button from 'react-bootstrap/Button';
 
-import classes from './TournamentDetails.module.scss';
 import {useDirectorContext} from "../../../store/DirectorContext";
 
-const stateChangeButton = ({stateChangeInitiated}) => {
+import classes from './TournamentDetails.module.scss';
+
+const StateChangeButton = ({stateChangeInitiated}) => {
   const context = useDirectorContext();
   if (!context || !context.tournament) {
     return '';
@@ -54,4 +55,4 @@ const stateChangeButton = ({stateChangeInitiated}) => {
   return stateChangeButton;
 }
 
-export default stateChangeButton;
+export default StateChangeButton;

@@ -1,7 +1,7 @@
 import classes from './ProgressIndicator.module.scss';
 import {Col, Row} from "react-bootstrap";
 
-const progressIndicator = ({active}) => {
+const ProgressIndicator = ({active}) => {
   const steps = [
     {
       id: 'team',
@@ -41,9 +41,4 @@ const progressIndicator = ({active}) => {
   );
 }
 
-export default progressIndicator;
-
-// <ProgressState text='Team' id='team-name' active={props.active} />
-// <ProgressState text='Bowlers' id='bowler-details' active={props.active} />
-// <ProgressState text='Partners' id='doubles-partners' active={props.active} />
-// <ProgressState text='Review' id='review-entries' active={props.active} />
+export default ProgressIndicator;

@@ -9,7 +9,7 @@ import FreeEntryListing from "../../../components/Director/FreeEntryListing/Free
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import NewFreeEntryForm from "../../../components/Director/NewFreeEntryForm/NewFreeEntryForm";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const directorContext = useDirectorContext();
   const [successMessage, setSuccessMessage] = useState(null);
@@ -27,13 +27,16 @@ const page = () => {
     if (!identifier) {
       return;
     }
+    if (!directorContext) {
+      return;
+    }
     if (!directorContext.isLoggedIn) {
       router.push('/director/login');
     }
     if (directorContext.user.role !== 'superuser' && !directorContext.user.tournaments.some(t => t.identifier === identifier)) {
       router.push('/director');
     }
-  }, [identifier]);
+  }, [identifier, router, directorContext]);
 
   const freeEntriesFetched = (data) => {
     setFreeEntries(data);
@@ -63,7 +66,7 @@ const page = () => {
       onSuccess: freeEntriesFetched,
       onFailure: freeEntriesFetchFailed,
     });
-  }, [identifier]);
+  }, [identifier, directorContext, router]);
 
   // Do we have a success query parameter?
   useEffect(() => {
@@ -72,7 +75,7 @@ const page = () => {
       setSuccessMessage('The free entry has been deleted.');
       router.replace(router.pathname, null, { shallow: true });
     }
-  });
+  }, [router]);
 
   let success = '';
   let error = '';
@@ -245,7 +248,7 @@ const page = () => {
 
 }
 
-page.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
   return (
     <DirectorLayout>
       {page}
@@ -253,4 +256,4 @@ page.getLayout = function getLayout(page) {
   );
 }
 
-export default page;
+export default Page;
