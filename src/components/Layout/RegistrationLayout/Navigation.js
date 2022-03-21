@@ -3,7 +3,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './Navigation.module.scss';
 
-const navigation = ({showCart}) => {
+const Navigation = ({showCart}) => {
   const {commerce} = useRegistrationContext();
 
   let cartText = '';
@@ -45,4 +45,4 @@ const navigation = ({showCart}) => {
   );
 };
 
-export default navigation;
+export default Navigation;

@@ -3,7 +3,7 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './TournamentDetails.module.scss';
 
-const basics = () => {
+const Basics = () => {
   const context = useDirectorContext();
   if (!context || !context.tournament) {
     return '';
@@ -34,4 +34,4 @@ const basics = () => {
   );
 }
 
-export default basics;
+export default Basics;

@@ -5,7 +5,7 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './Navigation.module.scss';
 
-const navigation = () => {
+const Navigation = () => {
   const directorContext = useDirectorContext();
 
   const [loggedIn, setLoggedIn] = useState(false);
@@ -55,4 +55,4 @@ const navigation = () => {
   );
 };
 
-export default navigation;
+export default Navigation;

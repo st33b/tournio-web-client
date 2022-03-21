@@ -12,10 +12,6 @@ import Contacts from "../../../components/Registration/Contacts/Contacts";
 const Page = () => {
   const { entry, dispatch } = useRegistrationContext();
 
-  if (!entry.tournament) {
-    return '';
-  }
-
   const [loading, setLoading] = useState(false);
   const [teams, setTeams] = useState(null);
 
@@ -34,6 +30,7 @@ const Page = () => {
     if (!entry || !entry.tournament) {
       return;
     }
+
     dispatch(joinTeamRegistrationInitiated());
     fetchTeamList({
       tournamentIdentifier: entry.tournament.identifier,
@@ -44,6 +41,10 @@ const Page = () => {
     })
   }, []);
 
+  if (!entry || !entry.tournament || !teams) {
+    return '';
+  }
+
   if (loading) {
     return (
       <div>
@@ -52,10 +53,6 @@ const Page = () => {
         </p>
       </div>
     );
-  }
-
-  if (!teams) {
-    return '';
   }
 
   return (

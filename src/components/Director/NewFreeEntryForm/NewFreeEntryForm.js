@@ -5,7 +5,7 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './NewFreeEntryForm.module.scss';
 
-const newFreeEntryForm = ({submitted}) => {
+const NewFreeEntryForm = ({submitted}) => {
   const directorContext = useDirectorContext();
 
   const initialState = {
@@ -64,4 +64,4 @@ const newFreeEntryForm = ({submitted}) => {
   );
 }
 
-export default newFreeEntryForm;
+export default NewFreeEntryForm;

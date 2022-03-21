@@ -6,7 +6,7 @@ import {Col, FloatingLabel, Row} from "react-bootstrap";
 
 import classes from './BowlerFilterForm.module.scss';
 
-const bowlerFilterForm = ({onFilterApplication}) => {
+const BowlerFilterForm = ({onFilterApplication}) => {
   const initialState = {
     name: '',
     amount_due: false,
@@ -120,4 +120,4 @@ const bowlerFilterForm = ({onFilterApplication}) => {
   )
 };
 
-export default bowlerFilterForm;
+export default BowlerFilterForm;

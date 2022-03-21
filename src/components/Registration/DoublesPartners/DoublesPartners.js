@@ -4,7 +4,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './DoublesPartners.module.scss';
 
-const doublesPartners = ({partnersChosen}) => {
+const DoublesPartners = ({partnersChosen}) => {
   const {entry} = useRegistrationContext();
 
   if (!entry.bowlers) {
@@ -42,4 +42,4 @@ const doublesPartners = ({partnersChosen}) => {
   );
 }
 
-export default doublesPartners;
+export default DoublesPartners;

@@ -10,7 +10,7 @@ import Menu from '../../components/Commerce/Menu';
 
 const Page = () => {
   const router = useRouter();
-  const {success, error} = router.query;
+  const {success} = router.query;
   const {commerce, commerceDispatch} = useRegistrationContext();
   const {identifier} = router.query;
 

@@ -15,7 +15,7 @@ const Login = () => {
       setSuccessMessage('Your password was successfully changed. You may now use it to log in.');
       router.replace(router.pathname, null, {shallow: true});
     }
-  });
+  }, [router]);
 
   let successAlert = '';
   if (successMessage) {

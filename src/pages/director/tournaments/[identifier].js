@@ -12,10 +12,13 @@ const Tournament = () => {
   const { identifier } = router.query;
 
   useEffect(() => {
+    if (!directorContext) {
+      return;
+    }
     if (!directorContext.isLoggedIn) {
       router.push('/director/login');
     }
-  });
+  }, [router, directorContext]);
 
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -28,7 +31,7 @@ const Tournament = () => {
   }
 
   useEffect(() => {
-    if (!directorContext.user) {
+    if (!directorContext || !directorContext.user) {
       return;
     }
     if (identifier === undefined) {
@@ -47,7 +50,7 @@ const Tournament = () => {
       onSuccess: onTournamentFetchSuccess,
       onFailure: onTournamentFetchFailure,
     });
-  }, [identifier]);
+  }, [identifier, directorContext.user, router]);
 
   const stateChangeSuccess = (data) => {
     directorContext.setTournament(data);

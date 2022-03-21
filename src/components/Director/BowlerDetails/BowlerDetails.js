@@ -7,7 +7,7 @@ import Input from "../../ui/Input/Input";
 
 import classes from './BowlerDetails.module.scss';
 
-const bowlerDetails = ({bowler, bowlerUpdateSubmitted}) => {
+const BowlerDetails = ({bowler, bowlerUpdateSubmitted}) => {
   const directorContext = useDirectorContext();
 
   let tournament;
@@ -392,4 +392,4 @@ const bowlerDetails = ({bowler, bowlerUpdateSubmitted}) => {
   );
 }
 
-export default bowlerDetails;
+export default BowlerDetails;

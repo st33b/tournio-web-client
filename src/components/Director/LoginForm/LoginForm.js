@@ -8,7 +8,7 @@ import {directorApiLoginRequest} from "../../../utils";
 
 import classes from './LoginForm.module.scss';
 
-const loginForm = () => {
+const LoginForm = () => {
   const router = useRouter();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
@@ -59,7 +59,7 @@ const loginForm = () => {
       <Card className={classes.Card}>
         <Card.Header>
           <Card.Title>
-            Let's get you logged in...
+            Let&apos;s get you logged in...
           </Card.Title>
         </Card.Header>
         <Card.Body>
@@ -72,7 +72,7 @@ const loginForm = () => {
                             placeholder={'name@example.com'}
                             ref={emailInputRef}/>
               <Form.Control.Feedback type={'invalid'}>
-                Can't log in without an email.
+                Can&apos;t log in without an email.
               </Form.Control.Feedback>
             </FloatingLabel>
             <FloatingLabel label={'Password'}
@@ -82,7 +82,7 @@ const loginForm = () => {
                             placeholder={'Password'}
                             ref={passwordInputRef}/>
               <Form.Control.Feedback type={'invalid'}>
-                Can't log in without a password.
+                Can&apos;t log in without a password.
               </Form.Control.Feedback>
             </FloatingLabel>
             <div className={classes.Actions}>
@@ -101,4 +101,4 @@ const loginForm = () => {
   );
 };
 
-export default loginForm;
+export default LoginForm;

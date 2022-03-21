@@ -7,7 +7,7 @@ import PartnerSelectionRow from "./PartnerSelectionRow";
 
 import classes from './TeamDetails.module.scss';
 
-const teamDetails = ({team, teamUpdateSubmitted}) => {
+const TeamDetails = ({team, teamUpdateSubmitted}) => {
   const directorContext = useDirectorContext();
 
   let identifier;
@@ -44,7 +44,7 @@ const teamDetails = ({team, teamUpdateSubmitted}) => {
         position: b.position,
         doubles_partner_id: b.doubles_partner_id,
       }
-    });
+    }, [team]);
     setData(team.bowlers);
     setTeamForm(newFormData);
   }, [team]);
@@ -241,10 +241,10 @@ const teamDetails = ({team, teamUpdateSubmitted}) => {
             Roster
           </caption>
           <thead className={'table-light'}>
-          {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps()}>
+          {headerGroups.map((headerGroup, i) => (
+            <tr key={i} {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column, j) => (
+                <th key={j} {...column.getHeaderProps()}>
                   {column.render('Header')}
                 </th>
               ))}
@@ -252,12 +252,12 @@ const teamDetails = ({team, teamUpdateSubmitted}) => {
           ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-          {rows.map(row => {
+          {rows.map((row, i) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map(cell => (
-                  <td {...cell.getCellProps()}>
+              <tr key={i} {...row.getRowProps()}>
+                {row.cells.map((cell, j) => (
+                  <td key={j} {...cell.getCellProps()}>
                     {cell.render('Cell')}
                   </td>
                 ))}
@@ -280,4 +280,4 @@ const teamDetails = ({team, teamUpdateSubmitted}) => {
   );
 }
 
-export default teamDetails;
+export default TeamDetails;

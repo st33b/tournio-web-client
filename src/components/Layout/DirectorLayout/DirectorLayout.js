@@ -5,7 +5,7 @@ import Navigation from './Navigation';
 import Footer from './Footer';
 import classes from './DirectorLayout.module.scss';
 
-const directorLayout = ({children}) => {
+const DirectorLayout = ({children}) => {
   return (
     <div className={classes.DirectorLayout}>
       <SiteHeader/>
@@ -30,4 +30,4 @@ const directorLayout = ({children}) => {
   )
 }
 
-export default directorLayout;
+export default DirectorLayout;

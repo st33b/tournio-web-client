@@ -2,7 +2,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './TeamDetails.module.scss';
 
-const teamDetails = ({successType}) => {
+const TeamDetails = ({successType}) => {
   const {entry, commerce} = useRegistrationContext();
 
   if (!entry.tournament || !entry.team) {
@@ -93,4 +93,4 @@ const teamDetails = ({successType}) => {
   );
 }
 
-export default teamDetails;
+export default TeamDetails;

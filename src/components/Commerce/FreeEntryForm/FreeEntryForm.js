@@ -6,12 +6,8 @@ import {freeEntryDeclared, freeEntryFailure, freeEntrySuccess} from "../../../st
 
 import classes from './FreeEntryForm.module.scss';
 
-const freeEntryForm = () => {
+const FreeEntryForm = () => {
   const {commerce, commerceDispatch} = useRegistrationContext();
-
-  if (!commerce || !commerce.bowler) {
-    return '';
-  }
 
   let initialCode = '';
   if (commerce.freeEntry && commerce.freeEntry.code) {
@@ -68,6 +64,10 @@ const freeEntryForm = () => {
       valid: isValid(enteredCode),
     });
     setFreeEntryForm(newState);
+  }
+
+  if (!commerce || !commerce.bowler) {
+    return '';
   }
 
   let textClass = 'd-block';
@@ -163,4 +163,4 @@ const freeEntryForm = () => {
   );
 }
 
-export default freeEntryForm;
+export default FreeEntryForm;

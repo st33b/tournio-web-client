@@ -1,7 +1,6 @@
-import Image from "next/image";
 import classes from './TournamentLogo.module.scss';
 
-const tournamentLogo = ({tournament}) => {
+const TournamentLogo = ({tournament}) => {
   if (!tournament) {
     return '';
   }
@@ -16,4 +15,4 @@ const tournamentLogo = ({tournament}) => {
   );
 }
 
-export default tournamentLogo;
+export default TournamentLogo;

@@ -8,7 +8,7 @@ import {useDirectorContext} from '../../../store/DirectorContext';
 import classes from './TournamentListing.module.scss';
 import {useRouter} from "next/router";
 
-const tournamentListing = () => {
+const TournamentListing = () => {
   const directorContext = useDirectorContext();
   const router = useRouter();
 
@@ -145,4 +145,4 @@ const tournamentListing = () => {
   );
 };
 
-export default tournamentListing;
+export default TournamentListing;

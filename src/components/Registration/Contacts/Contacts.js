@@ -2,7 +2,7 @@ import {ListGroup} from "react-bootstrap";
 
 import classes from './Contacts.module.scss';
 
-const contacts = ({tournament}) => {
+const Contacts = ({tournament}) => {
   if (!tournament) {
     return '';
   }
@@ -35,4 +35,4 @@ const contacts = ({tournament}) => {
   );
 }
 
-export default contacts;
+export default Contacts;

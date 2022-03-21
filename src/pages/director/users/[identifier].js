@@ -15,6 +15,7 @@ const Page = () => {
 
   const isSuperuser = directorContext.user && directorContext.user.role === 'superuser';
   const isEditingSelf = directorContext.user && directorContext.user.identifier === identifier;
+
   useEffect(() => {
     if (identifier === undefined) {
       return;
@@ -58,7 +59,7 @@ const Page = () => {
       router: router,
       onSuccess: onSuccess,
       onFailure: onFailure});
-  }, [identifier]);
+  }, [identifier, directorContext, router]);
 
   const onTournamentsFetched = (data) => {
     setTournaments(data);
@@ -85,7 +86,7 @@ const Page = () => {
       onSuccess: onTournamentsFetched,
       onFailure: onTournamentsFetchFailure,
     });
-  }, []);
+  }, [directorContext, router]);
 
   const onDeleteSuccess = (_) => {
     setIsLoading(false);

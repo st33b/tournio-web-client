@@ -15,7 +15,7 @@ const Page = () => {
 
   useEffect(() => {
     dispatch(newTeamRegistrationInitiated());
-  }, [])
+  }, [dispatch]);
 
   const onTeamFormCompleted = (teamName) => {
     dispatch(teamInfoAdded(teamName));

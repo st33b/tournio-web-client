@@ -14,10 +14,6 @@ const Page = () => {
 
   let {identifier} = router.query;
 
-  if (!directorContext) {
-    return '';
-  }
-
   const newTeamFormInitialState = {
     destinationTeam: '',
   }
@@ -47,7 +43,7 @@ const Page = () => {
     if (directorContext.user.role === 'director' && !directorContext.user.tournaments.some(t => t.identifier === tournament.identifier)) {
       router.push('/director');
     }
-  }, [directorContext]);
+  }, [directorContext, router]);
 
   const fetchBowlerSuccess = (data) => {
     setLoading(false);
@@ -76,7 +72,7 @@ const Page = () => {
       onSuccess: fetchBowlerSuccess,
       onFailure: fetchBowlerFailure,
     });
-  }, [identifier, directorContext]);
+  }, [identifier, directorContext, router]);
 
   const fetchTeamsSuccess = (data) => {
     setLoading(false);
@@ -105,7 +101,7 @@ const Page = () => {
       onSuccess: fetchTeamsSuccess,
       onFailure: fetchTeamsFailure,
     });
-  }, [directorContext]);
+  }, [directorContext, router]);
 
   const fetchFreeEntriesSuccess = (data) => {
     setAvailableFreeEntries(data);
@@ -131,7 +127,11 @@ const Page = () => {
       onSuccess: fetchFreeEntriesSuccess,
       onFailure: fetchFreeEntriesFailure,
     });
-  }, [bowler]);
+  }, [bowler, directorContext, router]);
+
+  if (!directorContext) {
+    return '';
+  }
 
   if (loading) {
     return <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>;

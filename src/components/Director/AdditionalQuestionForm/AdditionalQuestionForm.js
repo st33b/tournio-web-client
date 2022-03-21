@@ -7,7 +7,7 @@ import {directorApiRequest} from "../../../utils";
 
 import classes from './AdditionalQuestionForm.module.scss';
 
-const additionalQuestionForm = () => {
+const AdditionalQuestionForm = () => {
   const context = useDirectorContext();
   const router = useRouter();
 
@@ -191,4 +191,4 @@ const additionalQuestionForm = () => {
   );
 }
 
-export default additionalQuestionForm;
+export default AdditionalQuestionForm;

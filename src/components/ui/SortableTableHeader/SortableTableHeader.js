@@ -1,7 +1,7 @@
 import classes from "./SortableTableHeader.module.scss";
 
 // column is a Column instance from react-table
-const sortableTableHeader = ({column, text}) => {
+const SortableTableHeader = ({column, text}) => {
   const headerClassName = column.canSort ? 'link-primary' : '';
   return (
     <span className={`${classes.SortableTableHeader} ${headerClassName}`}>
@@ -15,4 +15,4 @@ const sortableTableHeader = ({column, text}) => {
   );
 };
 
-export default sortableTableHeader;
+export default SortableTableHeader;

@@ -25,13 +25,16 @@ const Page = () => {
     if (!identifier) {
       return;
     }
+    if (!directorContext || !directorContext.user) {
+      return;
+    }
     if (!directorContext.isLoggedIn) {
       router.push('/director/login');
     }
     if (directorContext.user.role !== 'superuser' && !directorContext.user.tournaments.some(t => t.identifier === identifier)) {
       router.push('/director');
     }
-  }, [identifier]);
+  }, [identifier, router, directorContext]);
 
   const onFetchBowlersSuccess = (data) => {
     setBowlers(data);
@@ -61,7 +64,7 @@ const Page = () => {
       onSuccess: onFetchBowlersSuccess,
       onFailure: onFetchBowlersFailure,
     })
-  }, [identifier]);
+  }, [identifier, router, directorContext]);
 
   // Do we have a success query parameter?
   useEffect(() => {
@@ -70,7 +73,7 @@ const Page = () => {
       setSuccessMessage('The bowler has been removed.');
       router.replace(router.pathname, null, { shallow: true });
     }
-  });
+  }, [router]);
 
   let success = '';
   let error = '';

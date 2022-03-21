@@ -2,7 +2,7 @@ import Head from 'next/head';
 
 export const siteTitle = 'IGBO Tournament Administration';
 
-const siteHeader = () => (
+const SiteHeader = () => (
   <Head>
     <title>{siteTitle}</title>
     {/* icon logo link, if we want */}
@@ -14,4 +14,4 @@ const siteHeader = () => (
   </Head>
 );
 
-export default siteHeader;
+export default SiteHeader;
