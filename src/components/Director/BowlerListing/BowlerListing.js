@@ -8,7 +8,7 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './BowlerListing.module.scss';
 
-const bowlerListing = ({bowlers}) => {
+const BowlerListing = ({bowlers}) => {
   const directorContext = useDirectorContext();
 
   let identifier;
@@ -108,10 +108,10 @@ const bowlerListing = ({bowlers}) => {
       <div className={'table-responsive'}>
         <table className={'table table-striped table-hover'} {...getTableProps}>
           <thead className={'table-light'}>
-          {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+          {headerGroups.map((headerGroup, i) => (
+            <tr key={i} {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column, j) => (
+                <th key={j} {...column.getHeaderProps(column.getSortByToggleProps())}>
                   {column.render('Header')}
                 </th>
               ))}
@@ -119,12 +119,12 @@ const bowlerListing = ({bowlers}) => {
           ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-          {rows.map(row => {
+          {rows.map((row, i) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map(cell => (
-                  <td {...cell.getCellProps()}>
+              <tr key={i} {...row.getRowProps()}>
+                {row.cells.map((cell, j) => (
+                  <td key={j} {...cell.getCellProps()}>
                     {cell.render('Cell')}
                   </td>
                 ))}
@@ -156,4 +156,4 @@ const bowlerListing = ({bowlers}) => {
   );
 };
 
-export default bowlerListing;
+export default BowlerListing;

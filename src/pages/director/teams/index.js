@@ -27,13 +27,16 @@ const Page = () => {
     if (!identifier) {
       return;
     }
+    if (!directorContext) {
+      return;
+    }
     if (!directorContext.isLoggedIn) {
       router.push('/director/login');
     }
     if (directorContext.user.role !== 'superuser' && !directorContext.user.tournaments.some(t => t.identifier === identifier)) {
       router.push('/director');
     }
-  }, [identifier]);
+  }, [identifier, router, directorContext]);
 
   const onFetchTeamsSuccess = (data) => {
     setTeams(data);
@@ -63,7 +66,7 @@ const Page = () => {
       onSuccess: onFetchTeamsSuccess,
       onFailure: onFetchTeamsFailure,
     });
-  }, [identifier]);
+  }, [identifier, router, directorContext]);
 
   // Do we have a success query parameter?
   useEffect(() => {
@@ -72,7 +75,7 @@ const Page = () => {
       setSuccessMessage('The team has been removed.');
       router.replace(router.pathname, null, { shallow: true });
     }
-  });
+  }, [router]);
 
   const newTeamSubmitSuccess = (data) => {
     setSuccessMessage('New team created!');

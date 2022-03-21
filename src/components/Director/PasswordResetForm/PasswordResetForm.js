@@ -6,7 +6,7 @@ import {directorResetPasswordRequest} from "../../../utils";
 
 import classes from './PasswordResetForm.module.scss';
 
-const passwordResetForm = ({token}) => {
+const PasswordResetForm = ({token}) => {
   const router = useRouter();
   const passwordInputRef = useRef();
   const passwordConfirmInputRef = useRef();
@@ -83,7 +83,7 @@ const passwordResetForm = ({token}) => {
                             placeholder={'Password'}
                             ref={passwordInputRef}/>
               <Form.Control.Feedback type={'invalid'}>
-                Password's gotta be at least 8 characters long.
+                Password&apos;s gotta be at least 8 characters long.
               </Form.Control.Feedback>
             </FloatingLabel>
             <FloatingLabel label={'Confirm Password'}
@@ -108,4 +108,4 @@ const passwordResetForm = ({token}) => {
   );
 };
 
-export default passwordResetForm;
+export default PasswordResetForm;

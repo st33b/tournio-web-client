@@ -1,6 +1,6 @@
 import classes from './Footer.module.scss';
 
-const footer = () => (
+const Footer = () => (
   <div className={classes.Footer}>
     <p className={'text-muted text-center py-2 my-2'}>
       <a href={'/about'}>
@@ -16,4 +16,4 @@ const footer = () => (
   </div>
 );
 
-export default footer;
+export default Footer;

@@ -4,7 +4,7 @@ import {format} from 'date-fns';
 import classes from './TournamentDetails.module.scss';
 import {useDirectorContext} from "../../../store/DirectorContext";
 
-const purchasableItems = () => {
+const PurchasableItems = () => {
   const context = useDirectorContext();
   if (!context || !context.tournament) {
     return '';
@@ -78,4 +78,4 @@ const purchasableItems = () => {
   );
 }
 
-export default purchasableItems;
+export default PurchasableItems;

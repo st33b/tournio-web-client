@@ -10,14 +10,18 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './TournamentDetails.module.scss';
 
-const statusAndCounts = ({testEnvironmentUpdated}) => {
+const StatusAndCounts = ({testEnvironmentUpdated}) => {
   const context = useDirectorContext();
-  if (!context || !context.tournament) {
-    return '';
-  }
   const router = useRouter();
 
   const [downloadMessage, setDownloadMessage] = useState(null);
+  const [clearTestDataSuccessMessage, setClearTestDataSuccessMessage] = useState();
+  const [loading, setLoading] = useState(false);
+
+  if (!context || !context.tournament) {
+    return '';
+  }
+
   const downloadSuccess = (data, name) => {
     const url = URL.createObjectURL(data);
     const link = document.createElement('a');
@@ -118,7 +122,6 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
     </ListGroup>
   );
 
-  const [clearTestDataSuccessMessage, setClearTestDataSuccessMessage] = useState();
   const onClearTestDataSuccess = (_) => {
     setLoading(false);
     const updatedTournament = {...context.tournament}
@@ -137,7 +140,6 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
     setClearTestDataSuccessMessage(null);
   }
 
-  const [loading, setLoading] = useState(false);
   const clearTestDataClickHandler = () => {
     if (context.tournament.state !== 'testing') {
       console.log('Cannot clear data for a tournament that is not in setup or testing.');
@@ -330,4 +332,4 @@ const statusAndCounts = ({testEnvironmentUpdated}) => {
   );
 }
 
-export default statusAndCounts;
+export default StatusAndCounts;

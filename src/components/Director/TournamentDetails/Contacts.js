@@ -4,7 +4,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import classes from './TournamentDetails.module.scss';
 import {useDirectorContext} from "../../../store/DirectorContext";
 
-const contacts = () => {
+const Contacts = () => {
   const context = useDirectorContext();
   if (!context || !context.tournament) {
     return '';
@@ -36,4 +36,4 @@ const contacts = () => {
   );
 }
 
-export default contacts;
+export default Contacts;

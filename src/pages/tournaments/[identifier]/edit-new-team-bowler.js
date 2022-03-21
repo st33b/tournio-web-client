@@ -12,19 +12,22 @@ import {useEffect, useState} from "react";
 const Page = () => {
   const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
-  const { bowler } = router.query;
 
   const [bowlerNum, setBowlerNum] = useState(null);
 
   // Validate the 'bowler' query parameter
   useEffect(() => {
+    if (!router || !entry) {
+      return;
+    }
+    const { bowler } = router.query;
     const result = parseInt(bowler);
     if (isNaN(result) || result <= 0 || result > entry.bowlers.length) {
       router.push(`/tournaments/${entry.tournament.identifier}`);
     } else {
       setBowlerNum(result);
     }
-  });
+  }, [router, entry]);
 
   if (!bowlerNum) {
     return '';

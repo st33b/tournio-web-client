@@ -36,7 +36,7 @@ const Page = () => {
       onSuccess: onTeamListRetrieved,
       onFailure: onTeamListFailed,
     });
-  }, []);
+  }, [dispatch]);
 
   if (loading) {
     return (

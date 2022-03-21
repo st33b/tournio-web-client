@@ -4,7 +4,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './Summary.module.scss';
 
-const summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEdit}) => {
+const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEdit}) => {
   const {entry} = useRegistrationContext();
 
   if (!entry.tournament) {
@@ -87,4 +87,4 @@ const summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
   );
 };
 
-export default summary;
+export default Summary;

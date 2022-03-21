@@ -5,7 +5,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './BowlerSummary.module.scss';
 
-const bowlerSummary = ({bowler, editClicked}) => {
+const BowlerSummary = ({bowler, editClicked}) => {
   const {entry} = useRegistrationContext();
   if (!bowler || !entry.tournament) {
     return '';
@@ -80,4 +80,4 @@ const bowlerSummary = ({bowler, editClicked}) => {
   );
 }
 
-export default bowlerSummary;
+export default BowlerSummary;

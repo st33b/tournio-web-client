@@ -23,7 +23,7 @@ const Page = () => {
     }
 
     fetchTournamentDetails(identifier, dispatch, commerceDispatch);
-   }, [identifier]);
+   }, [identifier, dispatch, commerceDispatch]);
 
   if (!entry || !entry.tournament) {
     return (

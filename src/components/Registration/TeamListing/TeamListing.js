@@ -1,6 +1,6 @@
 import classes from './TeamListing.module.scss';
 
-const teamListing = ({teams, caption}) => {
+const TeamListing = ({teams, caption}) => {
   if (!teams) {
     return '';
   }
@@ -57,4 +57,4 @@ const teamListing = ({teams, caption}) => {
   );
 }
 
-export default teamListing;
+export default TeamListing;

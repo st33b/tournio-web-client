@@ -6,7 +6,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './BowlerForm.module.scss';
 
-const bowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
+const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
   const {entry} = useRegistrationContext();
 
   if (!entry.tournament || !entry.bowlers) {
@@ -405,4 +405,4 @@ const bowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
   );
 }
 
-export default bowlerForm;
+export default BowlerForm;

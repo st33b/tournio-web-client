@@ -27,13 +27,16 @@ const Page = () => {
     if (!identifier) {
       return;
     }
+    if (!directorContext) {
+      return;
+    }
     if (!directorContext.isLoggedIn) {
       router.push('/director/login');
     }
     if (directorContext.user.role !== 'superuser' && !directorContext.user.tournaments.some(t => t.identifier === identifier)) {
       router.push('/director');
     }
-  }, [identifier]);
+  }, [identifier, router, directorContext]);
 
   const freeEntriesFetched = (data) => {
     setFreeEntries(data);
@@ -63,7 +66,7 @@ const Page = () => {
       onSuccess: freeEntriesFetched,
       onFailure: freeEntriesFetchFailed,
     });
-  }, [identifier]);
+  }, [identifier, directorContext, router]);
 
   // Do we have a success query parameter?
   useEffect(() => {
@@ -72,7 +75,7 @@ const Page = () => {
       setSuccessMessage('The free entry has been deleted.');
       router.replace(router.pathname, null, { shallow: true });
     }
-  });
+  }, [router]);
 
   let success = '';
   let error = '';

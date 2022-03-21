@@ -4,7 +4,7 @@ import BowlerSummary from "./BowlerSummary";
 import classes from './ReviewEntries.module.scss';
 import {Alert, Col, Row} from "react-bootstrap";
 
-const reviewEntries = ({editBowler, context}) => {
+const ReviewEntries = ({editBowler, context}) => {
   const {entry} = useRegistrationContext();
 
   if (!entry.bowlers) {
@@ -49,4 +49,4 @@ const reviewEntries = ({editBowler, context}) => {
   );
 }
 
-export default reviewEntries;
+export default ReviewEntries;

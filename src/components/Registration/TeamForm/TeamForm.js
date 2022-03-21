@@ -5,7 +5,7 @@ import {updateObject} from "../../../utils";
 
 import classes from './TeamForm.module.scss';
 
-const teamForm = ({teamFormCompleted}) => {
+const TeamForm = ({teamFormCompleted}) => {
   const initialFormState = {
     teamName: '',
     valid: false,
@@ -75,4 +75,4 @@ const teamForm = ({teamFormCompleted}) => {
   )
 };
 
-export default teamForm;
+export default TeamForm;

@@ -2,7 +2,7 @@ import Head from 'next/head';
 
 export const siteTitle = 'IGBO Tournament Registration';
 
-const siteHeader = () => (
+const SiteHeader = () => (
   <Head>
     <title>{siteTitle}</title>
     <meta httpEquiv={"Content-Type"} content={"text/html; charset=utf-8"} />
@@ -13,4 +13,4 @@ const siteHeader = () => (
   </Head>
 );
 
-export default siteHeader;
+export default SiteHeader;

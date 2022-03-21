@@ -38,7 +38,7 @@ const Page = () => {
         dispatches: [dispatch, commerceDispatch],
       })
     }
-  }, [identifier, entry]);
+  }, [identifier, entry, dispatch, commerceDispatch]);
 
   // ensure that the tournament in context matches the team's
   useEffect(() => {
@@ -51,7 +51,7 @@ const Page = () => {
     if (entry.team.tournament.identifier !== entry.tournament.identifier) {
       fetchTournamentDetails(entry.team.tournament.identifier, dispatch, commerceDispatch);
     }
-  }, [identifier, entry]);
+  }, [identifier, entry, dispatch, commerceDispatch]);
 
   if (loading || !entry || !entry.team) {
     return (

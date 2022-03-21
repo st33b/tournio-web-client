@@ -1,7 +1,7 @@
 import Row from "react-bootstrap/Row";
 import classes from './Footer.module.scss';
 
-const footer = () => (
+const Footer = () => (
   <div className={classes.Footer}>
     <Row className={process.env.NODE_ENV === 'development' && classes.Development}>
       <p className={'text-muted text-center py-2 my-2'}>
@@ -14,4 +14,4 @@ const footer = () => (
   </div>
 );
 
-export default footer;
+export default Footer;

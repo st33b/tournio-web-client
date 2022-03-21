@@ -3,7 +3,7 @@ import Card from 'react-bootstrap/Card';
 import classes from './TournamentDetails.module.scss';
 import {useDirectorContext} from "../../../store/DirectorContext";
 
-const tournamentLogo = () => {
+const TournamentLogo = () => {
   const context = useDirectorContext();
   if (!context || !context.tournament) {
     return '';
@@ -18,4 +18,4 @@ const tournamentLogo = () => {
   );
 }
 
-export default tournamentLogo;
+export default TournamentLogo;

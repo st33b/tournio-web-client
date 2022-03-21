@@ -5,7 +5,7 @@ import Navigation from './Navigation';
 import Footer from './Footer';
 import classes from './RegistrationLayout.module.scss';
 
-const registrationLayout = ({children, showCart}) => {
+const RegistrationLayout = ({children, showCart}) => {
   return (
     <div className={classes.RegistrationLayout}>
       <SiteHeader/>
@@ -30,4 +30,4 @@ const registrationLayout = ({children, showCart}) => {
   )
 }
 
-export default registrationLayout;
+export default RegistrationLayout;

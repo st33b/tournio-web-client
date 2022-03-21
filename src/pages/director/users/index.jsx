@@ -34,7 +34,7 @@ const Page = () => {
       setSuccessMessage('The user has been removed.');
       router.replace(router.pathname, null, { shallow: true });
     }
-  });
+  }, [router]);
 
   const usersRetrieved = (data) => {
     setUsers(data);
@@ -60,7 +60,7 @@ const Page = () => {
       onSuccess: usersRetrieved,
       onFailure: usersFailedToRetrieve,
     });
-  }, []);
+  }, [directorContext]);
 
   const onTournamentsFetched = (data) => {
     setTournaments(data);
@@ -87,7 +87,7 @@ const Page = () => {
       onSuccess: onTournamentsFetched,
       onFailure: onTournamentsFetchFailure,
     });
-  }, []);
+  }, [directorContext, router]);
 
   if (loading) {
     return (

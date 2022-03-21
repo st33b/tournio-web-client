@@ -1,15 +1,12 @@
 import {useRouter} from "next/router";
 import {Card, Col, ListGroup, Row} from "react-bootstrap";
 
-import Contacts from "../Contacts/Contacts";
-import TournamentLogo from "../TournamentLogo/TournamentLogo";
-
 import classes from './TournamentDetails.module.scss';
 
 const USBC_ID_LOOKUP_URL = 'https://webapps.bowl.com/USBCFindA/Home/Member';
 const IGBO_ID_LOOKUP_URL = 'http://igbo.org/tournaments/igbots-id-lookup/';
 
-const tournamentDetails = ({tournament}) => {
+const TournamentDetails = ({tournament}) => {
   const router = useRouter();
 
   if (!tournament) {
@@ -282,4 +279,4 @@ const tournamentDetails = ({tournament}) => {
   );
 }
 
-export default tournamentDetails;
+export default TournamentDetails;

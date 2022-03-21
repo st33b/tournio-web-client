@@ -5,19 +5,16 @@ import ListGroup from "react-bootstrap/ListGroup";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 import AdditionalQuestionForm from "../AdditionalQuestionForm/AdditionalQuestionForm";
-
-import classes from './AdditionalQuestions.module.scss';
 import {directorApiRequest} from "../../../utils";
 
-const additionalQuestions = () => {
+import classes from './AdditionalQuestions.module.scss';
+
+const AdditionalQuestions = () => {
   const context = useDirectorContext();
   const router = useRouter();
-  if (!context || !context.tournament) {
-    return '';
-  }
 
   const initialSaveData = {
-    questions: context.tournament.additional_questions.map(q => ({ id: q.id, order: q.order, _destroy: false })),
+    questions: [],
     valid: true, // currently, no validity is enforced, so it's always true
   }
 
@@ -30,12 +27,20 @@ const additionalQuestions = () => {
   const editable = context.tournament.state !== 'active' && context.tournament.state !== 'closed';
 
   useEffect(() => {
+    if (!context || !context.tournament) {
+      return;
+    }
+
     const dataFromContext = {
       questions: context.tournament.additional_questions.map(q => ({ id: q.id, order: q.order, _destroy: false })),
       valid: true,
     };
     setSaveData(dataFromContext);
   }, [context]);
+
+  if (!context || !context.tournament) {
+    return '';
+  }
 
   const editClicked = (event) => {
     event.preventDefault();
@@ -212,4 +217,4 @@ const additionalQuestions = () => {
   );
 }
 
-export default additionalQuestions;
+export default AdditionalQuestions;

@@ -14,7 +14,7 @@ const about = () => (
             This site is intended to be a low-cost, low-effort way for IGBO tournament directors to offer their bowlers online registration and purchase of optional events and products, as well as to prepare for their tournaments by consolidating and correcting data, monitoring the receipt of payments, and offering the export of registration data in spreadsheet format (comma-separated value, or CSV) as well as a format suitable for import into the IGBO-TS software.
           </p>
           <p>
-            When bowlers pay their registration fees and purchase optional events, the transactions are made directly with PayPal using each tournament's client identifier; no funds pass through this system. Thus, the system charges no transaction fees.
+            When bowlers pay their registration fees and purchase optional events, the transactions are made directly with PayPal using each tournament&apos;s client identifier; no funds pass through this system. Thus, the system charges no transaction fees.
           </p>
         </Accordion.Body>
       </Accordion.Item>
@@ -103,30 +103,30 @@ const about = () => (
               Run registration in Test Mode before opening it to the public.
             </li>
             <li>
-              When registration is in Test Mode, you can clear out all test data, which is what you should do just before you're ready to open registration to the public.
+              When registration is in Test Mode, you can clear out all test data, which is what you should do just before you&apos;re ready to open registration to the public.
             </li>
             <li>
               In Test Mode, simulate registrations happening during the early, regular, and late registration periods, to verify the proper discount/fee gets applied.
             </li>
             <li>
-              You can close registration with a single button press when you're ready, or when you've reached capacity.
+              You can close registration with a single button press when you&apos;re ready, or when you&apos;ve reached capacity.
             </li>
           </ul>
         </p>
         <p>
-          I've got a big list of features I'm working on adding to the system in the coming months, all based on feedback I've received from other tournament directors. This list includes:
+          I&apos;ve got a big list of features I&apos;m working on adding to the system in the coming months, all based on feedback I&apos;ve received from other tournament directors. This list includes:
           <ul>
             <li>
               Ability for a tournament director to upload an image to use as logo, along with other assets, like PDFs for rules and results.
             </li>
             <li>
-              More control over configuration details, including choosing which optional registration questions to include in the form, e.g., preferred pronouns.
+              More control over configuration details, including choosing which optional events to make available for purchase.
             </li>
             <li>
               Mark bowlers as paid via a mechanism outside of PayPal, e.g., cash or check.
             </li>
             <li>
-              Improved experience for bowlers in the time period between registration closing and the tournament's start date.
+              Improved experience for bowlers in the time period between registration closing and the tournament&apos;s start date.
             </li>
             <li>
               Being added to a waiting list for a full tournament.
@@ -176,7 +176,7 @@ const about = () => (
             {' '}was born. Like so many software projects, the first version was overly complicated, difficult to maintain, and not very easy to use, for either me or for tournament directors. I quickly replaced it with a version designed to solve the most common use cases first, and it found success with a small number of tournaments.
           </p>
           <p>
-            The lull in tournaments created by the coronavirus pandemic in 2020 and 2021 presented an opportunity to incorporate feedback I'd received about the system over the years and completely rebuild it from the ground up. In doing so, I completely rebuilt both the registration and administration experiences, in order to allow bowlers an easier, more seamless and thorough registration experience, and to provide tournament directors with greater control and flexibility in how they run their tournaments.
+            The lull in tournaments created by the coronavirus pandemic in 2020 and 2021 presented an opportunity to incorporate feedback I&apos;d received about the system over the years and completely rebuild it from the ground up. In doing so, I completely rebuilt both the registration and administration experiences, in order to allow bowlers an easier, more seamless and thorough registration experience, and to provide tournament directors with greater control and flexibility in how they run their tournaments.
           </p>
         </Accordion.Body>
       </Accordion.Item>
@@ -187,7 +187,7 @@ const about = () => (
         </Accordion.Header>
         <Accordion.Body>
           <p>
-            This website has no official affiliation with IGBO. I've simply built it specifically for use by IGBO tournaments.
+            This website has no official affiliation with IGBO. I&apos;ve simply built it specifically for use by IGBO tournaments.
           </p>
           <p>
             This website is designed to work with all modern browsers, regardless of device. On desktops, though, I recommend using{' '}
@@ -196,7 +196,7 @@ const about = () => (
             </a>.
           </p>
           <p>
-            Interested in the source code? It's in two parts, available on <i className={'bi-github'} /> Github:
+            Interested in the source code? It&apos;s in two parts, available on <i className={'bi-github'} /> Github:
             <ul>
               <li>
                 <a href={'https://github.com/st33b/igbo-registration-api'}>

@@ -3,7 +3,7 @@ import Card from 'react-bootstrap/Card';
 import classes from './TournamentDetails.module.scss';
 import {useDirectorContext} from "../../../store/DirectorContext";
 
-const configuration = () => {
+const Configuration = () => {
   const context = useDirectorContext();
   if (!context || !context.tournament) {
     return '';
@@ -31,4 +31,4 @@ const configuration = () => {
   );
 }
 
-export default configuration;
+export default Configuration;

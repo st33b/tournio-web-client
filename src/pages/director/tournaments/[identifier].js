@@ -41,7 +41,7 @@ const Tournament = () => {
       onSuccess: onTournamentFetchSuccess,
       onFailure: onTournamentFetchFailure,
     });
-  }, [identifier]);
+  }, [identifier, directorContext.user, router]);
 
   const stateChangeSuccess = (data) => {
     directorContext.setTournament(data);

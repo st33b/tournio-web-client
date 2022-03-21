@@ -4,10 +4,9 @@ import {FloatingLabel, Form, Button} from "react-bootstrap";
 import {updateObject} from "../../../utils";
 
 import classes from './NewTeamForm.module.scss';
-import {useRouter} from "next/router";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
-const newTeamForm = ({submitted}) => {
+const NewTeamForm = ({submitted}) => {
   const directorContext = useDirectorContext();
   let identifier;
   if (directorContext && directorContext.tournament) {
@@ -79,4 +78,4 @@ const newTeamForm = ({submitted}) => {
   );
 }
 
-export default newTeamForm;
+export default NewTeamForm;

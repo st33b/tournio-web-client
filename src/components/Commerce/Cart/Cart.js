@@ -4,8 +4,8 @@ import MultiUseItem from "./MultiUseItem/MultiUseItem";
 
 import classes from './Cart.module.scss';
 
-const cart = ({itemAddedToCart, itemRemovedFromCart}) => {
-  const {commerce, commerceDispatch} = useRegistrationContext();
+const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
+  const {commerce} = useRegistrationContext();
 
   if (!commerce || !commerce.cart) {
     return '';
@@ -62,4 +62,4 @@ const cart = ({itemAddedToCart, itemRemovedFromCart}) => {
   );
 }
 
-export default cart;
+export default Cart;

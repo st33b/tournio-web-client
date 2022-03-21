@@ -15,7 +15,7 @@ const Page = () => {
 
   useEffect(() => {
     dispatch(newSoloRegistrationInitiated());
-  }, [])
+  }, [dispatch]);
 
   const onCompletion = (bowler) => {
     dispatch(soloBowlerInfoAdded(bowler));

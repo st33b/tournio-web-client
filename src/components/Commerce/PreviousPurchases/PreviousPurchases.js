@@ -2,7 +2,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './PreviousPurchases.module.scss';
 
-const previousPurchases = () => {
+const PreviousPurchases = () => {
   const {commerce} = useRegistrationContext();
 
   if (!commerce) {
@@ -51,4 +51,4 @@ const previousPurchases = () => {
   )
 }
 
-export default previousPurchases;
+export default PreviousPurchases;
