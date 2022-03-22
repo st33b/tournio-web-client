@@ -71,12 +71,18 @@ const Input = (props) => {
 
   let helperElement = '';
   if (props.helper && props.helper.text) {
-    helperElement = (
-      <small className="form-text text-muted">
+    let helper = props.helper.text;
+    if (props.helper.url) {
+      helper = (
         <a href={props.helper.url} target="_new">
           {props.helper.text}{' '}
           <i className={`${classes.ExternalLink} bi-box-arrow-up-right pl-2`} aria-hidden="true"/>
         </a>
+      )
+    }
+    helperElement = (
+      <small className="form-text text-muted">
+        {helper}
       </small>
     );
   }
