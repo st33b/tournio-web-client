@@ -1,19 +1,24 @@
 import {useEffect, useState, createElement} from "react";
-import {format} from "date-fns";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import ErrorBoundary from "../../common/ErrorBoundary";
+import {format, formatISO} from "date-fns";
+import {useRouter} from "next/router";
 
 import TextField from "@mui/material/TextField";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import DateTimePicker from "@mui/lab/DateTimePicker";
 
+import {useDirectorContext} from "../../../store/DirectorContext";
+import {directorApiRequest} from "../../../utils";
+import ErrorBoundary from "../../common/ErrorBoundary";
+
 import classes from './ConfigItemForm.module.scss';
 
 const ConfigItemForm = ({item}) => {
   const context = useDirectorContext();
+  const router = useRouter();
 
   const initialState = {
+    prevValue: '',
     value: '',
     valid: true,
   }
@@ -26,6 +31,7 @@ const ConfigItemForm = ({item}) => {
     }
     const newFormData = {...formData}
     newFormData.value = item.value;
+    newFormData.prevValue = item.value;
     setFormData(newFormData);
   }, [item]);
 
@@ -33,90 +39,87 @@ const ConfigItemForm = ({item}) => {
     return '';
   }
 
-  // const timeZones = {
-  //   'Pacific/Honolulu': {
-  //     key: 'Pacific/Honolulu',
-  //     display: 'Hawaii',
-  //   },
-  //   'America/Adak': {
-  //     key: 'America/Adak',
-  //     display: 'Hawaii-Aleutian',
-  //   },
-  //   'America/Anchorage': {
-  //     key: 'America/Anchorage',
-  //     display: 'Alaska',
-  //   },
-  //   'America/Los_Angeles': {
-  //     key: 'America/Los_Angeles',
-  //     display: 'Pacific',
-  //   },
-  //   'America/Phoenix': {
-  //     key: 'America/Phoenix',
-  //     display: 'MST (Phoenix)',
-  //   },
-  //   'America/Denver': {
-  //     key: 'America/Denver',
-  //     display: 'Mountain',
-  //   },
-  //   'America/Chicago': {
-  //     key: 'America/Chicago',
-  //     display: 'Central',
-  //   },
-  //   'America/New_York': {
-  //     key: 'America/New_York',
-  //     display: 'Eastern',
-  //   },
-  // }
-
-  const timeZones = [
-    {
+  const timeZones = {
+    'Pacific/Honolulu': {
       key: 'Pacific/Honolulu',
-      display: 'Hawaii',
+      display: 'Hawaii (HST)',
     },
-    {
+    'America/Adak': {
       key: 'America/Adak',
-      display: 'Hawaii-Aleutian',
+      display: 'Hawaii-Aleutian (HST/HDT)',
     },
-    {
+    'America/Anchorage': {
       key: 'America/Anchorage',
-      display: 'Alaska',
+      display: 'Alaska (AKST/AKDT)',
     },
-    {
+    'America/Los_Angeles': {
       key: 'America/Los_Angeles',
-      display: 'Pacific',
+      display: 'Pacific (PST/PDT)',
     },
-    {
+    'America/Phoenix': {
       key: 'America/Phoenix',
-      display: 'MST (Phoenix)',
+      display: 'Phoenix (MST)',
     },
-    {
+    'America/Denver': {
       key: 'America/Denver',
-      display: 'Mountain',
+      display: 'Mountain (MST/MDT)',
     },
-    {
+    'America/Chicago': {
       key: 'America/Chicago',
-      display: 'Central',
+      display: 'Central (CST/CDT)',
     },
-    {
+    'America/New_York': {
       key: 'America/New_York',
-      display: 'Eastern',
+      display: 'Eastern (EST/EDT)',
     },
-  ]
+  }
 
-  const allowEdit = context.tournament.state === 'setup' || context.tournament.state === 'testing';
+  const allowEdit = context.tournament.state !== 'active';
 
   const toggleEdit = (event, enable) => {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
     setEditing(enable);
   }
 
   const onInputChanged = (event) => {
-    console.log("Input value changed");
+    const newFormData = {...formData};
+    if (item.key === 'entry_deadline') {
+      newFormData.value = formatISO(event);
+    } else {
+      newFormData.value = event.target.value;
+    }
+    newFormData.valid = newFormData.value.length > 0;
+    setFormData(newFormData);
   }
 
+  const onCancel = (event) => {
+    event.preventDefault();
+    const newFormData = {...formData}
+    newFormData.value = newFormData.prevValue;
+    setFormData(newFormData);
+    toggleEdit(null, false);
+  }
   const onFormSubmit = (event) => {
     event.preventDefault();
-    console.log("Form submitted!");
+    const uri = `/director/config_items/${item.id}`;
+    const requestConfig = {
+      method: 'patch',
+      data: {
+        config_item: {
+          value: formData.value,
+        }
+      }
+    };
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      router: router,
+      onSuccess: (_) => { toggleEdit(null, false) },
+      onFailure: (_) => { console.log("Failed to save config item.") },
+    });
   }
 
   let content = '';
@@ -124,13 +127,12 @@ const ConfigItemForm = ({item}) => {
     let displayedValue = '';
     switch (item.key) {
       case 'time_zone':
-        // displayedValue = timeZones[item.value].display;
-        displayedValue = item.value;
+        displayedValue = formData.value ? timeZones[formData.value].display : '';
         break;
       case 'website':
         displayedValue = (
-          <a href={item.value}
-             title={item.value}
+          <a href={formData.value}
+             title={formData.value}
              target={'_new'}>
             visit
             <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden={true} />
@@ -138,10 +140,10 @@ const ConfigItemForm = ({item}) => {
         );
         break;
       case 'entry_deadline':
-        displayedValue = format(new Date(item.value), 'PPp');
+        displayedValue = formData.value ? format(new Date(formData.value), 'PPp') : '';
         break;
       default:
-        displayedValue = item.value;
+        displayedValue = formData.value;
         break;
     }
     content = (
@@ -172,7 +174,7 @@ const ConfigItemForm = ({item}) => {
     switch (item.key) {
       case 'time_zone':
         elementName = 'select';
-        children = timeZones.map(tz => <option value={tz.key} key={tz.key}>{tz.display}</option>);
+        children = Object.values(timeZones).map(tz => <option value={tz.key} key={tz.key}>{tz.display}</option>);
         elementClassNames.push('form-select');
         break;
       case 'team_size':
@@ -217,7 +219,7 @@ const ConfigItemForm = ({item}) => {
         <div className={'text-end pt-2'}>
           <button type={'button'}
                   title={'Cancel'}
-                  onClick={(event) => toggleEdit(event, false)}
+                  onClick={onCancel}
                   className={'btn btn-sm btn-outline-danger me-2'}>
             <span className={'visually-hidden'}>Cancel</span>
             <i className={'bi-x-lg'} aria-hidden={true} />
