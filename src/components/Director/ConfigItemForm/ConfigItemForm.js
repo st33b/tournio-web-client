@@ -1,6 +1,12 @@
 import {useEffect, useState, createElement} from "react";
+import {format} from "date-fns";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import ErrorBoundary from "../../common/ErrorBoundary";
+
+import TextField from "@mui/material/TextField";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import DateTimePicker from "@mui/lab/DateTimePicker";
 
 import classes from './ConfigItemForm.module.scss';
 
@@ -115,19 +121,28 @@ const ConfigItemForm = ({item}) => {
 
   let content = '';
   if (!editing) {
-    let displayedValue = item.value;
-    if (item.key === 'time_zone') {
-      // displayedValue = timeZones[item.value].display;
-      displayedValue = item.value;
-    } else if (item.key === 'website') {
-      displayedValue = (
-        <a href={item.value}
-           title={item.value}
-           target={'_new'}>
-          visit
-          <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden={true} />
-        </a>
-      );
+    let displayedValue = '';
+    switch (item.key) {
+      case 'time_zone':
+        // displayedValue = timeZones[item.value].display;
+        displayedValue = item.value;
+        break;
+      case 'website':
+        displayedValue = (
+          <a href={item.value}
+             title={item.value}
+             target={'_new'}>
+            visit
+            <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden={true} />
+          </a>
+        );
+        break;
+      case 'entry_deadline':
+        displayedValue = format(new Date(item.value), 'PPp');
+        break;
+      default:
+        displayedValue = item.value;
+        break;
     }
     content = (
       <div className={`${classes.Item} d-flex`} key={item.key}>
@@ -144,13 +159,6 @@ const ConfigItemForm = ({item}) => {
       </div>
     );
   } else {
-    // <input type={'text'}
-    //        className={'form-control'}
-    //        name={'config_item'}
-    //        id={'config_item'}
-    //        value={formData.value}
-    //        onChange={onInputChanged}
-    // />
     let elementName = '';
     let elementProps = {
       onChange: onInputChanged,
@@ -160,18 +168,12 @@ const ConfigItemForm = ({item}) => {
     };
     const elementClassNames = [];
     let children = null;
+    let inputElement = null;
     switch (item.key) {
       case 'time_zone':
         elementName = 'select';
         children = timeZones.map(tz => <option value={tz.key} key={tz.key}>{tz.display}</option>);
         elementClassNames.push('form-select');
-        break;
-      case 'location':
-      case 'paypal_client_id':
-      case 'website':
-        elementName = 'input';
-        elementProps.type = 'text';
-        elementClassNames.push('form-control');
         break;
       case 'team_size':
         elementName = 'input';
@@ -180,14 +182,37 @@ const ConfigItemForm = ({item}) => {
         elementProps.max = 6;
         elementClassNames.push('form-control');
         break;
+      case 'entry_deadline':
+        inputElement = (
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DateTimePicker onChange={onInputChanged}
+                            value={formData.value}
+                            label={'Entry Deadline'}
+                            renderInput={(params) => <TextField {...params} />}
+                            />
+          </LocalizationProvider>
+        )
+        break;
+      case 'location':
+      case 'paypal_client_id':
+      case 'website':
+      default:
+        elementName = 'input';
+        elementProps.type = 'text';
+        elementClassNames.push('form-control');
+        break;
     }
     elementProps.className = elementClassNames.join(' ');
-    const inputElement = createElement(elementName, elementProps, children);
+    if (inputElement === null) {
+      inputElement = createElement(elementName, elementProps, children);
+    }
     content = (
-      <form onSubmit={onFormSubmit} className={`${classes.Form} p-2 my-3`}>
-        <label className={'form-label'} htmlFor={'config_item'}>
-          {item.label}
-        </label>
+      <form onSubmit={onFormSubmit} className={`${classes.Form} p-2 mb-3`}>
+        {item.key !== 'entry_deadline' &&
+          <label className={'form-label'} htmlFor={'config_item'}>
+            {item.label}
+          </label>
+        }
         {inputElement}
         <div className={'text-end pt-2'}>
           <button type={'button'}
