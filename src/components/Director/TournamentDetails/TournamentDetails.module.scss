@@ -26,6 +26,19 @@
     max-width: 100%;
   }
 
+  .Configuration {
+    .Item {
+      a {
+        display: none;
+      }
+    }
+    .Item:hover {
+      a {
+        display: inline;
+      }
+    }
+  }
+
   .PurchasableItems {
     .Category {
       border-bottom: 1px solid #ccc;

@@ -112,7 +112,7 @@ const Input = (props) => {
 
   return (
     <div className={`${classes.Input} row mb-1 mb-sm-2`}>
-      <label className="col-12 col-sm-4 col-form-label text-sm-end pb-0" htmlFor={props.identifier}>
+      <label className="col-12 col-sm-5 col-form-label text-sm-end pb-0" htmlFor={props.identifier}>
         {props.label}
         {requiredLabel}
       </label>

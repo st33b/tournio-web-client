@@ -1,0 +1,23 @@
+.ConfigItemForm {
+  .Form {
+    border: 1px solid #ddd;
+    label {
+      font-weight: 600;
+    }
+  }
+  .Item {
+    .EditLink {
+      display: none;
+    }
+  }
+  .Item:hover {
+    .EditLink {
+      display: inline;
+    }
+  }
+  .ExternalLink {
+    font-size: 80%;
+    padding-left: 0.5rem;
+  }
+
+}

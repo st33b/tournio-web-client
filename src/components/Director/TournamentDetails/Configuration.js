@@ -2,6 +2,7 @@ import Card from 'react-bootstrap/Card';
 
 import classes from './TournamentDetails.module.scss';
 import {useDirectorContext} from "../../../store/DirectorContext";
+import ConfigItemForm from "../ConfigItemForm/ConfigItemForm";
 
 const Configuration = () => {
   const context = useDirectorContext();
@@ -9,9 +10,8 @@ const Configuration = () => {
     return '';
   }
 
-
   return (
-    <Card className={classes.Card}>
+    <Card className={`${classes.Card} ${classes.Configuration}`}>
       <Card.Header as={'h5'} className={'fw-light'}>
         Configuration
       </Card.Header>
@@ -19,10 +19,7 @@ const Configuration = () => {
         <dl>
           {context.tournament.config_items.map((item) => {
             return (
-              <div className={'row'} key={item.key}>
-                <dt className={'col-4'}>{item.label}</dt>
-                <dd className={'col-8'}>{item.value}</dd>
-              </div>
+              <ConfigItemForm item={item} key={item.key} />
             )
           })}
         </dl>
