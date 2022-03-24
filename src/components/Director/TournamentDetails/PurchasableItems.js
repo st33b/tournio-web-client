@@ -8,6 +8,7 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import PurchasableItemEditForm from "../PurchasableItemEditForm/PurchasableItemEditForm";
 import {Col} from "react-bootstrap";
 import Item from "../../Commerce/AvailableItems/Item/Item";
+import SingleUseForm from "../NewPurchasableItem/SingleUseForm";
 
 const PurchasableItems = () => {
   const context = useDirectorContext();
@@ -90,6 +91,8 @@ const PurchasableItems = () => {
             {multiUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
           </Card.Body>
         }
+
+        <SingleUseForm />
       </LocalizationProvider>
     </Card>
   );

@@ -26,6 +26,11 @@ const item = ({item, added, preview}) => {
   let note = '';
   if (item.configuration.note) {
     note = `(${item.configuration.note})`;
+    secondaryText = (
+      <p className={classes.Note}>
+        {note}
+      </p>
+    );
   }
   if (item.configuration.division) {
     secondaryText = (

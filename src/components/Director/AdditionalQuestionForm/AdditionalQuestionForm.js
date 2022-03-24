@@ -46,7 +46,6 @@ const AdditionalQuestionForm = () => {
   }
 
   const submissionSuccess = (data) => {
-    // This should trigger a re-render of the whole tournament details page, yeah?
     setSuccessMessage(
       <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
         <i className={'bi-check2-circle pe-2'} aria-hidden={true} />

@@ -1,4 +1,4 @@
-import {useEffect, useState, createElement} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {format, formatISO} from "date-fns";
 import Card from "react-bootstrap/Card";
@@ -26,9 +26,8 @@ const PurchasableItemEditForm = ({item}) => {
     value: '',
     order: '',
 
-    // new PIs only -- maybe this is enough to warrant a separate component?
+    // new PIs only
     // category: '',
-    // user_selectable: '',
     // determination: '',
     // refinement: '',
 
@@ -90,10 +89,9 @@ const PurchasableItemEditForm = ({item}) => {
   }
   const onFormSubmit = (event) => {
     event.preventDefault();
-    const method = 'patch';
     const uri = `/director/purchasable_items/${item.identifier}`;
     const requestConfig = {
-      method: method,
+      method: 'patch',
       data: {
         purchasable_item: {
           value: formData.value,
@@ -136,6 +134,8 @@ const PurchasableItemEditForm = ({item}) => {
       case 'bowling':
         if (item.refinement === 'division') {
           note = formData.division + ' (' + formData.note + ')'
+        } else {
+          note = formData.note;
         }
         break;
       case 'product':
@@ -244,17 +244,16 @@ const PurchasableItemEditForm = ({item}) => {
             classes: '',
             others: {},
           });
-
-          inputElements.push({
-            label: 'Note',
-            type: 'text',
-            name: 'note',
-            id: 'note',
-            value: formData.note,
-            classes: '',
-            others: {},
-          });
         }
+        inputElements.push({
+          label: 'Note',
+          type: 'text',
+          name: 'note',
+          id: 'note',
+          value: formData.note,
+          classes: '',
+          others: {},
+        });
         break;
       case 'product':
         if (item.refinement === 'denomination') {
