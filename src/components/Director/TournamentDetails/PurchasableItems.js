@@ -6,9 +6,7 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import classes from './TournamentDetails.module.scss';
 import {useDirectorContext} from "../../../store/DirectorContext";
 import PurchasableItemEditForm from "../PurchasableItemEditForm/PurchasableItemEditForm";
-import {Col} from "react-bootstrap";
-import Item from "../../Commerce/AvailableItems/Item/Item";
-import SingleUseForm from "../NewPurchasableItem/SingleUseForm";
+import NewPurchasableItem from "../NewPurchasableItem/NewPurchasableItem";
 
 const PurchasableItems = () => {
   const context = useDirectorContext();
@@ -92,7 +90,9 @@ const PurchasableItems = () => {
           </Card.Body>
         }
 
-        <SingleUseForm />
+        <Card.Body className={'p-0'}>
+          <NewPurchasableItem />
+        </Card.Body>
       </LocalizationProvider>
     </Card>
   );

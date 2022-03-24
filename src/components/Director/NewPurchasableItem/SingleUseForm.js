@@ -1,6 +1,5 @@
 import {useState} from "react";
 import {useRouter} from "next/router";
-import Card from "react-bootstrap/Card";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../utils";
@@ -8,7 +7,7 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './SingleUseForm.module.scss';
 
-const SingleItemForm = () => {
+const SingleItemForm = ({onCancel, onComplete}) => {
   const context = useDirectorContext();
   const router = useRouter();
 
@@ -24,15 +23,6 @@ const SingleItemForm = () => {
   }
 
   const [formData, setFormData] = useState(initialState);
-  const [formDisplayed, setFormDisplayed] = useState(false);
-  const [alertMessage, setAlertMessage] = useState({success: '', error: ''});
-
-  const allowCreate = context.tournament.state !== 'active';
-
-  const addClicked = (event) => {
-    event.preventDefault();
-    setFormDisplayed(true);
-  }
 
   const inputChanged = (event) => {
     let newValue = '';
@@ -51,11 +41,10 @@ const SingleItemForm = () => {
 
   const submissionSuccess = (data) => {
     setFormData({...initialState});
-    setFormDisplayed(false);
-    setAlertMessage({success: 'New item saved.'});
     const tournament = {...context.tournament}
     tournament.purchasable_items = tournament.purchasable_items.concat(data);
     context.setTournament(tournament);
+    onComplete(`Item ${data.name} created.`);
   }
 
   const formSubmitted = (event) => {
@@ -88,129 +77,87 @@ const SingleItemForm = () => {
     });
   }
 
-  const outerClass = formDisplayed ? classes.FormDisplayed : '';
   return (
     <ErrorBoundary>
       <div className={classes.SingleUseForm}>
-        <Card.Body className={outerClass}>
-          {formDisplayed &&
-            <form onSubmit={formSubmitted} className={`${classes.Form} mx-2`}>
-              <div className={`${classes.HeaderRow} row mb-2`}>
-                <h6>
-                  New Single-Use Item
-                </h6>
-              </div>
-              <div className={'row mb-3'}>
-                <label htmlFor={'name'} className={'form-label ps-0 mb-1'}>
-                  Name
-                </label>
-                <input type={'text'}
-                       className={`form-control`}
-                       name={'name'}
-                       id={'name'}
-                       required={true}
-                       onChange={(event) => inputChanged(event)}
-                       value={formData.name}
-                />
-              </div>
-              <div className={'row mb-3'}>
-                <div className={'col-6 ps-0'}>
-                  <label htmlFor={'value'} className={'form-label ps-0 mb-1'}>
-                    Price
-                  </label>
-                  <input type={'number'}
-                         className={`form-control`}
-                         name={'value'}
-                         id={'value'}
-                         required={true}
-                         onChange={(event) => inputChanged(event)}
-                         value={formData.value}
-                  />
-                </div>
-                <div className={'col-6 pe-0'}>
-                  <label htmlFor={'order'} className={'form-label ps-0 mb-1'}>
-                    Display order
-                  </label>
-                  <input type={'number'}
-                         className={`form-control`}
-                         name={'order'}
-                         id={'order'}
-                         required={true}
-                         onChange={(event) => inputChanged(event)}
-                         value={formData.order}
-                  />
-                </div>
-              </div>
-              <div className={'row mb-3'}>
-                <label htmlFor={'note'} className={'form-label ps-0 mb-1'}>
-                  Note (optional)
-                </label>
-                <input type={'text'}
-                       className={`form-control`}
-                       name={'note'}
-                       id={'note'}
-                       onChange={(event) => inputChanged(event)}
-                       value={formData.note}
-                />
-              </div>
-              <div className={'row'}>
-                <div className={'d-flex justify-content-between p-0'}>
-                  <button type={'button'}
-                          title={'Cancel'}
-                          onClick={() => setFormDisplayed(false)}
-                          className={'btn btn-outline-danger'}>
-                    <i className={'bi-x-lg pe-2'} aria-hidden={true}/>
-                    Cancel
-                  </button>
-                  <button type={'submit'}
-                          title={'Save'}
-                          disabled={!formData.valid}
-                          className={'btn btn-success'}>
-                    Save
-                    <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>
-                  </button>
-                </div>
-              </div>
-            </form>
-          }
-          {!formDisplayed && allowCreate &&
-            <div className={'text-center'}>
+        <form onSubmit={formSubmitted} className={`mx-4 py-2`}>
+          <div className={`${classes.HeaderRow} row mb-2`}>
+            <h6>
+              New Single-Use Item
+            </h6>
+          </div>
+          <div className={'row mb-3'}>
+            <label htmlFor={'name'} className={'form-label ps-0 mb-1'}>
+              Name
+            </label>
+            <input type={'text'}
+                   className={`form-control`}
+                   name={'name'}
+                   id={'name'}
+                   required={true}
+                   onChange={(event) => inputChanged(event)}
+                   value={formData.name}
+            />
+          </div>
+          <div className={'row mb-3'}>
+            <div className={'col-6 ps-0'}>
+              <label htmlFor={'value'} className={'form-label ps-0 mb-1'}>
+                Price
+              </label>
+              <input type={'number'}
+                     className={`form-control`}
+                     name={'value'}
+                     id={'value'}
+                     required={true}
+                     onChange={(event) => inputChanged(event)}
+                     value={formData.value}
+              />
+            </div>
+            <div className={'col-6 pe-0'}>
+              <label htmlFor={'order'} className={'form-label ps-0 mb-1'}>
+                Display order
+              </label>
+              <input type={'number'}
+                     className={`form-control`}
+                     name={'order'}
+                     id={'order'}
+                     required={true}
+                     onChange={(event) => inputChanged(event)}
+                     value={formData.order}
+              />
+            </div>
+          </div>
+          <div className={'row mb-3'}>
+            <label htmlFor={'note'} className={'form-label ps-0 mb-1'}>
+              Note (optional)
+            </label>
+            <input type={'text'}
+                   className={`form-control`}
+                   name={'note'}
+                   id={'note'}
+                   onChange={(event) => inputChanged(event)}
+                   value={formData.note}
+            />
+          </div>
+          <div className={'row'}>
+            <div className={'d-flex justify-content-between p-0'}>
               <button type={'button'}
-                      className={'btn btn-outline-primary'}
-                      role={'button'}
-                      onClick={addClicked}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                New Single-use Item
+                      title={'Cancel'}
+                      onClick={onCancel}
+                      className={'btn btn-outline-danger'}>
+                <i className={'bi-x-lg pe-2'} aria-hidden={true}/>
+                Cancel
+              </button>
+              <button type={'submit'}
+                      title={'Save'}
+                      disabled={!formData.valid}
+                      className={'btn btn-success'}>
+                Save
+                <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>
               </button>
             </div>
-          }
-          {!allowCreate &&
-            <div className={'text-center'}
-                 title={'Cannot add items once registration is open'}>
-              <button type={'button'}
-                      className={'btn btn-outline-secondary'}
-                      disabled
-                      role={'button'}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                New Single-use Item
-              </button>
-            </div>
-          }
-          {alertMessage.success && (
-            <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'}
-                 role={'alert'}>
-              <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
-              <div className={'me-auto'}>
-                {alertMessage.success}
-                <button type="button"
-                        className={"btn-close"}
-                        data-bs-dismiss="alert"
-                        onClick={() => setAlertMessage({success: ''})}
-                        aria-label="Close"/>
-              </div>
-            </div>
-          )}
-        </Card.Body>
+          </div>
+        </form>
       </div>
     </ErrorBoundary>
   );
