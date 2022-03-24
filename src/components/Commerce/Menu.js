@@ -2,11 +2,12 @@ import {Col, Row} from "react-bootstrap";
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import {itemAddedToCart, itemRemovedFromCart} from "../../store/actions/registrationActions";
 
-import classes from './Menu.module.scss';
 import PreviousPurchases from "./PreviousPurchases/PreviousPurchases";
 import AvailableItems from "./AvailableItems/AvailableItems";
 import Cart from "./Cart/Cart";
 import FreeEntryForm from "./FreeEntryForm/FreeEntryForm";
+
+import classes from './Menu.module.scss';
 
 const Menu = () => {
   const {commerce, commerceDispatch} = useRegistrationContext();
