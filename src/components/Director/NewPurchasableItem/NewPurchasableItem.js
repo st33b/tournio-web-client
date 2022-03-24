@@ -1,7 +1,8 @@
-import {useState, useEffect} from "react";
+import {useState} from "react";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
 import SingleUseForm from "./SingleUseForm";
+import MultiUseForm from "./MultiUseForm";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './NewPurchasableItem.module.scss';
@@ -48,18 +49,30 @@ const NewPurchasableItem = () => {
         )}
 
         {!formDisplayed && allowCreate &&
-          <div className={'text-center my-3'}>
-            <button type={'button'}
-                    className={'btn btn-outline-primary'}
-                    role={'button'}
-                    onClick={(event) => addClicked(event, 'single_use')}>
-              <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-              New Single-use Item
-            </button>
-          </div>
+          <>
+            <div className={'text-center my-3'}>
+              <button type={'button'}
+                      className={'btn btn-outline-primary'}
+                      role={'button'}
+                      onClick={(event) => addClicked(event, 'single_use')}>
+                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
+                New Single-use Item
+              </button>
+            </div>
+            <div className={'text-center my-3'}>
+              <button type={'button'}
+                      className={'btn btn-outline-primary'}
+                      role={'button'}
+                      onClick={(event) => addClicked(event, 'multi_use')}>
+                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
+                New Multi-use Item
+              </button>
+            </div>
+          </>
         }
 
         {formDisplayed === 'single_use' && <SingleUseForm onCancel={cancelClicked} onComplete={itemSaved} />}
+        {formDisplayed === 'multi_use' && <MultiUseForm onCancel={cancelClicked} onComplete={itemSaved} />}
 
       </div>
     </ErrorBoundary>

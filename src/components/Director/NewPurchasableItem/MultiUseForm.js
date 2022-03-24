@@ -7,16 +7,18 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './SingleUseForm.module.scss';
 
-const SingleUseForm = ({onCancel, onComplete}) => {
+const MultiUseForm = ({onCancel, onComplete}) => {
   const context = useDirectorContext();
   const router = useRouter();
 
   const initialState = {
-    category: 'bowling',
-    determination: 'single_use',
+    category: '', // banquet, product
+    determination: 'multi_use',
+    refinement: '', // denomination (for quantity-based products, like raffle ticket bundles
     name: '',
     value: '',
-    note: '', // division, product (optional)
+    note: '',
+    denomination: '', // for quantity-based products, like raffle ticket bundles
     order: '',
 
     valid: false,
@@ -33,8 +35,18 @@ const SingleUseForm = ({onCancel, onComplete}) => {
     }
     const newFormData = {...formData};
     newFormData[inputName] = newValue;
+    if (inputName === 'denomination') {
+      if (newValue.length > 0) {
+        newFormData.refinement = 'denomination';
+      } else {
+        newFormData.refinement = '';
+      }
+    }
 
-    newFormData.valid = newFormData.name.length > 0 && newFormData.value > 0 && newFormData.order > 0;
+    newFormData.valid = newFormData.name.length > 0
+      && newFormData.value > 0
+      && newFormData.order > 0
+      && newFormData.category !== '';
 
     setFormData(newFormData);
   }
@@ -61,6 +73,7 @@ const SingleUseForm = ({onCancel, onComplete}) => {
           configuration: {
             order: formData.order,
             note: formData.note,
+            denomination: formData.denomination,
           }
         }
       }
@@ -83,12 +96,27 @@ const SingleUseForm = ({onCancel, onComplete}) => {
         <form onSubmit={formSubmitted} className={`mx-4 py-2`}>
           <div className={`${classes.HeaderRow} row mb-2`}>
             <h6>
-              New Single-Use Item
+              New Multi-Use Item
             </h6>
           </div>
           <div className={'row mb-3'}>
             <label htmlFor={'name'} className={'form-label ps-0 mb-1'}>
-              Name
+              Item type
+            </label>
+            <select className={`form-select`}
+                    name={'category'}
+                    id={'category'}
+                    required={true}
+                    onChange={(event) => inputChanged(event)}
+                    value={formData.category}>
+              <option value={''}>--</option>
+              <option value={'banquet'}>Banquet (non-bowler)</option>
+              <option value={'product'}>Product</option>
+            </select>
+          </div>
+          <div className={'row mb-3'}>
+            <label htmlFor={'name'} className={'form-label ps-0 mb-1'}>
+              Display Name
             </label>
             <input type={'text'}
                    className={`form-control`}
@@ -163,4 +191,4 @@ const SingleUseForm = ({onCancel, onComplete}) => {
   );
 }
 
-export default SingleUseForm;
+export default MultiUseForm;
