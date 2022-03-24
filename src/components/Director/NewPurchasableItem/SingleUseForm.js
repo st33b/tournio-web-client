@@ -58,7 +58,9 @@ const SingleItemForm = () => {
     setFormData({...initialState});
     setFormDisplayed(false);
     setAlertMessage({ success: 'New item saved.' });
-    // context.setTournament(data);
+    const tournament = {...context.tournament}
+    tournament.purchasable_items = tournament.purchasable_items.concat(data);
+    context.setTournament(tournament);
   }
 
   const formSubmitted = (event) => {
