@@ -1,0 +1,37 @@
+.PurchasableItemEditForm {
+  .Form {
+    border: 1px solid #ddd;
+    legend {
+      font-size: 1.1rem;
+      font-weight: 600;
+
+    }
+    label {
+      font-weight: normal;
+      font-style: italic;
+    }
+    .ValueInput {
+      //width: 100%;
+    }
+  }
+  .Item {
+    .EditLink {
+      display: none;
+    }
+    .Note {
+      font-size: 85%;
+      text-indent: 1rem;
+    }
+    .Subnote {
+      font-style: italic;
+    }
+  }
+  .Item:hover {
+    background-color: #eee;
+  }
+  .PreviewText {
+    font-size: 90%;
+    font-style: italic;
+    display: block;
+  }
+}
