@@ -155,8 +155,17 @@ const PurchasableItemEditForm = ({item}) => {
         break;
     }
 
+    let orderText = '';
+    if (formData.order) {
+      orderText = (
+        <Card.Text className={classes.Order}>
+          {formData.order}.
+        </Card.Text>
+      );
+    }
     const itemContent = (
       <div className={`${classes.Item} d-flex`}>
+        {orderText}
         <Card.Text className={`me-auto`}>
           {item.name}
           <span className={`${classes.Note} d-block`}>
@@ -284,34 +293,31 @@ const PurchasableItemEditForm = ({item}) => {
       others: otherValueProps,
     });
 
-    const itemPreviewProps = {...item}
-    itemPreviewProps.value = formData.value;
-    itemPreviewProps.configuration.order = formData.order;
-    itemPreviewProps.configuration.applies_at = formData.applies_at;
-    itemPreviewProps.configuration.valid_until = formData.valid_until;
-    itemPreviewProps.configuration.division = formData.division;
-    itemPreviewProps.configuration.note = formData.note;
-    itemPreviewProps.configuration.denomination = formData.denomination;
+    let itemPreview = '';
+    if (item.category !== 'ledger') {
+      const itemPreviewProps = {...item}
+      itemPreviewProps.value = formData.value;
+      itemPreviewProps.configuration.order = formData.order;
+      itemPreviewProps.configuration.applies_at = formData.applies_at;
+      itemPreviewProps.configuration.valid_until = formData.valid_until;
+      itemPreviewProps.configuration.division = formData.division;
+      itemPreviewProps.configuration.note = formData.note;
+      itemPreviewProps.configuration.denomination = formData.denomination;
 
-    const itemPreview = (
-      <div className={'row mx-0 pt-3'}>
+      itemPreview = (
+        <div className={'row mx-0 pt-3'}>
         <span className={classes.PreviewText}>
           How it will look to bowlers:
         </span>
-        <Item item={itemPreviewProps} preview={true}/>
-      </div>
-    );
+          <Item item={itemPreviewProps} preview={true}/>
+        </div>
+      );
+    }
 
     content = (
       <form onSubmit={onFormSubmit} className={`${classes.Form} p-2 mb-3`}>
         <fieldset>
           <legend>{item.name}</legend>
-          {/*{item.key !== 'entry_deadline' &&*/}
-          {/*  <label className={'form-label'} htmlFor={'config_item'}>*/}
-          {/*    {item.label}*/}
-          {/*  </label>*/}
-          {/*}*/}
-          {/*{inputElement}*/}
           {inputElements.map((elemProps, i) => (
               <div key={i} className={'row mx-0'}>
                 {elemProps.type === 'datepicker' && <DateTimePicker {...elemProps.props} />}

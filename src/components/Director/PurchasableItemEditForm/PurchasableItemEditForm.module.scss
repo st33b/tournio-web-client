@@ -15,6 +15,10 @@
     }
   }
   .Item {
+    .Order {
+      font-weight: bold;
+      padding-right: 0.5rem;
+    }
     .EditLink {
       display: none;
     }
