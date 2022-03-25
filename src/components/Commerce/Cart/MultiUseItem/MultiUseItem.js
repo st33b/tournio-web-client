@@ -1,6 +1,10 @@
 import classes from './MultiUseItem.module.scss';
 
 const multiUseItem = ({item, increase, decrease}) => {
+  if (!item) {
+    return '';
+  }
+
   const decreaseClickedHandler = (event) => {
     event.preventDefault();
     decrease(item);
