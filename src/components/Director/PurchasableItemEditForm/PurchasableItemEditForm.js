@@ -26,11 +26,6 @@ const PurchasableItemEditForm = ({item}) => {
     value: '',
     order: '',
 
-    // new PIs only
-    // category: '',
-    // determination: '',
-    // refinement: '',
-
     valid: true,
   }
 
@@ -73,7 +68,7 @@ const PurchasableItemEditForm = ({item}) => {
       // it's from a datepicker
       newValue = formatISO(event);
     }
-    if (id === 'value' || id==='order') {
+    if (id === 'value' || id === 'order') {
       newValue = parseInt(newValue);
     }
     const newFormData = {...formData};
@@ -111,8 +106,12 @@ const PurchasableItemEditForm = ({item}) => {
       requestConfig: requestConfig,
       context: context,
       router: router,
-      onSuccess: (_) => { toggleEdit(null, false) },
-      onFailure: (_) => { console.log("Failed to save config item.") },
+      onSuccess: (_) => {
+        toggleEdit(null, false)
+      },
+      onFailure: (_) => {
+        console.log("Failed to save config item.")
+      },
     });
   }
 
@@ -136,6 +135,15 @@ const PurchasableItemEditForm = ({item}) => {
           note = formData.division + ' (' + formData.note + ')'
         } else {
           note = formData.note;
+        }
+        break;
+      case 'banquet':
+        if (formData.note) {
+          note = (
+            <span>
+              {formData.note}
+            </span>
+          )
         }
         break;
       case 'product':
@@ -164,7 +172,7 @@ const PurchasableItemEditForm = ({item}) => {
       );
     }
     const itemContent = (
-      <div className={`${classes.Item} d-flex`}>
+      <div className={`${classes.Item} d-flex px-2`}>
         {orderText}
         <Card.Text className={`me-auto`}>
           {item.name}
@@ -193,7 +201,7 @@ const PurchasableItemEditForm = ({item}) => {
   } else {
     const inputElements = [];
 
-    const otherValueProps = { min: 0 }
+    const otherValueProps = {min: 0}
     switch (item.category) {
       case 'ledger':
         if (item.determination === 'early_discount') {
@@ -277,6 +285,17 @@ const PurchasableItemEditForm = ({item}) => {
           others: {},
         });
         break;
+      case 'banquet':
+        inputElements.push({
+          label: 'Note',
+          type: 'text',
+          name: 'note',
+          id: 'note',
+          value: formData.note,
+          classes: '',
+          others: {},
+        });
+        break;
       default:
         break;
     }
@@ -314,14 +333,14 @@ const PurchasableItemEditForm = ({item}) => {
     }
 
     content = (
-      <form onSubmit={onFormSubmit} className={`${classes.Form} p-2 mb-3`}>
+      <form onSubmit={onFormSubmit} className={`${classes.Form} px-2 pt-2 pb-3`}>
         <fieldset>
           <legend>{item.name}</legend>
           {inputElements.map((elemProps, i) => (
-              <div key={i} className={'row mx-0'}>
-                {elemProps.type === 'datepicker' && <DateTimePicker {...elemProps.props} />}
-                {elemProps.type !== 'datepicker' && (
-                  <div>
+            <div key={i} className={'row mx-0'}>
+              {elemProps.type === 'datepicker' && <DateTimePicker {...elemProps.props} />}
+              {elemProps.type !== 'datepicker' && (
+                <div className={'px-0'}>
                   <label htmlFor={elemProps.id} className={'form-label ps-0 mb-1'}>
                     {elemProps.label}
                   </label>
@@ -333,26 +352,26 @@ const PurchasableItemEditForm = ({item}) => {
                          value={elemProps.value}
                          {...elemProps.others}
                   />
-                  </div>
-                )}
-              </div>
-            ))
+                </div>
+              )}
+            </div>
+          ))
           }
         </fieldset>
         {itemPreview}
-        <div className={'text-end pt-2'}>
+        <div className={`text-end ${!itemPreview && 'pt-3'}`}>
           <button type={'button'}
                   title={'Cancel'}
                   onClick={onCancel}
                   className={'btn btn-sm btn-outline-danger me-2'}>
             <span className={'visually-hidden'}>Cancel</span>
-            <i className={'bi-x-lg'} aria-hidden={true} />
+            <i className={'bi-x-lg'} aria-hidden={true}/>
           </button>
           <button type={'submit'}
                   title={'Save'}
                   className={'btn btn-sm btn-outline-success'}>
             <span className={'visually-hidden'}>Save</span>
-            <i className={'bi-check-lg'} aria-hidden={true} />
+            <i className={'bi-check-lg'} aria-hidden={true}/>
           </button>
         </div>
       </form>

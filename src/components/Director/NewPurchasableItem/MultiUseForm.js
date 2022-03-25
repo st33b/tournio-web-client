@@ -4,8 +4,9 @@ import {useRouter} from "next/router";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../utils";
 import ErrorBoundary from "../../common/ErrorBoundary";
+import Item from "../../Commerce/AvailableItems/Item/Item";
 
-import classes from './SingleUseForm.module.scss';
+import classes from './MultiUseForm.module.scss';
 
 const MultiUseForm = ({onCancel, onComplete}) => {
   const context = useDirectorContext();
@@ -25,6 +26,7 @@ const MultiUseForm = ({onCancel, onComplete}) => {
   }
 
   const [formData, setFormData] = useState(initialState);
+  const [denominationVisibility, setDenominationVisibility] = useState('visually-hidden');
 
   const inputChanged = (event) => {
     let newValue = '';
@@ -35,20 +37,18 @@ const MultiUseForm = ({onCancel, onComplete}) => {
     }
     const newFormData = {...formData};
     newFormData[inputName] = newValue;
-    if (inputName === 'denomination') {
-      if (newValue.length > 0) {
-        newFormData.refinement = 'denomination';
-      } else {
-        newFormData.refinement = '';
-      }
-    }
 
-    newFormData.valid = newFormData.name.length > 0
-      && newFormData.value > 0
-      && newFormData.order > 0
-      && newFormData.category !== '';
+    newFormData.valid = isValid(newFormData);
 
     setFormData(newFormData);
+  }
+
+  const isValid = (data) => {
+    return data.name.length > 0
+      && data.value > 0
+      && data.order > 0
+      && data.category !== ''
+      && (data.refinement !== 'denomination' || data.refinement === 'denomination' && data.denomination.length > 0);
   }
 
   const submissionSuccess = (data) => {
@@ -68,12 +68,13 @@ const MultiUseForm = ({onCancel, onComplete}) => {
         purchasable_item: {
           category: formData.category,
           determination: formData.determination,
+          refinement: formData.refinement,
           name: formData.name,
           value: formData.value,
           configuration: {
             order: formData.order,
             note: formData.note,
-            denomination: formData.denomination,
+            denomination: formData.refinement === 'denomination' ? formData.denomination : '',
           }
         }
       }
@@ -90,9 +91,40 @@ const MultiUseForm = ({onCancel, onComplete}) => {
     });
   }
 
+  const toggleDenominationVisibility = (event) => {
+    setDenominationVisibility(event.target.checked ? '' : 'visually-hidden');
+    const newFormData = {...formData};
+    newFormData.refinement = event.target.checked ? 'denomination' : '';
+    newFormData.valid = isValid(newFormData);
+    setFormData(newFormData);
+  }
+
+  let itemPreview = '';
+  const itemPreviewProps = {
+    category: formData.category,
+    determination: 'multi_use',
+    name: formData.name,
+    value: formData.value,
+    refinement: formData.refinement,
+    configuration: {
+      note: formData.note,
+      denomination: formData.denomination,
+      order: formData.order,
+    }
+  }
+
+  itemPreview = (
+    <div className={'row mx-0 px-0'}>
+      <span className={`${classes.PreviewText} px-0 pb-1`}>
+        How it will look to bowlers:
+      </span>
+      <Item item={itemPreviewProps} preview={true} />
+    </div>
+  );
+
   return (
     <ErrorBoundary>
-      <div className={classes.SingleUseForm}>
+      <div className={classes.MultiUseForm}>
         <form onSubmit={formSubmitted} className={`mx-4 py-2`}>
           <div className={`${classes.HeaderRow} row mb-2`}>
             <h6>
@@ -125,6 +157,32 @@ const MultiUseForm = ({onCancel, onComplete}) => {
                    required={true}
                    onChange={(event) => inputChanged(event)}
                    value={formData.name}
+            />
+          </div>
+          <div className={'row mb-3'}>
+            <div className={'form-check'}>
+              <input type={'checkbox'}
+                     className={'form-check-input'}
+                     value={true}
+                     name={'has_denomination'}
+                     onChange={toggleDenominationVisibility}
+                     id={'has_denomination'}/>
+              <label className={'form-check-label'}
+                     htmlFor={'has_denomination'}>
+                Item has a denomination/quantity
+              </label>
+            </div>
+          </div>
+          <div className={`row mb-3 ${denominationVisibility}`}>
+            <label htmlFor={'denomination'} className={'form-label ps-0 mb-1'}>
+              Denomination/quantity
+            </label>
+            <input type={'text'}
+                   className={`form-control`}
+                   name={'denomination'}
+                   id={'denomination'}
+                   onChange={(event) => inputChanged(event)}
+                   value={formData.denomination}
             />
           </div>
           <div className={'row mb-3'}>
@@ -166,6 +224,9 @@ const MultiUseForm = ({onCancel, onComplete}) => {
                    onChange={(event) => inputChanged(event)}
                    value={formData.note}
             />
+          </div>
+          <div className={'row'}>
+            {itemPreview}
           </div>
           <div className={'row'}>
             <div className={'d-flex justify-content-between p-0'}>

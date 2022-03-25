@@ -1,14 +1,14 @@
 .PurchasableItemEditForm {
   .Form {
-    border: 1px solid #ddd;
+    background-color: #f8f8f8;
     legend {
-      font-size: 1.1rem;
-      font-weight: 600;
-
+      text-align: center;
+        font-size: 1.2rem;
+        font-weight: 300;
     }
     label {
-      font-weight: normal;
-      font-style: italic;
+      font-weight: 200;
+      font-size: 95%;
     }
     .ValueInput {
       //width: 100%;
