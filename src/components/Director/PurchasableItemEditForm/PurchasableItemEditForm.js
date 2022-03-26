@@ -9,9 +9,9 @@ import DateTimePicker from "@mui/lab/DateTimePicker";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../utils";
 import ErrorBoundary from "../../common/ErrorBoundary";
+import Item from "../../Commerce/AvailableItems/Item/Item";
 
 import classes from './PurchasableItemEditForm.module.scss';
-import Item from "../../Commerce/AvailableItems/Item/Item";
 
 const PurchasableItemEditForm = ({item}) => {
   const context = useDirectorContext();
