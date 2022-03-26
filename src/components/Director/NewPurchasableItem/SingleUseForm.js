@@ -44,7 +44,7 @@ const SingleUseForm = ({onCancel, onComplete}) => {
     const tournament = {...context.tournament}
     tournament.purchasable_items = tournament.purchasable_items.concat(data);
     context.setTournament(tournament);
-    onComplete(`Item ${data.name} created.`);
+    onComplete(`Item ${data[0].name} created.`);
   }
 
   const formSubmitted = (event) => {
@@ -53,17 +53,19 @@ const SingleUseForm = ({onCancel, onComplete}) => {
     const requestConfig = {
       method: 'post',
       data: {
-        purchasable_item: {
-          category: formData.category,
-          determination: formData.determination,
-          name: formData.name,
-          value: formData.value,
-          configuration: {
-            order: formData.order,
-            note: formData.note,
-          }
-        }
-      }
+        purchasable_items: [
+          {
+            category: formData.category,
+            determination: formData.determination,
+            name: formData.name,
+            value: formData.value,
+            configuration: {
+              order: formData.order,
+              note: formData.note,
+            },
+          },
+        ],
+      },
     };
     directorApiRequest({
       uri: uri,

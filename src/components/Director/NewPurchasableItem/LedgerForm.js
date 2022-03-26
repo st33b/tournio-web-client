@@ -80,7 +80,7 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
     const tournament = {...context.tournament}
     tournament.purchasable_items = tournament.purchasable_items.concat(data);
     context.setTournament(tournament);
-    onComplete(`Item ${data.name} created.`);
+    onComplete(`Item ${data[0].name} created.`);
   }
 
   const formSubmitted = (event) => {
@@ -89,17 +89,19 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
     const requestConfig = {
       method: 'post',
       data: {
-        purchasable_item: {
-          category: formData.category,
-          determination: formData.determination,
-          name: formData.name,
-          value: formData.value,
-          configuration: {
-            applies_at: formData.applies_at,
-            valid_until: formData.valid_until,
-          }
-        }
-      }
+        purchasable_items: [
+          {
+            category: formData.category,
+            determination: formData.determination,
+            name: formData.name,
+            value: formData.value,
+            configuration: {
+              applies_at: formData.applies_at,
+              valid_until: formData.valid_until,
+            },
+          },
+        ],
+      },
     };
     directorApiRequest({
       uri: uri,
@@ -167,7 +169,7 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
               <DateTimePicker onChange={(newDateTime) => inputChanged('valid_until', newDateTime)}
                               value={formData.valid_until}
                               label={'Valid until'}
-                              renderInput={(params) => <TextField {...params} />} />
+                              renderInput={(params) => <TextField {...params} />}/>
             </div>
           }
           {formData.determination === 'late_fee' &&
@@ -175,7 +177,7 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
               <DateTimePicker onChange={(newDateTime) => inputChanged('applies_at', newDateTime)}
                               value={formData.applies_at}
                               label={'Applies at'}
-                              renderInput={(params) => <TextField {...params} />} />
+                              renderInput={(params) => <TextField {...params} />}/>
             </div>
           }
           <div className={'row mb-3'}>

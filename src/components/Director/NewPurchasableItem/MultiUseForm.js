@@ -56,7 +56,7 @@ const MultiUseForm = ({onCancel, onComplete}) => {
     const tournament = {...context.tournament}
     tournament.purchasable_items = tournament.purchasable_items.concat(data);
     context.setTournament(tournament);
-    onComplete(`Item ${data.name} created.`);
+    onComplete(`Item ${data[0].name} created.`);
   }
 
   const formSubmitted = (event) => {
@@ -65,19 +65,21 @@ const MultiUseForm = ({onCancel, onComplete}) => {
     const requestConfig = {
       method: 'post',
       data: {
-        purchasable_item: {
-          category: formData.category,
-          determination: formData.determination,
-          refinement: formData.refinement,
-          name: formData.name,
-          value: formData.value,
-          configuration: {
-            order: formData.order,
-            note: formData.note,
-            denomination: formData.refinement === 'denomination' ? formData.denomination : '',
-          }
-        }
-      }
+        purchasable_items: [
+          {
+            category: formData.category,
+            determination: formData.determination,
+            refinement: formData.refinement,
+            name: formData.name,
+            value: formData.value,
+            configuration: {
+              order: formData.order,
+              note: formData.note,
+              denomination: formData.refinement === 'denomination' ? formData.denomination : '',
+            },
+          },
+        ],
+      },
     };
     directorApiRequest({
       uri: uri,
@@ -118,7 +120,7 @@ const MultiUseForm = ({onCancel, onComplete}) => {
       <span className={`${classes.PreviewText} px-0 pb-1`}>
         How it will look to bowlers:
       </span>
-      <Item item={itemPreviewProps} preview={true} />
+      <Item item={itemPreviewProps} preview={true}/>
     </div>
   );
 
