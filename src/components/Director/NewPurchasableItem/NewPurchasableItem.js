@@ -2,6 +2,7 @@ import {useState, useEffect} from "react";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
 import LedgerForm from "./LedgerForm";
+import DivisionForm from './DivisionForm';
 import SingleUseForm from "./SingleUseForm";
 import MultiUseForm from "./MultiUseForm";
 import {useDirectorContext} from "../../../store/DirectorContext";
@@ -15,14 +16,15 @@ const NewPurchasableItem = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [availableLedgerTypes, setAvailableLedgerTypes] = useState([]);
 
+  // Determine which types of ledger items can still be created
   useEffect(() => {
     if (!context) {
       return;
     }
-    const allTypes = ['entry_fee', 'late_fee', 'early_discount'];
+    const allLedgerTypes = ['entry_fee', 'late_fee', 'early_discount'];
     const usedTypes = context.tournament.purchasable_items.filter(item => item.category === 'ledger').map(item => item.determination);
     const typesAvailable = [];
-    allTypes.forEach(type => {
+    allLedgerTypes.forEach(type => {
       if (!usedTypes.includes(type)) {
         typesAvailable.push(type);
       }
@@ -85,6 +87,15 @@ const NewPurchasableItem = () => {
               <button type={'button'}
                       className={'btn btn-outline-primary'}
                       role={'button'}
+                      onClick={(event) => addClicked(event, 'division')}>
+                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
+                New Division Item
+              </button>
+            </div>
+            <div className={'text-center my-3'}>
+              <button type={'button'}
+                      className={'btn btn-outline-primary'}
+                      role={'button'}
                       onClick={(event) => addClicked(event, 'single_use')}>
                 <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
                 New Single-use Item
@@ -103,6 +114,7 @@ const NewPurchasableItem = () => {
         }
 
         {formDisplayed === 'ledger' && <LedgerForm availableTypes={availableLedgerTypes} onCancel={cancelClicked} onComplete={itemSaved} />}
+        {formDisplayed === 'division' && <DivisionForm onCancel={cancelClicked} onComplete={itemSaved} />}
         {formDisplayed === 'single_use' && <SingleUseForm onCancel={cancelClicked} onComplete={itemSaved} />}
         {formDisplayed === 'multi_use' && <MultiUseForm onCancel={cancelClicked} onComplete={itemSaved} />}
 

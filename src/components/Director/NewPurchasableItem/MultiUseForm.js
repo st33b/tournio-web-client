@@ -29,8 +29,7 @@ const MultiUseForm = ({onCancel, onComplete}) => {
   const [denominationVisibility, setDenominationVisibility] = useState('visually-hidden');
 
   const inputChanged = (event) => {
-    let newValue = '';
-    newValue = event.target.value;
+    let newValue = event.target.value;
     const inputName = event.target.name;
     if (inputName === 'value' || inputName === 'order') {
       newValue = parseInt(newValue);
