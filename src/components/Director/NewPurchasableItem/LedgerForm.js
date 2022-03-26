@@ -182,7 +182,8 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
           }
           <div className={'row mb-3'}>
             <label htmlFor={'value'} className={'form-label ps-0 mb-1'}>
-              Fee
+              {formData.determination === 'early_discount' && 'Discount'}
+              {formData.determination !== 'early_discount' && 'Fee'}
             </label>
             <input type={'number'}
                    className={`form-control`}

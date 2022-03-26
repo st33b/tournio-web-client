@@ -208,9 +208,6 @@ const DivisionForm = ({onCancel, onComplete}) => {
             </a>
           </div>
 
-          {/*<div className={'row'}>*/}
-          {/*  {itemPreview}*/}
-          {/*</div>*/}
           <div className={'row'}>
             <div className={'d-flex justify-content-between p-0'}>
               <button type={'button'}

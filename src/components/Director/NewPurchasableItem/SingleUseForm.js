@@ -29,7 +29,9 @@ const SingleUseForm = ({onCancel, onComplete}) => {
     newValue = event.target.value;
     const inputName = event.target.name;
     if (inputName === 'value' || inputName === 'order') {
-      newValue = parseInt(newValue);
+      if (newValue.length > 0) {
+        newValue = parseInt(newValue);
+      }
     }
     const newFormData = {...formData};
     newFormData[inputName] = newValue;
