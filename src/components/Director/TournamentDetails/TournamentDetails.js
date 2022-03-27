@@ -10,6 +10,7 @@ import PurchasableItems from "./PurchasableItems";
 import Contacts from "./Contacts";
 import StateChangeButton from "./StateChangeButton";
 import {useDirectorContext} from "../../../store/DirectorContext";
+import DeleteTournament from "./DeleteTournament";
 
 const TournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated}) => {
   const context = useDirectorContext();
@@ -40,6 +41,7 @@ const TournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated}) => {
           <TournamentLogo tournament={context.tournament} />
           <StateChangeButton stateChangeInitiated={stateChangeInitiated} />
           <Contacts />
+          {context.tournament.state !== 'active' && <DeleteTournament />}
         </div>
       </div>
     </div>
