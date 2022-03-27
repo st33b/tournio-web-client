@@ -2,14 +2,14 @@
 
 import classes from "./Item.module.scss";
 
-const item = ({item, added}) => {
+const item = ({item, added, preview}) => {
   const addClickedHandler = (event) => {
     event.preventDefault();
     added(item);
   }
 
   let addLink = '';
-  if (!item.addedToCart) {
+  if (!preview && !item.addedToCart) {
     addLink = (
       <div className={'ms-auto align-self-center'}>
         <a href={'#'}
@@ -26,6 +26,11 @@ const item = ({item, added}) => {
   let note = '';
   if (item.configuration.note) {
     note = `(${item.configuration.note})`;
+    secondaryText = (
+      <p className={classes.Note}>
+        {note}
+      </p>
+    );
   }
   if (item.configuration.division) {
     secondaryText = (

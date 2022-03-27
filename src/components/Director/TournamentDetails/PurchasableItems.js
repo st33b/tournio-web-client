@@ -1,8 +1,12 @@
 import Card from 'react-bootstrap/Card';
 import {format} from 'date-fns';
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
 
 import classes from './TournamentDetails.module.scss';
 import {useDirectorContext} from "../../../store/DirectorContext";
+import PurchasableItemEditForm from "../PurchasableItemEditForm/PurchasableItemEditForm";
+import NewPurchasableItem from "../NewPurchasableItem/NewPurchasableItem";
 
 const PurchasableItems = () => {
   const context = useDirectorContext();
@@ -10,70 +14,86 @@ const PurchasableItems = () => {
     return '';
   }
 
-  const items = {
-    ledger: [],
-    bowling: [],
-    banquet: [],
-    product: [],
-  };
-  const datetimeFormat = 'LLL d, yyyy h:mmaaa';
-  context.tournament.purchasable_items.map((pi) => {
-    let item = {
-      name: pi.name,
-      value: pi.value,
-      note: '',
-    };
-    if (pi.category === 'ledger') {
-      switch (pi.determination) {
-        case 'early_discount':
-          item.note = 'Valid until ' + format(new Date(pi.configuration.valid_until), datetimeFormat);
-          break;
-        case 'late_fee':
-          item.note = 'Applies at ' + format(new Date(pi.configuration.applies_at), datetimeFormat);
-          break;
-      }
-    }
-    if (pi.category === 'bowling') {
-      if (pi.refinement === 'division') {
-        item.note = pi.configuration.division + ' (' + pi.configuration.note + ')'
-      }
-    }
-    if (pi.category === 'product') {
-      if (pi.refinement === 'denomination') {
-        item.note = pi.configuration.denomination;
-      }
-    }
-    items[pi.category].push(item);
+  const ledgerItems = context.tournament.purchasable_items.filter(item => {
+    return item.category === 'ledger'
+  }).sort((left, right) => {
+    const leftText = left.determination;
+    const rightText = right.determination;
+    return leftText.localeCompare(rightText);
   });
+
+  // sort the division items by name and note
+  const divisionItems = context.tournament.purchasable_items.filter(item => {
+    return item.determination === 'single_use' && item.refinement === 'division';
+  }).sort((left, right) => {
+    const leftText = left.name + left.configuration.division;
+    const rightText = right.name + right.configuration.division;
+    return leftText.localeCompare(rightText);
+  });
+
+  const divisionGroups = new Map();
+  divisionItems.forEach((item) => {
+    const name = item.name;
+    if (!divisionGroups.has(name)) {
+      divisionGroups.set(name, []);
+    }
+    const currentSet = divisionGroups.get(name);
+    divisionGroups.set(name, currentSet.concat(item));
+  });
+
+  const sortByOrder = (left, right) => {
+    let leftOrder = left.configuration.order || 100;
+    let rightOrder = right.configuration.order || 100;
+    return leftOrder - rightOrder;
+  }
+
+  // sort the single_use items by their order
+  const singleUseItems = context.tournament.purchasable_items.filter(item => {
+    return item.determination === 'single_use' && !item.refinement;
+  }).sort(sortByOrder);
+
+  // sort the multi-use items by their order
+  const multiUseItems = context.tournament.purchasable_items.filter(item => {
+    return item.determination === 'multi_use';
+  }).sort(sortByOrder);
+
+  const groupValues = [...divisionGroups.values()];
 
   return (
     <Card className={[classes.Card, classes.PurchasableItems].join(' ')}>
       <Card.Header as={'h5'} className={'fw-light'}>
         Purchasable Items
       </Card.Header>
-      {Object.values(items).map((itemSet, i) => {
-        if (itemSet.length === 0)
-        {
-          return '';
-        }
-        return (
-          <Card.Body key={i} className={classes.Category}>
-            {itemSet.map((item, j) => {
-              return (
-                <span className={'d-flex'} key={j}>
-                    <Card.Text className={classes.Item}>
-                      {item.name}
-                      <span className={classes.Note}>{item.note}</span>
-                    </Card.Text>
-                    <Card.Text className={'ms-auto fw-bold'}>
-                      ${item.value}
-                    </Card.Text>
-                  </span>
-              );
-            })}
+
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <Card.Body className={classes.Category}>
+          {ledgerItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+        </Card.Body>
+
+        {groupValues.map((group, index) => {
+          return group.length > 0 && (
+              <Card.Body key={index} className={classes.Category}>
+                {group.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+              </Card.Body>
+          );
+        })}
+
+        {singleUseItems.length > 0 &&
+          <Card.Body className={classes.Category}>
+            {singleUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
           </Card.Body>
-        );
-      })}
+        }
+
+        {multiUseItems.length > 0 &&
+          <Card.Body className={classes.Category}>
+            {multiUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+          </Card.Body>
+        }
+
+        <Card.Body className={'p-0'}>
+          <NewPurchasableItem />
+        </Card.Body>
+      </LocalizationProvider>
     </Card>
   );
 }

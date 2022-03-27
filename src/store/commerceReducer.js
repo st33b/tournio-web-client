@@ -116,12 +116,11 @@ const itemAdded = (state, item) => {
     newCart = state.cart.concat(addedItem);
     newAvailableItems[identifier] = addedItem;
   } else {
-    // instead of adding the newly chosen item to the cart, bump up its quantity
+    // instead of adding the newly chosen item to the cart, replace it with addedItem
     newCart = state.cart.slice(0);
-    const whichItem = newCart.find(i => i.identifier === addedItem.identifier)
-    whichItem.quantity++;
+    const index = newCart.findIndex(i => i.identifier === addedItem.identifier);
+    newCart[index] = addedItem;
   }
-
   return updateObject(state, {
     cart: newCart,
     availableItems: newAvailableItems,
@@ -138,8 +137,8 @@ const itemRemoved = (state, item) => {
     newCart = state.cart.filter(i => i.identifier !== removedItem.identifier);
   } else {
     newCart = state.cart.slice(0);
-    const reducedItem = newCart.find(i => i.identifier === removedItem.identifier);
-    reducedItem.quantity--;
+    const index = newCart.findIndex(i => i.identifier === removedItem.identifier);
+    newCart[index] = removedItem;
   }
 
   const newAvailableItems = {...state.availableItems}
