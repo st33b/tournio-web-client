@@ -10,6 +10,8 @@ const StateChangeButton = ({stateChangeInitiated}) => {
     return '';
   }
 
+  const disabled = context.tournament.state === 'setup' && !context.tournament.purchasable_items.some(item => item.determination === 'entry_fee')
+
   let variant = '';
   let stateChangeText = '';
   let stateChangeValue = '';
@@ -44,7 +46,10 @@ const StateChangeButton = ({stateChangeInitiated}) => {
       <div className={classes.StateChange}>
         <form onSubmit={stateChangeSubmitHandler}>
           <input type={'hidden'} name={'state_action'} value={stateChangeValue} />
-          <Button variant={variant} type={'submit'}>
+          <Button variant={variant}
+                  disabled={disabled}
+                  title={disabled ? 'Requires an entry fee first' : ''}
+                  type={'submit'}>
             {stateChangeText}
           </Button>
         </form>
