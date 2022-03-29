@@ -31,7 +31,6 @@ const ContactForm = ({contact, newContact}) => {
 
   const isValid = (data) => {
     return data.name.length > 0
-      && data.email.length > 0
       && data.role.length > 0
       && ['daily_summary', 'individually'].includes(data.notification_preference);
   }
@@ -49,9 +48,16 @@ const ContactForm = ({contact, newContact}) => {
 
   const onSuccess = (data) => {
     const tournament = {...context.tournament};
-    tournament.contacts = tournament.contacts.concat(data);
+    if (newContact) {
+      tournament.contacts = tournament.contacts.concat(data);
+      setFormData(initialState);
+    } else {
+      const contacts = context.tournament.contacts.slice(0);
+      const index = contacts.findIndex(elem => elem.id === contact.id);
+      contacts[index] = data;
+      tournament.contacts = contacts;
+    }
     context.setTournament(tournament);
-    setFormData(initialState);
     setEditing(false);
   }
 
@@ -61,9 +67,9 @@ const ContactForm = ({contact, newContact}) => {
 
   const formSubmitted = (event) => {
     event.preventDefault();
-    const uri = `/director/tournaments/${context.tournament.identifier}/contacts`;
+    const uri = newContact ? `/director/tournaments/${context.tournament.identifier}/contacts` : `/director/contacts/${contact.id}`;
     const requestConfig = {
-      method: 'post',
+      method: newContact ? 'post' : 'patch',
       data: {
         contact: {
           name: formData.name,
@@ -85,36 +91,20 @@ const ContactForm = ({contact, newContact}) => {
     })
   }
 
-  const roles = [
-    {
-      value: 'co-director',
-      label: 'Co-Director',
-    },
-    {
-      value: 'director',
-      label: 'Director',
-    },
-    {
-      value: 'fundraising',
-      label: 'Fundraising',
-    },
-    {
-      value: 'secretary',
-      label: 'Secretary',
-    },
-    {
-      value: 'secretary-treasurer',
-      label: 'Secretary/Treasurer',
-    },
-    {
-      value: 'statistician',
-      label: 'Statistician',
-    },
-    {
-      value: 'treasurer',
-      label: 'Treasurer',
-    },
-  ];
+  const roles = {
+    'co-director': 'Co-Director',
+    'director': 'Director',
+    'fundraising': 'Fundraising',
+    'secretary': 'Secretary',
+    'secretary-treasurer': 'Secretary/Treasurer',
+    'statistician': 'Statistician',
+    'treasurer': 'Treasurer',
+  };
+
+  const preferenceLabels = {
+    daily_summary: 'Daily Summary',
+    individually: 'Individually',
+  }
 
   const chosenNotifications = [];
   if (formData.notify_on_payment) {
@@ -122,6 +112,11 @@ const ContactForm = ({contact, newContact}) => {
   }
   if (formData.notify_on_registration) {
     chosenNotifications.push('registrations');
+  }
+
+  const editClicked = (event) => {
+    event.preventDefault();
+    setEditing(true);
   }
 
   return (
@@ -146,7 +141,6 @@ const ContactForm = ({contact, newContact}) => {
             </label>
             <input type={'email'}
                    className={'form-control'}
-                   required={true}
                    onChange={inputChanged}
                    name={'email'}
                    value={formData.email}/>
@@ -160,7 +154,7 @@ const ContactForm = ({contact, newContact}) => {
                     onChange={inputChanged}
                     value={formData.role}>
               <option value={''}>--</option>
-              {roles.map(role => <option value={role.value} key={role.value}>{role.label}</option>)}
+              {Object.entries(roles).map(pair => <option value={pair[0]} key={pair[0]}>{pair[1]}</option>)}
             </select>
           </div>
           <div className={'row mb-3'}>
@@ -246,19 +240,26 @@ const ContactForm = ({contact, newContact}) => {
         </form>
       }
       {!editing && !newContact &&
-        <div className={'row'}>
-          <p className={'fw-bold m-0'}>
+        <div className={`row ${classes.Detail}`}>
+          <p className={`fw-bold m-0 d-flex`}>
             {formData.name}
+            <a href={'#'}
+               className={`${classes.EditLink} ms-auto`}
+               onClick={editClicked}>
+              <span className={'visually-hidden'}>Edit</span>
+              <i className={'bi-pencil'} aria-hidden={true}/>
+            </a>
+
           </p>
           <p className={'m-0'}>
-            {formData.role}
+            {roles[formData.role]}
           </p>
           <p className={'small m-0'}>
             {formData.email}
           </p>
           <p className={'small m-0 fst-italic'}>
             Notifications: {chosenNotifications.join(', ') || 'none'}
-            {chosenNotifications.length > 0 && ` (${formData.notification_preference})`}
+            {chosenNotifications.length > 0 && ` (${preferenceLabels[formData.notification_preference]})`}
           </p>
         </div>
       }
