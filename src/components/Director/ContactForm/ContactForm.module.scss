@@ -1,0 +1,16 @@
+.ContactForm {
+  label {
+    font-weight: 200;
+    font-size: 95%;
+  }
+  .Detail {
+    .EditLink {
+      display: none;
+    }
+  }
+  .Detail:hover {
+    .EditLink {
+      display: inline;
+    }
+  }
+}
