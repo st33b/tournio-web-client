@@ -7,6 +7,16 @@ const Contacts = ({tournament}) => {
     return '';
   }
 
+  const roles = {
+    'co-director': 'Co-Director',
+    'director': 'Director',
+    'fundraising': 'Fundraising',
+    'secretary': 'Secretary',
+    'secretary-treasurer': 'Secretary/Treasurer',
+    'statistician': 'Statistician',
+    'treasurer': 'Treasurer',
+  };
+
   return (
     <div className={classes.Contacts}>
       <h5 className={'mt-2'}>
@@ -20,7 +30,7 @@ const Contacts = ({tournament}) => {
                 {c.name}
               </p>
               <p className={classes.Role}>
-                {c.role}
+                {roles[c.role]}
               </p>
               <p className={classes.Email}>
                 <a href={`mailto:${c.email}`} title={'Tournament inquiry'}>
