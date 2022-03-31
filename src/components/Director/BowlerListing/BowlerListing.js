@@ -76,6 +76,7 @@ const BowlerListing = ({bowlers}) => {
         Header: 'Due',
         accessor: 'amount_due',
         filter: doesNotEqual,
+        Cell: ({value}) => `$${value}`,
       },
     ], [identifier]);
 

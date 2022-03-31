@@ -76,7 +76,7 @@ const TeamDetails = ({successType}) => {
               <tr key={i}>
                 <td>{b.position}</td>
                 <td>{name}</td>
-                <td>{amountDue}</td>
+                <td>${amountDue}</td>
                 <td>
                   <a href={`/bowlers/${b.identifier}`}
                      className={'btn btn-sm btn-outline-success'}>

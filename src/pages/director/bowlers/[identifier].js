@@ -7,6 +7,8 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import BowlerDetails from "../../../components/Director/BowlerDetails/BowlerDetails";
+import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import ManualPayment from "../../../components/Director/BowlerDetails/ManualPayment";
 
 const Page = () => {
   const router = useRouter();
@@ -133,8 +135,8 @@ const Page = () => {
     return '';
   }
 
-  if (loading) {
-    return <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>;
+  if (loading || !bowler) {
+    return <LoadingMessage message={'Retrieving bowler details...'} />
   }
 
   let displayedError = '';
@@ -149,14 +151,6 @@ const Page = () => {
           </strong>
           {' '}{errorMessage}
         </div>
-      </div>
-    );
-  }
-
-  if (!bowler) {
-    return (
-      <div className={'display-6 text-center'}>
-        Retrieving bowler details...
       </div>
     );
   }
@@ -375,7 +369,7 @@ const Page = () => {
                      type={'checkbox'}
                      value={'1'}
                      onChange={confirmFreeEntryChanged}
-                     id={'confirm'} />
+                     id={'confirm'}/>
               <label className={'form-check-label'} htmlFor={'confirm'}>
                 Confirm it, too.
               </label>
@@ -419,6 +413,13 @@ const Page = () => {
     </Card>
   );
 
+  const ledgerEntryAdded = (newEntry) => {
+    const newBowler = {...bowler};
+    newBowler.ledger_entries = bowler.ledger_entries.concat(newEntry);
+    newBowler.amount_due = 0;
+    setBowler(newBowler);
+  }
+
   const ledgerEntries = (
     <Card className={'mb-3'}>
       <Card.Header as={'h5'} className={'fw-light'}>
@@ -442,6 +443,9 @@ const Page = () => {
             </ListGroup.Item>
           );
         })}
+        <ListGroup.Item className={'p-0'}>
+          <ManualPayment bowler={bowler} added={ledgerEntryAdded}/>
+        </ListGroup.Item>
       </ListGroup>
     </Card>
   );
@@ -539,6 +543,7 @@ const Page = () => {
           {moveToTeamCard}
           {purchases}
           {ledgerEntries}
+          <hr />
           {deleteBowlerCard}
         </Col>
       </Row>
