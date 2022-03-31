@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Card} from "react-bootstrap";
 
@@ -8,6 +8,7 @@ import TeamListing from "../../../components/Director/TeamListing/TeamListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import NewTeamForm from "../../../components/Director/NewTeamForm/NewTeamForm";
 import {directorApiRequest} from "../../../utils";
+import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const router = useRouter();
@@ -159,11 +160,7 @@ const Page = () => {
   }
 
   if (loading) {
-    return (
-      <div>
-        <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
-      </div>
-    );
+    return <LoadingMessage message={'Retrieving team data...'} />
   }
 
   return (

@@ -8,6 +8,7 @@ import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLa
 import UserListing from '../../../components/Director/UserListing/UserListing';
 import UserForm from '../../../components/Director/UserForm/UserForm';
 import {directorApiRequest} from "../../../utils";
+import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const directorContext = useDirectorContext();
@@ -90,13 +91,7 @@ const Page = () => {
   }, [directorContext, router]);
 
   if (loading) {
-    return (
-      <div className={'mt-2'}>
-        <h4 className={'display-6'}>
-          Retrieving users &amp; tournaments, gimme a sec...
-        </h4>
-      </div>
-    );
+    return <LoadingMessage message={'Retrieving users & tournaments, gimme a sec...'} />
   }
 
   const userAdded = (newUser) => {

@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 
 import {Col, Row} from "react-bootstrap";
 
@@ -7,6 +7,7 @@ import {useDirectorContext} from '../../../store/DirectorContext';
 
 import classes from './TournamentListing.module.scss';
 import {useRouter} from "next/router";
+import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 
 const TournamentListing = () => {
   const directorContext = useDirectorContext();
@@ -55,9 +56,9 @@ const TournamentListing = () => {
 
   let list = '';
   if (loading) {
-    list = <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>;
+    list = <LoadingMessage message={'Retrieving data...'} />;
   } else if (data.length === 0) {
-    list = <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>;
+    list = <h3 className={'display-6 text-center pt-2'}>No tournaments to display.</h3>;
   } else {
     list = (
       <div className={'table-responsive'}>

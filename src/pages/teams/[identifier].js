@@ -8,6 +8,7 @@ import RegistrationLayout from "../../components/Layout/RegistrationLayout/Regis
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import Contacts from "../../components/Registration/Contacts/Contacts";
 import TeamDetails from "../../components/Registration/TeamDetails/TeamDetails";
+import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const router = useRouter();
@@ -54,13 +55,7 @@ const Page = () => {
   }, [identifier, entry, dispatch, commerceDispatch]);
 
   if (loading || !entry || !entry.team) {
-    return (
-      <div>
-        <p>
-          Retrieving team details...
-        </p>
-      </div>
-    );
+    return <LoadingMessage message={'Retrieving team details...'} />
   }
 
   let joinLink = '';

@@ -3,6 +3,7 @@ import {useState, useEffect} from "react";
 import {fetchTournamentList} from "../../../utils";
 
 import classes from './TournamentListing.module.scss';
+import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 
 const TournamentListing = () => {
   const [tournaments, setTournaments] = useState([]);
@@ -22,16 +23,7 @@ const TournamentListing = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className={classes.TournamentListing}>
-        <h2>
-          Upcoming Tournaments
-        </h2>
-        <p>
-          Retrieving list of tournaments...
-        </p>
-      </div>
-    );
+    return <LoadingMessage message={'Retrieving list of tournaments...'} />
   }
 
   return (

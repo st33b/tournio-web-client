@@ -9,6 +9,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
 import {submitNewTeamRegistration} from "../../../utils";
 import {teamDetailsRetrieved, newTeamEntryCompleted} from "../../../store/actions/registrationActions";
+import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const {entry, dispatch} = useRegistrationContext();
@@ -45,18 +46,13 @@ const Page = () => {
   if (error) {
     errorMessage = (
       <Alert variant={'danger'}>
-        <h1 className={'display-6 text-center text-danger'}>Well, shit...</h1>
+        <h1 className={'display-6 text-center text-danger'}>Well, that was unexpected...</h1>
         <p className={'text-center'}>{error}</p>
       </Alert>
     );
   }
   if (processing) {
-    output = (
-      <>
-        <ProgressIndicator active={'review'} />
-        <h1 className={'display-6 text-center'}>Processing, sit tight...</h1>
-      </>
-    )
+    output = <LoadingMessage message={'Submitting registration...'} />;
   } else {
     output = (
       <>
