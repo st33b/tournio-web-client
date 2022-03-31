@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Row, Col, Card} from "react-bootstrap";
 
@@ -8,6 +8,7 @@ import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLa
 import FreeEntryListing from "../../../components/Director/FreeEntryListing/FreeEntryListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import NewFreeEntryForm from "../../../components/Director/NewFreeEntryForm/NewFreeEntryForm";
+import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const router = useRouter();
@@ -220,11 +221,7 @@ const Page = () => {
   }
 
   if (loading) {
-    return (
-      <div>
-        <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
-      </div>
-    );
+    return <LoadingMessage message={'Retrieving free entry data...'} />
   }
 
   return (

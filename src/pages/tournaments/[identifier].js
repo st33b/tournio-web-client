@@ -10,6 +10,7 @@ import TournamentLogo from "../../components/Registration/TournamentLogo/Tournam
 import Contacts from "../../components/Registration/Contacts/Contacts";
 
 import classes from "../../components/Registration/TournamentDetails/TournamentDetails.module.scss";
+import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const router = useRouter();
@@ -26,16 +27,9 @@ const Page = () => {
    }, [identifier, dispatch, commerceDispatch]);
 
   if (!entry || !entry.tournament) {
-    return (
-      <div>
-        <p>
-          Retrieving tournament details...
-        </p>
-      </div>
-    );
+    return <LoadingMessage message={'Retrieving tournament details...'} />
   }
 
-  // return <TournamentDetails tournament={entry.tournament} />;
   return (
     <div className={classes.TournamentDetails}>
       <Row>

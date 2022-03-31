@@ -9,6 +9,7 @@ import TournamentLogo from "../../../components/Registration/TournamentLogo/Tour
 import ItemSummary from "../../../components/Commerce/Checkout/ItemSummary";
 import PayPalExpressCheckout from "../../../components/Commerce/Checkout/PayPalExpressCheckout";
 import {purchaseCompleted, purchaseFailed} from "../../../store/actions/registrationActions";
+import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const router = useRouter();
@@ -80,13 +81,7 @@ const Page = () => {
   }
 
   if (loading) {
-    return (
-      <div>
-        <p>
-          Preparing checkout...
-        </p>
-      </div>
-    );
+    return <LoadingMessage message={'Preparing checkout'}/>;
   }
 
   if (!commerce) {

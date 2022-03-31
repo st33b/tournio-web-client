@@ -1,11 +1,13 @@
 import {Col, Row} from "react-bootstrap";
 
 import classes from './UserListing.module.scss';
+import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
+import React from "react";
 
 const UserListing = ({users}) => {
   let list = '';
   if (!users) {
-    list = <p>Retrieving users...</p>;
+    list = <LoadingMessage message={'Retrieving users...'} />;
   } else if (users.length === 0) {
     list = <p>No users to display.</p>;
   } else {

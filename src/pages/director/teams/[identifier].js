@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Card, Button, Row, Col} from "react-bootstrap";
 
@@ -7,6 +7,7 @@ import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLa
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import TeamDetails from "../../../components/Director/TeamDetails/TeamDetails";
 import {directorApiRequest} from "../../../utils";
+import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const router = useRouter();
@@ -63,12 +64,8 @@ const Page = () => {
     });
   }, [identifier, router]);
 
-  if (!directorContext) {
-    return '';
-  }
-
-  if (loading) {
-    return <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>;
+  if (!directorContext || loading) {
+    return <LoadingMessage message={'Retrieving team data...'} />;
   }
 
   if (errorMessage) {

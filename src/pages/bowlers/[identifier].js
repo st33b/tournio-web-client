@@ -7,6 +7,7 @@ import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import Menu from '../../components/Commerce/Menu';
+import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const router = useRouter();
@@ -39,7 +40,7 @@ const Page = () => {
   }, [identifier, commerce, commerceDispatch]);
 
   if (!commerce || !commerce.bowler) {
-    return '';
+    return <LoadingMessage message={'One moment, please...'} />;
   }
 
   let displayed_name = commerce.bowler.first_name;

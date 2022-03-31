@@ -7,6 +7,7 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import TeamListing from "../../../components/Registration/TeamListing/TeamListing";
 import Contacts from "../../../components/Registration/Contacts/Contacts";
+import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const { entry, dispatch } = useRegistrationContext();
@@ -39,17 +40,11 @@ const Page = () => {
   }, [dispatch]);
 
   if (loading) {
-    return (
-      <div>
-        <p>
-          Retrieving list of teams...
-        </p>
-      </div>
-    );
+    return <LoadingMessage message={'Retrieving list of teams...'} />
   }
 
   if (!teams || !entry || !entry.tournament) {
-    return '';
+    return <LoadingMessage message={'Retrieving list of teams...'} />
   }
 
   return (

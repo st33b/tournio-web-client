@@ -9,6 +9,7 @@ import ReviewEntries from "../../../components/Registration/ReviewEntries/Review
 import {newTeamEntryCompleted, teamDetailsRetrieved} from "../../../store/actions/registrationActions";
 import {submitNewTeamRegistration} from "../../../utils";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
+import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const {entry, dispatch} = useRegistrationContext();
@@ -51,11 +52,7 @@ const Page = () => {
     );
   }
   if (processing) {
-    output = (
-      <>
-        <h3 className={'display-6 text-center pt-2'}>Processing, sit tight...</h3>
-      </>
-    )
+    output = <LoadingMessage message={'Submitting registration...'} />;
   } else {
     output = (
       <>
