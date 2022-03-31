@@ -10,18 +10,26 @@ const StateChangeButton = ({stateChangeInitiated}) => {
     return '';
   }
 
-  const disabled = context.tournament.state === 'setup' && !context.tournament.purchasable_items.some(item => item.determination === 'entry_fee')
-
   let variant = '';
   let stateChangeText = '';
   let stateChangeValue = '';
+  let titleText = '';
+  let disabled = false;
   switch (context.tournament.state) {
     case 'setup':
+      disabled = !context.tournament.purchasable_items.some(item => item.determination === 'entry_fee');
+      if (disabled) {
+        titleText = 'Requires an entry fee first';
+      }
       variant = 'warning';
       stateChangeText = 'Begin Testing';
       stateChangeValue = 'test';
       break;
     case 'testing':
+      disabled = process.env.NODE_ENV === 'production' && context.tournament.config_items.find(item => item.key === 'paypal_client_id').value === 'sb';
+      if (disabled) {
+        titleText = 'PayPal Client ID must be set before opening registration';
+      }
       variant = 'success';
       stateChangeText = 'Open Registration';
       stateChangeValue = 'open';
@@ -48,7 +56,7 @@ const StateChangeButton = ({stateChangeInitiated}) => {
           <input type={'hidden'} name={'state_action'} value={stateChangeValue} />
           <Button variant={variant}
                   disabled={disabled}
-                  title={disabled ? 'Requires an entry fee first' : ''}
+                  title={titleText}
                   type={'submit'}>
             {stateChangeText}
           </Button>
