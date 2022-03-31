@@ -1,0 +1,18 @@
+.ManualPayment {
+  .Form {
+    background-color: #f8f8f8;
+    .HeaderRow {
+      text-align: center;
+      h6 {
+        font-size: 1.2rem;
+        font-weight: 300;
+      }
+    }
+    label {
+      padding-left: 0;
+      margin-bottom: 0.25rem;
+      font-weight: 200;
+      font-size: 95%;
+    }
+  }
+}

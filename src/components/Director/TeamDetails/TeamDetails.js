@@ -126,6 +126,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     {
       Header: 'Amount Due',
       accessor: 'amount_due',
+      Cell: ({value}) => `$${value}`,
     },
     {
       id: 'free_entry',
