@@ -142,7 +142,7 @@ const BowlerListing = ({bowlers}) => {
     setFilter('name', criteria.name);
 
     if (criteria.amount_due) {
-      setFilter('amount_due', '$0');
+      setFilter('amount_due', 0);
     } else {
       setFilter('amount_due', '');
     }
