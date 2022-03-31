@@ -87,7 +87,12 @@ const LoginForm = () => {
             </FloatingLabel>
             <div className={classes.Actions}>
               {!loading && <Button variant={'primary'} type={'submit'}>Log In</Button>}
-              {loading && <Button variant={'secondary'} disabled={true}>Logging you in...</Button>}
+              {loading && (
+                <Button variant={'secondary'} disabled={true}>
+                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  {' '}Logging you in...
+                </Button>
+              )}
             </div>
           </Form>
         </Card.Body>
