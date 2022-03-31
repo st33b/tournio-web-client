@@ -19,7 +19,7 @@ const StateChangeButton = ({stateChangeInitiated}) => {
     case 'setup':
       disabled = !context.tournament.purchasable_items.some(item => item.determination === 'entry_fee');
       if (disabled) {
-        titleText = 'Requires an entry fee first';
+        titleText = 'An entry fee must be set before testing can begin.';
       }
       variant = 'warning';
       stateChangeText = 'Begin Testing';
@@ -60,6 +60,7 @@ const StateChangeButton = ({stateChangeInitiated}) => {
                   type={'submit'}>
             {stateChangeText}
           </Button>
+          {titleText && <div className={`${classes.WhyDisabledText} text-muted pt-3`}>({titleText})</div> }
         </form>
       </div>
     );
