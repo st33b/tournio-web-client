@@ -28,25 +28,33 @@ const about = () => (
             I am proud to say the number of tournaments using this system continues to grow. Past and present tournaments include:
             <ul>
               <li>
-                <a href={'https://www.bigdclassic.com/'}>Big D Classic</a>
-              </li>
-              <li>
-                <a href={'http://trotbowling.com/'}>Texas Roll-off Tournament (TROT)</a>
+                <a href={'https://www.okclassic.com/'}>OKClassic</a>
               </li>
               <li>
                 <a href={'http://www.houstoninvite.com/'}>Houston Invitational Tournament (HIT)</a>
               </li>
+              {/*<li>*/}
+              {/*  <a href={'http://www.makitkc.org/'}>*/}
+              {/*    Missouri and Kansas Invitational Tournament (MAKIT)*/}
+              {/*  </a>*/}
+              {/*</li>*/}
               <li>
-                <a href={'https://www.okclassic.com/'}>OKClassic</a>
+                <a href={'https://www.bigdclassic.com/'}>Big D Classic</a>
+              </li>
+              {/*<li>*/}
+              {/*  <a href={'https://www.txsuperslam.com/'}>Texas Super Slam</a>*/}
+              {/*</li>*/}
+              {/*<li>*/}
+              {/*  <a href={'https://www.lvshowgirl.net/'}>Las Vegas Showgirl</a>*/}
+              {/*</li>*/}
+              <li>
+                <a href={'http://trotbowling.com/'}>Texas Roll-off Tournament (TROT)</a>
               </li>
               <li>
                 <a href={'https://www.goldengateclassic.org/'}>San Francisco Golden Gate Classic</a>
               </li>
               <li>
                 Dallas Area Masters Invitational Tournament (DAMIT)
-              </li>
-              <li>
-                <a href={'https://www.txsuperslam.com/'}>Texas Super Slam</a>
               </li>
             </ul>
             ... with more to come!
@@ -85,6 +93,9 @@ const about = () => (
           In a nutshell, here are the main features/actions the director interface lets you do:
           <ul>
             <li>
+              Export registration information, in both spreadsheet (CSV) and IGBO-TS formats. (The IGBO-TS format is suitable for import into the IGBO-TS program.)
+            </li>
+            <li>
               Correct bowler and team information
             </li>
             <li>
@@ -97,19 +108,30 @@ const about = () => (
               Create free entry codes, and link free entry codes with registered bowlers.
             </li>
             <li>
-              Export registration information, in both spreadsheet (CSV) and IGBO-TS formats. (The IGBO-TS format is suitable for import into the IGBO-TS program.)
+              Control configuration details, including choosing which optional events to make available for purchase.
             </li>
             <li>
-              Run registration in Test Mode before opening it to the public.
+              Mark bowlers as paid via a mechanism outside of PayPal, e.g., cash or check.
             </li>
             <li>
-              When registration is in Test Mode, you can clear out all test data, which is what you should do just before you&apos;re ready to open registration to the public.
+              Run registration in Test Mode before opening it to the public. In Test Mode, you can:
+              <ul>
+                <li>
+                  Exercise the registration flow to ensure the optimal bowler experience. Includes full and partial team registrations, joining an existing partial team, and registering as a solo bowler.
+                </li>
+                <li>
+                  Simulate registrations happening during the early, regular, and late registration periods, to verify the proper discount/fee gets applied.
+                </li>
+                <li>
+                  Receive emails that would otherwise go to bowlers, e.g., registration confirmations and payment receipts.
+                </li>
+                <li>
+                  Clear out all test data, which is what you should do just before you&apos;re ready to open registration to the public.
+                </li>
+              </ul>
             </li>
             <li>
-              In Test Mode, simulate registrations happening during the early, regular, and late registration periods, to verify the proper discount/fee gets applied.
-            </li>
-            <li>
-              You can close registration with a single button press when you&apos;re ready, or when you&apos;ve reached capacity.
+              Close registration with a single button press when you&apos;re ready, or when you&apos;ve reached capacity.
             </li>
           </ul>
         </p>
@@ -118,12 +140,6 @@ const about = () => (
           <ul>
             <li>
               Ability for a tournament director to upload an image to use as logo, along with other assets, like PDFs for rules and results.
-            </li>
-            <li>
-              More control over configuration details, including choosing which optional events to make available for purchase.
-            </li>
-            <li>
-              Mark bowlers as paid via a mechanism outside of PayPal, e.g., cash or check.
             </li>
             <li>
               Improved experience for bowlers in the time period between registration closing and the tournament&apos;s start date.
