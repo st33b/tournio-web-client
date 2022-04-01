@@ -74,7 +74,7 @@ const Page = () => {
             <TournamentLogo tournament={commerce.tournament}/>
           </a>
         </Col>
-        <Col md={10} className={'d-flex flex-column justify-content-center text-center text-md-start'}>
+        <Col md={10} className={'d-flex flex-column justify-content-center text-center text-md-start ps-2'}>
           <h3 className={'p-0 m-0'}>
             <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
               {commerce.tournament.name}
