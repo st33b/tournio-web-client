@@ -5,6 +5,7 @@ import React, {useEffect, useState} from "react";
 import {Map} from 'immutable';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {Button, Card} from "react-bootstrap";
+import {directorApiRequest} from "../../../utils";
 
 const OfficeUseOnly = ({bowler}) => {
   const context = useDirectorContext();
@@ -18,6 +19,7 @@ const OfficeUseOnly = ({bowler}) => {
   });
 
   const [formData, setFormData] = useState(initialFormData);
+  const [flashes, setFlashes] = useState({success: '', error: ''});
 
   // If there's a valid bowler prop, put their data into the form data
   useEffect(() => {
@@ -47,10 +49,71 @@ const OfficeUseOnly = ({bowler}) => {
     setFormData(newFormData.set('valid', isValid(newFormData)));
   }
 
+  const updateSuccess = (data) => {
+    setFlashes({success: 'Data saved.'});
+  }
+
+  const updateFailure = (data) => {
+    setFlashes({error: 'Failed to save data'});
+  }
+
   const formSubmitted = (event) => {
     event.preventDefault();
-    // ...
+
+    const uri = `/director/bowlers/${bowler.identifier}`;
+    const requestConfig = {
+      method: 'patch',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        bowler: {
+          verified_data: {
+            verified_average: formData.get('verified_average'),
+            handicap: formData.get('handicap'),
+          }
+        }
+      }
+    }
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      router: router,
+      onSuccess: updateSuccess,
+      onFailure: updateFailure,
+    });
   }
+
+  const errorAlert = flashes.error && (
+    <div className={'alert alert-warning alert-dismissible fade show d-flex align-items-center mt-3 mb-0'}
+         role={'alert'}>
+      <i className={'bi-exclamation-circle-fill pe-2'} aria-hidden={true}/>
+      <div className={'me-auto'}>
+        {flashes.error}
+        <button type="button"
+                className={"btn-close"}
+                data-bs-dismiss="alert"
+                onClick={() => setFlashes({error: '', success: ''})}
+                aria-label="Close"/>
+      </div>
+    </div>
+  );
+
+  const successAlert = flashes.success && (
+    <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'}
+         role={'alert'}>
+      <i className={'bi-check-lg pe-2'} aria-hidden={true}/>
+      <div className={'me-auto'}>
+        {flashes.success}
+        <button type="button"
+                className={"btn-close"}
+                data-bs-dismiss="alert"
+                onClick={() => setFlashes({error: '', success: ''})}
+                aria-label="Close"/>
+      </div>
+    </div>
+  );
 
   return (
     <ErrorBoundary>
@@ -104,6 +167,8 @@ const OfficeUseOnly = ({bowler}) => {
                 </div>
               </div>
             </form>
+            {errorAlert}
+            {successAlert}
           </Card.Body>
         </Card>
       </div>
