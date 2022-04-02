@@ -9,6 +9,7 @@ import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import BowlerDetails from "../../../components/Director/BowlerDetails/BowlerDetails";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ManualPayment from "../../../components/Director/BowlerDetails/ManualPayment";
+import OfficeUseOnly from "../../../components/Director/BowlerDetails/OfficeUseOnly";
 
 const Page = () => {
   const router = useRouter();
@@ -131,11 +132,7 @@ const Page = () => {
     });
   }, [bowler, directorContext, router]);
 
-  if (!directorContext) {
-    return '';
-  }
-
-  if (loading || !bowler) {
+  if (!directorContext || !directorContext.tournament || loading || !bowler) {
     return <LoadingMessage message={'Retrieving bowler details...'} />
   }
 
@@ -273,7 +270,7 @@ const Page = () => {
 
   let moveToTeamCard = (
     <Card className={'mb-3'}>
-      <Card.Header as={'h5'} className={'fw-light'}>
+      <Card.Header as={'h6'} className={'fw-light'}>
         Move to another team
       </Card.Header>
       <Card.Body>
@@ -287,7 +284,7 @@ const Page = () => {
 
     moveToTeamCard = (
       <Card className={'mb-3'}>
-        <Card.Header as={'h5'} className={'fw-light'}>
+        <Card.Header as={'h6'} className={'fw-light'}>
           Move to another team
         </Card.Header>
         <Card.Body>
@@ -297,6 +294,7 @@ const Page = () => {
               {options.map(t => <option key={t.identifier} value={t.identifier}>{t.name}</option>)}
             </select>
             <Button variant={'primary'}
+                    size={'sm'}
                     className={'mt-3'}
                     disabled={newTeamFormData.destinationTeam === ''}
                     type={'submit'}>
@@ -355,7 +353,7 @@ const Page = () => {
   if (!bowler.free_entry && availableFreeEntries.length > 0) {
     linkFreeEntryCard = (
       <Card className={'mb-3'}>
-        <Card.Header as={'h5'} className={'fw-light'}>
+        <Card.Header as={'h6'} className={'fw-light'}>
           Link a Free Entry
         </Card.Header>
         <Card.Body>
@@ -376,6 +374,7 @@ const Page = () => {
             </div>
             <div className={'text-center'}>
               <Button variant={'primary'}
+                      size={'sm'}
                       className={'mt-3'}
                       disabled={linkFreeEntryFormData.id === null}
                       type={'submit'}>
@@ -390,7 +389,7 @@ const Page = () => {
 
   const purchases = (
     <Card className={'mb-3'}>
-      <Card.Header as={'h5'} className={'fw-light'}>
+      <Card.Header as={'h6'} className={'fw-light'}>
         Purchases
       </Card.Header>
       <ListGroup variant={'flush'}>
@@ -422,7 +421,7 @@ const Page = () => {
 
   const ledgerEntries = (
     <Card className={'mb-3'}>
-      <Card.Header as={'h5'} className={'fw-light'}>
+      <Card.Header as={'h6'} className={'fw-light'}>
         Ledger Entries
       </Card.Header>
       <ListGroup variant={'flush'}>
@@ -539,6 +538,7 @@ const Page = () => {
           />
         </Col>
         <Col md={4}>
+          <OfficeUseOnly bowler={bowler} />
           {linkFreeEntryCard}
           {moveToTeamCard}
           {purchases}
