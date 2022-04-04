@@ -27,7 +27,7 @@ const Page = () => {
    }, [identifier, dispatch, commerceDispatch]);
 
   if (!entry || !entry.tournament) {
-    return <LoadingMessage message={'Retrieving tournament details...'} />
+    return '';
   }
 
   return (

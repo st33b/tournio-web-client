@@ -15,7 +15,7 @@ const Page = () => {
   const { entry, dispatch, commerceDispatch } = useRegistrationContext();
   const { identifier, success } = router.query;
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const onTeamFetchSuccess = (data) => {
     setLoading(false);
@@ -38,6 +38,8 @@ const Page = () => {
         onFailure: onTeamFetchFailure,
         dispatches: [dispatch, commerceDispatch],
       })
+    } else {
+      setLoading(false);
     }
   }, [identifier, entry, dispatch, commerceDispatch]);
 

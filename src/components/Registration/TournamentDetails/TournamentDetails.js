@@ -1,5 +1,6 @@
 import {useRouter} from "next/router";
 import {Card, Col, ListGroup, Row} from "react-bootstrap";
+import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 
 import classes from './TournamentDetails.module.scss';
 
@@ -10,7 +11,7 @@ const TournamentDetails = ({tournament}) => {
   const router = useRouter();
 
   if (!tournament) {
-    return '';
+    return <LoadingMessage message={'Retrieving tournament details...'} />;
   }
 
   /////////////////////////////////////////////////////
