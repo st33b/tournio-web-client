@@ -6,15 +6,10 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import Summary from "../../../components/Registration/Summary/Summary";
 import {existingTeamBowlerInfoAdded} from "../../../store/actions/registrationActions";
-import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const router = useRouter();
   const { entry, dispatch } = useRegistrationContext();
-
-  if (!entry.tournament || !entry.team) {
-    return <LoadingMessage message={'Retrieving team details...'} />
-  }
 
   const onNewBowlerAdded = (bowlerInfo) => {
     dispatch(existingTeamBowlerInfoAdded(bowlerInfo));

@@ -75,7 +75,7 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
         },
         label: 'IGBO ID',
         validation: {
-          required: false,
+          required: true,
         },
         helper: {
           url: 'http://www.igbo.org/igbots-id-lookup/',

@@ -1,7 +1,7 @@
 import classes from './LoadingMessage.module.scss';
 
 const LoadingMessage = ({message}) => (
-    <div className={`${classes.LoadingMessage}`}>
+    <div className={classes.LoadingMessage}>
       <div className={'d-flex align-items-top justify-content-center pt-3'}>
         <span className={`spinner-border ${classes.LoadingSpinner}`}
           aria-hidden={true}

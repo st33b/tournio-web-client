@@ -70,20 +70,22 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
   }
 
   return (
-    <Card className={`${classes.Summary} border-0`}>
-      <Card.Img variant={'top'}
-                src={entry.tournament.image_path}
-                className={'d-none d-sm-block'}/>
-      <Card.Body>
-        <Card.Title>
-          {entry.tournament.name}
-        </Card.Title>
-        {teamText}
-        {bowlersText}
-        {doublesLink}
-        {nextStepButton}
-      </Card.Body>
-    </Card>
+    <div className={classes.Summary}>
+      <Card className={`border-0`}>
+        <Card.Img variant={'top'}
+                  src={entry.tournament.image_path}
+                  className={'d-none d-sm-block'}/>
+        <Card.Body>
+          <Card.Title>
+            {entry.tournament.name}
+          </Card.Title>
+          {teamText}
+          {bowlersText}
+          {doublesLink}
+          {nextStepButton}
+        </Card.Body>
+      </Card>
+    </div>
   );
 };
 
