@@ -11,7 +11,7 @@ const TournamentDetails = ({tournament}) => {
   const router = useRouter();
 
   if (!tournament) {
-    return <LoadingMessage message={'Retrieving tournament details...'} />;
+    return <LoadingMessage message={'Retrieving tournament details...'}/>;
   }
 
   /////////////////////////////////////////////////////
@@ -133,32 +133,33 @@ const TournamentDetails = ({tournament}) => {
     )
   }
 
-  let registrationLink = '';
-  let joinTeamLink = '';
-  let soloRegistrationLink = '';
+  let registrationOptions = '';
   if (tournament.state === 'testing' || tournament.state === 'active') {
-    registrationLink = (
-      <ListGroup.Item className={'text-primary'}
-                      href={`${router.asPath}/new-team`}
-                      action>
-        Register a New Team
-      </ListGroup.Item>
-    );
-
-    joinTeamLink = (
-      <ListGroup.Item className={'text-primary'}
-                      href={`${router.asPath}/join-a-team`}
-                      action>
-        Join an Existing Team
-      </ListGroup.Item>
-    );
-
-    soloRegistrationLink = (
-      <ListGroup.Item className={'text-primary'}
-                      href={`${router.asPath}/solo-bowler`}
-                      action>
-        Register as a Solo Bowler
-      </ListGroup.Item>
+    registrationOptions = (
+      <Col md={6}>
+        <Card>
+          <Card.Header as={'h6'}>
+            Registration Options
+          </Card.Header>
+          <ListGroup variant={'flush'}>
+            <ListGroup.Item className={'text-primary'}
+                            href={`${router.asPath}/new-team`}
+                            action>
+              Register a New Team
+            </ListGroup.Item>
+            <ListGroup.Item className={'text-primary'}
+                            href={`${router.asPath}/join-a-team`}
+                            action>
+              Join an Existing Team
+            </ListGroup.Item>
+            <ListGroup.Item className={'text-primary'}
+                            href={`${router.asPath}/solo-bowler`}
+                            action>
+              Register as a Solo Bowler
+            </ListGroup.Item>
+          </ListGroup>
+        </Card>
+      </Col>
     );
   }
 
@@ -192,38 +193,41 @@ const TournamentDetails = ({tournament}) => {
     );
   }
 
-  const youWillNeed = (
-    <div className={'border rounded-sm bg-light p-3'}>
-      <h6>
-        You will need the following information for each registered bowler:
-      </h6>
-      <ul className={'mb-1'}>
-        <li>
-          Names and contact information (email, phone, address)
-        </li>
-        <li>
-          Birth dates (required for IGBO)
-        </li>
-        <li>
-          USBC and IGBO identifiers
-          <ul>
-            <li>
-              <a href={USBC_ID_LOOKUP_URL} target="_new">
-                Find a USBC identifier
-                <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>
-              </a>
-            </li>
-            <li>
-              <a href={IGBO_ID_LOOKUP_URL} target="_new">
-                Find an IGBO identifier
-                <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>
-              </a>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-  );
+  let youWillNeed = <hr />;
+  if (tournament.state === 'testing' || tournament.state === 'active') {
+    youWillNeed = (
+      <div className={'border rounded-sm bg-light p-3'}>
+        <h6>
+          You will need the following information for each registered bowler:
+        </h6>
+        <ul className={'mb-1'}>
+          <li>
+            Names and contact information (email, phone, address)
+          </li>
+          <li>
+            Birth dates (required for IGBO)
+          </li>
+          <li>
+            USBC and IGBO identifiers
+            <ul>
+              <li>
+                <a href={USBC_ID_LOOKUP_URL} target="_new">
+                  Find a USBC identifier
+                  <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>
+                </a>
+              </li>
+              <li>
+                <a href={IGBO_ID_LOOKUP_URL} target="_new">
+                  Find an IGBO identifier
+                  <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    );
+  }
 
   return (
     <div className={classes.TournamentDetails}>
@@ -239,18 +243,7 @@ const TournamentDetails = ({tournament}) => {
       {youWillNeed}
 
       <Row className={'mt-4'}>
-        <Col md={6}>
-          <Card>
-            <Card.Header as={'h6'}>
-              Registration Options
-            </Card.Header>
-            <ListGroup variant={'flush'}>
-              {registrationLink}
-              {joinTeamLink}
-              {soloRegistrationLink}
-            </ListGroup>
-          </Card>
-        </Col>
+        {registrationOptions}
         <Col>
           <h6 className="my-2">
             Already registered?
