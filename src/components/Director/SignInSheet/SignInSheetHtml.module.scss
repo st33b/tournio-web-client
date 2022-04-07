@@ -1,0 +1,33 @@
+.SignInSheetHtml {
+  line-height: 1.5rem;
+  .Logo {
+    max-width: 80px;
+    max-height: 80px;
+  }
+  .Address {
+    span {
+      display: block;
+    }
+  }
+  .PurchaseNote {
+    display: block;
+    font-style: italic;
+    font-size: 90%;
+    font-weight: 200;
+  }
+  .Agreement {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+
+    .Signature {
+      border-bottom: 1px solid #000;
+    }
+    .Acknowledgement {
+      font-style: italic;
+      font-size: 90%;
+      font-weight: 200;
+      word-wrap: normal;
+    }
+  }
+}
