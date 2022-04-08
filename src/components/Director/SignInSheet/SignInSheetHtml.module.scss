@@ -1,8 +1,20 @@
+@page {
+  size: auto;
+  margin: 0;
+}
+
 .SignInSheetHtml {
+  margin: 2rem;
+
   line-height: 1.5rem;
   .Logo {
     max-width: 80px;
     max-height: 80px;
+  }
+  @media print {
+    .PrintButton {
+      display: none;
+    }
   }
   .Address {
     span {
@@ -17,7 +29,7 @@
   }
   .Agreement {
     position: fixed;
-    bottom: 0;
+    bottom: 2rem;
     width: 100%;
 
     .Signature {

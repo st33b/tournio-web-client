@@ -172,13 +172,9 @@ const OfficeUseOnly = ({bowler}) => {
           </Card.Body>
           <Card.Body>
             <Card.Text className={'text-center'}>
-              <Card.Link href={`/director/bowlers/${bowler.identifier}/sign-in-sheet`}
-                         target={'_new'}>
-                Sign-in Sheet
-              </Card.Link>
               <Card.Link href={`/director/bowlers/${bowler.identifier}/sign-in-sheet-html`}
                          target={'_new'}>
-                Sign-in Sheet (HTML)
+                Sign-in Sheet
               </Card.Link>
             </Card.Text>
           </Card.Body>

@@ -24,9 +24,17 @@ const SignInSheetHtml = ({bowler}) => {
         </h2>
       </div>
 
-      <h3 className={'py-3 border-top border-bottom border-1'}>
-        {bowler.last_name}, {bowlerFirstName}
-      </h3>
+      <div className={'d-flex justify-content-end py-3 border-top border-bottom border-1'}>
+        <h3 className={'me-auto'}>
+          {bowler.last_name}, {bowlerFirstName}
+        </h3>
+        <button className={`${classes.PrintButton} btn btn-sm btn-outline-secondary`}
+                role={'button'}
+                onClick={() => window.print()}>
+          <i className={'bi-printer pe-2'} aria-hidden={true} />
+          Print this page
+        </button>
+      </div>
 
       <div className={'row py-3 border-bottom border-1'}>
         <div className={'col-6'}>
@@ -177,7 +185,7 @@ const SignInSheetHtml = ({bowler}) => {
 
       <div className={classes.Agreement}>
         <div className={'row'}>
-          <div className={`col-8 offset-4`}>
+          <div className={`col-7 offset-3`}>
             <div className={classes.Signature}>
               <i className={'bi-x-lg'} aria-hidden={true}/>
             </div>
