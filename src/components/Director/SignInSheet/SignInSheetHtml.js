@@ -74,6 +74,12 @@ const SignInSheetHtml = ({bowler}) => {
           <div>
             USBC Number: {bowler.usbc_id}
           </div>
+          <div className={'pt-2'}>
+            IGBO Member:{' '}
+            <strong>
+              {bowler.igbo_member ? 'Yes' : 'No'}
+            </strong>
+          </div>
         </div>
       </div>
 
