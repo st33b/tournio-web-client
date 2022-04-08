@@ -14,6 +14,7 @@ const OfficeUseOnly = ({bowler}) => {
   const initialFormData = Map({
     verified_average: '',
     handicap: '',
+    igbo_member: '',
 
     valid: false,
   });
@@ -32,6 +33,7 @@ const OfficeUseOnly = ({bowler}) => {
     const newFormData = formData.withMutations(map => {
       map.set('verified_average', bowler.verified_average)
         .set('handicap', bowler.handicap)
+        .set('igbo_member', bowler.igbo_member)
     });
     newFormData.set('valid', isValid(newFormData));
     setFormData(newFormData);
@@ -42,8 +44,12 @@ const OfficeUseOnly = ({bowler}) => {
   }
 
   const inputChanged = (event) => {
-    const newValue = parseInt(event.target.value);
+    let newValue = parseInt(event.target.value);
     const elemName = event.target.name;
+
+    if (elemName === 'igbo_member') {
+      newValue = event.target.checked;
+    }
 
     const newFormData = formData.set(elemName, newValue);
     setFormData(newFormData.set('valid', isValid(newFormData)));
@@ -71,6 +77,7 @@ const OfficeUseOnly = ({bowler}) => {
           verified_data: {
             verified_average: formData.get('verified_average'),
             handicap: formData.get('handicap'),
+            igbo_member: formData.get('igbo_member'),
           }
         }
       }
@@ -139,7 +146,7 @@ const OfficeUseOnly = ({bowler}) => {
                          id={'verified_average'}/>
                 </div>
               </div>
-              <div className={'row mb-1 mb-sm-0'}>
+              <div className={'row mb-1 mb-sm-2'}>
                 <label className="col-12 col-sm-7 col-form-label text-sm-end pb-0" htmlFor='handicap'>
                   Tournament Handicap
                 </label>
@@ -152,6 +159,20 @@ const OfficeUseOnly = ({bowler}) => {
                          max={300}
                          name={'handicap'}
                          id={'handicap'}/>
+                </div>
+              </div>
+              <div className={'row mb-1 mb-sm-0 d-flex align-items-center'}>
+                <label className={'col-form-label col-12 col-sm-7 text-sm-end pb-0'}
+                       htmlFor={'igbo_memeber'}>
+                  IGBO Membership Verified
+                </label>
+                <div className={'col'}>
+                  <input type={'checkbox'}
+                         value={true}
+                         id={'igbo_member'}
+                         name={'igbo_member'}
+                         checked={formData.get('igbo_member')}
+                         onChange={inputChanged} />
                 </div>
               </div>
               <div className={'row'}>
