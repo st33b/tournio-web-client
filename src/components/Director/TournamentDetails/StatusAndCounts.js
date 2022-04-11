@@ -389,6 +389,10 @@ const StatusAndCounts = ({testEnvironmentUpdated}) => {
     case 'closed':
       bgColor = 'secondary';
       break;
+    case 'demo':
+      bgColor = 'primary';
+      textColor = 'white';
+      break;
     default:
       bgColor = 'dark';
   }
