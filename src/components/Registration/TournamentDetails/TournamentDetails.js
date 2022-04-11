@@ -269,28 +269,55 @@ const TournamentDetails = ({tournament}) => {
 
       {youWillNeed}
 
-      {tournament.shifts.map((shift, i) => (
-        <Row className={`${classes.ProgressBar} my-3`} key={i}>
-          <h6 className={'fw-light'}>
-            Shift: {shift.name}
-          </h6>
-          <div className={`d-flex justify-content-between`}>
-            <div className={classes.EndLabel}>0%</div>
-            <div className={classes.EndLabel}>100%</div>
+      {tournament.shifts.length > 1 && (
+        <Row className={'my-3'}>
+          <h5 className={'fw-light'}>
+            Shifts
+          </h5>
+          {tournament.shifts.map((shift, i) => (
+            <div className={`${classes.ProgressBar} d-flex align-items-center my-2`} key={i}>
+              <div className={'pe-2 py-0'}>
+                {shift.name}:
+              </div>
+              <div className={'flex-grow-1'}>
+                <div className={`d-flex justify-content-between`}>
+                  <div className={classes.EndLabel}>0%</div>
+                  <div className={classes.EndLabel}>100%</div>
+                </div>
+                <div>
+                  <ProgressBar style={{ height: '2rem' }}>
+                    <ProgressBar now={percent(shift.confirmed_count, shift.capacity)}
+                                 label={`${percent(shift.confirmed_count, shift.capacity)}%`}
+                                 variant={'success'} />
+                    <ProgressBar now={percent(shift.desired_count, shift.capacity)}
+                                 label={`${percent(shift.desired_count, shift.capacity)}%`}
+                                 variant={'primary'} />
+                  </ProgressBar>
+                </div>
+              </div>
+            </div>
+          ))}
+          <div className={`${classes.ProgressBarLegend} d-flex justify-content-end pt-2`}>
+            <div>
+              <div>
+                <i className={'bi-square-fill text-success pe-2'} />
+                <span className={'visually-hidden'}>Green</span>
+                Confirmed
+              </div>
+              <div>
+                <i className={'bi-square-fill text-primary pe-2'} />
+                <span className={'visually-hidden'}>Blue</span>
+                Requested
+              </div>
+              <div>
+                <i className={`${classes.Available} bi-square-fill pe-2`} />
+                <span className={'visually-hidden'}>Gray</span>
+                Available
+              </div>
+            </div>
           </div>
-          <Col xs={12}>
-            <ProgressBar style={{ height: '2rem' }}>
-              <ProgressBar now={percent(shift.confirmed_count, shift.capacity)}
-                           label={`${percent(shift.confirmed_count, shift.capacity)}% confirmed`}
-                           variant={'success'} />
-              <ProgressBar now={percent(shift.desired_count, shift.capacity)}
-                           label={`${percent(shift.desired_count, shift.capacity)}% requested`}
-                           variant={'primary'} />
-            </ProgressBar>
-          </Col>
         </Row>
-      ))}
-
+      )}
       <Row className={'mt-4'}>
         {registrationOptions}
         <Col>
