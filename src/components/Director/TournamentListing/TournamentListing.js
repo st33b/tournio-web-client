@@ -98,6 +98,10 @@ const TournamentListing = () => {
               case 'closed':
                 bgColor = 'bg-secondary';
                 break;
+              case 'demo':
+                bgColor = 'bg-info';
+                textColor = 'text-dark';
+                break;
               default:
                 bgColor = 'bg-dark';
             }

@@ -17,25 +17,48 @@ const TournamentDetails = ({tournament}) => {
   /////////////////////////////////////////////////////
   // State banner, to indicate states other than active
 
+  let stateHeader = '';
   let stateText = '';
-  let stateClasses = ['text-center', 'py-2', 'py-md-5'];
+  let stateIcon = '';
+  let stateClasses = ['alert'];
   switch (tournament.state) {
     case 'setup':
-      stateText = 'SETUP MODE: registration data is subject to deletion at any time.';
-      stateClasses.push('bg-warning');
+      stateHeader = 'This tournament is in setup mode.';
+      stateText = 'Creating registrations in this state is not permitted.';
+      stateIcon = <i className={'bi-bricks pe-3'} aria-hidden={true} />
+      stateClasses.push('alert-warning');
+      break;
+    case 'testing':
+      stateHeader = 'This tournament is in testing mode.';
+      stateText = 'You may create registrations and test the payment flow, but data is subject to deletion at any time.';
+      stateIcon = <i className={'bi-tools pe-3'} aria-hidden={true} />
+      stateClasses.push('alert-info');
+      break;
+    case 'demo':
+      stateHeader = 'This is a demonstration tournament.'
+      stateText = 'You may create registrations and test the payment flow, but data is subject to deletion at any time.';
+      stateClasses.push('alert-primary');
+      stateIcon = <i className={'bi-clipboard2-check pe-3'} aria-hidden={true} />
       break;
     case 'closed':
-      stateText = 'Registration for this tournament has closed.';
-      stateClasses.push('bg-dark', 'text-light');
+      stateHeader = 'Registration for this tournament has closed.';
+       stateIcon = <i className={'bi-door-closed pe-3'} aria-hidden={true} />
+      stateClasses.push('alert-dark');
       break;
     default:
       stateText = '';
       stateClasses = ['d-none'];
   }
   const stateBanner = (
-    <h2 className={stateClasses.join(' ')}>
-      {stateText}
-    </h2>
+    <div className={stateClasses.join(' ')}>
+      <h2 className={'alert-heading'}>
+        {stateIcon}
+        {stateHeader}
+      </h2>
+      <p className={'mb-0'}>
+        {stateText}
+      </p>
+    </div>
   );
 
   ////////////////////////////////////////////////////
@@ -134,7 +157,7 @@ const TournamentDetails = ({tournament}) => {
   }
 
   let registrationOptions = '';
-  if (tournament.state === 'testing' || tournament.state === 'active') {
+  if (tournament.state === 'testing' || tournament.state === 'active' || tournament.state === 'demo') {
     registrationOptions = (
       <Col md={6}>
         <Card>
@@ -194,7 +217,7 @@ const TournamentDetails = ({tournament}) => {
   }
 
   let youWillNeed = <hr />;
-  if (tournament.state === 'testing' || tournament.state === 'active') {
+  if (tournament.state === 'testing' || tournament.state === 'active' || tournament.state === 'demo') {
     youWillNeed = (
       <div className={'border rounded-sm bg-light p-3'}>
         <h6>
