@@ -6,7 +6,7 @@ const DeleteTournament = () => {
   const context = useDirectorContext();
   const router = useRouter();
 
-  if (!context) {
+  if (!context || !context.user) {
     return '';
   }
 
