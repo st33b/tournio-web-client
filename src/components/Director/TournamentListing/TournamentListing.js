@@ -99,8 +99,7 @@ const TournamentListing = () => {
                 bgColor = 'bg-secondary';
                 break;
               case 'demo':
-                bgColor = 'bg-info';
-                textColor = 'text-dark';
+                bgColor = 'bg-primary';
                 break;
               default:
                 bgColor = 'bg-dark';
