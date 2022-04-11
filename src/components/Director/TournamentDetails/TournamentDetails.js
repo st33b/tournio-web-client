@@ -11,6 +11,7 @@ import Contacts from "./Contacts";
 import StateChangeButton from "./StateChangeButton";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DeleteTournament from "./DeleteTournament";
+import Shifts from "./Shifts";
 
 const TournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated}) => {
   const context = useDirectorContext();
@@ -30,6 +31,7 @@ const TournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated}) => {
           <Basics />
           <Configuration />
           <AdditionalQuestions />
+          <Shifts />
         </div>
 
         <div className={'col-12 col-md-6 col-lg-4'}>

@@ -1,5 +1,5 @@
 import {useRouter} from "next/router";
-import {Card, Col, ListGroup, Row} from "react-bootstrap";
+import {Card, Col, ListGroup, ProgressBar, Row} from "react-bootstrap";
 import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 
 import classes from './TournamentDetails.module.scss';
@@ -252,6 +252,10 @@ const TournamentDetails = ({tournament}) => {
     );
   }
 
+  const percent = (num, outOf) => {
+    return Math.round(num / outOf * 100);
+  }
+
   return (
     <div className={classes.TournamentDetails}>
       <h2>
@@ -264,6 +268,28 @@ const TournamentDetails = ({tournament}) => {
       {dates}
 
       {youWillNeed}
+
+      {tournament.shifts.map((shift, i) => (
+        <Row className={`${classes.ProgressBar} my-3`} key={i}>
+          <h6 className={'fw-light'}>
+            Shift: {shift.name}
+          </h6>
+          <div className={`d-flex justify-content-between`}>
+            <div className={classes.EndLabel}>0%</div>
+            <div className={classes.EndLabel}>100%</div>
+          </div>
+          <Col xs={12}>
+            <ProgressBar style={{ height: '2rem' }}>
+              <ProgressBar now={percent(shift.confirmed_count, shift.capacity)}
+                           label={`${percent(shift.confirmed_count, shift.capacity)}% confirmed`}
+                           variant={'success'} />
+              <ProgressBar now={percent(shift.desired_count, shift.capacity)}
+                           label={`${percent(shift.desired_count, shift.capacity)}% requested`}
+                           variant={'primary'} />
+            </ProgressBar>
+          </Col>
+        </Row>
+      ))}
 
       <Row className={'mt-4'}>
         {registrationOptions}
