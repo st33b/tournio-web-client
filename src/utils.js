@@ -27,6 +27,15 @@ export const lessThan = (rows, id, filterValue) => {
   });
 };
 
+export const isOrIsNot = (rows, id, filterValue) => {
+  if (filterValue === '') {
+    return rows;
+  }
+  return rows.filter(row => {
+    return row.values[id] === filterValue;
+  });
+}
+
 ///////////////////////////////////////////////////
 
 export const apiHost = `${process.env.NEXT_PUBLIC_API_PROTOCOL}://${process.env.NEXT_PUBLIC_API_HOSTNAME}:${process.env.NEXT_PUBLIC_API_PORT}`;

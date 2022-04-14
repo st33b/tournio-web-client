@@ -11,6 +11,7 @@ const BowlerFilterForm = ({onFilterApplication}) => {
     name: '',
     amount_due: false,
     has_free_entry: false,
+    igbo_member: '',
   }
 
   const [filterForm, setFilterForm] = useState(initialState);
@@ -35,6 +36,9 @@ const BowlerFilterForm = ({onFilterApplication}) => {
         break;
       case 'name':
         updatedForm[inputIdentifier] = event.target.value;
+        break;
+      case 'igbo_member':
+        updatedForm['igbo_member'] = event.target.value === 'true';
         break;
       default:
         console.log('uhh...');
@@ -63,10 +67,10 @@ const BowlerFilterForm = ({onFilterApplication}) => {
       <Form.Group controlId={'name'}
                   as={Row}
                   className={'mb-3'}>
-        <Form.Label column sm={3} className={'d-none d-sm-block text-end'}>
+        <Form.Label column sm={2} className={'d-none d-sm-block text-end'}>
           Name
         </Form.Label>
-        <Col sm={9} className={'d-none d-sm-block'}>
+        <Col sm={10} className={'d-none d-sm-block'}>
           <Form.Control type={'text'}
                         placeholder={'Name'}
                         value={filterForm.name}
@@ -74,34 +78,68 @@ const BowlerFilterForm = ({onFilterApplication}) => {
           />
         </Col>
       </Form.Group>
-      <Form.Group controlId={'amount_due'}
-                  as={Row}
-                  className={'mb-3'}>
-        <Col sm={{span: 9, offset: 3}}>
-          <Form.Check type={'checkbox'}
-                      label={'Not paid in full'}
-                      checked={filterForm.amount_due}
-                      onChange={(event) => inputChangedHandler(event, 'amount_due')}
-          />
+      <Row>
+        <Col sm={6}>
+
+          <Form.Group controlId={'amount_due'}
+                      as={Row}
+                      className={'mb-3'}>
+            <Col sm={{span: 8, offset: 4}}>
+              <Form.Check type={'checkbox'}
+                          label={'Not paid in full'}
+                          checked={filterForm.amount_due}
+                          onChange={(event) => inputChangedHandler(event, 'amount_due')}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group controlId={'has_free_entry'}
+                      as={Row}
+                      className={'mb-3'}>
+            <Col sm={{span: 8, offset: 4}}>
+              <Form.Check type={'checkbox'}
+                          label={'Has a free entry'}
+                          checked={filterForm.has_free_entry}
+                          onChange={(event) => inputChangedHandler(event, 'has_free_entry')}
+              />
+            </Col>
+          </Form.Group>
+
         </Col>
-      </Form.Group>
-      <Form.Group controlId={'has_free_entry'}
-                  as={Row}
-                  className={'mb-3'}>
-        <Col sm={{span: 9, offset: 3}}>
-          <Form.Check type={'checkbox'}
-                      label={'Has a free entry'}
-                      checked={filterForm.has_free_entry}
-                      onChange={(event) => inputChangedHandler(event, 'has_free_entry')}
-          />
+        <Col sm={6}>
+
+          <Form.Group className={'mb-3'}>
+            <Form.Label>
+              IGBO Membership:
+            </Form.Label>
+              <Form.Check type={'radio'}
+                          value={true}
+                          label={'Verified'}
+                          name={'igbo_member'}
+                          id={'igbo_member_true'}
+                          checked={filterForm.igbo_member === true}
+                          onChange={(event) => inputChangedHandler(event, 'igbo_member')}
+              />
+              <Form.Check type={'radio'}
+                          value={false}
+                          label={'Unverified'}
+                          name={'igbo_member'}
+                          id={'igbo_member_false'}
+                          checked={filterForm.igbo_member === false}
+                          onChange={(event) => inputChangedHandler(event, 'igbo_member')}
+              />
+          </Form.Group>
+
         </Col>
-      </Form.Group>
+      </Row>
+
+
+
       <Form.Group as={Row}>
         <Col sm={{span: 9, offset: 3}} className={'d-flex'}>
-          <Button variant={'secondary'} type={'submit'}>
+          <Button variant={'dark'} type={'submit'}>
             Apply Filters
           </Button>
-          <Button variant={'outline-secondary'}
+          <Button variant={'outline-dark'}
                   type={'button'}
                   className={'ms-auto'}
                   onClick={resetFilterHandler}
