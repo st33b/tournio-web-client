@@ -76,7 +76,7 @@ const Page = () => {
   }
 
   return (
-    <div>
+    <div className={'container-md'}>
       {displayedError && (
         <Row>
           <Col>
