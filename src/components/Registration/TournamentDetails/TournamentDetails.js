@@ -25,24 +25,24 @@ const TournamentDetails = ({tournament}) => {
     case 'setup':
       stateHeader = 'This tournament is in setup mode.';
       stateText = 'Creating registrations in this state is not permitted.';
-      stateIcon = <i className={'bi-bricks pe-3'} aria-hidden={true} />
+      stateIcon = <i className={'bi-bricks pe-3'} aria-hidden={true}/>
       stateClasses.push('alert-warning');
       break;
     case 'testing':
       stateHeader = 'This tournament is in testing mode.';
       stateText = 'You may create registrations and test the payment flow, but data is subject to deletion at any time.';
-      stateIcon = <i className={'bi-tools pe-3'} aria-hidden={true} />
+      stateIcon = <i className={'bi-tools pe-3'} aria-hidden={true}/>
       stateClasses.push('alert-info');
       break;
     case 'demo':
       stateHeader = 'This is a demonstration tournament.'
       stateText = 'You may create registrations and test the payment flow, but data is subject to deletion at any time.';
       stateClasses.push('alert-primary');
-      stateIcon = <i className={'bi-clipboard2-check pe-3'} aria-hidden={true} />
+      stateIcon = <i className={'bi-clipboard2-check pe-3'} aria-hidden={true}/>
       break;
     case 'closed':
       stateHeader = 'Registration for this tournament has closed.';
-       stateIcon = <i className={'bi-door-closed pe-3'} aria-hidden={true} />
+      stateIcon = <i className={'bi-door-closed pe-3'} aria-hidden={true}/>
       stateClasses.push('alert-dark');
       break;
     default:
@@ -216,7 +216,7 @@ const TournamentDetails = ({tournament}) => {
     );
   }
 
-  let youWillNeed = <hr />;
+  let youWillNeed = <hr/>;
   if (tournament.state === 'testing' || tournament.state === 'active' || tournament.state === 'demo') {
     youWillNeed = (
       <div className={'border rounded-sm bg-light p-3'}>
@@ -269,52 +269,58 @@ const TournamentDetails = ({tournament}) => {
 
       {youWillNeed}
 
-      {tournament.shifts.length > 1 && (
+      {tournament.shifts && tournament.shifts.length > 1 && (
         <Row className={'my-3'}>
           <h5 className={'fw-light'}>
             Shifts
           </h5>
-          {tournament.shifts.map((shift, i) => (
-            <div className={`${classes.ProgressBar} d-flex align-items-center my-2`} key={i}>
-              <div className={'pe-2 py-0'}>
-                {shift.name}:
-              </div>
-              <div className={'flex-grow-1'}>
-                <div className={`d-flex justify-content-between`}>
-                  <div className={classes.EndLabel}>0%</div>
-                  <div className={classes.EndLabel}>100%</div>
+          {tournament.shifts.map((shift, i) => {
+            const desiredCount = Math.min(shift.desired_count, shift.capacity - shift.confirmed_count);
+            return (
+              <div className={`${classes.ProgressBar} d-flex align-items-center my-2`} key={i}>
+                <div className={'pe-2 py-0'}>
+                  {shift.name}:
                 </div>
-                <div>
-                  <ProgressBar style={{ height: '2rem' }}>
-                    <ProgressBar now={percent(shift.confirmed_count, shift.capacity)}
-                                 label={`${percent(shift.confirmed_count, shift.capacity)}%`}
-                                 variant={'success'} />
-                    <ProgressBar now={percent(shift.desired_count, shift.capacity)}
-                                 label={`${percent(shift.desired_count, shift.capacity)}%`}
-                                 variant={'primary'} />
-                  </ProgressBar>
+                <div className={'flex-grow-1'}>
+                  <div className={`d-flex justify-content-between`}>
+                    <div className={classes.EndLabel}>0%</div>
+                    <div className={classes.EndLabel}>100%</div>
+                  </div>
+                  <div>
+                    <ProgressBar style={{height: '2rem'}}>
+                      <ProgressBar now={percent(shift.confirmed_count, shift.capacity)}
+                                   label={`${percent(shift.confirmed_count, shift.capacity)}%`}
+                                   variant={'success'}/>
+                      <ProgressBar now={percent(desiredCount, shift.capacity)}
+                                   label={`${percent(desiredCount, shift.capacity)}%`}
+                                   variant={'primary'}/>
+                    </ProgressBar>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
           <div className={`${classes.ProgressBarLegend} d-flex justify-content-end pt-2`}>
             <div>
               <div>
-                <i className={'bi-square-fill text-success pe-2'} />
+                <i className={'bi-square-fill text-success pe-2'}/>
                 <span className={'visually-hidden'}>Green</span>
-                Confirmed
+                Confirmed*
               </div>
               <div>
-                <i className={'bi-square-fill text-primary pe-2'} />
+                <i className={'bi-square-fill text-primary pe-2'}/>
                 <span className={'visually-hidden'}>Blue</span>
                 Requested
               </div>
               <div>
-                <i className={`${classes.Available} bi-square-fill pe-2`} />
+                <i className={`${classes.Available} bi-square-fill pe-2`}/>
                 <span className={'visually-hidden'}>Gray</span>
                 Available
               </div>
             </div>
+          </div>
+          <div className={classes.ConfirmedNote}>
+            * A team's place in a shift is not confirmed until all team members have paid their registration fees.
           </div>
         </Row>
       )}

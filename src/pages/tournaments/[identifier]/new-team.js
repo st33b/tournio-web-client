@@ -17,8 +17,8 @@ const Page = () => {
     dispatch(newTeamRegistrationInitiated());
   }, [dispatch]);
 
-  const onTeamFormCompleted = (teamName) => {
-    dispatch(teamInfoAdded(teamName));
+  const onTeamFormCompleted = (teamName, shift) => {
+    dispatch(teamInfoAdded(teamName, shift));
     router.push(`/tournaments/${entry.tournament.identifier}/new-team-bowler`);
   }
 

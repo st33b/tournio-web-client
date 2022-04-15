@@ -270,11 +270,8 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
     return isValid;
   }
 
-  let position = entry.bowlers.length + 1;
+  let position = entry.team.bowlers.length + 1;
   let buttonText = 'Save Bowler';
-  if (entry.team) {
-    position = entry.team.bowlers.length + 1;
-  }
 
   // In the event we're editing a bowler, populate initialFormState with their values
   if (editBowlerNum) {
