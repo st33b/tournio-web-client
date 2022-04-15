@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {useTable, useSortBy, useFilters} from 'react-table';
 import {List} from 'immutable';
 
@@ -8,6 +8,7 @@ import {doesNotEqual, isOrIsNot} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './BowlerListing.module.scss';
+import {Overlay, OverlayTrigger, Popover} from "react-bootstrap";
 
 const IgboMemberCell = ({
                           value: initialValue,
@@ -16,12 +17,17 @@ const IgboMemberCell = ({
                           updateTheData,
                         }) => {
   const [checked, setChecked] = useState(initialValue);
+  const [showPopover, setShowPopover] = useState(false);
+  const target = useRef(null);
 
   const igboMemberBoxChanged = (event) => {
     const isCheckedNow = event.target.checked;
 
     setChecked(isCheckedNow);
     updateTheData(index, id, isCheckedNow);
+
+    // trigger the popover
+    setShowPopover(true);
   }
 
   useEffect(() => {
@@ -29,11 +35,27 @@ const IgboMemberCell = ({
   }, [initialValue]);
 
   return (
-    <input type={'checkbox'}
-           className={'form-check-input'}
-           checked={checked}
-           onChange={igboMemberBoxChanged}
-    />
+    <div className={classes.IgboMember}>
+      <input type={'checkbox'}
+             className={'form-check-input'}
+             checked={checked}
+             onChange={igboMemberBoxChanged}
+             ref={target}
+      />
+      <Overlay target={target.current}
+               rootClose={true}
+               onHide={() => { setShowPopover(false)}}
+               show={showPopover}
+               placement={'right'}>
+        {(props) => (
+          <Popover id={`popover-${id}`} {...props}>
+            <Popover.Body>
+              Saved
+            </Popover.Body>
+          </Popover>
+        )}
+      </Overlay>
+    </div>
   );
 }
 
@@ -76,6 +98,11 @@ const BowlerListing = ({bowlers}) => {
       Header: 'Position',
       accessor: 'position',
       disableSortBy: true,
+      Cell: ({value}) => (
+        <div className={'text-center'}>
+          {value}
+        </div>
+      )
     },
     {
       Header: ({column}) => <SortableTableHeader text={'Date Registered'} column={column}/>,
@@ -96,10 +123,10 @@ const BowlerListing = ({bowlers}) => {
         const classes = value ? ['text-success', 'bi-check-lg'] : ['text-danger', 'bi-x-lg'];
         const text = value ? 'Yes' : 'No';
         return (
-          <>
+          <div className={'text-center'}>
             <i className={classes.join(' ')} aria-hidden={true}/>
             <span className={'visually-hidden'}>{text}</span>
-          </>
+          </div>
         )
       }
     },
