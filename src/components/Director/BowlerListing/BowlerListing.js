@@ -1,33 +1,68 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
+import {useRouter} from "next/router";
 import {useTable, useSortBy, useFilters} from 'react-table';
 import {List} from 'immutable';
+import {Overlay, Popover} from "react-bootstrap";
 
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
 import BowlerFilterForm from "../BowlerFilterForm/BowlerFilterForm";
-import {doesNotEqual, isOrIsNot} from "../../../utils";
+import {directorApiRequest, doesNotEqual, isOrIsNot} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './BowlerListing.module.scss';
-import {Overlay, OverlayTrigger, Popover} from "react-bootstrap";
 
 const IgboMemberCell = ({
                           value: initialValue,
-                          row: {index},
+                          row: {index, original},
                           column: {id},
                           updateTheData,
                         }) => {
   const [checked, setChecked] = useState(initialValue);
   const [showPopover, setShowPopover] = useState(false);
   const target = useRef(null);
+  const context = useDirectorContext();
+  const router = useRouter();
 
-  const igboMemberBoxChanged = (event) => {
-    const isCheckedNow = event.target.checked;
-
-    setChecked(isCheckedNow);
-    updateTheData(index, id, isCheckedNow);
+  const onChangeSuccess = (checked, data) => {
+    updateTheData(index, id, checked);
 
     // trigger the popover
     setShowPopover(true);
+  }
+
+  const onChangeFailure = (data) => {
+    console.log("Failure", data);
+  }
+
+  const submitStatusChange = (newStatus) => {
+    const uri = `/director/bowlers/${original.identifier}`;
+    const requestConfig = {
+      method: 'patch',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        bowler: {
+          verified_data: {
+            igbo_member: newStatus,
+          }
+        }
+      }
+    }
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      router: router,
+      onSuccess: (data) => onChangeSuccess(newStatus, data),
+      onFailure: onChangeFailure,
+    });
+  }
+
+  const igboMemberBoxChanged = (event) => {
+    const isCheckedNow = event.target.checked;
+    setChecked(isCheckedNow);
+    submitStatusChange(isCheckedNow);
   }
 
   useEffect(() => {
