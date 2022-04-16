@@ -275,7 +275,7 @@ const TournamentDetails = ({tournament}) => {
             Shifts
           </h5>
           {tournament.shifts.map((shift, i) => {
-            const desiredCount = Math.min(shift.desired_count, shift.capacity - shift.confirmed_count);
+            const requestedCount = Math.min(shift.requested_count, shift.capacity - shift.confirmed_count);
             return (
               <div className={`${classes.ProgressBar} d-flex align-items-center my-2`} key={i}>
                 <div className={'pe-2 py-0'}>
@@ -291,8 +291,8 @@ const TournamentDetails = ({tournament}) => {
                       <ProgressBar now={percent(shift.confirmed_count, shift.capacity)}
                                    label={`${percent(shift.confirmed_count, shift.capacity)}%`}
                                    variant={'success'}/>
-                      <ProgressBar now={percent(desiredCount, shift.capacity)}
-                                   label={`${percent(desiredCount, shift.capacity)}%`}
+                      <ProgressBar now={percent(requestedCount, shift.capacity)}
+                                   label={`${percent(requestedCount, shift.capacity)}%`}
                                    variant={'primary'}/>
                     </ProgressBar>
                   </div>

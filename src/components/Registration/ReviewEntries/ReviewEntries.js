@@ -7,7 +7,7 @@ import {Alert, Col, Row} from "react-bootstrap";
 const ReviewEntries = ({editBowler, context}) => {
   const {entry} = useRegistrationContext();
 
-  if (!entry.bowlers) {
+  if (!entry.team) {
     return '';
   }
 
@@ -15,14 +15,14 @@ const ReviewEntries = ({editBowler, context}) => {
   if (context === 'join' || context === 'solo') {
     content = (
       <Col className={'px-lg-2'}>
-        <BowlerSummary bowler={entry.bowlers[entry.bowlers.length - 1]}
+        <BowlerSummary bowler={entry.team.bowlers[entry.team.bowlers.length - 1]}
                        editClicked={editBowler}
         />
       </Col>
     );
   } else {
-    content = entry.bowlers.map((bowler, i) => {
-          const colSize = entry.bowlers.length > 1 ? 6 : 12;
+    content = entry.team.bowlers.map((bowler, i) => {
+          const colSize = entry.team.bowlers.length > 1 ? 6 : 12;
           return (
             <Col md={colSize} className={'px-lg-2'} key={i}>
               <BowlerSummary bowler={bowler}

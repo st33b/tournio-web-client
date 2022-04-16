@@ -248,7 +248,7 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
     setBowlerForm(formData);
   }, [entry]);
 
-  if (!entry || !entry.tournament || !entry.bowlers) {
+  if (!entry || !entry.tournament || !entry.team) {
     return '';
   }
 
@@ -276,7 +276,7 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
   // In the event we're editing a bowler, populate initialFormState with their values
   if (editBowlerNum) {
     position = editBowlerNum;
-    const bowlerToEdit = entry.bowlers[position - 1];
+    const bowlerToEdit = entry.team.bowlers[position - 1];
     for (const inputIdentifier in initialFormState.formFields) {
       initialFormState.formFields[inputIdentifier].elementConfig.value = bowlerToEdit[inputIdentifier];
       initialFormState.formFields[inputIdentifier].valid = checkValidity(
