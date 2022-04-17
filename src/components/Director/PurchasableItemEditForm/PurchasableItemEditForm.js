@@ -51,7 +51,7 @@ const PurchasableItemEditForm = ({item}) => {
     return '';
   }
 
-  const allowEdit = context.tournament.state !== 'active';
+  const allowEdit = context.tournament.state !== 'active' && context.tournament.state !== 'demo';
 
   const toggleEdit = (event, enable) => {
     if (event) {
@@ -110,7 +110,35 @@ const PurchasableItemEditForm = ({item}) => {
         toggleEdit(null, false)
       },
       onFailure: (_) => {
-        console.log("Failed to save config item.")
+        console.log("Failed to save item.")
+      },
+    });
+  }
+
+  const deleteSuccess = (data) => {
+    toggleEdit(null, false);
+    const newItems = context.tournament.purchasable_items.filter(i => i.identifier !== item.identifier);
+    const newTournament = {...context.tournament};
+    newTournament.purchasable_items = newItems;
+    context.setTournament(newTournament);
+  }
+  const onDelete = (event) => {
+    event.preventDefault();
+    if (!confirm('Are you sure you wish to delete this item?')) {
+      return;
+    }
+    const uri = `/director/purchasable_items/${item.identifier}`;
+    const requestConfig = {
+      method: 'delete',
+    };
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      router: router,
+      onSuccess: deleteSuccess,
+      onFailure: (_) => {
+        console.log("Failed to delete item.")
       },
     });
   }
@@ -359,11 +387,18 @@ const PurchasableItemEditForm = ({item}) => {
           }
         </fieldset>
         {itemPreview}
-        <div className={`text-end ${!itemPreview && 'pt-3'}`}>
+        <div className={`d-flex justify-content-end ${!itemPreview && 'pt-3'}`}>
+          <button type={'button'}
+                  title={'Delete'}
+                  onClick={onDelete}
+                  className={'btn btn-sm btn-danger me-auto'}>
+            <i className={'bi-slash-circle pe-2'} aria-hidden={true} />
+            Delete
+          </button>
           <button type={'button'}
                   title={'Cancel'}
                   onClick={onCancel}
-                  className={'btn btn-sm btn-outline-danger me-2'}>
+                  className={'btn btn-sm btn-outline-dark me-2'}>
             <span className={'visually-hidden'}>Cancel</span>
             <i className={'bi-x-lg'} aria-hidden={true}/>
           </button>
