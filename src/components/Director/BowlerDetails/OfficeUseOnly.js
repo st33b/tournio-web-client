@@ -27,13 +27,14 @@ const OfficeUseOnly = ({bowler}) => {
     if (!bowler) {
       return;
     }
-    if (!bowler.verified_average || !bowler.handicap) {
-      return;
-    }
     const newFormData = formData.withMutations(map => {
-      map.set('verified_average', bowler.verified_average)
-        .set('handicap', bowler.handicap)
-        .set('igbo_member', bowler.igbo_member)
+      if (bowler.verified_average) {
+        map.set('verified_average', bowler.verified_average);
+      }
+      if (bowler.handicap) {
+        map.set('handicap', bowler.handicap);
+      }
+      map.set('igbo_member', bowler.igbo_member)
     });
     newFormData.set('valid', isValid(newFormData));
     setFormData(newFormData);
