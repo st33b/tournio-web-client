@@ -31,6 +31,14 @@ const Shifts = () => {
             <dl>
               <div className={'row'}>
                 <dt className={'col-5'}>
+                  Display Order
+                </dt>
+                <dd className={'col'}>
+                  {shift.display_order}
+                </dd>
+              </div>
+              <div className={'row'}>
+                <dt className={'col-5'}>
                   Name
                 </dt>
                 <dd className={'col'}>
@@ -66,7 +74,7 @@ const Shifts = () => {
                   Requested teams
                 </dt>
                 <dd className={'col'}>
-                  {shift.desired_count}
+                  {shift.requested_count}
                 </dd>
               </div>
 

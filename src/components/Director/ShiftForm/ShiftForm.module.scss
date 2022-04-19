@@ -1,7 +1,4 @@
 .ShiftForm {
-  .FormDisplayed {
-    background-color: #f8f8f8;
-  }
   .HeaderRow {
     text-align: center;
     h6 {
@@ -13,4 +10,7 @@
     font-weight: 200;
     font-size: 95%;
   }
+}
+.FormDisplayed {
+  background-color: #f8f8f8;
 }
