@@ -1,4 +1,5 @@
 import {Card, ListGroup} from "react-bootstrap";
+import ShiftForm from '../ShiftForm/ShiftForm';
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './TournamentDetails.module.scss';
@@ -22,7 +23,10 @@ const Shifts = () => {
   } else {
     content = (
       <ListGroup variant={'flush'}>
-        {context.tournament.shifts.map((shift, i) => (
+        {context.tournament.shifts.length === 0 &&
+          <ListGroup.Item>None configured</ListGroup.Item>
+        }
+        {context.tournament.shifts.length > 0 && context.tournament.shifts.map((shift, i) => (
           <ListGroup.Item key={i}>
             <dl>
               <div className={'row'}>
@@ -79,6 +83,7 @@ const Shifts = () => {
         Shifts
       </Card.Header>
       {content}
+      <ShiftForm />
     </Card>
   )
 }
