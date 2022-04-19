@@ -10,6 +10,7 @@ import BowlerDetails from "../../../components/Director/BowlerDetails/BowlerDeta
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ManualPayment from "../../../components/Director/BowlerDetails/ManualPayment";
 import OfficeUseOnly from "../../../components/Director/BowlerDetails/OfficeUseOnly";
+import ResendEmailButtons from "../../../components/Director/BowlerDetails/ResendEmailButtons";
 
 const Page = () => {
   const router = useRouter();
@@ -539,6 +540,7 @@ const Page = () => {
         </Col>
         <Col md={4}>
           <OfficeUseOnly bowler={bowler} />
+          <ResendEmailButtons bowler={bowler} />
           {linkFreeEntryCard}
           {moveToTeamCard}
           {purchases}
