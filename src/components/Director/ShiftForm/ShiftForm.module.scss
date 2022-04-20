@@ -10,6 +10,13 @@
     font-weight: 200;
     font-size: 95%;
   }
+  .ExistingShift {
+    padding: 0.5rem 1rem;
+  }
+  .ExistingShift:hover {
+    background-color: #eee;
+    cursor: pointer;
+  }
 }
 .FormDisplayed {
   background-color: #f8f8f8;

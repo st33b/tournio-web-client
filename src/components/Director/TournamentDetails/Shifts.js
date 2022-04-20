@@ -27,58 +27,8 @@ const Shifts = () => {
           <ListGroup.Item>None configured</ListGroup.Item>
         }
         {context.tournament.shifts.length > 0 && context.tournament.shifts.map((shift, i) => (
-          <ListGroup.Item key={i}>
-            <dl>
-              <div className={'row'}>
-                <dt className={'col-5'}>
-                  Display Order
-                </dt>
-                <dd className={'col'}>
-                  {shift.display_order}
-                </dd>
-              </div>
-              <div className={'row'}>
-                <dt className={'col-5'}>
-                  Name
-                </dt>
-                <dd className={'col'}>
-                  {shift.name}
-                </dd>
-              </div>
-              <div className={'row'}>
-                <dt className={'col-5'}>
-                  Description
-                </dt>
-                <dd className={'col'}>
-                  {shift.description}
-                </dd>
-              </div>
-              <div className={'row'}>
-                <dt className={'col-5'}>
-                  Capacity
-                </dt>
-                <dd className={'col'}>
-                  {shift.capacity} teams
-                </dd>
-              </div>
-              <div className={'row'}>
-                <dt className={'col-5'}>
-                  Confirmed teams
-                </dt>
-                <dd className={'col'}>
-                  {shift.confirmed_count}
-                </dd>
-              </div>
-              <div className={'row'}>
-                <dt className={'col-5'}>
-                  Requested teams
-                </dt>
-                <dd className={'col'}>
-                  {shift.requested_count}
-                </dd>
-              </div>
-
-            </dl>
+          <ListGroup.Item key={i} className={'p-0'}>
+            <ShiftForm shift={shift}/>
           </ListGroup.Item>
         ))}
       </ListGroup>

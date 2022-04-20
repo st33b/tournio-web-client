@@ -8,7 +8,7 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import classes from './ShiftForm.module.scss';
 import {directorApiRequest} from "../../../utils";
 
-const ShiftForm = () => {
+const ShiftForm = ({shift}) => {
   const context = useDirectorContext();
   const router = useRouter();
 
@@ -26,9 +26,20 @@ const ShiftForm = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  // useEffect(() => {
-  //
-  // }, [context]);
+  useEffect(() => {
+    if (!shift) {
+      return;
+    }
+    const existingShift = {
+      name: shift.name,
+      description: shift.description,
+      capacity: shift.capacity,
+      display_order: shift.display_order,
+
+      valid: true,
+    };
+    setFormData(Map(existingShift));
+  }, [shift]);
 
   if (!context || !context.tournament) {
     return '';
@@ -106,10 +117,92 @@ const ShiftForm = () => {
     outerClasses.push(classes.FormDisplayed);
   }
 
+  const toggleEdit = (event) => {
+    event.preventDefault();
+    setFormDisplayed(!formDisplayed);
+  }
+
+  const deleteShift = (event) => {
+    event.preventDefault();
+    // ...
+  }
+
+  const allowDelete = shift && (context.tournament.state !== 'active' || context.tournament.state !== 'demo');
+
   return (
     <div className={outerClasses.join(' ')}>
-      <Card.Body>
-        {formDisplayed &&
+      {!formDisplayed && !shift &&
+        <Card.Body>
+          <div className={'text-center'}>
+            <button type={'button'}
+                    className={'btn btn-outline-primary'}
+                    role={'button'}
+                    onClick={addClicked}>
+              <i className={'bi-plus-lg'} aria-hidden={true}/>{' '}
+              Add
+            </button>
+          </div>
+        </Card.Body>
+      }
+      {!formDisplayed && shift &&
+        <a href={'#'}
+           className={'text-body text-decoration-none'}
+           title={'Edit details'}
+           onClick={toggleEdit}>
+          <dl className={classes.ExistingShift}>
+            <div className={'row'}>
+              <dt className={'col-5'}>
+                Display Order
+              </dt>
+              <dd className={'col'}>
+                {shift.display_order}
+              </dd>
+            </div>
+            <div className={'row'}>
+              <dt className={'col-5'}>
+                Name
+              </dt>
+              <dd className={'col'}>
+                {shift.name}
+              </dd>
+            </div>
+            <div className={'row'}>
+              <dt className={'col-5'}>
+                Description
+              </dt>
+              <dd className={'col'}>
+                {shift.description}
+              </dd>
+            </div>
+            <div className={'row'}>
+              <dt className={'col-5'}>
+                Capacity
+              </dt>
+              <dd className={'col'}>
+                {shift.capacity} teams
+              </dd>
+            </div>
+            <div className={'row'}>
+              <dt className={'col-5'}>
+                Confirmed teams
+              </dt>
+              <dd className={'col'}>
+                {shift.confirmed_count}
+              </dd>
+            </div>
+            <div className={'row'}>
+              <dt className={'col-5'}>
+                Requested teams
+              </dt>
+              <dd className={'col'}>
+                {shift.requested_count}
+              </dd>
+            </div>
+          </dl>
+        </a>
+      }
+      {formDisplayed &&
+        <Card.Body>
           <form onSubmit={formSubmitted}>
             <div className={'row mb-3'}>
               <label htmlFor={'name'}
@@ -155,7 +248,7 @@ const ShiftForm = () => {
                        required={true}
                        onChange={inputChanged}
                        value={formData.get('capacity')}
-                    />
+                />
               </div>
               <div className={'col-6'}>
                 <label htmlFor={'display_order'} className={'form-label ps-0 mb-1'}>
@@ -172,53 +265,55 @@ const ShiftForm = () => {
               </div>
             </div>
             <div className={'row'}>
-              <div className={'d-flex justify-content-between'}>
+              <div className={'d-flex justify-content-end'}>
+                {allowDelete && (
+                  <button type={'button'}
+                          title={'Delete'}
+                          onClick={deleteShift}
+                          className={'btn btn-danger me-auto'}>
+                    <i className={'bi-slash-circle pe-2'} aria-hidden={true}/>
+                    Delete
+                  </button>
+                )}
                 <button type={'button'}
                         title={'Cancel'}
                         onClick={formCancelled}
-                        className={'btn btn-outline-danger'}>
-                  <i className={'bi-x-lg pe-2'} aria-hidden={true}/>
-                  Cancel
+                        className={'btn btn-outline-dark me-2'}>
+                  <i className={'bi-x-lg'} aria-hidden={true}/>
+                  <span className={'visually-hidden'}>
+                    Cancel
+                  </span>
                 </button>
                 <button type={'submit'}
                         title={'Save'}
                         disabled={!formData.get('valid')}
                         className={'btn btn-success'}>
-                  Save
-                  <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>
+                  <i className={'bi-check-lg'} aria-hidden={true}/>
+                  <span className={'visually-hidden'}>
+                    Save
+                  </span>
                 </button>
               </div>
             </div>
           </form>
-        }
-        {!formDisplayed &&
-          <div className={'text-center'}>
-            <button type={'button'}
-                    className={'btn btn-outline-primary'}
-                    role={'button'}
-                    onClick={addClicked}>
-              <i className={'bi-plus-lg'} aria-hidden={true}/>{' '}
-              Add
-            </button>
+        </Card.Body>
+      }
+      {successMessage && (
+        <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mx-3'}
+             role={'alert'}>
+          <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
+          <div className={'me-auto'}>
+            {successMessage}
+            <button type="button"
+                    className={"btn-close"}
+                    data-bs-dismiss="alert"
+                    onClick={() => setSuccessMessage(null)}
+                    aria-label="Close"/>
           </div>
-        }
-        {successMessage && (
-          <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'}
-               role={'alert'}>
-            <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
-            <div className={'me-auto'}>
-              {successMessage}
-              <button type="button"
-                      className={"btn-close"}
-                      data-bs-dismiss="alert"
-                      onClick={() => setSuccessMessage(null)}
-                      aria-label="Close"/>
-            </div>
-          </div>
-        )}
+        </div>
+      )}
 
-        {errorMessage}
-      </Card.Body>
+      {errorMessage}
     </div>
   )
 }
