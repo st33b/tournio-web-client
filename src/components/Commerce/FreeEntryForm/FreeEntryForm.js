@@ -54,7 +54,7 @@ const FreeEntryForm = () => {
   }
 
   const isValid = (value) => {
-    return value.trim().length > 3;
+    return value.trim().length > 0;
   }
 
   const inputChangedHandler = (event) => {
