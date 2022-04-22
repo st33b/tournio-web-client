@@ -76,7 +76,7 @@ const ShiftForm = ({shift}) => {
       data.get('display_order') > 0;
   }
 
-  const formSubmitted = (event) => {
+  const addShiftFormSubmitted = (event) => {
     event.preventDefault();
 
     const uri = `/director/tournaments/${context.tournament.identifier}/shifts`;
@@ -147,13 +147,55 @@ const ShiftForm = ({shift}) => {
     const tournament = {...context.tournament};
     tournament.shifts = context.tournament.shifts.filter(s => s.identifier !== shift.identifier);
     context.setTournament(tournament);
-    setSuccessMessage('Shift deleted');
-    setFormDisplayed(false);
     // Anything else we need to do? I'm pretty sure a re-render will take this component instance away entirely...
   }
 
   const deleteShiftFailure = (data) => {
     console.log("Uh oh...", data);
+  }
+
+  const updateShiftFormSubmitted = (event) => {
+    event.preventDefault();
+
+    const uri = `/director/shifts/${shift.identifier}`;
+    const requestConfig = {
+      method: 'patch',
+      data: {
+        shift: {
+          capacity: formData.get('capacity'),
+          name: formData.get('name'),
+          description: formData.get('description'),
+          display_order: formData.get('display_order'),
+        }
+      }
+    };
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      router: router,
+      onSuccess: updateShiftSuccess,
+      onFailure: updateShiftFailure,
+    })
+  }
+
+  const updateShiftSuccess = (data) => {
+    const tournament = {...context.tournament};
+    tournament.shifts = [...context.tournament.shifts];
+    const index = tournament.shifts.findIndex(s => s.identifier === shift.identifier)
+    tournament.shifts[index] = data;
+    context.setTournament(tournament);
+    setSuccessMessage('Shift updated.');
+    setFormDisplayed(false);
+  }
+
+  const updateShiftFailure = (data) => {
+    console.log('damn', data);
+  }
+
+  let submitFunction = addShiftFormSubmitted;
+  if (shift) {
+    submitFunction = updateShiftFormSubmitted;
   }
 
   return (
@@ -230,7 +272,7 @@ const ShiftForm = ({shift}) => {
       }
       {formDisplayed &&
         <Card.Body>
-          <form onSubmit={formSubmitted}>
+          <form onSubmit={submitFunction}>
             <div className={'row mb-3'}>
               <label htmlFor={'name'}
                      className={'form-label mb-1'}>
