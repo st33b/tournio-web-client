@@ -45,6 +45,8 @@ const ShiftForm = ({shift}) => {
     return '';
   }
 
+  const allowDelete = shift && (context.tournament.state !== 'active' || context.tournament.state !== 'demo');
+
   const addClicked = (event) => {
     event.preventDefault();
     setFormDisplayed(true);
@@ -124,10 +126,35 @@ const ShiftForm = ({shift}) => {
 
   const deleteShift = (event) => {
     event.preventDefault();
-    // ...
+    if (!allowDelete) {
+      return;
+    }
+    const uri = `/director/shifts/${shift.identifier}`;
+    const requestConfig = {
+      method: 'delete',
+    };
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      router: router,
+      onSuccess: deleteShiftSuccess,
+      onFailure: deleteShiftFailure,
+    });
   }
 
-  const allowDelete = shift && (context.tournament.state !== 'active' || context.tournament.state !== 'demo');
+  const deleteShiftSuccess = (data) => {
+    const tournament = {...context.tournament};
+    tournament.shifts = context.tournament.shifts.filter(s => s.identifier !== shift.identifier);
+    context.setTournament(tournament);
+    setSuccessMessage('Shift deleted');
+    setFormDisplayed(false);
+    // Anything else we need to do? I'm pretty sure a re-render will take this component instance away entirely...
+  }
+
+  const deleteShiftFailure = (data) => {
+    console.log("Uh oh...", data);
+  }
 
   return (
     <div className={outerClasses.join(' ')}>
