@@ -29,6 +29,7 @@ const TeamListing = ({teams, caption}) => {
             <tr>
               <th>Name</th>
               <th>Date Registered</th>
+              <th>Requested Shift</th>
               <th>Bowlers</th>
             </tr>
           </thead>
@@ -43,6 +44,9 @@ const TeamListing = ({teams, caption}) => {
                 </td>
                 <td>
                   {t.date_registered}
+                </td>
+                <td>
+                  {t.shift.name}
                 </td>
                 <td>
                   {t.size}

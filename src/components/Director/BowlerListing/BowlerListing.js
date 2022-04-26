@@ -162,7 +162,7 @@ const BowlerListing = ({bowlers}) => {
             <i className={classes.join(' ')} aria-hidden={true}/>
             <span className={'visually-hidden'}>{text}</span>
           </div>
-        )
+        );
       }
     },
     {

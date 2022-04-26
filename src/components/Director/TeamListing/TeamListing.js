@@ -30,6 +30,24 @@ const TeamListing = ({teams}) => {
         accessor: 'date_registered',
       },
       {
+        Header: ({column}) => <SortableTableHeader text={'Requested Shift'} column={column}/>,
+        accessor: 'shift',
+      },
+      {
+        Header: 'Shift Confirmed?',
+        accessor: 'shift_confirmed',
+        Cell: ({cell: {value}}) => {
+          const classes = value ? ['text-success', 'bi-check-lg'] : ['text-danger', 'bi-x-lg'];
+          const text = value ? 'Yes' : 'No';
+          return (
+            <div className={'text-center'}>
+              <i className={classes.join(' ')} aria-hidden={true}/>
+              <span className={'visually-hidden'}>{text}</span>
+            </div>
+          );
+        }
+      },
+      {
         Header: 'Size',
         accessor: 'size',
         disableSortBy: true,

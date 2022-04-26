@@ -223,7 +223,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
   return (
     <div className={classes.TeamDetails}>
       <div className={'row mb-2'}>
-        <label htmlFor={'team_name'} className={'col-form-label fw-bold text-end col-12 col-sm-4'}>
+        <label htmlFor={'team_name'} className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
           Team Name
         </label>
         <div className={'col'}>
@@ -233,6 +233,34 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
                  id={'name'}
                  value={teamForm.fields.name.value}
                  onChange={(event) => inputChangedHandler(event, 'name')}
+          />
+        </div>
+      </div>
+      <div className={'row mb-2'}>
+        <label htmlFor={'shift'}
+               className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
+          Requested Shift
+        </label>
+        <div className={'col'}>
+          <input type={'text'}
+                 readOnly={true}
+                 className={'form-control-plaintext'}
+                 id={'shift'}
+                 value={team.shift.name}
+          />
+        </div>
+      </div>
+      <div className={'row mb-2'}>
+        <label htmlFor={'shift_confirmed'}
+               className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
+          Shift Confirmed?
+        </label>
+        <div className={'col'}>
+          <input type={'text'}
+                 readOnly={true}
+                 className={'form-control-plaintext'}
+                 id={'shift'}
+                 value={team.shift_confirmed ? 'Yes' : 'No' }
           />
         </div>
       </div>

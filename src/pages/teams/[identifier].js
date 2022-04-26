@@ -51,7 +51,7 @@ const Page = () => {
     if (!entry.team || !entry.tournament) {
       return;
     }
-    if (entry.team.tournament.identifier !== entry.tournament.identifier) {
+    if (entry.tournament.identifier !== entry.tournament.identifier) {
       fetchTournamentDetails(entry.team.tournament.identifier, dispatch, commerceDispatch);
     }
   }, [identifier, entry, dispatch, commerceDispatch]);
