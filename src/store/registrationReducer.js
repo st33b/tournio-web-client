@@ -35,7 +35,7 @@ export const registrationReducer = (state, action) => {
       return updateObject(state, {
         team: {
           name: action.name,
-          shift: state.tournament.shifts.find(s => s.id === action.shiftId),
+          shift: state.tournament.shifts.find(s => s.identifier === action.shiftId),
           bowlers: [],
         }
       });

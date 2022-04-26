@@ -37,7 +37,7 @@ const TeamForm = ({teamFormCompleted}) => {
       return;
     }
 
-    teamFormCompleted(teamForm.get('teamName'), parseInt(teamForm.get('shift')));
+    teamFormCompleted(teamForm.get('teamName'), teamForm.get('shift'));
   }
 
   const isValid = (formData) => {
@@ -70,7 +70,7 @@ const TeamForm = ({teamFormCompleted}) => {
           >
             <option>-- Choose a shift</option>
             {entry.tournament.available_shifts.map(shift => (
-              <option key={shift.id} value={shift.id}>{shift.name}</option>
+              <option key={shift.identifier} value={shift.identifier}>{shift.name}</option>
             ))}
           </Form.Select>
         </Col>

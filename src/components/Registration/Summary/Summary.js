@@ -30,7 +30,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
     shiftText = (
       <p>
         <span>
-          Shift:{' '}
+          Requested Shift:{' '}
         </span>
         <span className={'fw-bold'}>
           {entry.team.shift.name}
