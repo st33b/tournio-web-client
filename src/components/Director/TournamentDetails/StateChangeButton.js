@@ -3,6 +3,7 @@ import Button from 'react-bootstrap/Button';
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './TournamentDetails.module.scss';
+import ErrorBoundary from "../../common/ErrorBoundary";
 
 const StateChangeButton = ({stateChangeInitiated}) => {
   const context = useDirectorContext();
@@ -81,23 +82,25 @@ const StateChangeButton = ({stateChangeInitiated}) => {
   let stateChangeButton = '';
   if (variant || demoButton) {
     stateChangeButton = (
-      <div className={classes.StateChange}>
-        <form onSubmit={stateChangeSubmitHandler}>
-          <input type={'hidden'} name={'state_action'} value={stateChangeValue} />
-          <Button variant={variant}
-                  disabled={disabled}
-                  title={titleText}
-                  type={'submit'}>
-            {stateChangeText}
-          </Button>
-          {titleText && <div className={`${classes.WhyDisabledText} text-muted pt-3`}>({titleText})</div> }
-        </form>
-        {demoButton && (
-          <div className={'d-flex justify-content-center pt-3'}>
-            {demoButton}
-          </div>
-        )}
-      </div>
+      <ErrorBoundary>
+        <div className={classes.StateChange}>
+          <form onSubmit={stateChangeSubmitHandler}>
+            <input type={'hidden'} name={'state_action'} value={stateChangeValue} />
+            <Button variant={variant}
+                    disabled={disabled}
+                    title={titleText}
+                    type={'submit'}>
+              {stateChangeText}
+            </Button>
+            {titleText && <div className={`${classes.WhyDisabledText} text-muted pt-3`}>({titleText})</div> }
+          </form>
+          {demoButton && (
+            <div className={'d-flex justify-content-center pt-3'}>
+              {demoButton}
+            </div>
+          )}
+        </div>
+      </ErrorBoundary>
     );
   }
 
