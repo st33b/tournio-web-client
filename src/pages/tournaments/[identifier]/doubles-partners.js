@@ -7,10 +7,24 @@ import ProgressIndicator from "../../../components/Registration/ProgressIndicato
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import DoublesPartners from "../../../components/Registration/DoublesPartners/DoublesPartners";
 import {newTeamPartnersChosen} from "../../../store/actions/registrationActions";
+import {useEffect, useState} from "react";
 
 const Page = () => {
   const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
+
+  const [partnersChosen, setPartnersChosen] = useState(false);
+
+  useEffect(() => {
+    if (!entry || !entry.bowlers) {
+      return;
+    }
+    const theyHavePartners = entry.bowlers.reduce(
+      (prev, bowler) => prev || !!bowler.doubles_partner_num,
+      entry.bowlers.length < 2
+    );
+    setPartnersChosen(theyHavePartners);
+  }, [entry]);
 
   const moveOnToReview = () => {
     router.push(`/tournaments/${entry.tournament.identifier}/review-entries`);
@@ -53,6 +67,7 @@ const Page = () => {
       newBowlers[bowlersLeftToUpdate[0]].doubles_partner_num = null;
     }
 
+    setPartnersChosen(true);
     dispatch(newTeamPartnersChosen(newBowlers));
   }
 
@@ -65,6 +80,7 @@ const Page = () => {
       <Col>
         <Summary nextStepClicked={moveOnToReview}
                  nextStepText={'Review Entries'}
+                 buttonDisabled={!partnersChosen}
         />
       </Col>
     </Row>
