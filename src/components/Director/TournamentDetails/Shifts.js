@@ -23,10 +23,13 @@ const Shifts = () => {
   } else {
     content = (
       <ListGroup variant={'flush'}>
-        {context.tournament.shifts.length === 0 &&
+        {!context.tournament.shifts &&
           <ListGroup.Item>None configured</ListGroup.Item>
         }
-        {context.tournament.shifts.length > 0 && context.tournament.shifts.map((shift, i) => (
+        {context.tournament.shifts && context.tournament.shifts.length === 0 &&
+          <ListGroup.Item>None configured</ListGroup.Item>
+        }
+        {context.tournament.shifts && context.tournament.shifts.length > 0 && context.tournament.shifts.map((shift, i) => (
           <ListGroup.Item key={i} className={'p-0'}>
             <ShiftForm shift={shift}/>
           </ListGroup.Item>
