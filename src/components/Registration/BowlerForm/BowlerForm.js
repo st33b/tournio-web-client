@@ -47,6 +47,10 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
         validation: {
           required: false,
         },
+        helper: {
+          url: null,
+          text: '(if different from first name)',
+        },
         valid: true,
         touched: false,
       },
