@@ -25,7 +25,8 @@ const Page = () => {
     <Row>
       <Col lg={8}>
         <BowlerForm editBowlerNum={bowlerNum}
-                    bowlerInfoSaved={onBowlerInfoUpdated} />
+                    bowlerInfoSaved={onBowlerInfoUpdated}
+                    includeShiftSelection={true} />
       </Col>
       <Col>
         <Summary nextStepClicked={null}

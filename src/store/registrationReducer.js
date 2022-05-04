@@ -94,6 +94,7 @@ export const registrationReducer = (state, action) => {
     case actionTypes.SOLO_BOWLER_INFO_UPDATED:
       const soloTeam = {...state.team}
       soloTeam.bowlers = [action.bowler];
+      soloTeam.shift = state.tournament.shifts.find(s => s.identifier === action.bowler.shift);
       return updateObject(state, {
         team: soloTeam,
       });

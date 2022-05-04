@@ -33,9 +33,10 @@ const Page = () => {
   }
 
   const submitRegistration = () => {
+    const newTeam = {...entry.team};
+    newTeam.name = 'A Solo Bowler';
     submitNewTeamRegistration(entry.tournament,
-      'A Solo Bowler',
-      entry.bowlers,
+      newTeam,
       soloRegistrationSuccess,
       soloRegistrationFailure);
     setProcessing(true);

@@ -26,7 +26,7 @@ const Page = () => {
     <Row>
       <Col lg={8}>
         <ProgressIndicator active={'bowlers'} />
-        <BowlerForm bowlerInfoSaved={onCompletion} />
+        <BowlerForm bowlerInfoSaved={onCompletion} includeShiftSelection={true} />
       </Col>
       <Col>
         <Summary />
