@@ -194,8 +194,14 @@ const ShiftForm = ({shift}) => {
   }
 
   let submitFunction = addShiftFormSubmitted;
+  let colorClass = '';
   if (shift) {
     submitFunction = updateShiftFormSubmitted;
+    if (shift.confirmed_count === shift.capacity) {
+      colorClass = classes.Full;
+    } else if (shift.confirmed_count + shift.requested_count >= shift.capacity) {
+      colorClass = classes.AlmostFull;
+    }
   }
 
   return (
@@ -243,7 +249,7 @@ const ShiftForm = ({shift}) => {
                 {shift.description}
               </dd>
             </div>
-            <div className={'row'}>
+            <div className={`row ${colorClass}`}>
               <dt className={'col-5'}>
                 Capacity
               </dt>
@@ -251,7 +257,7 @@ const ShiftForm = ({shift}) => {
                 {shift.capacity} teams
               </dd>
             </div>
-            <div className={'row'}>
+            <div className={`row ${colorClass}`}>
               <dt className={'col-5'}>
                 Confirmed teams
               </dt>
@@ -259,7 +265,7 @@ const ShiftForm = ({shift}) => {
                 {shift.confirmed_count}
               </dd>
             </div>
-            <div className={'row'}>
+            <div className={`row ${colorClass}`}>
               <dt className={'col-5'}>
                 Requested teams
               </dt>

@@ -198,7 +198,6 @@ export const submitNewTeamRegistration = (tournament, team, onSuccess, onFailure
 export const submitJoinTeamRegistration = (tournament, team, bowler, onSuccess, onFailure) => {
   // make the post
   const bowlerData = { bowler: convertBowlerDataForPost(tournament, bowler) };
-  console.log(bowler);
   const teamId = team.identifier;
   axios.post(`${apiHost}/teams/${teamId}/bowlers`, bowlerData)
     .then(response => {
