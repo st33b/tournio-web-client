@@ -15,20 +15,9 @@ const TeamListing = ({teams}) => {
   if (directorContext && directorContext.tournament) {
     identifier = directorContext.tournament.identifier;
   }
-  const columns = useMemo(() => [
-      {
-        Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
-        accessor: 'name',
-        Cell: ({row, value}) => (
-          <a href={`/director/teams/${row.original.identifier}`}>
-            {value}
-          </a>
-        )
-      },
-      {
-        Header: ({column}) => <SortableTableHeader text={'Initially Created'} column={column}/>,
-        accessor: 'date_registered',
-      },
+  const shiftColumns = [];
+  if (directorContext.tournament.shifts.length > 1) {
+    shiftColumns.push(
       {
         Header: ({column}) => <SortableTableHeader text={'Requested Shift'} column={column}/>,
         accessor: 'shift',
@@ -47,15 +36,34 @@ const TeamListing = ({teams}) => {
           );
         }
       },
+    );
+  }
+  const columns = useMemo(() => [
+      {
+        Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
+        accessor: 'name',
+        Cell: ({row, value}) => (
+          <a href={`/director/teams/${row.original.identifier}`}>
+            {value}
+          </a>
+        )
+      },
+      {
+        Header: ({column}) => <SortableTableHeader text={'Initially Created'} column={column}/>,
+        accessor: 'date_registered',
+      },
       {
         Header: 'Size',
         accessor: 'size',
         disableSortBy: true,
         filter: lessThan,
       },
-    ], []);
+    ].concat(shiftColumns), []);
 
-  const data = teams;
+  let data = [];
+  if (teams) {
+    data = teams;
+  }
 
   // tell react-table which things we want to use (sorting, filtering)
   // and retrieve properties/functions they let us hook into

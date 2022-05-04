@@ -23,6 +23,10 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
         value: '',
         valid: true,
       },
+      shift: {
+        value: '',
+        valid: true,
+      },
       bowlers_attributes: {
         value: [],
         valid: true,
@@ -38,6 +42,12 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     }
     const newFormData = {...teamForm}
     newFormData.fields.name.value = team.name;
+    if (directorContext.tournament.shifts.length > 1) {
+      newFormData.fields.shift = {
+        value: team.shift.identifier,
+        valid: true,
+      };
+    }
     newFormData.fields.bowlers_attributes.value = team.bowlers.map((b) => {
       return {
         id: b.id,
@@ -53,16 +63,20 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     const updatedTeamForm = {...teamForm};
     updatedTeamForm.touched = true;
 
-    if (inputName === 'name') {
-      updatedTeamForm.fields[inputName].value = event.target.value;
-      updatedTeamForm.fields[inputName].valid = updatedTeamForm.fields[inputName].value.length > 0;
-    } else if (inputName === 'position') {
-      updatedTeamForm.fields.bowlers_attributes.value[index].position = parseInt(event.target.value);
-      const positions = updatedTeamForm.fields.bowlers_attributes.value.map((attrs) => attrs.position).sort();
-      updatedTeamForm.fields.bowlers_attributes.valid = positions.reduce((result, value, index, array) => result && array[index - 1] < value);
+    switch (inputName) {
+      case 'name':
+      case 'shift':
+        updatedTeamForm.fields[inputName].value = event.target.value;
+        updatedTeamForm.fields[inputName].valid = updatedTeamForm.fields[inputName].value.length > 0;
+        break;
+      case 'position':
+        updatedTeamForm.fields.bowlers_attributes.value[index].position = parseInt(event.target.value);
+        const positions = updatedTeamForm.fields.bowlers_attributes.value.map((attrs) => attrs.position).sort();
+        updatedTeamForm.fields.bowlers_attributes.valid = positions.reduce((result, value, index, array) => result && array[index - 1] < value);
+        break;
     }
-    // Do we need to Handle validity of partner assignments?
 
+    // Do we need to Handle validity of partner assignments?
     let formIsValid = true;
     for (let fieldName in updatedTeamForm.fields) {
       formIsValid = formIsValid && updatedTeamForm.fields[fieldName].valid;
@@ -236,34 +250,43 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
           />
         </div>
       </div>
-      <div className={'row mb-2'}>
-        <label htmlFor={'shift'}
-               className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
-          Requested Shift
-        </label>
-        <div className={'col'}>
-          <input type={'text'}
-                 readOnly={true}
-                 className={'form-control-plaintext'}
-                 id={'shift'}
-                 value={team.shift.name}
-          />
+      {directorContext.tournament.shifts.length > 1 &&
+        <div className={'row mb-2'}>
+          <label htmlFor={'shift'}
+                 className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
+            Requested Shift
+          </label>
+          <div className={'col'}>
+            <select className={'form-select'}
+                    name={'shift'}
+                    id={'shift'}
+                    onChange={(event) => inputChangedHandler(event, 'shift')}
+                    value={teamForm.fields.shift.value}>
+              {directorContext.tournament.shifts.map(shift => (
+                <option key={shift.identifier} value={shift.identifier}>
+                  {shift.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-      </div>
-      <div className={'row mb-2'}>
-        <label htmlFor={'shift_confirmed'}
-               className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
-          Shift Confirmed?
-        </label>
-        <div className={'col'}>
-          <input type={'text'}
-                 readOnly={true}
-                 className={'form-control-plaintext'}
-                 id={'shift'}
-                 value={team.shift_confirmed ? 'Yes' : 'No' }
-          />
+      }
+      {directorContext.tournament.shifts.length > 1 &&
+        <div className={'row mb-2'}>
+          <label htmlFor={'shift_confirmed'}
+                 className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
+            Shift Confirmed?
+          </label>
+          <div className={'col'}>
+            <input type={'text'}
+                   readOnly={true}
+                   className={'form-control-plaintext'}
+                   id={'shift_confirmed'}
+                   value={team.shift_confirmed ? 'Yes' : 'No'}
+            />
+          </div>
         </div>
-      </div>
+      }
       <div className={'table-responsive'}>
         <table className={'table table-striped caption-top align-middle'} {...getTableProps}>
           <caption className={classes.Caption}>
