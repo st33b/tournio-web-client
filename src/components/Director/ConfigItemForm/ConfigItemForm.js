@@ -74,7 +74,7 @@ const ConfigItemForm = ({item}) => {
     },
   }
 
-  const allowEdit = context.tournament.state !== 'active';
+  const allowEdit = context.tournament.state !== 'active' && !['email_in_dev', 'display_capacity'].includes(item.key);
 
   const toggleEdit = (event, enable) => {
     if (event) {
@@ -87,11 +87,18 @@ const ConfigItemForm = ({item}) => {
     const newFormData = {...formData};
     if (item.key === 'entry_deadline') {
       newFormData.value = formatISO(event);
+    } else if (item.key === 'email_in_dev' || item.key === 'display_capacity') {
+      newFormData.value = event.target.checked;
+      // onFormSubmit(event);
     } else {
       newFormData.value = event.target.value;
     }
     newFormData.valid = newFormData.value.length > 0;
     setFormData(newFormData);
+
+    if (item.key === 'email_in_dev' || item.key === 'display_capacity') {
+      onFormSubmit();
+    }
   }
 
   const onCancel = (event) => {
@@ -101,8 +108,7 @@ const ConfigItemForm = ({item}) => {
     setFormData(newFormData);
     toggleEdit(null, false);
   }
-  const onFormSubmit = (event) => {
-    event.preventDefault();
+  const onFormSubmit = () => {
     const uri = `/director/config_items/${item.id}`;
     const requestConfig = {
       method: 'patch',
@@ -142,6 +148,19 @@ const ConfigItemForm = ({item}) => {
       case 'entry_deadline':
         displayedValue = formData.value ? format(new Date(formData.value), 'PPp') : '';
         break;
+      case 'display_capacity':
+      case 'email_in_dev':
+        displayedValue = (
+          <div className={'form-switch'}>
+            <input type={'checkbox'}
+                   className={'form-check-input'}
+                   role={'switch'}
+                   name={'config_item'}
+                   checked={formData.value}
+                   onChange={onInputChanged} />
+          </div>
+        );
+        break;
       default:
         displayedValue = formData.value;
         break;
@@ -171,6 +190,7 @@ const ConfigItemForm = ({item}) => {
     const elementClassNames = [];
     let children = null;
     let inputElement = null;
+    let wrapperClass = '';
     switch (item.key) {
       case 'time_zone':
         elementName = 'select';
@@ -198,10 +218,11 @@ const ConfigItemForm = ({item}) => {
       case 'location':
       case 'paypal_client_id':
       case 'website':
-      default:
         elementName = 'input';
         elementProps.type = 'text';
         elementClassNames.push('form-control');
+        break;
+      default:
         break;
     }
     elementProps.className = elementClassNames.join(' ');

@@ -21,7 +21,7 @@ const TeamForm = ({teamFormCompleted}) => {
       return;
     }
     if (entry.tournament.available_shifts.length === 1) {
-      const newTeamForm = teamForm.set('shift', entry.tournament.available_shifts[0].id);
+      const newTeamForm = teamForm.set('shift', entry.tournament.available_shifts[0].identifier);
       setTeamForm(newTeamForm);
     }
   }, [entry]);
@@ -67,6 +67,7 @@ const TeamForm = ({teamFormCompleted}) => {
           <Form.Select name={'shift'}
                        required
                        onChange={inputChangedHandler}
+                       value={teamForm.get('shift')}
           >
             <option>-- Choose a shift</option>
             {entry.tournament.available_shifts.map(shift => (

@@ -29,10 +29,15 @@
     background-color: burlywood;
   }
 
-  .ProgressBar {
-    .EndLabel {
-      font-size: 85%;
-      font-weight: 100;
+  .ShiftInfo {
+    h6 {
+      //font-weight: 300;
+    }
+    .ProgressBar {
+      .EndLabel {
+        font-size: 85%;
+        font-weight: 100;
+      }
     }
   }
   .ProgressBarLegend {

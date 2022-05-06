@@ -267,39 +267,106 @@ const TournamentDetails = ({tournament}) => {
 
       {dates}
 
-      {youWillNeed}
-
       {tournament.shifts && tournament.shifts.length > 1 && (
         <Row className={'my-3'}>
           <h5 className={'fw-light'}>
-            Shifts
+            The tournament is offering {tournament.shifts.length} shifts to choose from:
           </h5>
           {tournament.shifts.map((shift, i) => {
             const requestedCount = Math.min(shift.requested_count, shift.capacity - shift.confirmed_count);
+            let borderClass = 'border-bottom';
+            if (i === tournament.shifts.length - 1) {
+              borderClass = '';
+            }
             return (
-              <div className={`${classes.ProgressBar} d-flex align-items-center my-2`} key={i}>
-                <div className={'pe-2 py-0'}>
-                  {shift.name}:
-                </div>
-                <div className={'flex-grow-1'}>
-                  <div className={`d-flex justify-content-between`}>
-                    <div className={classes.EndLabel}>0%</div>
-                    <div className={classes.EndLabel}>100%</div>
+              <div key={i} className={`${classes.ShiftInfo} ${borderClass} py-3`}>
+                <div className={'row'}>
+                  <div className={'col-12 col-sm-4'}>
+                    <h6>
+                      {shift.name}
+                    </h6>
+                    <p>
+                      Capacity: {shift.capacity} teams / {shift.capacity * 4} bowlers
+                    </p>
                   </div>
-                  <div>
-                    <ProgressBar style={{height: '2rem'}}>
-                      <ProgressBar now={percent(shift.confirmed_count, shift.capacity)}
-                                   label={`${percent(shift.confirmed_count, shift.capacity)}%`}
-                                   variant={'success'}/>
-                      <ProgressBar now={percent(requestedCount, shift.capacity)}
-                                   label={`${percent(requestedCount, shift.capacity)}%`}
-                                   variant={'primary'}/>
-                    </ProgressBar>
+                  <div className={'col'}>
+                    <table className={'table table-sm table-bordered mb-0'}>
+                      <thead>
+                      <tr>
+                        <th>
+                          Event
+                        </th>
+                        <th>
+                          Day
+                        </th>
+                        <th>
+                          Time
+                        </th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      {shift.details.map((event, j) => (
+                        <tr key={j}>
+                          <td>
+                            {event.event}
+                          </td>
+                          <td>
+                            {event.day}
+                          </td>
+                          <td>
+                            {event.time}
+                          </td>
+                        </tr>
+                      ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
+                <div className={`${classes.ProgressBar} d-flex align-items-center my-2`} key={i}>
+                  <div className={'flex-grow-1'}>
+                    <div className={`d-flex justify-content-between`}>
+                      <div className={classes.EndLabel}>0%</div>
+                      <div className={classes.EndLabel}>100%</div>
+                    </div>
+                    <div>
+                      <ProgressBar style={{height: '2rem'}}>
+                        <ProgressBar now={percent(shift.confirmed_count, shift.capacity)}
+                                     label={`${percent(shift.confirmed_count, shift.capacity)}%`}
+                                     variant={'success'}/>
+                        <ProgressBar now={percent(requestedCount, shift.capacity)}
+                                     label={`${percent(requestedCount, shift.capacity)}%`}
+                                     variant={'primary'}/>
+                      </ProgressBar>
+                    </div>
+                  </div>
+                </div>
+
               </div>
+
+              // <div className={`${classes.ProgressBar} d-flex align-items-center my-2`} key={i}>
+              //   <div className={'pe-2 py-0'}>
+              //     {shift.name}:
+              //   </div>
+              //   <div className={'flex-grow-1'}>
+              //     <div className={`d-flex justify-content-between`}>
+              //       <div className={classes.EndLabel}>0%</div>
+              //       <div className={classes.EndLabel}>100%</div>
+              //     </div>
+              //     <div>
+              //       <ProgressBar style={{height: '2rem'}}>
+              //         <ProgressBar now={percent(shift.confirmed_count, shift.capacity)}
+              //                      label={`${percent(shift.confirmed_count, shift.capacity)}%`}
+              //                      variant={'success'}/>
+              //         <ProgressBar now={percent(requestedCount, shift.capacity)}
+              //                      label={`${percent(requestedCount, shift.capacity)}%`}
+              //                      variant={'primary'}/>
+              //       </ProgressBar>
+              //     </div>
+              //   </div>
+              // </div>
             )
           })}
+
           <div className={`${classes.ProgressBarLegend} d-flex justify-content-end pt-2`}>
             <div>
               <div>
@@ -324,6 +391,9 @@ const TournamentDetails = ({tournament}) => {
           </div>
         </Row>
       )}
+
+      {youWillNeed}
+
       <Row className={'mt-4'}>
         {registrationOptions}
         <Col>
