@@ -3,6 +3,7 @@ import {Card, Col, ListGroup, ProgressBar, Row} from "react-bootstrap";
 import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 
 import classes from './TournamentDetails.module.scss';
+import ProgressBarLegend from "./ProgressBarLegend";
 
 const USBC_ID_LOOKUP_URL = 'https://webapps.bowl.com/USBCFindA/Home/Member';
 const IGBO_ID_LOOKUP_URL = 'http://igbo.org/tournaments/igbots-id-lookup/';
@@ -256,72 +257,62 @@ const TournamentDetails = ({tournament}) => {
     return Math.round(num / outOf * 100);
   }
 
-  return (
-    <div className={classes.TournamentDetails}>
-      <h2>
-        {tournament.name} ({tournament.year})
-      </h2>
-      {website}
-      {stateBanner}
-      {testingEnvironment}
-
-      {dates}
-
-      {tournament.shifts && tournament.shifts.length > 1 && (
-        <Row className={'my-3'}>
-          <h5 className={'fw-light'}>
-            The tournament is offering {tournament.shifts.length} shifts to choose from:
-          </h5>
-          {tournament.shifts.map((shift, i) => {
-            const requestedCount = Math.min(shift.requested_count, shift.capacity - shift.confirmed_count);
-            let borderClass = 'border-bottom';
-            if (i === tournament.shifts.length - 1) {
-              borderClass = '';
-            }
-            return (
-              <div key={i} className={`${classes.ShiftInfo} ${borderClass} py-3`}>
-                <div className={'row'}>
-                  <div className={'col-12 col-sm-4'}>
-                    <h6>
-                      {shift.name}
-                    </h6>
-                    <p>
-                      Capacity: {shift.capacity} teams / {shift.capacity * 4} bowlers
-                    </p>
-                  </div>
-                  <div className={'col'}>
-                    <table className={'table table-sm table-bordered mb-0'}>
-                      <thead>
-                      <tr>
-                        <th>
-                          Event
-                        </th>
-                        <th>
-                          Day
-                        </th>
-                        <th>
-                          Time
-                        </th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      {shift.details.map((event, j) => (
-                        <tr key={j}>
-                          <td>
-                            {event.event}
-                          </td>
-                          <td>
-                            {event.day}
-                          </td>
-                          <td>
-                            {event.time}
-                          </td>
-                        </tr>
-                      ))}
-                      </tbody>
-                    </table>
-                  </div>
+  let shiftContent = '';
+  const displayCapacity = !!tournament.config_items.find(ci => ci.key === 'display_capacity' && ci.value)
+  if (tournament.shifts.length > 1) {
+    shiftContent = (
+      <div className={`${classes.Shifts} my-3 border rounded-sm bg-light p-2 p-sm-3`}>
+        <h4 className={'fw-light'}>
+          Shift Days/Times
+        </h4>
+        {tournament.shifts.map((shift, i) => {
+          const requestedCount = Math.min(shift.requested_count, shift.capacity - shift.confirmed_count);
+          return (
+            <div key={i} className={`${classes.ShiftInfo} border rounded-sm p-2 p-sm-3 mb-2 mb-sm-3`}>
+              <div className={'row'}>
+                <div className={'col-12 col-sm-4'}>
+                  <h5>
+                    {shift.name}
+                  </h5>
+                  <p>
+                    Capacity: {shift.capacity} teams / {shift.capacity * 4} bowlers
+                  </p>
                 </div>
+                <div className={'col'}>
+                  <table className={'table table-sm table-bordered mb-0'}>
+                    <thead>
+                    <tr>
+                      <th>
+                        Event
+                      </th>
+                      <th>
+                        Day
+                      </th>
+                      <th>
+                        Time
+                      </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {shift.details.map((event, j) => (
+                      <tr key={j}>
+                        <td>
+                          {event.event}
+                        </td>
+                        <td>
+                          {event.day}
+                        </td>
+                        <td>
+                          {event.time}
+                        </td>
+                      </tr>
+                    ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {displayCapacity && (
                 <div className={`${classes.ProgressBar} d-flex align-items-center my-2`} key={i}>
                   <div className={'flex-grow-1'}>
                     <div className={`d-flex justify-content-between`}>
@@ -340,61 +331,34 @@ const TournamentDetails = ({tournament}) => {
                     </div>
                   </div>
                 </div>
-
-              </div>
-
-              // <div className={`${classes.ProgressBar} d-flex align-items-center my-2`} key={i}>
-              //   <div className={'pe-2 py-0'}>
-              //     {shift.name}:
-              //   </div>
-              //   <div className={'flex-grow-1'}>
-              //     <div className={`d-flex justify-content-between`}>
-              //       <div className={classes.EndLabel}>0%</div>
-              //       <div className={classes.EndLabel}>100%</div>
-              //     </div>
-              //     <div>
-              //       <ProgressBar style={{height: '2rem'}}>
-              //         <ProgressBar now={percent(shift.confirmed_count, shift.capacity)}
-              //                      label={`${percent(shift.confirmed_count, shift.capacity)}%`}
-              //                      variant={'success'}/>
-              //         <ProgressBar now={percent(requestedCount, shift.capacity)}
-              //                      label={`${percent(requestedCount, shift.capacity)}%`}
-              //                      variant={'primary'}/>
-              //       </ProgressBar>
-              //     </div>
-              //   </div>
-              // </div>
-            )
-          })}
-
-          <div className={`${classes.ProgressBarLegend} d-flex justify-content-end pt-2`}>
-            <div>
-              <div>
-                <i className={'bi-square-fill text-success pe-2'}/>
-                <span className={'visually-hidden'}>Green</span>
-                Confirmed*
-              </div>
-              <div>
-                <i className={'bi-square-fill text-primary pe-2'}/>
-                <span className={'visually-hidden'}>Blue</span>
-                Requested
-              </div>
-              <div>
-                <i className={`${classes.Available} bi-square-fill pe-2`}/>
-                <span className={'visually-hidden'}>Gray</span>
-                Available
-              </div>
+              )}
             </div>
-          </div>
-          <div className={classes.ConfirmedNote}>
-            * A team's place in a shift is not confirmed until all team members have paid their registration fees.
-          </div>
-        </Row>
-      )}
+          )
+        })}
+
+        {displayCapacity && <ProgressBarLegend />}
+      </div>
+    );
+  } else if (tournament.shifts.length === 1) {
+    
+  }
+
+  return (
+    <div className={classes.TournamentDetails}>
+      <h2>
+        {tournament.name} ({tournament.year})
+      </h2>
+      {website}
+      {stateBanner}
+      {testingEnvironment}
+
+      {dates}
+
+      {shiftContent}
 
       {youWillNeed}
 
-      <Row className={'mt-4'}>
+      <Row className={'mt-3'}>
         {registrationOptions}
         <Col>
           <h6 className="my-2">

@@ -29,8 +29,13 @@
     background-color: burlywood;
   }
 
+  .Shifts {
+    //background-color: #f3f3f3;
+  }
+
   .ShiftInfo {
-    h6 {
+    background-color: white;
+    h5 {
       //font-weight: 300;
     }
     .ProgressBar {
@@ -39,16 +44,5 @@
         font-weight: 100;
       }
     }
-  }
-  .ProgressBarLegend {
-    .Available {
-      color: #e9ecef;
-    }
-  }
-  .ConfirmedNote {
-    text-align: right;
-    font-size: 85%;
-    font-weight: 200;
-    padding-top: 0.5rem;
   }
 }
