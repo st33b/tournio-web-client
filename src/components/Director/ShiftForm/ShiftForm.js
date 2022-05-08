@@ -199,7 +199,7 @@ const ShiftForm = ({shift}) => {
     submitFunction = updateShiftFormSubmitted;
     if (shift.confirmed_count === shift.capacity) {
       colorClass = classes.Full;
-    } else if (shift.confirmed_count + shift.requested_count >= shift.capacity) {
+    } else if (shift.confirmed_count + shift.requested_count + 16 >= shift.capacity) {
       colorClass = classes.AlmostFull;
     }
   }
@@ -254,12 +254,12 @@ const ShiftForm = ({shift}) => {
                 Capacity
               </dt>
               <dd className={'col'}>
-                {shift.capacity} teams
+                {shift.capacity} bowlers
               </dd>
             </div>
             <div className={`row ${colorClass}`}>
               <dt className={'col-5'}>
-                Confirmed teams
+                No. Confirmed
               </dt>
               <dd className={'col'}>
                 {shift.confirmed_count}
@@ -267,7 +267,7 @@ const ShiftForm = ({shift}) => {
             </div>
             <div className={`row ${colorClass}`}>
               <dt className={'col-5'}>
-                Requested teams
+                No. Requested
               </dt>
               <dd className={'col'}>
                 {shift.requested_count}
@@ -314,7 +314,7 @@ const ShiftForm = ({shift}) => {
             <div className={'row mb-3'}>
               <div className={'col-6'}>
                 <label htmlFor={'capacity'} className={'form-label ps-0 mb-1'}>
-                  Capacity
+                  Capacity (bowlers)
                 </label>
                 <input type={'number'}
                        className={'form-control'}

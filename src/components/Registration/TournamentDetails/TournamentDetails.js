@@ -275,7 +275,7 @@ const TournamentDetails = ({tournament}) => {
                     {shift.name}
                   </h5>
                   <p>
-                    Capacity: {shift.capacity} teams / {shift.capacity * 4} bowlers
+                    Capacity: {shift.capacity} bowlers / {shift.capacity / 4} teams
                   </p>
                 </div>
                 <div className={'col'}>
@@ -340,7 +340,7 @@ const TournamentDetails = ({tournament}) => {
       </div>
     );
   } else if (tournament.shifts.length === 1) {
-    
+
   }
 
   return (
