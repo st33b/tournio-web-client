@@ -340,7 +340,40 @@ const TournamentDetails = ({tournament}) => {
       </div>
     );
   } else if (tournament.shifts.length === 1) {
+    const shift = tournament.shifts[0];
+    const requestedCount = Math.min(shift.requested_count, shift.capacity - shift.confirmed_count);
+    shiftContent = displayCapacity && (
+      <div className={`${classes.ShiftInfo} my-3 border rounded-sm p-2 p-sm-3`}>
+        <div>
+          <h5 className={'fw-light'}>
+            Tournament Capacity
+          </h5>
+          <p>
+            The tournament is limited to {shift.capacity} bowlers / {shift.capacity / 4} teams
+          </p>
 
+          <div className={`${classes.ProgressBar} d-flex align-items-center my-2`}>
+            <div className={'flex-grow-1'}>
+              <div className={`d-flex justify-content-between`}>
+                <div className={classes.EndLabel}>0%</div>
+                <div className={classes.EndLabel}>100%</div>
+              </div>
+              <div>
+                <ProgressBar style={{height: '2rem'}}>
+                  <ProgressBar now={percent(shift.confirmed_count, shift.capacity)}
+                               label={`${percent(shift.confirmed_count, shift.capacity)}%`}
+                               variant={'success'}/>
+                  <ProgressBar now={percent(requestedCount, shift.capacity)}
+                               label={`${percent(requestedCount, shift.capacity)}%`}
+                               variant={'primary'}/>
+                </ProgressBar>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ProgressBarLegend />
+      </div>
+    );
   }
 
   return (

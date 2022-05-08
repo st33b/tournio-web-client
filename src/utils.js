@@ -218,11 +218,14 @@ const convertTeamDataForServer = (tournament, team) => {
     team: {
       name: team.name,
       bowlers_attributes: [],
-      shift: {
-        identifier: team.shift.identifier,
-      },
     },
   };
+  console.log(team);
+  if (team.shift) {
+    postData.team.shift = {
+      identifier: team.shift.identifier,
+    };
+  }
   for (const bowler of team.bowlers) {
     postData.team.bowlers_attributes.push(
       convertBowlerDataForPost(tournament, bowler)

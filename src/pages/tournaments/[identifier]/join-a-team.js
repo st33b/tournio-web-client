@@ -50,6 +50,8 @@ const Page = () => {
     return <LoadingMessage message={'Retrieving list of available teams...'} />
   }
 
+  const includeShift = entry.tournament.shifts && entry.tournament.shifts.length > 1;
+
   return (
     <div>
       <Row>
@@ -61,7 +63,7 @@ const Page = () => {
           <Contacts tournament={entry.tournament}/>
         </Col>
         <Col>
-          <TeamListing caption={'Teams Available to Join'} teams={teams} />
+          <TeamListing caption={'Teams Available to Join'} teams={teams} includeShift={includeShift} />
         </Col>
       </Row>
     </div>

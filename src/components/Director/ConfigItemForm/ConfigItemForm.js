@@ -88,7 +88,6 @@ const ConfigItemForm = ({item}) => {
     if (item.key === 'entry_deadline') {
       newFormData.value = formatISO(event);
     } else if (item.key === 'email_in_dev' || item.key === 'display_capacity') {
-      console.log("Checked?", event.target.checked);
       newFormData.value = event.target.checked;
     } else {
       newFormData.value = event.target.value;
@@ -110,7 +109,6 @@ const ConfigItemForm = ({item}) => {
   }
   const onFormSubmit = (value = null) => {
     const valueToSend = value === null ? formData.value : value;
-    console.log("Value to send", valueToSend);
     const uri = `/director/config_items/${item.id}`;
     const requestConfig = {
       method: 'patch',

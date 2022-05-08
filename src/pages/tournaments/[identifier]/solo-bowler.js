@@ -22,11 +22,17 @@ const Page = () => {
     router.push(`/tournaments/${entry.tournament.identifier}/solo-bowler-review`);
   }
 
+  if (!entry || !entry.tournament) {
+    return '';
+  }
+
+  const includeShift = entry.tournament.available_shifts && entry.tournament.available_shifts.length > 0;
+
   return (
     <Row>
       <Col lg={8}>
         <ProgressIndicator active={'bowlers'} />
-        <BowlerForm bowlerInfoSaved={onCompletion} includeShiftSelection={true} />
+        <BowlerForm bowlerInfoSaved={onCompletion} includeShift={includeShift} />
       </Col>
       <Col>
         <Summary />

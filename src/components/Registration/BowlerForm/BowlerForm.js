@@ -6,7 +6,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './BowlerForm.module.scss';
 
-const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShiftSelection}) => {
+const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift}) => {
   const {entry} = useRegistrationContext();
 
   const initialFormState = {
@@ -248,6 +248,7 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShiftSelection}) => 
     }
   }
   const [bowlerForm, setBowlerForm] = useState(initialFormState);
+  const [showShiftSelection, setShowShiftSelection] = useState(false);
 
   useEffect(() => {
     if (!entry) {
@@ -264,13 +265,19 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShiftSelection}) => 
       formData.formFields[key].elementConfig = { ...entry.tournament.additional_questions[key].elementConfig }
     }
 
-    if (includeShiftSelection) {
-      formData.soloBowlerFields.shift.elementConfig.options = [{value: '', label: '-- Choose a shift'}];
-      entry.tournament.available_shifts.map(shift => {
-        formData.soloBowlerFields.shift.elementConfig.options.push(
-          { value: shift.identifier, label: shift.name }
-        );
-      });
+    if (includeShift) {
+      if (entry.tournament.available_shifts.length > 1) {
+        formData.soloBowlerFields.shift.elementConfig.options = [{value: '', label: '-- Choose a shift'}];
+        entry.tournament.available_shifts.map(shift => {
+          formData.soloBowlerFields.shift.elementConfig.options.push(
+            { value: shift.identifier, label: shift.name }
+          );
+        });
+        setShowShiftSelection(true);
+      } else {
+        initialFormState.soloBowlerFields.shift.elementConfig.value = entry.tournament.available_shifts[0].identifier;
+        initialFormState.soloBowlerFields.shift.valid = true;
+      }
     }
 
     setBowlerForm(formData);
@@ -313,7 +320,7 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShiftSelection}) => 
       );
     }
 
-    if (includeShiftSelection) {
+    if (includeShift) {
       initialFormState.soloBowlerFields.shift.elementConfig.value = entry.team.shift.identifier;
       initialFormState.soloBowlerFields.shift.valid = true;
     }
@@ -334,7 +341,7 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShiftSelection}) => 
     }
     bowlerData.position = position;
 
-    if (includeShiftSelection) {
+    if (includeShift) {
       bowlerData.shift = bowlerForm.soloBowlerFields.shift.elementConfig.value;
     }
 
@@ -382,7 +389,7 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShiftSelection}) => 
     }
 
     // Now, determine whether the whole form is valid
-    let formIsValid = includeShiftSelection
+    let formIsValid = includeShift
       ? updatedBowlerForm.soloBowlerFields.shift.elementConfig.value.length > 0
       : true;
     for (let inputIdentifier in updatedBowlerForm.formFields) {
@@ -406,7 +413,7 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShiftSelection}) => 
 
   let form = (
     <form onSubmit={formHandler} noValidate>
-      {includeShiftSelection && (
+      {showShiftSelection && (
         <div>
           <Input
             key={'shift'}

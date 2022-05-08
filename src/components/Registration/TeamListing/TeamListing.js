@@ -1,7 +1,7 @@
 import classes from './TeamListing.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 
-const TeamListing = ({teams, caption}) => {
+const TeamListing = ({teams, caption, includeShift}) => {
   if (!teams) {
     return '';
   }
@@ -31,7 +31,7 @@ const TeamListing = ({teams, caption}) => {
             <tr>
               <th>Name</th>
               <th>Date Registered</th>
-              <th>Requested Shift</th>
+              {includeShift && <th>Requested Shift</th>}
               <th>Bowlers</th>
             </tr>
             </thead>
@@ -47,9 +47,7 @@ const TeamListing = ({teams, caption}) => {
                   <td>
                     {t.date_registered}
                   </td>
-                  <td>
-                    {t.shift.name}
-                  </td>
+                  {includeShift && <td>{t.shift.name}</td>}
                   <td>
                     {t.size}
                   </td>
