@@ -2,7 +2,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './TeamDetails.module.scss';
 
-const TeamDetails = ({successType}) => {
+const TeamDetails = ({successType, enablePayment = true}) => {
   const {entry, commerce} = useRegistrationContext();
 
   if (!entry.tournament || !entry.team) {
@@ -55,7 +55,7 @@ const TeamDetails = ({successType}) => {
               <th>Name</th>
               {/* conditionally display this? */}
               <th>Amount Due</th>
-              <th></th>
+              {enablePayment && <th></th>}
             </tr>
           </thead>
           <tbody>
@@ -77,12 +77,14 @@ const TeamDetails = ({successType}) => {
                 <td>{b.position}</td>
                 <td>{name}</td>
                 <td>${amountDue}</td>
-                <td>
-                  <a href={`/bowlers/${b.identifier}`}
-                     className={'btn btn-sm btn-outline-success'}>
-                    Choose Events &amp; Pay
-                  </a>
-                </td>
+                {enablePayment && (
+                  <td>
+                    <a href={`/bowlers/${b.identifier}`}
+                       className={'btn btn-sm btn-outline-success'}>
+                      Choose Events &amp; Pay
+                    </a>
+                  </td>
+                )}
               </tr>
             )
           })}

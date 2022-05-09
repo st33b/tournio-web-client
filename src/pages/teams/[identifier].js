@@ -16,6 +16,8 @@ const Page = () => {
   const { identifier, success } = router.query;
 
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [enablePurchase, setEnablePurchase] = useState(true);
 
   const onTeamFetchSuccess = (data) => {
     setLoading(false);
@@ -37,9 +39,22 @@ const Page = () => {
         onSuccess: onTeamFetchSuccess,
         onFailure: onTeamFetchFailure,
         dispatches: [dispatch, commerceDispatch],
-      })
+      });
+      return;
     } else {
       setLoading(false);
+    }
+
+    if (entry.team.shift_info.full && !entry.team.shift_info.confirmed) {
+      // either the tournament is full, or the chosen shift is full.
+      // first, see if there are available shifts
+      if (entry.tournament.available_shifts.length > 0) {
+        setErrorMessage("Your team's requested shift is full. Please contact the tournament director about changing to another shift before paying entry fees.");
+        setEnablePurchase(false);
+      } else {
+        setErrorMessage("The tournament has reached its maximum capacity. Your team's registration is now provisional.");
+        setEnablePurchase(false);
+      }
     }
   }, [identifier, entry, dispatch, commerceDispatch]);
 
@@ -92,8 +107,17 @@ const Page = () => {
           </a>
         </Col>
         <Col>
-          <TeamDetails successType={success}/>
+          <TeamDetails successType={success} enablePayment={enablePurchase}/>
           {joinLink}
+
+          {errorMessage && (
+            <div className={'col-12 alert alert-warning fade show d-flex align-items-center'} role={'alert'}>
+              <i className={'bi-exclamation-triangle-fill pe-2'} aria-hidden={true}/>
+              <div className={'me-auto'}>
+                {errorMessage}
+              </div>
+            </div>
+          )}
         </Col>
       </Row>
     </div>
