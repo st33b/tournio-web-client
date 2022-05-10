@@ -132,8 +132,6 @@ const BowlerFilterForm = ({onFilterApplication}) => {
         </Col>
       </Row>
 
-
-
       <Form.Group as={Row}>
         <Col sm={{span: 9, offset: 3}} className={'d-flex'}>
           <Button variant={'dark'} type={'submit'}>

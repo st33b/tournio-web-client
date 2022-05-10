@@ -271,11 +271,11 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
           </div>
         </div>
       }
-      {directorContext.tournament.shifts.length > 1 &&
+      {directorContext.tournament.shifts.length > 0 &&
         <div className={'row mb-2'}>
           <label htmlFor={'shift_confirmed'}
                  className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
-            Shift Confirmed?
+            Place Confirmed?
           </label>
           <div className={'col'}>
             <input type={'text'}

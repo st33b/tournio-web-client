@@ -1,7 +1,7 @@
 import {useMemo} from "react";
 import {useFilters, useSortBy, useTable} from "react-table";
 
-import {lessThan} from "../../../utils";
+import {lessThan, isOrIsNot} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import TeamFilterForm from "../TeamFilterForm/TeamFilterForm";
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
@@ -22,6 +22,10 @@ const TeamListing = ({teams}) => {
         Header: ({column}) => <SortableTableHeader text={'Requested Shift'} column={column}/>,
         accessor: 'shift',
       },
+    );
+  }
+  if (directorContext.tournament.shifts.length > 0) {
+    shiftColumns.push(
       {
         Header: 'Shift Confirmed?',
         accessor: 'shift_confirmed',
@@ -34,7 +38,8 @@ const TeamListing = ({teams}) => {
               <span className={'visually-hidden'}>{text}</span>
             </div>
           );
-        }
+        },
+        filter: isOrIsNot,
       },
     );
   }
@@ -125,14 +130,13 @@ const TeamListing = ({teams}) => {
   const filterThatData = (criteria) => {
     if (criteria.incomplete) {
       setFilter('size', 4);
-    } else {
-      setAllFilters([]);
     }
+    setFilter('shift_confirmed', criteria.shift_confirmed);
   }
 
   return (
     <div className={classes.TeamListing}>
-      {!!data.length && <TeamFilterForm onFilterApplication={filterThatData}/>}
+      {!!data.length && <TeamFilterForm onFilterApplication={filterThatData} includeConfirmed={directorContext.tournament.shifts.length > 0}/>}
       {list}
     </div>
   );
