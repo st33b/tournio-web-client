@@ -178,7 +178,7 @@ const Page = () => {
             <Button variant={'success'}
                     type={'submit'}
             >
-              Confirm Team's Place
+              Confirm Team&apos;s Place
             </Button>
           </form>
         </Card.Body>
