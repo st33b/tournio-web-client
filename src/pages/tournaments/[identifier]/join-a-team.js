@@ -9,9 +9,11 @@ import TeamListing from "../../../components/Registration/TeamListing/TeamListin
 import {joinTeamRegistrationInitiated} from "../../../store/actions/registrationActions";
 import Contacts from "../../../components/Registration/Contacts/Contacts";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import {useRouter} from "next/router";
 
 const Page = () => {
   const { entry, dispatch } = useRegistrationContext();
+  const router = useRouter();
 
   const [loading, setLoading] = useState(false);
   const [teams, setTeams] = useState(null);
@@ -25,6 +27,16 @@ const Page = () => {
     setLoading(false);
     // error!
   }
+
+  useEffect(() => {
+    if (!entry || !entry.tournament) {
+      return;
+    }
+    const shift = entry.tournament.shifts[0];
+    if (shift && !shift.permit_joins) {
+      router.push(`/tournaments/${entry.tournament.identifier}`);
+    }
+  }, [entry]);
 
   // fetch the team details
   useEffect(() => {

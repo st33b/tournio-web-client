@@ -14,6 +14,16 @@ const Page = () => {
   const router = useRouter();
 
   useEffect(() => {
+    if (!entry || !entry.tournament) {
+      return;
+    }
+    const shift = entry.tournament.shifts[0];
+    if (shift && !shift.permit_new_teams) {
+      router.push(`/tournaments/${entry.tournament.identifier}`);
+    }
+  }, [entry]);
+
+  useEffect(() => {
     dispatch(newTeamRegistrationInitiated());
   }, [dispatch]);
 

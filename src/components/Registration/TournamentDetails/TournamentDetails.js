@@ -158,6 +158,7 @@ const TournamentDetails = ({tournament}) => {
   }
 
   let registrationOptions = '';
+  const shift = tournament.shifts[0];
   if (tournament.state === 'testing' || tournament.state === 'active' || tournament.state === 'demo') {
     registrationOptions = (
       <Col md={6}>
@@ -166,21 +167,42 @@ const TournamentDetails = ({tournament}) => {
             Registration Options
           </Card.Header>
           <ListGroup variant={'flush'}>
-            <ListGroup.Item className={'text-primary'}
-                            href={`${router.asPath}/new-team`}
-                            action>
-              Register a New Team
-            </ListGroup.Item>
-            <ListGroup.Item className={'text-primary'}
-                            href={`${router.asPath}/join-a-team`}
-                            action>
-              Join an Existing Team
-            </ListGroup.Item>
-            <ListGroup.Item className={'text-primary'}
-                            href={`${router.asPath}/solo-bowler`}
-                            action>
-              Register as a Solo Bowler
-            </ListGroup.Item>
+            {(!shift || shift && shift.permit_new_teams) && (
+              <ListGroup.Item className={'text-primary'}
+                              href={`${router.asPath}/new-team`}
+                              action>
+                Register a New Team
+              </ListGroup.Item>
+            )}
+            {shift && !shift.permit_new_teams && (
+              <ListGroup.Item className={'text-muted text-decoration-line-through'}>
+                Register a New Team
+              </ListGroup.Item>
+            )}
+            {(!shift || shift && shift.permit_joins) && (
+              <ListGroup.Item className={'text-primary'}
+                              href={`${router.asPath}/join-a-team`}
+                              action>
+                Join an Existing Team
+              </ListGroup.Item>
+            )}
+            {shift && !shift.permit_joins && (
+              <ListGroup.Item className={'text-muted text-decoration-line-through'}>
+                Join an Existing Team
+              </ListGroup.Item>
+            )}
+            {(!shift || shift && shift.permit_solo) && (
+              <ListGroup.Item className={'text-primary'}
+                              href={`${router.asPath}/solo-bowler`}
+                              action>
+                Register as a Solo Bowler
+              </ListGroup.Item>
+            )}
+            {shift && !shift.permit_solo && (
+              <ListGroup.Item className={'text-muted text-decoration-line-through'}>
+                Register as a Solo Bowler
+              </ListGroup.Item>
+            )}
           </ListGroup>
         </Card>
       </Col>
@@ -336,7 +358,7 @@ const TournamentDetails = ({tournament}) => {
           )
         })}
 
-        {displayCapacity && <ProgressBarLegend />}
+        {displayCapacity && <ProgressBarLegend/>}
       </div>
     );
   } else if (tournament.shifts.length === 1) {
@@ -371,7 +393,7 @@ const TournamentDetails = ({tournament}) => {
             </div>
           </div>
         </div>
-        <ProgressBarLegend />
+        <ProgressBarLegend/>
       </div>
     );
   }
