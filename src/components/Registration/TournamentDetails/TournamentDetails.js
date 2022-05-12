@@ -294,7 +294,7 @@ const TournamentDetails = ({tournament}) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {shift.details.map((event, j) => (
+                    {shift.events.map((event, j) => (
                       <tr key={j}>
                         <td>
                           {event.event}
@@ -346,7 +346,7 @@ const TournamentDetails = ({tournament}) => {
       <div className={`${classes.ShiftInfo} my-3 border rounded-sm p-2 p-sm-3`}>
         <div>
           <h5 className={'fw-light'}>
-            Tournament Capacity
+            Capacity
           </h5>
           <p>
             The tournament is limited to {shift.capacity} bowlers / {shift.capacity / 4} teams

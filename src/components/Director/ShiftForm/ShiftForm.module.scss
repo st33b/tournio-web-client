@@ -6,9 +6,15 @@
       font-weight: 300;
     }
   }
-  label {
+  label,
+  .AddEvent {
     font-weight: 200;
     font-size: 95%;
+  }
+  .SubLabel {
+    label {
+      font-size: 90%;
+    }
   }
   .ExistingShift {
     padding: 0.5rem 1rem;

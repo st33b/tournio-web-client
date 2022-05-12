@@ -44,7 +44,7 @@ const Shifts = () => {
         Shifts
       </Card.Header>
       {content}
-      <ShiftForm />
+      {context.tournament.shifts.length === 0 && <ShiftForm />}
     </Card>
   )
 }
