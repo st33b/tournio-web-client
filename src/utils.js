@@ -120,15 +120,17 @@ export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, commerceDispat
   axios(requestConfig)
     .then(response => {
       const bowlerData = response.data.bowler;
+      const bowlerTournamentId = bowlerData.tournament.identifier;
       const availableItems = response.data.available_items;
       commerceDispatch(bowlerCommerceDetailsRetrieved(bowlerData, availableItems));
 
       // Make sure the tournament in context matches that of the bowler.
       // If it doesn't, retrieve the bowler's tournament so we can put it
       // into context.
-      if (commerceObj.tournament) {
+      if (!commerceObj) {
+        fetchTournamentDetails(bowlerTournamentId, commerceDispatch);
+      } else if (commerceObj.tournament) {
         const contextTournamentId = commerceObj.tournament.identifier;
-        const bowlerTournamentId = bowlerData.tournament.identifier;
 
         if (contextTournamentId !== bowlerTournamentId) {
           fetchTournamentDetails(bowlerTournamentId, commerceDispatch);
@@ -137,7 +139,7 @@ export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, commerceDispat
     })
     .catch(error => {
       // Display some kind of error message
-      console.log('Whoops!');
+      console.log('Whoops!', error);
     });
 }
 
@@ -171,8 +173,8 @@ export const fetchTeamList = ({tournamentIdentifier, dispatch, onSuccess, onFail
 
 ////////////////////////////////////////////////////
 
-export const submitNewTeamRegistration = (tournament, teamName, bowlers, onSuccess, onFailure) => {
-  const postData = convertTeamDataForServer(tournament, teamName, bowlers);
+export const submitNewTeamRegistration = (tournament, team, onSuccess, onFailure) => {
+  const postData = convertTeamDataForServer(tournament, team);
 
   const requestConfig = {
     method: 'post',
@@ -198,7 +200,6 @@ export const submitNewTeamRegistration = (tournament, teamName, bowlers, onSucce
 export const submitJoinTeamRegistration = (tournament, team, bowler, onSuccess, onFailure) => {
   // make the post
   const bowlerData = { bowler: convertBowlerDataForPost(tournament, bowler) };
-  console.log(bowler);
   const teamId = team.identifier;
   axios.post(`${apiHost}/teams/${teamId}/bowlers`, bowlerData)
     .then(response => {
@@ -214,14 +215,20 @@ export const submitJoinTeamRegistration = (tournament, team, bowler, onSuccess, 
 
 }
 
-const convertTeamDataForServer = (tournament, teamName, bowlers) => {
+const convertTeamDataForServer = (tournament, team) => {
   let postData = {
     team: {
-      name: teamName,
-      bowlers_attributes: []
-    }
+      name: team.name,
+      bowlers_attributes: [],
+    },
   };
-  for (const bowler of bowlers) {
+  console.log(team);
+  if (team.shift) {
+    postData.team.shift = {
+      identifier: team.shift.identifier,
+    };
+  }
+  for (const bowler of team.bowlers) {
     postData.team.bowlers_attributes.push(
       convertBowlerDataForPost(tournament, bowler)
     );

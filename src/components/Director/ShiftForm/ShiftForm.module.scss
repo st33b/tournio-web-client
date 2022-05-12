@@ -1,0 +1,35 @@
+.ShiftForm {
+  .HeaderRow {
+    text-align: center;
+    h6 {
+      font-size: 1.2rem;
+      font-weight: 300;
+    }
+  }
+  label,
+  .AddEvent {
+    font-weight: 200;
+    font-size: 95%;
+  }
+  .SubLabel {
+    label {
+      font-size: 90%;
+    }
+  }
+  .ExistingShift {
+    padding: 0.5rem 1rem;
+  }
+  .AlmostFull {
+    background-color: lemonchiffon;
+  }
+  .Full {
+    background-color: mistyrose;
+  }
+  .ExistingShift:hover {
+    background-color: #eee;
+    cursor: pointer;
+  }
+}
+.FormDisplayed {
+  background-color: #f8f8f8;
+}

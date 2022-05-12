@@ -19,23 +19,25 @@ const Page = () => {
     router.push(`/tournaments/${entry.tournament.identifier}/solo-bowler-edit`);
   }
 
+  const [error, setError] = useState(null);
+  const [processing, setProcessing] = useState(false);
+
   const soloRegistrationSuccess = (teamData) => {
     dispatch(teamDetailsRetrieved(teamData));
     dispatch(newTeamEntryCompleted());
     router.push(`/teams/${teamData.identifier}?success=solo`);
   }
 
-  const [error, setError] = useState(null);
-  const [processing, setProcessing] = useState(false);
   const soloRegistrationFailure = (errorMessage) => {
     setProcessing(false);
     setError(errorMessage);
   }
 
   const submitRegistration = () => {
+    const newTeam = {...entry.team};
+    newTeam.name = 'A Solo Bowler';
     submitNewTeamRegistration(entry.tournament,
-      'A Solo Bowler',
-      entry.bowlers,
+      newTeam,
       soloRegistrationSuccess,
       soloRegistrationFailure);
     setProcessing(true);

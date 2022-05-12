@@ -28,4 +28,21 @@
     padding-left: 0.5rem;
     background-color: burlywood;
   }
+
+  .Shifts {
+    //background-color: #f3f3f3;
+  }
+
+  .ShiftInfo {
+    background-color: white;
+    h5 {
+      //font-weight: 300;
+    }
+    .ProgressBar {
+      .EndLabel {
+        font-size: 85%;
+        font-weight: 100;
+      }
+    }
+  }
 }

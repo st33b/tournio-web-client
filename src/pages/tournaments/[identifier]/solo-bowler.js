@@ -14,6 +14,16 @@ const Page = () => {
   const router = useRouter();
 
   useEffect(() => {
+    if (!entry || !entry.tournament) {
+      return;
+    }
+    const shift = entry.tournament.shifts[0];
+    if (shift && !shift.permit_solo) {
+      router.push(`/tournaments/${entry.tournament.identifier}`);
+    }
+  }, [entry]);
+
+  useEffect(() => {
     dispatch(newSoloRegistrationInitiated());
   }, [dispatch]);
 
@@ -22,11 +32,17 @@ const Page = () => {
     router.push(`/tournaments/${entry.tournament.identifier}/solo-bowler-review`);
   }
 
+  if (!entry || !entry.tournament) {
+    return '';
+  }
+
+  const includeShift = entry.tournament.available_shifts && entry.tournament.available_shifts.length > 0;
+
   return (
     <Row>
       <Col lg={8}>
         <ProgressIndicator active={'bowlers'} />
-        <BowlerForm bowlerInfoSaved={onCompletion} />
+        <BowlerForm bowlerInfoSaved={onCompletion} includeShift={includeShift} />
       </Col>
       <Col>
         <Summary />

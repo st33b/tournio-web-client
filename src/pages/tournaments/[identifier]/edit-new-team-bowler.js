@@ -1,3 +1,4 @@
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Row, Col} from "react-bootstrap";
 
@@ -7,7 +8,6 @@ import ProgressIndicator from "../../../components/Registration/ProgressIndicato
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamBowlerEdited} from "../../../store/actions/registrationActions";
-import {useEffect, useState} from "react";
 
 const Page = () => {
   const {entry, dispatch} = useRegistrationContext();
@@ -22,7 +22,7 @@ const Page = () => {
     }
     const { bowler } = router.query;
     const result = parseInt(bowler);
-    if (isNaN(result) || result <= 0 || result > entry.bowlers.length) {
+    if (isNaN(result) || result <= 0 || result > entry.team.bowlers.length) {
       router.push(`/tournaments/${entry.tournament.identifier}`);
     } else {
       setBowlerNum(result);

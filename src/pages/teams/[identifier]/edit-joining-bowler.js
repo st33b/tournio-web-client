@@ -15,7 +15,7 @@ const Page = () => {
     return'';
   }
 
-  const bowlerNum = entry.bowlers.length;
+  const bowlerNum = entry.team.bowlers.length;
   const onBowlerInfoUpdated = (bowlerInfo) => {
     dispatch(existingTeamBowlerEdited(bowlerInfo));
     router.push(`/teams/${entry.team.identifier}/review-joining-bowler`);

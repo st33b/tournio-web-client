@@ -34,8 +34,7 @@ const Page = () => {
 
   const submitRegistration = () => {
     submitNewTeamRegistration(entry.tournament,
-      entry.teamName,
-      entry.bowlers,
+      entry.team,
       newTeamRegistrationSuccess,
       newTeamRegistrationFailure);
     setProcessing(true);

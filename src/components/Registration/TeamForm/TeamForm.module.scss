@@ -1,7 +1,21 @@
 .TeamForm {
   .Label {
-    text-align: right;
-    font-weight: bold;
+    text-align: left;
+    font-weight: normal;
+  }
+  @media (min-width: 768px) {
+    .Label {
+      text-align: right;
+      font-weight: bold;
+    }
+  }
+  .OneShift {
+    font-size: 90%;
+    font-weight: 300;
+    line-height: 2.5rem;
+    strong {
+      font-weight: bold;
+    }
   }
   .Submit {
     text-align: right;

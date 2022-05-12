@@ -3,5 +3,9 @@
     color: darkred;
     font-size: 60%;
   }
-
+  .InputItem {
+    .RequiredLabel {
+      margin-left: 5px;
+    }
+  }
 }

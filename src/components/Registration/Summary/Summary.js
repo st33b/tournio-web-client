@@ -7,19 +7,33 @@ import classes from './Summary.module.scss';
 const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEdit}) => {
   const {entry} = useRegistrationContext();
 
-  if (!entry.tournament) {
+  if (!entry.tournament || !entry.team) {
     return '';
   }
 
   let teamText = '';
-  if (entry.teamName) {
+  if (entry.team.name) {
     teamText = (
       <p>
         <span>
           Team name:{' '}
         </span>
         <span className={'fw-bold'}>
-          {entry.teamName}
+          {entry.team.name}
+        </span>
+      </p>
+    );
+  }
+
+  let shiftText = '';
+  if (entry.team.shift && entry.tournament.shifts.length > 1) {
+    shiftText = (
+      <p>
+        <span>
+          Requested Shift:{' '}
+        </span>
+        <span className={'fw-bold'}>
+          {entry.team.shift.name}
         </span>
       </p>
     );
@@ -28,10 +42,10 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
   // list the names of bowlers added so far
   let bowlersText = '';
   let nextStepButton = '';
-  if (entry.bowlers && entry.bowlers.length > 0) {
+  if (entry.team.bowlers && entry.team.bowlers.length > 0) {
     bowlersText = (
       <ol>
-        {entry.bowlers.map((b, i) => {
+        {entry.team.bowlers.map((b, i) => {
           return (
             <li key={i}>
               {b.first_name} {b.last_name}
@@ -57,7 +71,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
 
   // for editing doubles partners
   let doublesLink = '';
-  if (enableDoublesEdit && entry.bowlers && entry.bowlers.length > 1) {
+  if (enableDoublesEdit && entry.team.bowlers && entry.team.bowlers.length > 1) {
     doublesLink = (
       <div className='text-start pb-4'>
         <a
@@ -80,6 +94,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
             {entry.tournament.name}
           </Card.Title>
           {teamText}
+          {shiftText}
           {bowlersText}
           {doublesLink}
           {nextStepButton}

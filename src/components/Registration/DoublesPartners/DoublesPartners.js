@@ -7,7 +7,7 @@ import classes from './DoublesPartners.module.scss';
 const DoublesPartners = ({partnersChosen}) => {
   const {entry} = useRegistrationContext();
 
-  if (!entry.bowlers) {
+  if (!entry.team) {
     return '';
   }
 
@@ -28,8 +28,8 @@ const DoublesPartners = ({partnersChosen}) => {
         </tr>
         </thead>
         <tbody>
-        {entry.bowlers.map(bowler => {
-          const teammates = entry.bowlers.filter((value) => { return value.position !== bowler.position });
+        {entry.team.bowlers.map(bowler => {
+          const teammates = entry.team.bowlers.filter((value) => { return value.position !== bowler.position });
           return <PartnerSelectionRow key={bowler.position}
                                       bowler={bowler}
                                       teammates={teammates}

@@ -6,7 +6,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './BowlerForm.module.scss';
 
-const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
+const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift}) => {
   const {entry} = useRegistrationContext();
 
   const initialFormState = {
@@ -231,8 +231,24 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
     },
     valid: false,
     touched: false,
+    soloBowlerFields: {
+      shift: {
+        elementType: 'select',
+        elementConfig: {
+          value: '',
+          options: [],
+        },
+        label: 'Preferred Shift',
+        validation: {
+          required: true,
+        },
+        valid: false,
+        touched: false,
+      }
+    }
   }
   const [bowlerForm, setBowlerForm] = useState(initialFormState);
+  const [showShiftSelection, setShowShiftSelection] = useState(false);
 
   useEffect(() => {
     if (!entry) {
@@ -249,10 +265,25 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
       formData.formFields[key].elementConfig = { ...entry.tournament.additional_questions[key].elementConfig }
     }
 
+    if (includeShift) {
+      if (entry.tournament.available_shifts.length > 1) {
+        formData.soloBowlerFields.shift.elementConfig.options = [{value: '', label: '-- Choose a shift'}];
+        entry.tournament.available_shifts.map(shift => {
+          formData.soloBowlerFields.shift.elementConfig.options.push(
+            { value: shift.identifier, label: shift.name }
+          );
+        });
+        setShowShiftSelection(true);
+      } else {
+        initialFormState.soloBowlerFields.shift.elementConfig.value = entry.tournament.available_shifts[0].identifier;
+        initialFormState.soloBowlerFields.shift.valid = true;
+      }
+    }
+
     setBowlerForm(formData);
   }, [entry]);
 
-  if (!entry || !entry.tournament || !entry.bowlers) {
+  if (!entry || !entry.tournament || !entry.team) {
     return '';
   }
 
@@ -274,16 +305,13 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
     return isValid;
   }
 
-  let position = entry.bowlers.length + 1;
+  let position = entry.team.bowlers.length + 1;
   let buttonText = 'Save Bowler';
-  if (entry.team) {
-    position = entry.team.bowlers.length + 1;
-  }
 
   // In the event we're editing a bowler, populate initialFormState with their values
   if (editBowlerNum) {
     position = editBowlerNum;
-    const bowlerToEdit = entry.bowlers[position - 1];
+    const bowlerToEdit = entry.team.bowlers[position - 1];
     for (const inputIdentifier in initialFormState.formFields) {
       initialFormState.formFields[inputIdentifier].elementConfig.value = bowlerToEdit[inputIdentifier];
       initialFormState.formFields[inputIdentifier].valid = checkValidity(
@@ -292,6 +320,10 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
       );
     }
 
+    if (includeShift) {
+      initialFormState.soloBowlerFields.shift.elementConfig.value = entry.team.shift.identifier;
+      initialFormState.soloBowlerFields.shift.valid = true;
+    }
     buttonText = 'Save Changes';
   }
 
@@ -309,6 +341,10 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
     }
     bowlerData.position = position;
 
+    if (includeShift) {
+      bowlerData.shift = bowlerForm.soloBowlerFields.shift.elementConfig.value;
+    }
+
     // Reset the form to take in the next bowler's info
     setBowlerForm(initialFormState);
 
@@ -316,38 +352,46 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
   }
 
   const inputChangedHandler = (event, inputIdentifier) => {
-    // This is the part of the form concerning the input that's changed
-    const updatedFormElement = {
-      ...bowlerForm.formFields[inputIdentifier]
-    }
-    // Deep-copy the element config, since that has the part that gets changed...
-    updatedFormElement.elementConfig = { ...bowlerForm.formFields[inputIdentifier].elementConfig }
-
-    // The country is a special snowflake...
-    let newValue = null;
-    if (inputIdentifier === 'country')
-      newValue = event;
-    else
-      newValue = event.target.value;
-
-    // Update the relevant parts of the changed field (the new value, whether it's valid, and the fact that it was changed at all)
-    updatedFormElement.elementConfig.value = newValue;
-    updatedFormElement.valid = checkValidity(newValue, updatedFormElement.validation);
-    updatedFormElement.touched = true;
-
     // Create a copy of the bowler form; this is where we'll make updates
     const updatedBowlerForm = {
       ...bowlerForm
     };
-    // Deep-copy the formFields property, because it's complex
-    updatedBowlerForm.formFields = {
-      ...bowlerForm.formFields
+
+    if (inputIdentifier === 'shift') {
+      updatedBowlerForm.soloBowlerFields.shift.elementConfig.value = event.target.value;
+      updatedBowlerForm.touched = true;
+    } else {
+      // This is the part of the form concerning the input that's changed
+      const updatedFormElement = {
+        ...bowlerForm.formFields[inputIdentifier]
+      }
+      // Deep-copy the element config, since that has the part that gets changed...
+      updatedFormElement.elementConfig = { ...bowlerForm.formFields[inputIdentifier].elementConfig }
+
+      // The country is a special snowflake...
+      let newValue = null;
+      if (inputIdentifier === 'country')
+        newValue = event;
+      else
+        newValue = event.target.value;
+
+      // Update the relevant parts of the changed field (the new value, whether it's valid, and the fact that it was changed at all)
+      updatedFormElement.elementConfig.value = newValue;
+      updatedFormElement.valid = checkValidity(newValue, updatedFormElement.validation);
+      updatedFormElement.touched = true;
+
+      // Deep-copy the formFields property, because it's complex
+      updatedBowlerForm.formFields = {
+        ...bowlerForm.formFields
+      }
+      // Put the changed field in the copy of the bowler form structure
+      updatedBowlerForm.formFields[inputIdentifier] = updatedFormElement;
     }
-    // Put the changed field in the copy of the bowler form structure
-    updatedBowlerForm.formFields[inputIdentifier] = updatedFormElement;
 
     // Now, determine whether the whole form is valid
-    let formIsValid = true;
+    let formIsValid = includeShift
+      ? updatedBowlerForm.soloBowlerFields.shift.elementConfig.value.length > 0
+      : true;
     for (let inputIdentifier in updatedBowlerForm.formFields) {
       formIsValid = formIsValid && updatedBowlerForm.formFields[inputIdentifier].valid;
     }
@@ -369,6 +413,23 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum}) => {
 
   let form = (
     <form onSubmit={formHandler} noValidate>
+      {showShiftSelection && (
+        <div>
+          <Input
+            key={'shift'}
+            identifier={'shift'}
+            elementType={bowlerForm.soloBowlerFields.shift.elementType}
+            elementConfig={bowlerForm.soloBowlerFields.shift.elementConfig}
+            changed={(event) => inputChangedHandler(event, 'shift')}
+            label={bowlerForm.soloBowlerFields.shift.label}
+            shouldValidate={true}
+            touched={bowlerForm.soloBowlerFields.shift.touched}
+            invalid={!bowlerForm.soloBowlerFields.shift.valid}
+            validationRules={bowlerForm.soloBowlerFields.shift.validation}
+          />
+          <hr />
+        </div>
+      )}
       {formElements.map(formElement => (
         <Input
           key={formElement.id}

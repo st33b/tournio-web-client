@@ -1,7 +1,7 @@
 import {useMemo} from "react";
 import {useFilters, useSortBy, useTable} from "react-table";
 
-import {lessThan} from "../../../utils";
+import {lessThan, isOrIsNot} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import TeamFilterForm from "../TeamFilterForm/TeamFilterForm";
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
@@ -14,6 +14,34 @@ const TeamListing = ({teams}) => {
   let identifier;
   if (directorContext && directorContext.tournament) {
     identifier = directorContext.tournament.identifier;
+  }
+  const shiftColumns = [];
+  if (directorContext.tournament.shifts.length > 1) {
+    shiftColumns.push(
+      {
+        Header: ({column}) => <SortableTableHeader text={'Requested Shift'} column={column}/>,
+        accessor: 'shift',
+      },
+    );
+  }
+  if (directorContext.tournament.shifts.length > 0) {
+    shiftColumns.push(
+      {
+        Header: 'Shift Confirmed?',
+        accessor: 'shift_confirmed',
+        Cell: ({cell: {value}}) => {
+          const classes = value ? ['text-success', 'bi-check-lg'] : ['text-danger', 'bi-x-lg'];
+          const text = value ? 'Yes' : 'No';
+          return (
+            <div className={'text-center'}>
+              <i className={classes.join(' ')} aria-hidden={true}/>
+              <span className={'visually-hidden'}>{text}</span>
+            </div>
+          );
+        },
+        filter: isOrIsNot,
+      },
+    );
   }
   const columns = useMemo(() => [
       {
@@ -35,9 +63,12 @@ const TeamListing = ({teams}) => {
         disableSortBy: true,
         filter: lessThan,
       },
-    ], []);
+    ].concat(shiftColumns), []);
 
-  const data = teams;
+  let data = [];
+  if (teams) {
+    data = teams;
+  }
 
   // tell react-table which things we want to use (sorting, filtering)
   // and retrieve properties/functions they let us hook into
@@ -99,14 +130,13 @@ const TeamListing = ({teams}) => {
   const filterThatData = (criteria) => {
     if (criteria.incomplete) {
       setFilter('size', 4);
-    } else {
-      setAllFilters([]);
     }
+    setFilter('shift_confirmed', criteria.shift_confirmed);
   }
 
   return (
     <div className={classes.TeamListing}>
-      {!!data.length && <TeamFilterForm onFilterApplication={filterThatData}/>}
+      {!!data.length && <TeamFilterForm onFilterApplication={filterThatData} includeConfirmed={directorContext.tournament.shifts.length > 0}/>}
       {list}
     </div>
   );

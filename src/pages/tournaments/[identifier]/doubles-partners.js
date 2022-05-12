@@ -38,7 +38,7 @@ const Page = () => {
   //  - set C and D to be partners (the remaining two)
   const gimmeNewDoublesPartners = (bowlerNum, partnerNum) => {
     // create a copy of the bowlers array
-    const newBowlers = entry.bowlers.slice(0);
+    const newBowlers = entry.team.bowlers.slice(0);
 
     // these are index-based, which is position-1
 

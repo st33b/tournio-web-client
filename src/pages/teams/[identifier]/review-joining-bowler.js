@@ -33,7 +33,7 @@ const Page = () => {
   const submitRegistration = () => {
     submitJoinTeamRegistration(entry.tournament,
       entry.team,
-      entry.bowlers[entry.bowlers.length - 1],
+      entry.team.bowlers.slice(-1).pop(),
       joinTeamSuccess,
       joinTeamFailure);
     setProcessing(true);

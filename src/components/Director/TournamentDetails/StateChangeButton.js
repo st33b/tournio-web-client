@@ -53,7 +53,7 @@ const StateChangeButton = ({stateChangeInitiated}) => {
       stateChangeValue = 'close';
       break;
     case 'demo':
-      if (context.user.role === 'superuser') {
+      if (context.user && context.user.role === 'superuser') {
         demoButton = (
           <button className={'btn btn-outline-danger'}
                   type={'button'}

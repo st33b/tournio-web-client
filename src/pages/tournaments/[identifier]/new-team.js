@@ -14,11 +14,21 @@ const Page = () => {
   const router = useRouter();
 
   useEffect(() => {
+    if (!entry || !entry.tournament) {
+      return;
+    }
+    const shift = entry.tournament.shifts[0];
+    if (shift && !shift.permit_new_teams) {
+      router.push(`/tournaments/${entry.tournament.identifier}`);
+    }
+  }, [entry]);
+
+  useEffect(() => {
     dispatch(newTeamRegistrationInitiated());
   }, [dispatch]);
 
-  const onTeamFormCompleted = (teamName) => {
-    dispatch(teamInfoAdded(teamName));
+  const onTeamFormCompleted = (teamName, shift) => {
+    dispatch(teamInfoAdded(teamName, shift));
     router.push(`/tournaments/${entry.tournament.identifier}/new-team-bowler`);
   }
 
