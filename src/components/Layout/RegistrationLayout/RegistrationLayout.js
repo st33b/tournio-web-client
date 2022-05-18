@@ -4,6 +4,7 @@ import SiteHeader from './SiteHeader';
 import Navigation from './Navigation';
 import Footer from './Footer';
 import classes from './RegistrationLayout.module.scss';
+import MaintenanceAnnouncement from "../../common/MaintenanceAnnouncement/MaintenanceAnnouncement";
 
 const RegistrationLayout = ({children, showCart}) => {
   return (
@@ -17,6 +18,7 @@ const RegistrationLayout = ({children, showCart}) => {
 
       <main>
         <Container fluid={'md'}>
+          <MaintenanceAnnouncement />
           {children}
         </Container>
       </main>
