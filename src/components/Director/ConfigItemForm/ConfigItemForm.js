@@ -96,7 +96,7 @@ const ConfigItemForm = ({item}) => {
     setFormData(newFormData);
 
     if (item.key === 'email_in_dev' || item.key === 'display_capacity') {
-      onFormSubmit(newFormData.value);
+      onFormSubmit(null, newFormData.value);
     }
   }
 
@@ -107,7 +107,10 @@ const ConfigItemForm = ({item}) => {
     setFormData(newFormData);
     toggleEdit(null, false);
   }
-  const onFormSubmit = (value = null) => {
+  const onFormSubmit = (event, value = null) => {
+    if (event) {
+      event.preventDefault();
+    }
     const valueToSend = value === null ? formData.value : value;
     const uri = `/director/config_items/${item.id}`;
     const requestConfig = {
@@ -124,7 +127,7 @@ const ConfigItemForm = ({item}) => {
       context: context,
       router: router,
       onSuccess: (_) => { toggleEdit(null, false) },
-      onFailure: (_) => { console.log("Failed to save config item.") },
+      onFailure: (data) => { console.log("Failed to save config item.", data) },
     });
   }
 
