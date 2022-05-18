@@ -7,7 +7,7 @@ import classes from './Summary.module.scss';
 const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEdit}) => {
   const {entry} = useRegistrationContext();
 
-  if (!entry.tournament || !entry.team) {
+  if (!entry || !entry.tournament || !entry.team) {
     return '';
   }
 
