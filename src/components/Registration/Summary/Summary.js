@@ -3,37 +3,50 @@ import {Button, Card} from "react-bootstrap";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './Summary.module.scss';
+import {useEffect, useState} from "react";
 
-const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEdit}) => {
+const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEdit, finalStep}) => {
   const {entry} = useRegistrationContext();
 
-  if (!entry.tournament || !entry.team) {
+  const [tournament, setTournament] = useState();
+  const [team, setTeam] = useState();
+
+  useEffect(() => {
+    if (!entry || !entry.tournament || !entry.team) {
+      return;
+    }
+
+    setTournament(entry.tournament);
+    setTeam(entry.team);
+  }, [entry]);
+
+  if (!tournament || !team) {
     return '';
   }
 
   let teamText = '';
-  if (entry.team.name) {
+  if (team.name) {
     teamText = (
       <p>
         <span>
           Team name:{' '}
         </span>
         <span className={'fw-bold'}>
-          {entry.team.name}
+          {team.name}
         </span>
       </p>
     );
   }
 
   let shiftText = '';
-  if (entry.team.shift && entry.tournament.shifts.length > 1) {
+  if (team.shift && tournament.shifts.length > 1) {
     shiftText = (
       <p>
         <span>
           Requested Shift:{' '}
         </span>
         <span className={'fw-bold'}>
-          {entry.team.shift.name}
+          {team.shift.name}
         </span>
       </p>
     );
@@ -41,10 +54,10 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
 
   // list the names of bowlers added so far
   let bowlersText = '';
-  if (entry.team.bowlers && entry.team.bowlers.length > 0) {
+  if (team.bowlers && team.bowlers.length > 0) {
     bowlersText = (
       <ol>
-        {entry.team.bowlers.map((b, i) => {
+        {team.bowlers.map((b, i) => {
           return (
             <li key={i}>
               {b.first_name} {b.last_name}
@@ -55,10 +68,24 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
     );
   }
 
+  // for editing doubles partners
+  let doublesLink = '';
+  if (enableDoublesEdit && team.bowlers && team.bowlers.length > 1) {
+    doublesLink = (
+      <div className='text-start pb-4'>
+        <a
+          href={`/tournaments/${tournament.identifier}/doubles-partners`}
+          className=''>
+          Edit doubles partners
+        </a>
+      </div>
+    );
+  }
+
   // e.g., finished with bowlers, submit registration
   // we only want to show this button if we have at least one bowler
   let nextStep = '';
-  if (nextStepText && entry.team.bowlers.length > 0) {
+  if (nextStepText && team.bowlers.length > 0) {
     nextStep = (
       <Button variant={'success'}
               size={'lg'}
@@ -69,29 +96,45 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
     );
   }
 
-  // for editing doubles partners
-  let doublesLink = '';
-  if (enableDoublesEdit && entry.team.bowlers && entry.team.bowlers.length > 1) {
-    doublesLink = (
-      <div className='text-start pb-4'>
-        <a
-          href={`/tournaments/${entry.tournament.identifier}/doubles-partners`}
-          className=''>
-          Edit doubles partners
-        </a>
-      </div>
-    );
+  if (finalStep) {
+    const teamSize = team.bowlers.length;
+    const maxTeamSize = parseInt(tournament.config_items.find(({key}) => key === 'team_size').value);
+    if (teamSize < maxTeamSize) {
+      nextStep = (
+        <form onSubmit={nextStepClicked}>
+          <div className={'form-check mb-3'}>
+            <input type={'checkbox'}
+                   className={'form-check-input'}
+                   name={'placeWithOthers'}
+                   id={'placeWithOthers'}
+            />
+            <label className={'form-check-label'}
+                   htmlFor={'placeWithOthers'}
+            >
+              We'd like the tournament committee to fill our team by placing other bowlers with us.
+            </label>
+          </div>
+
+          <Button variant={'success'}
+                  size={'lg'}
+                  type={'submit'}
+                  disabled={buttonDisabled}>
+            {nextStepText}
+          </Button>
+        </form>
+      )
+    }
   }
 
   return (
     <div className={classes.Summary}>
       <Card className={`border-0`}>
         <Card.Img variant={'top'}
-                  src={entry.tournament.image_path}
+                  src={tournament.image_path}
                   className={'d-none d-sm-block'}/>
         <Card.Body>
           <Card.Title>
-            {entry.tournament.name}
+            {tournament.name}
           </Card.Title>
           {teamText}
           {shiftText}
