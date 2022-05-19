@@ -111,7 +111,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
             <label className={'form-check-label'}
                    htmlFor={'placeWithOthers'}
             >
-              We'd like the tournament committee to fill our team by placing other bowlers with us.
+              We&apos;d like the tournament committee to fill our team by placing other bowlers with us.
             </label>
           </div>
 
