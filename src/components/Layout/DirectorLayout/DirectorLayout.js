@@ -4,6 +4,7 @@ import SiteHeader from './SiteHeader';
 import Navigation from './Navigation';
 import Footer from './Footer';
 import classes from './DirectorLayout.module.scss';
+import MaintenanceAnnouncement from "../../common/MaintenanceAnnouncement/MaintenanceAnnouncement";
 
 const DirectorLayout = ({children}) => {
   return (
@@ -17,6 +18,7 @@ const DirectorLayout = ({children}) => {
 
       <main>
         <Container fluid={'lg'}>
+          <MaintenanceAnnouncement />
           {children}
         </Container>
       </main>
