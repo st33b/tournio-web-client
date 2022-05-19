@@ -11,7 +11,7 @@ const MaintenanceAnnouncement = () => {
 
   const parsedTime = parseISO(envTime);
 
-  const theDate = format(parsedTime, 'PP'); // Day of week + date
+  const theDate = format(parsedTime, 'cccc, MMMM do'); // Day of week + date
   const startTime = format(parsedTime, 'h:mmaaa'); // time of day
   const ending = parsedTime.setHours(parsedTime.getHours() + 2);
   const endTime = format(ending, 'h:mmaaa'); // two hours, time of day
@@ -30,7 +30,7 @@ const MaintenanceAnnouncement = () => {
         </span>
         {' to '}
         <span className={classes.TimeBoundary}>
-          {endTime}
+          {endTime} EDT
         </span>
         .
       </div>
