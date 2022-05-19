@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "NEXT_PUBLIC_IGBO_REGISTRATION_CLIENT_VERSION=`git rev-parse --short HEAD` next",
-    "build": "next build",
+    "build": "NEXT_PUBLIC_IGBO_REGISTRATION_CLIENT_VERSION=`git rev-parse --short HEAD` next build",
     "start": "NEXT_PUBLIC_IGBO_REGISTRATION_CLIENT_VERSION=`git rev-parse --short HEAD` next start",
     "lint": "next lint"
   },
