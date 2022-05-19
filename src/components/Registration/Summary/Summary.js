@@ -41,7 +41,6 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
 
   // list the names of bowlers added so far
   let bowlersText = '';
-  let nextStepButton = '';
   if (entry.team.bowlers && entry.team.bowlers.length > 0) {
     bowlersText = (
       <ol>
@@ -54,19 +53,20 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
         })}
       </ol>
     );
+  }
 
-    // e.g., finished with bowlers, submit registration
-    // we only want to show this button if we have at least one bowler
-    if (nextStepText) {
-      nextStepButton = (
-        <Button variant={'success'}
-                size={'lg'}
-                disabled={buttonDisabled}
-                onClick={nextStepClicked}>
-          {nextStepText}
-        </Button>
-      );
-    }
+  // e.g., finished with bowlers, submit registration
+  // we only want to show this button if we have at least one bowler
+  let nextStep = '';
+  if (nextStepText && entry.team.bowlers.length > 0) {
+    nextStep = (
+      <Button variant={'success'}
+              size={'lg'}
+              disabled={buttonDisabled}
+              onClick={nextStepClicked}>
+        {nextStepText}
+      </Button>
+    );
   }
 
   // for editing doubles partners
@@ -97,7 +97,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
           {shiftText}
           {bowlersText}
           {doublesLink}
-          {nextStepButton}
+          {nextStep}
         </Card.Body>
       </Card>
     </div>

@@ -220,6 +220,9 @@ const convertTeamDataForServer = (tournament, team) => {
     team: {
       name: team.name,
       bowlers_attributes: [],
+      options: {
+        place_with_others: !!team.placeWithOthers,
+      }
     },
   };
   console.log(team);
