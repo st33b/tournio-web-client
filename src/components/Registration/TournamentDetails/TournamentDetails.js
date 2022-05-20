@@ -254,21 +254,27 @@ const TournamentDetails = ({tournament}) => {
             Birth dates (required for IGBO)
           </li>
           <li>
-            USBC and IGBO identifiers
-            <ul>
-              <li>
-                <a href={USBC_ID_LOOKUP_URL} target="_new">
-                  Find a USBC identifier
-                  <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>
-                </a>
-              </li>
-              <li>
-                <a href={IGBO_ID_LOOKUP_URL} target="_new">
-                  Find an IGBO identifier
-                  <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>
-                </a>
-              </li>
-            </ul>
+            {/*USBC and IGBO identifiers*/}
+            USBC ID
+            {' '}&ndash;{' '}
+            <a href={USBC_ID_LOOKUP_URL} target="_new">
+              find a USBC identifier
+              <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>
+            </a>
+            {/*<ul>*/}
+            {/*  <li>*/}
+            {/*    <a href={USBC_ID_LOOKUP_URL} target="_new">*/}
+            {/*      Find a USBC identifier*/}
+            {/*      <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>*/}
+            {/*    </a>*/}
+            {/*  </li>*/}
+            {/*  <li>*/}
+            {/*    <a href={IGBO_ID_LOOKUP_URL} target="_new">*/}
+            {/*      Find an IGBO identifier*/}
+            {/*      <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>*/}
+            {/*    </a>*/}
+            {/*  </li>*/}
+            {/*</ul>*/}
           </li>
         </ul>
       </div>
