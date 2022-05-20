@@ -32,7 +32,14 @@ const Page = () => {
     setError(errorMessage);
   }
 
-  const submitRegistration = () => {
+  const submitRegistration = (event) => {
+    event.preventDefault();
+
+    if (event.target.elements) {
+      // got a partial team with a checkbox in a form
+      entry.team.placeWithOthers = event.target.elements.placeWithOthers.checked;
+    }
+
     submitNewTeamRegistration(entry.tournament,
       entry.team,
       newTeamRegistrationSuccess,
@@ -71,6 +78,7 @@ const Page = () => {
         <Summary nextStepClicked={submitRegistration}
                  nextStepText={'Submit Registration'}
                  enableDoublesEdit={true}
+                 finalStep={true}
         />
       </Col>
     </Row>

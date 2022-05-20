@@ -36,6 +36,7 @@ const Page = () => {
   const submitRegistration = () => {
     const newTeam = {...entry.team};
     newTeam.name = 'A Solo Bowler';
+    newTeam.placeWithOthers = true;
     submitNewTeamRegistration(entry.tournament,
       newTeam,
       soloRegistrationSuccess,

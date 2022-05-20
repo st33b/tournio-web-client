@@ -6,14 +6,10 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import PartnerSelectionRow from "./PartnerSelectionRow";
 
 import classes from './TeamDetails.module.scss';
+import ErrorBoundary from "../../common/ErrorBoundary";
 
 const TeamDetails = ({team, teamUpdateSubmitted}) => {
   const directorContext = useDirectorContext();
-
-  let identifier;
-  if (directorContext && directorContext.tournament) {
-    identifier = directorContext.tournament.identifier;
-  }
 
   let initialFormData = {
     valid: true,
@@ -36,13 +32,24 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
 
   const [data, setData] = useState([]);
   const [teamForm, setTeamForm] = useState(initialFormData);
+  const [tournament, setTournament] = useState();
+
+  let identifier;
   useEffect(() => {
-    if (!team) {
+    if (!directorContext || !directorContext.tournament) {
+      return;
+    }
+    setTournament(directorContext.tournament);
+    identifier = directorContext.tournament.identifier;
+  }, [directorContext]);
+
+  useEffect(() => {
+    if (!team || !tournament) {
       return;
     }
     const newFormData = {...teamForm}
     newFormData.fields.name.value = team.name;
-    if (directorContext.tournament.shifts.length > 1) {
+    if (tournament.shifts.length > 1) {
       newFormData.fields.shift = {
         value: team.shift.identifier,
         valid: true,
@@ -57,49 +64,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     }, [team]);
     setData(team.bowlers);
     setTeamForm(newFormData);
-  }, [team]);
-
-  const inputChangedHandler = (event, inputName, index = -1) => {
-    const updatedTeamForm = {...teamForm};
-    updatedTeamForm.touched = true;
-
-    switch (inputName) {
-      case 'name':
-      case 'shift':
-        updatedTeamForm.fields[inputName].value = event.target.value;
-        updatedTeamForm.fields[inputName].valid = updatedTeamForm.fields[inputName].value.length > 0;
-        break;
-      case 'position':
-        updatedTeamForm.fields.bowlers_attributes.value[index].position = parseInt(event.target.value);
-        const positions = updatedTeamForm.fields.bowlers_attributes.value.map((attrs) => attrs.position).sort();
-        updatedTeamForm.fields.bowlers_attributes.valid = positions.reduce((result, value, index, array) => result && array[index - 1] < value);
-        break;
-    }
-
-    // Do we need to Handle validity of partner assignments?
-    let formIsValid = true;
-    for (let fieldName in updatedTeamForm.fields) {
-      formIsValid = formIsValid && updatedTeamForm.fields[fieldName].valid;
-    }
-    updatedTeamForm.valid = formIsValid;
-
-    setTeamForm(updatedTeamForm);
-  }
-
-  const updateSubmitHandler = () => {
-    const formData = {};
-    for (let key in teamForm.fields) {
-      formData[key] = teamForm.fields[key].value;
-    }
-    teamUpdateSubmitted(formData);
-  }
-
-  const freeEntryDeets = (row, rowIndex) => {
-    if (row.free_entry === null) {
-      return '--'
-    }
-    return row.free_entry.unique_code;
-  }
+  }, [team, tournament]);
 
   // columns
   const columns = useMemo(() => [
@@ -161,6 +126,52 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     {columns, data},
   );
 
+  if (!tournament || !team) {
+    return '';
+  }
+
+  const inputChangedHandler = (event, inputName, index = -1) => {
+    const updatedTeamForm = {...teamForm};
+    updatedTeamForm.touched = true;
+
+    switch (inputName) {
+      case 'name':
+      case 'shift':
+        updatedTeamForm.fields[inputName].value = event.target.value;
+        updatedTeamForm.fields[inputName].valid = updatedTeamForm.fields[inputName].value.length > 0;
+        break;
+      case 'position':
+        updatedTeamForm.fields.bowlers_attributes.value[index].position = parseInt(event.target.value);
+        const positions = updatedTeamForm.fields.bowlers_attributes.value.map((attrs) => attrs.position).sort();
+        updatedTeamForm.fields.bowlers_attributes.valid = positions.reduce((result, value, index, array) => result && array[index - 1] < value);
+        break;
+    }
+
+    // Do we need to Handle validity of partner assignments?
+    let formIsValid = true;
+    for (let fieldName in updatedTeamForm.fields) {
+      formIsValid = formIsValid && updatedTeamForm.fields[fieldName].valid;
+    }
+    updatedTeamForm.valid = formIsValid;
+
+    setTeamForm(updatedTeamForm);
+  }
+
+  const updateSubmitHandler = () => {
+    const formData = {};
+    for (let key in teamForm.fields) {
+      formData[key] = teamForm.fields[key].value;
+    }
+    teamUpdateSubmitted(formData);
+  }
+
+  const freeEntryDeets = (row, rowIndex) => {
+    if (row.free_entry === null) {
+      return '--'
+    }
+    return row.free_entry.unique_code;
+  }
+
   // When a doubles partner is clicked, what needs to happen:
   // - update the double partner assignments in state. (One click is enough to know everyone.)
   //  - Ex: Bowler A clicked on Bowler B
@@ -200,10 +211,6 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     setTeamForm(updatedTeamForm);
   }
 
-  if (!team) {
-    return '';
-  }
-
   const doublesPartnerSelection = (
     <div className={'table-responsive'}>
       <table className={'table table-hover caption-top align-middle'}>
@@ -234,101 +241,122 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     </div>
   );
 
+  const maxTeamSize = parseInt(tournament.config_items.find(({key}) => key === 'team_size').value);
+
   return (
-    <div className={classes.TeamDetails}>
-      <div className={'row mb-2'}>
-        <label htmlFor={'team_name'} className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
-          Team Name
-        </label>
-        <div className={'col'}>
-          <input type={'text'}
-                 className={'form-control'}
-                 name={'name'}
-                 id={'name'}
-                 value={teamForm.fields.name.value}
-                 onChange={(event) => inputChangedHandler(event, 'name')}
-          />
-        </div>
-      </div>
-      {directorContext.tournament.shifts.length > 1 &&
+    <ErrorBoundary>
+      <div className={classes.TeamDetails}>
         <div className={'row mb-2'}>
-          <label htmlFor={'shift'}
-                 className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
-            Requested Shift
-          </label>
-          <div className={'col'}>
-            <select className={'form-select'}
-                    name={'shift'}
-                    id={'shift'}
-                    onChange={(event) => inputChangedHandler(event, 'shift')}
-                    value={teamForm.fields.shift.value}>
-              {directorContext.tournament.shifts.map(shift => (
-                <option key={shift.identifier} value={shift.identifier}>
-                  {shift.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      }
-      {directorContext.tournament.shifts.length > 0 &&
-        <div className={'row mb-2'}>
-          <label htmlFor={'shift_confirmed'}
-                 className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
-            Place Confirmed?
+          <label htmlFor={'team_name'} className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
+            Team Name
           </label>
           <div className={'col'}>
             <input type={'text'}
-                   readOnly={true}
-                   className={'form-control-plaintext'}
-                   id={'shift_confirmed'}
-                   value={team.shift_confirmed ? 'Yes' : 'No'}
+                   className={'form-control'}
+                   name={'name'}
+                   id={'name'}
+                   value={teamForm.fields.name.value}
+                   onChange={(event) => inputChangedHandler(event, 'name')}
             />
           </div>
         </div>
-      }
-      <div className={'table-responsive'}>
-        <table className={'table table-striped caption-top align-middle'} {...getTableProps}>
-          <caption className={classes.Caption}>
-            Roster
-          </caption>
-          <thead className={'table-light'}>
-          {headerGroups.map((headerGroup, i) => (
-            <tr key={i} {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column, j) => (
-                <th key={j} {...column.getHeaderProps()}>
-                  {column.render('Header')}
-                </th>
-              ))}
-            </tr>
-          ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-          {rows.map((row, i) => {
-            prepareRow(row);
-            return (
-              <tr key={i} {...row.getRowProps()}>
-                {row.cells.map((cell, j) => (
-                  <td key={j} {...cell.getCellProps()}>
-                    {cell.render('Cell')}
-                  </td>
+        {tournament.shifts.length > 1 &&
+          <div className={'row mb-2'}>
+            <label htmlFor={'shift'}
+                   className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
+              Requested Shift
+            </label>
+            <div className={'col'}>
+              <select className={'form-select'}
+                      name={'shift'}
+                      id={'shift'}
+                      onChange={(event) => inputChangedHandler(event, 'shift')}
+                      value={teamForm.fields.shift.value}>
+                {tournament.shifts.map(shift => (
+                  <option key={shift.identifier} value={shift.identifier}>
+                    {shift.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        }
+        {tournament.shifts.length > 0 &&
+          <div className={'row mb-2'}>
+            <label htmlFor={'shift_confirmed'}
+                   className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
+              Place Confirmed?
+            </label>
+            <div className={'col'}>
+              <input type={'text'}
+                     readOnly={true}
+                     className={'form-control-plaintext'}
+                     id={'shift_confirmed'}
+                     value={team.shift_confirmed ? 'Yes' : 'No'}
+              />
+            </div>
+          </div>
+        }
+        {team.size < maxTeamSize &&
+          <div className={'row mb-2'}>
+            <label htmlFor={'place_with_others'}
+                   className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
+              Place With Others?
+            </label>
+            <div className={'col'}>
+              <input type={'text'}
+                     readOnly={true}
+                     className={'form-control-plaintext'}
+                     id={'place_with_others'}
+                     value={team.place_with_others === 'n/a' ? 'no response' : (team.place_with_others ? 'Yes' : 'No')}
+              />
+            </div>
+          </div>
+        }
+        <div className={'table-responsive'}>
+          <table className={'table table-striped caption-top align-middle'} {...getTableProps}>
+            <caption className={classes.Caption}>
+              Roster
+            </caption>
+            <thead className={'table-light'}>
+            {headerGroups.map((headerGroup, i) => (
+              <tr key={i} {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column, j) => (
+                  <th key={j} {...column.getHeaderProps()}>
+                    {column.render('Header')}
+                  </th>
                 ))}
               </tr>
-            )
-          })}
-          </tbody>
-        </table>
+            ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+            {rows.map((row, i) => {
+              prepareRow(row);
+              return (
+                <tr key={i} {...row.getRowProps()}>
+                  {row.cells.map((cell, j) => (
+                    <td key={j} {...cell.getCellProps()}>
+                      {cell.render('Cell')}
+                    </td>
+                  ))}
+                </tr>
+              )
+            })}
+            </tbody>
+          </table>
+        </div>
+        {doublesPartnerSelection}
+        <div className={'text-center mt-4'}>
+          <Button variant={'primary'}
+                  disabled={!teamForm.touched || !teamForm.valid}
+                  onClick={updateSubmitHandler}
+          >
+            Update Details
+          </Button>
+        </div>
       </div>
-      {doublesPartnerSelection}
-      <div className={'text-center mt-4'}>
-        <Button variant={'primary'}
-                disabled={!teamForm.touched || !teamForm.valid}
-                onClick={updateSubmitHandler}
-        >
-          Update Details
-        </Button>
-      </div>
-    </div>
+    </ErrorBoundary>
+
   );
 }
 

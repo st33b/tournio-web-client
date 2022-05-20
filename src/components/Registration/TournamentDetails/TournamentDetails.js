@@ -167,16 +167,16 @@ const TournamentDetails = ({tournament}) => {
             Registration Options
           </Card.Header>
           <ListGroup variant={'flush'}>
-            {(!shift || shift && shift.permit_new_teams) && (
+            {(!shift || shift && shift.permit_solo) && (
               <ListGroup.Item className={'text-primary'}
-                              href={`${router.asPath}/new-team`}
+                              href={`${router.asPath}/solo-bowler`}
                               action>
-                Register a New Team
+                Register as a Solo Bowler
               </ListGroup.Item>
             )}
-            {shift && !shift.permit_new_teams && (
+            {shift && !shift.permit_solo && (
               <ListGroup.Item className={'text-muted text-decoration-line-through'}>
-                Register a New Team
+                Register as a Solo Bowler
               </ListGroup.Item>
             )}
             {(!shift || shift && shift.permit_joins) && (
@@ -191,16 +191,16 @@ const TournamentDetails = ({tournament}) => {
                 Join an Existing Team
               </ListGroup.Item>
             )}
-            {(!shift || shift && shift.permit_solo) && (
+            {(!shift || shift && shift.permit_new_teams) && (
               <ListGroup.Item className={'text-primary'}
-                              href={`${router.asPath}/solo-bowler`}
+                              href={`${router.asPath}/new-team`}
                               action>
-                Register as a Solo Bowler
+                Register a New Team
               </ListGroup.Item>
             )}
-            {shift && !shift.permit_solo && (
+            {shift && !shift.permit_new_teams && (
               <ListGroup.Item className={'text-muted text-decoration-line-through'}>
-                Register as a Solo Bowler
+                Register a New Team
               </ListGroup.Item>
             )}
           </ListGroup>
