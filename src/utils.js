@@ -225,7 +225,6 @@ const convertTeamDataForServer = (tournament, team) => {
       }
     },
   };
-  console.log(team);
   if (team.shift) {
     postData.team.shift = {
       identifier: team.shift.identifier,
@@ -401,7 +400,6 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
   axios(requestConfig)
     .then(response => {
       if (response.status >= 200 && response.status < 300) {
-        console.log(response.headers)
         onSuccess(response.data);
       } else if (response.status === 422) {
         onFailure(response.data.error);
