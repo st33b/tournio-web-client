@@ -1,9 +1,8 @@
-import 'bootstrap/scss/bootstrap.scss';
+import '../scss/igbo-reg-bs.scss';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import '../scss/styles.scss';
 
 import {useEffect} from "react";
-
-import '../styles.scss';
 
 import {DirectorContextProvider} from "../store/DirectorContext";
 import {RegistrationContextProvider} from "../store/RegistrationContext";
