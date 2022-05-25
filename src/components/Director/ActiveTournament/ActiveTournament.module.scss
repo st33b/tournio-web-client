@@ -1,10 +1,18 @@
 .ActiveTournament {
+  .AccordionHeader {
+    font-size: 95%;
+  }
   .Logo {
     max-height: 300px;
     width: auto;
     max-width: 100%;
   }
-
+  .Basics {
+    p {
+      margin-bottom: 0;
+      margin-top: 0;
+    }
+  }
   .StateChange {
     text-align: center;
     padding-bottom: 1rem;

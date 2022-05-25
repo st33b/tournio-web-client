@@ -1,18 +1,26 @@
 import Card from 'react-bootstrap/Card';
 
 import classes from './ActiveTournament.module.scss';
-import {useDirectorContext} from "../../../store/DirectorContext";
+import {Placeholder} from "react-bootstrap";
 
-const Logo = () => {
-  const context = useDirectorContext();
-  if (!context || !context.tournament) {
-    return '';
+const Logo = ({src}) => {
+  let content = (
+    <Placeholder as={Card.Text} animation="glow">
+      <Placeholder xs={7}/>{' '}
+      <Placeholder xs={4}/>{' '}
+      <Placeholder xs={4}/>{' '}
+      <Placeholder xs={6}/> {' '}
+      <Placeholder xs={8}/>
+    </Placeholder>
+  );
+  if (src) {
+    content = <Card.Img variant={'top'} src={src} className={classes.Logo}/>;
   }
 
   return (
-    <Card border={'0'} className={'d-none d-lg-block text-center'}>
+    <Card border={'0'} className={'d-none d-md-block text-center'}>
       <Card.Body>
-        <Card.Img variant={'top'} src={context.tournament.image_path} className={classes.Logo}/>
+        {content}
       </Card.Body>
     </Card>
   );

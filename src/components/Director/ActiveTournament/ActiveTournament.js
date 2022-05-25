@@ -1,4 +1,3 @@
-import {useDirectorContext} from "../../../store/DirectorContext";
 import Basics from './Basics';
 // import Configuration from "./Configuration";
 // import AdditionalQuestions from "./AdditionalQuestions";
@@ -12,9 +11,8 @@ import CloseTournament from "./CloseTournament";
 import classes from './ActiveTournament.module.scss';
 import {Accordion} from "react-bootstrap";
 
-const ActiveTournament = ({closeTournament}) => {
-  const context = useDirectorContext();
-  if (!context || !context.tournament) {
+const ActiveTournament = ({tournament, closeTournament}) => {
+  if (!tournament) {
     return <div className={classes.ActiveTournament}>
       <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
     </div>;
@@ -23,11 +21,11 @@ const ActiveTournament = ({closeTournament}) => {
   return (
     <div className={classes.ActiveTournament}>
       <div className={'row'}>
-        <div className={'col-12 col-md-6 col-lg-4'}>
-          <Logo tournament={context.tournament} />
+        <div className={'col-12 col-md-4 col-xl-3'}>
+          <Logo src={tournament.image_path} />
           <CloseTournament closeTournament={closeTournament} />
-          <Accordion>
-            <Basics />
+          <Accordion className={'mb-3'}>
+            <Basics eventKey={'0'} tournament={tournament}/>
           </Accordion>
 
           {/*<Configuration />*/}

@@ -139,7 +139,7 @@ const Tournament = () => {
   }
 
   const tournamentView = directorContext.tournament.state === 'active'
-    ? <ActiveTournament closeTournament={stateChangeInitiated} />
+    ? <ActiveTournament tournament={tournament} closeTournament={stateChangeInitiated} />
     : <TournamentDetails stateChangeInitiated={stateChangeInitiated}
                          testEnvironmentUpdated={testEnvironmentUpdated} />;
 
