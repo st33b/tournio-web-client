@@ -1,5 +1,3 @@
-import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
-
 import classes from './TournamentDetails.module.scss';
 import Basics from "./Basics";
 import Configuration from "./Configuration";
@@ -21,11 +19,8 @@ const TournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated}) => {
     </div>;
   }
 
-  const ladder = [{ text: 'Tournaments', path: '/director' }];
   return (
     <div className={classes.TournamentDetails}>
-      <Breadcrumbs ladder={ladder} activeText={context.tournament.name} className={classes.Breadcrumbs} />
-
       <div className={'row'}>
         <div className={'col-12 col-md-6 col-lg-4'}>
           <Basics />
