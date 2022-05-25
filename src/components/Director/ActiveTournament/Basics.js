@@ -49,6 +49,7 @@ const Basics = ({tournament, eventKey}) => {
       {content}
     </Accordion.Item>
   );
+
 }
 
 export default Basics;
