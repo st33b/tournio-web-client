@@ -1,17 +1,18 @@
+import {Accordion} from "react-bootstrap";
+
 import Basics from './Basics';
-// import Configuration from "./Configuration";
-// import AdditionalQuestions from "./AdditionalQuestions";
 import Logo from "./Logo";
+import Configuration from "./Configuration";
+import AdditionalQuestions from "./AdditionalQuestions";
+import Capacity from './Capacity';
 import CloseTournament from "./CloseTournament";
+
 // import StatusAndCounts from "./StatusAndCounts";
 // import PurchasableItems from "./PurchasableItems";
 // import Contacts from "./Contacts";
 // import Shifts from "./Shifts";
 
 import classes from './ActiveTournament.module.scss';
-import {Accordion} from "react-bootstrap";
-import Configuration from "./Configuration";
-import AdditionalQuestions from "./AdditionalQuestions";
 
 const ActiveTournament = ({tournament, closeTournament}) => {
   if (!tournament) {
@@ -37,8 +38,8 @@ const ActiveTournament = ({tournament, closeTournament}) => {
           {/*<Contacts />*/}
         </div>
 
-        <div className={'col-12 col-md-6 col-lg-8'}>
-
+        <div className={'col-12 col-md-8 col-xl-6'}>
+          <Capacity tournament={tournament} />
         </div>
       </div>
     </div>
