@@ -1,8 +1,7 @@
+import classes from './ActiveTournament.module.scss';
 import {Placeholder} from "react-bootstrap";
 import ShiftCapacity from "../../common/ShiftCapacity/ShiftCapacity";
 import ProgressBarLegend from "../../common/ShiftCapacity/ProgressBarLegend";
-
-import classes from './ActiveTournament.module.scss';
 
 const Capacity = ({tournament}) => {
   let content = (
