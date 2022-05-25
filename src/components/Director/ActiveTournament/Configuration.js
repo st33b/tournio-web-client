@@ -1,31 +1,46 @@
-import Card from 'react-bootstrap/Card';
+import {Accordion, Placeholder} from "react-bootstrap";
+
+import ConfigItem from "./ConfigItem";
 
 import classes from './ActiveTournament.module.scss';
-import ConfigItemForm from "../ConfigItemForm/ConfigItemForm";
-import ErrorBoundary from "../../common/ErrorBoundary";
 
-const Configuration = ({tournament}) => {
-  if (!tournament) {
-    return '';
+const Configuration = ({eventKey, tournament}) => {
+  let content = (
+    <Placeholder animation={'glow'}>
+      <Placeholder xs={3} />{' '}
+      <Placeholder xs={8} />
+      <Placeholder xs={4} />{' '}
+      <Placeholder xs={7} />
+      <Placeholder xs={3} />{' '}
+      <Placeholder xs={8} />
+      <Placeholder xs={4} />{' '}
+      <Placeholder xs={7} />
+    </Placeholder>
+  )
+  if (tournament) {
+    content = (
+      <dl>
+        {tournament.config_items.map((item) => {
+          if (item.key === 'display_capacity' || item.key === 'email_in_dev') {
+            return '';
+          }
+          return (
+            <ConfigItem item={item} key={item.key} />
+          )
+        })}
+      </dl>
+    )
   }
 
   return (
-    <ErrorBoundary>
-      <Card className={`${classes.Card} ${classes.Configuration}`}>
-        <Card.Header as={'h5'} className={'fw-light'}>
-          Configuration
-        </Card.Header>
-        <Card.Body>
-          <dl>
-            {tournament.config_items.map((item) => {
-              return (
-                <ConfigItemForm item={item} key={item.key} />
-              )
-            })}
-          </dl>
-        </Card.Body>
-      </Card>
-    </ErrorBoundary>
+    <Accordion.Item eventKey={eventKey} className={classes.Configuration}>
+      <Accordion.Header as={'h5'} className={classes.AccordionHeader}>
+        Configuration
+      </Accordion.Header>
+      <Accordion.Body className={classes.AccordionBody}>
+        {content}
+      </Accordion.Body>
+    </Accordion.Item>
   );
 }
 

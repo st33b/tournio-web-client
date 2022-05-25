@@ -1,6 +1,12 @@
 .ActiveTournament {
   .AccordionHeader {
-    font-size: 95%;
+    button {
+      font-size: 85%;
+    }
+  }
+  .AccordionBody {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
   .Logo {
     max-height: 300px;
@@ -13,9 +19,19 @@
       margin-top: 0;
     }
   }
+  .Configuration {
+    dl {
+      margin-bottom: 0;
+    }
+    .Item {
+    }
+    .ExternalLink {
+      font-size: 80%;
+      padding-left: 0.5rem;
+    }
+  }
   .StateChange {
     text-align: center;
     padding-bottom: 1rem;
   }
-
 }

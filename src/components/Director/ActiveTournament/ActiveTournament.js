@@ -10,6 +10,7 @@ import CloseTournament from "./CloseTournament";
 
 import classes from './ActiveTournament.module.scss';
 import {Accordion} from "react-bootstrap";
+import Configuration from "./Configuration";
 
 const ActiveTournament = ({tournament, closeTournament}) => {
   if (!tournament) {
@@ -26,6 +27,7 @@ const ActiveTournament = ({tournament, closeTournament}) => {
           <CloseTournament closeTournament={closeTournament} />
           <Accordion className={'mb-3'}>
             <Basics eventKey={'0'} tournament={tournament}/>
+            <Configuration eventKey={'1'} tournament={tournament} />
           </Accordion>
 
           {/*<Configuration />*/}

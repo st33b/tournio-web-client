@@ -13,11 +13,14 @@ const Basics = ({tournament, eventKey}) => {
 
   if (tournament) {
     content = (
-      <Accordion.Body>
+      <Accordion.Body className={classes.AccordionBody}>
         <p>
           {tournament.name}
         </p>
         <p>
+          <strong>
+            Year:{' '}
+          </strong>
           {tournament.year}
         </p>
         <p>
