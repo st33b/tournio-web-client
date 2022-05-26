@@ -27,7 +27,7 @@ const RegistrationOptions = ({tournament}) => {
         }
         {tournament.shifts && tournament.shifts.length > 0 && tournament.shifts.map((shift, i) => (
           <ListGroup.Item key={i} className={'p-0'}>
-            <ShiftForm shift={shift}/>
+            <ShiftForm shift={shift} />
           </ListGroup.Item>
         ))}
       </ListGroup>

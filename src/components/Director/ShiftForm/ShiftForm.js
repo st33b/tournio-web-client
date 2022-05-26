@@ -455,12 +455,12 @@ const ShiftForm = ({shift}) => {
             {/*</div>*/}
 
             <div className={'row mb-3'}>
-              <div className={'col-6 text-end'}>
-                <label htmlFor={'capacity'} className={'col-form-label ps-0 mb-1'}>
+              <div className={'col-5'}>
+                <label htmlFor={'capacity'} >
                   Capacity (bowlers)
                 </label>
               </div>
-              <div className={'col-6'}>
+              <div className={'col'}>
                 <input type={'number'}
                        className={'form-control'}
                        name={'capacity'}
@@ -485,12 +485,12 @@ const ShiftForm = ({shift}) => {
               {/*</div>*/}
             </div>
             <div className={'row mb-3'}>
-              <div className={'col-6 text-end'}>
+              <div className={'col-5'}>
                 <label>
-                  Enabled Registrations
+                  Enabled Options
                 </label>
               </div>
-              <div className={'col-6'}>
+              <div className={'col'}>
                 {registrationKinds.map(kind => (
                   <div className={'form-check form-switch'} key={kind.key}>
                     <input type={'checkbox'}
