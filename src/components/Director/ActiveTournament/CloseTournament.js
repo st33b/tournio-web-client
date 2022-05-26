@@ -2,11 +2,23 @@ import Button from 'react-bootstrap/Button';
 
 import classes from './ActiveTournament.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {Placeholder} from "react-bootstrap";
 
 /* Assumption: tournament.state is active */
 const CloseTournament = ({tournament, closeTournament}) => {
-  if (!tournament || !tournament.config_items) {
-    return '';
+  let content = (
+    <Placeholder.Button variant={'danger'} xs={6} />
+  );
+
+  if (tournament) {
+    content = (
+      <form onSubmit={stateChangeSubmitHandler}>
+        <Button variant={'danger'}
+                type={'submit'}>
+          Close Registration
+        </Button>
+      </form>
+    );
   }
 
   const stateChangeSubmitHandler = (event) => {
@@ -17,16 +29,11 @@ const CloseTournament = ({tournament, closeTournament}) => {
   }
 
   return (
-      <ErrorBoundary>
-        <div className={classes.StateChange}>
-          <form onSubmit={stateChangeSubmitHandler}>
-            <Button variant={'danger'}
-                    type={'submit'}>
-              Close Registration
-            </Button>
-          </form>
-        </div>
-      </ErrorBoundary>
+      <div className={classes.StateChange}>
+        <ErrorBoundary>
+          {content}
+        </ErrorBoundary>
+      </div>
     );
 }
 

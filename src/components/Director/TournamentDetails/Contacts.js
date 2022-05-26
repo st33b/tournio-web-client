@@ -13,8 +13,8 @@ const Contacts = () => {
   }
 
   return (
-    <Card className={classes.Card}>
-      <Card.Header as={'h5'} className={'fw-light'}>
+    <Card className={`${classes.Card} mb-3`}>
+      <Card.Header as={'h6'} className={'fw-light'}>
         Contacts
       </Card.Header>
       <ListGroup variant={'flush'}>
