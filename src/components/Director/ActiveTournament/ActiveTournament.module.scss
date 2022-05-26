@@ -47,6 +47,13 @@
   .RegistrationOptions {
     margin-bottom: 0.75rem;
   }
+  .EditableConfiguration {
+    dl {
+      margin-bottom: 0;
+    }
+    .ConfigItemForm {
+    }
+  }
   .StateChange {
     text-align: center;
     padding-bottom: 1rem;

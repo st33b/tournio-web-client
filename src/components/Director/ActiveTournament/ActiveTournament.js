@@ -15,6 +15,7 @@ import CloseTournament from "./CloseTournament";
 import classes from './ActiveTournament.module.scss';
 import Counts from "./Counts";
 import RegistrationOptions from "./RegistrationOptions";
+import EditableConfiguration from "./EditableConfiguration";
 
 const ActiveTournament = ({tournament, closeTournament}) => {
   if (!tournament) {
@@ -32,6 +33,7 @@ const ActiveTournament = ({tournament, closeTournament}) => {
           <CloseTournament closeTournament={closeTournament} />
           <Counts tournament={tournament} />
           <RegistrationOptions tournament={tournament}/>
+          <EditableConfiguration tournament={tournament} />
         </div>
 
         <div className={'col-12 col-md-8 col-xl-6'}>

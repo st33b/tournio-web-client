@@ -17,6 +17,14 @@ const Basics = ({tournament, eventKey}) => {
         <p>
           {tournament.name}
         </p>
+        {process.env.NODE_ENV === 'development' && (
+          <p>
+            <strong>
+              ID:{' '}
+            </strong>
+            {tournament.id}
+          </p>
+        )}
         <p>
           <strong>
             Year:{' '}
