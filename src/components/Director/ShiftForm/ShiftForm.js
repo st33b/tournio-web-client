@@ -506,8 +506,8 @@ const ShiftForm = ({shift}) => {
                   Enabled Options
                 </label>
               </div>
-              <div className={'col-6'}>
-                {REGISTRATION_TYPE_LABELS.map(kind => (
+              <div className={'col'}>
+                {registrationKinds.map(kind => (
                   <div className={'form-check form-switch'} key={kind.key}>
                     <input type={'checkbox'}
                            className={'form-check-input'}
