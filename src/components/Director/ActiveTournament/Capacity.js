@@ -1,7 +1,8 @@
-import classes from './ActiveTournament.module.scss';
 import {Placeholder} from "react-bootstrap";
 import ShiftCapacity from "../../common/ShiftCapacity/ShiftCapacity";
 import ProgressBarLegend from "../../common/ShiftCapacity/ProgressBarLegend";
+
+import classes from './ActiveTournament.module.scss';
 
 const Capacity = ({tournament}) => {
   let content = (
@@ -19,7 +20,7 @@ const Capacity = ({tournament}) => {
     })
   }
   return (
-    <div className={`${classes.Capacity} my-3 border rounded-sm p-2 p-sm-3`}>
+    <div className={`${classes.Capacity} border rounded-sm p-2 p-sm-3 mb-3`}>
       <div>
         <h5 className={'fw-light'}>
           Capacity

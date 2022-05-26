@@ -13,6 +13,7 @@ import CloseTournament from "./CloseTournament";
 // import Shifts from "./Shifts";
 
 import classes from './ActiveTournament.module.scss';
+import Counts from "./Counts";
 
 const ActiveTournament = ({tournament, closeTournament}) => {
   if (!tournament) {
@@ -40,6 +41,10 @@ const ActiveTournament = ({tournament, closeTournament}) => {
 
         <div className={'col-12 col-md-8 col-xl-6'}>
           <Capacity tournament={tournament} />
+        </div>
+
+        <div className={'col-12 col-md-4 col-xl-3'}>
+          <Counts tournament={tournament} />
         </div>
       </div>
     </div>

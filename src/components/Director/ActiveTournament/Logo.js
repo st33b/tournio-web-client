@@ -14,14 +14,12 @@ const Logo = ({src}) => {
     </Placeholder>
   );
   if (src) {
-    content = <Card.Img variant={'top'} src={src} className={classes.Logo}/>;
+    content = <Card.Img variant={'top'} src={src} />;
   }
 
   return (
-    <Card border={'0'} className={'d-none d-md-block text-center'}>
-      <Card.Body>
-        {content}
-      </Card.Body>
+    <Card border={'0'} className={`d-none d-md-block text-center ${classes.Logo}`}>
+      {content}
     </Card>
   );
 }
