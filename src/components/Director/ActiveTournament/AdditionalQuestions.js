@@ -16,7 +16,7 @@ const AdditionalQuestions = ({eventKey, tournament}) => {
     const list = (
       tournament.additional_questions.map((q, i) => {
         return (
-          <ListGroup.Item key={i}>
+          <ListGroup.Item key={i} className={classes.ListItem}>
             <strong>
               {q.order}{': '}
             </strong>
@@ -27,7 +27,7 @@ const AdditionalQuestions = ({eventKey, tournament}) => {
     );
     content = (
       <ListGroup variant={'flush'}>
-        {list.length === 0 && <ListGroup.Item>None configured</ListGroup.Item>}
+        {list.length === 0 && <ListGroup.Item className={classes.ListItem}>None configured</ListGroup.Item>}
         {list}
       </ListGroup>
     );
@@ -38,7 +38,7 @@ const AdditionalQuestions = ({eventKey, tournament}) => {
       <Accordion.Header as={'h5'} className={classes.AccordionHeader}>
         Additional Questions
       </Accordion.Header>
-      <Accordion.Body className={`${classes.AccordionBody} p-1`}>
+      <Accordion.Body className={`${classes.AccordionBody} py-1`}>
         {content}
       </Accordion.Body>
     </Accordion.Item>

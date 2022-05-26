@@ -23,21 +23,29 @@
     dl {
       margin-bottom: 0;
     }
-    .Item {
-    }
-    .ExternalLink {
-      font-size: 80%;
-      padding-left: 0.5rem;
+    .ConfigItem {
+      .Item {
+        .ExternalLink {
+          font-size: 80%;
+          padding-left: 0.5rem;
+        }
+      }
     }
   }
   .AdditionalQuestions {
-
+    .ListItem {
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
   .Capacity {
 
   }
   .Counts {
-
+    margin-bottom: 0.75rem;
+  }
+  .RegistrationOptions {
+    margin-bottom: 0.75rem;
   }
   .StateChange {
     text-align: center;
