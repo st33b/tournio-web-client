@@ -13,6 +13,10 @@
     width: auto;
     max-width: 100%;
   }
+  .ExternalLink {
+    font-size: 80%;
+    padding-left: 0.5rem;
+  }
   .Basics {
     p {
       margin-bottom: 0;
@@ -36,6 +40,16 @@
     .ListItem {
       padding-left: 0;
       padding-right: 0;
+    }
+  }
+  .PurchasableItems {
+    .PurchasableItem {
+      .Name {
+        display: block;
+      }
+      .Price {
+        font-weight: bold;
+      }
     }
   }
   .Capacity {

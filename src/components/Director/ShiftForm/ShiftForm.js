@@ -60,7 +60,7 @@ const ShiftForm = ({shift}) => {
   //   setFormData(newFormData);
   // }
 
-  const allowDelete = shift && (context.tournament.state !== 'active' || context.tournament.state !== 'demo');
+  const allowDelete = shift && (context.tournament.state !== 'active' && context.tournament.state !== 'demo');
 
   const addClicked = (event) => {
     event.preventDefault();
