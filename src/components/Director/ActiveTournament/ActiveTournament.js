@@ -13,6 +13,7 @@ import Contacts from "../TournamentDetails/Contacts";
 
 import classes from './ActiveTournament.module.scss';
 import PurchasableItems from "./PurchasableItems";
+import Downloads from "./Downloads";
 
 const ActiveTournament = ({tournament, closeTournament}) => {
   if (!tournament) {
@@ -29,6 +30,7 @@ const ActiveTournament = ({tournament, closeTournament}) => {
           <Counts tournament={tournament} />
           <RegistrationOptions tournament={tournament}/>
           <EditableConfiguration tournament={tournament} />
+          <Downloads tournament={tournament}/>
           <hr />
           <CloseTournament tournament={tournament} closeTournament={closeTournament} />
         </div>
