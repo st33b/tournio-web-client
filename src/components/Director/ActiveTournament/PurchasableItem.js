@@ -13,6 +13,14 @@ const PurchasableItem = ({item}) => {
   }
 
   let additionalText = '';
+  if (item.refinement === 'division') {
+    additionalText = `Division: ${item.configuration['division']}`;
+    if (item.configuration.note) {
+      additionalText += ` (${item.configuration.note})`;
+    }
+  } else if (item.configuration.note) {
+    additionalText = item.configuration.note;
+  }
 
   return (
     <ListGroupItem className={classes.PurchasableItem}>
@@ -20,7 +28,9 @@ const PurchasableItem = ({item}) => {
         <span className={classes.Name}>{item.name}</span>
         <span className={classes.Price}>${item.value}</span>
       </div>
-      {additionalText}
+      {additionalText && <span className={classes.Additional}>
+        {additionalText}
+      </span>}
     </ListGroupItem>
   )
 }
