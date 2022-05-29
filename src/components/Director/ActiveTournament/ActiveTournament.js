@@ -14,6 +14,7 @@ import Contacts from "../TournamentDetails/Contacts";
 import classes from './ActiveTournament.module.scss';
 import PurchasableItems from "./PurchasableItems";
 import Downloads from "./Downloads";
+import RegistrationsWeekChart from "./Charts/RegistrationsWeekChart";
 
 const ActiveTournament = ({tournament, closeTournament}) => {
   if (!tournament) {
@@ -37,6 +38,7 @@ const ActiveTournament = ({tournament, closeTournament}) => {
 
         <div className={'col-12 col-md-8 col-xl-6'}>
           <Capacity tournament={tournament} />
+          <RegistrationsWeekChart tournament={tournament}/>
         </div>
 
         <div className={'col-12 col-md-4 col-xl-3'}>
