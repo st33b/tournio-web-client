@@ -4,7 +4,7 @@ import {eachDayOfInterval, format} from "date-fns";
 
 import classes from '../ActiveTournament.module.scss';
 
-const RegistrationsWeekChart = ({tournament}) => {
+const RegistrationsWeek = ({tournament}) => {
   if (!tournament) {
     return '';
   }
@@ -52,4 +52,4 @@ const RegistrationsWeekChart = ({tournament}) => {
   );
 }
 
-export default RegistrationsWeekChart
+export default RegistrationsWeek
