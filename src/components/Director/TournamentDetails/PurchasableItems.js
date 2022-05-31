@@ -7,6 +7,7 @@ import classes from './TournamentDetails.module.scss';
 import {useDirectorContext} from "../../../store/DirectorContext";
 import PurchasableItemEditForm from "../PurchasableItemEditForm/PurchasableItemEditForm";
 import NewPurchasableItem from "../NewPurchasableItem/NewPurchasableItem";
+import ErrorBoundary from "../../common/ErrorBoundary";
 
 const PurchasableItems = () => {
   const context = useDirectorContext();
@@ -20,6 +21,10 @@ const PurchasableItems = () => {
     const leftText = left.determination;
     const rightText = right.determination;
     return leftText.localeCompare(rightText);
+  });
+
+  const eventItems = context.tournament.purchasable_items.filter(({determination}) => determination === 'event').sort((left, right) => {
+    return left.configuration.order - right.configuration.order;
   });
 
   // sort the division items by name and note
@@ -60,41 +65,49 @@ const PurchasableItems = () => {
   const groupValues = [...divisionGroups.values()];
 
   return (
-    <Card className={[classes.Card, classes.PurchasableItems].join(' ')}>
-      <Card.Header as={'h5'} className={'fw-light'}>
-        Purchasable Items
-      </Card.Header>
+    <ErrorBoundary>
+      <Card className={[classes.Card, classes.PurchasableItems].join(' ')}>
+        <Card.Header as={'h5'} className={'fw-light'}>
+          Purchasable Items
+        </Card.Header>
 
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <Card.Body className={classes.Category}>
-          {ledgerItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
-        </Card.Body>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <Card.Body className={classes.Category}>
+            {ledgerItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+          </Card.Body>
 
-        {groupValues.map((group, index) => {
-          return group.length > 0 && (
+          {eventItems.length > 0 && (
+            <Card.Body className={classes.Category}>
+              {eventItems.map(item => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+            </Card.Body>
+          )}
+
+          {groupValues.map((group, index) => {
+            return group.length > 0 && (
               <Card.Body key={index} className={classes.Category}>
                 {group.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
               </Card.Body>
-          );
-        })}
+            );
+          })}
 
-        {singleUseItems.length > 0 &&
-          <Card.Body className={classes.Category}>
-            {singleUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+          {singleUseItems.length > 0 &&
+            <Card.Body className={classes.Category}>
+              {singleUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+            </Card.Body>
+          }
+
+          {multiUseItems.length > 0 &&
+            <Card.Body className={classes.Category}>
+              {multiUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+            </Card.Body>
+          }
+
+          <Card.Body className={'p-0'}>
+            <NewPurchasableItem/>
           </Card.Body>
-        }
-
-        {multiUseItems.length > 0 &&
-          <Card.Body className={classes.Category}>
-            {multiUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
-          </Card.Body>
-        }
-
-        <Card.Body className={'p-0'}>
-          <NewPurchasableItem />
-        </Card.Body>
-      </LocalizationProvider>
-    </Card>
+        </LocalizationProvider>
+      </Card>
+    </ErrorBoundary>
   );
 }
 
