@@ -8,6 +8,7 @@ import MultiUseForm from "./MultiUseForm";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './NewPurchasableItem.module.scss';
+import EventForm from "./EventForm";
 
 const NewPurchasableItem = () => {
   const context = useDirectorContext();
@@ -15,6 +16,7 @@ const NewPurchasableItem = () => {
   const [formDisplayed, setFormDisplayed] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [availableLedgerTypes, setAvailableLedgerTypes] = useState([]);
+  const [eventSelection, setEventSelection] = useState(false);
 
   // Determine which types of ledger items can still be created
   useEffect(() => {
@@ -30,6 +32,7 @@ const NewPurchasableItem = () => {
       }
     });
     setAvailableLedgerTypes(typesAvailable);
+    setEventSelection(context.tournament.config_items.some(item => item.key === 'event_selection' && item.value));
   }, [context])
 
   const allowCreate = context.tournament.state !== 'active';
@@ -80,9 +83,18 @@ const NewPurchasableItem = () => {
                       disabled={availableLedgerTypes.length === 0}
                       onClick={(event) => addClicked(event, 'ledger')}>
                 <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                New Fee Item
+                New Ledger Item
               </button>
             </div>
+            {eventSelection && (<div className={'text-center my-3'}>
+              <button type={'button'}
+                      className={'btn btn-outline-primary'}
+                      role={'button'}
+                      onClick={(event) => addClicked(event, 'event')}>
+                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
+                New Event
+              </button>
+            </div>)}
             <div className={'text-center my-3'}>
               <button type={'button'}
                       className={'btn btn-outline-primary'}
@@ -114,6 +126,7 @@ const NewPurchasableItem = () => {
         }
 
         {formDisplayed === 'ledger' && <LedgerForm availableTypes={availableLedgerTypes} onCancel={cancelClicked} onComplete={itemSaved} />}
+        {formDisplayed === 'event' && <EventForm onCancel={cancelClicked} onComplete={itemSaved} /> }
         {formDisplayed === 'division' && <DivisionForm onCancel={cancelClicked} onComplete={itemSaved} />}
         {formDisplayed === 'single_use' && <SingleUseForm onCancel={cancelClicked} onComplete={itemSaved} />}
         {formDisplayed === 'multi_use' && <MultiUseForm onCancel={cancelClicked} onComplete={itemSaved} />}
