@@ -27,7 +27,7 @@ const StateChangeButton = ({stateChangeInitiated}) => {
       stateChangeText = 'Begin Testing';
       stateChangeValue = 'test';
 
-      if (context.user.role === 'superuser') {
+      if (context.user && context.user.role === 'superuser') {
         demoButton = (
           <button className={'btn btn-outline-warning'}
                   type={'button'}

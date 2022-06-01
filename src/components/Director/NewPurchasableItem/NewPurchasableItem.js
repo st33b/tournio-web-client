@@ -32,7 +32,12 @@ const NewPurchasableItem = () => {
       }
     });
     setAvailableLedgerTypes(typesAvailable);
-    setEventSelection(context.tournament.config_items.some(item => item.key === 'event_selection' && item.value));
+
+    const eventSelectionEnabled = context.tournament.config_items.some(item => item.key === 'event_selection' && item.value);
+    if (eventSelectionEnabled) {
+      typesAvailable.push('bundle_discount');
+    }
+    setEventSelection(eventSelectionEnabled);
   }, [context])
 
   const allowCreate = context.tournament.state !== 'active';

@@ -89,7 +89,7 @@ const ConfigItemForm = ({item}) => {
     const newFormData = {...formData};
     if (item.key === 'entry_deadline') {
       newFormData.value = formatISO(event);
-    } else if (BOOLEAN_CONFIG_ITEMS.includes(item.key)) { // (item.key === 'email_in_dev' || item.key === 'display_capacity') {
+    } else if (BOOLEAN_CONFIG_ITEMS.includes(item.key)) {
       newFormData.value = event.target.checked;
     } else {
       newFormData.value = event.target.value;
