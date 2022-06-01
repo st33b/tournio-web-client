@@ -25,6 +25,7 @@ const PurchasableItemEditForm = ({item}) => {
     note: '', // division, product (optional)
     value: '',
     order: '',
+    eventIdentifiers: {}, // map of identifier to true/false
 
     valid: true,
   }
@@ -35,6 +36,14 @@ const PurchasableItemEditForm = ({item}) => {
     if (!item) {
       return;
     }
+    const eventIdentifiers = {};
+    if (item.configuration.events) {
+      context.tournament.purchasable_items.filter(({determination}) => determination === 'event').map(event => {
+        const id = event.identifier;
+        eventIdentifiers[id] = item.configuration.events.includes(event.identifier);
+      });
+    }
+
     const newFormData = {
       applies_at: item.configuration.applies_at || '',
       valid_until: item.configuration.valid_until || '',
@@ -43,6 +52,7 @@ const PurchasableItemEditForm = ({item}) => {
       note: item.configuration.note || '',
       value: item.value,
       order: item.configuration.order || '',
+      eventIdentifiers: eventIdentifiers, // map of identifier to true/false
     }
     setFormData(newFormData);
   }, [item]);
@@ -85,19 +95,36 @@ const PurchasableItemEditForm = ({item}) => {
   const onFormSubmit = (event) => {
     event.preventDefault();
     const uri = `/director/purchasable_items/${item.identifier}`;
+    const configuration = {};
+    switch (item.determination) {
+      case 'early_discount':
+        configuration.valid_until = formData.valid_until;
+        break;
+      case 'late_fee':
+        configuration.applies_at = formData.applies_at;
+        break;
+      case 'bundle_discount':
+        configuration.events = Object.keys(formData.eventIdentifiers).filter(id => formData.eventIdentifiers[id]);
+        break;
+    }
+    if (formData.order) {
+      configuration.order = formData.order;
+    }
+    if (formData.division) {
+      configuration.division = formData.division;
+    }
+    if (formData.note) {
+      configuration.note = formData.note;
+    }
+    if (formData.denomination) {
+      configuration.denomination = formData.denomination;
+    }
     const requestConfig = {
       method: 'patch',
       data: {
         purchasable_item: {
           value: formData.value,
-          configuration: {
-            order: formData.order,
-            applies_at: formData.applies_at,
-            valid_until: formData.valid_until,
-            division: formData.division,
-            note: formData.note,
-            denomination: formData.denomination,
-          }
+          configuration: configuration,
         }
       }
     };
@@ -155,6 +182,23 @@ const PurchasableItemEditForm = ({item}) => {
             break;
           case 'late_fee':
             note = !!formData.applies_at ? 'Applies at ' + format(new Date(formData.applies_at), datetimeFormat) : '';
+            break;
+          case 'bundle_discount':
+            note = (
+              // <ul className={'mb-0'}>
+                context.tournament.purchasable_items.filter(({determination}) => determination === 'event').map(event => {
+                  const eventIdentifier = event.identifier;
+                  if (formData.eventIdentifiers[eventIdentifier]) {
+                    return (
+                      <span className={'d-block'} key={eventIdentifier}>
+                        <i className={'bi-dash pe-1'} aria-hidden={true}/>
+                        {event.name}
+                      </span>
+                    )
+                  }
+                })
+              // </ul>
+            )
             break;
         }
         break;
@@ -255,6 +299,9 @@ const PurchasableItemEditForm = ({item}) => {
               renderInput: (params) => <TextField {...params} />,
             }
           });
+        } else if (item.determination === 'bundle_discount') {
+          otherValueProps.min = -1000;
+          otherValueProps.max = -1;
         }
         break;
       case 'bowling':
