@@ -23,10 +23,12 @@
       display: none;
     }
     .Note {
+      display: block;
       font-size: 85%;
       text-indent: 0.5rem;
     }
     .Subnote {
+      display: block;
       font-style: italic;
     }
   }
