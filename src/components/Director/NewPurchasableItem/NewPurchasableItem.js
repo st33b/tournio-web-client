@@ -23,21 +23,23 @@ const NewPurchasableItem = () => {
     if (!context) {
       return;
     }
+    const eventSelectionEnabled = context.tournament.config_items.some(item => item.key === 'event_selection' && item.value);
+
     const allLedgerTypes = ['entry_fee', 'late_fee', 'early_discount'];
     const usedTypes = context.tournament.purchasable_items.filter(item => item.category === 'ledger').map(item => item.determination);
     const typesAvailable = [];
     allLedgerTypes.forEach(type => {
-      if (!usedTypes.includes(type)) {
+      if (eventSelectionEnabled || !usedTypes.includes(type)) {
         typesAvailable.push(type);
       }
     });
-    setAvailableLedgerTypes(typesAvailable);
 
-    const eventSelectionEnabled = context.tournament.config_items.some(item => item.key === 'event_selection' && item.value);
     if (eventSelectionEnabled) {
       typesAvailable.push('bundle_discount');
     }
     setEventSelection(eventSelectionEnabled);
+
+    setAvailableLedgerTypes(typesAvailable);
   }, [context])
 
   const allowCreate = context.tournament.state !== 'active';
