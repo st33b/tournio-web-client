@@ -503,7 +503,7 @@ const ShiftForm = ({shift}) => {
             <div className={'row mb-3'}>
               <div className={'col-5'}>
                 <label>
-                  Enabled Options
+                  Enabled Registration Routes
                 </label>
               </div>
               <div className={'col'}>
