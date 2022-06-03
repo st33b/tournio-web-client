@@ -23,17 +23,23 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
     applies_at: '',
     valid_until: '',
     eventIdentifiers: {}, // map of identifier to true/false
+    linkedEvent: '',
 
     valid: false,
   }
 
   const [formData, setFormData] = useState(initialState);
+  const [eventSelectionAllowed, setEventSelectionAllowed] = useState(false);
 
   useEffect(() => {
     if (!context || !context.tournament) {
       return;
     }
-    if (availableTypes.includes('bundle_discount')) {
+    // It's a tournament where bowlers can select events, rather than a traditional tournament
+    if (context.tournament.config_items.some(ci => ci.key === 'event_selection' && ci.value)) {
+      setEventSelectionAllowed(true);
+
+      // populate the event identifiers, for both bundle_discount (if it's available) and event-linked late fee
       const identifiers = {};
       context.tournament.purchasable_items.filter(({determination}) => determination === 'event').map(item => {
         const id = item.identifier;
@@ -43,7 +49,6 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
       newFormData.eventIdentifiers = identifiers;
       setFormData(newFormData);
     }
-
   }, [context]);
 
   const inputChanged = (elementName, event) => {
@@ -75,7 +80,7 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
         }
         newFormData[elementName] = event.target.value;
       } else {
-        // It's the item name
+        // It's the item name or the linked event identifier
         newFormData[elementName] = event.target.value;
       }
     } else {
@@ -115,30 +120,35 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
   const formSubmitted = (event) => {
     event.preventDefault();
     const configuration = {};
+    const itemData = {
+      category: formData.category,
+      determination: formData.determination,
+      name: formData.name,
+      value: formData.value,
+    }
     switch (formData.determination) {
       case 'early_discount':
         configuration.valid_until = formData.valid_until;
         break;
       case 'late_fee':
         configuration.applies_at = formData.applies_at;
+        if (formData.linkedEvent) {
+          configuration.event = formData.linkedEvent;
+          itemData.refinement = 'event_linked';
+        }
         break;
       case 'bundle_discount':
         console.log('event identifiers', Object.keys(formData.eventIdentifiers).filter(id => formData.eventIdentifiers[id]));
         configuration.events = Object.keys(formData.eventIdentifiers).filter(id => formData.eventIdentifiers[id]);
         break;
     }
+    itemData.configuration = configuration;
     const uri = `/director/tournaments/${context.tournament.identifier}/purchasable_items`;
     const requestConfig = {
       method: 'post',
       data: {
         purchasable_items: [
-          {
-            category: formData.category,
-            determination: formData.determination,
-            name: formData.name,
-            value: formData.value,
-            configuration: configuration,
-          },
+          itemData,
         ],
       },
     };
@@ -243,6 +253,26 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
                   </label>
                 </div>
               ))}
+            </div>
+          }
+          {eventSelectionAllowed && formData.determination === 'late_fee' &&
+            <div className={'row mb-3'}>
+              <label htmlFor={'linkedEvent'} className={'form-label ps-0 mb-1'}>
+                Linked Event
+              </label>
+              <select className={'form-select'}
+                      name={'linkedEvent'}
+                      id={'linkedEvent'}
+                      onChange={event => inputChanged('linkedEvent', event)}>
+                <option value={''}>--</option>
+                {context.tournament.purchasable_items.filter(
+                  ({category, determination}) => category === 'bowling' && determination === 'event'
+                ).map(event => (
+                  <option key={event.identifier} value={event.identifier}>
+                    {event.name}
+                  </option>
+                  ))}
+              </select>
             </div>
           }
           <div className={'row mb-3'}>
