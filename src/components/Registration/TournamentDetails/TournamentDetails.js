@@ -158,6 +158,12 @@ const TournamentDetails = ({tournament}) => {
   }
 
   let registrationOptions = '';
+  const eventSelectionEnabled = tournament.config_items.some(item => item.key === 'event_selection' && item.value);
+  if (eventSelectionEnabled) {
+
+  } else {
+
+  }
   const shift = tournament.shifts[0];
   if (tournament.state === 'testing' || tournament.state === 'active' || tournament.state === 'demo') {
     registrationOptions = (
