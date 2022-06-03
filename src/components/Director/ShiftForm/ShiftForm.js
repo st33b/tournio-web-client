@@ -20,6 +20,7 @@ const ShiftForm = ({shift}) => {
     permit_new_teams: true,
     permit_joins: true,
     permit_solo: true,
+    permit_partnering: true,
 
     valid: false,
   });
@@ -41,6 +42,7 @@ const ShiftForm = ({shift}) => {
       permit_new_teams: shift.permit_new_teams,
       permit_joins: shift.permit_joins,
       permit_solo: shift.permit_solo,
+      permit_partnering: shift.permit_partnering,
 
       valid: true,
     };
@@ -83,6 +85,7 @@ const ShiftForm = ({shift}) => {
       case 'permit_new_teams':
       case 'permit_joins':
       case 'permit_solo':
+      case 'permit_partnering':
         newValue = event.target.checked;
         break;
       // case 'name':
@@ -128,6 +131,7 @@ const ShiftForm = ({shift}) => {
             permit_new_teams: formData.get('permit_new_teams'),
             permit_solo: formData.get('permit_solo'),
             permit_joins: formData.get('permit_joins'),
+            permit_partnering: formData.get('permit_partnering'),
           }
         }
       }
@@ -208,6 +212,7 @@ const ShiftForm = ({shift}) => {
             permit_new_teams: formData.get('permit_new_teams'),
             permit_solo: formData.get('permit_solo'),
             permit_joins: formData.get('permit_joins'),
+            permit_partnering: formData.get('permit_partnering'),
           }
         }
       }
@@ -251,6 +256,7 @@ const ShiftForm = ({shift}) => {
     {key: 'permit_new_teams', label: 'New Teams'},
     {key: 'permit_solo', label: 'Solo Entries'},
     {key: 'permit_joins', label: 'Join a Team'},
+    {key: 'permit_partnering', label: 'Partner Up'},
   ];
 
   // const daysOfWeek = [
