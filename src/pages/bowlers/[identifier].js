@@ -30,11 +30,10 @@ const Page = () => {
       return;
     }
 
-    // TODO: differentiate this message based on success content (register, purchase, etc.)
     if (success === 'purchase') {
       setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
     } else if (success === 'register') {
-      setSuccessMessage('Your registration was received! You may now select event, optional items, and pay entry fees.');
+      setSuccessMessage('Your registration was received! You may now select events, optional items, and pay entry fees.');
     }
 
     if (commerce.bowler.shift_info.full && !commerce.bowler.shift_info.confirmed) {
@@ -92,12 +91,14 @@ const Page = () => {
           <h4 className={'p-0 my-2 my-md-3'}>
             Bowler: {name}
           </h4>
-          <p className={'p-0 m-0'}>
-            <a href={`/teams/${commerce.bowler.team_identifier}`}>
-              <i className={'bi-arrow-left pe-2'} aria-hidden={true}/>
-              back to team
-            </a>
-          </p>
+          {commerce.bowler.team_identifier && (
+            <p className={'p-0 m-0'}>
+              <a href={`/teams/${commerce.bowler.team_identifier}`}>
+                <i className={'bi-arrow-left pe-2'} aria-hidden={true}/>
+                back to team
+              </a>
+            </p>
+          )}
         </Col>
       </Row>
 
