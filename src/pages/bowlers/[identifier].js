@@ -30,8 +30,11 @@ const Page = () => {
       return;
     }
 
-    if (success) {
+    // TODO: differentiate this message based on success content (register, purchase, etc.)
+    if (success === 'purchase') {
       setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
+    } else if (success === 'register') {
+      setSuccessMessage('Your registration was received! You may now select event, optional items, and pay entry fees.');
     }
 
     if (commerce.bowler.shift_info.full && !commerce.bowler.shift_info.confirmed) {

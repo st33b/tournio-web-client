@@ -197,9 +197,27 @@ export const submitNewTeamRegistration = (tournament, team, onSuccess, onFailure
 
 }
 
-export const submitJoinTeamRegistration = (tournament, team, bowler, onSuccess, onFailure) => {
+export const submitSoloRegistration = (tournament, bowler, onSuccess, onFailure) => {
   // make the post
   const bowlerData = { bowler: convertBowlerDataForPost(tournament, bowler) };
+  axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, bowlerData)
+    .then(response => {
+      const newBowlerIdentifier = response.data.identifier;
+      onSuccess(newBowlerIdentifier);
+    })
+    .catch(error => {
+      console.log('womp womp');
+      console.log(error);
+      console.log(error.response);
+      onFailure(error.response.status);
+    });
+}
+
+export const submitJoinTeamRegistration = (tournament, team, bowler, onSuccess, onFailure) => {
+  // make the post
+  const bowlerData = {
+    bowler: Object.assign(convertBowlerDataForPost(tournament, bowler), teamDataForBowler(bowler)),
+  };
   const teamId = team.identifier;
   axios.post(`${apiHost}/teams/${teamId}/bowlers`, bowlerData)
     .then(response => {
@@ -232,17 +250,25 @@ const convertTeamDataForServer = (tournament, team) => {
   }
   for (const bowler of team.bowlers) {
     postData.team.bowlers_attributes.push(
-      convertBowlerDataForPost(tournament, bowler)
+      Object.assign(
+        convertBowlerDataForPost(tournament, bowler),
+        teamDataForBowler(bowler)
+      )
     );
   }
   return postData;
 }
 
-const convertBowlerDataForPost = (tournament, bowler) => {
-  const additionalQuestionResponses = convertAdditionalQuestionResponsesForPost(tournament, bowler);
+const teamDataForBowler = (bowler) => {
   return {
     position: bowler.position,
     doubles_partner_num: bowler.doubles_partner_num,
+  };
+}
+
+const convertBowlerDataForPost = (tournament, bowler) => {
+  const additionalQuestionResponses = convertAdditionalQuestionResponsesForPost(tournament, bowler);
+  return {
     person_attributes: {
       first_name: bowler.first_name,
       last_name: bowler.last_name,
