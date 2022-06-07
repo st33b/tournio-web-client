@@ -114,14 +114,16 @@ const TournamentDetails = ({tournament}) => {
         Important details:
       </h6>
       <dl>
-        <div className={'row pb-2'}>
-          <dt className={dtClass}>
-            Registration fee:
-          </dt>
-          <dd className={ddClass}>
-            ${tournament.registration_fee}
-          </dd>
-        </div>
+        {!!tournament.registration_fee && (
+          <div className={'row pb-2'}>
+            <dt className={dtClass}>
+              Registration fee:
+            </dt>
+            <dd className={ddClass}>
+              ${tournament.registration_fee}
+            </dd>
+          </div>
+        )}
         {early_registration}
         {late_fee_date}
         <div className={'row pb-2'}>

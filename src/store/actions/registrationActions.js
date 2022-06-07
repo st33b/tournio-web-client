@@ -108,6 +108,12 @@ export const soloBowlerInfoUpdated = (bowlerInfo) => {
   }
 }
 
+export const soloBowlerRegistrationCompleted = () => {
+  return {
+    type: actionTypes.SOLO_BOWLER_REGISTRATION_COMPLETED,
+  }
+}
+
 export const bowlerCommerceDetailsRetrieved = (bowler, availableItems) => {
   return {
     type: actionTypes.BOWLER_DETAILS_RETRIEVED,

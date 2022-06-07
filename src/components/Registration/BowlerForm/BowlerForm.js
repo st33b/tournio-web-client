@@ -6,7 +6,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './BowlerForm.module.scss';
 
-const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift}) => {
+const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData}) => {
   const {entry} = useRegistrationContext();
 
   const initialFormState = {
@@ -309,7 +309,25 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift}) => {
   let buttonText = 'Save Bowler';
 
   // In the event we're editing a bowler, populate initialFormState with their values
-  if (editBowlerNum) {
+  if (bowlerData) {
+    // We're editing a solo bowler
+    position = 1;
+
+    for (const inputIdentifier in initialFormState.formFields) {
+      initialFormState.formFields[inputIdentifier].elementConfig.value = bowlerData[inputIdentifier];
+      initialFormState.formFields[inputIdentifier].valid = checkValidity(
+        bowlerData[inputIdentifier],
+        initialFormState.formFields[inputIdentifier].validation
+      );
+    }
+
+    if (includeShift) {
+      initialFormState.soloBowlerFields.shift.elementConfig.value = bowlerData.shift.identifier;
+      initialFormState.soloBowlerFields.shift.valid = true;
+    }
+    buttonText = 'Save Changes';
+  } else if (editBowlerNum) {
+    // We're editing a bowler on a team
     position = editBowlerNum;
     const bowlerToEdit = entry.team.bowlers[position - 1];
     for (const inputIdentifier in initialFormState.formFields) {

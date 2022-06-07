@@ -10,17 +10,19 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
 
   const [tournament, setTournament] = useState();
   const [team, setTeam] = useState();
+  const [bowler, setBowler] = useState();
 
   useEffect(() => {
-    if (!entry || !entry.tournament || !entry.team) {
+    if (!entry || !entry.tournament || (!entry.team && !entry.bowler)) {
       return;
     }
 
     setTournament(entry.tournament);
     setTeam(entry.team);
+    setBowler(entry.bowler);
   }, [entry]);
 
-  if (!tournament || !team) {
+  if (!tournament || (!team && !bowler)) {
     return '';
   }
 
@@ -85,7 +87,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
   // e.g., finished with bowlers, submit registration
   // we only want to show this button if we have at least one bowler
   let nextStep = '';
-  if (nextStepText && team.bowlers.length > 0) {
+  if (nextStepText && (team.bowlers.length > 0 || !!bowler)) {
     nextStep = (
       <Button variant={'success'}
               size={'lg'}
@@ -96,7 +98,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
     );
   }
 
-  if (finalStep) {
+  if (finalStep && !!team) {
     const teamSize = team.bowlers.length;
     const maxTeamSize = parseInt(tournament.config_items.find(({key}) => key === 'team_size').value);
     if (teamSize < maxTeamSize) {

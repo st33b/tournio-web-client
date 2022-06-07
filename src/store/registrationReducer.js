@@ -3,8 +3,8 @@ import {updateObject} from "../utils";
 
 const initialState = {
   tournament: null,
-  // bowlers: [],
   team: null,
+  bowler: null,
 }
 
 export const regInitializer = (initialValue = initialState) => {
@@ -86,17 +86,18 @@ export const registrationReducer = (state, action) => {
       });
     case actionTypes.NEW_SOLO_REGISTRATION_INITIATED:
       return updateObject(state, {
-        team: {
-          bowlers: [],
-        },
+        bowler: {},
       });
     case actionTypes.SOLO_BOWLER_INFO_ADDED:
     case actionTypes.SOLO_BOWLER_INFO_UPDATED:
-      const soloTeam = {...state.team}
-      soloTeam.bowlers = [action.bowler];
-      soloTeam.shift = state.tournament.shifts.find(s => s.identifier === action.bowler.shift);
+      const soloBowler = action.bowler;
+      soloBowler.shift = state.tournament.shifts.find(s => s.identifier === action.bowler.shift);
       return updateObject(state, {
-        team: soloTeam,
+        bowler: soloBowler,
+      });
+    case actionTypes.SOLO_BOWLER_REGISTRATION_COMPLETED:
+      return updateObject(state, {
+        bowler: null,
       });
     default:
       console.log("Nope!");

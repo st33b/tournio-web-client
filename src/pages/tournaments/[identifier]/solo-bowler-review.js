@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Alert, Col, Row} from "react-bootstrap";
 
@@ -6,8 +6,8 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import Summary from "../../../components/Registration/Summary/Summary";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
-import {newTeamEntryCompleted, teamDetailsRetrieved} from "../../../store/actions/registrationActions";
-import {submitNewTeamRegistration} from "../../../utils";
+import {soloBowlerRegistrationCompleted} from "../../../store/actions/registrationActions";
+import {submitSoloRegistration} from "../../../utils";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
@@ -15,17 +15,30 @@ const Page = () => {
   const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
 
-  const editBowlerClicked = () => {
-    router.push(`/tournaments/${entry.tournament.identifier}/solo-bowler-edit`);
-  }
-
+  const [bowler, setBowler] = useState();
+  const [tournament, setTournament] = useState();
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
 
-  const soloRegistrationSuccess = (teamData) => {
-    dispatch(teamDetailsRetrieved(teamData));
-    dispatch(newTeamEntryCompleted());
-    router.push(`/teams/${teamData.identifier}?success=solo`);
+  useEffect(() => {
+    if (!entry || !entry.tournament || !entry.bowler) {
+      return;
+    }
+    setTournament(entry.tournament);
+    setBowler(entry.bowler);
+  }, [entry]);
+
+  if (!tournament || !bowler) {
+    return '';
+  }
+
+  const editBowlerClicked = () => {
+    router.push(`/tournaments/${tournament.identifier}/solo-bowler-edit`);
+  }
+
+  const soloRegistrationSuccess = (bowlerIdentifier) => {
+    dispatch(soloBowlerRegistrationCompleted());
+    router.push(`/bowlers/${bowlerIdentifier}?success=register`);
   }
 
   const soloRegistrationFailure = (errorMessage) => {
@@ -34,11 +47,8 @@ const Page = () => {
   }
 
   const submitRegistration = () => {
-    const newTeam = {...entry.team};
-    newTeam.name = 'A Solo Bowler';
-    newTeam.placeWithOthers = true;
-    submitNewTeamRegistration(entry.tournament,
-      newTeam,
+    submitSoloRegistration(tournament,
+      bowler,
       soloRegistrationSuccess,
       soloRegistrationFailure);
     setProcessing(true);

@@ -6,27 +6,39 @@ import Summary from "../../../components/Registration/Summary/Summary";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {soloBowlerInfoUpdated} from "../../../store/actions/registrationActions";
+import {useEffect, useState} from "react";
 
 const Page = () => {
   const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
 
-  if (!entry || !entry.bowlers) {
+  const [bowler, setBowler] = useState();
+  const [tournament, setTournament] = useState();
+  useEffect(() => {
+    if (!entry) {
+      return;
+    }
+    setBowler(entry.bowler);
+    setTournament(entry.tournament);
+  }, [entry]);
+
+  if (!bowler) {
     return'';
   }
 
   const bowlerNum = 1;
   const onBowlerInfoUpdated = (bowlerInfo) => {
     dispatch(soloBowlerInfoUpdated(bowlerInfo));
-    router.push(`/tournaments/${entry.tournament.identifier}/solo-bowler-review`);
+    router.push(`/tournaments/${tournament.identifier}/solo-bowler-review`);
   }
 
   return (
     <Row>
       <Col lg={8}>
-        <BowlerForm editBowlerNum={bowlerNum}
+        <BowlerForm bowlerData={bowler}
                     bowlerInfoSaved={onBowlerInfoUpdated}
-                    includeShiftSelection={true} />
+                    // includeShift={true}
+        />
       </Col>
       <Col>
         <Summary nextStepClicked={null}
