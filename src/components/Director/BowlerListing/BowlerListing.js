@@ -106,7 +106,8 @@ const BowlerListing = ({bowlers}) => {
     {
       id: 'name',
       Header: ({column}) => <SortableTableHeader text={'Name'} column={column}/>,
-      accessor: (props) => props.last_name + ', ' + props.first_name,
+      // accessor: (props) => props.last_name + ', ' + props.first_name,
+      accessor: 'full_name',
       Cell: ({row, cell}) => {
         return (
           <a href={`/director/bowlers/${row.original.identifier}`}>
@@ -116,10 +117,15 @@ const BowlerListing = ({bowlers}) => {
       }
     },
     {
-      Header: 'Preferred Name',
-      accessor: 'preferred_name',
-      disableSortBy: true,
+      id: 'email',
+      Header: 'Email',
+      accessor: 'email',
     },
+    // {
+    //   Header: 'Preferred Name',
+    //   accessor: 'preferred_name',
+    //   disableSortBy: true,
+    // },
     {
       Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
       accessor: 'team_name',
@@ -129,16 +135,16 @@ const BowlerListing = ({bowlers}) => {
         </a>
       ),
     },
-    {
-      Header: 'Position',
-      accessor: 'position',
-      disableSortBy: true,
-      Cell: ({value}) => (
-        <div className={'text-center'}>
-          {value}
-        </div>
-      )
-    },
+    // {
+    //   Header: 'Position',
+    //   accessor: 'position',
+    //   disableSortBy: true,
+    //   Cell: ({value}) => (
+    //     <div className={'text-center'}>
+    //       {value}
+    //     </div>
+    //   )
+    // },
     {
       Header: ({column}) => <SortableTableHeader text={'Date Registered'} column={column}/>,
       accessor: 'date_registered',
@@ -248,6 +254,7 @@ const BowlerListing = ({bowlers}) => {
 
   const filterThatData = (criteria) => {
     setFilter('name', criteria.name);
+    setFilter('email', criteria.email);
 
     if (criteria.amount_due) {
       setFilter('amount_due', 0);

@@ -18,8 +18,8 @@ const PurchasableItems = () => {
   const ledgerItems = context.tournament.purchasable_items.filter(item => {
     return item.category === 'ledger'
   }).sort((left, right) => {
-    const leftText = left.determination;
-    const rightText = right.determination;
+    const leftText = !!left.determination ? left.determination : '';
+    const rightText = !!right.determination ? right.determination : '';
     return leftText.localeCompare(rightText);
   });
 
