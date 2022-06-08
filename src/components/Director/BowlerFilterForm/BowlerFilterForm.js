@@ -9,6 +9,7 @@ import classes from './BowlerFilterForm.module.scss';
 const BowlerFilterForm = ({onFilterApplication}) => {
   const initialState = {
     name: '',
+    email: '',
     amount_due: false,
     has_free_entry: false,
     igbo_member: '',
@@ -35,6 +36,7 @@ const BowlerFilterForm = ({onFilterApplication}) => {
         updatedForm[inputIdentifier] = newValue;
         break;
       case 'name':
+      case 'email':
         updatedForm[inputIdentifier] = event.target.value;
         break;
       case 'igbo_member':
@@ -75,6 +77,29 @@ const BowlerFilterForm = ({onFilterApplication}) => {
                         placeholder={'Name'}
                         value={filterForm.name}
                         onChange={(event) => inputChangedHandler(event, 'name')}
+          />
+        </Col>
+      </Form.Group>
+      <FloatingLabel label={'Email'}
+                     controlId={'email_xs'}
+                     className={'d-sm-none'}>
+        <Form.Control type={'text'}
+                      placeholder={'Email'}
+                      value={filterForm.email}
+                      onChange={(event) => inputChangedHandler(event, 'email')}
+        />
+      </FloatingLabel>
+      <Form.Group controlId={'email'}
+                  as={Row}
+                  className={'mb-3'}>
+        <Form.Label column sm={2} className={'d-none d-sm-block text-end'}>
+          Email
+        </Form.Label>
+        <Col sm={10} className={'d-none d-sm-block'}>
+          <Form.Control type={'text'}
+                        placeholder={'Email'}
+                        value={filterForm.email}
+                        onChange={(event) => inputChangedHandler(event, 'email')}
           />
         </Col>
       </Form.Group>
