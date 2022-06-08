@@ -30,6 +30,7 @@ const Page = () => {
 
   const onPreparePurchaseFailure = (data) => {
     setLoading(false);
+    console.log("D'oh!", data);
     // error?
   }
 

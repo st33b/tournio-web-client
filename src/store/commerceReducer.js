@@ -107,7 +107,7 @@ const itemAdded = (state, item) => {
   const identifier = item.identifier;
   const newAvailableItems = {...state.availableItems}
 
-  if (item.determination === 'single_use') {
+  if (item.determination === 'single_use' || item.determination === 'event') {
     addedItem.addedToCart = true;
     newCart = state.cart.concat(addedItem);
     newAvailableItems[identifier] = addedItem;
@@ -121,6 +121,19 @@ const itemAdded = (state, item) => {
     const index = newCart.findIndex(i => i.identifier === addedItem.identifier);
     newCart[index] = addedItem;
   }
+
+  if (item.determination === 'event') {
+    const discountItem = eligibleBundleDiscount(newAvailableItems, newCart);
+    if (discountItem) {
+      // add it to the cart
+      const newDiscountItem = {...discountItem}
+      newDiscountItem.addedToCart = true;
+      newCart.push(newDiscountItem);
+      newAvailableItems[discountItem.identifier] = newDiscountItem;
+    }
+  }
+
+
   return updateObject(state, {
     cart: newCart,
     availableItems: newAvailableItems,
@@ -144,9 +157,26 @@ const itemRemoved = (state, item) => {
   const newAvailableItems = {...state.availableItems}
   newAvailableItems[identifier] = removedItem;
 
-  if (removedItem.determination === 'single_use') {
+  if (removedItem.determination === 'single_use' || removedItem.determination === 'event') {
     removedItem.addedToCart = false;
     markOtherItemsInDivisionAsAvailable(newAvailableItems, removedItem);
+  }
+
+  if (removedItem.determination === 'event') {
+    // do we need to remove a bundle discount as a result?
+    const discountItemIndex = newCart.findIndex(item => {
+      if (item.category !== 'ledger' || item.determination !== 'bundle_discount') {
+        return false;
+      }
+      return item.configuration.events.includes(removedItem.identifier);
+    });
+
+    if (discountItemIndex >= 0) {
+      const newDiscountItem = {...newCart[discountItemIndex]};
+      newDiscountItem.addedToCart = false;
+      newAvailableItems[newDiscountItem.identifier] = newDiscountItem;
+      newCart = newCart.filter(i => i.identifier !== newDiscountItem.identifier);
+    }
   }
 
   return updateObject(state, {
@@ -154,7 +184,6 @@ const itemRemoved = (state, item) => {
     availableItems: newAvailableItems,
   });
 }
-
 
 const markOtherItemsInDivisionUnavailable = (items, addedItem) => {
   for (const identifier in items) {
@@ -188,4 +217,18 @@ const markOtherItemsInDivisionAsAvailable = (items, removedItem) => {
       items[identifier].addedToCart = false;
     }
   }
+}
+
+const eligibleBundleDiscount = (availableItems, cartItems) => {
+  const cartItemIdentifiers = cartItems.map(item => item.identifier);
+  return Object.values(availableItems).find(item => {
+    if (item.category !== 'ledger' || item.determination !== 'bundle_discount' || item.addedToCart) {
+      return false;
+    }
+    // intersect the cart item identifiers with the ones in the bundle_discount's configuration.events property
+    const intersection = cartItemIdentifiers.filter(i => item.configuration.events.includes(i));
+
+    // if the intersection is the same size as the configuration.events property, then we're eligible for the discount!
+    return intersection.length === item.configuration.events.length;
+  });
 }
