@@ -69,7 +69,7 @@ const Page = () => {
         </Col>
         <Col>
           {error}
-          <BowlerListing caption={'Registered Bowlers'} bowlers={bowlers}/>
+          <BowlerListing caption={'Registered Bowlers'} bowlers={bowlers} enablePayment={true}/>
         </Col>
       </Row>
     </div>
