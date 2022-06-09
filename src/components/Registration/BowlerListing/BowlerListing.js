@@ -52,7 +52,7 @@ const BowlerListing = ({caption, bowlers, enablePayment, includeEvents}) => {
   if (data.size > 0) {
     list = (
       <div className={'table-responsive'}>
-        <table className={'table table-striped table-hover caption-top'} {...getTableProps}>
+        <table className={'table table-striped table-hover table-sm caption-top'} {...getTableProps}>
           <caption>
             {caption}
           </caption>
@@ -64,6 +64,7 @@ const BowlerListing = ({caption, bowlers, enablePayment, includeEvents}) => {
                   {column.render('Header')}
                 </th>
               ))}
+              {enablePayment && <th />}
             </tr>
           ))}
           </thead>

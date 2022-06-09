@@ -236,7 +236,7 @@ const TournamentDetails = ({tournament}) => {
   }
 
   const payFeeLink = (
-    <a href={`${router.asPath}/teams`}
+    <a href={`${router.asPath}/bowlers`}
        className={''}>
       Choose Events &amp; Pay
     </a>
