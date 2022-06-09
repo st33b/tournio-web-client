@@ -123,7 +123,7 @@ const itemAdded = (state, item) => {
   }
 
   if (item.determination === 'event') {
-    const discountItem = eligibleBundleDiscount(newAvailableItems, newCart);
+    const discountItem = eligibleBundleDiscount(newAvailableItems, newCart, state.purchasedItems);
     if (discountItem) {
       // add it to the cart
       const newDiscountItem = {...discountItem}
@@ -219,14 +219,16 @@ const markOtherItemsInDivisionAsAvailable = (items, removedItem) => {
   }
 }
 
-const eligibleBundleDiscount = (availableItems, cartItems) => {
+const eligibleBundleDiscount = (availableItems, cartItems, purchasedItems) => {
   const cartItemIdentifiers = cartItems.map(item => item.identifier);
+  const purchasedItemIdentifiers = purchasedItems.map(item => item.purchasable_item_identifier);
+  const itemsToConsider = cartItemIdentifiers.concat(purchasedItemIdentifiers);
   return Object.values(availableItems).find(item => {
     if (item.category !== 'ledger' || item.determination !== 'bundle_discount' || item.addedToCart) {
       return false;
     }
-    // intersect the cart item identifiers with the ones in the bundle_discount's configuration.events property
-    const intersection = cartItemIdentifiers.filter(i => item.configuration.events.includes(i));
+    // intersect the cart+purchased item identifiers with the ones in the bundle_discount's configuration.events property
+    const intersection = itemsToConsider.filter(i => item.configuration.events.includes(i));
 
     // if the intersection is the same size as the configuration.events property, then we're eligible for the discount!
     return intersection.length === item.configuration.events.length;
