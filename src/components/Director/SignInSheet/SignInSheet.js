@@ -103,20 +103,22 @@ const SignInSheet = ({bowler}) => {
           </div>
         </div>
         <div className={'col-7'}>
-          <div className={'row'}>
-            <div className={'col-5 text-end pe-2'}>
-              Team Name
+          {!!bowler.team && (
+            <div className={'row'}>
+              <div className={'col-5 text-end pe-2'}>
+                Team Name
+              </div>
+              <div className={'col fw-bold'}>
+                {bowler.team.name}
+              </div>
             </div>
-            <div className={'col fw-bold'}>
-              {bowler.team.name}
-            </div>
-          </div>
+          )}
           <div className={'row'}>
             <div className={'col-5 text-end pe-2'}>
               Doubles Partner
             </div>
             <div className={'col fw-bold'}>
-              {bowler.doubles_partner}
+              {!!bowler.doubles_partner ? bowler.doubles_partner : 'n/a'}
             </div>
           </div>
         </div>

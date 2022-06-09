@@ -66,7 +66,9 @@ const Page = () => {
     for (let i of items) {
       if (i.category === 'ledger') {
         // mandatory things like entry & late fees, early discount
-        purchaseIdentifiers.push(i.identifier);
+        if (i.determination !== 'bundle_discount') {
+          purchaseIdentifiers.push(i.identifier);
+        }
       } else {
         purchasableItems.push({
           identifier: i.identifier,
