@@ -18,7 +18,7 @@ const Page = () => {
       return;
     }
     const shift = entry.tournament.shifts[0];
-    if (shift && !shift.permit_new_teams) {
+    if (shift && !shift.registration_types.new_team) {
       router.push(`/tournaments/${entry.tournament.identifier}`);
     }
   }, [entry]);

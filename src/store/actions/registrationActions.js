@@ -171,3 +171,24 @@ export const freeEntryFailure = (code, error) => {
     error: error
   }
 }
+
+export const newPairRegistrationInitiated = () => {
+  return {
+    type: actionTypes.NEW_PAIR_REGISTRATION_INITIATED,
+  }
+}
+
+export const newPairBowlerAdded = (bowler) => {
+  return {
+    type: actionTypes.NEW_PAIR_BOWLER_INFO_ADDED,
+    bowler: bowler,
+  }
+}
+
+export const newPairBowlerUpdated = (bowlerInfo, index) => {
+  return {
+    type: actionTypes.NEW_PAIR_BOWLER_UPDATED,
+    bowler: bowlerInfo,
+    index: index,
+  }
+}

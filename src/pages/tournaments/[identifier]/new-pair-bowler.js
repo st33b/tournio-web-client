@@ -6,7 +6,7 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import Summary from "../../../components/Registration/Summary/Summary";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {newSoloRegistrationInitiated, soloBowlerInfoAdded} from "../../../store/actions/registrationActions";
+import {newPairBowlerAdded} from "../../../store/actions/registrationActions";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 
 const Page = () => {
@@ -17,32 +17,32 @@ const Page = () => {
     if (!entry || !entry.tournament) {
       return;
     }
-    const shift = entry.tournament.shifts[0];
-    if (shift && !shift.registration_types.solo) {
-      router.push(`/tournaments/${entry.tournament.identifier}`);
+    if (entry.bowlers.length === 2) {
+      onFinishedWithBowlers();
     }
   }, [entry]);
-
-  useEffect(() => {
-    dispatch(newSoloRegistrationInitiated());
-  }, [dispatch]);
-
-  const onCompletion = (bowler) => {
-    dispatch(soloBowlerInfoAdded(bowler));
-    router.push(`/tournaments/${entry.tournament.identifier}/solo-bowler-review`);
-  }
 
   if (!entry || !entry.tournament) {
     return '';
   }
 
-  const includeShift = entry.tournament.available_shifts && entry.tournament.available_shifts.length > 0;
+  const onFinishedWithBowlers = () => {
+    // Move on to pair review!
+    router.push(`/tournaments/${entry.tournament.identifier}/new-pair-review`);
+  }
+
+  const onNewBowlerAdded = (bowlerInfo) => {
+    dispatch(newPairBowlerAdded(bowlerInfo));
+  }
+
+  // const includeShift = entry.tournament.available_shifts && entry.tournament.available_shifts.length > 0;
+  const includeShift = false;
 
   return (
     <Row>
       <Col lg={8}>
         <ProgressIndicator active={'bowlers'} />
-        <BowlerForm bowlerInfoSaved={onCompletion} includeShift={includeShift} />
+        <BowlerForm bowlerInfoSaved={onNewBowlerAdded} includeShift={includeShift} />
       </Col>
       <Col>
         <Summary />

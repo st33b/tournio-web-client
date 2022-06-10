@@ -11,23 +11,25 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
   const [tournament, setTournament] = useState();
   const [team, setTeam] = useState();
   const [bowler, setBowler] = useState();
+  const [bowlers, setBowlers] = useState();
 
   useEffect(() => {
-    if (!entry || !entry.tournament || (!entry.team && !entry.bowler)) {
+    if (!entry || !entry.tournament || (!entry.team && !entry.bowler && !entry.bowlers)) {
       return;
     }
 
     setTournament(entry.tournament);
     setTeam(entry.team);
     setBowler(entry.bowler);
+    setBowlers(entry.bowlers);
   }, [entry]);
 
-  if (!tournament || (!team && !bowler)) {
+  if (!tournament) {
     return '';
   }
 
   let teamText = '';
-  if (team.name) {
+  if (team) {
     teamText = (
       <p>
         <span>
@@ -41,7 +43,8 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
   }
 
   let shiftText = '';
-  if (team.shift && tournament.shifts.length > 1) {
+  // TODO: adapt for bowler / pair
+  if (tournament.shifts.length > 1) {
     shiftText = (
       <p>
         <span>
@@ -54,12 +57,25 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
     );
   }
 
-  // list the names of bowlers added so far
+  // list the names of bowlers added to the team so far
   let bowlersText = '';
-  if (team.bowlers && team.bowlers.length > 0) {
+  if (team && team.bowlers.length > 0) {
     bowlersText = (
       <ol>
         {team.bowlers.map((b, i) => {
+          return (
+            <li key={i}>
+              {b.first_name} {b.last_name}
+            </li>
+          )
+        })}
+      </ol>
+    );
+  }
+  if (bowlers && bowlers.length > 0) {
+    bowlersText = (
+      <ol>
+        {bowlers.map((b, i) => {
           return (
             <li key={i}>
               {b.first_name} {b.last_name}
@@ -87,7 +103,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
   // e.g., finished with bowlers, submit registration
   // we only want to show this button if we have at least one bowler
   let nextStep = '';
-  if (nextStepText && (team.bowlers.length > 0 || !!bowler)) {
+  if (nextStepText && (team && team.bowlers.length > 0 || !!bowler || !!bowlers && bowlers.length > 0)) {
     nextStep = (
       <Button variant={'success'}
               size={'lg'}

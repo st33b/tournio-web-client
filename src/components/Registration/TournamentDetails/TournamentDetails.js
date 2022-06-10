@@ -185,7 +185,7 @@ const TournamentDetails = ({tournament}) => {
       },
       {
         name: 'new_pair',
-        path: 'tbd',
+        path: 'new-pair',
         linkText: 'Register a Pair of Bowlers',
       },
     ]
