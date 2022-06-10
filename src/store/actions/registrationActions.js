@@ -192,3 +192,9 @@ export const newPairBowlerUpdated = (bowlerInfo, index) => {
     index: index,
   }
 }
+
+export const newPairRegistrationCompleted = () => {
+  return {
+    type: actionTypes.NEW_PAIR_REGISTRATION_COMPLETED,
+  }
+}

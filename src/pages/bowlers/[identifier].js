@@ -91,14 +91,14 @@ const Page = () => {
           <h4 className={'p-0 my-2 my-md-3'}>
             Bowler: {name}
           </h4>
-          {commerce.bowler.team_identifier && (
-            <p className={'p-0 m-0'}>
-              <a href={`/teams/${commerce.bowler.team_identifier}`}>
-                <i className={'bi-arrow-left pe-2'} aria-hidden={true}/>
-                back to team
-              </a>
-            </p>
-          )}
+          {/*{commerce.bowler.team_identifier && (*/}
+          {/*  <p className={'p-0 m-0'}>*/}
+          {/*    <a href={`/teams/${commerce.bowler.team_identifier}`}>*/}
+          {/*      <i className={'bi-arrow-left pe-2'} aria-hidden={true}/>*/}
+          {/*      back to team*/}
+          {/*    </a>*/}
+          {/*  </p>*/}
+          {/*)}*/}
         </Col>
       </Row>
 

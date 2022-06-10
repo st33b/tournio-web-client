@@ -19,6 +19,11 @@ const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successT
       Header: ({column}) => <SortableTableHeader text={'Date Registered'} column={column}/>,
       accessor: 'date_registered',
     },
+    {
+      Header: 'Doubles Partner',
+      accessor: 'doubles_partner',
+      Cell: ({row, cell}) => !!cell.value ? cell.value.full_name : '',
+    },
   ], [bowlers]);
 
   const [data, setData] = useState(List());
