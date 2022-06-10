@@ -164,24 +164,29 @@ const TournamentDetails = ({tournament}) => {
     const shift = tournament.shifts[0];
     const optionTypes = [
       {
-        name: 'permit_solo',
+        name: 'solo',
         path: 'solo-bowler',
         linkText: 'Register as a Solo Bowler',
       },
       {
-        name: 'permit_joins',
+        name: 'join_team',
         path: 'join-a-team',
         linkText: 'Join an Existing Team',
       },
       {
-        name: 'permit_new_teams',
+        name: 'new_team',
         path: 'new-team',
         linkText: 'Register a New Team',
       },
       {
-        name: 'permit_partnering',
+        name: 'partner',
         path: 'tbd',
         linkText: 'Partner Up With Someone',
+      },
+      {
+        name: 'new_pair',
+        path: 'tbd',
+        linkText: 'Register a Pair of Bowlers',
       },
     ]
     const eventSelectionEnabled = tournament.config_items.some(item => item.key === 'event_selection' && item.value);
@@ -189,7 +194,7 @@ const TournamentDetails = ({tournament}) => {
     if (eventSelectionEnabled) {
       // only show what's enabled
       registrationOptions = optionTypes.map(({name, path, linkText}) => {
-        if (!shift[name]) {
+        if (!shift.registration_types[name]) {
           return '';
         }
         return (
@@ -204,12 +209,12 @@ const TournamentDetails = ({tournament}) => {
     } else {
       // show the standard ways, striking them out if disabled
       registrationOptions = optionTypes.map(({name, path, linkText}) => {
-        // partnering isn't part of a standard tournament
-        if (name === 'permit_partnering') {
+        // partnering and a new pair aren't part of a standard tournament
+        if (name === 'partner' || name === 'new_pair') {
           return '';
         }
-        const className = shift[name] ? 'link-primary' : 'text-decoration-line-through';
-        const enableLink = shift[name];
+        const className = shift.registration_types[name] ? 'link-primary' : 'text-decoration-line-through';
+        const enableLink = shift.registration_types[name];
         return (
           <ListGroup.Item key={name}
                           className={className}

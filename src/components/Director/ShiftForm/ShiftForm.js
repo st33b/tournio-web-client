@@ -12,15 +12,25 @@ const ShiftForm = ({shift}) => {
   const context = useDirectorContext();
   const router = useRouter();
 
+  const REGISTRATION_TYPES = ['new_team', 'solo', 'join_team', 'partner', 'new_pair'];
+  const REGISTRATION_TYPE_LABELS = [
+    {key: 'new_team', label: 'New Teams'},
+    {key: 'solo', label: 'Solo Entries'},
+    {key: 'join_team', label: 'Join a Team'},
+    {key: 'partner', label: 'Partner Up'},
+    {key: 'new_pair', label: 'New Doubles Pair'},
+  ];
+
   const initialFormData = Map({
     // name: '',
     capacity: 0,
     // display_order: 1,
     // events: [],
-    permit_new_teams: true,
-    permit_joins: true,
-    permit_solo: true,
-    permit_partnering: true,
+    new_team: true,
+    join_team: true,
+    solo: true,
+    partner: false,
+    new_pair: false,
 
     valid: false,
   });
@@ -39,13 +49,13 @@ const ShiftForm = ({shift}) => {
       capacity: shift.capacity,
       // display_order: shift.display_order,
       // events: shift.events,
-      permit_new_teams: shift.permit_new_teams,
-      permit_joins: shift.permit_joins,
-      permit_solo: shift.permit_solo,
-      permit_partnering: shift.permit_partnering,
 
       valid: true,
     };
+    REGISTRATION_TYPES.forEach(rType => {
+      existingShift[rType] = shift.registration_types[rType];
+    })
+
     setFormData(Map(existingShift));
   }, [shift]);
 
@@ -82,10 +92,11 @@ const ShiftForm = ({shift}) => {
       // case 'display_order':
         newValue = parseInt(event.target.value);
         break;
-      case 'permit_new_teams':
-      case 'permit_joins':
-      case 'permit_solo':
-      case 'permit_partnering':
+      case 'new_team':
+      case 'join_team':
+      case 'solo':
+      case 'partner':
+      case 'new_pair':
         newValue = event.target.checked;
         break;
       // case 'name':
@@ -119,6 +130,12 @@ const ShiftForm = ({shift}) => {
     event.preventDefault();
 
     const uri = `/director/tournaments/${context.tournament.identifier}/shifts`;
+    const registrationTypes = [];
+    REGISTRATION_TYPES.forEach(rType => {
+      if (formData.get(rType)) {
+        registrationTypes.push(rType);
+      }
+    })
     const requestConfig = {
       method: 'post',
       data: {
@@ -128,10 +145,7 @@ const ShiftForm = ({shift}) => {
           // display_order: formData.get('display_order'),
           details: {
             // events: formData.get('events'),
-            permit_new_teams: formData.get('permit_new_teams'),
-            permit_solo: formData.get('permit_solo'),
-            permit_joins: formData.get('permit_joins'),
-            permit_partnering: formData.get('permit_partnering'),
+            registration_types: registrationTypes,
           }
         }
       }
@@ -200,6 +214,12 @@ const ShiftForm = ({shift}) => {
     event.preventDefault();
 
     const uri = `/director/shifts/${shift.identifier}`;
+    const registrationTypes = [];
+    REGISTRATION_TYPES.forEach(rType => {
+      if (formData.get(rType)) {
+        registrationTypes.push(rType);
+      }
+    })
     const requestConfig = {
       method: 'patch',
       data: {
@@ -208,11 +228,8 @@ const ShiftForm = ({shift}) => {
           // name: formData.get('name'),
           // display_order: formData.get('display_order'),
           details: {
+            registration_types: registrationTypes,
             // events: formData.get('events'),
-            permit_new_teams: formData.get('permit_new_teams'),
-            permit_solo: formData.get('permit_solo'),
-            permit_joins: formData.get('permit_joins'),
-            permit_partnering: formData.get('permit_partnering'),
           }
         }
       }
@@ -251,13 +268,6 @@ const ShiftForm = ({shift}) => {
       colorClass = classes.AlmostFull;
     }
   }
-
-  const registrationKinds = [
-    {key: 'permit_new_teams', label: 'New Teams'},
-    {key: 'permit_solo', label: 'Solo Entries'},
-    {key: 'permit_joins', label: 'Join a Team'},
-    {key: 'permit_partnering', label: 'Partner Up'},
-  ];
 
   // const daysOfWeek = [
   //   {value: 'Monday', display: 'Mon'},
@@ -350,15 +360,15 @@ const ShiftForm = ({shift}) => {
                 Enabled Entry Types
               </dt>
               <dd className={'col'}>
-                {registrationKinds.map(kind => (
+                {REGISTRATION_TYPE_LABELS.map(kind => (
                   <div className={'d-block'} key={kind.key}>
-                    {shift[kind.key] && (
+                    {shift.registration_types[kind.key] && (
                       <span className={'pe-1'}>
                         <i className={'bi-check-lg text-success'} aria-hidden={true}/>
                         <span className={'visually-hidden'}>Yes</span>
                       </span>
                     )}
-                    {!shift[kind.key] && (
+                    {!shift.registration_types[kind.key] && (
                       <span className={'pe-1'}>
                         <i className={'bi-x-lg text-danger'} aria-hidden={true}/>
                         <span className={'visually-hidden'}>No</span>
@@ -497,7 +507,7 @@ const ShiftForm = ({shift}) => {
                 </label>
               </div>
               <div className={'col-6'}>
-                {registrationKinds.map(kind => (
+                {REGISTRATION_TYPE_LABELS.map(kind => (
                   <div className={'form-check form-switch'} key={kind.key}>
                     <input type={'checkbox'}
                            className={'form-check-input'}
