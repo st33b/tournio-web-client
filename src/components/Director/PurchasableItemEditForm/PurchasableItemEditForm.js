@@ -191,7 +191,6 @@ const PurchasableItemEditForm = ({item}) => {
           case 'late_fee':
             let part1 = '';
             if (item.refinement === 'event_linked') {
-              console.log("Linked event identifier", item.configuration.event);
               const event = context.tournament.purchasable_items.find(
                 pi => pi.determination === 'event' && pi.identifier === item.configuration.event
               );
