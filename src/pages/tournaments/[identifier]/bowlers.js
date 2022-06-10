@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {Alert, Col, Row} from "react-bootstrap";
+import {useRouter} from "next/router";
 
 import {fetchBowlerList} from "../../../utils";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
@@ -10,7 +11,9 @@ import Contacts from "../../../components/Registration/Contacts/Contacts";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
+  const router = useRouter();
   const {entry, dispatch} = useRegistrationContext();
+  const { success } = router.query;
 
   const [loading, setLoading] = useState(false);
   const [bowlers, setBowlers] = useState(null);
@@ -69,7 +72,11 @@ const Page = () => {
         </Col>
         <Col>
           {error}
-          <BowlerListing caption={'Registered Bowlers'} bowlers={bowlers} enablePayment={true}/>
+          <BowlerListing caption={'Registered Bowlers'}
+                         bowlers={bowlers}
+                         enablePayment={true}
+                         successType={success}
+          />
         </Col>
       </Row>
     </div>

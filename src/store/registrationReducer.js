@@ -5,6 +5,7 @@ const initialState = {
   tournament: null,
   team: null,
   bowler: null,
+  bowlers: null,
 }
 
 export const regInitializer = (initialValue = initialState) => {
@@ -30,6 +31,20 @@ export const registrationReducer = (state, action) => {
           bowlers: [],
           shift: null,
         },
+      });
+    case actionTypes.NEW_PAIR_REGISTRATION_INITIATED:
+      return updateObject(state, {
+        bowlers: [],
+      });
+    case actionTypes.NEW_PAIR_BOWLER_INFO_ADDED:
+      return updateObject(state, {
+        bowlers: state.bowlers.concat(action.bowler),
+      });
+    case actionTypes.NEW_PAIR_BOWLER_UPDATED:
+      const newBowlers = [...state.bowlers];
+      newBowlers[action.index] = action.bowler;
+      return updateObject(state, {
+        bowlers: newBowlers,
       });
     case actionTypes.TEAM_INFO_ADDED:
       return updateObject(state, {

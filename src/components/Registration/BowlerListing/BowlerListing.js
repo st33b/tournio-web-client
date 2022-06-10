@@ -7,7 +7,7 @@ import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeade
 
 import classes from './BowlerListing.module.scss';
 
-const BowlerListing = ({caption, bowlers, enablePayment, includeEvents}) => {
+const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successType}) => {
   const columns = useMemo(() => [
     {
       id: 'full_name',
@@ -95,8 +95,34 @@ const BowlerListing = ({caption, bowlers, enablePayment, includeEvents}) => {
     );
   }
 
+  let successBanner = '';
+  if (successType) {
+    let content = '';
+    switch (successType) {
+      case 'new_pair':
+        content = 'Your registration was received! Each bowler may now choose their events and pay their fees.';
+        break;
+      default:
+        content = "Something was successful! I just don't know what.";
+        break;
+    }
+
+    successBanner = (
+      <div className={'alert alert-success'} role={'alert'}>
+        <h5 className={'alert-heading'}>
+          <i className={'bi-check-circle-fill pe-2'} aria-hidden={true} />
+          Success!
+        </h5>
+        <p className={classes.SuccessMessage}>
+          {content}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className={classes.BowlerListing}>
+      {successBanner}
       {list}
     </div>
   );

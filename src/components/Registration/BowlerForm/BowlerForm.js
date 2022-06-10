@@ -6,7 +6,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './BowlerForm.module.scss';
 
-const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData}) => {
+const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData, cancelHref}) => {
   const {entry} = useRegistrationContext();
 
   const initialFormState = {
@@ -283,7 +283,7 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData}) 
     setBowlerForm(formData);
   }, [entry]);
 
-  if (!entry || !entry.tournament || !entry.team) {
+  if (!entry || !entry.tournament) {
     return '';
   }
 
@@ -305,13 +305,22 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData}) 
     return isValid;
   }
 
-  let position = entry.team.bowlers.length + 1;
+  let position = 1;
+  if (entry.team) {
+    position = entry.team.bowlers.length + 1;
+  } else if (entry.bowlers) {
+    position = entry.bowlers.length + 1;
+  }
   let buttonText = 'Save Bowler';
 
+  let showCancelButton = false;
   // In the event we're editing a bowler, populate initialFormState with their values
   if (bowlerData) {
     // We're editing a solo bowler
     position = 1;
+    if (editBowlerNum) {
+      position = editBowlerNum;
+    }
 
     for (const inputIdentifier in initialFormState.formFields) {
       initialFormState.formFields[inputIdentifier].elementConfig.value = bowlerData[inputIdentifier];
@@ -326,6 +335,7 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData}) 
       initialFormState.soloBowlerFields.shift.valid = true;
     }
     buttonText = 'Save Changes';
+    showCancelButton = true;
   } else if (editBowlerNum) {
     // We're editing a bowler on a team
     position = editBowlerNum;
@@ -343,6 +353,7 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData}) 
       initialFormState.soloBowlerFields.shift.valid = true;
     }
     buttonText = 'Save Changes';
+    showCancelButton = true;
   }
 
   const formHandler = (event) => {
@@ -464,15 +475,22 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData}) 
         />
       ))}
 
-      <div className="text-end pt-2">
+      <div className="d-flex flex-row-reverse justify-content-between pt-2">
         {/*<div className="invalid-form-warning alert alert-warning" role="alert">*/}
         {/*  There are some errors in your form. Please correct them and try again.*/}
         {/*</div>*/}
         <button className="btn btn-primary btn-lg" type="submit" disabled={!bowlerForm.valid || !bowlerForm.touched}>
           {buttonText}{' '}
-          <i className="bi-chevron-double-right pl-3" aria-hidden="true"/>
+          <i className="bi-chevron-double-right ps-1" aria-hidden="true"/>
         </button>
 
+        {showCancelButton && (
+          <a className={'btn btn-secondary btn-lg'}
+             href={cancelHref}>
+            <i className={'bi-chevron-double-left pe-1'} aria-hidden={true} />
+            Cancel Changes
+          </a>
+        )}
       </div>
     </form>
   );

@@ -10,6 +10,7 @@ const ReviewEntries = ({editBowler, context}) => {
 
   const [bowler, setBowler] = useState();
   const [team, setTeam] = useState();
+  const [bowlers, setBowlers]= useState();
 
   useEffect(() => {
     if (!entry) {
@@ -17,9 +18,10 @@ const ReviewEntries = ({editBowler, context}) => {
     }
     setBowler(entry.bowler);
     setTeam(entry.team);
+    setBowlers(entry.bowlers);
   }, [entry]);
 
-  if (!entry.team && !entry.bowler) {
+  if (!bowler && !bowlers && !team) {
     return '';
   }
 
@@ -40,17 +42,25 @@ const ReviewEntries = ({editBowler, context}) => {
         />
       </Col>
     );
+  } else if (context === 'doubles') {
+    content = bowlers.map((bowler, i) => {
+      return (
+        <Col md={6} className={'px-lg-2'} key={i}>
+          <BowlerSummary bowler={bowler} editClicked={bowler => editBowler(bowler, i)}/>
+        </Col>
+      );
+    });
   } else {
     content = team.bowlers.map((bowler, i) => {
-          const colSize = team.bowlers.length > 1 ? 6 : 12;
-          return (
-            <Col md={colSize} className={'px-lg-2'} key={i}>
-              <BowlerSummary bowler={bowler}
-                             editClicked={editBowler}
-              />
-            </Col>
-          )
-        })
+      const colSize = team.bowlers.length > 1 ? 6 : 12;
+      return (
+        <Col md={colSize} className={'px-lg-2'} key={i}>
+          <BowlerSummary bowler={bowler}
+                         editClicked={editBowler}
+          />
+        </Col>
+      )
+    });
   }
 
   return (
