@@ -6,8 +6,8 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import Summary from "../../../components/Registration/Summary/Summary";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
-import {soloBowlerRegistrationCompleted} from "../../../store/actions/registrationActions";
-import {submitSoloRegistration} from "../../../utils";
+import {newPairRegistrationCompleted} from "../../../store/actions/registrationActions";
+import {submitDoublesRegistration} from "../../../utils";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
@@ -37,8 +37,8 @@ const Page = () => {
   }
 
   const registrationSuccess = (bowlerIdentifier) => {
-    // dispatch(soloBowlerRegistrationCompleted());
-    router.push(`/tournaments/${tournament.identifier}/bowlers?success=register`);
+    dispatch(newPairRegistrationCompleted());
+    router.push(`/tournaments/${tournament.identifier}/bowlers?success=new_pair`);
   }
 
   const registrationFailure = (errorMessage) => {
@@ -47,10 +47,10 @@ const Page = () => {
   }
 
   const submitRegistration = () => {
-    // submitSoloRegistration(tournament,
-    //   bowler,
-    //   soloRegistrationSuccess,
-    //   soloRegistrationFailure);
+    submitDoublesRegistration(tournament,
+      bowlers,
+      registrationSuccess,
+      registrationFailure);
     setProcessing(true);
   }
 
