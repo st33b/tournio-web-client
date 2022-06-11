@@ -29,7 +29,7 @@ const Page = () => {
   const bowlerNum = 1;
   const onBowlerInfoUpdated = (bowlerInfo) => {
     dispatch(soloBowlerInfoUpdated(bowlerInfo));
-    router.push(`/tournaments/${tournament.identifier}/solo-bowler-review`);
+    router.push(`/tournaments/${tournament.identifier}/partner-up-bowler-review`);
   }
 
   return (
@@ -37,7 +37,7 @@ const Page = () => {
       <Col lg={8}>
         <BowlerForm bowlerData={bowler}
                     bowlerInfoSaved={onBowlerInfoUpdated}
-                    cancelHref={`/tournaments/${tournament.identifier}/solo-bowler-review`}
+                    cancelHref={`/tournaments/${tournament.identifier}/partner-up-bowler-review`}
                     // includeShift={true}
         />
       </Col>

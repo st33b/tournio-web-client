@@ -199,9 +199,10 @@ export const newPairRegistrationCompleted = () => {
   }
 }
 
-export const partnerUpRegistrationInitiated = () => {
+export const partnerUpRegistrationInitiated = (partner) => {
   return {
     type: actionTypes.PARTNER_UP_REGISTRATION_INITIATED,
+    partner: partner,
   }
 }
 

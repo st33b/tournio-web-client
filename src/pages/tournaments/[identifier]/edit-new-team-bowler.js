@@ -43,7 +43,9 @@ const Page = () => {
       <Col lg={8}>
         <ProgressIndicator active={'bowlers'} />
         <BowlerForm editBowlerNum={bowlerNum}
-                    bowlerInfoSaved={onBowlerInfoUpdated} />
+                    bowlerInfoSaved={onBowlerInfoUpdated}
+                    cancelHref={`/tournaments/${tournament.identifier}/review-entries`}
+        />
       </Col>
       <Col>
         <Summary nextStepClicked={null}

@@ -75,6 +75,7 @@ const Page = () => {
                          enablePayment={false}
                          enablePartnerUp={true}
                          includeEvents={true}
+                         tournament={entry.tournament}
 
           />
         </Col>

@@ -26,7 +26,7 @@ const ReviewEntries = ({editBowler, context}) => {
   }
 
   let content = '';
-  if (context === 'solo') {
+  if (context === 'solo' || context === 'partner') {
     content = (
       <Col className={'px-lg-2'}>
         <BowlerSummary bowler={bowler}
