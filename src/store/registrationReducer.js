@@ -6,6 +6,7 @@ const initialState = {
   team: null,
   bowler: null,
   bowlers: null,
+  partner: null,
 }
 
 export const regInitializer = (initialValue = initialState) => {
@@ -120,7 +121,10 @@ export const registrationReducer = (state, action) => {
       });
     case actionTypes.PARTNER_UP_REGISTRATION_INITIATED:
       return updateObject(state, {
-        bowler: null,
+        team: null,
+        bowler: {},
+        bowlers: null,
+        partner: action.partner,
       });
     case actionTypes.PARTNER_UP_BOWLER_INFO_ADDED:
       return updateObject(state, {
@@ -133,6 +137,7 @@ export const registrationReducer = (state, action) => {
     case actionTypes.PARTNER_UP_REGISTRATION_COMPLETED:
       return updateObject(state, {
         bowler: null,
+        partner: null,
       });
     default:
       console.log("Nope!");

@@ -12,9 +12,10 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
   const [team, setTeam] = useState();
   const [bowler, setBowler] = useState();
   const [bowlers, setBowlers] = useState();
+  const [partner, setPartner] = useState();
 
   useEffect(() => {
-    if (!entry || !entry.tournament || (!entry.team && !entry.bowler && !entry.bowlers)) {
+    if (!entry || !entry.tournament) {
       return;
     }
 
@@ -22,6 +23,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
     setTeam(entry.team);
     setBowler(entry.bowler);
     setBowlers(entry.bowlers);
+    setPartner(entry.partner);
   }, [entry]);
 
   if (!tournament) {
@@ -83,6 +85,20 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
           )
         })}
       </ol>
+    );
+  }
+
+  let partnerText = '';
+  if (partner) {
+    partnerText = (
+      <p>
+        <span>
+          Partner:{' '}
+        </span>
+        <span className={'fw-bold'}>
+          {partner.full_name}
+        </span>
+      </p>
     );
   }
 
@@ -157,6 +173,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
           {teamText}
           {shiftText}
           {bowlersText}
+          {partnerText}
           {doublesLink}
           {nextStep}
         </Card.Body>

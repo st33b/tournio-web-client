@@ -1,13 +1,18 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
+import {useRouter} from "next/router";
 import {useTable, useSortBy, useFilters} from 'react-table';
 import {List} from 'immutable';
 
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
 
-
 import classes from './BowlerListing.module.scss';
+import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {partnerUpRegistrationInitiated} from "../../../store/actions/registrationActions";
 
-const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successType, enablePartnerUp}) => {
+const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successType, enablePartnerUp, tournament}) => {
+  const router = useRouter();
+  const {dispatch} = useRegistrationContext();
+
   const columnList = [
     {
       id: 'full_name',
@@ -26,6 +31,13 @@ const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successT
         accessor: 'doubles_partner',
         Cell: ({row, cell}) => !!cell.value ? cell.value.full_name : '',
       });
+  }
+  if (includeEvents) {
+    columnList.push({
+      Header: 'Events',
+      id: 'events',
+      Cell: ({row, cell}) => row.original.events.map(event => event.name).join(', '),
+    })
   }
   const columns = useMemo(() => columnList, [bowlers]);
 
@@ -52,6 +64,15 @@ const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successT
 
   /////////////////////////////////////////////////
 
+  const confirmPartnerUp = (event, targetPartner) => {
+    event.preventDefault();
+    const name = (targetPartner.preferred_name || targetPartner.first_name) + ' ' + targetPartner.last_name;
+    if (confirm(`By proceeding, I affirm that ${name} knows that I am partnering up with them.`)) {
+      dispatch(partnerUpRegistrationInitiated(targetPartner));
+      router.push(`/tournaments/${tournament.identifier}/partner-up-bowler`);
+    }
+  }
+
   let list = (
     <div className={'display-6 text-center'}>
       No bowlers to display.
@@ -73,6 +94,7 @@ const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successT
                 </th>
               ))}
               {enablePayment && <th />}
+              {includeEvents && <th />}
             </tr>
           ))}
           </thead>
@@ -89,7 +111,7 @@ const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successT
                 {enablePayment && (
                   <td className={'text-end'}>
                     <a href={`/bowlers/${row.original.identifier}`}
-                       className={'btn btn-sm btn-secondary'}>
+                       className={'btn btn-sm btn-success'}>
                       Choose Events &amp; Pay
                     </a>
                   </td>
@@ -97,6 +119,7 @@ const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successT
                 {enablePartnerUp && (
                   <td className={'text-end'}>
                     <a href={`/bowlers/${row.original.identifier}`}
+                       onClick={(event) => confirmPartnerUp(event, row.original)}
                        className={'btn btn-sm btn-outline-success'}>
                       Partner Up
                     </a>

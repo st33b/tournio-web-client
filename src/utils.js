@@ -252,6 +252,24 @@ export const submitDoublesRegistration = (tournament, bowlers, onSuccess, onFail
     });
 }
 
+export const submitPartnerRegistration = (tournament, bowler, partner, onSuccess, onFailure) => {
+  // make the post
+  const bowlerData = { bowlers: [convertBowlerDataForPost(tournament, bowler)] };
+  bowlerData.bowlers[0].doubles_partner_identifier = partner.identifier;
+
+  axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, bowlerData)
+    .then(response => {
+      const newBowler = response.data[0];
+      onSuccess(newBowler);
+    })
+    .catch(error => {
+      console.log('womp womp');
+      console.log(error);
+      console.log(error.response);
+      onFailure(error.response.status);
+    });
+}
+
 export const submitJoinTeamRegistration = (tournament, team, bowler, onSuccess, onFailure) => {
   // make the post
   const bowlerData = {
