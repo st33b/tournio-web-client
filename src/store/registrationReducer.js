@@ -118,6 +118,22 @@ export const registrationReducer = (state, action) => {
       return updateObject(state, {
         bowler: null,
       });
+    case actionTypes.PARTNER_UP_REGISTRATION_INITIATED:
+      return updateObject(state, {
+        bowler: null,
+      });
+    case actionTypes.PARTNER_UP_BOWLER_INFO_ADDED:
+      return updateObject(state, {
+        bowler: action.bowler,
+      });
+    case actionTypes.PARTNER_UP_BOWLER_UPDATED:
+      return updateObject(state, {
+        bowler: action.bowler,
+      });
+    case actionTypes.PARTNER_UP_REGISTRATION_COMPLETED:
+      return updateObject(state, {
+        bowler: null,
+      });
     default:
       console.log("Nope!");
       break;

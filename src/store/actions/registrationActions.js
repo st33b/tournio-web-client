@@ -198,3 +198,30 @@ export const newPairRegistrationCompleted = () => {
     type: actionTypes.NEW_PAIR_REGISTRATION_COMPLETED,
   }
 }
+
+export const partnerUpRegistrationInitiated = () => {
+  return {
+    type: actionTypes.PARTNER_UP_REGISTRATION_INITIATED,
+  }
+}
+
+export const partnerUpBowlerAdded = (bowler) => {
+  return {
+    type: actionTypes.PARTNER_UP_BOWLER_INFO_ADDED,
+    bowler: bowler,
+  }
+}
+
+export const partnerUpBowlerUpdated = (bowlerInfo, index) => {
+  return {
+    type: actionTypes.PARTNER_UP_BOWLER_UPDATED,
+    bowler: bowlerInfo,
+    index: index,
+  }
+}
+
+export const partnerUpRegistrationCompleted = () => {
+  return {
+    type: actionTypes.PARTNER_UP_REGISTRATION_COMPLETED,
+  }
+}

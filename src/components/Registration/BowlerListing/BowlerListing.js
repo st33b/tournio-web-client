@@ -7,8 +7,8 @@ import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeade
 
 import classes from './BowlerListing.module.scss';
 
-const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successType}) => {
-  const columns = useMemo(() => [
+const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successType, enablePartnerUp}) => {
+  const columnList = [
     {
       id: 'full_name',
       Header: ({column}) => <SortableTableHeader text={'Name'} column={column}/>,
@@ -19,12 +19,15 @@ const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successT
       Header: ({column}) => <SortableTableHeader text={'Date Registered'} column={column}/>,
       accessor: 'date_registered',
     },
-    {
-      Header: 'Doubles Partner',
-      accessor: 'doubles_partner',
-      Cell: ({row, cell}) => !!cell.value ? cell.value.full_name : '',
-    },
-  ], [bowlers]);
+  ];
+  if (!enablePartnerUp) {
+    columnList.push({
+        Header: 'Doubles Partner',
+        accessor: 'doubles_partner',
+        Cell: ({row, cell}) => !!cell.value ? cell.value.full_name : '',
+      });
+  }
+  const columns = useMemo(() => columnList, [bowlers]);
 
   const [data, setData] = useState(List());
   useEffect(() => {
@@ -88,6 +91,14 @@ const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successT
                     <a href={`/bowlers/${row.original.identifier}`}
                        className={'btn btn-sm btn-secondary'}>
                       Choose Events &amp; Pay
+                    </a>
+                  </td>
+                )}
+                {enablePartnerUp && (
+                  <td className={'text-end'}>
+                    <a href={`/bowlers/${row.original.identifier}`}
+                       className={'btn btn-sm btn-outline-success'}>
+                      Partner Up
                     </a>
                   </td>
                 )}

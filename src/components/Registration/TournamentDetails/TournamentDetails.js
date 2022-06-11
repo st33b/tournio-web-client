@@ -180,7 +180,7 @@ const TournamentDetails = ({tournament}) => {
       },
       {
         name: 'partner',
-        path: 'tbd',
+        path: 'partner-up',
         linkText: 'Partner Up With Someone',
       },
       {

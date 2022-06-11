@@ -171,10 +171,11 @@ export const fetchTeamList = ({tournamentIdentifier, dispatch, onSuccess, onFail
     });
 }
 
-export const fetchBowlerList = ({tournamentIdentifier, onSuccess, onFailure}) => {
+export const fetchBowlerList = ({tournamentIdentifier, onSuccess, onFailure, unpartneredOnly}) => {
+  const queryString = unpartneredOnly ? '?unpartnered=true' : '';
   const requestConfig = {
     method: 'get',
-    url: `${apiHost}/tournaments/${tournamentIdentifier}/bowlers`,
+    url: `${apiHost}/tournaments/${tournamentIdentifier}/bowlers${queryString}`,
     headers: {
       'Accept': 'application/json',
     },
