@@ -38,7 +38,7 @@ const Page = () => {
         <BowlerForm bowlerData={bowler}
                     bowlerInfoSaved={onBowlerInfoUpdated}
                     cancelHref={`/tournaments/${tournament.identifier}/solo-bowler-review`}
-                    // includeShift={true}
+                    includeShift={true}
         />
       </Col>
       <Col>

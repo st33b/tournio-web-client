@@ -5,8 +5,9 @@ import Input from "../../ui/Input/Input";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './BowlerForm.module.scss';
+import ErrorBoundary from "../../common/ErrorBoundary";
 
-const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData, cancelHref}) => {
+const BowlerForm = ({bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => {
   const {entry} = useRegistrationContext();
 
   const initialFormState = {
@@ -249,19 +250,27 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData, c
   }
   const [bowlerForm, setBowlerForm] = useState(initialFormState);
   const [showShiftSelection, setShowShiftSelection] = useState(false);
+  const [buttonText, setButtonText] = useState('Save Bowler');
+  const [showCancelButton, setShowCancelButton] = useState(false);
+
+  const additionalFormFields = () => {
+    const formFields = {};
+    for (let key in entry.tournament.additional_questions) {
+      formFields[key] = { ...entry.tournament.additional_questions[key] }
+      formFields[key].valid = !entry.tournament.additional_questions[key].validation.required
+      formFields[key].touched = false;
+      formFields[key].elementConfig = { ...entry.tournament.additional_questions[key].elementConfig }
+    }
+    return formFields;
+  }
 
   const resetFormData = () => {
-    // For each of the additional questions, we need to deep-copy the nested objects that we care about
-    // (elementConfig, in this case. helper and validation won't change.)
-    const formData = {...initialFormState}
+    const formData = {...initialFormState};
 
-    for (let key in entry.tournament.additional_questions) {
-      formData.formFields[key] = { ...entry.tournament.additional_questions[key] }
-      formData.formFields[key].valid = !entry.tournament.additional_questions[key].validation.required
-      formData.formFields[key].touched = false;
-      formData.formFields[key].elementConfig = { ...entry.tournament.additional_questions[key].elementConfig }
-    }
+    // get the additional questions
+    formData.formFields = {...formData.formFields, ...additionalFormFields()};
 
+    // put shift info in there, if needed
     if (includeShift) {
       if (entry.tournament.available_shifts.length > 1) {
         formData.soloBowlerFields.shift.elementConfig.options = [{value: '', label: '-- Choose a shift'}];
@@ -280,6 +289,7 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData, c
     setBowlerForm(formData);
   }
 
+  // get the additional questions into the bowler form, along with shift info if needed
   useEffect(() => {
     if (!entry) {
       return;
@@ -288,9 +298,50 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData, c
     resetFormData();
   }, [entry]);
 
+  // We're editing a bowler. Put their data into the form.
+  useEffect(() => {
+    if (!bowlerData) {
+      return;
+    }
+    const updatedBowlerForm = {...bowlerForm};
+    updatedBowlerForm.formFields = {...updatedBowlerForm.formFields, ...additionalFormFields()};
+
+    // First, all the standard fields and additional questions
+    // for (const inputIdentifier in initialFormState.formFields) {
+    for (const inputIdentifier in bowlerData) {
+      if (updatedBowlerForm.formFields[inputIdentifier] === undefined) {
+        continue;
+      }
+      updatedBowlerForm.formFields[inputIdentifier].elementConfig.value = bowlerData[inputIdentifier];
+      updatedBowlerForm.formFields[inputIdentifier].valid = checkValidity(
+        bowlerData[inputIdentifier],
+        updatedBowlerForm.formFields[inputIdentifier].validation
+      );
+    }
+
+    // Now, shift information, if there is any
+    if (includeShift) {
+      updatedBowlerForm.soloBowlerFields.shift.elementConfig.value = bowlerData.shift.identifier;
+      updatedBowlerForm.soloBowlerFields.shift.valid = true;
+    }
+
+    setBowlerForm(updatedBowlerForm);
+    setButtonText('Save Changes');
+    setShowCancelButton(true);
+  }, []);
+
   if (!entry || !entry.tournament) {
     return '';
   }
+
+  //. If we aren't editing a bowler, then set the position if it's needs to be something other than 1.
+  // if (!bowlerData) {
+  //   if (entry.team) {
+  //     setPosition (entry.team.bowlers.length + 1);
+  //   } else if (entry.bowlers) {
+  //     setPosition(entry.bowlers.length + 1);
+  //   }
+  // }
 
   const checkValidity = (value, rules) => {
     let isValid = true;
@@ -308,57 +359,6 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData, c
     }
 
     return isValid;
-  }
-
-  let position = 1;
-  if (entry.team) {
-    position = entry.team.bowlers.length + 1;
-  } else if (entry.bowlers) {
-    position = entry.bowlers.length + 1;
-  }
-  let buttonText = 'Save Bowler';
-
-  let showCancelButton = false;
-  // In the event we're editing a bowler, populate initialFormState with their values
-  if (bowlerData) {
-    // We're editing a solo bowler
-    position = 1;
-    if (editBowlerNum) {
-      position = editBowlerNum;
-    }
-
-    for (const inputIdentifier in initialFormState.formFields) {
-      initialFormState.formFields[inputIdentifier].elementConfig.value = bowlerData[inputIdentifier];
-      initialFormState.formFields[inputIdentifier].valid = checkValidity(
-        bowlerData[inputIdentifier],
-        initialFormState.formFields[inputIdentifier].validation
-      );
-    }
-
-    if (includeShift) {
-      initialFormState.soloBowlerFields.shift.elementConfig.value = bowlerData.shift.identifier;
-      initialFormState.soloBowlerFields.shift.valid = true;
-    }
-    buttonText = 'Save Changes';
-    showCancelButton = true;
-  } else if (editBowlerNum) {
-    // We're editing a bowler on a team
-    position = editBowlerNum;
-    const bowlerToEdit = entry.team.bowlers[position - 1];
-    for (const inputIdentifier in initialFormState.formFields) {
-      initialFormState.formFields[inputIdentifier].elementConfig.value = bowlerToEdit[inputIdentifier];
-      initialFormState.formFields[inputIdentifier].valid = checkValidity(
-        bowlerToEdit[inputIdentifier],
-        initialFormState.formFields[inputIdentifier].validation
-      );
-    }
-
-    if (includeShift) {
-      initialFormState.soloBowlerFields.shift.elementConfig.value = entry.team.shift.identifier;
-      initialFormState.soloBowlerFields.shift.valid = true;
-    }
-    buttonText = 'Save Changes';
-    showCancelButton = true;
   }
 
   const formHandler = (event) => {
@@ -380,7 +380,7 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData, c
     }
 
     // Reset the form to take in the next bowler's info
-    resetFormData();
+    resetFormData(initialFormState);
 
     bowlerInfoSaved(bowlerData);
   }
@@ -500,22 +500,33 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData, c
     </form>
   );
 
+  let position = 1;
+  if (bowlerData) {
+    position = bowlerData.position;
+  } else if (entry.team) {
+    position = entry.team.bowlers.length + 1;
+  } else if (entry.bowlers) {
+    position = entry.bowlers.length + 1;
+  }
+
   let headerText = 'Bowler #' + position;
 
   return (
-    <div className={classes.BowlerForm}>
+    <ErrorBoundary>
+      <div className={classes.BowlerForm}>
 
-      <h3>
-        {headerText}
-      </h3>
+        <h3>
+          {headerText}
+        </h3>
 
-      <p>
-        <i className={`${classes.RequiredLabel} align-top bi-asterisk`} />
-        {' '}indicates a required field
-      </p>
+        <p>
+          <i className={`${classes.RequiredLabel} align-top bi-asterisk`} />
+          {' '}indicates a required field
+        </p>
 
-      {form}
-    </div>
+        {form}
+      </div>
+    </ErrorBoundary>
   );
 }
 

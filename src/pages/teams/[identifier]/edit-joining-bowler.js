@@ -24,7 +24,7 @@ const Page = () => {
   return (
     <Row>
       <Col lg={8}>
-        <BowlerForm editBowlerNum={bowlerNum}
+        <BowlerForm bowlerData={entry.team.bowlers[bowlerNum - 1]}
                     bowlerInfoSaved={onBowlerInfoUpdated} />
       </Col>
       <Col>

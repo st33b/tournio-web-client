@@ -90,10 +90,6 @@ export const registrationReducer = (state, action) => {
       return updateObject(state, {
         team: null,
       });
-    // case actionTypes.TEAM_DETAILS_RETRIEVED:
-    //   return updateObject(state, {
-    //     team: action.team,
-    //   });
     case actionTypes.EXISTING_TEAM_BOWLER_INFO_ADDED:
       const modifiedTeam = {...state.team}
       modifiedTeam.bowlers = state.team.bowlers.concat(action.bowler);

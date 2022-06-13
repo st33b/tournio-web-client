@@ -31,7 +31,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
   }
 
   let teamText = '';
-  if (team) {
+  if (team && team.name) {
     teamText = (
       <p>
         <span>
@@ -104,7 +104,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
 
   // for editing doubles partners
   let doublesLink = '';
-  if (enableDoublesEdit && team.bowlers && team.bowlers.length > 1) {
+  if (enableDoublesEdit && team && team.bowlers && team.bowlers.length > 1) {
     doublesLink = (
       <div className='text-start pb-4'>
         <a
