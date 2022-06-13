@@ -250,14 +250,11 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData, c
   const [bowlerForm, setBowlerForm] = useState(initialFormState);
   const [showShiftSelection, setShowShiftSelection] = useState(false);
 
-  useEffect(() => {
-    if (!entry) {
-      return;
-    }
-
+  const resetFormData = () => {
     // For each of the additional questions, we need to deep-copy the nested objects that we care about
     // (elementConfig, in this case. helper and validation won't change.)
-    const formData = {...bowlerForm}
+    const formData = {...initialFormState}
+
     for (let key in entry.tournament.additional_questions) {
       formData.formFields[key] = { ...entry.tournament.additional_questions[key] }
       formData.formFields[key].valid = !entry.tournament.additional_questions[key].validation.required
@@ -275,12 +272,20 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData, c
         });
         setShowShiftSelection(true);
       } else {
-        initialFormState.soloBowlerFields.shift.elementConfig.value = entry.tournament.available_shifts[0].identifier;
-        initialFormState.soloBowlerFields.shift.valid = true;
+        formData.soloBowlerFields.shift.elementConfig.value = entry.tournament.available_shifts[0].identifier;
+        formData.soloBowlerFields.shift.valid = true;
       }
     }
 
     setBowlerForm(formData);
+  }
+
+  useEffect(() => {
+    if (!entry) {
+      return;
+    }
+
+    resetFormData();
   }, [entry]);
 
   if (!entry || !entry.tournament) {
@@ -375,7 +380,7 @@ const BowlerForm = ({bowlerInfoSaved, editBowlerNum, includeShift, bowlerData, c
     }
 
     // Reset the form to take in the next bowler's info
-    setBowlerForm(initialFormState);
+    resetFormData();
 
     bowlerInfoSaved(bowlerData);
   }

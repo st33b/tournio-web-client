@@ -35,8 +35,7 @@ const Page = () => {
     dispatch(newPairBowlerAdded(bowlerInfo));
   }
 
-  // const includeShift = entry.tournament.available_shifts && entry.tournament.available_shifts.length > 0;
-  const includeShift = false;
+  const includeShift = entry.tournament.available_shifts && entry.tournament.available_shifts.length > 0;
 
   return (
     <Row>

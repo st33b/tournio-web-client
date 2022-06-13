@@ -325,7 +325,12 @@ const teamDataForBowler = (bowler) => {
 
 const convertBowlerDataForPost = (tournament, bowler) => {
   const additionalQuestionResponses = convertAdditionalQuestionResponsesForPost(tournament, bowler);
-  return {
+  const shiftObj = {};
+  if (bowler.shift) {
+    shiftObj.shift_identifier = bowler.shift.identifier;
+  }
+
+  const bowlerObj = {
     person_attributes: {
       first_name: bowler.first_name,
       last_name: bowler.last_name,
@@ -345,6 +350,7 @@ const convertBowlerDataForPost = (tournament, bowler) => {
     },
     additional_question_responses: additionalQuestionResponses,
   };
+  return {...bowlerObj, ...shiftObj};
 }
 
 const convertAdditionalQuestionResponsesForPost = (tournament, bowler) => {
