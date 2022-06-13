@@ -48,9 +48,10 @@ export const newTeamEntryCompleted = () => {
   }
 }
 
-export const joinTeamRegistrationInitiated = () => {
+export const joinTeamRegistrationInitiated = (team) => {
   return {
     type: actionTypes.JOIN_TEAM_REGISTRATION_INITIATED,
+    team: team,
   }
 }
 
@@ -60,12 +61,12 @@ export const teamListRetrieved = () => {
   }
 }
 
-export const teamDetailsRetrieved = (team) => {
-  return {
-    type: actionTypes.TEAM_DETAILS_RETRIEVED,
-    team: team,
-  }
-}
+// export const teamDetailsRetrieved = (team) => {
+//   return {
+//     type: actionTypes.TEAM_DETAILS_RETRIEVED,
+//     team: team,
+//   }
+// }
 
 export const existingTeamBowlerInfoAdded = (bowlerInfo) => {
   return {
@@ -213,11 +214,10 @@ export const partnerUpBowlerAdded = (bowler) => {
   }
 }
 
-export const partnerUpBowlerUpdated = (bowlerInfo, index) => {
+export const partnerUpBowlerUpdated = (bowlerInfo) => {
   return {
     type: actionTypes.PARTNER_UP_BOWLER_UPDATED,
     bowler: bowlerInfo,
-    index: index,
   }
 }
 

@@ -44,7 +44,7 @@ const Page = () => {
         <ProgressIndicator active={'bowlers'} />
         <BowlerForm editBowlerNum={bowlerNum}
                     bowlerInfoSaved={onBowlerInfoUpdated}
-                    cancelHref={`/tournaments/${tournament.identifier}/review-entries`}
+                    cancelHref={`/tournaments/${entry.tournament.identifier}/review-entries`}
         />
       </Col>
       <Col>

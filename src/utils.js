@@ -83,7 +83,7 @@ export const fetchTournamentDetails = (identifier, ...dispatches) => {
 
 }
 
-export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure, dispatches}) => {
+export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure}) => {
   const requestConfig = {
     method: 'get',
     url: `${apiHost}/teams/${teamIdentifier}`,
@@ -95,9 +95,6 @@ export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure, dispatch
   axios(requestConfig)
     .then(response => {
       if (response.status >= 200 && response.status < 300) {
-        dispatches.map(dispatch => {
-          dispatch(teamDetailsRetrieved(response.data));
-        });
         onSuccess(response.data);
       } else {
         onFailure(response.data);
@@ -272,8 +269,11 @@ export const submitPartnerRegistration = (tournament, bowler, partner, onSuccess
 
 export const submitJoinTeamRegistration = (tournament, team, bowler, onSuccess, onFailure) => {
   // make the post
+  if (team.shift) {
+    bowler.shift = team.shift;
+  }
   const bowlerData = {
-    bowlers: [Object.assign(convertBowlerDataForPost(tournament, bowler), teamDataForBowler(bowler))],
+    bowlers: [{...convertBowlerDataForPost(tournament, bowler), ...teamDataForBowler(bowler) }],
   };
   const teamId = team.identifier;
   axios.post(`${apiHost}/teams/${teamId}/bowlers`, bowlerData)
@@ -301,16 +301,14 @@ const convertTeamDataForServer = (tournament, team) => {
     },
   };
   if (team.shift) {
-    postData.team.shift = {
-      identifier: team.shift.identifier,
-    };
+    team.bowlers.forEach(bowler => bowler.shift = team.shift);
   }
   for (const bowler of team.bowlers) {
     postData.team.bowlers_attributes.push(
-      Object.assign(
-        convertBowlerDataForPost(tournament, bowler),
-        teamDataForBowler(bowler)
-      )
+      {
+        ...convertBowlerDataForPost(tournament, bowler),
+        ...teamDataForBowler(bowler)
+      }
     );
   }
   return postData;

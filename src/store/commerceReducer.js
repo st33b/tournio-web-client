@@ -31,6 +31,7 @@ export const commerceReducer = (state, action) => {
         freeEntry: null,
         error: null,
         bowler: null,
+        cart: [],
       })
     case actionTypes.BOWLER_DETAILS_RETRIEVED:
       let unpaidItems = action.bowler.unpaid_purchases.slice(0);

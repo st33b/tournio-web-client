@@ -2,10 +2,10 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './TeamDetails.module.scss';
 
-const TeamDetails = ({successType, enablePayment = true}) => {
+const TeamDetails = ({team, successType, enablePayment = true}) => {
   const {entry, commerce} = useRegistrationContext();
 
-  if (!entry.tournament || !entry.team) {
+  if (!entry.tournament || !team) {
     return '';
   }
 
@@ -48,7 +48,7 @@ const TeamDetails = ({successType, enablePayment = true}) => {
       {successBanner}
       <div className={'table-responsive'}>
         <table className={'table table-striped caption-top'}>
-          <caption>Team: {entry.team.name}</caption>
+          <caption>Team: {team.name}</caption>
           <thead>
             <tr className={'align-middle'}>
               <th><span className={'d-none d-sm-block'}>Position</span></th>
@@ -59,7 +59,7 @@ const TeamDetails = ({successType, enablePayment = true}) => {
             </tr>
           </thead>
           <tbody>
-          {entry.team.bowlers.map((b, i) => {
+          {team.bowlers.map((b, i) => {
             let displayed_name = b.first_name;
             if (b.preferred_name) {
               displayed_name = b.preferred_name;
@@ -67,7 +67,7 @@ const TeamDetails = ({successType, enablePayment = true}) => {
             const name = displayed_name + ' ' + b.last_name;
 
             // We might've come here from the checkout page, in which case that amount_due
-            // is more up-to-date than the one on the entry.team object.
+            // is more up-to-date than the one on the team object.
             let amountDue = b.amount_due;
             if (commerce.bowler && commerce.bowler.identifier === b.identifier) {
               amountDue = commerce.bowler.amount_due;
