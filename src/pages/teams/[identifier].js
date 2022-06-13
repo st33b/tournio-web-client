@@ -9,6 +9,7 @@ import TournamentLogo from "../../components/Registration/TournamentLogo/Tournam
 import Contacts from "../../components/Registration/Contacts/Contacts";
 import TeamDetails from "../../components/Registration/TeamDetails/TeamDetails";
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
+import {joinTeamRegistrationInitiated} from "../../store/actions/registrationActions";
 
 const Page = () => {
   const router = useRouter();
@@ -18,8 +19,10 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const [enablePurchase, setEnablePurchase] = useState(true);
+  const [team, setTeam] = useState();
 
   const onTeamFetchSuccess = (data) => {
+    setTeam(data);
     setLoading(false);
   }
 
@@ -29,57 +32,43 @@ const Page = () => {
 
   // fetch the team details
   useEffect(() => {
-    if (identifier === undefined || !entry) {
+    if (!identifier) {
       return;
     }
 
-    if (!entry.team || entry.team.identifier !== identifier) {
-      fetchTeamDetails({
-        teamIdentifier: identifier,
-        onSuccess: onTeamFetchSuccess,
-        onFailure: onTeamFetchFailure,
-        dispatches: [dispatch, commerceDispatch],
-      });
-      return;
-    } else {
-      setLoading(false);
-    }
-
-    if (entry.team.shift_info.full && !entry.team.shift_info.confirmed) {
-      // either the tournament is full, or the chosen shift is full.
-      // first, see if there are available shifts
-      if (entry.tournament.available_shifts.length > 0) {
-        setErrorMessage("Your team's requested shift is full. Please contact the tournament director about changing to another shift before paying entry fees.");
-        setEnablePurchase(false);
-      } else {
-        setErrorMessage("The tournament has reached its maximum capacity. Your team's registration is now provisional.");
-        setEnablePurchase(false);
-      }
-    }
-  }, [identifier, entry, dispatch, commerceDispatch]);
+    fetchTeamDetails({
+      teamIdentifier: identifier,
+      onSuccess: onTeamFetchSuccess,
+      onFailure: onTeamFetchFailure,
+    });
+  }, [identifier]);
 
   // ensure that the tournament in context matches the team's
   useEffect(() => {
-    if (identifier === undefined || !entry) {
+    if (!identifier || !entry || !team) {
       return;
     }
-    if (!entry.team || !entry.tournament) {
-      return;
-    }
-    if (entry.tournament.identifier !== entry.tournament.identifier) {
+    if (!entry.tournament || entry.tournament.identifier !== team.tournament.identifier) {
       fetchTournamentDetails(entry.team.tournament.identifier, dispatch, commerceDispatch);
     }
-  }, [identifier, entry, dispatch, commerceDispatch]);
+  }, [identifier, entry, team, dispatch, commerceDispatch]);
 
-  if (loading || !entry || !entry.team) {
+  if (loading || !entry || !team) {
     return <LoadingMessage message={'Retrieving team details...'} />
   }
 
+  const joinTeamClicked = (event) => {
+    // event.preventDefault();
+    dispatch(joinTeamRegistrationInitiated(team));
+    // router.push(`/teams/${team.identifier}/join`);
+  }
+
   let joinLink = '';
-  if (entry.team.size < entry.tournament.max_bowlers && !success) {
+  if (team.size < entry.tournament.max_bowlers && !success) {
     joinLink = (
       <p className={'text-center mt-2'}>
-        <a href={`/teams/${entry.team.identifier}/join`}
+        <a href={`/teams/${team.identifier}/join`}
+           onClick={joinTeamClicked}
            className={'btn btn-outline-info'}>
           Join this Team
         </a>
@@ -107,7 +96,7 @@ const Page = () => {
           </a>
         </Col>
         <Col>
-          <TeamDetails successType={success} enablePayment={enablePurchase}/>
+          <TeamDetails successType={success} enablePayment={enablePurchase} team={team}/>
           {joinLink}
 
           {errorMessage && (

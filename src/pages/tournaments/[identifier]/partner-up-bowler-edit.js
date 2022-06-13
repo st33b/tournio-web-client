@@ -5,7 +5,7 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import Summary from "../../../components/Registration/Summary/Summary";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {soloBowlerInfoUpdated} from "../../../store/actions/registrationActions";
+import {partnerUpBowlerUpdated, soloBowlerInfoUpdated} from "../../../store/actions/registrationActions";
 import {useEffect, useState} from "react";
 
 const Page = () => {
@@ -26,9 +26,8 @@ const Page = () => {
     return'';
   }
 
-  const bowlerNum = 1;
   const onBowlerInfoUpdated = (bowlerInfo) => {
-    dispatch(soloBowlerInfoUpdated(bowlerInfo));
+    dispatch(partnerUpBowlerUpdated(bowlerInfo));
     router.push(`/tournaments/${tournament.identifier}/partner-up-bowler-review`);
   }
 

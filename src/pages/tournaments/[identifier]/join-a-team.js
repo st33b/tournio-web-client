@@ -33,7 +33,7 @@ const Page = () => {
       return;
     }
     const shift = entry.tournament.shifts[0];
-    if (shift && !shift.permit_joins) {
+    if (shift && !shift.registration_types.join_team) {
       router.push(`/tournaments/${entry.tournament.identifier}`);
     }
   }, [entry]);
@@ -44,7 +44,6 @@ const Page = () => {
       return;
     }
 
-    dispatch(joinTeamRegistrationInitiated());
     fetchTeamList({
       tournamentIdentifier: entry.tournament.identifier,
       dispatch: dispatch,
