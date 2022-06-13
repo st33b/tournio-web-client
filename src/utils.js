@@ -120,19 +120,6 @@ export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, commerceDispat
       const bowlerTournamentId = bowlerData.tournament.identifier;
       const availableItems = response.data.available_items;
       commerceDispatch(bowlerCommerceDetailsRetrieved(bowlerData, availableItems));
-
-      // Make sure the tournament in context matches that of the bowler.
-      // If it doesn't, retrieve the bowler's tournament so we can put it
-      // into context.
-      if (!commerceObj) {
-        fetchTournamentDetails(bowlerTournamentId, commerceDispatch);
-      } else if (commerceObj.tournament) {
-        const contextTournamentId = commerceObj.tournament.identifier;
-
-        if (contextTournamentId !== bowlerTournamentId) {
-          fetchTournamentDetails(bowlerTournamentId, commerceDispatch);
-        }
-      }
     })
     .catch(error => {
       // Display some kind of error message
