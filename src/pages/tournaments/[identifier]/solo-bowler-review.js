@@ -36,9 +36,9 @@ const Page = () => {
     router.push(`/tournaments/${tournament.identifier}/solo-bowler-edit`);
   }
 
-  const soloRegistrationSuccess = (bowlerIdentifier) => {
+  const soloRegistrationSuccess = (bowler) => {
     dispatch(soloBowlerRegistrationCompleted());
-    router.push(`/bowlers/${bowlerIdentifier}?success=register`);
+    router.push(`/bowlers/${bowler.identifier}?success=register`);
   }
 
   const soloRegistrationFailure = (errorMessage) => {

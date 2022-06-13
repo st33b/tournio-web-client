@@ -340,7 +340,7 @@ const ShiftForm = ({shift}) => {
             </div>
             <div className={`row ${colorClass}`}>
               <dt className={'col-5'}>
-                Confirmed
+                # Confirmed
               </dt>
               <dd className={'col'}>
                 {shift.confirmed_count}
@@ -348,7 +348,7 @@ const ShiftForm = ({shift}) => {
             </div>
             <div className={`row ${colorClass}`}>
               <dt className={'col-5'}>
-                Requested
+                # Requested
               </dt>
               <dd className={'col'}>
                 {shift.requested_count}
@@ -357,7 +357,7 @@ const ShiftForm = ({shift}) => {
 
             <div className={'row'}>
               <dt className={'col-5'}>
-                Enabled Options
+                Enabled Entry Types
               </dt>
               <dd className={'col'}>
                 {REGISTRATION_TYPE_LABELS.map(kind => (
