@@ -2,7 +2,7 @@ import {useRegistrationContext} from "../../../../store/RegistrationContext";
 
 import classes from './SingleUseItem.module.scss';
 
-const singleUseItem = ({item, removed}) => {
+const SingleUseItem = ({item, removed}) => {
   const {commerce} = useRegistrationContext();
 
   const removeClickedHandler = (event) => {
@@ -82,4 +82,4 @@ const singleUseItem = ({item, removed}) => {
   );
 }
 
-export default singleUseItem;
+export default SingleUseItem;
