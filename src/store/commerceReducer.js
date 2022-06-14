@@ -1,5 +1,7 @@
+import {compareAsc} from "date-fns";
 import * as actionTypes from './actions/actionTypes';
 import {updateObject} from "../utils";
+import availableItems from "../components/Commerce/AvailableItems/AvailableItems";
 
 const initialState = {
   tournament: null,
@@ -132,6 +134,14 @@ const itemAdded = (state, item) => {
       newCart.push(newDiscountItem);
       newAvailableItems[discountItem.identifier] = newDiscountItem;
     }
+
+    const lateFeeItem = applicableLateFee(newAvailableItems, addedItem, state.tournament);
+    if (lateFeeItem) {
+      const newLateFeeItem = {...lateFeeItem};
+      newLateFeeItem.addedToCart = true;
+      newCart.push(lateFeeItem);
+      newAvailableItems[lateFeeItem.identifier] = newLateFeeItem;
+    }
   }
 
 
@@ -177,6 +187,21 @@ const itemRemoved = (state, item) => {
       newDiscountItem.addedToCart = false;
       newAvailableItems[newDiscountItem.identifier] = newDiscountItem;
       newCart = newCart.filter(i => i.identifier !== newDiscountItem.identifier);
+    }
+
+    // how about an associated late fee item?
+    const lateFeeItemIndex = newCart.findIndex(item => {
+      if (item.category !== 'ledger' || item.determination !== 'late_fee' || item.refinement !== 'event_linked') {
+        return false;
+      }
+      return item.configuration.event === removedItem.identifier;
+    });
+
+    if (lateFeeItemIndex >= 0) {
+      const newLateFeeItem = {...newCart[lateFeeItemIndex]};
+      newLateFeeItem.addedToCart = false;
+      newAvailableItems[newLateFeeItem.identifier] = newLateFeeItem;
+      newCart = newCart.filter(i => i.identifier !== newLateFeeItem.identifier);
     }
   }
 
@@ -234,4 +259,36 @@ const eligibleBundleDiscount = (availableItems, cartItems, purchasedItems) => {
     // if the intersection is the same size as the configuration.events property, then we're eligible for the discount!
     return intersection.length === item.configuration.events.length;
   });
+}
+
+const applicableLateFee = (availableItems, addedItem, tournament) => {
+  const addedItemIdentifier = addedItem.identifier;
+  const lateFeeItem = Object.values(availableItems).find(item => {
+    if (item.category !== 'ledger' || item.determination !== 'late_fee' || item.refinement !== 'event_linked') {
+      return false;
+    }
+    return item.configuration.event && item.configuration.event === addedItemIdentifier;
+  });
+
+  if (!lateFeeItem) {
+    return null;
+  }
+
+  // Now that we've found a matching item, are we actually in late registration?
+  // 1 - if the tournament has a test environment setting
+  // 2 - if the current date/time is after the item's applies_at time
+
+  if (tournament.testing_environment) {
+    // 1
+    if (tournament.testing_environment.settings.registration_period.value === 'late') {
+      return lateFeeItem;
+    }
+  } else {
+    // 2
+    const appliesAt = new Date(lateFeeItem.configuration.applies_at);
+    const now = new Date();
+    if (compareAsc(appliesAt, now) < 0) {
+      return lateFeeItem;
+    }
+  }
 }
