@@ -1,9 +1,17 @@
+import {useRegistrationContext} from "../../../../store/RegistrationContext";
+
 import classes from './SingleUseItem.module.scss';
 
 const singleUseItem = ({item, removed}) => {
+  const {commerce} = useRegistrationContext();
+
   const removeClickedHandler = (event) => {
     event.preventDefault();
     removed(item);
+  }
+
+  if (!commerce) {
+    return '';
   }
 
   let removeLink = '';
@@ -41,6 +49,21 @@ const singleUseItem = ({item, removed}) => {
 
   if (item.category === 'ledger') {
     outerClasses.push(classes.Sticky);
+    if (item.configuration.event) {
+      note = (
+        <p className={classes.Note}>
+          Event: {commerce.availableItems[item.configuration.event].name}
+        </p>
+      );
+    }
+    if (item.configuration.events) {
+      const matchingEvents = item.configuration.events.map(identifier => commerce.availableItems[identifier]);
+      note = (
+        <p className={classes.Note}>
+          Events: {matchingEvents.map(event => commerce.availableItems[event.identifier].name).join(', ')}
+        </p>
+      );
+    }
   }
 
   return (
