@@ -6,7 +6,7 @@ import {Overlay, Popover} from "react-bootstrap";
 
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
 import BowlerFilterForm from "../BowlerFilterForm/BowlerFilterForm";
-import {directorApiRequest, doesNotEqual, isOrIsNot} from "../../../utils";
+import {directorApiRequest, doesNotEqual, isOrIsNot, equals} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './BowlerListing.module.scss';
@@ -134,6 +134,7 @@ const BowlerListing = ({bowlers}) => {
           {cell.value}
         </a>
       ),
+      filter: equals,
     },
     // {
     //   Header: 'Position',
@@ -175,6 +176,8 @@ const BowlerListing = ({bowlers}) => {
       Header: 'Billed',
       accessor: 'amount_billed',
       disableSortBy: true,
+      filter: equals,
+      Cell: ({value}) => `$${value}`,
     },
     {
       Header: 'Due',
@@ -205,6 +208,7 @@ const BowlerListing = ({bowlers}) => {
     rows,
     prepareRow,
     setFilter,
+    setAllFilters,
   } = useTable(
     {columns, data, updateTheData},
     useFilters,
@@ -259,15 +263,29 @@ const BowlerListing = ({bowlers}) => {
     if (criteria.amount_due) {
       setFilter('amount_due', 0);
     } else {
-      setFilter('amount_due', '');
+      setFilter('amount_due', undefined);
+    }
+    if (criteria.amount_billed) {
+      setFilter('amount_billed', 0);
+    } else {
+      setFilter('amount_billed', undefined);
     }
     setFilter('has_free_entry', criteria.has_free_entry)
     setFilter('igbo_member', criteria.igbo_member);
+    if (criteria.no_team) {
+      setFilter('team_name', 'n/a');
+    } else {
+      setFilter('team_name', undefined);
+    }
+  }
+
+  const resetThoseFilters = () => {
+    setAllFilters([]);
   }
 
   return (
     <div className={classes.BowlerListing}>
-      {!!data.size && <BowlerFilterForm onFilterApplication={filterThatData}/>}
+      {!!data.size && <BowlerFilterForm onFilterApplication={filterThatData} onFilterReset={resetThoseFilters}/>}
       {list}
     </div>
   );

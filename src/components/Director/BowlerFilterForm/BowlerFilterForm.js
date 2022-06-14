@@ -6,13 +6,15 @@ import {Col, FloatingLabel, Row} from "react-bootstrap";
 
 import classes from './BowlerFilterForm.module.scss';
 
-const BowlerFilterForm = ({onFilterApplication}) => {
+const BowlerFilterForm = ({onFilterApplication, onFilterReset}) => {
   const initialState = {
     name: '',
     email: '',
     amount_due: false,
     has_free_entry: false,
     igbo_member: '',
+    no_team: '',
+    amount_billed: false,
   }
 
   const [filterForm, setFilterForm] = useState(initialState);
@@ -31,6 +33,8 @@ const BowlerFilterForm = ({onFilterApplication}) => {
     switch (inputIdentifier) {
       case 'amount_due':
       case 'has_free_entry':
+      case 'no_team':
+      case 'amount_billed':
         const oldValue = filterForm[inputIdentifier];
         const newValue = !oldValue;
         updatedForm[inputIdentifier] = newValue;
@@ -52,7 +56,8 @@ const BowlerFilterForm = ({onFilterApplication}) => {
 
   const resetFilterHandler = () => {
     setFilterForm(initialState);
-    onFilterApplication(initialState);
+    // onFilterApplication(initialState);
+    onFilterReset();
   }
 
   const form = (
@@ -106,6 +111,17 @@ const BowlerFilterForm = ({onFilterApplication}) => {
       <Row>
         <Col sm={6}>
 
+          <Form.Group controlId={'amount_billed'}
+                      as={Row}
+                      className={'mb-3'}>
+            <Col sm={{span: 8, offset: 4}}>
+              <Form.Check type={'checkbox'}
+                          label={'No charges yet'}
+                          checked={filterForm.amount_billed}
+                          onChange={(event) => inputChangedHandler(event, 'amount_billed')}
+              />
+            </Col>
+          </Form.Group>
           <Form.Group controlId={'amount_due'}
                       as={Row}
                       className={'mb-3'}>
@@ -125,6 +141,17 @@ const BowlerFilterForm = ({onFilterApplication}) => {
                           label={'Has a free entry'}
                           checked={filterForm.has_free_entry}
                           onChange={(event) => inputChangedHandler(event, 'has_free_entry')}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group controlId={'no_team'}
+                      as={Row}
+                      className={'mb-3'}>
+            <Col sm={{span: 8, offset: 4}}>
+              <Form.Check type={'checkbox'}
+                          label={'Not on a team'}
+                          checked={filterForm.no_team}
+                          onChange={(event) => inputChangedHandler(event, 'no_team')}
               />
             </Col>
           </Form.Group>

@@ -285,7 +285,10 @@ const Page = () => {
     </Card>
   );
   if (availableTeams.length > 0) {
-    const bowlerTeamId = bowler.team.identifier;
+    let bowlerTeamId = '';
+    if (bowler.team) {
+      bowlerTeamId = bowler.team.identifier;
+    }
     const options = availableTeams.filter(t => t.identifier !== bowlerTeamId);
 
     moveToTeamCard = (

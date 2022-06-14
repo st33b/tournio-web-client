@@ -130,13 +130,22 @@ const TeamListing = ({teams}) => {
   const filterThatData = (criteria) => {
     if (criteria.incomplete) {
       setFilter('size', 4);
+    } else {
+      setFilter('size', undefined);
     }
     setFilter('shift_confirmed', criteria.shift_confirmed);
   }
 
+  const resetThoseFilters = () => {
+    setAllFilters([]);
+  }
+
   return (
     <div className={classes.TeamListing}>
-      {!!data.length && <TeamFilterForm onFilterApplication={filterThatData} includeConfirmed={directorContext.tournament.shifts.length > 0}/>}
+      {!!data.length && <TeamFilterForm
+        onFilterApplication={filterThatData}
+        onFilterReset={resetThoseFilters}
+        includeConfirmed={directorContext.tournament.shifts.length > 0}/>}
       {list}
     </div>
   );
