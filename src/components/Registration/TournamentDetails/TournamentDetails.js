@@ -386,7 +386,7 @@ const TournamentDetails = ({tournament}) => {
             Capacity
           </h5>
           <p>
-            The tournament is limited to {shift.capacity} bowlers / {shift.capacity / 4} teams
+            The tournament can accommodate up to {shift.capacity} bowlers.
           </p>
 
           <ShiftCapacity shift={shift} />
