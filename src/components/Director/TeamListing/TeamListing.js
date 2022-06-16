@@ -15,34 +15,6 @@ const TeamListing = ({teams}) => {
   if (directorContext && directorContext.tournament) {
     identifier = directorContext.tournament.identifier;
   }
-  const shiftColumns = [];
-  if (directorContext.tournament.shifts.length > 1) {
-    shiftColumns.push(
-      {
-        Header: ({column}) => <SortableTableHeader text={'Requested Shift'} column={column}/>,
-        accessor: 'shift',
-      },
-    );
-  }
-  if (directorContext.tournament.shifts.length > 0) {
-    shiftColumns.push(
-      {
-        Header: 'Shift Confirmed?',
-        accessor: 'shift_confirmed',
-        Cell: ({cell: {value}}) => {
-          const classes = value ? ['text-success', 'bi-check-lg'] : ['text-danger', 'bi-x-lg'];
-          const text = value ? 'Yes' : 'No';
-          return (
-            <div className={'text-center'}>
-              <i className={classes.join(' ')} aria-hidden={true}/>
-              <span className={'visually-hidden'}>{text}</span>
-            </div>
-          );
-        },
-        filter: isOrIsNot,
-      },
-    );
-  }
   const columns = useMemo(() => [
       {
         Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
@@ -63,7 +35,21 @@ const TeamListing = ({teams}) => {
         disableSortBy: true,
         filter: lessThan,
       },
-    ].concat(shiftColumns), []);
+    {
+      Header: 'Place with Others?',
+      accessor: 'place_with_others',
+      Cell: ({cell: {value}}) => {
+        const classes = value ? ['text-success', 'bi-check-lg'] : ['text-danger', 'bi-x-lg'];
+        const text = value ? 'Yes' : 'No';
+        return (
+          <div className={'text-center'}>
+            <i className={classes.join(' ')} aria-hidden={true}/>
+            <span className={'visually-hidden'}>{text}</span>
+          </div>
+        );
+      },
+    }
+    ], []);
 
   let data = [];
   if (teams) {
@@ -133,7 +119,11 @@ const TeamListing = ({teams}) => {
     } else {
       setFilter('size', undefined);
     }
-    setFilter('shift_confirmed', criteria.shift_confirmed);
+    if (criteria.place_with_others) {
+      setFilter('place_with_others', true);
+    } else {
+      setFilter('place_with_others', undefined);
+    }
   }
 
   const resetThoseFilters = () => {
@@ -145,7 +135,7 @@ const TeamListing = ({teams}) => {
       {!!data.length && <TeamFilterForm
         onFilterApplication={filterThatData}
         onFilterReset={resetThoseFilters}
-        includeConfirmed={directorContext.tournament.shifts.length > 0}/>}
+      />}
       {list}
     </div>
   );
