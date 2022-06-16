@@ -48,7 +48,7 @@ export const registrationReducer = (state, action) => {
       });
     case actionTypes.NEW_PAIR_BOWLER_UPDATED:
       const newBowlers = [...state.bowlers];
-      newBowlers[action.index] = action.bowler;
+      newBowlers[action.index] = {...state.bowlers[action.index], ...action.bowler};
       return updateObject(state, {
         bowlers: newBowlers,
       });
@@ -140,7 +140,7 @@ export const registrationReducer = (state, action) => {
       });
     case actionTypes.PARTNER_UP_BOWLER_UPDATED:
       return updateObject(state, {
-        bowler: action.bowler,
+        bowler: {...state.bowler, ...action.bowler},
       });
     case actionTypes.PARTNER_UP_REGISTRATION_COMPLETED:
       return updateObject(state, {
