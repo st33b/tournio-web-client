@@ -138,7 +138,6 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
         }
         break;
       case 'bundle_discount':
-        console.log('event identifiers', Object.keys(formData.eventIdentifiers).filter(id => formData.eventIdentifiers[id]));
         configuration.events = Object.keys(formData.eventIdentifiers).filter(id => formData.eventIdentifiers[id]);
         break;
     }
