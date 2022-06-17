@@ -30,6 +30,7 @@ const Page = () => {
 
   const onPreparePurchaseFailure = (data) => {
     setLoading(false);
+    console.log("D'oh!", data);
     // error?
   }
 
@@ -65,6 +66,11 @@ const Page = () => {
     for (let i of items) {
       if (i.category === 'ledger') {
         // mandatory things like entry & late fees, early discount
+
+        // some things we want the server to add: bundle discount, event-linked late fees
+        if (i.determination === 'bundle_discount' || i.determination === 'late_fee' && i.refinement === 'event_linked') {
+          continue;
+        }
         purchaseIdentifiers.push(i.identifier);
       } else {
         purchasableItems.push({

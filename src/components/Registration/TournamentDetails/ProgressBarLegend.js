@@ -22,7 +22,7 @@ const ProgressBarLegend = () => (
       </div>
     </div>
     <div className={classes.ConfirmedNote}>
-      * A team&apos;s place in a shift is not confirmed until all team members have paid their registration fees.
+      * A bowler&apos;s place in a shift is not confirmed until all they have paid their registration fees.
     </div>
   </div>
 );

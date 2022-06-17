@@ -1,9 +1,14 @@
 import RegistrationLayout from '../components/Layout/RegistrationLayout/RegistrationLayout';
-import TournamentListing from "../components/Registration/TournamentListing/TournamentListing";
+import TournamentCards from "../components/Registration/TournamentListing/TournamentCards";
 
-const Page = () => {
-  return <TournamentListing />;
-}
+const Page = () => (
+  <div>
+    <h2 className={'mt-1 mb-3'}>
+      Upcoming Tournaments
+    </h2>
+    <TournamentCards/>
+  </div>
+);
 
 Page.getLayout = function getLayout(page) {
   return (

@@ -6,7 +6,7 @@ import {Overlay, Popover} from "react-bootstrap";
 
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
 import BowlerFilterForm from "../BowlerFilterForm/BowlerFilterForm";
-import {directorApiRequest, doesNotEqual, isOrIsNot} from "../../../utils";
+import {directorApiRequest, doesNotEqual, isOrIsNot, equals} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './BowlerListing.module.scss';
@@ -106,7 +106,8 @@ const BowlerListing = ({bowlers}) => {
     {
       id: 'name',
       Header: ({column}) => <SortableTableHeader text={'Name'} column={column}/>,
-      accessor: (props) => props.last_name + ', ' + props.first_name,
+      // accessor: (props) => props.last_name + ', ' + props.first_name,
+      accessor: 'full_name',
       Cell: ({row, cell}) => {
         return (
           <a href={`/director/bowlers/${row.original.identifier}`}>
@@ -116,29 +117,35 @@ const BowlerListing = ({bowlers}) => {
       }
     },
     {
-      Header: 'Preferred Name',
-      accessor: 'preferred_name',
-      disableSortBy: true,
+      id: 'email',
+      Header: 'Email',
+      accessor: 'email',
     },
+    // {
+    //   Header: 'Preferred Name',
+    //   accessor: 'preferred_name',
+    //   disableSortBy: true,
+    // },
     {
       Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
       accessor: 'team_name',
       Cell: ({row, cell}) => (
-        <a href={`/director/teams/${row.original.team_identifier}`}>
+        <a href={row.original.team_identifier === 'n/a' ? undefined : `/director/teams/${row.original.team_identifier}`}>
           {cell.value}
         </a>
       ),
+      filter: equals,
     },
-    {
-      Header: 'Position',
-      accessor: 'position',
-      disableSortBy: true,
-      Cell: ({value}) => (
-        <div className={'text-center'}>
-          {value}
-        </div>
-      )
-    },
+    // {
+    //   Header: 'Position',
+    //   accessor: 'position',
+    //   disableSortBy: true,
+    //   Cell: ({value}) => (
+    //     <div className={'text-center'}>
+    //       {value}
+    //     </div>
+    //   )
+    // },
     {
       Header: ({column}) => <SortableTableHeader text={'Date Registered'} column={column}/>,
       accessor: 'date_registered',
@@ -169,6 +176,8 @@ const BowlerListing = ({bowlers}) => {
       Header: 'Billed',
       accessor: 'amount_billed',
       disableSortBy: true,
+      filter: equals,
+      Cell: ({value}) => `$${value}`,
     },
     {
       Header: 'Due',
@@ -199,6 +208,7 @@ const BowlerListing = ({bowlers}) => {
     rows,
     prepareRow,
     setFilter,
+    setAllFilters,
   } = useTable(
     {columns, data, updateTheData},
     useFilters,
@@ -248,19 +258,34 @@ const BowlerListing = ({bowlers}) => {
 
   const filterThatData = (criteria) => {
     setFilter('name', criteria.name);
+    setFilter('email', criteria.email);
 
     if (criteria.amount_due) {
       setFilter('amount_due', 0);
     } else {
-      setFilter('amount_due', '');
+      setFilter('amount_due', undefined);
+    }
+    if (criteria.amount_billed) {
+      setFilter('amount_billed', 0);
+    } else {
+      setFilter('amount_billed', undefined);
     }
     setFilter('has_free_entry', criteria.has_free_entry)
     setFilter('igbo_member', criteria.igbo_member);
+    if (criteria.no_team) {
+      setFilter('team_name', 'n/a');
+    } else {
+      setFilter('team_name', undefined);
+    }
+  }
+
+  const resetThoseFilters = () => {
+    setAllFilters([]);
   }
 
   return (
     <div className={classes.BowlerListing}>
-      {!!data.size && <BowlerFilterForm onFilterApplication={filterThatData}/>}
+      {!!data.size && <BowlerFilterForm onFilterApplication={filterThatData} onFilterReset={resetThoseFilters}/>}
       {list}
     </div>
   );

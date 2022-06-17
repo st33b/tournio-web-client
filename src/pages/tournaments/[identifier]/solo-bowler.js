@@ -18,7 +18,7 @@ const Page = () => {
       return;
     }
     const shift = entry.tournament.shifts[0];
-    if (shift && !shift.permit_solo) {
+    if (shift && !shift.registration_types.solo) {
       router.push(`/tournaments/${entry.tournament.identifier}`);
     }
   }, [entry]);

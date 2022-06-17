@@ -1,13 +1,13 @@
+import {useEffect} from "react";
+import {useRouter} from "next/router";
 import {Row, Col} from "react-bootstrap";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
-import TeamForm from "../../../components/Registration/TeamForm/TeamForm";
 import Summary from "../../../components/Registration/Summary/Summary";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
-import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {newTeamRegistrationInitiated, teamInfoAdded} from "../../../store/actions/registrationActions";
-import {useEffect} from "react";
+import {newPairBowlerAdded} from "../../../store/actions/registrationActions";
+import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 
 const Page = () => {
   const {entry, dispatch} = useRegistrationContext();
@@ -17,26 +17,31 @@ const Page = () => {
     if (!entry || !entry.tournament) {
       return;
     }
-    const shift = entry.tournament.shifts[0];
-    if (shift && !shift.registration_types.new_team) {
-      router.push(`/tournaments/${entry.tournament.identifier}`);
+    if (entry.bowlers.length === 2) {
+      onFinishedWithBowlers();
     }
   }, [entry]);
 
-  useEffect(() => {
-    dispatch(newTeamRegistrationInitiated());
-  }, [dispatch]);
-
-  const onTeamFormCompleted = (teamName, shift) => {
-    dispatch(teamInfoAdded(teamName, shift));
-    router.push(`/tournaments/${entry.tournament.identifier}/new-team-bowler`);
+  if (!entry || !entry.tournament) {
+    return '';
   }
+
+  const onFinishedWithBowlers = () => {
+    // Move on to pair review!
+    router.push(`/tournaments/${entry.tournament.identifier}/new-pair-review`);
+  }
+
+  const onNewBowlerAdded = (bowlerInfo) => {
+    dispatch(newPairBowlerAdded(bowlerInfo));
+  }
+
+  const includeShift = entry.tournament.available_shifts && entry.tournament.available_shifts.length > 0;
 
   return (
     <Row>
       <Col lg={8}>
-        <ProgressIndicator active={'team'} />
-        <TeamForm teamFormCompleted={onTeamFormCompleted} />
+        <ProgressIndicator active={'bowlers'} />
+        <BowlerForm bowlerInfoSaved={onNewBowlerAdded} includeShift={includeShift} />
       </Col>
       <Col>
         <Summary />

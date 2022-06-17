@@ -5,12 +5,13 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import Summary from "../../../components/Registration/Summary/Summary";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {soloBowlerInfoUpdated} from "../../../store/actions/registrationActions";
+import {newPairBowlerUpdated, soloBowlerInfoUpdated} from "../../../store/actions/registrationActions";
 import {useEffect, useState} from "react";
 
 const Page = () => {
   const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
+  const { index } = router.query;
 
   const [bowler, setBowler] = useState();
   const [tournament, setTournament] = useState();
@@ -18,7 +19,8 @@ const Page = () => {
     if (!entry) {
       return;
     }
-    setBowler(entry.bowler);
+
+    setBowler(entry.bowlers[index]);
     setTournament(entry.tournament);
   }, [entry]);
 
@@ -26,10 +28,10 @@ const Page = () => {
     return'';
   }
 
-  const bowlerNum = 1;
+  const bowlerNum = parseInt(index) + 1;
   const onBowlerInfoUpdated = (bowlerInfo) => {
-    dispatch(soloBowlerInfoUpdated(bowlerInfo));
-    router.push(`/tournaments/${tournament.identifier}/solo-bowler-review`);
+    dispatch(newPairBowlerUpdated(bowlerInfo, index));
+    router.push(`/tournaments/${tournament.identifier}/new-pair-review`);
   }
 
   return (
@@ -37,8 +39,9 @@ const Page = () => {
       <Col lg={8}>
         <BowlerForm bowlerData={bowler}
                     bowlerInfoSaved={onBowlerInfoUpdated}
-                    cancelHref={`/tournaments/${tournament.identifier}/solo-bowler-review`}
-                    includeShift={true}
+                    editBowlerNum={bowlerNum}
+                    cancelHref={`/tournaments/${tournament.identifier}/new-pair-review`}
+          // includeShift={true}
         />
       </Col>
       <Col>

@@ -5,7 +5,7 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import Summary from "../../../components/Registration/Summary/Summary";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {soloBowlerInfoUpdated} from "../../../store/actions/registrationActions";
+import {partnerUpBowlerUpdated, soloBowlerInfoUpdated} from "../../../store/actions/registrationActions";
 import {useEffect, useState} from "react";
 
 const Page = () => {
@@ -26,10 +26,9 @@ const Page = () => {
     return'';
   }
 
-  const bowlerNum = 1;
   const onBowlerInfoUpdated = (bowlerInfo) => {
-    dispatch(soloBowlerInfoUpdated(bowlerInfo));
-    router.push(`/tournaments/${tournament.identifier}/solo-bowler-review`);
+    dispatch(partnerUpBowlerUpdated(bowlerInfo));
+    router.push(`/tournaments/${tournament.identifier}/partner-up-bowler-review`);
   }
 
   return (
@@ -37,8 +36,8 @@ const Page = () => {
       <Col lg={8}>
         <BowlerForm bowlerData={bowler}
                     bowlerInfoSaved={onBowlerInfoUpdated}
-                    cancelHref={`/tournaments/${tournament.identifier}/solo-bowler-review`}
-                    includeShift={true}
+                    cancelHref={`/tournaments/${tournament.identifier}/partner-up-bowler-review`}
+                    // includeShift={true}
         />
       </Col>
       <Col>

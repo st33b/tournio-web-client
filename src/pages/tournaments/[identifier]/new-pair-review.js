@@ -6,8 +6,8 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import Summary from "../../../components/Registration/Summary/Summary";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
-import {soloBowlerRegistrationCompleted} from "../../../store/actions/registrationActions";
-import {submitSoloRegistration} from "../../../utils";
+import {newPairRegistrationCompleted} from "../../../store/actions/registrationActions";
+import {submitDoublesRegistration} from "../../../utils";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
@@ -15,42 +15,42 @@ const Page = () => {
   const {entry, dispatch} = useRegistrationContext();
   const router = useRouter();
 
-  const [bowler, setBowler] = useState();
+  const [bowlers, setBowlers] = useState();
   const [tournament, setTournament] = useState();
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
-    if (!entry || !entry.tournament || !entry.bowler) {
+    if (!entry || !entry.tournament || !entry.bowlers) {
       return;
     }
     setTournament(entry.tournament);
-    setBowler(entry.bowler);
+    setBowlers(entry.bowlers);
   }, [entry]);
 
-  if (!tournament || !bowler) {
+  if (!tournament || !bowlers) {
     return '';
   }
 
-  const editBowlerClicked = () => {
-    router.push(`/tournaments/${tournament.identifier}/solo-bowler-edit`);
+  const editBowlerClicked = (bowler, index) => {
+    router.push(`/tournaments/${tournament.identifier}/pair-bowler-edit?index=${index}`);
   }
 
-  const soloRegistrationSuccess = (bowler) => {
-    dispatch(soloBowlerRegistrationCompleted());
-    router.push(`/bowlers/${bowler.identifier}?success=register`);
+  const registrationSuccess = (bowlerIdentifier) => {
+    dispatch(newPairRegistrationCompleted());
+    router.push(`/tournaments/${tournament.identifier}/bowlers?success=new_pair`);
   }
 
-  const soloRegistrationFailure = (errorMessage) => {
+  const registrationFailure = (errorMessage) => {
     setProcessing(false);
     setError(errorMessage);
   }
 
   const submitRegistration = () => {
-    submitSoloRegistration(tournament,
-      bowler,
-      soloRegistrationSuccess,
-      soloRegistrationFailure);
+    submitDoublesRegistration(tournament,
+      bowlers,
+      registrationSuccess,
+      registrationFailure);
     setProcessing(true);
   }
 
@@ -71,7 +71,7 @@ const Page = () => {
       <>
         <ProgressIndicator active={'review'} />
         {errorMessage}
-        <ReviewEntries editBowler={editBowlerClicked} context={'solo'} />
+        <ReviewEntries editBowler={editBowlerClicked} context={'doubles'} />
       </>
     )
   }

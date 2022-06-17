@@ -10,22 +10,28 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
 
   const [tournament, setTournament] = useState();
   const [team, setTeam] = useState();
+  const [bowler, setBowler] = useState();
+  const [bowlers, setBowlers] = useState();
+  const [partner, setPartner] = useState();
 
   useEffect(() => {
-    if (!entry || !entry.tournament || !entry.team) {
+    if (!entry || !entry.tournament) {
       return;
     }
 
     setTournament(entry.tournament);
     setTeam(entry.team);
+    setBowler(entry.bowler);
+    setBowlers(entry.bowlers);
+    setPartner(entry.partner);
   }, [entry]);
 
-  if (!tournament || !team) {
+  if (!tournament) {
     return '';
   }
 
   let teamText = '';
-  if (team.name) {
+  if (team && team.name) {
     teamText = (
       <p>
         <span>
@@ -39,7 +45,8 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
   }
 
   let shiftText = '';
-  if (team.shift && tournament.shifts.length > 1) {
+  // TODO: adapt for bowler / pair
+  if (tournament.shifts.length > 1) {
     shiftText = (
       <p>
         <span>
@@ -52,9 +59,9 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
     );
   }
 
-  // list the names of bowlers added so far
+  // list the names of bowlers added to the team so far
   let bowlersText = '';
-  if (team.bowlers && team.bowlers.length > 0) {
+  if (team && team.bowlers.length > 0) {
     bowlersText = (
       <ol>
         {team.bowlers.map((b, i) => {
@@ -67,10 +74,37 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
       </ol>
     );
   }
+  if (bowlers && bowlers.length > 0) {
+    bowlersText = (
+      <ol>
+        {bowlers.map((b, i) => {
+          return (
+            <li key={i}>
+              {b.first_name} {b.last_name}
+            </li>
+          )
+        })}
+      </ol>
+    );
+  }
+
+  let partnerText = '';
+  if (partner) {
+    partnerText = (
+      <p>
+        <span>
+          Partner:{' '}
+        </span>
+        <span className={'fw-bold'}>
+          {partner.full_name}
+        </span>
+      </p>
+    );
+  }
 
   // for editing doubles partners
   let doublesLink = '';
-  if (enableDoublesEdit && team.bowlers && team.bowlers.length > 1) {
+  if (enableDoublesEdit && team && team.bowlers && team.bowlers.length > 1) {
     doublesLink = (
       <div className='text-start pb-4'>
         <a
@@ -85,7 +119,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
   // e.g., finished with bowlers, submit registration
   // we only want to show this button if we have at least one bowler
   let nextStep = '';
-  if (nextStepText && team.bowlers.length > 0) {
+  if (nextStepText && (team && team.bowlers.length > 0 || !!bowler || !!bowlers && bowlers.length > 0)) {
     nextStep = (
       <Button variant={'success'}
               size={'lg'}
@@ -96,7 +130,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
     );
   }
 
-  if (finalStep) {
+  if (finalStep && !!team) {
     const teamSize = team.bowlers.length;
     const maxTeamSize = parseInt(tournament.config_items.find(({key}) => key === 'team_size').value);
     if (teamSize < maxTeamSize) {
@@ -139,6 +173,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
           {teamText}
           {shiftText}
           {bowlersText}
+          {partnerText}
           {doublesLink}
           {nextStep}
         </Card.Body>

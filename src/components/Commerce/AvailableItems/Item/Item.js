@@ -55,7 +55,12 @@ const item = ({item, added, preview}) => {
     );
   }
 
-  let attachedClasses = [classes.Item, 'rounded', 'border', 'border-secondary', 'mb-3', 'mx-0', 'd-flex'];
+  let attachedClasses = [classes.Item, 'rounded', 'border', 'mb-3', 'mx-0', 'd-flex'];
+  if (item.determination === 'event') {
+    attachedClasses.push('border-primary', 'border-3');
+  } else {
+    attachedClasses.push('border-secondary');
+  }
   let tooltipText = 'Click the + to select this item';
   if (item.addedToCart) {
     attachedClasses.push(classes.Selected);

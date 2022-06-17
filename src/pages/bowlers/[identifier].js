@@ -21,7 +21,7 @@ const Page = () => {
 
   // fetch the bowler details
   useEffect(() => {
-    if (identifier === undefined) {
+    if (!identifier) {
       return;
     }
 
@@ -30,28 +30,30 @@ const Page = () => {
       return;
     }
 
-    if (success) {
+    if (success === 'purchase') {
       setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
+    } else if (success === 'register') {
+      setSuccessMessage('Your registration was received! You may now select events, optional items, and pay entry fees.');
     }
 
     if (commerce.bowler.shift_info.full && !commerce.bowler.shift_info.confirmed) {
-      if (commerce.bowler.unpaid_purchases.some(p => p.category === 'ledger')) {
+      if (commerce.bowler.unpaid_purchases.some(p => p.category === 'ledger' || p.determination === 'event')) {
         // either the tournament is full, or the chosen shift is full.
         // first, see if there are available shifts
-        if (commerce.tournament.available_shifts.length > 0) {
-          setErrorMessage("Your team's requested shift is full. Please contact the tournament director about changing to another shift before paying your entry fee.");
-          setEnablePurchase(false);
-        } else {
+        // if (commerce.tournament.available_shifts.length > 0) {
+        //   setErrorMessage("Your team's requested shift is full. Please contact the tournament director about changing to another shift before paying your entry fee.");
+        //   setEnablePurchase(false);
+        // } else {
           setErrorMessage("The tournament has reached its maximum capacity. Your registration is now provisional.");
           setEnablePurchase(false);
-        }
+        // }
       }
     }
   }, [identifier, commerce, commerceDispatch, success]);
 
   // ensure that the tournament in context matches the bowler's
   useEffect(() => {
-    if (identifier === undefined || !commerce) {
+    if (!identifier || !commerce) {
       return;
     }
     if (!commerce.bowler || !commerce.tournament) {
@@ -89,12 +91,6 @@ const Page = () => {
           <h4 className={'p-0 my-2 my-md-3'}>
             Bowler: {name}
           </h4>
-          <p className={'p-0 m-0'}>
-            <a href={`/teams/${commerce.bowler.team_identifier}`}>
-              <i className={'bi-arrow-left pe-2'} aria-hidden={true}/>
-              back to team
-            </a>
-          </p>
         </Col>
       </Row>
 

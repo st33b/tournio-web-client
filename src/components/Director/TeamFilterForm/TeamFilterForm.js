@@ -10,7 +10,7 @@ import Button from "react-bootstrap/Button";
 const TeamFilterForm = (props) => {
   const initialState = {
     incomplete: false,
-    shift_confirmed: '',
+    place_with_others: false,
   }
 
   const [filterForm, setFilterForm] = useState(initialState);
@@ -20,12 +20,10 @@ const TeamFilterForm = (props) => {
 
     switch (inputIdentifier) {
       case 'incomplete':
+      case 'place_with_others':
         const oldValue = filterForm[inputIdentifier];
         const newValue = !oldValue;
         updatedForm[inputIdentifier] = newValue;
-        break;
-      case 'shift_confirmed':
-        updatedForm['shift_confirmed'] = event.target.value === 'true';
         break;
       default:
         console.log('uhh...');
@@ -37,7 +35,8 @@ const TeamFilterForm = (props) => {
 
   const resetFilterHandler = () => {
     setFilterForm(initialState);
-    props.onFilterApplication(initialState);
+    // props.onFilterApplication(initialState);
+    props.onFilterReset();
   }
 
   const formHandler = (event) => {
@@ -47,8 +46,8 @@ const TeamFilterForm = (props) => {
 
   const form = (
     <Form className={'p-3 col-md-10 offset-md-1 col-lg-8 offset-lg-2'} onSubmit={formHandler}>
-      <Row>
-        <Col sm={6}>
+      <Row className={'mb-3'}>
+        <Col sm={12}>
           <Form.Check type={'switch'}
                       id={'incomplete'}
                       name={'incomplete'}
@@ -56,32 +55,14 @@ const TeamFilterForm = (props) => {
                       checked={filterForm.incomplete}
                       onChange={(event) => inputChangedHandler(event, 'incomplete')}
           />
+          <Form.Check type={'switch'}
+                      id={'place_with_others'}
+                      name={'place_with_others'}
+                      label={'Wants committee to place others with them'}
+                      checked={filterForm.place_with_others}
+                      onChange={(event) => inputChangedHandler(event, 'place_with_others')}
+          />
         </Col>
-        {props.includeConfirmed && (
-          <Col sm={6}>
-            <Form.Group className={'mb-3'}>
-              <Form.Label>
-                Place Confirmation
-              </Form.Label>
-              <Form.Check type={'radio'}
-                          value={true}
-                          label={'Confirmed'}
-                          name={'shift_confirmed'}
-                          id={'confirmation_true'}
-                          checked={filterForm.shift_confirmed === true}
-                          onChange={(event) => inputChangedHandler(event, 'shift_confirmed')}
-              />
-              <Form.Check type={'radio'}
-                          value={false}
-                          label={'Not Confirmed'}
-                          name={'shift_confirmed'}
-                          id={'confirmation_false'}
-                          checked={filterForm.shift_confirmed === false}
-                          onChange={(event) => inputChangedHandler(event, 'shift_confirmed')}
-              />
-            </Form.Group>
-          </Col>
-        )}
       </Row>
 
       <Form.Group as={Row}>

@@ -20,6 +20,13 @@ export const doesNotEqual = (rows, id, filterValue) => {
   });
 };
 
+export const equals = (rows, id, filterValue) => {
+  return rows.filter(row => {
+    const rowValue = row.values[id];
+    return rowValue === filterValue;
+  });
+};
+
 export const lessThan = (rows, id, filterValue) => {
   return rows.filter(row => {
     const rowValue = row.values[id];
@@ -83,7 +90,7 @@ export const fetchTournamentDetails = (identifier, ...dispatches) => {
 
 }
 
-export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure, dispatches}) => {
+export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure}) => {
   const requestConfig = {
     method: 'get',
     url: `${apiHost}/teams/${teamIdentifier}`,
@@ -95,9 +102,6 @@ export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure, dispatch
   axios(requestConfig)
     .then(response => {
       if (response.status >= 200 && response.status < 300) {
-        dispatches.map(dispatch => {
-          dispatch(teamDetailsRetrieved(response.data));
-        });
         onSuccess(response.data);
       } else {
         onFailure(response.data);
@@ -123,19 +127,6 @@ export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, commerceDispat
       const bowlerTournamentId = bowlerData.tournament.identifier;
       const availableItems = response.data.available_items;
       commerceDispatch(bowlerCommerceDetailsRetrieved(bowlerData, availableItems));
-
-      // Make sure the tournament in context matches that of the bowler.
-      // If it doesn't, retrieve the bowler's tournament so we can put it
-      // into context.
-      if (!commerceObj) {
-        fetchTournamentDetails(bowlerTournamentId, commerceDispatch);
-      } else if (commerceObj.tournament) {
-        const contextTournamentId = commerceObj.tournament.identifier;
-
-        if (contextTournamentId !== bowlerTournamentId) {
-          fetchTournamentDetails(bowlerTournamentId, commerceDispatch);
-        }
-      }
     })
     .catch(error => {
       // Display some kind of error message
@@ -161,6 +152,29 @@ export const fetchTeamList = ({tournamentIdentifier, dispatch, onSuccess, onFail
     .then(response => {
       if (response.status >= 200 && response.status < 300) {
         dispatch(teamListRetrieved());
+        onSuccess(response.data);
+      } else {
+        onFailure(response.data);
+      }
+    })
+    .catch(error => {
+      onFailure({error: 'Unexpected error from the server'});
+    });
+}
+
+export const fetchBowlerList = ({tournamentIdentifier, onSuccess, onFailure, unpartneredOnly}) => {
+  const queryString = unpartneredOnly ? '?unpartnered=true' : '';
+  const requestConfig = {
+    method: 'get',
+    url: `${apiHost}/tournaments/${tournamentIdentifier}/bowlers${queryString}`,
+    headers: {
+      'Accept': 'application/json',
+    },
+    validateStatus: status => { return status < 500 },
+  };
+  axios(requestConfig)
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
         onSuccess(response.data);
       } else {
         onFailure(response.data);
@@ -197,9 +211,64 @@ export const submitNewTeamRegistration = (tournament, team, onSuccess, onFailure
 
 }
 
+export const submitSoloRegistration = (tournament, bowler, onSuccess, onFailure) => {
+  // make the post
+  const bowlerData = { bowlers: [convertBowlerDataForPost(tournament, bowler)] };
+  axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, bowlerData)
+    .then(response => {
+      const newBowler = response.data[0];
+      onSuccess(newBowler);
+    })
+    .catch(error => {
+      console.log('womp womp');
+      console.log(error);
+      console.log(error.response);
+      onFailure(error.response.status);
+    });
+}
+
+export const submitDoublesRegistration = (tournament, bowlers, onSuccess, onFailure) => {
+  // make the post
+  const bowlerData = { bowlers: bowlers.map(bowler => convertBowlerDataForPost(tournament, bowler)) };
+  axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, bowlerData)
+    .then(response => {
+      const newBowlers = response.data;
+      onSuccess(newBowlers);
+    })
+    .catch(error => {
+      console.log('womp womp');
+      console.log(error);
+      console.log(error.response);
+      onFailure(error.response.status);
+    });
+}
+
+export const submitPartnerRegistration = (tournament, bowler, partner, onSuccess, onFailure) => {
+  // make the post
+  const bowlerData = { bowlers: [convertBowlerDataForPost(tournament, bowler)] };
+  bowlerData.bowlers[0].doubles_partner_identifier = partner.identifier;
+
+  axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, bowlerData)
+    .then(response => {
+      const newBowler = response.data[0];
+      onSuccess(newBowler);
+    })
+    .catch(error => {
+      console.log('womp womp');
+      console.log(error);
+      console.log(error.response);
+      onFailure(error.response.status);
+    });
+}
+
 export const submitJoinTeamRegistration = (tournament, team, bowler, onSuccess, onFailure) => {
   // make the post
-  const bowlerData = { bowler: convertBowlerDataForPost(tournament, bowler) };
+  if (team.shift) {
+    bowler.shift = team.shift;
+  }
+  const bowlerData = {
+    bowlers: [{...convertBowlerDataForPost(tournament, bowler), ...teamDataForBowler(bowler) }],
+  };
   const teamId = team.identifier;
   axios.post(`${apiHost}/teams/${teamId}/bowlers`, bowlerData)
     .then(response => {
@@ -226,23 +295,34 @@ const convertTeamDataForServer = (tournament, team) => {
     },
   };
   if (team.shift) {
-    postData.team.shift = {
-      identifier: team.shift.identifier,
-    };
+    team.bowlers.forEach(bowler => bowler.shift = team.shift);
   }
   for (const bowler of team.bowlers) {
     postData.team.bowlers_attributes.push(
-      convertBowlerDataForPost(tournament, bowler)
+      {
+        ...convertBowlerDataForPost(tournament, bowler),
+        ...teamDataForBowler(bowler)
+      }
     );
   }
   return postData;
 }
 
-const convertBowlerDataForPost = (tournament, bowler) => {
-  const additionalQuestionResponses = convertAdditionalQuestionResponsesForPost(tournament, bowler);
+const teamDataForBowler = (bowler) => {
   return {
     position: bowler.position,
     doubles_partner_num: bowler.doubles_partner_num,
+  };
+}
+
+const convertBowlerDataForPost = (tournament, bowler) => {
+  const additionalQuestionResponses = convertAdditionalQuestionResponsesForPost(tournament, bowler);
+  const shiftObj = {};
+  if (bowler.shift) {
+    shiftObj.shift_identifier = bowler.shift.identifier;
+  }
+
+  const bowlerObj = {
     person_attributes: {
       first_name: bowler.first_name,
       last_name: bowler.last_name,
@@ -262,6 +342,7 @@ const convertBowlerDataForPost = (tournament, bowler) => {
     },
     additional_question_responses: additionalQuestionResponses,
   };
+  return {...bowlerObj, ...shiftObj};
 }
 
 const convertAdditionalQuestionResponsesForPost = (tournament, bowler) => {

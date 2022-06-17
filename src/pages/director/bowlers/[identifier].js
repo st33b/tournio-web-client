@@ -192,21 +192,26 @@ const Page = () => {
       </Card.Header>
       <Card.Body>
         <dl className={'mb-0'}>
-          <div className={'row'}>
-            <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
-            <dd className={'col'}>
-              <a href={`/director/teams/${bowler.team.identifier}`}>
-                {bowler.team.name}
-              </a>
-            </dd>
-          </div>
-          <div className={'row'}>
-            <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team position</dt>
-            <dd className={'col'}>{bowler.position}</dd>
-          </div>
+          {!!bowler.team && (
+            <>
+              <div className={'row'}>
+                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
+                <dd className={'col'}>
+                  <a href={`/director/teams/${bowler.team.identifier}`}>
+                    {bowler.team.name}
+                  </a>
+                </dd>
+              </div>
+              <div className={'row'}>
+                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team position</dt>
+                <dd className={'col'}>{bowler.position}</dd>
+              </div>
+            </>
+          )}
           <div className={'row'}>
             <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Doubles partner</dt>
-            <dd className={'col'}>{bowler.doubles_partner}</dd>
+            {!!bowler.doubles_partner && <dd className={'col'}>{bowler.doubles_partner}</dd>}
+            {!bowler.doubles_partner && <dd className={'col'}>n/a</dd>}
           </div>
         </dl>
       </Card.Body>
@@ -280,7 +285,10 @@ const Page = () => {
     </Card>
   );
   if (availableTeams.length > 0) {
-    const bowlerTeamId = bowler.team.identifier;
+    let bowlerTeamId = '';
+    if (bowler.team) {
+      bowlerTeamId = bowler.team.identifier;
+    }
     const options = availableTeams.filter(t => t.identifier !== bowlerTeamId);
 
     moveToTeamCard = (

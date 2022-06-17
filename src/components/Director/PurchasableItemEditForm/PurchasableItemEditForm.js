@@ -25,6 +25,8 @@ const PurchasableItemEditForm = ({item}) => {
     note: '', // division, product (optional)
     value: '',
     order: '',
+    eventIdentifiers: {}, // map of identifier to true/false
+    linkedEvent: '',
 
     valid: true,
   }
@@ -35,6 +37,14 @@ const PurchasableItemEditForm = ({item}) => {
     if (!item) {
       return;
     }
+    const eventIdentifiers = {};
+    if (item.configuration.events) {
+      context.tournament.purchasable_items.filter(({determination}) => determination === 'event').map(event => {
+        const id = event.identifier;
+        eventIdentifiers[id] = item.configuration.events.includes(event.identifier);
+      });
+    }
+
     const newFormData = {
       applies_at: item.configuration.applies_at || '',
       valid_until: item.configuration.valid_until || '',
@@ -43,6 +53,8 @@ const PurchasableItemEditForm = ({item}) => {
       note: item.configuration.note || '',
       value: item.value,
       order: item.configuration.order || '',
+      linkedEvent: item.configuration.event || '',
+      eventIdentifiers: eventIdentifiers, // map of identifier to true/false
     }
     setFormData(newFormData);
   }, [item]);
@@ -85,19 +97,36 @@ const PurchasableItemEditForm = ({item}) => {
   const onFormSubmit = (event) => {
     event.preventDefault();
     const uri = `/director/purchasable_items/${item.identifier}`;
+    const configuration = {};
+    switch (item.determination) {
+      case 'early_discount':
+        configuration.valid_until = formData.valid_until;
+        break;
+      case 'late_fee':
+        configuration.applies_at = formData.applies_at;
+        break;
+      case 'bundle_discount':
+        configuration.events = Object.keys(formData.eventIdentifiers).filter(id => formData.eventIdentifiers[id]);
+        break;
+    }
+    if (formData.order) {
+      configuration.order = formData.order;
+    }
+    if (formData.division) {
+      configuration.division = formData.division;
+    }
+    if (formData.note) {
+      configuration.note = formData.note;
+    }
+    if (formData.denomination) {
+      configuration.denomination = formData.denomination;
+    }
     const requestConfig = {
       method: 'patch',
       data: {
         purchasable_item: {
           value: formData.value,
-          configuration: {
-            order: formData.order,
-            applies_at: formData.applies_at,
-            valid_until: formData.valid_until,
-            division: formData.division,
-            note: formData.note,
-            denomination: formData.denomination,
-          }
+          configuration: configuration,
         }
       }
     };
@@ -151,24 +180,63 @@ const PurchasableItemEditForm = ({item}) => {
       case 'ledger':
         switch (item.determination) {
           case 'early_discount':
-            note = !!formData.valid_until ? 'Valid until ' + format(new Date(formData.valid_until), datetimeFormat) : '';
+            if (!!formData.valid_until) {
+              note = (
+                <span className={classes.Note}>
+                  Valid until {format(new Date(formData.valid_until), datetimeFormat)}
+                </span>
+              );
+            }
             break;
           case 'late_fee':
-            note = !!formData.applies_at ? 'Applies at ' + format(new Date(formData.applies_at), datetimeFormat) : '';
+            let part1 = '';
+            if (item.refinement === 'event_linked') {
+              const event = context.tournament.purchasable_items.find(
+                pi => pi.determination === 'event' && pi.identifier === item.configuration.event
+              );
+              part1 = <span className={classes.Note}>{event.name}</span>;
+            }
+            if (!!formData.applies_at) {
+              note = (
+                <>
+                  {part1}
+                  <span className={classes.Note}>
+                    Applies at {format(new Date(formData.applies_at), datetimeFormat)}
+                  </span>
+                </>
+              );
+            }
+            break;
+          case 'bundle_discount':
+            note = (
+              <>
+                {context.tournament.purchasable_items.filter(({determination}) => determination === 'event').map(event => {
+                  const eventIdentifier = event.identifier;
+                  if (formData.eventIdentifiers[eventIdentifier]) {
+                    return (
+                      <span className={classes.Note} key={eventIdentifier}>
+                        <i className={'bi-dash pe-1'} aria-hidden={true}/>
+                        {event.name}
+                      </span>
+                    )
+                  }
+                })}
+              </>
+            )
             break;
         }
         break;
       case 'bowling':
         if (item.refinement === 'division') {
-          note = formData.division + ' (' + formData.note + ')'
+          note = <span className={classes.Note}>{formData.division} ({formData.note})</span>
         } else {
-          note = formData.note;
+          note = <span className={classes.Note}>{formData.note}</span>;
         }
         break;
       case 'banquet':
         if (formData.note) {
           note = (
-            <span>
+            <span className={classes.Note}>
               {formData.note}
             </span>
           )
@@ -176,13 +244,13 @@ const PurchasableItemEditForm = ({item}) => {
         break;
       case 'product':
         if (item.refinement === 'denomination') {
-          note = <span>{formData.denomination}</span>;
+          note = <span className={classes.Note}>{formData.denomination}</span>;
         }
         if (formData.note) {
           note = (
-            <span>
+            <span className={classes.Note}>
               {note}
-              <span className={`${classes.Subnote} d-block`}>{formData.note}</span>
+              <span className={classes.Subnote}>{formData.note}</span>
             </span>
           );
         }
@@ -204,9 +272,7 @@ const PurchasableItemEditForm = ({item}) => {
         {orderText}
         <Card.Text className={`me-auto`}>
           {item.name}
-          <span className={`${classes.Note} d-block`}>
-            {note}
-          </span>
+          {note}
         </Card.Text>
         <Card.Text className={'fw-bold'}>
           ${formData.value}
@@ -245,6 +311,10 @@ const PurchasableItemEditForm = ({item}) => {
             }
           });
         } else if (item.determination === 'late_fee') {
+          if (item.refinement === 'event_linked') {
+            // push a Select item in
+            // ... when we feel it's worthwhile
+          }
           otherValueProps.min = 1;
           inputElements.push({
             type: 'datepicker',
@@ -255,6 +325,9 @@ const PurchasableItemEditForm = ({item}) => {
               renderInput: (params) => <TextField {...params} />,
             }
           });
+        } else if (item.determination === 'bundle_discount') {
+          otherValueProps.min = -1000;
+          otherValueProps.max = -1;
         }
         break;
       case 'bowling':

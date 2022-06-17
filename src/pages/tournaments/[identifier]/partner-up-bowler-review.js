@@ -6,8 +6,8 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import Summary from "../../../components/Registration/Summary/Summary";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
-import {soloBowlerRegistrationCompleted} from "../../../store/actions/registrationActions";
-import {submitSoloRegistration} from "../../../utils";
+import {partnerUpRegistrationCompleted} from "../../../store/actions/registrationActions";
+import {submitPartnerRegistration} from "../../../utils";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
@@ -16,6 +16,7 @@ const Page = () => {
   const router = useRouter();
 
   const [bowler, setBowler] = useState();
+  const [partner, setPartner] = useState();
   const [tournament, setTournament] = useState();
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
@@ -26,6 +27,7 @@ const Page = () => {
     }
     setTournament(entry.tournament);
     setBowler(entry.bowler);
+    setPartner(entry.partner);
   }, [entry]);
 
   if (!tournament || !bowler) {
@@ -33,24 +35,25 @@ const Page = () => {
   }
 
   const editBowlerClicked = () => {
-    router.push(`/tournaments/${tournament.identifier}/solo-bowler-edit`);
+    router.push(`/tournaments/${tournament.identifier}/partner-up-bowler-edit`);
   }
 
-  const soloRegistrationSuccess = (bowler) => {
-    dispatch(soloBowlerRegistrationCompleted());
-    router.push(`/bowlers/${bowler.identifier}?success=register`);
+  const registrationSuccess = (newBowler) => {
+    dispatch(partnerUpRegistrationCompleted());
+    router.push(`/bowlers/${newBowler.identifier}?success=register`);
   }
 
-  const soloRegistrationFailure = (errorMessage) => {
+  const registrationFailure = (errorMessage) => {
     setProcessing(false);
     setError(errorMessage);
   }
 
   const submitRegistration = () => {
-    submitSoloRegistration(tournament,
+    submitPartnerRegistration(tournament,
       bowler,
-      soloRegistrationSuccess,
-      soloRegistrationFailure);
+      partner,
+      registrationSuccess,
+      registrationFailure);
     setProcessing(true);
   }
 
@@ -71,7 +74,7 @@ const Page = () => {
       <>
         <ProgressIndicator active={'review'} />
         {errorMessage}
-        <ReviewEntries editBowler={editBowlerClicked} context={'solo'} />
+        <ReviewEntries editBowler={editBowlerClicked} context={'partner'} />
       </>
     )
   }

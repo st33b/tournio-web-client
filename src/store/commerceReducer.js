@@ -1,5 +1,7 @@
+import {compareAsc} from "date-fns";
 import * as actionTypes from './actions/actionTypes';
 import {updateObject} from "../utils";
+import availableItems from "../components/Commerce/AvailableItems/AvailableItems";
 
 const initialState = {
   tournament: null,
@@ -31,6 +33,7 @@ export const commerceReducer = (state, action) => {
         freeEntry: null,
         error: null,
         bowler: null,
+        cart: [],
       })
     case actionTypes.BOWLER_DETAILS_RETRIEVED:
       let unpaidItems = action.bowler.unpaid_purchases.slice(0);
@@ -107,7 +110,7 @@ const itemAdded = (state, item) => {
   const identifier = item.identifier;
   const newAvailableItems = {...state.availableItems}
 
-  if (item.determination === 'single_use') {
+  if (item.determination === 'single_use' || item.determination === 'event') {
     addedItem.addedToCart = true;
     newCart = state.cart.concat(addedItem);
     newAvailableItems[identifier] = addedItem;
@@ -121,6 +124,27 @@ const itemAdded = (state, item) => {
     const index = newCart.findIndex(i => i.identifier === addedItem.identifier);
     newCart[index] = addedItem;
   }
+
+  if (item.determination === 'event') {
+    const discountItem = eligibleBundleDiscount(newAvailableItems, newCart, state.purchasedItems);
+    if (discountItem) {
+      // add it to the cart
+      const newDiscountItem = {...discountItem}
+      newDiscountItem.addedToCart = true;
+      newCart.push(newDiscountItem);
+      newAvailableItems[discountItem.identifier] = newDiscountItem;
+    }
+
+    const lateFeeItem = applicableLateFee(newAvailableItems, addedItem, state.tournament);
+    if (lateFeeItem) {
+      const newLateFeeItem = {...lateFeeItem};
+      newLateFeeItem.addedToCart = true;
+      newCart.push(lateFeeItem);
+      newAvailableItems[lateFeeItem.identifier] = newLateFeeItem;
+    }
+  }
+
+
   return updateObject(state, {
     cart: newCart,
     availableItems: newAvailableItems,
@@ -144,9 +168,41 @@ const itemRemoved = (state, item) => {
   const newAvailableItems = {...state.availableItems}
   newAvailableItems[identifier] = removedItem;
 
-  if (removedItem.determination === 'single_use') {
+  if (removedItem.determination === 'single_use' || removedItem.determination === 'event') {
     removedItem.addedToCart = false;
     markOtherItemsInDivisionAsAvailable(newAvailableItems, removedItem);
+  }
+
+  if (removedItem.determination === 'event') {
+    // do we need to remove a bundle discount as a result?
+    const discountItemIndex = newCart.findIndex(item => {
+      if (item.category !== 'ledger' || item.determination !== 'bundle_discount') {
+        return false;
+      }
+      return item.configuration.events.includes(removedItem.identifier);
+    });
+
+    if (discountItemIndex >= 0) {
+      const newDiscountItem = {...newCart[discountItemIndex]};
+      newDiscountItem.addedToCart = false;
+      newAvailableItems[newDiscountItem.identifier] = newDiscountItem;
+      newCart = newCart.filter(i => i.identifier !== newDiscountItem.identifier);
+    }
+
+    // how about an associated late fee item?
+    const lateFeeItemIndex = newCart.findIndex(item => {
+      if (item.category !== 'ledger' || item.determination !== 'late_fee' || item.refinement !== 'event_linked') {
+        return false;
+      }
+      return item.configuration.event === removedItem.identifier;
+    });
+
+    if (lateFeeItemIndex >= 0) {
+      const newLateFeeItem = {...newCart[lateFeeItemIndex]};
+      newLateFeeItem.addedToCart = false;
+      newAvailableItems[newLateFeeItem.identifier] = newLateFeeItem;
+      newCart = newCart.filter(i => i.identifier !== newLateFeeItem.identifier);
+    }
   }
 
   return updateObject(state, {
@@ -154,7 +210,6 @@ const itemRemoved = (state, item) => {
     availableItems: newAvailableItems,
   });
 }
-
 
 const markOtherItemsInDivisionUnavailable = (items, addedItem) => {
   for (const identifier in items) {
@@ -186,6 +241,54 @@ const markOtherItemsInDivisionAsAvailable = (items, removedItem) => {
     // mark other items with the same name as available
     if (items[identifier].name === removedItem.name) {
       items[identifier].addedToCart = false;
+    }
+  }
+}
+
+const eligibleBundleDiscount = (availableItems, cartItems, purchasedItems) => {
+  const cartItemIdentifiers = cartItems.map(item => item.identifier);
+  const purchasedItemIdentifiers = purchasedItems.map(item => item.purchasable_item_identifier);
+  const itemsToConsider = cartItemIdentifiers.concat(purchasedItemIdentifiers);
+  return Object.values(availableItems).find(item => {
+    if (item.category !== 'ledger' || item.determination !== 'bundle_discount' || item.addedToCart) {
+      return false;
+    }
+    // intersect the cart+purchased item identifiers with the ones in the bundle_discount's configuration.events property
+    const intersection = itemsToConsider.filter(i => item.configuration.events.includes(i));
+
+    // if the intersection is the same size as the configuration.events property, then we're eligible for the discount!
+    return intersection.length === item.configuration.events.length;
+  });
+}
+
+const applicableLateFee = (availableItems, addedItem, tournament) => {
+  const addedItemIdentifier = addedItem.identifier;
+  const lateFeeItem = Object.values(availableItems).find(item => {
+    if (item.category !== 'ledger' || item.determination !== 'late_fee' || item.refinement !== 'event_linked') {
+      return false;
+    }
+    return item.configuration.event && item.configuration.event === addedItemIdentifier;
+  });
+
+  if (!lateFeeItem) {
+    return null;
+  }
+
+  // Now that we've found a matching item, are we actually in late registration?
+  // 1 - if the tournament has a test environment setting
+  // 2 - if the current date/time is after the item's applies_at time
+
+  if (tournament.testing_environment) {
+    // 1
+    if (tournament.testing_environment.settings.registration_period.value === 'late') {
+      return lateFeeItem;
+    }
+  } else {
+    // 2
+    const appliesAt = new Date(lateFeeItem.configuration.applies_at);
+    const now = new Date();
+    if (compareAsc(appliesAt, now) < 0) {
+      return lateFeeItem;
     }
   }
 }

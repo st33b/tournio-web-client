@@ -113,14 +113,16 @@ const TournamentDetails = ({tournament}) => {
         Important details:
       </h6>
       <dl>
-        <div className={'row pb-2'}>
-          <dt className={dtClass}>
-            Registration fee:
-          </dt>
-          <dd className={ddClass}>
-            ${tournament.registration_fee}
-          </dd>
-        </div>
+        {!!tournament.registration_fee && (
+          <div className={'row pb-2'}>
+            <dt className={dtClass}>
+              Registration fee:
+            </dt>
+            <dd className={ddClass}>
+              ${tournament.registration_fee}
+            </dd>
+          </div>
+        )}
         {early_registration}
         {late_fee_date}
         <div className={'row pb-2'}>
@@ -157,52 +159,81 @@ const TournamentDetails = ({tournament}) => {
     )
   }
 
-  let registrationOptions = '';
-  const shift = tournament.shifts[0];
+  let registrationSection = '';
   if (tournament.state === 'testing' || tournament.state === 'active' || tournament.state === 'demo') {
-    registrationOptions = (
+    const shift = tournament.shifts[0];
+    const optionTypes = [
+      {
+        name: 'solo',
+        path: 'solo-bowler',
+        linkText: 'Register as a Solo Bowler',
+      },
+      {
+        name: 'join_team',
+        path: 'join-a-team',
+        linkText: 'Join an Existing Team',
+      },
+      {
+        name: 'new_team',
+        path: 'new-team',
+        linkText: 'Register a New Team',
+      },
+      {
+        name: 'partner',
+        path: 'partner-up',
+        linkText: 'Partner Up With Someone',
+      },
+      {
+        name: 'new_pair',
+        path: 'new-pair',
+        linkText: 'Register a Pair of Bowlers',
+      },
+    ]
+    const eventSelectionEnabled = tournament.config_items.some(item => item.key === 'event_selection' && item.value);
+    let registrationOptions = '';
+    if (eventSelectionEnabled) {
+      // only show what's enabled
+      registrationOptions = optionTypes.map(({name, path, linkText}) => {
+        if (!shift.registration_types[name]) {
+          return '';
+        }
+        return (
+          <ListGroup.Item key={name}
+                          className={'text-primary'}
+                          href={`${router.asPath}/${path}`}
+                          action>
+            {linkText}
+          </ListGroup.Item>
+        );
+      });
+    } else {
+      // show the standard ways, striking them out if disabled
+      registrationOptions = optionTypes.map(({name, path, linkText}) => {
+        // partnering and a new pair aren't part of a standard tournament
+        if (name === 'partner' || name === 'new_pair') {
+          return '';
+        }
+        const className = shift.registration_types[name] ? 'link-primary' : 'text-decoration-line-through';
+        const enableLink = shift.registration_types[name];
+        return (
+          <ListGroup.Item key={name}
+                          className={className}
+                          href={enableLink ? `${router.asPath}/${path}` : undefined}
+                          disabled={!enableLink}
+                          action={enableLink}>
+            {linkText}
+          </ListGroup.Item>
+        );
+      });
+    }
+    registrationSection = (
       <Col md={6}>
         <Card>
           <Card.Header as={'h6'}>
             Registration Options
           </Card.Header>
           <ListGroup variant={'flush'}>
-            {(!shift || shift && shift.permit_solo) && (
-              <ListGroup.Item className={'text-primary'}
-                              href={`${router.asPath}/solo-bowler`}
-                              action>
-                Register as a Solo Bowler
-              </ListGroup.Item>
-            )}
-            {shift && !shift.permit_solo && (
-              <ListGroup.Item className={'text-muted text-decoration-line-through'}>
-                Register as a Solo Bowler
-              </ListGroup.Item>
-            )}
-            {(!shift || shift && shift.permit_joins) && (
-              <ListGroup.Item className={'text-primary'}
-                              href={`${router.asPath}/join-a-team`}
-                              action>
-                Join an Existing Team
-              </ListGroup.Item>
-            )}
-            {shift && !shift.permit_joins && (
-              <ListGroup.Item className={'text-muted text-decoration-line-through'}>
-                Join an Existing Team
-              </ListGroup.Item>
-            )}
-            {(!shift || shift && shift.permit_new_teams) && (
-              <ListGroup.Item className={'text-primary'}
-                              href={`${router.asPath}/new-team`}
-                              action>
-                Register a New Team
-              </ListGroup.Item>
-            )}
-            {shift && !shift.permit_new_teams && (
-              <ListGroup.Item className={'text-muted text-decoration-line-through'}>
-                Register a New Team
-              </ListGroup.Item>
-            )}
+            {registrationOptions}
           </ListGroup>
         </Card>
       </Col>
@@ -210,7 +241,7 @@ const TournamentDetails = ({tournament}) => {
   }
 
   const payFeeLink = (
-    <a href={`${router.asPath}/teams`}
+    <a href={`${router.asPath}/bowlers`}
        className={''}>
       Choose Events &amp; Pay
     </a>
@@ -377,7 +408,7 @@ const TournamentDetails = ({tournament}) => {
             Capacity
           </h5>
           <p>
-            The tournament is limited to {shift.capacity} bowlers / {shift.capacity / 4} teams
+            The tournament can accommodate up to {shift.capacity} bowlers.
           </p>
 
           <div className={`${classes.ProgressBar} d-flex align-items-center my-2`}>
@@ -420,7 +451,7 @@ const TournamentDetails = ({tournament}) => {
       {youWillNeed}
 
       <Row className={'mt-3'}>
-        {registrationOptions}
+        {registrationSection}
         <Col>
           <h6 className="my-2">
             Already registered?

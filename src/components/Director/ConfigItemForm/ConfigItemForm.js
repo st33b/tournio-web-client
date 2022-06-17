@@ -13,6 +13,8 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './ConfigItemForm.module.scss';
 
+const BOOLEAN_CONFIG_ITEMS = ['display_capacity', 'email_in_dev', 'event_selection'];
+
 const ConfigItemForm = ({item}) => {
   const context = useDirectorContext();
   const router = useRouter();
@@ -74,7 +76,7 @@ const ConfigItemForm = ({item}) => {
     },
   }
 
-  const allowEdit = context.tournament.state !== 'active' && !['email_in_dev', 'display_capacity'].includes(item.key);
+  const allowEdit = context.tournament.state !== 'active' && !BOOLEAN_CONFIG_ITEMS.includes(item.key);
 
   const toggleEdit = (event, enable) => {
     if (event) {
@@ -87,7 +89,7 @@ const ConfigItemForm = ({item}) => {
     const newFormData = {...formData};
     if (item.key === 'entry_deadline') {
       newFormData.value = formatISO(event);
-    } else if (item.key === 'email_in_dev' || item.key === 'display_capacity') {
+    } else if (BOOLEAN_CONFIG_ITEMS.includes(item.key)) {
       newFormData.value = event.target.checked;
     } else {
       newFormData.value = event.target.value;
@@ -95,7 +97,7 @@ const ConfigItemForm = ({item}) => {
     newFormData.valid = newFormData.value.length > 0;
     setFormData(newFormData);
 
-    if (item.key === 'email_in_dev' || item.key === 'display_capacity') {
+    if (BOOLEAN_CONFIG_ITEMS.includes(item.key)) {
       onFormSubmit(null, newFormData.value);
     }
   }
@@ -153,6 +155,7 @@ const ConfigItemForm = ({item}) => {
         break;
       case 'display_capacity':
       case 'email_in_dev':
+      case 'event_selection':
         displayedValue = (
           <div className={'form-check'}>
             <input type={'checkbox'}

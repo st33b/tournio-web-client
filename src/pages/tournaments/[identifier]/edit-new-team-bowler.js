@@ -33,6 +33,8 @@ const Page = () => {
     return '';
   }
 
+  const bowlerIndex = bowlerNum - 1;
+
   const onBowlerInfoUpdated = (bowlerInfo) => {
     dispatch(newTeamBowlerEdited(bowlerInfo));
     router.push(`/tournaments/${entry.tournament.identifier}/review-entries`);
@@ -42,8 +44,10 @@ const Page = () => {
     <Row>
       <Col lg={8}>
         <ProgressIndicator active={'bowlers'} />
-        <BowlerForm editBowlerNum={bowlerNum}
-                    bowlerInfoSaved={onBowlerInfoUpdated} />
+        <BowlerForm bowlerData={entry.team.bowlers[bowlerIndex]}
+                    bowlerInfoSaved={onBowlerInfoUpdated}
+                    cancelHref={`/tournaments/${entry.tournament.identifier}/review-entries`}
+        />
       </Col>
       <Col>
         <Summary nextStepClicked={null}

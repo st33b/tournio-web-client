@@ -138,54 +138,6 @@ const Page = () => {
     </Card>
   );
 
-  const onConfirmTeamSuccess = (_) => {
-    setLoading(false);
-    setSuccessMessage("The team's spot has been confirmed.");
-    const newTeamData = {...team};
-    newTeamData.shift_confirmed = true;
-    setTeam(newTeamData);
-  }
-
-  const onConfirmTeamFailure = (data) => {
-    setLoading(false);
-    setErrorMessage(data.error);
-  }
-
-  const confirmSubmitHandler = (event) => {
-    event.preventDefault();
-    setLoading(true);
-    const uri = `/director/teams/${identifier}/confirm_shift`;
-    const requestConfig = {
-      method: 'post',
-    }
-    setLoading(true);
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: directorContext,
-      router: router,
-      onSuccess: onConfirmTeamSuccess,
-      onFailure: onConfirmTeamFailure,
-    });
-  }
-
-  let confirmTeamCard = '';
-  if (!team.shift_confirmed && directorContext.tournament.shifts.length > 0) {
-    confirmTeamCard = (
-      <Card className={'mb-3'}>
-        <Card.Body className={'text-center'}>
-          <form onSubmit={confirmSubmitHandler}>
-            <Button variant={'success'}
-                    type={'submit'}
-            >
-              Confirm Team&apos;s Place
-            </Button>
-          </form>
-        </Card.Body>
-      </Card>
-    );
-  }
-
   const ladder = [
     {text: 'Tournaments', path: '/director/tournaments'},
     {text: directorContext.tournament.name, path: `/director/tournaments/${directorContext.tournament.identifier}`},
@@ -251,7 +203,6 @@ const Page = () => {
               <button type={"button"} className={"btn-close"} data-bs-dismiss={"alert"} aria-label={"Close"} />
             </div>
           )}
-          {confirmTeamCard}
           {deleteTeamCard}
         </Col>
       </Row>

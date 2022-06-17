@@ -1,13 +1,17 @@
+import {useEffect} from "react";
+import {useRouter} from "next/router";
 import {Row, Col} from "react-bootstrap";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
-import TeamForm from "../../../components/Registration/TeamForm/TeamForm";
 import Summary from "../../../components/Registration/Summary/Summary";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
-import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {newTeamRegistrationInitiated, teamInfoAdded} from "../../../store/actions/registrationActions";
-import {useEffect} from "react";
+import {
+  newSoloRegistrationInitiated,
+  partnerUpBowlerAdded,
+  soloBowlerInfoAdded
+} from "../../../store/actions/registrationActions";
+import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 
 const Page = () => {
   const {entry, dispatch} = useRegistrationContext();
@@ -18,25 +22,25 @@ const Page = () => {
       return;
     }
     const shift = entry.tournament.shifts[0];
-    if (shift && !shift.registration_types.new_team) {
+    if (shift && !shift.registration_types.partner) {
       router.push(`/tournaments/${entry.tournament.identifier}`);
     }
   }, [entry]);
 
-  useEffect(() => {
-    dispatch(newTeamRegistrationInitiated());
-  }, [dispatch]);
+  if (!entry || !entry.tournament) {
+    return '';
+  }
 
-  const onTeamFormCompleted = (teamName, shift) => {
-    dispatch(teamInfoAdded(teamName, shift));
-    router.push(`/tournaments/${entry.tournament.identifier}/new-team-bowler`);
+  const onCompletion = (bowler) => {
+    dispatch(partnerUpBowlerAdded(bowler));
+    router.push(`/tournaments/${entry.tournament.identifier}/partner-up-bowler-review`);
   }
 
   return (
     <Row>
       <Col lg={8}>
-        <ProgressIndicator active={'team'} />
-        <TeamForm teamFormCompleted={onTeamFormCompleted} />
+        <ProgressIndicator active={'bowlers'} />
+        <BowlerForm bowlerInfoSaved={onCompletion} />
       </Col>
       <Col>
         <Summary />

@@ -20,7 +20,6 @@ const Page = () => {
   }
 
   const newTeamRegistrationSuccess = (teamData) => {
-    dispatch(teamDetailsRetrieved(teamData));
     dispatch(newTeamEntryCompleted());
     router.push(`/teams/${teamData.identifier}?success=new_team`);
   }

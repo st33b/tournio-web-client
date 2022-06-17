@@ -19,15 +19,15 @@ const StateChangeButton = ({stateChangeInitiated}) => {
   let demoButton = '';
   switch (context.tournament.state) {
     case 'setup':
-      disabled = !context.tournament.purchasable_items.some(item => item.determination === 'entry_fee');
+      disabled = !context.tournament.purchasable_items.some(item => item.determination === 'entry_fee' || item.determination === 'event');
       if (disabled) {
-        titleText = 'An entry fee must be set before testing can begin.';
+        titleText = 'An entry fee or main event must be set before testing can begin.';
       }
       variant = 'warning';
       stateChangeText = 'Begin Testing';
       stateChangeValue = 'test';
 
-      if (context.user.role === 'superuser') {
+      if (context.user && context.user.role === 'superuser') {
         demoButton = (
           <button className={'btn btn-outline-warning'}
                   type={'button'}
