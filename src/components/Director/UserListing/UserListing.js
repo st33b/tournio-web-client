@@ -16,6 +16,11 @@ const UserListing = ({users, tournaments}) => {
       id: 'email',
       Header: ({column}) => <SortableTableHeader text={'Email'} column={column}/>,
       accessor: 'email',
+      Cell: ({row}) => (
+        <a href={'/director/users/' + row.original.identifier}>
+          {row.original.email}
+        </a>
+      )
     },
     {
       id: 'role',
