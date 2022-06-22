@@ -43,6 +43,15 @@ export const isOrIsNot = (rows, id, filterValue) => {
   });
 }
 
+export const tournamentName = (rows, id, filterValue) => {
+  if (filterValue === '') {
+    return rows.filter(row => {
+      return row.values[id].length === 0;
+    });
+  }
+  return rows.filter(row => row.values[id].some(t => t.name === filterValue));
+}
+
 ///////////////////////////////////////////////////
 
 export const apiHost = `${process.env.NEXT_PUBLIC_API_PROTOCOL}://${process.env.NEXT_PUBLIC_API_HOSTNAME}:${process.env.NEXT_PUBLIC_API_PORT}`;
