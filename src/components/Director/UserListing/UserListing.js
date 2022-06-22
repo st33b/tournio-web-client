@@ -1,10 +1,69 @@
+import React, {useEffect, useMemo, useState} from "react";
 import {Col, Row} from "react-bootstrap";
+import {useTable, useSortBy, useFilters} from 'react-table';
+import {List} from 'immutable';
+
+import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
+import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
+import UserFilterForm from "../UserFilterForm/UserFilterForm";
+import {tournamentName} from '../../../utils';
 
 import classes from './UserListing.module.scss';
-import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
-import React from "react";
 
-const UserListing = ({users}) => {
+const UserListing = ({users, tournaments}) => {
+  const columns = useMemo(() => [
+    {
+      id: 'email',
+      Header: ({column}) => <SortableTableHeader text={'Email'} column={column}/>,
+      accessor: 'email',
+      Cell: ({row}) => (
+        <a href={'/director/users/' + row.original.identifier}>
+          {row.original.email}
+        </a>
+      )
+    },
+    {
+      id: 'role',
+      Header: 'Role',
+      accessor: 'role',
+      disableSortBy: true,
+    },
+    {
+      id: 'tournaments',
+      accessor: 'tournaments',
+      Header: 'Tournaments',
+      Cell: ({row}) => row.original.tournaments.map(t => (t.name)).join(', '),
+      filter: tournamentName,
+      disableSortBy: true,
+    },
+    {
+      id: 'last_sign_in_at',
+      accessor: 'last_sign_in_at',
+      Header: ({column}) => <SortableTableHeader text={'Last Signed In'} column={column}/>,
+    },
+  ], [users]);
+
+  const [data, setData] = useState(List(users));
+  useEffect(() => {
+    setData(List(users));
+  }, [users]);
+
+  // tell react-table which things we want to use (sorting, filtering)
+  // and retrieve properties/functions they let us hook into
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    setFilter,
+    setAllFilters,
+  } = useTable(
+    {columns, data},
+    useFilters,
+    useSortBy,
+  );
+
   let list = '';
   if (!users) {
     list = <LoadingMessage message={'Retrieving users...'} />;
@@ -13,43 +72,30 @@ const UserListing = ({users}) => {
   } else {
     list = (
       <div className={'table-responsive'}>
-        <table className={'table table-striped'}>
+        <table className={'table table-striped table-hover'} {...getTableProps}>
           <thead className={'table-light'}>
-          <tr>
-            <th>
-              Email
-            </th>
-            <th>
-              Role
-            </th>
-            <th>
-              Tournament(s)
-            </th>
-            <th>
-              Last signed in
-            </th>
-          </tr>
+          {headerGroups.map((headerGroup, i) => (
+            <tr key={i} {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column, j) => (
+                <th key={j} {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  {column.render('Header')}
+                </th>
+              ))}
+            </tr>
+          ))}
           </thead>
-          <tbody>
-          {users.map((row) => {
+          <tbody {...getTableBodyProps()}>
+          {rows.map((row, i) => {
+            prepareRow(row);
             return (
-              <tr key={row.identifier}>
-                <td>
-                  <a href={'/director/users/' + row.identifier}>
-                    {row.email}
-                  </a>
-                </td>
-                <td>
-                  {row.role}
-                </td>
-                <td>
-                  {row.tournaments.map(t => (t.name)).join(', ')}
-                </td>
-                <td>
-                  {row.last_sign_in_at}
-                </td>
+              <tr key={i} {...row.getRowProps()}>
+                {row.cells.map((cell, j) => (
+                  <td key={j} {...cell.getCellProps()}>
+                    {cell.render('Cell')}
+                  </td>
+                ))}
               </tr>
-            );
+            )
           })}
           </tbody>
         </table>
@@ -57,10 +103,33 @@ const UserListing = ({users}) => {
     );
   }
 
+  const filterThatData = (criteria) => {
+    if (criteria.tournament) {
+      setFilter('tournaments', criteria.tournament);
+    } else if (criteria.has_no_tournament) {
+      setFilter('tournaments', '');
+    } else {
+      setFilter('tournaments', undefined);
+    }
+
+    setFilter('email', criteria.email);
+
+    if (criteria.has_not_signed_in) {
+      setFilter('last_sign_in_at', 'n/a');
+    } else {
+      setFilter('last_sign_in_at', undefined);
+    }
+  }
+
+  const resetThoseFilters = () => {
+    setAllFilters([]);
+  }
+
   return (
     <div className={classes.UserListing}>
       <Row>
         <Col>
+          {!!data.size && <UserFilterForm onFilterApplication={filterThatData} onFilterReset={resetThoseFilters} tournaments={tournaments}/>}
           {list}
         </Col>
       </Row>

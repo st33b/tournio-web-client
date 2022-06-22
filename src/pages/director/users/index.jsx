@@ -138,7 +138,7 @@ const Page = () => {
         <Col lg={8}>
           {success}
           {error}
-          <UserListing users={users} />
+          <UserListing users={users} tournaments={tournaments}/>
         </Col>
         <Col>
           <UserForm tournaments={tournaments}/>
