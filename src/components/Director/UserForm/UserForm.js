@@ -21,7 +21,7 @@ const UserForm = ({user, tournaments, userDeleteInitiated}) => {
   const initialState = {
     fields: {
       email: '',
-      role: '',
+      role: 'director',
       tournamentIds: [],
     },
     valid: false,
@@ -81,6 +81,8 @@ const UserForm = ({user, tournaments, userDeleteInitiated}) => {
       delete newUserFormData.fields.role;
       delete newUserFormData.fields.tournamentIds;
     }
+
+    newUserFormData.valid = true;
 
     setUserFormData(newUserFormData);
   }, [user, directorContext]);
