@@ -249,10 +249,10 @@ const TournamentDetails = ({tournament}) => {
   );
 
   let testingEnvironment = '';
-  if (tournament.state === 'testing') {
+  if (tournament.state === 'testing' || tournament.state === 'demo') {
     testingEnvironment = (
       <div className={classes.TestingEnvironment}>
-        <h3>Current test setup</h3>
+        <h3>Current environment setup</h3>
         <dl>
           {Object.values(tournament.testing_environment.settings).map(setting => {
             return (

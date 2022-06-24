@@ -22,6 +22,15 @@ const FreeEntryForm = () => {
 
   const [freeEntryForm, setFreeEntryForm] = useState(initialState);
 
+  if (!commerce || !commerce.bowler) {
+    return '';
+  }
+
+  // No free entry form for tournaments with event selection. (At least, not yet.)
+  if (commerce.tournament.config_items.some(({key, value}) => key === 'event_selection' && value)) {
+    return '';
+  }
+
   const onFreeEntryPostSuccess = (data) => {
     commerceDispatch(freeEntrySuccess(data.unique_code, data.message));
   }
@@ -64,10 +73,6 @@ const FreeEntryForm = () => {
       valid: isValid(enteredCode),
     });
     setFreeEntryForm(newState);
-  }
-
-  if (!commerce || !commerce.bowler) {
-    return '';
   }
 
   let textClass = 'd-block';
