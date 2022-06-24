@@ -31,7 +31,7 @@ const StatusAndCounts = ({testEnvironmentUpdated}) => {
       return;
     }
 
-    if (context.tournament.state === 'testing') {
+    if (context.tournament.state === 'testing' || context.tournament.state === 'demo') {
       const formData = {...testEnvFormData};
 
       Object.keys(context.tournament.available_conditions).forEach(name => {
@@ -289,7 +289,8 @@ const StatusAndCounts = ({testEnvironmentUpdated}) => {
       textColor = 'dark';
       break;
     case 'testing':
-      bgColor = 'warning';
+    case 'demo':
+      bgColor = context.tournament.state === 'demo' ? 'primary' : 'warning';
       let success = '';
       if (clearTestDataSuccessMessage) {
         success = (
@@ -311,7 +312,7 @@ const StatusAndCounts = ({testEnvironmentUpdated}) => {
           <Card.Text>
             {!loading && (
               <Button variant={'warning'} onClick={clearTestDataClickHandler}>
-                Clear Test Data
+                Clear Registration Data
               </Button>
             )}
             {loading && (
@@ -342,7 +343,7 @@ const StatusAndCounts = ({testEnvironmentUpdated}) => {
       testingStatusContent = (
         <Card.Body className={'bg-white text-dark border-bottom border-top'}>
           <Card.Title as={'h6'} className={'fw-light mb-3'}>
-            Testing Environment
+            Environment Setup
           </Card.Title>
 
           <form onSubmit={testEnvSaved}>
@@ -388,10 +389,6 @@ const StatusAndCounts = ({testEnvironmentUpdated}) => {
       break;
     case 'closed':
       bgColor = 'secondary';
-      break;
-    case 'demo':
-      bgColor = 'primary';
-      textColor = 'white';
       break;
     default:
       bgColor = 'dark';
