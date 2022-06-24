@@ -143,6 +143,7 @@ const MultiUseForm = ({onCancel, onComplete}) => {
                     onChange={(event) => inputChanged(event)}
                     value={formData.category}>
               <option value={''}>--</option>
+              <option value={'bowling'}>Bowling</option>
               <option value={'banquet'}>Banquet (non-bowler)</option>
               <option value={'product'}>Product</option>
             </select>
