@@ -12,7 +12,7 @@ import ActiveTournament from "../../../components/Director/ActiveTournament/Acti
 const Tournament = () => {
   const directorContext = useDirectorContext();
   const router = useRouter();
-  const { identifier } = router.query;
+  const { identifier, stripe } = router.query;
 
   const [errorMessage, setErrorMessage] = useState(null);
   const [tournament, setTournament] = useState(null);

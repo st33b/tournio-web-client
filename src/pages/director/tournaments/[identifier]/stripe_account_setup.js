@@ -18,7 +18,6 @@ const Page = () => {
   });
 
   useEffect(() => {
-    console.log("Here goes...")
     const requestConfig = {
       method: 'get',
 
@@ -55,7 +54,7 @@ const Page = () => {
   return (
     <div>
       <Breadcrumbs ladder={ladder} activeText={context.tournament.name} className={classes.Breadcrumbs} />
-      <LoadingMessage message={'Here goes...'} />
+      <LoadingMessage message={'Initiating setup...'} />
     </div>
   );
 }
