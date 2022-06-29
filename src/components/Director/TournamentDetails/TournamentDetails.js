@@ -1,6 +1,5 @@
+import {useDirectorContext} from "../../../store/DirectorContext";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
-
-import classes from './TournamentDetails.module.scss';
 import Basics from "./Basics";
 import Configuration from "./Configuration";
 import AdditionalQuestions from "./AdditionalQuestions";
@@ -9,11 +8,13 @@ import StatusAndCounts from "./StatusAndCounts";
 import PurchasableItems from "./PurchasableItems";
 import Contacts from "./Contacts";
 import StateChangeButton from "./StateChangeButton";
-import {useDirectorContext} from "../../../store/DirectorContext";
 import DeleteTournament from "./DeleteTournament";
 import Shifts from "./Shifts";
+import StripeStatus from "./StripeStatus";
 
-const TournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated}) => {
+import classes from './TournamentDetails.module.scss';
+
+const TournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated, requestStripeStatus}) => {
   const context = useDirectorContext();
   if (!context || !context.tournament) {
     return <div className={classes.TournamentDetails}>
@@ -30,6 +31,7 @@ const TournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated}) => {
         <div className={'col-12 col-md-6 col-lg-4'}>
           <Basics />
           <Configuration />
+          <StripeStatus tournament={context.tournament} needStatus={requestStripeStatus} />
           <AdditionalQuestions />
           <Shifts />
         </div>
