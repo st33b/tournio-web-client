@@ -29,6 +29,25 @@ const StripeStatus = ({tournament, needStatus}) => {
     setErrorMessage(data.error);
   }
 
+  const initiateStatusRequest = (event = null) => {
+    if (event) {
+      event.preventDefault();
+    }
+    console.log("Requesting status");
+    const uri = `/director/tournaments/${tournament.identifier}/stripe_status`;
+    const requestConfig = {
+      method: 'get',
+    };
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      onSuccess: onStatusFetchSuccess,
+      onFailure: onStatusFetchFailure,
+    });
+    setStatus({requested: true, fetched: status.fetched});
+  }
+
   useEffect(() => {
     if (!context || !tournament) {
       return;
@@ -48,19 +67,7 @@ const StripeStatus = ({tournament, needStatus}) => {
     console.log("needStatus:", needStatus);
 
     if (!status.requested) {
-      console.log("Requesting status");
-      const uri = `/director/tournaments/${tournament.identifier}/stripe_status`;
-      const requestConfig = {
-        method: 'get',
-      };
-      directorApiRequest({
-        uri: uri,
-        requestConfig: requestConfig,
-        context: context,
-        onSuccess: onStatusFetchSuccess,
-        onFailure: onStatusFetchFailure,
-      });
-      setStatus({requested: true, fetched: status.fetched});
+      initiateStatusRequest();
     } else {
       console.log("A request is already underway, so I'm not doing another.");
     }
@@ -78,11 +85,11 @@ const StripeStatus = ({tournament, needStatus}) => {
         </Card.Header>
         <Card.Body>
           {errorMessage && (
-            <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center my-2'}
+            <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center'}
                  role={'alert'}>
               <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
               <div className={'me-auto'}>
-                Questions saved.
+                {errorMessage}
                 <button type="button"
                         className={"btn-close"}
                         data-bs-dismiss="alert"
@@ -91,35 +98,33 @@ const StripeStatus = ({tournament, needStatus}) => {
               </div>
             </div>
           )}
-          <div className={'d-flex justify-content-around'}>
-            {stripeAccount && (
-              <>
-                <span>
-                  Ready to accept payments?
+          {stripeAccount && (
+            <div className={'d-flex justify-content-center mb-3'}>
+              <span className={'pe-3'}>
+                Ready to accept payments?
+              </span>
+              {stripeAccount.can_accept_payments && (
+                <span className={`text-success ${classes.Ready}`}>
+                <i className={'bi-check-lg'} aria-hidden={true}/>
+                <span className={'visually-hidden'}>
+                  Yes
                 </span>
-                {stripeAccount.can_accept_payments && (
-                  <span className={`text-success ${classes.Ready}`}>
-                  <i className={'bi-hand-thumbs-up'} aria-hidden={true}/>
+              </span>
+              )}
+              {!stripeAccount.can_accept_payments && (
+                <span className={`text-danger ${classes.NotReady}`}>
+                  <i className={'bi-x-lg'} aria-hidden={true}/>
                   <span className={'visually-hidden'}>
-                    Yes
+                    No
                   </span>
                 </span>
-                )}
-                {!stripeAccount.can_accept_payments && (
-                  <span className={`text-danger ${classes.NotReady}`}>
-                    <i className={'bi-hand-thumbs-down'} aria-hidden={true}/>
-                    <span className={'visually-hidden'}>
-                      No
-                    </span>
-                  </span>
-                )}
-              </>
-            )}
-          </div>
-          <div className={'d-flex justify-content-center'}>
+              )}
+            </div>
+          )}
+          <div className={'d-flex justify-content-around'}>
             {stripeAccount && !stripeAccount.can_accept_payments && (
               <a href={`/director/tournaments/${tournament.identifier}/stripe_account_setup`}
-                 className={`btn btn-success mt-3`}>
+                 className={`btn btn-success`}>
                 Resume Setup
               </a>
             )}
@@ -128,6 +133,19 @@ const StripeStatus = ({tournament, needStatus}) => {
                  className={`btn btn-success`}>
                 Begin Setup
               </a>
+            )}
+            {!status.requested && (
+              <button onClick={initiateStatusRequest}
+                      className={`btn btn-outline-secondary`}>
+                Refresh Status
+              </button>
+            )}
+            {status.requested && (
+              <button disabled
+                      className={`btn btn-secondary`}>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Checking
+              </button>
             )}
           </div>
         </Card.Body>

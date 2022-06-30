@@ -391,10 +391,40 @@ export const postFreeEntry = (tournamentIdentifier, postData, onSuccess, onFailu
     });
 }
 
-export const postPurchaseDetails = (bowlerIdentifier, postData, onSuccess, onFailure) => {
+export const purchaseDetailsPostData = (items) => {
+  const purchaseIdentifiers = [];
+  const purchasableItems = [];
+
+  const sum = (runningTotal, currentValue) => runningTotal + currentValue.value * (currentValue.quantity || 1);
+  const expectedTotal = items.reduce(sum, 0);
+
+  for (let i of items) {
+    if (i.category === 'ledger') {
+      // mandatory things like entry & late fees, early discount
+
+      // some things we want the server to add: bundle discount, event-linked late fees
+      if (i.determination === 'bundle_discount' || i.determination === 'late_fee' && i.refinement === 'event_linked') {
+        continue;
+      }
+      purchaseIdentifiers.push(i.identifier);
+    } else {
+      purchasableItems.push({
+        identifier: i.identifier,
+        quantity: i.quantity,
+      });
+    }
+  }
+  return {
+    purchase_identifiers: purchaseIdentifiers,
+    purchasable_items: purchasableItems,
+    expected_total: expectedTotal,
+  };
+}
+
+export const postPurchaseDetails = (bowlerIdentifier, path, postData, onSuccess, onFailure) => {
   const requestConfig = {
     method: 'post',
-    url: `${apiHost}/bowlers/${bowlerIdentifier}/purchase_details`,
+    url: `${apiHost}/bowlers/${bowlerIdentifier}/${path}`,
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
