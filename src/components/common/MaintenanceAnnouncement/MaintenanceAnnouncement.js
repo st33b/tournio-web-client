@@ -30,7 +30,7 @@ const MaintenanceAnnouncement = () => {
         </span>
         {' to '}
         <span className={classes.TimeBoundary}>
-          {endTime} EDT
+          {endTime}
         </span>
         .
       </div>
