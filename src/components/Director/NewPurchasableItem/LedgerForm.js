@@ -96,13 +96,13 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
   const isFormDataValid = (data) => {
     let valid = data.name.length > 0;
     if (data.determination === 'early_discount') {
-      valid = valid && data.value < 0 && isValidDate(parseISO(data.valid_until));
+      valid = valid && data.value > 0 && isValidDate(parseISO(data.valid_until));
     } else if (data.determination === 'late_fee') {
       valid = valid && data.value > 0 && isValidDate(parseISO(data.applies_at));
     } else if (data.determination === 'bundle_discount') {
       const checkedEvents = Object.values(data.eventIdentifiers)
         .reduce((prev, current) => current ? prev + 1 : prev, 0);
-      valid = valid && data.value < 0 && checkedEvents > 1;
+      valid = valid && data.value > 0 && checkedEvents > 1;
     } else {
       valid = valid && data.value > 0;
     }
@@ -163,13 +163,12 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
     });
   }
 
-  const valueProperties = {}
+  const valueProperties = {
+    min: 1,
+  }
   let amountLabel = 'Fee';
   if (formData.determination === 'early_discount' || formData.determination === 'bundle_discount') {
-    amountLabel = 'Discount (must be negative)';
-    valueProperties.max = -1;
-  } else {
-    valueProperties.min = 1;
+    amountLabel = 'Discount Amount';
   }
 
   const labels = {
@@ -178,7 +177,6 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
     early_discount: 'Early registration discount',
     bundle_discount: 'Event Bundle Discount',
   };
-
 
   return (
     <ErrorBoundary>
@@ -245,7 +243,7 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
                          id={`event_${item.identifier}`}
                          name={`event_${item.identifier}`}
                          checked={formData.eventIdentifiers[item.identifier]}
-                         onChange={(event) => inputChanged(`event_${item.identifier}`, event)} />
+                         onChange={(event) => inputChanged(`event_${item.identifier}`, event)}/>
                   <label className={'form-check-label'}
                          htmlFor={`event_${item.identifier}`}>
                     {item.name}
@@ -270,7 +268,7 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
                   <option key={event.identifier} value={event.identifier}>
                     {event.name}
                   </option>
-                  ))}
+                ))}
               </select>
             </div>
           }
