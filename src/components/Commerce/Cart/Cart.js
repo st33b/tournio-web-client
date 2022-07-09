@@ -11,7 +11,12 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
     return '';
   }
 
-  const sum = (runningTotal, currentValue) => runningTotal + currentValue.value * (currentValue.quantity || 1);
+  const sum = (runningTotal, currentValue) => {
+    if (currentValue.category === 'ledger' && (currentValue.determination === 'early_discount' || currentValue.determination === 'bundle_discount')) {
+      return runningTotal - currentValue.value * (currentValue.quantity || 1);
+    }
+    return runningTotal + currentValue.value * (currentValue.quantity || 1);
+  };
   const totalFees = commerce.cart.reduce(sum, 0);
   let cartItems = (
     <div className={classes.EmptyItemList}>
