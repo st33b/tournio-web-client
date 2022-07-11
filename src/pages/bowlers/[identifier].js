@@ -32,6 +32,9 @@ const Page = () => {
 
     if (success === 'purchase') {
       setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
+      // do we need to refresh our purchase details?
+      fetchBowlerDetails(identifier, commerce, commerceDispatch);
+      return;
     } else if (success === 'register') {
       setSuccessMessage('Your registration was received! You may now select events, optional items, and pay entry fees.');
     }

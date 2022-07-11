@@ -1,7 +1,6 @@
 import {compareAsc} from "date-fns";
 import * as actionTypes from './actions/actionTypes';
 import {updateObject} from "../utils";
-import availableItems from "../components/Commerce/AvailableItems/AvailableItems";
 
 const initialState = {
   tournament: null,
@@ -10,6 +9,7 @@ const initialState = {
   availableItems: {},
   purchasedItems: [],
   freeEntry: null,
+  checkoutSessionId: null,
   error: null,
 }
 
@@ -96,10 +96,20 @@ export const commerceReducer = (state, action) => {
           error: action.error,
         }
       });
+    case actionTypes.STRIPE_CHECKOUT_SESSION_INITIATED:
+      return updateObject(state, {
+        checkoutSessionId: action.sessionId,
+      });
+    case actionTypes.STRIPE_CHECKOUT_SESSION_COMPLETED:
+      return updateObject(state, {
+        checkoutSessionId: null,
+        cart: [],
+      });
     default:
-      console.log('Haha, no');
+      console.log('Haha, no', action.type);
       break;
   }
+  return state;
 }
 
 const itemAdded = (state, item) => {
@@ -143,7 +153,6 @@ const itemAdded = (state, item) => {
       newAvailableItems[lateFeeItem.identifier] = newLateFeeItem;
     }
   }
-
 
   return updateObject(state, {
     cart: newCart,
