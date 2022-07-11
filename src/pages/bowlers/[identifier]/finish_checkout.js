@@ -2,14 +2,19 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
+import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import {getCheckoutSessionStatus} from '../../../utils';
+import {stripeCheckoutSessionCompleted} from '../../../store/actions/registrationActions';
 
 const Page = () => {
   const router = useRouter();
   const {commerce, commerceDispatch} = useRegistrationContext();
   const {identifier} = router.query;
+  const [errorMessage, setErrorMessage] = useState();
 
+  // Do we have an identifier and a commerce object?
   useEffect(() => {
-    if (identifier === undefined) {
+    if (identifier === undefined || !commerce) {
       return;
     }
 
@@ -17,19 +22,68 @@ const Page = () => {
     if (commerce.bowler && commerce.bowler.identifier !== identifier) {
       router.push('/');
     }
+  }, [identifier, commerce, router]);
 
-    if (commerce.cart && commerce.cart.length === 0) {
+  // If we have a commerce object but no checkout session id, then we're done, and can redirect with success.
+  useEffect(() => {
+    if (!commerce) {
+      return;
+    }
+    if (!commerce.checkoutSessionId) {
+      router.push(`/bowlers/${identifier}?success=purchase`);
+    }
+  }, [commerce.checkoutSessionId]);
+
+  // once we have a commerce object, begin polling for changes to the checkout session id's status
+  useEffect(() => {
+    if (!commerce) {
       return;
     }
 
+    if (commerce.checkoutSessionId) {
+      checkTheStatus();
+    }
+  }, []);
 
-  }, [identifier, commerce, router]);
+  const checkTheStatus = () => {
+    getCheckoutSessionStatus(commerce.checkoutSessionId, success, failure);
+  }
+
+  const success = (data) => {
+    if (data.status === 'completed') {
+      commerceDispatch(stripeCheckoutSessionCompleted());
+      return;
+    }
+    setTimeout(checkTheThing, 3000);
+  }
+
+  const failure = (data) => {
+    setErrorMessage(data.error);
+  }
 
   return (
-    <div>
-      <h6>Finishing checkout...</h6>
-      <p>Here is where we'll check the server for status of the completed checkout.</p>
-      <p>Will Stripe give us any query params to tell us which session was completed? That might be useful...</p>
+    <div className={'mt-4'}>
+      {!errorMessage && <LoadingMessage message={'Finishing checkout, just a moment...'} />}
+      {errorMessage && (
+        <>
+          <div className={'alert alert-danger fade show d-flex align-items-center'}
+               role={'alert'}>
+            <div className={'me-auto'}>
+              <i className={'bi-exclamation-circle pe-2'} aria-hidden={true}/>
+              {errorMessage}
+              <p className={'mt-3'}>
+                Please <a href={'mailto:info@igbo-reg.com?subject=Error%20report'}>report this</a> to us!
+              </p>
+            </div>
+          </div>
+          <p className={'mt-3'}>
+            <a href={`/bowlers/${identifier}`}>
+              <i className={'bi-arrow-left pe-2'} aria-hidden={true}/>
+              Back to cart
+            </a>
+          </p>
+        </>
+        )}
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import * as actionTypes from './actionTypes';
+import {act} from "react-dom/test-utils";
 
 export const tournamentDetailsRetrieved = (tournament) => {
   return {
@@ -224,5 +225,18 @@ export const partnerUpBowlerUpdated = (bowlerInfo) => {
 export const partnerUpRegistrationCompleted = () => {
   return {
     type: actionTypes.PARTNER_UP_REGISTRATION_COMPLETED,
+  }
+}
+
+export const stripeCheckoutSessionInitiated = (sessionId) => {
+  return {
+    type: actionTypes.STRIPE_CHECKOUT_SESSION_INITIATED,
+    sessionId: sessionId,
+  }
+}
+
+export const stripeCheckoutSessionCompleted = () => {
+  return {
+    type: actionTypes.STRIPE_CHECKOUT_SESSION_COMPLETED,
   }
 }

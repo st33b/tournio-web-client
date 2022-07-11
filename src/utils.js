@@ -276,10 +276,11 @@ export const submitJoinTeamRegistration = (tournament, team, bowler, onSuccess, 
     bowler.shift = team.shift;
   }
   const bowlerData = {
+    team_identifier: teamId,
     bowlers: [{...convertBowlerDataForPost(tournament, bowler), ...teamDataForBowler(bowler) }],
   };
   const teamId = team.identifier;
-  axios.post(`${apiHost}/teams/${teamId}/bowlers`, bowlerData)
+  axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, bowlerData)
     .then(response => {
       const newBowlerIdentifier = response.data.identifier;
       onSuccess(newBowlerIdentifier);
@@ -467,6 +468,29 @@ export const postPurchasesCompleted = (bowlerIdentifier, postData, onSuccess, on
     .catch(error => {
       onFailure({error: error.message});
     });
+}
+
+export const getCheckoutSessionStatus = (identifier, onSuccess, onFailure) => {
+  const requestConfig = {
+    method: 'get',
+    url: `${apiHost}/checkout_sessions/${identifier}`,
+    headers: {
+      'Accept': 'application/json',
+    },
+    validateStatus: (status) => { return status < 500 },
+  }
+  axios(requestConfig)
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        onSuccess(response.data);
+      } else {
+        onFailure(response.data);
+      }
+    })
+    .catch(error => {
+      onFailure(error);
+    });
+
 }
 
 ////////////////////////////////////////////////

@@ -3,11 +3,12 @@ import {useRouter} from "next/router";
 
 import {purchaseDetailsPostData, postPurchaseDetails} from "../../../utils";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {stripeCheckoutSessionInitiated} from "../../../store/actions/registrationActions";
 
 import classes from './StripeCheckout.module.scss';
 
 const StripeCheckout = () => {
-  const {commerce} = useRegistrationContext();
+  const {commerce, commerceDispatch} = useRegistrationContext();
   const router = useRouter();
 
   const {identifier} = router.query;
@@ -24,16 +25,16 @@ const StripeCheckout = () => {
   // If we don't have all the data we need, bail out
   if (!commerce || !commerce.bowler || !identifier) {
     console.log('missing required data');
-    // console.log('commerce', commerce);
-    // console.log('bowler', commerce.bowler);
-    // console.log('identifier', identifier);
     return '';
   }
 
   ///////////////////////////////////////////////////////
-  console.log('Ok, proceeding...');
 
   const postDetailsSucceeded = (responseData) => {
+    // grab the checkout session id before redirecting, so we can poll for results upon completion
+    const csId = responseData.checkout_session_id;
+    commerceDispatch(stripeCheckoutSessionInitiated(csId));
+
     // Redirect to the URL in the response data
     location = responseData.redirect_to;
     // that's it!

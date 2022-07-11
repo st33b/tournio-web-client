@@ -151,5 +151,6 @@ export const registrationReducer = (state, action) => {
       console.log("Nope!");
       break;
   }
+  return state;
 }
 
