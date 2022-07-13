@@ -1,5 +1,7 @@
+import Image from "next/image";
 import {Row} from "react-bootstrap";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
+import logoImage from '../../../images/tournio-logo.png';
 
 import classes from './Navigation.module.scss';
 
@@ -29,17 +31,19 @@ const Navigation = ({showCart}) => {
     <div className={`${classes.Navigation}`}>
       <Row className={process.env.NODE_ENV === 'development' && classes.Development}>
         <div className={`${classes.HomeLinks} d-flex d-md-none`}>
-          <a href={'/'} title={'To tournament listing'} className={'link-dark'}>
+          <a href={'/tournaments'} title={'To tournament listing'} className={'link-dark'}>
             <span className={'visually-hidden'}>Home</span>
             <i className={'bi-house'} aria-hidden={true} />
           </a>
           {cartText}
         </div>
-        <h1 className={`${classes.HomeLinkMd} d-none d-md-block my-1`}>
-          <a href={'/'}>
-            IGBO Tournament Registration
-          </a>
-        </h1>
+        <a href={'/tournaments'} className={'d-none d-md-block'}>
+          <div className={`${classes.HomeLinkMd} my-1`}>
+            <span className={'visually-hidden'}>
+              Home
+            </span>
+        </div>
+        </a>
       </Row>
     </div>
   );

@@ -4,7 +4,7 @@ import TournamentCards from "../../components/Registration/TournamentListing/Tou
 const Page = () => {
   return (
     <div>
-      <h2 className={'mt-1 mb-3'}>
+      <h2 className={'mt-1 mb-3 text-center'}>
         Upcoming Tournaments
       </h2>
       <TournamentCards/>
