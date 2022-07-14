@@ -8,8 +8,11 @@ const Footer = () => {
   return (
     <div className={classes.Footer}>
       <p className={'text-muted text-center py-2 my-2'}>
+        <a href={'/director/login'} className={`${classes.Element} ${classes.NotTheLast}`}>
+          Director Login
+        </a>
         {router.pathname !== '/about' &&
-          <a href={'/about'} className={`${classes.Element} ${classes.About}`}>
+          <a href={'/about'} className={`${classes.Element} ${classes.NotTheLast}`}>
             About
           </a>
         }
