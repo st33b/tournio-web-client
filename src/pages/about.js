@@ -6,7 +6,7 @@ const Page = () => (
   <div>
     <About />
     <Row className={'justify-content-center pt-3'}>
-      <Col xs={12} sm={4} >
+      <Col xs={12} sm={6} >
         <Card>
           <Card.Body>
             <Card.Text className={'text-center'}>

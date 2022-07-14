@@ -1,17 +1,22 @@
 .Navigation {
   .BrandWrapper {
-    line-height: 2;
     margin-left: 0.5rem;
+    // Might make this the inverted IO on small devices...
+    background: url('../../../images/tournio-logo-inverted.png') no-repeat left center;
+    background-size: contain;
     .Brand {
-
+      margin: 0;
+      padding: 0;
     }
   }
-  @media (min-width: 768px) {
-    .BrandWrapper {
-      background: url('../../../images/bowling.svg') no-repeat left top;
-      .Brand {
-        margin-left: 4rem;
-      }
-    }
-  }
+  //@media (min-width: 768px) {
+  //  .BrandWrapper {
+  //    background: url('../../../images/tournio-logo-inverted.png') no-repeat left center;
+  //    background-size: contain;
+  //    .Brand {
+  //      margin: 0;
+  //      padding: 0;
+  //    }
+  //  }
+  //}
 }

@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {Nav, Navbar} from "react-bootstrap";
+import {Container, Nav, Navbar} from "react-bootstrap";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 
@@ -18,37 +18,42 @@ const Navigation = () => {
 
   return (
     <div className={classes.Navigation}>
-      <Navbar variant={'dark'} bg={'dark'}>
+      <Navbar variant={'dark'} bg={'dark'} collapseOnSelect expand={'md'}>
         <div className={classes.BrandWrapper}>
           <Navbar.Brand href={'/director'} className={classes.Brand}>
-            <div className={'d-none d-sm-inline'}>
-              Tournament Director
-            </div>
-            <div className={'d-inline d-sm-none'}>
-              Director
-            </div>
+            {/* This is a bit of a hack to make the image clickable. It will resize to however long the text is. */}
+            <span className={'invisible'}>
+              Tournio-oh-oh
+            </span>
+            {/* For assistive technologies */}
+            <span className={`visually-hidden`}>
+              Tournio
+            </span>
           </Navbar.Brand>
         </div>
         {loggedIn && (
-          <Navbar.Collapse id={'basic-navbar-nav'}>
-            <Nav className={'me-auto'}>
-              {isSuperuser && (
-                <Nav.Link href={'/director/users'}>
-                  User Accounts
+          <>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id={'basic-navbar-nav'}>
+              <Nav className={'ms-4 me-auto'}>
+                {isSuperuser && (
+                  <Nav.Link href={'/director/users'}>
+                    User Accounts
+                  </Nav.Link>
+                )}
+                {directorContext.user && (
+                  <Nav.Link href={'/director/users/' + directorContext.user.identifier}>
+                    My Profile
+                  </Nav.Link>
+                )}
+              </Nav>
+              <Nav className={'ms-2 ms-md-auto pe-2'}>
+                <Nav.Link href={'/director/logout'}>
+                  Log Out
                 </Nav.Link>
-              )}
-              {directorContext.user && (
-                <Nav.Link href={'/director/users/' + directorContext.user.identifier}>
-                  My Profile
-                </Nav.Link>
-              )}
-            </Nav>
-            <Nav className={'ms-auto pe-2'}>
-              <Nav.Link href={'/director/logout'}>
-                Log Out
-              </Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
+              </Nav>
+            </Navbar.Collapse>
+          </>
         )}
       </Navbar>
     </div>

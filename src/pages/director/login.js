@@ -46,7 +46,7 @@ const Login = () => {
           <Card className={'border-0 text-center'}>
             <Card.Body>
               <Card.Link href={'/'}>
-                Registration Home
+                Tournio Home
               </Card.Link>
               <Card.Link href={'/director/forgot-password'}>
                 Password Reset
