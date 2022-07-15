@@ -99,6 +99,10 @@ const ContactForm = ({contact, newContact}) => {
     'secretary-treasurer': 'Secretary/Treasurer',
     'statistician': 'Statistician',
     'treasurer': 'Treasurer',
+    'registration': 'Registration',
+    'igbo-representative': 'IGBO Representative',
+    'technologist': 'Technologist',
+    'member-at-large': 'Member At Large',
   };
 
   const preferenceLabels = {
