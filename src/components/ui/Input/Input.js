@@ -51,6 +51,24 @@ const Input = (props) => {
         }
       );
       break;
+    case('checkbox'):
+      inputElement = (
+        <div className={`form-check ${invalidClass}`}>
+          <input
+            type={'checkbox'}
+            className={'form-check-input'}
+            id={props.identifier}
+            name={props.identifier}
+            onChange={props.changed}
+            {...props.elementConfig}
+            checked={props.elementConfig.value === 'yes' || props.elementConfig.value === true}
+          />
+          <label className={'form-check-label'}>
+            {props.elementConfig.label}
+          </label>
+        </div>
+      );
+      break;
     default:
       console.log("I don't recognize that element type: " + props.elementType);
       return null;
