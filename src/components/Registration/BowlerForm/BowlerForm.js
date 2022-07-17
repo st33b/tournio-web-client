@@ -406,6 +406,9 @@ const BowlerForm = ({bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => 
       let newValue = null;
       if (inputIdentifier === 'country')
         newValue = event;
+      else if (updatedFormElement.elementType === 'checkbox') {
+        newValue = event.target.checked ? 'yes' : 'no';
+      }
       else
         newValue = event.target.value;
 
