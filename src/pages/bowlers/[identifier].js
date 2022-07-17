@@ -30,15 +30,6 @@ const Page = () => {
       return;
     }
 
-    if (success === 'purchase') {
-      setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
-      // do we need to refresh our purchase details?
-      fetchBowlerDetails(identifier, commerce, commerceDispatch);
-      return;
-    } else if (success === 'register') {
-      setSuccessMessage('Your registration was received! You may now select events, optional items, and pay entry fees.');
-    }
-
     if (commerce.bowler.shift_info.full && !commerce.bowler.shift_info.confirmed) {
       if (commerce.bowler.unpaid_purchases.some(p => p.category === 'ledger' || p.determination === 'event')) {
         // either the tournament is full, or the chosen shift is full.
@@ -53,6 +44,18 @@ const Page = () => {
       }
     }
   }, [identifier, commerce, commerceDispatch, success]);
+
+  useEffect(() => {
+    if (success === 'purchase') {
+      console.log("We've completed a purchase. Retrieving bowler details...");
+      setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
+      // do we need to refresh our purchase details?
+      fetchBowlerDetails(identifier, commerce, commerceDispatch);
+      return;
+    } else if (success === 'register') {
+      setSuccessMessage('Your registration was received! You may now select events, optional items, and pay entry fees.');
+    }
+  }, [success]);
 
   // ensure that the tournament in context matches the bowler's
   useEffect(() => {
