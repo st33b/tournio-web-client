@@ -41,29 +41,45 @@ const Page = () => {
     }
 
     if (commerce.checkoutSessionId) {
+      console.log("First call to checkTheStatus!");
       checkTheStatus();
     }
   }, []);
 
-  const checkTheStatus = () => {
-    getCheckoutSessionStatus(commerce.checkoutSessionId, success, failure);
+  const checkTheStatus = (count = 0) => {
+    if (count < 10) {
+      console.log("On attempt #", count);
+      getCheckoutSessionStatus(commerce.checkoutSessionId, (d) => success(d, count + 1), failure);
+    } else {
+      console.log('No more attempts left.');
+      // We should do something dramatic here:
+      // - show a failure message to the bowler
+      // - try to send a notification to bugreport@tourn.io (one that I'll receive) with details
+    }
   }
 
-  const success = (data) => {
+  const success = (data, count) => {
+    console.log("Success callback", data);
     if (data.status === 'completed') {
+      // It'd be nice to get a report here, how high did "count" get before we had the full details from Stripe?
       commerceDispatch(stripeCheckoutSessionCompleted());
       return;
+    } else {
+      console.log('But our status is not completed. Trying again.');
+      setTimeout(() => checkTheStatus(count), 2 ** count * 10);
     }
-    setTimeout(checkTheThing, 3000);
   }
 
   const failure = (data) => {
+    console.log("Failure callback", data);
     setErrorMessage(data.error);
   }
 
   return (
     <div className={'mt-4'}>
-      {!errorMessage && <LoadingMessage message={'Finishing checkout, just a moment...'} />}
+      {!errorMessage &&
+          <LoadingMessage message={'Finishing checkout, just a moment...'} />
+      }
       {errorMessage && (
         <>
           <div className={'alert alert-danger fade show d-flex align-items-center'}

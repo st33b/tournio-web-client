@@ -13,19 +13,20 @@ const StripeStatus = ({tournament, needStatus}) => {
   // If needStatus is set, then we need to request the Stripe status from the server
   // Otherwise, show a button that can trigger an on-demand status check
 
-  const [status, setStatus] = useState({requested: false, fetched: false});
   const [errorMessage, setErrorMessage] = useState();
   const [stripeAccount, setStripeAccount] = useState();
 
   const onStatusFetchSuccess = (data) => {
-    console.log("Status has been fetched.");
-    setStatus({requested: false, fetched: true});
     setStripeAccount(data);
+    if (!data.can_accept_payments && needStatus) {
+      console.log("Can't accept payments, requesting status again soon.");
+      setTimeout(initiateStatusRequest, 3000);
+    } else {
+      console.log("We can accept payments, so we're good.");
+    }
   }
 
   const onStatusFetchFailure = (data) => {
-    console.log("Status has been fetched (and failed).");
-    setStatus({requested: false, fetched: true});
     setErrorMessage(data.error);
   }
 
@@ -33,7 +34,6 @@ const StripeStatus = ({tournament, needStatus}) => {
     if (event) {
       event.preventDefault();
     }
-    console.log("Requesting status");
     const uri = `/director/tournaments/${tournament.identifier}/stripe_status`;
     const requestConfig = {
       method: 'get',
@@ -45,33 +45,23 @@ const StripeStatus = ({tournament, needStatus}) => {
       onSuccess: onStatusFetchSuccess,
       onFailure: onStatusFetchFailure,
     });
-    setStatus({requested: true, fetched: status.fetched});
   }
 
   useEffect(() => {
-    if (!context || !tournament) {
+    if (!tournament) {
       return;
     }
 
     setStripeAccount(tournament.stripe_account);
 
-    if (!needStatus || status.fetched) {
-      console.log('Not trying to fetch account status.');
-      console.log("status:", status);
-      console.log("needStatus:", needStatus);
+    if (!needStatus) {
       return;
     }
 
-    console.log("I don't have status yet.");
-    console.log("status:", status);
-    console.log("needStatus:", needStatus);
-
-    if (!status.requested) {
+    if (!tournament.stripe_account.can_accept_payments) {
       initiateStatusRequest();
-    } else {
-      console.log("A request is already underway, so I'm not doing another.");
     }
-  }, [status, needStatus, tournament]);
+  }, [needStatus, tournament]);
 
   if (!context || !tournament) {
     return '';
