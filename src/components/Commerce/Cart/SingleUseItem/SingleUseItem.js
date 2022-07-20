@@ -57,10 +57,21 @@ const SingleUseItem = ({item, removed}) => {
       );
     }
     if (item.configuration.events) {
-      const matchingEvents = item.configuration.events.map(identifier => commerce.availableItems[identifier]);
+      // We need to check purchased items as well as available items for the label to apply.
+      const allItems = commerce.purchasedItems.concat(Object.values(commerce.availableItems));
+      const matchingEvents = [];
+      allItems.forEach(i => {
+        let identifier = i.identifier;
+        if (i.purchasable_item_identifier) {
+          identifier = i.purchasable_item_identifier;
+        }
+        if (item.configuration.events.includes(identifier)) {
+          matchingEvents.push(i);
+        }
+      });
       note = (
         <p className={classes.Note}>
-          Events: {matchingEvents.map(event => commerce.availableItems[event.identifier].name).join(', ')}
+          Events: {matchingEvents.map(event => event.name).join(', ')}
         </p>
       );
     }
