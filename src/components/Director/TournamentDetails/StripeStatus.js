@@ -51,6 +51,9 @@ const StripeStatus = ({tournament, needStatus}) => {
     if (!tournament) {
       return;
     }
+    if (!tournament.stripe_account) {
+      return;
+    }
 
     setStripeAccount(tournament.stripe_account);
 
