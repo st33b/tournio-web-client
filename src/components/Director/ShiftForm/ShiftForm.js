@@ -4,9 +4,9 @@ import {Map} from "immutable";
 import Card from 'react-bootstrap/Card';
 
 import {useDirectorContext} from "../../../store/DirectorContext";
+import {directorApiRequest} from "../../../utils";
 
 import classes from './ShiftForm.module.scss';
-import {directorApiRequest} from "../../../utils";
 
 const ShiftForm = ({shift}) => {
   const context = useDirectorContext();
@@ -340,7 +340,7 @@ const ShiftForm = ({shift}) => {
             </div>
             <div className={`row ${colorClass}`}>
               <dt className={'col-5'}>
-                # Confirmed
+                Confirmed
               </dt>
               <dd className={'col'}>
                 {shift.confirmed_count}
@@ -348,7 +348,7 @@ const ShiftForm = ({shift}) => {
             </div>
             <div className={`row ${colorClass}`}>
               <dt className={'col-5'}>
-                # Requested
+                Requested
               </dt>
               <dd className={'col'}>
                 {shift.requested_count}
@@ -507,7 +507,7 @@ const ShiftForm = ({shift}) => {
                 </label>
               </div>
               <div className={'col'}>
-                {registrationKinds.map(kind => (
+                {REGISTRATION_TYPE_LABELS.map(kind => (
                   <div className={'form-check form-switch'} key={kind.key}>
                     <input type={'checkbox'}
                            className={'form-check-input'}
