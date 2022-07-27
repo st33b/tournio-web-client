@@ -9,12 +9,7 @@ const RegistrationsWeek = ({tournament}) => {
     return '';
   }
 
-  const days = eachDayOfInterval(
-    { start: new Date(2022, 4, 21), end: new Date(2022, 4, 27) }
-  );
-
-  const labels = days.map(d => format(d, 'MMM d'));
-
+  const labels = Object.keys(tournament.registrations_by_day).map(dayTs => format(new Date(dayTs*1000), 'MMM d'));
   const options = {
     responsive: true,
     plugins: {
@@ -38,7 +33,7 @@ const RegistrationsWeek = ({tournament}) => {
     datasets: [
       {
         label: 'Foo',
-        data: [3, 5, 1, 8, 6, 4, 3],
+        data: Object.values(tournament.registrations_by_day),
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
