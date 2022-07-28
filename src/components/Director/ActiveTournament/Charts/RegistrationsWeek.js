@@ -9,16 +9,16 @@ const RegistrationsWeek = ({tournament}) => {
     return '';
   }
 
-  const labels = Object.keys(tournament.registrations_by_day).map(dayTs => format(new Date(dayTs*1000), 'MMM d'));
+  const labels = Object.keys(tournament.chart_data.last_week_registrations).map(dayTs => format(new Date(dayTs*1000), 'MMM d'));
   const options = {
     responsive: true,
     plugins: {
       title: {
         display: true,
-        text: "Last Week's Registrations",
+        text: "Last Week's Activity",
       },
       legend: {
-        display: false,
+        display: true,
       },
     },
     scales: {
@@ -32,10 +32,16 @@ const RegistrationsWeek = ({tournament}) => {
     labels,
     datasets: [
       {
-        label: 'Foo',
-        data: Object.values(tournament.registrations_by_day),
+        label: 'Registrations',
+        data: Object.values(tournament.chart_data.last_week_registrations),
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      },
+      {
+        label: 'Payments',
+        data: Object.values(tournament.chart_data.last_week_payments),
+        borderColor: 'rgb(64, 130, 76)',
+        backgroundColor: 'rgba(64, 130, 76, 0.5)',
       },
     ],
   };
