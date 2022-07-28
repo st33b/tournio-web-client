@@ -9,7 +9,7 @@ const RegistrationsWeek = ({tournament}) => {
     return '';
   }
 
-  const labels = Object.keys(tournament.chart_data.last_week_registrations).map(dayTs => format(new Date(dayTs*1000), 'MMM d'));
+  const labels = Object.keys(tournament.chart_data.last_week_registrations).map(dayIso8601 => format(new Date(dayIso8601), 'MMM d'));
   const options = {
     responsive: true,
     plugins: {
