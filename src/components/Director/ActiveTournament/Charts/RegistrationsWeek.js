@@ -9,7 +9,7 @@ const RegistrationsWeek = ({tournament}) => {
     return '';
   }
 
-  const labels = Object.keys(tournament.chart_data.last_week_registrations).map(dayIso8601 => format(new Date(dayIso8601), 'MMM d'));
+  const labels = tournament.chart_data.last_week_registrations.dates.map(dayIso8601 => format(new Date(dayIso8601), 'MMM d'));
   const options = {
     responsive: true,
     plugins: {
@@ -33,13 +33,13 @@ const RegistrationsWeek = ({tournament}) => {
     datasets: [
       {
         label: 'Registrations',
-        data: Object.values(tournament.chart_data.last_week_registrations),
+        data: tournament.chart_data.last_week_registrations.values,
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
       {
         label: 'Payments',
-        data: Object.values(tournament.chart_data.last_week_payments),
+        data: Object.values(tournament.chart_data.last_week_payments.values),
         borderColor: 'rgb(64, 130, 76)',
         backgroundColor: 'rgba(64, 130, 76, 0.5)',
       },

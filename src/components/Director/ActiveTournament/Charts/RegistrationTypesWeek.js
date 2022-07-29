@@ -9,11 +9,7 @@ const RegistrationTypesWeek = ({tournament}) => {
     return '';
   }
 
-  const days = eachDayOfInterval(
-    { start: new Date(2022, 4, 21), end: new Date(2022, 4, 27) }
-  );
-
-  const labels = days.map(d => format(d, 'MMM d'));
+  const labels = tournament.chart_data.last_week_registration_types.dates.map(dayIso8601 => format(new Date(dayIso8601), 'MMM d'));
 
   const options = {
     responsive: true,
@@ -41,17 +37,17 @@ const RegistrationTypesWeek = ({tournament}) => {
     datasets: [
       {
         label: 'New Team',
-        data: [3, 5, 1, 8, 6, 4, 3],
+        data: tournament.chart_data.last_week_registration_types.new_team,
         backgroundColor: 'rgb(255, 99, 132)',
       },
       {
         label: 'Join a Team',
-        data: [1, 0, 2, 1, 3, 0, 2],
+        data: tournament.chart_data.last_week_registration_types.join_team,
         backgroundColor: 'rgb(75, 192, 192)',
       },
       {
         label: 'Solo',
-        data: [2, 1, 0, 2, 3, 0, 1],
+        data: tournament.chart_data.last_week_registration_types.solo,
         backgroundColor: 'rgb(53, 162, 235)',
       },
     ],
