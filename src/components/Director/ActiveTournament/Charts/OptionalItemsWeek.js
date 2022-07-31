@@ -5,7 +5,7 @@ import {eachDayOfInterval, format} from "date-fns";
 import classes from '../ActiveTournament.module.scss';
 import {color} from "chart.js/helpers";
 
-const DivisionItemsByWeek = ({tournament, title}) => {
+const OptionalItemsWeek = ({tournament, title, dataKey}) => {
   if (!tournament) {
     return '';
   }
@@ -42,20 +42,17 @@ const DivisionItemsByWeek = ({tournament, title}) => {
     'rgb(108, 117, 125)', // secondary
   ];
 
-  const datasets = [];
   let colorIndex = 0;
-  Object.entries(tournament.chart_data.last_week_purchases_by_day.division).forEach(entry => {
-    const itemId = entry[0];
-    const data = entry[1];
-    const itemDetails = tournament.purchasable_items.division.find(({identifier}) => identifier === itemId);
-    if (itemDetails.name === title) {
-      datasets.push({
-        label: itemDetails.configuration.division,
-        data: data,
-        backgroundColor: bgColors[colorIndex],
-      });
-      colorIndex++;
-    }
+  const datasets = [];
+  Object.entries(tournament.chart_data.last_week_purchases_by_day[dataKey]).forEach(pair => {
+    const itemIdentifier = pair[0];
+    const label = tournament.purchasable_items[dataKey].find(({identifier}) => identifier === itemIdentifier).name;
+    datasets.push({
+      label: label,
+      data: pair[1],
+      backgroundColor: bgColors[colorIndex],
+    });
+    colorIndex++;
   });
 
   const chartData = {
@@ -70,4 +67,4 @@ const DivisionItemsByWeek = ({tournament, title}) => {
   );
 }
 
-export default DivisionItemsByWeek
+export default OptionalItemsWeek

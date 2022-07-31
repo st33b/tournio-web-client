@@ -16,7 +16,8 @@ import PurchasableItems from "./PurchasableItems";
 import Downloads from "./Downloads";
 import RegistrationsWeek from "./Charts/RegistrationsWeek";
 import RegistrationTypesWeek from "./Charts/RegistrationTypesWeek";
-import DivisionItemsByWeek from "./Charts/DivisionItemsByWeek";
+import DivisionItemsWeek from "./Charts/DivisionItemsWeek";
+import OptionalItemsWeek from "./Charts/OptionalItemsWeek";
 
 const ActiveTournament = ({tournament, closeTournament}) => {
   if (!tournament) {
@@ -48,7 +49,8 @@ const ActiveTournament = ({tournament, closeTournament}) => {
           <Capacity tournament={tournament} />
           <RegistrationsWeek tournament={tournament}/>
           <RegistrationTypesWeek tournament={tournament}/>
-          {divisionNames.map(name => <DivisionItemsByWeek tournament={tournament} title={name}/> )}
+          {divisionNames.map(name => <DivisionItemsWeek tournament={tournament} title={name}/> )}
+          <OptionalItemsWeek tournament={tournament} title={'Optional Events'} dataKey={'bowling'}/>
         </div>
 
         <div className={'col-12 col-md-4 col-xl-3'}>
