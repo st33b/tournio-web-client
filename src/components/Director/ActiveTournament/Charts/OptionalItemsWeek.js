@@ -3,7 +3,7 @@ import { Bar } from 'react-chartjs-2';
 import {format} from "date-fns";
 import {color} from "chart.js/helpers";
 
-import {bgColors} from "./common";
+import {chartColors} from "./common";
 
 import classes from '../ActiveTournament.module.scss';
 
@@ -37,6 +37,7 @@ const OptionalItemsWeek = ({tournament, title, dataKey}) => {
 
   let colorIndex = 0;
   const datasets = [];
+  const bgColors = chartColors();
   Object.entries(tournament.chart_data.last_week_purchases_by_day[dataKey]).forEach(pair => {
     const itemIdentifier = pair[0];
     const label = tournament.purchasable_items[dataKey].find(({identifier}) => identifier === itemIdentifier).name;

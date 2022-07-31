@@ -3,6 +3,7 @@ import { Bar } from 'react-chartjs-2';
 import {eachDayOfInterval, format} from "date-fns";
 
 import classes from '../ActiveTournament.module.scss';
+import {chartColors} from "./common";
 
 const RegistrationTypesWeek = ({tournament}) => {
   if (!tournament) {
@@ -32,23 +33,24 @@ const RegistrationTypesWeek = ({tournament}) => {
     },
   };
 
+  const bgColors = chartColors();
   const data = {
     labels,
     datasets: [
       {
         label: 'New Team',
         data: tournament.chart_data.last_week_registration_types.new_team,
-        backgroundColor: 'rgb(255, 99, 132)',
+        backgroundColor: bgColors[0],
       },
       {
         label: 'Join a Team',
         data: tournament.chart_data.last_week_registration_types.join_team,
-        backgroundColor: 'rgb(75, 192, 192)',
+        backgroundColor: bgColors[1],
       },
       {
         label: 'Solo',
         data: tournament.chart_data.last_week_registration_types.solo,
-        backgroundColor: 'rgb(53, 162, 235)',
+        backgroundColor: bgColors[2],
       },
     ],
   };
