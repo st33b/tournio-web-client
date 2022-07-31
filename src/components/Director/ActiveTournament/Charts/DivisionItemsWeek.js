@@ -1,9 +1,11 @@
 import Chart from 'chart.js/auto';
 import { Bar } from 'react-chartjs-2';
-import {eachDayOfInterval, format} from "date-fns";
+import {format} from "date-fns";
+import {color} from "chart.js/helpers";
+
+import {bgColors} from "./common";
 
 import classes from '../ActiveTournament.module.scss';
-import {color} from "chart.js/helpers";
 
 const DivisionItemsWeek = ({tournament, title}) => {
   if (!tournament) {
@@ -32,15 +34,6 @@ const DivisionItemsWeek = ({tournament, title}) => {
       },
     },
   };
-
-  const bgColors = [
-    'rgb(31, 96, 194)', // primary
-    'rgb(64, 130, 76)', // success
-    'rgb(255, 193, 7)', // warning
-    'rgb(191, 46, 60)', // danger
-    'rgb(104, 211, 232)', // info
-    'rgb(108, 117, 125)', // secondary
-  ];
 
   const datasets = [];
   let colorIndex = 0;
