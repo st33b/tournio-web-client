@@ -16,6 +16,7 @@ import PurchasableItems from "./PurchasableItems";
 import Downloads from "./Downloads";
 import RegistrationsWeek from "./Charts/RegistrationsWeek";
 import RegistrationTypesWeek from "./Charts/RegistrationTypesWeek";
+import DivisionItemsByWeek from "./Charts/DivisionItemsByWeek";
 
 const ActiveTournament = ({tournament, closeTournament}) => {
   if (!tournament) {
@@ -23,6 +24,12 @@ const ActiveTournament = ({tournament, closeTournament}) => {
       <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
     </div>;
   }
+
+  const divisionNameSet = new Set();
+  tournament.purchasable_items.division.forEach(({name}) => {
+    divisionNameSet.add(name);
+  });
+  const divisionNames = Array.from(divisionNameSet);
 
   return (
     <div className={classes.ActiveTournament}>
@@ -41,6 +48,7 @@ const ActiveTournament = ({tournament, closeTournament}) => {
           <Capacity tournament={tournament} />
           <RegistrationsWeek tournament={tournament}/>
           <RegistrationTypesWeek tournament={tournament}/>
+          {divisionNames.map(name => <DivisionItemsByWeek tournament={tournament} title={name}/> )}
         </div>
 
         <div className={'col-12 col-md-4 col-xl-3'}>
