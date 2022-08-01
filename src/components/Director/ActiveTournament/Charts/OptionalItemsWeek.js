@@ -7,7 +7,7 @@ import {chartColors} from "./common";
 
 import classes from '../ActiveTournament.module.scss';
 
-const OptionalItemsWeek = ({tournament, title, dataKey}) => {
+const OptionalItemsWeek = ({tournament, title, dataKeys}) => {
   if (!tournament) {
     return '';
   }
@@ -38,15 +38,17 @@ const OptionalItemsWeek = ({tournament, title, dataKey}) => {
   let colorIndex = 0;
   const datasets = [];
   const bgColors = chartColors();
-  Object.entries(tournament.chart_data.last_week_purchases_by_day[dataKey]).forEach(pair => {
-    const itemIdentifier = pair[0];
-    const label = tournament.purchasable_items[dataKey].find(({identifier}) => identifier === itemIdentifier).name;
-    datasets.push({
-      label: label,
-      data: pair[1],
-      backgroundColor: bgColors[colorIndex],
+  dataKeys.forEach(dataKey => {
+    Object.entries(tournament.chart_data.last_week_purchases_by_day[dataKey]).forEach(pair => {
+      const itemIdentifier = pair[0];
+      const label = tournament.purchasable_items[dataKey].find(({identifier}) => identifier === itemIdentifier).name;
+      datasets.push({
+        label: label,
+        data: pair[1],
+        backgroundColor: bgColors[colorIndex],
+      });
+      colorIndex++;
     });
-    colorIndex++;
   });
 
   const chartData = {

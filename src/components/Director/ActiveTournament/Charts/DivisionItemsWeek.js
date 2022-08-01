@@ -38,7 +38,6 @@ const DivisionItemsWeek = ({tournament, title}) => {
   const datasets = [];
   let colorIndex = 0;
   const bgColors = chartColors();
-  console.log("BG Colors", bgColors);
   Object.entries(tournament.chart_data.last_week_purchases_by_day.division).forEach(entry => {
     const itemId = entry[0];
     const data = entry[1];

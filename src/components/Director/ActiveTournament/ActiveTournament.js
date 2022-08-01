@@ -50,7 +50,8 @@ const ActiveTournament = ({tournament, closeTournament}) => {
           <RegistrationsWeek tournament={tournament}/>
           <RegistrationTypesWeek tournament={tournament}/>
           {divisionNames.map(name => <DivisionItemsWeek tournament={tournament} title={name}/> )}
-          <OptionalItemsWeek tournament={tournament} title={'Optional Events'} dataKey={'bowling'}/>
+          <OptionalItemsWeek tournament={tournament} title={'Optional Events'} dataKeys={['bowling']}/>
+          <OptionalItemsWeek tournament={tournament} title={'Extras'} dataKeys={['banquet', 'product']}/>
         </div>
 
         <div className={'col-12 col-md-4 col-xl-3'}>
