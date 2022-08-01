@@ -20,6 +20,12 @@ const Basics = () => {
             <dt className={'col-4'}>Name</dt>
             <dd className={'col'}>{context.tournament.name}</dd>
           </div>
+          {process.env.NODE_ENV === 'development' && (
+            <div className={'row'}>
+              <dt className={'col-4'}>ID</dt>
+              <dd className={'col'}>{context.tournament.id}</dd>
+            </div>
+          )}
           <div className={'row'}>
             <dt className={'col-4'}>Year</dt>
             <dd className={'col'}>{context.tournament.year}</dd>

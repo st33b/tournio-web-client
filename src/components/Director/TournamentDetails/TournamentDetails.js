@@ -1,5 +1,4 @@
 import {useDirectorContext} from "../../../store/DirectorContext";
-import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
 import Basics from "./Basics";
 import Configuration from "./Configuration";
 import AdditionalQuestions from "./AdditionalQuestions";
@@ -22,11 +21,8 @@ const TournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated, reques
     </div>;
   }
 
-  const ladder = [{ text: 'Tournaments', path: '/director' }];
   return (
     <div className={classes.TournamentDetails}>
-      <Breadcrumbs ladder={ladder} activeText={context.tournament.name} className={classes.Breadcrumbs} />
-
       <div className={'row'}>
         <div className={'col-12 col-md-6 col-lg-4'}>
           <Basics />

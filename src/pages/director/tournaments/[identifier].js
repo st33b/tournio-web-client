@@ -5,6 +5,9 @@ import {directorApiRequest} from "../../../utils";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentDetails from '../../../components/Director/TournamentDetails/TournamentDetails';
+import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
+import classes from "../../../components/Director/TournamentDetails/TournamentDetails.module.scss";
+import ActiveTournament from "../../../components/Director/ActiveTournament/ActiveTournament";
 
 const Tournament = () => {
   const directorContext = useDirectorContext();
@@ -12,6 +15,7 @@ const Tournament = () => {
   const { identifier, stripe } = router.query;
 
   const [errorMessage, setErrorMessage] = useState(null);
+  const [tournament, setTournament] = useState(null);
 
   const onTournamentFetchSuccess = (data) => {
     directorContext.setTournament(data);
@@ -42,6 +46,17 @@ const Tournament = () => {
       onFailure: onTournamentFetchFailure,
     });
   }, [identifier, directorContext.user, router]);
+
+  useEffect(() => {
+    if (!directorContext || !directorContext.tournament) {
+      return;
+    }
+    setTournament(directorContext.tournament);
+  }, [directorContext.tournament]);
+
+  if (!directorContext || !directorContext.tournament) {
+    return '';
+  }
 
   const stateChangeSuccess = (data) => {
     directorContext.setTournament(data);
@@ -123,17 +138,17 @@ const Tournament = () => {
     );
   }
 
-  if (!directorContext) {
-    return '';
-  }
+  const tournamentView = directorContext.tournament.state === 'active' || directorContext.tournament.state === 'closed'
+    ? <ActiveTournament tournament={tournament} closeTournament={stateChangeInitiated} />
+    : <TournamentDetails stateChangeInitiated={stateChangeInitiated}
+                         testEnvironmentUpdated={testEnvironmentUpdated} />;
 
+  const ladder = [{ text: 'Tournaments', path: '/director' }];
   return (
     <div>
+      <Breadcrumbs ladder={ladder} activeText={directorContext.tournament.name} className={classes.Breadcrumbs} />
       {error}
-      <TournamentDetails stateChangeInitiated={stateChangeInitiated}
-                         testEnvironmentUpdated={testEnvironmentUpdated}
-                         requestStripeStatus={stripe}
-      />
+      {tournamentView}
     </div>
   );
 }
