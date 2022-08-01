@@ -1,6 +1,6 @@
 import Card from 'react-bootstrap/Card';
 
-import classes from './ActiveTournament.module.scss';
+import classes from './VisibleTournament.module.scss';
 import {Placeholder} from "react-bootstrap";
 
 const Logo = ({src}) => {

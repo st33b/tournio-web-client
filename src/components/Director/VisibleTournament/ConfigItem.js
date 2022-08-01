@@ -3,7 +3,7 @@ import {Accordion, Placeholder} from "react-bootstrap";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
 
-import classes from './ActiveTournament.module.scss';
+import classes from './VisibleTournament.module.scss';
 
 const ConfigItem = ({item}) => {
   if (!item) {

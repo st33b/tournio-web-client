@@ -2,7 +2,7 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
 
-import classes from './ActiveTournament.module.scss';
+import classes from './VisibleTournament.module.scss';
 import {Placeholder} from "react-bootstrap";
 
 const Counts = ({tournament}) => {

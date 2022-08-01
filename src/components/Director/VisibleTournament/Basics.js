@@ -1,6 +1,6 @@
 import {Accordion, Placeholder} from "react-bootstrap";
 
-import classes from './ActiveTournament.module.scss';
+import classes from './VisibleTournament.module.scss';
 
 const Basics = ({tournament, eventKey}) => {
   let content = (

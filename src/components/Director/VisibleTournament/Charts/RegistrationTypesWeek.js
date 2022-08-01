@@ -2,7 +2,7 @@ import Chart from 'chart.js/auto';
 import { Bar } from 'react-chartjs-2';
 import {eachDayOfInterval, format} from "date-fns";
 
-import classes from '../ActiveTournament.module.scss';
+import classes from '../VisibleTournament.module.scss';
 import {chartColors} from "./common";
 
 const RegistrationTypesWeek = ({tournament}) => {

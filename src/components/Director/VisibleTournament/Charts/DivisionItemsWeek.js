@@ -5,7 +5,7 @@ import {color} from "chart.js/helpers";
 
 import {chartColors} from "./common";
 
-import classes from '../ActiveTournament.module.scss';
+import classes from '../VisibleTournament.module.scss';
 
 const DivisionItemsWeek = ({tournament, title}) => {
   if (!tournament) {

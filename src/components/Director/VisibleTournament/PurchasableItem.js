@@ -1,4 +1,4 @@
-import classes from './ActiveTournament.module.scss';
+import classes from './VisibleTournament.module.scss';
 import {Placeholder, ListGroupItem} from "react-bootstrap";
 
 const PurchasableItem = ({item}) => {

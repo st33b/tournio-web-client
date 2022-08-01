@@ -5,7 +5,7 @@ import {color} from "chart.js/helpers";
 
 import {chartColors} from "./common";
 
-import classes from '../ActiveTournament.module.scss';
+import classes from '../VisibleTournament.module.scss';
 
 const OptionalItemsWeek = ({tournament, title, dataKeys}) => {
   if (!tournament) {

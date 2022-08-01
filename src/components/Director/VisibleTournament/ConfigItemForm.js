@@ -6,7 +6,7 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../utils";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
-import classes from './ActiveTournament.module.scss';
+import classes from './VisibleTournament.module.scss';
 
 const ConfigItemForm = ({item}) => {
   const context = useDirectorContext();

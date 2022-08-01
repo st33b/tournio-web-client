@@ -2,28 +2,23 @@ import Chart from 'chart.js/auto';
 import { Line } from 'react-chartjs-2';
 import {eachDayOfInterval, format} from "date-fns";
 
-import classes from '../ActiveTournament.module.scss';
+import classes from '../VisibleTournament.module.scss';
 
-const RegistrationsWeekChart = ({tournament}) => {
+const RegistrationsWeek = ({tournament}) => {
   if (!tournament) {
     return '';
   }
 
-  const days = eachDayOfInterval(
-    { start: new Date(2022, 4, 21), end: new Date(2022, 4, 27) }
-  );
-
-  const labels = days.map(d => format(d, 'MMM d'));
-
+  const labels = tournament.chart_data.last_week_registrations.dates.map(dayIso8601 => format(new Date(dayIso8601), 'MMM d'));
   const options = {
     responsive: true,
     plugins: {
       title: {
         display: true,
-        text: "Last Week's Registrations",
+        text: "Last Week's Activity",
       },
       legend: {
-        display: false,
+        display: true,
       },
     },
     scales: {
@@ -37,10 +32,16 @@ const RegistrationsWeekChart = ({tournament}) => {
     labels,
     datasets: [
       {
-        label: 'Foo',
-        data: [3, 5, 1, 8, 6, 4, 3],
+        label: 'Registrations',
+        data: tournament.chart_data.last_week_registrations.values,
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      },
+      {
+        label: 'Payments',
+        data: Object.values(tournament.chart_data.last_week_payments.values),
+        borderColor: 'rgb(64, 130, 76)',
+        backgroundColor: 'rgba(64, 130, 76, 0.5)',
       },
     ],
   };
@@ -52,4 +53,4 @@ const RegistrationsWeekChart = ({tournament}) => {
   );
 }
 
-export default RegistrationsWeekChart
+export default RegistrationsWeek

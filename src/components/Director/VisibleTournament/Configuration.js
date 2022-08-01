@@ -2,7 +2,7 @@ import {Accordion, Placeholder} from "react-bootstrap";
 
 import ConfigItem from "./ConfigItem";
 
-import classes from './ActiveTournament.module.scss';
+import classes from './VisibleTournament.module.scss';
 
 const Configuration = ({eventKey, tournament}) => {
   let content = (

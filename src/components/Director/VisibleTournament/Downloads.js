@@ -5,7 +5,7 @@ import {Card, Placeholder} from "react-bootstrap";
 import {directorApiDownloadRequest} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
-import classes from './ActiveTournament.module.scss';
+import classes from './VisibleTournament.module.scss';
 
 const Downloads = ({tournament}) => {
   const context = useDirectorContext();

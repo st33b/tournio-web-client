@@ -1,7 +1,7 @@
 import {Card, ListGroup, Placeholder} from "react-bootstrap";
 import ShiftForm from '../ShiftForm/ShiftForm';
 
-import classes from './ActiveTournament.module.scss';
+import classes from './VisibleTournament.module.scss';
 
 const RegistrationOptions = ({tournament}) => {
   let content = (

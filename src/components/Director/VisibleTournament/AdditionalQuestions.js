@@ -1,7 +1,7 @@
 import ListGroup from "react-bootstrap/ListGroup";
 import {Accordion, Placeholder} from "react-bootstrap";
 
-import classes from './ActiveTournament.module.scss';
+import classes from './VisibleTournament.module.scss';
 
 const AdditionalQuestions = ({eventKey, tournament}) => {
   let content = (

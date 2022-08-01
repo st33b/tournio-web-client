@@ -2,7 +2,7 @@ import {Accordion, ListGroup, Placeholder} from "react-bootstrap";
 
 import PurchasableItem from "./PurchasableItem";
 
-import classes from './ActiveTournament.module.scss';
+import classes from './VisibleTournament.module.scss';
 
 const PurchasableItems = ({eventKey, tournament}) => {
   if (!tournament) {

@@ -7,7 +7,7 @@ import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLa
 import TournamentDetails from '../../../components/Director/TournamentDetails/TournamentDetails';
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import classes from "../../../components/Director/TournamentDetails/TournamentDetails.module.scss";
-import ActiveTournament from "../../../components/Director/ActiveTournament/ActiveTournament";
+import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
 
 const Tournament = () => {
   const directorContext = useDirectorContext();
@@ -122,6 +122,8 @@ const Tournament = () => {
     });
   }
 
+
+
   let error = '';
   if (errorMessage) {
     error = (
@@ -139,7 +141,7 @@ const Tournament = () => {
   }
 
   const tournamentView = directorContext.tournament.state === 'active' || directorContext.tournament.state === 'closed'
-    ? <ActiveTournament tournament={tournament} closeTournament={stateChangeInitiated} />
+    ? <VisibleTournament tournament={tournament} closeTournament={stateChangeInitiated} />
     : <TournamentDetails stateChangeInitiated={stateChangeInitiated}
                          testEnvironmentUpdated={testEnvironmentUpdated} />;
 

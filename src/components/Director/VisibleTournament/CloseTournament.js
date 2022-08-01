@@ -1,6 +1,6 @@
 import Button from 'react-bootstrap/Button';
 
-import classes from './ActiveTournament.module.scss';
+import classes from './VisibleTournament.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {Placeholder} from "react-bootstrap";
 

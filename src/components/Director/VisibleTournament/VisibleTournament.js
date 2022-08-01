@@ -11,17 +11,18 @@ import RegistrationOptions from "./RegistrationOptions";
 import EditableConfiguration from "./EditableConfiguration";
 import Contacts from "../TournamentDetails/Contacts";
 
-import classes from './ActiveTournament.module.scss';
+import classes from './VisibleTournament.module.scss';
 import PurchasableItems from "./PurchasableItems";
 import Downloads from "./Downloads";
 import RegistrationsWeek from "./Charts/RegistrationsWeek";
 import RegistrationTypesWeek from "./Charts/RegistrationTypesWeek";
 import DivisionItemsWeek from "./Charts/DivisionItemsWeek";
 import OptionalItemsWeek from "./Charts/OptionalItemsWeek";
+import MassActions from "../MassActions/MassActions";
 
-const ActiveTournament = ({tournament, closeTournament}) => {
+const VisibleTournament = ({tournament, closeTournament}) => {
   if (!tournament) {
-    return <div className={classes.ActiveTournament}>
+    return <div className={classes.VisibleTournament}>
       <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
     </div>;
   }
@@ -33,7 +34,7 @@ const ActiveTournament = ({tournament, closeTournament}) => {
   const divisionNames = Array.from(divisionNameSet);
 
   return (
-    <div className={classes.ActiveTournament}>
+    <div className={classes.VisibleTournament}>
       <div className={'row'}>
 
         <div className={'col-12 col-md-4 col-xl-3'}>
@@ -41,6 +42,7 @@ const ActiveTournament = ({tournament, closeTournament}) => {
           <RegistrationOptions tournament={tournament}/>
           <EditableConfiguration tournament={tournament} />
           <Downloads tournament={tournament}/>
+          <MassActions tournament={tournament}/>
           {tournament.state === 'active' && (
             <>
               <hr />
@@ -53,7 +55,7 @@ const ActiveTournament = ({tournament, closeTournament}) => {
           <Capacity tournament={tournament} />
           <RegistrationsWeek tournament={tournament}/>
           <RegistrationTypesWeek tournament={tournament}/>
-          {divisionNames.map(name => <DivisionItemsWeek tournament={tournament} title={name}/> )}
+          {divisionNames.map(name => <DivisionItemsWeek tournament={tournament} title={name} key={name}/> )}
           <OptionalItemsWeek tournament={tournament} title={'Optional Events'} dataKeys={['bowling']}/>
           <OptionalItemsWeek tournament={tournament} title={'Extras'} dataKeys={['banquet', 'product']}/>
         </div>
@@ -84,4 +86,4 @@ const ActiveTournament = ({tournament, closeTournament}) => {
   );
 }
 
-export default ActiveTournament;
+export default VisibleTournament;

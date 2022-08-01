@@ -1,4 +1,4 @@
-import classes from './ActiveTournament.module.scss';
+import classes from './VisibleTournament.module.scss';
 import {Placeholder, Card, ListGroup} from "react-bootstrap";
 import ConfigItemForm from "./ConfigItemForm";
 

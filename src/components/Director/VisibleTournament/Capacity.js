@@ -1,4 +1,4 @@
-import classes from './ActiveTournament.module.scss';
+import classes from './VisibleTournament.module.scss';
 import {Placeholder} from "react-bootstrap";
 import ShiftCapacity from "../../common/ShiftCapacity/ShiftCapacity";
 import ProgressBarLegend from "../../common/ShiftCapacity/ProgressBarLegend";
