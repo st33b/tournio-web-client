@@ -6,6 +6,13 @@ import {Placeholder} from "react-bootstrap";
 
 /* Assumption: tournament.state is active */
 const CloseTournament = ({tournament, closeTournament}) => {
+  const stateChangeSubmitHandler = (event) => {
+    event.preventDefault();
+    if (confirm("This step is irreversible. Are you sure?")) {
+      closeTournament('close');
+    }
+  }
+
   let content = (
     <Placeholder.Button variant={'danger'} xs={6} />
   );
@@ -19,13 +26,6 @@ const CloseTournament = ({tournament, closeTournament}) => {
         </Button>
       </form>
     );
-  }
-
-  const stateChangeSubmitHandler = (event) => {
-    event.preventDefault();
-    if (confirm("This step is irreversible. Are you sure?")) {
-      closeTournament('close');
-    }
   }
 
   return (

@@ -41,8 +41,12 @@ const ActiveTournament = ({tournament, closeTournament}) => {
           <RegistrationOptions tournament={tournament}/>
           <EditableConfiguration tournament={tournament} />
           <Downloads tournament={tournament}/>
-          <hr />
-          <CloseTournament tournament={tournament} closeTournament={closeTournament} />
+          {tournament.state === 'active' && (
+            <>
+              <hr />
+              <CloseTournament tournament={tournament} closeTournament={closeTournament} />
+            </>
+          )}
         </div>
 
         <div className={'col-12 col-md-8 col-xl-6'}>
