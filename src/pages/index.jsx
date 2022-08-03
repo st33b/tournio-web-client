@@ -45,7 +45,7 @@ const Page = () => (
               individually.
             </Card.Text>
             <Card.Text>
-              There's even support for tournaments with non-traditional formats.
+              There&apos;s even support for tournaments with non-traditional formats.
             </Card.Text>
           </Card.Body>
         </Card>
