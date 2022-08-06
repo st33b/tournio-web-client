@@ -127,21 +127,29 @@ const StatusAndCounts = ({testEnvironmentUpdated}) => {
 
   const downloads = (
     <Card.Body className={'bg-white text-dark'}>
-      <Card.Subtitle className={'mb-3'}>
+      <Card.Subtitle>
         Downloads
       </Card.Subtitle>
-      <Card.Link className={'btn btn-sm btn-outline-primary'}
-                 href={'#'}
-                 onClick ={(event) => downloadClicked(event, `/director/tournaments/${context.tournament.identifier}/csv_download`, 'bowlers.csv')}
-      >
-        CSV
-      </Card.Link>
-      <Card.Link className={'btn btn-sm btn-outline-primary'}
-                 href={'#'}
-                 onClick ={(event) => downloadClicked(event, `/director/tournaments/${context.tournament.identifier}/igbots_download`, 'bowlers.xml')}
-      >
-        IGBO-TS
-      </Card.Link>
+      <div className={`text-center ${classes.Downloads}`}>
+        <a className={'btn btn-sm btn-outline-primary mt-3'}
+                   href={'#'}
+                   onClick ={(event) => downloadClicked(event, `/director/tournaments/${context.tournament.identifier}/csv_download`, 'bowlers.csv')}
+        >
+          CSV
+        </a>
+        <a className={'btn btn-sm btn-outline-primary mt-3'}
+                   href={'#'}
+                   onClick ={(event) => downloadClicked(event, `/director/tournaments/${context.tournament.identifier}/igbots_download`, 'bowlers.xml')}
+        >
+          IGBO-TS
+        </a>
+        <a className={'btn btn-sm btn-outline-primary mt-3'}
+                   target={'_new'}
+                   href={`/director/tournaments/${context.tournament.identifier}/sign-in-sheets`}
+        >
+          Sign-in Sheets (beta)
+        </a>
+      </div>
       {downloadMessage}
     </Card.Body>
   );

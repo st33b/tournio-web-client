@@ -4,8 +4,8 @@
 }
 
 .SignInSheetHtml {
-  margin: 2rem;
-
+  margin-left: 2rem;
+  margin-right: 2rem;
   line-height: 1.5rem;
   .Logo {
     max-width: 80px;
@@ -28,8 +28,8 @@
     font-weight: 200;
   }
   .Agreement {
-    position: fixed;
-    bottom: 2rem;
+    margin-top: 3rem;
+    margin-right: 2rem;
     width: 100%;
 
     .Signature {
@@ -41,5 +41,10 @@
       font-weight: 200;
       word-wrap: normal;
     }
+  }
+}
+@media print {
+  .SignInSheetHtml {
+    page-break-after: always;
   }
 }
