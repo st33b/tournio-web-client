@@ -1,7 +1,7 @@
 import {useDirectorContext} from "../../../store/DirectorContext";
 import classes from './SignInSheet.module.scss';
 
-const SignInSheet = ({bowler}) => {
+const SignInSheet = ({bowler, showPrintButton}) => {
   const context = useDirectorContext();
 
   if (!bowler || !context) {
@@ -15,7 +15,7 @@ const SignInSheet = ({bowler}) => {
 
   return (
     <div className={classes.SignInSheetHtml}>
-      <div className={'d-flex align-items-center justify-content-center pb-3'}>
+      <div className={'d-flex align-items-center justify-content-center pb-3 pt-4'}>
         <img className={`${classes.Logo} img-fluid`}
              src={context.tournament.image_path}
              alt={'Tournament logo'}/>
@@ -28,12 +28,14 @@ const SignInSheet = ({bowler}) => {
         <h3 className={'me-auto'}>
           {bowler.last_name}, {bowlerFirstName}
         </h3>
-        <button className={`${classes.PrintButton} btn btn-sm btn-outline-secondary`}
-                role={'button'}
-                onClick={() => window.print()}>
-          <i className={'bi-printer pe-2'} aria-hidden={true} />
-          Print this page
-        </button>
+        {showPrintButton && (
+          <button className={`${classes.PrintButton} btn btn-sm btn-outline-secondary`}
+                  role={'button'}
+                  onClick={() => window.print()}>
+            <i className={'bi-printer pe-2'} aria-hidden={true} />
+            Print
+          </button>
+        )}
       </div>
 
       <div className={'row py-3 border-bottom border-1'}>
@@ -83,7 +85,7 @@ const SignInSheet = ({bowler}) => {
         </div>
       </div>
 
-      <div className={'row py-3 border-bottom border-1'}>
+      <div className={`row py-3 border-bottom border-1`}>
         <div className={'col-5'}>
           <div className={'row'}>
             <div className={'col-8 text-end pe-2'}>
@@ -191,9 +193,9 @@ const SignInSheet = ({bowler}) => {
         </div>
       </div>
 
-      <div className={classes.Agreement}>
+      <div className={`${classes.Agreement}`}>
         <div className={'row'}>
-          <div className={`col-7 offset-3`}>
+          <div className={`col-7 offset-5`}>
             <div className={classes.Signature}>
               <i className={'bi-x-lg'} aria-hidden={true}/>
             </div>
