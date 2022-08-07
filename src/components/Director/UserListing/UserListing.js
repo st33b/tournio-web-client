@@ -13,6 +13,17 @@ import classes from './UserListing.module.scss';
 const UserListing = ({users, tournaments}) => {
   const columns = useMemo(() => [
     {
+      id: 'last_name',
+      Header: ({column}) => <SortableTableHeader text={'Last Name'} column={column}/>,
+      accessor: 'last_name',
+    },
+    {
+      id: 'first_name',
+      accessor: 'first_name',
+      Header: 'First Name',
+      disableSortBy: true,
+    },
+    {
       id: 'email',
       Header: ({column}) => <SortableTableHeader text={'Email'} column={column}/>,
       accessor: 'email',
