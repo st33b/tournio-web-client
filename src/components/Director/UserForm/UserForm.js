@@ -22,6 +22,8 @@ const UserForm = ({user, tournaments, userDeleteInitiated}) => {
     fields: {
       email: '',
       role: 'director',
+      first_name: '',
+      last_name: '',
       tournamentIds: [],
     },
     valid: false,
@@ -74,6 +76,8 @@ const UserForm = ({user, tournaments, userDeleteInitiated}) => {
 
     newUserFormData.fields.email = user.email;
     newUserFormData.fields.role = user.role;
+    newUserFormData.fields.first_name = user.first_name;
+    newUserFormData.fields.last_name = user.last_name;
     newUserFormData.fields.tournamentIds = user.tournaments.map(t => t.id);
 
     const isSelf = user.identifier === directorContext.user.identifier;
@@ -110,12 +114,12 @@ const UserForm = ({user, tournaments, userDeleteInitiated}) => {
   const submitHandler = (event) => {
     event.preventDefault();
 
-    const enteredEmail = userFormData.fields.email;
-
     let uri = `/director/users`;
     let method = 'post';
     const userData = {
-      email: enteredEmail,
+      email: userFormData.fields.email,
+      first_name: userFormData.fields.first_name,
+      last_name: userFormData.fields.last_name,
     }
 
     if (!areWeCreating) {
@@ -124,13 +128,11 @@ const UserForm = ({user, tournaments, userDeleteInitiated}) => {
     }
 
     if (!isSelf) {
-      const enteredRole = userFormData.fields.role;
-
       const tournamentIds = [];
       for (const option of userFormData.fields.tournamentIds) {
         tournamentIds.push(option);
       }
-      userData.role = enteredRole;
+      userData.role = userFormData.fields.role;
       userData.tournament_ids = tournamentIds;
     }
 
@@ -211,6 +213,24 @@ const UserForm = ({user, tournaments, userDeleteInitiated}) => {
               <Form.Control.Feedback type={'invalid'}>
                 Gotta have a valid email address.
               </Form.Control.Feedback>
+            </FormGroup>
+            <FormGroup controlId={'firstName'} className={'mb-3'}>
+              <Form.Label>
+                First Name
+              </Form.Label>
+              <Form.Control type={'text'}
+                            value={userFormData.fields.first_name}
+                            onChange={(event) => inputChangedHandler(event, 'first_name')}
+              />
+            </FormGroup>
+            <FormGroup controlId={'lastName'} className={'mb-3'}>
+              <Form.Label>
+                Last Name
+              </Form.Label>
+              <Form.Control type={'text'}
+                            value={userFormData.fields.last_name}
+                            onChange={(event) => inputChangedHandler(event, 'last_name')}
+              />
             </FormGroup>
             {!isSelf && (
               <FormGroup controlId={'role'} className={'mb-3'}>
