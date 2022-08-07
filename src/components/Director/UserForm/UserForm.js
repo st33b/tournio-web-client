@@ -128,13 +128,11 @@ const UserForm = ({user, tournaments, userDeleteInitiated}) => {
     }
 
     if (!isSelf) {
-      const enteredRole = userFormData.fields.role;
-
       const tournamentIds = [];
       for (const option of userFormData.fields.tournamentIds) {
         tournamentIds.push(option);
       }
-      userData.role = enteredRole;
+      userData.role = userFormData.fields.role;
       userData.tournament_ids = tournamentIds;
     }
 
