@@ -12,6 +12,7 @@ import Shifts from "./Shifts";
 import StripeStatus from "./StripeStatus";
 
 import classes from './TournamentDetails.module.scss';
+import ImageUpload from "./ImageUpload";
 
 const TournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated, requestStripeStatus}) => {
   const context = useDirectorContext();
@@ -38,7 +39,8 @@ const TournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated, reques
         </div>
 
         <div className={'col-12 col-md-6 col-lg-4'}>
-          <TournamentLogo tournament={context.tournament} />
+          {/*<TournamentLogo tournament={context.tournament} />*/}
+          <ImageUpload/>
           <StateChangeButton stateChangeInitiated={stateChangeInitiated} />
           <Contacts />
           {context.tournament.state !== 'active' && <DeleteTournament />}
