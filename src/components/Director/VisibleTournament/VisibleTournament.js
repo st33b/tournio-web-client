@@ -1,7 +1,6 @@
 import {Accordion, Card} from "react-bootstrap";
 
 import Basics from './Basics';
-import Logo from "./Logo";
 import Configuration from "./Configuration";
 import AdditionalQuestions from "./AdditionalQuestions";
 import Capacity from './Capacity';
