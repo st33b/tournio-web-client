@@ -19,6 +19,7 @@ import RegistrationTypesWeek from "./Charts/RegistrationTypesWeek";
 import DivisionItemsWeek from "./Charts/DivisionItemsWeek";
 import OptionalItemsWeek from "./Charts/OptionalItemsWeek";
 import MassActions from "../MassActions/MassActions";
+import LogoImage from "../LogoImage/LogoImage";
 
 const VisibleTournament = ({tournament, closeTournament}) => {
   if (!tournament) {
@@ -61,7 +62,7 @@ const VisibleTournament = ({tournament, closeTournament}) => {
         </div>
 
         <div className={'col-12 col-md-4 col-xl-3'}>
-          <Logo src={tournament.image_path} />
+          <LogoImage src={tournament.image_url} />
 
           <Card className={'text-center'} border={'0'}>
             <Card.Body>

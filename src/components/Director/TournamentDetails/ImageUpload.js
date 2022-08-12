@@ -8,17 +8,19 @@ import Button from "react-bootstrap/Button";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../utils";
 import FormData from 'form-data';
-
-const B2 = require('backblaze-b2');
+import LogoImage from "../LogoImage/LogoImage";
 
 const ImageUpload = () => {
   const context = useDirectorContext();
   const router = useRouter();
 
   const [tournament, setTournament] = useState();
+  const [formDisplayed, setFormDisplayed] = useState(false);
   const [fileInput, setFileInput] = useState({
     file: '',
   });
+  const [success, setSuccess] = useState();
+  const [error, setError] = useState();
 
   useEffect(() => {
     if (!context) {
@@ -39,44 +41,21 @@ const ImageUpload = () => {
     console.log("New file input value:", newValue.file);
   }
 
-  // From the backblaze-b2 README...
-  // const b2 = new B2({
-  //   applicationKeyId: process.env.ACCESS_KEY,
-  //   applicationKey: process.env.SECRET_KEY,
-  //   // // optional:
-  //   // axios: {
-  //   //   // overrides the axios instance default config, see https://github.com/axios/axios
-  //   // },
-  //   // retry: {
-  //   //   retries: 3 // this is the default
-  //   //   // for additional options, see https://github.com/softonic/axios-retry
-  //   // }
-  // });
-
-  const success = (data) => {
-    console.log("Success!", data);
+  const onSuccess = (data) => {
+    setSuccess('File successfully uploaded.');
+    const imageUrl = data.image_url;
+    const tournament = {...context.tournament};
+    tournament.image_url = imageUrl;
+    context.setTournament(tournament);
+    setFormDisplayed(false);
   }
 
-  const failure = (data) => {
-    console.log("Failure :(", data);
+  const onFailure = (data) => {
+    setError('File failed to upload');
   }
 
   const uploadTheFile = (e) => {
     e.preventDefault();
-    console.log("Upload clicked, here we go...");
-    // try {
-    //   console.log("Requesting Backblaze authorization");
-    //   await b2.authorize();
-    //   console.log("Getting the ID of the bucket named", 'tournio-assets-development');
-    //   let bucket = await b2.getBucket({ bucketName: 'tournio-assets-development' });
-    //   console.log("Bucket response:", bucket);
-    //   // await b2.getUploadUrl({
-    //   //   bucketId: ,
-    //   //   // ...common arguments (optional)
-    //   // });
-    // } catch(err) {
-    //   console.log("Error!", err);
-    // }
 
     const formData = new FormData();
     formData.append('file', imageFile.files[0]);
@@ -91,8 +70,8 @@ const ImageUpload = () => {
       requestConfig: requestConfig,
       context: context,
       router: router,
-      onSuccess: success,
-      onFailure: failure,
+      onSuccess: onSuccess,
+      onFailure: onFailure,
     });
   }
 
@@ -102,30 +81,65 @@ const ImageUpload = () => {
         Logo
       </Card.Header>
       <Card.Body>
-        <Form.Group controlId="imageFile" className="mb-3">
-          <Form.Label>Logo File Upload</Form.Label>
-          <Form.Control type="file"
-                        size="sm"
-                        className={'mb-2'}
-                        onChange={whereTheFileIsChanged}
-          />
-          <Form.Text id="passwordHelpBlock" muted className={`mt-0`}>
-            Something about file
-            <strong>
-              {' '}
-              size or dimension
-              {' '}
-            </strong>
-            limitations.
-          </Form.Text>
-        </Form.Group>
-        <Form.Group controlId={'uploadGo'}>
+        <LogoImage src={context.tournament.image_url}/>
+        {!formDisplayed && (
           <Button variant={'primary'}
                   type={'button'}
-                  onClick={uploadTheFile}>
-            Upload
+                  onClick={() => setFormDisplayed(true)}
+          >
+            Upload new file
           </Button>
-        </Form.Group>
+        )}
+        {formDisplayed && (
+          <>
+            <Form.Group controlId="imageFile" className="mb-3">
+              <Form.Label>Logo File Upload</Form.Label>
+              <Form.Control type="file"
+                            size="sm"
+                            className={'mb-2'}
+                            onChange={whereTheFileIsChanged}
+              />
+              <Form.Text id="passwordHelpBlock" muted className={`mt-0`}>
+                A square-ish image works best.
+              </Form.Text>
+            </Form.Group>
+            <Form.Group controlId={'uploadGo'}>
+              <Button variant={'primary'}
+                      type={'button'}
+                      onClick={uploadTheFile}>
+                Upload
+              </Button>
+            </Form.Group>
+          </>
+        )}
+        {success && (
+          <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center my-2'}
+               role={'alert'}>
+            <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
+            <div className={'me-auto'}>
+              {success}
+              <button type="button"
+                      className={"btn-close"}
+                      data-bs-dismiss="alert"
+                      onClick={() => setSuccess(null)}
+                      aria-label="Close"/>
+            </div>
+          </div>
+        )}
+        {error && (
+          <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center my-2'}
+               role={'alert'}>
+            <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
+            <div className={'me-auto'}>
+              {error}
+              <button type="button"
+                      className={"btn-close"}
+                      data-bs-dismiss="alert"
+                      onClick={() => setError(null)}
+                      aria-label="Close"/>
+            </div>
+          </div>
+        )}
       </Card.Body>
     </Card>
   );

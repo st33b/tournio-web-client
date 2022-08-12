@@ -17,7 +17,7 @@ const SignInSheet = ({bowler}) => {
     <div className={classes.SignInSheetHtml}>
       <div className={'d-flex align-items-center justify-content-center pb-3'}>
         <img className={`${classes.Logo} img-fluid`}
-             src={context.tournament.image_path}
+             src={context.tournament.image_url}
              alt={'Tournament logo'}/>
         <h2 className={'ps-2'}>
           {context.tournament.name} {context.tournament.year}

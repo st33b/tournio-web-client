@@ -164,7 +164,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
     <div className={classes.Summary}>
       <Card className={`border-0`}>
         <Card.Img variant={'top'}
-                  src={tournament.image_path}
+                  src={tournament.image_url}
                   className={'d-none d-sm-block'}/>
         <Card.Body>
           <Card.Title>

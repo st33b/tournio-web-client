@@ -2,7 +2,6 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import Basics from "./Basics";
 import Configuration from "./Configuration";
 import AdditionalQuestions from "./AdditionalQuestions";
-import TournamentLogo from "./TournamentLogo";
 import StatusAndCounts from "./StatusAndCounts";
 import PurchasableItems from "./PurchasableItems";
 import Contacts from "./Contacts";
@@ -13,6 +12,7 @@ import StripeStatus from "./StripeStatus";
 
 import classes from './TournamentDetails.module.scss';
 import ImageUpload from "./ImageUpload";
+import LogoImage from "../LogoImage/LogoImage";
 
 const TournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated, requestStripeStatus}) => {
   const context = useDirectorContext();
@@ -39,7 +39,6 @@ const TournamentDetails = ({stateChangeInitiated, testEnvironmentUpdated, reques
         </div>
 
         <div className={'col-12 col-md-6 col-lg-4'}>
-          {/*<TournamentLogo tournament={context.tournament} />*/}
           <ImageUpload/>
           <StateChangeButton stateChangeInitiated={stateChangeInitiated} />
           <Contacts />

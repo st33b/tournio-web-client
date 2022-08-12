@@ -52,7 +52,7 @@ const TournamentCards = () => {
                   </div>
                   <div className={'card-body d-flex flex-column'}>
                     <p className={'d-block text-center d-none d-sm-block'}>
-                      <img src={t.image_path}
+                      <img src={t.image_url}
                            className={`card-img-top ${classes.Logo}`}
                            alt={'Tournament logo'} />
                     </p>
