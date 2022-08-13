@@ -19,16 +19,18 @@ import DivisionItemsWeek from "./Charts/DivisionItemsWeek";
 import OptionalItemsWeek from "./Charts/OptionalItemsWeek";
 import MassActions from "../MassActions/MassActions";
 import LogoImage from "../LogoImage/LogoImage";
+import {useDirectorContext} from "../../../store/DirectorContext";
 
-const VisibleTournament = ({tournament, closeTournament}) => {
-  if (!tournament) {
+const VisibleTournament = ({closeTournament}) => {
+  const context = useDirectorContext();
+  if (!context || !context.tournament) {
     return <div className={classes.VisibleTournament}>
       <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
     </div>;
   }
 
   const divisionNameSet = new Set();
-  tournament.purchasable_items.division.forEach(({name}) => {
+  context.tournament.purchasable_items.division.forEach(({name}) => {
     divisionNameSet.add(name);
   });
   const divisionNames = Array.from(divisionNameSet);
@@ -38,34 +40,34 @@ const VisibleTournament = ({tournament, closeTournament}) => {
       <div className={'row'}>
 
         <div className={'col-12 col-md-4 col-xl-3'}>
-          <Counts tournament={tournament} />
-          <RegistrationOptions tournament={tournament}/>
-          <EditableConfiguration tournament={tournament} />
-          <Downloads tournament={tournament}/>
-          <MassActions tournament={tournament}/>
-          {tournament.state === 'active' && (
+          <Counts tournament={context.tournament} />
+          <RegistrationOptions tournament={context.tournament}/>
+          <EditableConfiguration tournament={context.tournament} />
+          <Downloads tournament={context.tournament}/>
+          <MassActions tournament={context.tournament}/>
+          {context.tournament.state === 'active' && (
             <>
               <hr />
-              <CloseTournament tournament={tournament} closeTournament={closeTournament} />
+              <CloseTournament tournament={context.tournament} closeTournament={closeTournament} />
             </>
           )}
         </div>
 
         <div className={'col-12 col-md-8 col-xl-6'}>
-          <Capacity tournament={tournament} />
-          <RegistrationsWeek tournament={tournament}/>
-          <RegistrationTypesWeek tournament={tournament}/>
-          {divisionNames.map(name => <DivisionItemsWeek tournament={tournament} title={name} key={name}/> )}
-          <OptionalItemsWeek tournament={tournament} title={'Optional Events'} dataKeys={['bowling']}/>
-          <OptionalItemsWeek tournament={tournament} title={'Extras'} dataKeys={['banquet', 'product']}/>
+          <Capacity tournament={context.tournament} />
+          <RegistrationsWeek tournament={context.tournament}/>
+          <RegistrationTypesWeek tournament={context.tournament}/>
+          {divisionNames.map(name => <DivisionItemsWeek tournament={context.tournament} title={name} key={name}/> )}
+          <OptionalItemsWeek tournament={context.tournament} title={'Optional Events'} dataKeys={['bowling']}/>
+          <OptionalItemsWeek tournament={context.tournament} title={'Extras'} dataKeys={['banquet', 'product']}/>
         </div>
 
         <div className={'col-12 col-md-4 col-xl-3'}>
-          <LogoImage src={tournament.image_url} />
+          <LogoImage src={context.tournament.image_url} />
 
           <Card className={'text-center'} border={'0'}>
             <Card.Body>
-              <a href={`/tournaments/${tournament.identifier}`} target={'_new'}>
+              <a href={`/tournaments/${context.tournament.identifier}`} target={'_new'}>
                 Front Page
                 <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
               </a>
@@ -73,10 +75,10 @@ const VisibleTournament = ({tournament, closeTournament}) => {
           </Card>
 
           <Accordion className={'mb-3'}>
-            <Basics eventKey={'0'} tournament={tournament}/>
-            <Configuration eventKey={'1'} tournament={tournament} />
-            <AdditionalQuestions eventKey={'2'} tournament={tournament}/>
-            <PurchasableItems eventKey={'3'} tournament={tournament}/>
+            <Basics eventKey={'0'} tournament={context.tournament}/>
+            <Configuration eventKey={'1'} tournament={context.tournament} />
+            <AdditionalQuestions eventKey={'2'} tournament={context.tournament}/>
+            <PurchasableItems eventKey={'3'} tournament={context.tournament}/>
           </Accordion>
 
           <Contacts />

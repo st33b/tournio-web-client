@@ -85,6 +85,7 @@ const ImageUpload = () => {
         {!formDisplayed && (
           <Button variant={'primary'}
                   type={'button'}
+                  size={'sm'}
                   onClick={() => setFormDisplayed(true)}
           >
             Upload new file

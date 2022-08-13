@@ -47,13 +47,6 @@ const Tournament = () => {
     });
   }, [identifier, directorContext.user, router]);
 
-  useEffect(() => {
-    if (!directorContext || !directorContext.tournament) {
-      return;
-    }
-    setTournament(directorContext.tournament);
-  }, [directorContext.tournament]);
-
   if (!directorContext || !directorContext.tournament) {
     return '';
   }
@@ -122,8 +115,6 @@ const Tournament = () => {
     });
   }
 
-
-
   let error = '';
   if (errorMessage) {
     error = (
@@ -141,7 +132,7 @@ const Tournament = () => {
   }
 
   const tournamentView = directorContext.tournament.state === 'active' || directorContext.tournament.state === 'closed'
-    ? <VisibleTournament tournament={tournament} closeTournament={stateChangeInitiated} />
+    ? <VisibleTournament closeTournament={stateChangeInitiated} />
     : <TournamentDetails stateChangeInitiated={stateChangeInitiated}
                          testEnvironmentUpdated={testEnvironmentUpdated} />;
 
