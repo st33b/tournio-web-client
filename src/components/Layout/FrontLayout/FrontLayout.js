@@ -1,7 +1,6 @@
 import {Container} from "react-bootstrap";
 
 import SiteHeader from './SiteHeader';
-import Navigation from './Navigation';
 import Footer from './Footer';
 import classes from './FrontLayout.module.scss';
 import MaintenanceAnnouncement from "../../common/MaintenanceAnnouncement/MaintenanceAnnouncement";
