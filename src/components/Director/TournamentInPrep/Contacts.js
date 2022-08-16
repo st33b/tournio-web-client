@@ -4,7 +4,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import ContactForm from "../ContactForm/ContactForm";
 
-import classes from './TournamentDetails.module.scss';
+import classes from './TournamentInPrep.module.scss';
 
 const Contacts = () => {
   const context = useDirectorContext();

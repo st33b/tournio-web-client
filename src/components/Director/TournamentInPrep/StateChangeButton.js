@@ -2,7 +2,7 @@ import Button from 'react-bootstrap/Button';
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 
-import classes from './TournamentDetails.module.scss';
+import classes from './TournamentInPrep.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 const StateChangeButton = ({stateChangeInitiated}) => {

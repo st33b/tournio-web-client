@@ -9,7 +9,7 @@ import {directorApiRequest} from "../../../utils";
 
 import classes from './AdditionalQuestions.module.scss';
 
-const AdditionalQuestions = () => {
+const AdditionalQuestions = ({tournament}) => {
   const context = useDirectorContext();
   const router = useRouter();
 
@@ -23,22 +23,21 @@ const AdditionalQuestions = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const tournamentHasQuestions = context.tournament.additional_questions.length > 0;
-  const editable = context.tournament.state !== 'active' && context.tournament.state !== 'closed';
+  const tournamentHasQuestions = tournament.additional_questions.length > 0;
 
   useEffect(() => {
-    if (!context || !context.tournament) {
+    if (!context || !tournament) {
       return;
     }
 
     const dataFromContext = {
-      questions: context.tournament.additional_questions.map(q => ({ id: q.id, order: q.order, _destroy: false })),
+      questions: tournament.additional_questions.map(q => ({ id: q.id, order: q.order, _destroy: false })),
       valid: true,
     };
     setSaveData(dataFromContext);
-  }, [context]);
+  }, [context, tournament]);
 
-  if (!context || !context.tournament) {
+  if (!context || !tournament) {
     return '';
   }
 
@@ -90,7 +89,7 @@ const AdditionalQuestions = () => {
         additional_questions_attributes: saveData.questions,
       }
     }
-    const uri = `/director/tournaments/${context.tournament.identifier}`;
+    const uri = `/director/tournaments/${tournament.identifier}`;
     const requestConfig = {
       method: 'patch',
       data: patchData,
@@ -121,7 +120,7 @@ const AdditionalQuestions = () => {
   let list = '';
   if (editing) {
     list = (
-      context.tournament.additional_questions.map((q, i) => {
+      tournament.additional_questions.map((q, i) => {
         const str = q.label.length < 25 ? q.label : q.label.substring(0, 25).concat('...');
         if (!saveData.questions[i] || saveData.questions[i]._destroy) {
           return '';
@@ -132,7 +131,7 @@ const AdditionalQuestions = () => {
                    value={saveData.questions[i].order}
                    onChange={(event) => inputChanged(event, i)}
                    min={1}
-                   max={context.tournament.additional_questions.length}
+                   max={tournament.additional_questions.length}
                    className={`${classes.OrderInput} form-control`}
                    name={`aq-order-${i}`}
                    id={`aq-order-${i}`}
@@ -155,7 +154,7 @@ const AdditionalQuestions = () => {
     )
   } else {
     list = (
-      context.tournament.additional_questions.map((q, i) => {
+      tournament.additional_questions.map((q, i) => {
         if (saveData.questions[i] && saveData.questions[i]._destroy) {
           return '';
         }
@@ -204,7 +203,7 @@ const AdditionalQuestions = () => {
           <h5 className={'fw-light mb-0 mt-1'}>
             Additional Form Questions
           </h5>
-          {tournamentHasQuestions && editable && !editing && editLink}
+          {tournamentHasQuestions && !editing && editLink}
           {editing && saveLink}
         </Card.Header>
         <ListGroup variant={'flush'}>

@@ -1,13 +1,12 @@
 import Card from 'react-bootstrap/Card';
 
-import classes from './TournamentDetails.module.scss';
+import classes from './TournamentInPrep.module.scss';
 import {useDirectorContext} from "../../../store/DirectorContext";
 import ConfigItemForm from "../ConfigItemForm/ConfigItemForm";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
-const Configuration = () => {
-  const context = useDirectorContext();
-  if (!context || !context.tournament) {
+const Configuration = ({tournament}) => {
+  if (!tournament) {
     return '';
   }
 
@@ -19,7 +18,7 @@ const Configuration = () => {
         </Card.Header>
         <Card.Body>
           <dl>
-            {context.tournament.config_items.map((item) => {
+            {tournament.config_items.map((item) => {
               return (
                 <ConfigItemForm item={item} key={item.key} />
               )

@@ -4,9 +4,9 @@ import {useRouter} from "next/router";
 import {directorApiRequest} from "../../../utils";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
-import TournamentDetails from '../../../components/Director/TournamentDetails/TournamentDetails';
+import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
-import classes from "../../../components/Director/TournamentDetails/TournamentDetails.module.scss";
+import classes from "../../../components/Director/TournamentInPrep/TournamentInPrep.module.scss";
 import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
 
 const Tournament = () => {
@@ -15,7 +15,6 @@ const Tournament = () => {
   const { identifier, stripe } = router.query;
 
   const [errorMessage, setErrorMessage] = useState(null);
-  const [tournament, setTournament] = useState(null);
 
   const onTournamentFetchSuccess = (data) => {
     directorContext.setTournament(data);
@@ -133,8 +132,10 @@ const Tournament = () => {
 
   const tournamentView = directorContext.tournament.state === 'active' || directorContext.tournament.state === 'closed'
     ? <VisibleTournament closeTournament={stateChangeInitiated} />
-    : <TournamentDetails stateChangeInitiated={stateChangeInitiated}
-                         testEnvironmentUpdated={testEnvironmentUpdated} />;
+    : <TournamentInPrep stateChangeInitiated={stateChangeInitiated}
+                        testEnvironmentUpdated={testEnvironmentUpdated}
+                        requestStripeStatus={stripe}
+    />;
 
   const ladder = [{ text: 'Tournaments', path: '/director' }];
   return (

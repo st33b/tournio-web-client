@@ -2,7 +2,7 @@ import {Card, ListGroup} from "react-bootstrap";
 import ShiftForm from '../ShiftForm/ShiftForm';
 import {useDirectorContext} from "../../../store/DirectorContext";
 
-import classes from './TournamentDetails.module.scss';
+import classes from './TournamentInPrep.module.scss';
 
 const Shifts = () => {
   const context = useDirectorContext();

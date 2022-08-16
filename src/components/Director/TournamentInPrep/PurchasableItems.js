@@ -2,7 +2,7 @@ import Card from 'react-bootstrap/Card';
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 
-import classes from './TournamentDetails.module.scss';
+import classes from './TournamentInPrep.module.scss';
 import {useDirectorContext} from "../../../store/DirectorContext";
 import PurchasableItemEditForm from "../PurchasableItemEditForm/PurchasableItemEditForm";
 import NewPurchasableItem from "../NewPurchasableItem/NewPurchasableItem";
@@ -67,7 +67,7 @@ const PurchasableItems = () => {
     <ErrorBoundary>
       <Card className={[classes.Card, classes.PurchasableItems].join(' ')}>
         <Card.Header as={'h5'} className={'fw-light'}>
-          Purchasable Items
+          Fees and Events/Items
         </Card.Header>
 
         <LocalizationProvider dateAdapter={AdapterDateFns}>

@@ -3,7 +3,7 @@ import {useEffect} from "react";
 import {useRouter} from "next/router";
 import {useDirectorContext} from "../../../../store/DirectorContext";
 import Breadcrumbs from "../../../../components/Director/Breadcrumbs/Breadcrumbs";
-import classes from "../../../../components/Director/TournamentDetails/TournamentDetails.module.scss";
+import classes from "../../../../components/Director/TournamentInPrep/TournamentInPrep.module.scss";
 import {directorApiRequest} from "../../../../utils";
 import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
 

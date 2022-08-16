@@ -8,7 +8,7 @@ import CloseTournament from "./CloseTournament";
 import Counts from "./Counts";
 import RegistrationOptions from "./RegistrationOptions";
 import EditableConfiguration from "./EditableConfiguration";
-import Contacts from "../TournamentDetails/Contacts";
+import Contacts from "../TournamentInPrep/Contacts";
 
 import classes from './VisibleTournament.module.scss';
 import PurchasableItems from "./PurchasableItems";

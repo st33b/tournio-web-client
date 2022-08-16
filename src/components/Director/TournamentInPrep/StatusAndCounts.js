@@ -8,9 +8,9 @@ import Button from "react-bootstrap/Button";
 import {directorApiDownloadRequest, directorApiRequest} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
-import classes from './TournamentDetails.module.scss';
+import classes from './TournamentInPrep.module.scss';
 
-const StatusAndCounts = ({testEnvironmentUpdated}) => {
+const StatusAndCounts = ({testEnvironmentUpdated, tournament}) => {
   const context = useDirectorContext();
   const router = useRouter();
 
