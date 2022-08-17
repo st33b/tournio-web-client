@@ -27,6 +27,7 @@ const StripeStatus = ({tournament, needStatus}) => {
   }
 
   const onStatusFetchFailure = (data) => {
+    console.log('Failed to check Stripe status.');
     setErrorMessage(data.error);
   }
 
@@ -51,17 +52,13 @@ const StripeStatus = ({tournament, needStatus}) => {
     if (!tournament) {
       return;
     }
-    if (!tournament.stripe_account) {
-      return;
-    }
-
     setStripeAccount(tournament.stripe_account);
 
     if (!needStatus) {
       return;
     }
 
-    if (!tournament.stripe_account.can_accept_payments) {
+    if (tournament.stripe_account && !tournament.stripe_account.can_accept_payments) {
       initiateStatusRequest();
     }
   }, [needStatus, tournament]);

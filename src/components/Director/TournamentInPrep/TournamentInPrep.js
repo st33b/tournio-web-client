@@ -28,19 +28,19 @@ const TournamentInPrep = ({stateChangeInitiated, testEnvironmentUpdated, request
         <div className={'col-12 col-md-6 col-lg-4'}>
           <Basics tournament={context.tournament}/>
           <Configuration tournament={context.tournament}/>
-          <StripeStatus tournament={context.tournament} needStatus={requestStripeStatus} />
-          <AdditionalQuestions tournament={context.tournament}/>
           <Shifts tournament={context.tournament}/>
+          <AdditionalQuestions tournament={context.tournament}/>
         </div>
 
         <div className={'col-12 col-md-6 col-lg-4'}>
           <StatusAndCounts testEnvironmentUpdated={testEnvironmentUpdated} tournament={context.tournament}/>
+          <StateChangeButton tournament={context.tournament} stateChangeInitiated={stateChangeInitiated} />
           <PurchasableItems tournament={context.tournament}/>
+          <StripeStatus tournament={context.tournament} needStatus={requestStripeStatus} />
         </div>
 
         <div className={'col-12 col-md-6 col-lg-4'}>
           <ImageUpload tournament={context.tournament}/>
-          <StateChangeButton tournament={context.tournament} stateChangeInitiated={stateChangeInitiated} />
           <Contacts tournament={context.tournament}/>
           {context.tournament.state !== 'active' && <DeleteTournament />}
         </div>

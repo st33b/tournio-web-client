@@ -70,41 +70,51 @@ const PurchasableItems = ({tournament}) => {
           Fees and Events/Items
         </Card.Header>
 
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <Card.Body className={classes.Category}>
-            {ledgerItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+        {(!tournament.stripe_account || !tournament.stripe_account.can_accept_payments) && (
+          <Card.Body className={'text-muted text-center small'}>
+            Payment Integration must be set up before adding any fees or events/items.
           </Card.Body>
+        )}
 
-          {eventItems.length > 0 && (
-            <Card.Body className={classes.Category}>
-              {eventItems.map(item => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
-            </Card.Body>
-          )}
-
-          {groupValues.map((group, index) => {
-            return group.length > 0 && (
-              <Card.Body key={index} className={classes.Category}>
-                {group.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+        {tournament.stripe_account && tournament.stripe_account.can_accept_payments && (
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            {ledgerItems.length > 0 && (
+              <Card.Body className={classes.Category}>
+                {ledgerItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
               </Card.Body>
-            );
-          })}
+            )}
 
-          {singleUseItems.length > 0 &&
-            <Card.Body className={classes.Category}>
-              {singleUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+            {eventItems.length > 0 && (
+              <Card.Body className={classes.Category}>
+                {eventItems.map(item => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+              </Card.Body>
+            )}
+
+            {groupValues.map((group, index) => {
+              return group.length > 0 && (
+                <Card.Body key={index} className={classes.Category}>
+                  {group.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+                </Card.Body>
+              );
+            })}
+
+            {singleUseItems.length > 0 &&
+              <Card.Body className={classes.Category}>
+                {singleUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+              </Card.Body>
+            }
+
+            {multiUseItems.length > 0 &&
+              <Card.Body className={classes.Category}>
+                {multiUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+              </Card.Body>
+            }
+
+            <Card.Body className={'p-0'}>
+              <NewPurchasableItem/>
             </Card.Body>
-          }
-
-          {multiUseItems.length > 0 &&
-            <Card.Body className={classes.Category}>
-              {multiUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
-            </Card.Body>
-          }
-
-          <Card.Body className={'p-0'}>
-            <NewPurchasableItem/>
-          </Card.Body>
-        </LocalizationProvider>
+          </LocalizationProvider>
+        )}
       </Card>
     </ErrorBoundary>
   );

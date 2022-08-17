@@ -16,15 +16,17 @@ const Contacts = ({tournament}) => {
       <Card.Header as={'h6'} className={'fw-light'}>
         Contacts
       </Card.Header>
-      <ListGroup variant={'flush'}>
-        {tournament.contacts.map((contact, i) => {
-          return (
-            <ListGroup.Item key={i}>
-              <ContactForm contact={contact}/>
-            </ListGroup.Item>
-          );
-        })}
-      </ListGroup>
+      {tournament.contacts.length > 0 && (
+        <ListGroup variant={'flush'}>
+          {tournament.contacts.map((contact, i) => {
+            return (
+              <ListGroup.Item key={i}>
+                <ContactForm contact={contact}/>
+              </ListGroup.Item>
+            );
+          })}
+        </ListGroup>
+      )}
       <Card.Body>
         <ContactForm newContact={true} />
       </Card.Body>

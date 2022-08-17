@@ -11,6 +11,32 @@ const StateChangeButton = ({tournament, stateChangeInitiated}) => {
     return '';
   }
 
+  const unmetTestingCriteria = [];
+  const unmetOpeningCriteria = [];
+  if (!tournament.stripe_account || !tournament.stripe_account.can_accept_payments) {
+    unmetTestingCriteria.push('Payment Integration');
+    unmetOpeningCriteria.push('Payment Integration');
+  }
+  if (!tournament.purchasable_items.some(item => item.determination === 'entry_fee' || item.determination === 'event')) {
+    unmetTestingCriteria.push('Entry fee or main event');
+    unmetOpeningCriteria.push('Entry fee or main event');
+  }
+  if (!tournament.image_url) {
+    unmetTestingCriteria.push('Logo image');
+    unmetOpeningCriteria.push('Logo image');
+  }
+  if (tournament.contacts.length === 0) {
+    unmetTestingCriteria.push('Contacts (director, treasurer, etc)');
+    unmetOpeningCriteria.push('Contacts (director, treasurer, etc)');
+  }
+  if (!tournament.shifts || tournament.shifts.length === 0) {
+    unmetTestingCriteria.push('Capacity & registration options');
+    unmetOpeningCriteria.push('Capacity & registration options');
+  }
+  if (tournament.bowler_count > 0 || tournament.team_count > 0) {
+    unmetOpeningCriteria.push('Clear test data');
+  }
+
   let variant = '';
   let stateChangeText = '';
   let stateChangeValue = '';
@@ -19,9 +45,18 @@ const StateChangeButton = ({tournament, stateChangeInitiated}) => {
   let demoButton = '';
   switch (tournament.state) {
     case 'setup':
-      disabled = !tournament.purchasable_items.some(item => item.determination === 'entry_fee' || item.determination === 'event');
+      disabled = unmetTestingCriteria.length > 0;
       if (disabled) {
-        titleText = 'An entry fee or main event must be set before testing can begin.';
+        titleText = (
+          <>
+            <p>
+              The following items must be configured before testing can begin:
+            </p>
+            <ul>
+              {unmetTestingCriteria.map((item, i) => <li key={i}>{item}</li>)}
+            </ul>
+          </>
+        );
       }
       variant = 'warning';
       stateChangeText = 'Begin Testing';
@@ -39,6 +74,7 @@ const StateChangeButton = ({tournament, stateChangeInitiated}) => {
       }
       break;
     case 'testing':
+      // TODO: update for Stripe usage
       disabled = process.env.NODE_ENV === 'production' && tournament.config_items.find(item => item.key === 'paypal_client_id').value === 'sb';
       if (disabled) {
         titleText = 'PayPal Client ID must be set before opening registration';
@@ -87,10 +123,10 @@ const StateChangeButton = ({tournament, stateChangeInitiated}) => {
                     type={'submit'}>
               {stateChangeText}
             </Button>
-            {titleText && <div className={`${classes.WhyDisabledText} text-muted pt-3`}>({titleText})</div> }
+            {titleText && <div className={`${classes.WhyDisabledText} text-muted pt-3`}>{titleText}</div> }
           </form>
           {demoButton && (
-            <div className={'d-flex justify-content-center pt-3'}>
+            <div className={'d-flex justify-content-center mt-3'}>
               {demoButton}
             </div>
           )}

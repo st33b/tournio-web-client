@@ -323,9 +323,9 @@ const StatusAndCounts = ({testEnvironmentUpdated, tournament}) => {
       <Card.Header as={'h5'}>
         {tournament.status}
       </Card.Header>
-      {counts}
+      {tournament.state !== 'setup' && counts}
       {frontPageLink}
-      {downloads}
+      {tournament.state !== 'setup' && downloads}
       {testingStatusContent}
       {clearTestData}
     </Card>
