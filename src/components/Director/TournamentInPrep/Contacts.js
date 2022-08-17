@@ -6,9 +6,8 @@ import ContactForm from "../ContactForm/ContactForm";
 
 import classes from './TournamentInPrep.module.scss';
 
-const Contacts = () => {
-  const context = useDirectorContext();
-  if (!context || !context.tournament) {
+const Contacts = ({tournament}) => {
+  if (!tournament) {
     return '';
   }
 
@@ -18,7 +17,7 @@ const Contacts = () => {
         Contacts
       </Card.Header>
       <ListGroup variant={'flush'}>
-        {context.tournament.contacts.map((contact, i) => {
+        {tournament.contacts.map((contact, i) => {
           return (
             <ListGroup.Item key={i}>
               <ContactForm contact={contact}/>

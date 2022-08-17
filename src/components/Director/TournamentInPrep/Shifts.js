@@ -4,11 +4,9 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './TournamentInPrep.module.scss';
 
-const Shifts = () => {
-  const context = useDirectorContext();
-
+const Shifts = ({tournament}) => {
   let content = '';
-  if (!context || !context.tournament) {
+  if (!tournament) {
     content = (
       <Card.Body>
         <div className={'d-flex justify-content-center'}>
@@ -23,13 +21,13 @@ const Shifts = () => {
   } else {
     content = (
       <ListGroup variant={'flush'}>
-        {!context.tournament.shifts &&
+        {!tournament.shifts &&
           <ListGroup.Item>None configured</ListGroup.Item>
         }
-        {context.tournament.shifts && context.tournament.shifts.length === 0 &&
+        {tournament.shifts && tournament.shifts.length === 0 &&
           <ListGroup.Item>None configured</ListGroup.Item>
         }
-        {context.tournament.shifts && context.tournament.shifts.length > 0 && context.tournament.shifts.map((shift, i) => (
+        {tournament.shifts && tournament.shifts.length > 0 && tournament.shifts.map((shift, i) => (
           <ListGroup.Item key={i} className={'p-0'}>
             <ShiftForm shift={shift}/>
           </ListGroup.Item>
@@ -41,10 +39,10 @@ const Shifts = () => {
   return (
     <Card className={classes.Card}>
       <Card.Header as={'h5'} className={'fw-light'}>
-        Shifts
+        Capacity &amp; Registration Options
       </Card.Header>
       {content}
-      {context.tournament.shifts.length === 0 && <ShiftForm />}
+      {tournament.shifts.length === 0 && <ShiftForm />}
     </Card>
   )
 }

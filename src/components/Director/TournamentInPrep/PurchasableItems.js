@@ -8,13 +8,13 @@ import PurchasableItemEditForm from "../PurchasableItemEditForm/PurchasableItemE
 import NewPurchasableItem from "../NewPurchasableItem/NewPurchasableItem";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
-const PurchasableItems = () => {
+const PurchasableItems = ({tournament}) => {
   const context = useDirectorContext();
-  if (!context || !context.tournament) {
+  if (!context || !tournament) {
     return '';
   }
 
-  const ledgerItems = context.tournament.purchasable_items.filter(item => {
+  const ledgerItems = tournament.purchasable_items.filter(item => {
     return item.category === 'ledger'
   }).sort((left, right) => {
     const leftText = !!left.determination ? left.determination : '';
@@ -22,12 +22,12 @@ const PurchasableItems = () => {
     return leftText.localeCompare(rightText);
   });
 
-  const eventItems = context.tournament.purchasable_items.filter(({determination}) => determination === 'event').sort((left, right) => {
+  const eventItems = tournament.purchasable_items.filter(({determination}) => determination === 'event').sort((left, right) => {
     return left.configuration.order - right.configuration.order;
   });
 
   // sort the division items by name and note
-  const divisionItems = context.tournament.purchasable_items.filter(item => {
+  const divisionItems = tournament.purchasable_items.filter(item => {
     return item.determination === 'single_use' && item.refinement === 'division';
   }).sort((left, right) => {
     const leftText = left.name + left.configuration.division;
@@ -52,12 +52,12 @@ const PurchasableItems = () => {
   }
 
   // sort the single_use items by their order
-  const singleUseItems = context.tournament.purchasable_items.filter(item => {
+  const singleUseItems = tournament.purchasable_items.filter(item => {
     return item.determination === 'single_use' && !item.refinement;
   }).sort(sortByOrder);
 
   // sort the multi-use items by their order
-  const multiUseItems = context.tournament.purchasable_items.filter(item => {
+  const multiUseItems = tournament.purchasable_items.filter(item => {
     return item.determination === 'multi_use';
   }).sort(sortByOrder);
 

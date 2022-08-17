@@ -10,25 +10,16 @@ import {directorApiRequest} from "../../../utils";
 import FormData from 'form-data';
 import LogoImage from "../LogoImage/LogoImage";
 
-const ImageUpload = () => {
+const ImageUpload = ({tournament}) => {
   const context = useDirectorContext();
   const router = useRouter();
 
-  const [tournament, setTournament] = useState();
   const [formDisplayed, setFormDisplayed] = useState(false);
   const [fileInput, setFileInput] = useState({
     file: '',
   });
   const [success, setSuccess] = useState();
   const [error, setError] = useState();
-
-  useEffect(() => {
-    if (!context) {
-      return;
-    }
-
-    setTournament(context.tournament);
-  }, [context])
 
   if (!tournament) {
     return '';
@@ -44,9 +35,9 @@ const ImageUpload = () => {
   const onSuccess = (data) => {
     setSuccess('File successfully uploaded.');
     const imageUrl = data.image_url;
-    const tournament = {...context.tournament};
-    tournament.image_url = imageUrl;
-    context.setTournament(tournament);
+    const updatedTournament = {...tournament};
+    updatedTournament.image_url = imageUrl;
+    context.setTournament(updatedTournament);
     setFormDisplayed(false);
   }
 
@@ -60,7 +51,7 @@ const ImageUpload = () => {
     const formData = new FormData();
     formData.append('file', imageFile.files[0]);
 
-    const uri = `/director/tournaments/${context.tournament.identifier}/logo_upload`;
+    const uri = `/director/tournaments/${tournament.identifier}/logo_upload`;
     const requestConfig = {
       method: 'post',
       data: formData,
@@ -81,7 +72,7 @@ const ImageUpload = () => {
         Logo
       </Card.Header>
       <Card.Body>
-        <LogoImage src={context.tournament.image_url}/>
+        <LogoImage src={tournament.image_url}/>
         {!formDisplayed && (
           <Button variant={'primary'}
                   type={'button'}

@@ -5,9 +5,9 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import classes from './TournamentInPrep.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 
-const StateChangeButton = ({stateChangeInitiated}) => {
+const StateChangeButton = ({tournament, stateChangeInitiated}) => {
   const context = useDirectorContext();
-  if (!context || !context.tournament || !context.tournament.config_items) {
+  if (!context || !tournament || !tournament.config_items) {
     return '';
   }
 
@@ -17,9 +17,9 @@ const StateChangeButton = ({stateChangeInitiated}) => {
   let titleText = '';
   let disabled = false;
   let demoButton = '';
-  switch (context.tournament.state) {
+  switch (tournament.state) {
     case 'setup':
-      disabled = !context.tournament.purchasable_items.some(item => item.determination === 'entry_fee' || item.determination === 'event');
+      disabled = !tournament.purchasable_items.some(item => item.determination === 'entry_fee' || item.determination === 'event');
       if (disabled) {
         titleText = 'An entry fee or main event must be set before testing can begin.';
       }
@@ -39,18 +39,13 @@ const StateChangeButton = ({stateChangeInitiated}) => {
       }
       break;
     case 'testing':
-      disabled = process.env.NODE_ENV === 'production' && context.tournament.config_items.find(item => item.key === 'paypal_client_id').value === 'sb';
+      disabled = process.env.NODE_ENV === 'production' && tournament.config_items.find(item => item.key === 'paypal_client_id').value === 'sb';
       if (disabled) {
         titleText = 'PayPal Client ID must be set before opening registration';
       }
       variant = 'success';
       stateChangeText = 'Open Registration';
       stateChangeValue = 'open';
-      break;
-    case 'active':
-      variant = 'danger';
-      stateChangeText = 'Close Registration';
-      stateChangeValue = 'close';
       break;
     case 'demo':
       if (context.user && context.user.role === 'superuser') {
