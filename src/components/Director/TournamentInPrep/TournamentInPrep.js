@@ -42,7 +42,7 @@ const TournamentInPrep = ({stateChangeInitiated, testEnvironmentUpdated, request
         <div className={'col-12 col-md-6 col-lg-4'}>
           <ImageUpload tournament={context.tournament}/>
           <Contacts tournament={context.tournament}/>
-          {context.tournament.state !== 'active' && <DeleteTournament />}
+          <DeleteTournament tournament={context.tournament}/>
         </div>
       </div>
     </div>

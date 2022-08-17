@@ -20,6 +20,7 @@ import OptionalItemsWeek from "./Charts/OptionalItemsWeek";
 import MassActions from "../MassActions/MassActions";
 import LogoImage from "../LogoImage/LogoImage";
 import {useDirectorContext} from "../../../store/DirectorContext";
+import DeleteTournament from "./DeleteTournament";
 
 const VisibleTournament = ({closeTournament}) => {
   const context = useDirectorContext();
@@ -51,6 +52,7 @@ const VisibleTournament = ({closeTournament}) => {
               <CloseTournament tournament={context.tournament} closeTournament={closeTournament} />
             </>
           )}
+          {context.tournament.state === 'closed' && (<DeleteTournament tournament={context.tournament}/>)}
         </div>
 
         <div className={'col-12 col-md-8 col-xl-6'}>
@@ -81,7 +83,7 @@ const VisibleTournament = ({closeTournament}) => {
             <PurchasableItems eventKey={'3'} tournament={context.tournament}/>
           </Accordion>
 
-          <Contacts />
+          <Contacts tournament={context.tournament}/>
         </div>
       </div>
     </div>
