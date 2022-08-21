@@ -9,6 +9,7 @@ import {directorApiDownloadRequest, directorApiRequest} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './TournamentInPrep.module.scss';
+import {bgBG} from "@mui/material/locale";
 
 const StatusAndCounts = ({testEnvironmentUpdated, tournament}) => {
   const context = useDirectorContext();
@@ -131,7 +132,7 @@ const StatusAndCounts = ({testEnvironmentUpdated, tournament}) => {
   );
 
   const downloads = (
-    <Card.Body className={'bg-white text-dark'}>
+    <Card.Body>
       <Card.Subtitle className={'mb-3'}>
         Downloads
       </Card.Subtitle>
@@ -231,7 +232,7 @@ const StatusAndCounts = ({testEnvironmentUpdated, tournament}) => {
       );
     }
     clearTestData = (
-      <Card.Body className={'bg-white text-dark'}>
+      <Card.Body>
         <Card.Text>
           {!loading && (
             <Button variant={'warning'} onClick={clearTestDataClickHandler}>
@@ -265,7 +266,7 @@ const StatusAndCounts = ({testEnvironmentUpdated, tournament}) => {
       );
     }
     testingStatusContent = (
-      <Card.Body className={'bg-white text-dark border-bottom border-top'}>
+      <Card.Body className={'border-bottom border-top'}>
         <Card.Title as={'h6'} className={'fw-light mb-3'}>
           Environment Setup
         </Card.Title>
@@ -310,7 +311,7 @@ const StatusAndCounts = ({testEnvironmentUpdated, tournament}) => {
   }
 
   const frontPageLink = (
-    <Card.Body className={'bg-white text-dark'}>
+    <Card.Body>
       <a href={`/tournaments/${tournament.identifier}`} target={'_new'}>
         Front Page
         <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
@@ -319,8 +320,8 @@ const StatusAndCounts = ({testEnvironmentUpdated, tournament}) => {
   );
 
   return (
-    <Card bg={bgColor} text={textColor} className={classes.Card + ' text-center'}>
-      <Card.Header as={'h5'}>
+    <Card className={classes.Card + ' text-center'} border={bgColor}>
+      <Card.Header as={'h5'} className={`bg-${bgColor} text-${textColor}`}>
         {tournament.status}
       </Card.Header>
       {tournament.state !== 'setup' && counts}

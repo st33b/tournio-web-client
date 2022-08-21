@@ -330,7 +330,7 @@ const ShiftForm = ({shift}) => {
             {/*  </dd>*/}
             {/*</div>*/}
 
-            <div className={`row ${colorClass} g-0`}>
+            <div className={`row ${colorClass} g-3`}>
               <dt className={'col-6'}>
                 Capacity
               </dt>
@@ -338,7 +338,7 @@ const ShiftForm = ({shift}) => {
                 {shift.capacity} bowlers
               </dd>
             </div>
-            <div className={`row ${colorClass} g-0`}>
+            <div className={`row ${colorClass} g-3`}>
               <dt className={'col-6'}>
                 Confirmed
               </dt>
@@ -346,7 +346,7 @@ const ShiftForm = ({shift}) => {
                 {shift.confirmed_count}
               </dd>
             </div>
-            <div className={`row ${colorClass} g-0`}>
+            <div className={`row ${colorClass} g-3`}>
               <dt className={'col-6'}>
                 Requested
               </dt>
@@ -355,7 +355,7 @@ const ShiftForm = ({shift}) => {
               </dd>
             </div>
 
-            <div className={'row g-0'}>
+            <div className={'row g-3'}>
               <dt className={'col-6'}>
                 Enabled Entry Types
               </dt>

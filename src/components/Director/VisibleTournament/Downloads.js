@@ -79,7 +79,7 @@ const Downloads = ({tournament}) => {
   return (
     <div className={classes.Downloads}>
       <Card>
-        <Card.Body className={'bg-white text-dark'}>
+        <Card.Body>
           <Card.Subtitle className={'mb-3'}>
             Downloads
           </Card.Subtitle>
