@@ -8,7 +8,6 @@ import Cart from "./Cart/Cart";
 import FreeEntryForm from "./FreeEntryForm/FreeEntryForm";
 
 import classes from './Menu.module.scss';
-import StripeCheckout from "./StripeCheckout/StripeCheckout";
 
 const Menu = () => {
   const {commerce, commerceDispatch} = useRegistrationContext();
@@ -52,7 +51,6 @@ const Menu = () => {
           {freeEntryForm}
           <Cart itemAddedToCart={itemAdded}
                 itemRemovedFromCart={itemRemoved} />
-          <StripeCheckout />
         </Col>
       </Row>
     </div>

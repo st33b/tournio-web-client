@@ -159,12 +159,12 @@ const Page = () => {
         </Col>
 
         {/* checkout buttons (right side on desktop */}
-        <Col md={6}>
-          <PayPalExpressCheckout clientId={paypalClientId}
-                                 amount={serverTotal}
-                                 onPurchaseSuccess={purchaseSucceeded}
-                                 />
-        </Col>
+        {/*<Col md={6}>*/}
+        {/*  <PayPalExpressCheckout clientId={paypalClientId}*/}
+        {/*                         amount={serverTotal}*/}
+        {/*                         onPurchaseSuccess={purchaseSucceeded}*/}
+        {/*                         />*/}
+        {/*</Col>*/}
 
       </Row>
     </div>

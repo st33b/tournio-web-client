@@ -3,6 +3,7 @@ import SingleUseItem from "./SingleUseItem/SingleUseItem";
 import MultiUseItem from "./MultiUseItem/MultiUseItem";
 
 import classes from './Cart.module.scss';
+import StripeCheckout from "../StripeCheckout/StripeCheckout";
 
 const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
   const {commerce} = useRegistrationContext();
@@ -62,6 +63,7 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
            className={'btn btn-success btn-lg'}>
           Check Out
         </a>
+        <StripeCheckout/>
       </div>
     </div>
   );
