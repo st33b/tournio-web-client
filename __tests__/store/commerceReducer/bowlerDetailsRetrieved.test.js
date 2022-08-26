@@ -1,7 +1,7 @@
 import * as actionTypes from '../../../src/store/actions/actionTypes';
 import {commerceReducer} from "../../../src/store/commerceReducer";
 
-describe ('action type: tournament details retrieved', () => {
+describe ('action type: bowler details retrieved', () => {
   const paidPurchases = [
     {
       name: 'ticket',
@@ -116,15 +116,31 @@ describe ('action type: tournament details retrieved', () => {
     const result = commerceReducer({}, action);
     expect(result.purchasedItems).toStrictEqual(paidPurchases);
   });
-  it ('includes all cart items in the returned object', () => {
+  it ('includes all unpaid items in the cart', () => {
     const result = commerceReducer({}, action);
     expect(result.cart).toStrictEqual(unpaidLedgerItems.concat(unpaidNonLedgerItems));
-  })
+  });
 
-  // special case: the bowler has a free entry
-  it ('includes only non-ledger items in the cart', () => {
-    action.bowler.has_free_entry = true;
-    const result = commerceReducer({}, action);
-    expect(result.cart).toStrictEqual(unpaidNonLedgerItems);
-  })
+  //
+  // Making changes to the action's contents
+  //
+  describe ('the bowler has no unpaid items', () => {
+    it ('includes an initialized cart in the returned object', () => {
+      const myAction = {...action};
+      myAction.bowler = {...actionBowler}
+      myAction.bowler.unpaid_purchases = [];
+      const result = commerceReducer({}, myAction);
+      expect(result.cart).toStrictEqual([]);
+    });
+  });
+
+  describe ('the bowler has a free entry', () => {
+    it ('includes only non-ledger items in the cart', () => {
+      const myAction = {...action};
+      myAction.bowler = {...actionBowler}
+      myAction.bowler.has_free_entry = true;
+      const result = commerceReducer({}, myAction);
+      expect(result.cart).toStrictEqual(unpaidNonLedgerItems);
+    });
+  });
 });

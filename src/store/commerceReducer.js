@@ -105,14 +105,24 @@ export const commerceReducer = (state, action) => {
 }
 
 const itemAdded = (state, item) => {
-  const newQuantity = (item.quantity || 0) + 1;
+  const identifier = item.identifier;
+  const cartItemIndex = state.cart.findIndex(i => i.identifier === identifier);
+
+  let newQuantity = 1;
+  if (cartItemIndex >= 0) {
+    newQuantity = state.cart[cartItemIndex].quantity + 1;
+  }
   const addedItem = updateObject(item, {quantity: newQuantity});
   let newCart;
 
-  const identifier = item.identifier;
   const newAvailableItems = {...state.availableItems}
 
   if (item.determination === 'single_use' || item.determination === 'event') {
+    if (cartItemIndex >= 0) {
+      // We've already got this in our cart, so we shouldn't be allowed to add it again. Bail out with no changes.
+      return state;
+    }
+
     addedItem.addedToCart = true;
     newCart = state.cart.concat(addedItem);
     newAvailableItems[identifier] = addedItem;
@@ -123,8 +133,7 @@ const itemAdded = (state, item) => {
   } else {
     // instead of adding the newly chosen item to the cart, replace it with addedItem
     newCart = state.cart.slice(0);
-    const index = newCart.findIndex(i => i.identifier === addedItem.identifier);
-    newCart[index] = addedItem;
+    newCart[cartItemIndex] = addedItem;
   }
 
   if (item.determination === 'event') {
