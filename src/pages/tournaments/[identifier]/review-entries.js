@@ -8,7 +8,7 @@ import ProgressIndicator from "../../../components/Registration/ProgressIndicato
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
 import {submitNewTeamRegistration} from "../../../utils";
-import {teamDetailsRetrieved, newTeamEntryCompleted} from "../../../store/actions/registrationActions";
+import {newTeamEntryCompleted} from "../../../store/actions/registrationActions";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {

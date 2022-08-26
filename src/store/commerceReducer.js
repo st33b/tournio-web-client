@@ -25,16 +25,8 @@ export const commerceReducer = (state, action) => {
     case actionTypes.TOURNAMENT_DETAILS_RETRIEVED:
       return updateObject(state, {
         tournament: action.tournament,
-        freeEntry: null,
         error: null,
       });
-    case actionTypes.TEAM_DETAILS_RETRIEVED:
-      return updateObject(state, {
-        freeEntry: null,
-        error: null,
-        bowler: null,
-        cart: [],
-      })
     case actionTypes.BOWLER_DETAILS_RETRIEVED:
       let unpaidItems = action.bowler.unpaid_purchases.slice(0);
       // if they have a free entry--confirmed or otherwise--remove any ledger

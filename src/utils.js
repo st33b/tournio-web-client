@@ -1,7 +1,6 @@
 import axios from "axios";
 import {
   bowlerCommerceDetailsRetrieved,
-  teamDetailsRetrieved,
   teamListRetrieved,
   tournamentDetailsRetrieved,
 } from "./store/actions/registrationActions";

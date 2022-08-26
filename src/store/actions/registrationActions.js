@@ -1,5 +1,4 @@
 import * as actionTypes from './actionTypes';
-import {act} from "react-dom/test-utils";
 
 export const tournamentDetailsRetrieved = (tournament) => {
   return {
@@ -61,13 +60,6 @@ export const teamListRetrieved = () => {
     type: actionTypes.TEAM_LIST_RETRIEVED,
   }
 }
-
-// export const teamDetailsRetrieved = (team) => {
-//   return {
-//     type: actionTypes.TEAM_DETAILS_RETRIEVED,
-//     team: team,
-//   }
-// }
 
 export const existingTeamBowlerInfoAdded = (bowlerInfo) => {
   return {
