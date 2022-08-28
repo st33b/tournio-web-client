@@ -104,15 +104,83 @@ describe('item added to cart', () => {
         expect(item.addedToCart).toBeDefined();
         expect(item.addedToCart).toBeTruthy();
       });
+
+      describe ('a division item', () => {
+        const divAction = {...myAction};
+        divAction.item = {
+          ...myAction.item,
+          refinement: 'division',
+          name: 'a division-based item',
+          identifier: 'dolly',
+        };
+
+        // they must have the same name
+        const divisionItems = {
+          abba: {
+            determination: 'single_use',
+            refinement: 'division',
+            identifier: 'abba',
+            name: 'a division-based item',
+          },
+          beyonce: {
+            determination: 'single_use',
+            refinement: 'division',
+            identifier: 'beyonce',
+            name: 'a division-based item',
+          },
+          carlyrae: {
+            determination: 'single_use',
+            refinement: 'division',
+            identifier: 'carlyrae',
+            name: 'a division-based item',
+          },
+          dolly: {
+            determination: 'single_use',
+            refinement: 'division',
+            identifier: 'dolly',
+            name: 'a division-based item',
+          },
+        }
+
+        const myPreviousState = {
+          ...previousState,
+          availableItems: {
+            ...previousState.availableItems,
+            ...divisionItems,
+          },
+          purchasedItems: [...previousState.purchasedItems],
+        };
+
+        it ('adds it to the cart', () => {
+          const result = commerceReducer(myPreviousState, divAction);
+          expect(result.cart.length).toBe(1);
+          const item = result.cart[0];
+          expect(item.quantity).toBe(1);
+        });
+
+        it ('marks the other items in the division as unavailable', () => {
+          const result = commerceReducer(myPreviousState, divAction);
+          const availableDivisionItems = Object.values(result.availableItems).filter(item => item.name === 'a division-based item');
+          expect(availableDivisionItems.length).toBe(Object.keys(divisionItems).length);
+          const anyNotAddedToCart = availableDivisionItems.some(item => !item.addedToCart);
+          expect(anyNotAddedToCart).toBeFalsy();
+        });
+      });
     });
 
     describe ('a multi-use item', () => {
-    });
+      const myAction = {...action};
+      myAction.item = {
+        identifier: 'quack',
+        determination: 'multi_use',
+      };
 
-    describe ('a division item', () => {
-      // it ('marks the other items in the division as unavailable', () => {
-      //
-      // });
+      it ('adds it to the cart', () => {
+        const result = commerceReducer(previousState, myAction);
+        expect(result.cart.length).toBe(1);
+        const item = result.cart[0];
+        expect(item.quantity).toBe(1);
+      });
     });
 
     describe ('an event', () => {
@@ -130,10 +198,6 @@ describe('item added to cart', () => {
       });
 
       describe ('with an eligible bundle discount', () => {
-        // if there's an eligible bundle discount, add it to the cart
-        // --> can we do this using recursion? surely we can, since it's a pure function...
-        // ----> get the test passing, then change the implementation to use recursion
-
         const otherItem = {
           identifier: 'moo',
           determination: 'event',
@@ -187,9 +251,6 @@ describe('item added to cart', () => {
       });
 
       describe ('with an applicable late fee', () => {
-        // if there's an applicable late fee, add it to the cart
-        // --> ditto about using recursion
-
         const lateFeeItem = {
           identifier: 'tardy-to-the-party',
           category: 'ledger',
@@ -237,16 +298,4 @@ describe('item added to cart', () => {
       });
     });
   });
-
-  // if the item is single-use or an event:
-  //  - other division items get marked as unavailable
-  // if the new quantity is 1
-  //  - the cart is modified to have the added item
-  //  - the set of available items is updated to reflect the addition of this item to the cart
-  // otherwise
-  //  - it was already in the cart, so it gets updated
-
-  // if the item is an event
-  //  - does an eligible discount item also get added?
-  //  - does an event-linked late fee also get added?
 });
