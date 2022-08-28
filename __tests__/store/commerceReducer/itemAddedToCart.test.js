@@ -1,5 +1,5 @@
 import * as actionTypes from '../../../src/store/actions/actionTypes';
-import {commerceReducer} from "../../../src/store/commerceReducer";
+import {commerceReducer, applicableLateFee} from "../../../src/store/commerceReducer";
 
 describe('item added to cart', () => {
   // Prerequisites:
@@ -21,18 +21,12 @@ describe('item added to cart', () => {
     cart: [],
     availableItems: {},
     purchasedItems: [],
+    tournament: {},
   }
 
   it ('works', () => {
     const result = commerceReducer(previousState, action);
     expect(result.cart.length).toStrictEqual(1);
-  });
-
-  // item added to cart has the correct quantity
-  it ('adds a quantity of 1', () => {
-    const result = commerceReducer(previousState, action);
-    const resultItem = result.cart[0];
-    expect(resultItem.quantity).toBeDefined();
   });
 
   it ('adds a quantity of 1', () => {
@@ -47,12 +41,12 @@ describe('item added to cart', () => {
       const myPreviousState = {...previousState};
       myPreviousState.cart = [
         {
-          identifier: 'meow',
+          identifier: 'woof',
           quantity: 15,
         }
       ];
       myAction.item = {
-        identifier: 'meow',
+        identifier: 'woof',
       }
       const result = commerceReducer(myPreviousState, myAction);
 
@@ -63,20 +57,20 @@ describe('item added to cart', () => {
 
       it ('does not change the number of distinct items in the cart', () => {
         expect(result.cart.length).toEqual(myPreviousState.cart.length);
-      })
+      });
     });
     describe('single-use', () => {
       const myAction = {...action};
       const myPreviousState = {...previousState};
       myPreviousState.cart = [
         {
-          identifier: 'meow',
+          identifier: 'woof',
           determination: 'single_use',
           quantity: 1,
         }
       ];
       myAction.item = {
-        identifier: 'meow',
+        identifier: 'woof',
         determination: 'single_use',
       }
 
@@ -90,57 +84,157 @@ describe('item added to cart', () => {
   });
 
   describe ('the item is not yet in the cart', () => {
-    const myAction = {...action};
-    myAction.item = {
-      identifier: 'meow',
-      determination: 'single_use',
-    }
-    const result = commerceReducer(previousState, myAction);
-
-    it ('adds it to the cart', () => {
-      expect(result.cart.length).toStrictEqual(1);
-      const item = result.cart[0];
-      expect(item.quantity).toStrictEqual(1);
-    });
-
     describe ('a single-use item', () => {
-      it ('marks the item in availableItems as added to cart', () => {
-        const item = result.availableItems[myAction.item.identifier];
-        expect(item.addedToCart).toBeDefined();
-        expect(item.addedToCart).toBeTruthy();
-      });
-    });
-    describe ('a division item', () => {
-      it ('marks the other items in the division as unavailable', () => {
+      const myAction = {...action};
+      myAction.item = {
+        identifier: 'meow',
+        determination: 'single_use',
+      };
 
-      });
-    });
-    describe ('an event', () => {
-      myAction.item.determination = 'event';
-
-      it ('behaves like a ledger item', () => {
+      it ('adds it to the cart', () => {
+        const result = commerceReducer(previousState, myAction);
         expect(result.cart.length).toStrictEqual(1);
         const item = result.cart[0];
         expect(item.quantity).toStrictEqual(1);
       });
 
+      it ('marks the item in availableItems as added to cart', () => {
+        const result = commerceReducer(previousState, myAction);
+        const item = result.availableItems[myAction.item.identifier];
+        expect(item.addedToCart).toBeDefined();
+        expect(item.addedToCart).toBeTruthy();
+      });
+    });
+
+    describe ('a multi-use item', () => {
+    });
+
+    describe ('a division item', () => {
+      // it ('marks the other items in the division as unavailable', () => {
+      //
+      // });
+    });
+
+    describe ('an event', () => {
+      const myAction = {...action};
+      myAction.item = {
+        identifier: 'woof',
+        determination: 'event',
+      };
+
+      it ('behaves like a ledger item', () => {
+        const result = commerceReducer(previousState, myAction);
+        expect(result.cart.length).toEqual(1);
+        const item = result.cart[0];
+        expect(item.quantity).toEqual(1);
+      });
+
       describe ('with an eligible bundle discount', () => {
-        const myPreviousState = {...previousState};
+        // if there's an eligible bundle discount, add it to the cart
+        // --> can we do this using recursion? surely we can, since it's a pure function...
+        // ----> get the test passing, then change the implementation to use recursion
+
+        const otherItem = {
+          identifier: 'moo',
+          determination: 'event',
+        };
+
         const discountItem = {
           identifier: 'bundle_up',
           category: 'ledger',
           determination: 'bundle_discount',
-        }
-        myPreviousState.availableItems[discountItem.identifier] = discountItem;
-        const result = commerceReducer(myPreviousState, action);
+          configuration: {
+            events: [
+              myAction.item.identifier,
+              otherItem.identifier,
+            ],
+          },
+        };
 
-        
+        describe ('bowler has the rest of the bundle in their cart', () => {
+          // set up the other item being in the cart already
+          const myPreviousState = {...previousState};
+          myPreviousState.availableItems = {...previousState.availableItems};
+          myPreviousState.availableItems[discountItem.identifier] = discountItem;
+          myPreviousState.cart = [otherItem];
+
+          it ('adds the bundle discount to the cart as well', () => {
+            const result = commerceReducer(myPreviousState, myAction);
+            const bundleItemIndex = result.cart.findIndex(item => item.identifier === discountItem.identifier);
+            expect(bundleItemIndex).toBeGreaterThanOrEqual(0);
+          });
+        });
+
+        describe ('bowler previously purchased the rest of the bundle', () => {
+          // set up the other item having been purchased already
+          const purchasedItem = {
+            identifier: 'blahbitty-blah',
+            purchasable_item_identifier: otherItem.identifier,
+          }
+
+          const myPreviousState = {...previousState};
+          myPreviousState.availableItems = {...previousState.availableItems};
+          myPreviousState.availableItems[discountItem.identifier] = discountItem;
+          myPreviousState.purchasedItems = [...previousState.purchasedItems];
+          myPreviousState.purchasedItems = [purchasedItem];
+
+          it ('adds the bundle discount to the cart as well', () => {
+            const result = commerceReducer(myPreviousState, myAction);
+            const bundleItemIndex = result.cart.findIndex(item => item.identifier === discountItem.identifier);
+            expect(bundleItemIndex).toBeGreaterThanOrEqual(0);
+          });
+        });
       });
-      // if there's an eligible bundle discount, add it to the cart
-      // --> can we do this using recursion? surely we can, since it's a pure function...
 
-      // if there's an applicable late fee, add it to the cart
-      // --> ditto about using recursion
+      describe ('with an applicable late fee', () => {
+        // if there's an applicable late fee, add it to the cart
+        // --> ditto about using recursion
+
+        const lateFeeItem = {
+          identifier: 'tardy-to-the-party',
+          category: 'ledger',
+          determination: 'late_fee',
+          refinement: 'event_linked',
+          configuration: {
+            event: 'woof',
+            applies_at: new Date(Date.now() - 86400000),
+          },
+        };
+
+        describe ('when the tournament is in testing, with the late setting on', () => {
+          const myPreviousState = {...previousState};
+          myPreviousState.availableItems = {...previousState.availableItems};
+          myPreviousState.availableItems[lateFeeItem.identifier] = lateFeeItem;
+          myPreviousState.tournament = {
+            testing_environment: {
+              settings: {
+                registration_period: {
+                  value: 'late',
+                },
+              },
+            },
+          };
+
+          it ('adds the late-fee item to the cart', () => {
+            const result = commerceReducer(myPreviousState, myAction);
+            const lateFeeItemIndex = result.cart.findIndex(item => item.identifier === lateFeeItem.identifier);
+            expect(lateFeeItemIndex).toBeGreaterThanOrEqual(0);
+          });
+        });
+
+        describe ('when the tournament actually is in late registration', () => {
+          const myPreviousState = {...previousState};
+          myPreviousState.availableItems = {...previousState.availableItems};
+          myPreviousState.availableItems[lateFeeItem.identifier] = lateFeeItem;
+          myPreviousState.tournament = {...previousState.tournament};
+
+          it ('adds the late-fee item to the cart', () => {
+            const result = commerceReducer(myPreviousState, myAction);
+            const lateFeeItemIndex = result.cart.findIndex(item => item.identifier === lateFeeItem.identifier);
+            expect(lateFeeItemIndex).toBeGreaterThanOrEqual(0);
+          });
+        });
+      });
     });
   });
 
