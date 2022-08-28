@@ -278,7 +278,7 @@ const eligibleBundleDiscount = (availableItems, cartItems, purchasedItems) => {
   });
 }
 
-export const applicableLateFee = (availableItems, addedItem, tournament) => {
+const applicableLateFee = (availableItems, addedItem, tournament) => {
   const addedItemIdentifier = addedItem.identifier;
   const lateFeeItem = Object.values(availableItems).find(item => {
     if (item.category !== 'ledger' || item.determination !== 'late_fee' || item.refinement !== 'event_linked') {
