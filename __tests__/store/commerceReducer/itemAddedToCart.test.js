@@ -1,5 +1,5 @@
 import * as actionTypes from '../../../src/store/actions/actionTypes';
-import {commerceReducer, applicableLateFee} from "../../../src/store/commerceReducer";
+import {commerceReducer} from "../../../src/store/commerceReducer";
 
 describe('item added to cart', () => {
   // Prerequisites:
