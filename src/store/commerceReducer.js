@@ -115,7 +115,7 @@ const itemAdded = (state, item) => {
   const addedItem = updateObject(item, {quantity: newQuantity});
   let newCart;
 
-  const newAvailableItems = {...state.availableItems}
+  let newAvailableItems = {...state.availableItems}
 
   if (item.determination === 'single_use' || item.determination === 'event') {
     if (cartItemIndex >= 0) {
@@ -140,18 +140,25 @@ const itemAdded = (state, item) => {
     const discountItem = eligibleBundleDiscount(newAvailableItems, newCart, state.purchasedItems);
     if (discountItem) {
       // add it to the cart
-      const newDiscountItem = {...discountItem}
-      newDiscountItem.addedToCart = true;
-      newCart.push(newDiscountItem);
-      newAvailableItems[discountItem.identifier] = newDiscountItem;
+      const intermediateState = updateObject(state, {
+        cart: newCart,
+        availableItems: newAvailableItems,
+      });
+      const stateAfterAddingDiscount = itemAdded(intermediateState, discountItem);
+      newCart = stateAfterAddingDiscount.cart;
+      newAvailableItems = stateAfterAddingDiscount.availableItems;
     }
 
     const lateFeeItem = applicableLateFee(newAvailableItems, addedItem, state.tournament);
     if (lateFeeItem) {
-      const newLateFeeItem = {...lateFeeItem};
-      newLateFeeItem.addedToCart = true;
-      newCart.push(lateFeeItem);
-      newAvailableItems[lateFeeItem.identifier] = newLateFeeItem;
+      // add it to the cart
+      const intermediateState = updateObject(state, {
+        cart: newCart,
+        availableItems: newAvailableItems,
+      });
+      const stateAfterAddingLateFee = itemAdded(intermediateState, lateFeeItem);
+      newCart = stateAfterAddingLateFee.cart;
+      newAvailableItems = stateAfterAddingLateFee.availableItems;
     }
   }
 
