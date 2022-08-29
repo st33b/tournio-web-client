@@ -97,7 +97,7 @@ export const registrationReducer = (state, action) => {
         team: modifiedTeam,
       });
     case actionTypes.EXISTING_TEAM_BOWLER_EDITED:
-      const bowlers = state.team.bowlers.slice(0);
+      const bowlers = [...state.team.bowlers];
       bowlers.pop(); // remove the last bowler, which is the one who's been edited
       bowlers.push(action.bowler);
       const team = {...state.team}
