@@ -73,12 +73,12 @@ export const registrationReducer = (state, action) => {
       });
     case actionTypes.NEW_TEAM_PARTNERS_SELECTED:
       const theNewTeam = {...state.team}
-      theNewTeam.bowlers = action.bowlers.slice(0);
+      theNewTeam.bowlers = [...action.bowlers];
       return updateObject(state, {
         team: theNewTeam,
       });
     case actionTypes.NEW_TEAM_BOWLER_UPDATED:
-      const updatedBowlers = state.team.bowlers.slice(0);
+      const updatedBowlers = [...state.team.bowlers];
       const bowlerIndex = action.bowler.position - 1;
       updatedBowlers[bowlerIndex] = updateObject(state.team.bowlers[bowlerIndex], action.bowler);
       const updatedTeam = {...state.team}
