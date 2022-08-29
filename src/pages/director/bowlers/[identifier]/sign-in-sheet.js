@@ -84,7 +84,7 @@ const Page = () => {
           </Col>
         </Row>
       )}
-      <SignInSheet bowler={bowler}/>
+      <SignInSheet bowler={bowler} showPrintButton={true}/>
     </div>
   );
 }
