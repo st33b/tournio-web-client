@@ -114,7 +114,7 @@ export const registrationReducer = (state, action) => {
       });
     case actionTypes.SOLO_BOWLER_INFO_ADDED:
     case actionTypes.SOLO_BOWLER_INFO_UPDATED:
-      const soloBowler = action.bowler;
+      const soloBowler = {...action.bowler};
       soloBowler.shift = state.tournament.shifts.find(s => s.identifier === action.bowler.shift);
       return updateObject(state, {
         bowler: soloBowler,
@@ -135,9 +135,6 @@ export const registrationReducer = (state, action) => {
         partner: action.partner,
       });
     case actionTypes.PARTNER_UP_BOWLER_INFO_ADDED:
-      return updateObject(state, {
-        bowler: {...state.bowler, ...action.bowler},
-      });
     case actionTypes.PARTNER_UP_BOWLER_UPDATED:
       return updateObject(state, {
         bowler: {...state.bowler, ...action.bowler},

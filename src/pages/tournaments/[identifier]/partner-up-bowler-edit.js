@@ -5,7 +5,7 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import Summary from "../../../components/Registration/Summary/Summary";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {partnerUpBowlerUpdated, soloBowlerInfoUpdated} from "../../../store/actions/registrationActions";
+import {partnerUpBowlerUpdated} from "../../../store/actions/registrationActions";
 import {useEffect, useState} from "react";
 
 const Page = () => {
