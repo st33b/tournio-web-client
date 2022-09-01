@@ -14,12 +14,20 @@ const EventForm = ({onCancel, onComplete}) => {
   const initialState = {
     category: 'bowling',
     determination: 'event',
+    refinement: 'singles',
     name: '',
     value: '',
     order: '',
 
     valid: false,
   }
+
+  const refinementLabels = [
+    ['singles', 'Singles'],
+    ['doubles', 'Doubles'],
+    ['team', 'Team'],
+    ['trios', 'Trios'],
+  ];
 
   const [formData, setFormData] = useState(initialState);
 
@@ -58,6 +66,7 @@ const EventForm = ({onCancel, onComplete}) => {
           {
             category: formData.category,
             determination: formData.determination,
+            refinement: formData.refinement,
             name: formData.name,
             value: formData.value,
             configuration: {
@@ -100,6 +109,26 @@ const EventForm = ({onCancel, onComplete}) => {
                    onChange={(event) => inputChanged(event)}
                    value={formData.name}
             />
+          </div>
+          <div className={'row mb-3'}>
+            <label htmlFor={'refinement'} className={'form-label ps-0 mb-1'}>
+              Event Type
+            </label>
+            <select className={'form-select'}
+                    name={'refinement'}
+                    id={'refinement'}
+                    required={true}
+                    onChange={inputChanged}>
+              {refinementLabels.map(r => {
+                return (
+                  <option value={r[0]}
+                          key={r[0]}
+                          selected={formData.refinement === r[0]}>
+                    {r[1]}
+                  </option>
+                )}
+              )}
+            </select>
           </div>
           <div className={'row mb-3'}>
             <div className={'col-6 ps-0'}>
