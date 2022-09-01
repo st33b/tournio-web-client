@@ -21,6 +21,9 @@ const Page = () => {
   const newTeamFormInitialState = {
     destinationTeam: '',
   }
+  const newPartnerFormInitialState = {
+    partnerIdentifier: '',
+  }
   const linkFreeEntryInitialState = {
     id: null,
     confirm: false,
@@ -31,8 +34,10 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const [newTeamFormData, setNewTeamFormData] = useState(newTeamFormInitialState);
+  const [newPartnerFormData, setNewPartnerFormData] = useState(newPartnerFormInitialState);
   const [linkFreeEntryFormData, setLinkFreeEntryFormData] = useState(linkFreeEntryInitialState);
   const [availableFreeEntries, setAvailableFreeEntries] = useState([]);
+  const [unpartneredBowlers, setUnpartneredBowlers] = useState([]);
 
   // This effect ensures that we're logged in and have permission to administer the current tournament
   useEffect(() => {
@@ -107,6 +112,35 @@ const Page = () => {
     });
   }, [directorContext, router]);
 
+  const fetchBowlersSuccess = (data) => {
+    setLoading(false);
+    setUnpartneredBowlers(data);
+  }
+  const fetchBowlersFailure = (data) => {
+    setLoading(false);
+    setErrorMessage(data.error);
+  }
+
+  // This effect retrieves the list of bowlers without doubles partners
+  useEffect(() => {
+    if (!directorContext || !directorContext.tournament || !directorContext.token) {
+      return;
+    }
+
+    const uri = `/director/tournaments/${directorContext.tournament.identifier}/bowlers?unpartnered=true`;
+    const requestConfig = {
+      method: 'get',
+    }
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: fetchBowlersSuccess,
+      onFailure: fetchBowlersFailure,
+    });
+  }, [directorContext, router]);
+
   const fetchFreeEntriesSuccess = (data) => {
     setAvailableFreeEntries(data);
   }
@@ -116,9 +150,10 @@ const Page = () => {
 
   // This effect pulls the list of unassigned free entries from the backend
   useEffect(() => {
-    if (!bowler) {
+    if (!directorContext || !directorContext.tournament || !directorContext.token || !bowler) {
       return;
     }
+
     const uri = `/director/tournaments/${directorContext.tournament.identifier}/free_entries?unassigned=true`;
     const requestConfig = {
       method: 'get',
@@ -210,7 +245,7 @@ const Page = () => {
           )}
           <div className={'row'}>
             <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Doubles partner</dt>
-            {!!bowler.doubles_partner && <dd className={'col'}>{bowler.doubles_partner}</dd>}
+            {bowler.doubles_partner && <dd className={'col'}>{bowler.doubles_partner.full_name}</dd>}
             {!bowler.doubles_partner && <dd className={'col'}>n/a</dd>}
           </div>
         </dl>
@@ -274,16 +309,7 @@ const Page = () => {
     });
   }
 
-  let moveToTeamCard = (
-    <Card className={'mb-3'}>
-      <Card.Header as={'h6'} className={'fw-light'}>
-        Move to another team
-      </Card.Header>
-      <Card.Body>
-        No partial teams available.
-      </Card.Body>
-    </Card>
-  );
+  let moveToTeamCard = '';
   if (availableTeams.length > 0) {
     let bowlerTeamId = '';
     if (bowler.team) {
@@ -308,6 +334,83 @@ const Page = () => {
                     disabled={newTeamFormData.destinationTeam === ''}
                     type={'submit'}>
               Move Bowler
+            </Button>
+          </form>
+        </Card.Body>
+      </Card>
+    );
+  }
+
+  const partnerOptionChanged = (event) => {
+    const newFormData = {...newPartnerFormData}
+    newFormData.partnerIdentifier = event.target.value;
+    setNewPartnerFormData(newFormData);
+  }
+
+  const newPartnerSuccess = (data) => {
+    setLoading(false);
+    setBowler(data);
+  }
+  const newPartnerFailure = (data) => {
+    setLoading(false);
+    setErrorMessage(data.error);
+  }
+
+  const newPartnerSubmitHandler = (event) => {
+    event.preventDefault();
+    const uri = `/director/bowlers/${identifier}`;
+    const requestConfig = {
+      method: 'patch',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        bowler: {
+          doubles_partner: {
+            identifier: newPartnerFormData.partnerIdentifier,
+          }
+        }
+      }
+    }
+    setLoading(true);
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: newPartnerSuccess,
+      onFailure: newPartnerFailure,
+    });
+  }
+
+  let assignPartnerCard = '';
+  const tournamentHasDoublesEvent = directorContext.tournament.purchasable_items.some(pi => {
+    return pi.category === 'bowling' && pi.determination === 'event' && pi.refinement === 'doubles'
+  });
+  if (tournamentHasDoublesEvent && unpartneredBowlers.length > 0) {
+    let bowlerPartnerId = '';
+    if (bowler.doubles_partner) {
+      bowlerPartnerId = bowler.doubles_partner.identifier;
+    }
+    const options = unpartneredBowlers.filter(t => t.identifier !== bowlerPartnerId);
+
+    assignPartnerCard = (
+      <Card className={'mb-3'}>
+        <Card.Header as={'h6'} className={'fw-light'}>
+          Assign Doubles Partner
+        </Card.Header>
+        <Card.Body>
+          <form className={'text-center'} onSubmit={newPartnerSubmitHandler}>
+            <select className={'form-select'} name={'partner'} onChange={partnerOptionChanged}>
+              <option value={''}>Choose their new partner</option>
+              {options.map(t => <option key={t.identifier} value={t.identifier}>{t.full_name}</option>)}
+            </select>
+            <Button variant={'primary'}
+                    size={'sm'}
+                    className={'mt-3'}
+                    disabled={newPartnerFormData.partner === ''}
+                    type={'submit'}>
+              Assign Partner
             </Button>
           </form>
         </Card.Body>
@@ -402,7 +505,7 @@ const Page = () => {
         Purchases
       </Card.Header>
       <ListGroup variant={'flush'}>
-        {bowler.purchases.map(p => {
+        {bowler.purchases && bowler.purchases.map(p => {
           return (
             <ListGroup.Item key={p.identifier}>
               <span className={'float-end'}>
@@ -434,7 +537,7 @@ const Page = () => {
         Ledger Entries
       </Card.Header>
       <ListGroup variant={'flush'}>
-        {bowler.ledger_entries.map((l, i) => {
+        {bowler.ledger_entries && bowler.ledger_entries.map((l, i) => {
           const amountClass = l.credit > 0 ? 'text-success' : 'text-danger';
           const amount = l.credit - l.debit;
           return (
@@ -551,7 +654,8 @@ const Page = () => {
           <ResendEmailButtons bowler={bowler} />
           {linkFreeEntryCard}
           {moveToTeamCard}
-          {purchases}
+          {assignPartnerCard}
+          {bowler.purchases && bowler.purchases.length > 0 && purchases}
           {ledgerEntries}
           <hr />
           {deleteBowlerCard}
