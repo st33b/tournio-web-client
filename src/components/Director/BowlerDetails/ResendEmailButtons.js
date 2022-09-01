@@ -6,6 +6,9 @@ import classes from './ResendEmailButtons.module.scss';
 import EmailButton from "./EmailButton";
 
 const ResendEmailButtons = ({bowler}) => {
+  if (!bowler || !bowler.ledger_entries) {
+    return '';
+  }
   const paymentEntries = bowler.ledger_entries.filter(entry => entry.source === 'paypal');
 
   return (
