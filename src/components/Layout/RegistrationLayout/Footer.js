@@ -13,7 +13,7 @@ const Footer = () => (
         &copy; 2015-2022
         {' '}
         <a href={'mailto:info@igbo-reg.com'}>
-          Scott Stebleton
+          Tournio
         </a>
       </span>
     </p>
