@@ -1,6 +1,6 @@
-# igbo-registration-client
+# tournio-client
 
-This is the code for the frontend of my registration system for IGBO bowling tournaments. The repository for the backend is at `igbo-registration-api`.
+This is the code for the frontend of my registration system for IGBO bowling tournaments. The repository for the backend is at `tournio/tournio-api`.
 
 This was built using Create Next App.
 
