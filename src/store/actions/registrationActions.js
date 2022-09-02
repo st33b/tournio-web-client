@@ -61,13 +61,6 @@ export const teamListRetrieved = () => {
   }
 }
 
-// export const teamDetailsRetrieved = (team) => {
-//   return {
-//     type: actionTypes.TEAM_DETAILS_RETRIEVED,
-//     team: team,
-//   }
-// }
-
 export const existingTeamBowlerInfoAdded = (bowlerInfo) => {
   return {
     type: actionTypes.EXISTING_TEAM_BOWLER_INFO_ADDED,
@@ -224,5 +217,18 @@ export const partnerUpBowlerUpdated = (bowlerInfo) => {
 export const partnerUpRegistrationCompleted = () => {
   return {
     type: actionTypes.PARTNER_UP_REGISTRATION_COMPLETED,
+  }
+}
+
+export const stripeCheckoutSessionInitiated = (sessionId) => {
+  return {
+    type: actionTypes.STRIPE_CHECKOUT_SESSION_INITIATED,
+    sessionId: sessionId,
+  }
+}
+
+export const stripeCheckoutSessionCompleted = () => {
+  return {
+    type: actionTypes.STRIPE_CHECKOUT_SESSION_COMPLETED,
   }
 }

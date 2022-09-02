@@ -4,12 +4,15 @@ import {useRouter} from "next/router";
 import {directorApiRequest} from "../../../utils";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
-import TournamentDetails from '../../../components/Director/TournamentDetails/TournamentDetails';
+import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
+import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
+import classes from "../../../components/Director/TournamentInPrep/TournamentInPrep.module.scss";
+import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
 
 const Tournament = () => {
   const directorContext = useDirectorContext();
   const router = useRouter();
-  const { identifier } = router.query;
+  const { identifier, stripe } = router.query;
 
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -42,6 +45,10 @@ const Tournament = () => {
       onFailure: onTournamentFetchFailure,
     });
   }, [identifier, directorContext.user, router]);
+
+  if (!directorContext || !directorContext.tournament) {
+    return '';
+  }
 
   const stateChangeSuccess = (data) => {
     directorContext.setTournament(data);
@@ -123,15 +130,19 @@ const Tournament = () => {
     );
   }
 
-  if (!directorContext) {
-    return '';
-  }
+  const tournamentView = directorContext.tournament.state === 'active' || directorContext.tournament.state === 'closed'
+    ? <VisibleTournament closeTournament={stateChangeInitiated} />
+    : <TournamentInPrep stateChangeInitiated={stateChangeInitiated}
+                        testEnvironmentUpdated={testEnvironmentUpdated}
+                        requestStripeStatus={stripe}
+    />;
 
+  const ladder = [{ text: 'Tournaments', path: '/director' }];
   return (
     <div>
+      <Breadcrumbs ladder={ladder} activeText={directorContext.tournament.name} className={classes.Breadcrumbs} />
       {error}
-      <TournamentDetails stateChangeInitiated={stateChangeInitiated}
-                         testEnvironmentUpdated={testEnvironmentUpdated} />
+      {tournamentView}
     </div>
   );
 }

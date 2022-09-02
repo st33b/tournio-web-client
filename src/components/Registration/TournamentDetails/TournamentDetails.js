@@ -1,9 +1,10 @@
 import {useRouter} from "next/router";
-import {Card, Col, ListGroup, ProgressBar, Row} from "react-bootstrap";
+import {Card, Col, ListGroup, Row, ProgressBar} from "react-bootstrap";
 import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 
 import classes from './TournamentDetails.module.scss';
-import ProgressBarLegend from "./ProgressBarLegend";
+import ShiftCapacity from "../../common/ShiftCapacity/ShiftCapacity";
+import ProgressBarLegend from "../../common/ShiftCapacity/ProgressBarLegend";
 
 const USBC_ID_LOOKUP_URL = 'https://webapps.bowl.com/USBCFindA/Home/Member';
 const IGBO_ID_LOOKUP_URL = 'http://igbo.org/tournaments/igbots-id-lookup/';
@@ -312,10 +313,6 @@ const TournamentDetails = ({tournament}) => {
     );
   }
 
-  const percent = (num, outOf) => {
-    return Math.round(num / outOf * 100);
-  }
-
   let shiftContent = '';
   const displayCapacity = !!tournament.config_items.find(ci => ci.key === 'display_capacity' && ci.value)
   if (tournament.shifts.length > 1) {
@@ -371,26 +368,7 @@ const TournamentDetails = ({tournament}) => {
                 </div>
               </div>
 
-              {displayCapacity && (
-                <div className={`${classes.ProgressBar} d-flex align-items-center my-2`} key={i}>
-                  <div className={'flex-grow-1'}>
-                    <div className={`d-flex justify-content-between`}>
-                      <div className={classes.EndLabel}>0%</div>
-                      <div className={classes.EndLabel}>100%</div>
-                    </div>
-                    <div>
-                      <ProgressBar style={{height: '2rem'}}>
-                        <ProgressBar now={percent(shift.confirmed_count, shift.capacity)}
-                                     label={`${percent(shift.confirmed_count, shift.capacity)}%`}
-                                     variant={'success'}/>
-                        <ProgressBar now={percent(requestedCount, shift.capacity)}
-                                     label={`${percent(requestedCount, shift.capacity)}%`}
-                                     variant={'primary'}/>
-                      </ProgressBar>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {displayCapacity && <ShiftCapacity shift={shift} key={i} />}
             </div>
           )
         })}
@@ -411,24 +389,7 @@ const TournamentDetails = ({tournament}) => {
             The tournament can accommodate up to {shift.capacity} bowlers.
           </p>
 
-          <div className={`${classes.ProgressBar} d-flex align-items-center my-2`}>
-            <div className={'flex-grow-1'}>
-              <div className={`d-flex justify-content-between`}>
-                <div className={classes.EndLabel}>0%</div>
-                <div className={classes.EndLabel}>100%</div>
-              </div>
-              <div>
-                <ProgressBar style={{height: '2rem'}}>
-                  <ProgressBar now={percent(shift.confirmed_count, shift.capacity)}
-                               label={`${percent(shift.confirmed_count, shift.capacity)}%`}
-                               variant={'success'}/>
-                  <ProgressBar now={percent(requestedCount, shift.capacity)}
-                               label={`${percent(requestedCount, shift.capacity)}%`}
-                               variant={'primary'}/>
-                </ProgressBar>
-              </div>
-            </div>
-          </div>
+          <ShiftCapacity shift={shift} />
         </div>
         <ProgressBarLegend/>
       </div>

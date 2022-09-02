@@ -1,7 +1,6 @@
 import {compareAsc} from "date-fns";
 import * as actionTypes from './actions/actionTypes';
 import {updateObject} from "../utils";
-import availableItems from "../components/Commerce/AvailableItems/AvailableItems";
 
 const initialState = {
   tournament: null,
@@ -10,6 +9,7 @@ const initialState = {
   availableItems: {},
   purchasedItems: [],
   freeEntry: null,
+  checkoutSessionId: null,
   error: null,
 }
 
@@ -25,16 +25,8 @@ export const commerceReducer = (state, action) => {
     case actionTypes.TOURNAMENT_DETAILS_RETRIEVED:
       return updateObject(state, {
         tournament: action.tournament,
-        freeEntry: null,
         error: null,
       });
-    case actionTypes.TEAM_DETAILS_RETRIEVED:
-      return updateObject(state, {
-        freeEntry: null,
-        error: null,
-        bowler: null,
-        cart: [],
-      })
     case actionTypes.BOWLER_DETAILS_RETRIEVED:
       let unpaidItems = action.bowler.unpaid_purchases.slice(0);
       // if they have a free entry--confirmed or otherwise--remove any ledger
@@ -96,21 +88,41 @@ export const commerceReducer = (state, action) => {
           error: action.error,
         }
       });
+    case actionTypes.STRIPE_CHECKOUT_SESSION_INITIATED:
+      return updateObject(state, {
+        checkoutSessionId: action.sessionId,
+      });
+    case actionTypes.STRIPE_CHECKOUT_SESSION_COMPLETED:
+      return updateObject(state, {
+        checkoutSessionId: null,
+        cart: [],
+      });
     default:
-      console.log('Haha, no');
+      console.log('Haha, no', action.type);
       break;
   }
+  return state;
 }
 
 const itemAdded = (state, item) => {
-  const newQuantity = (item.quantity || 0) + 1;
+  const identifier = item.identifier;
+  const cartItemIndex = state.cart.findIndex(i => i.identifier === identifier);
+
+  let newQuantity = 1;
+  if (cartItemIndex >= 0) {
+    newQuantity = state.cart[cartItemIndex].quantity + 1;
+  }
   const addedItem = updateObject(item, {quantity: newQuantity});
   let newCart;
 
-  const identifier = item.identifier;
-  const newAvailableItems = {...state.availableItems}
+  let newAvailableItems = {...state.availableItems}
 
   if (item.determination === 'single_use' || item.determination === 'event') {
+    if (cartItemIndex >= 0) {
+      // We've already got this in our cart, so we shouldn't be allowed to add it again. Bail out with no changes.
+      return state;
+    }
+
     addedItem.addedToCart = true;
     newCart = state.cart.concat(addedItem);
     newAvailableItems[identifier] = addedItem;
@@ -121,29 +133,34 @@ const itemAdded = (state, item) => {
   } else {
     // instead of adding the newly chosen item to the cart, replace it with addedItem
     newCart = state.cart.slice(0);
-    const index = newCart.findIndex(i => i.identifier === addedItem.identifier);
-    newCart[index] = addedItem;
+    newCart[cartItemIndex] = addedItem;
   }
 
   if (item.determination === 'event') {
     const discountItem = eligibleBundleDiscount(newAvailableItems, newCart, state.purchasedItems);
     if (discountItem) {
       // add it to the cart
-      const newDiscountItem = {...discountItem}
-      newDiscountItem.addedToCart = true;
-      newCart.push(newDiscountItem);
-      newAvailableItems[discountItem.identifier] = newDiscountItem;
+      const intermediateState = updateObject(state, {
+        cart: newCart,
+        availableItems: newAvailableItems,
+      });
+      const stateAfterAddingDiscount = itemAdded(intermediateState, discountItem);
+      newCart = stateAfterAddingDiscount.cart;
+      newAvailableItems = stateAfterAddingDiscount.availableItems;
     }
 
     const lateFeeItem = applicableLateFee(newAvailableItems, addedItem, state.tournament);
     if (lateFeeItem) {
-      const newLateFeeItem = {...lateFeeItem};
-      newLateFeeItem.addedToCart = true;
-      newCart.push(lateFeeItem);
-      newAvailableItems[lateFeeItem.identifier] = newLateFeeItem;
+      // add it to the cart
+      const intermediateState = updateObject(state, {
+        cart: newCart,
+        availableItems: newAvailableItems,
+      });
+      const stateAfterAddingLateFee = itemAdded(intermediateState, lateFeeItem);
+      newCart = stateAfterAddingLateFee.cart;
+      newAvailableItems = stateAfterAddingLateFee.availableItems;
     }
   }
-
 
   return updateObject(state, {
     cart: newCart,

@@ -33,7 +33,7 @@ const Page = () => {
     <div className={classes.TournamentDetails}>
       <Row>
         <div className={'d-none d-md-block col-md-4'}>
-          <TournamentLogo tournament={entry.tournament}/>
+          <TournamentLogo url={entry.tournament.image_url}/>
           <Contacts tournament={entry.tournament}/>
         </div>
         <div className={'col-12 col-md-8'}>

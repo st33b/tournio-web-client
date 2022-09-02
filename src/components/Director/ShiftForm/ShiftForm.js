@@ -4,9 +4,9 @@ import {Map} from "immutable";
 import Card from 'react-bootstrap/Card';
 
 import {useDirectorContext} from "../../../store/DirectorContext";
+import {directorApiRequest} from "../../../utils";
 
 import classes from './ShiftForm.module.scss';
-import {directorApiRequest} from "../../../utils";
 
 const ShiftForm = ({shift}) => {
   const context = useDirectorContext();
@@ -72,7 +72,7 @@ const ShiftForm = ({shift}) => {
   //   setFormData(newFormData);
   // }
 
-  const allowDelete = shift && (context.tournament.state !== 'active' || context.tournament.state !== 'demo');
+  const allowDelete = shift && (context.tournament.state !== 'active' && context.tournament.state !== 'demo');
 
   const addClicked = (event) => {
     event.preventDefault();
@@ -330,33 +330,33 @@ const ShiftForm = ({shift}) => {
             {/*  </dd>*/}
             {/*</div>*/}
 
-            <div className={`row ${colorClass}`}>
-              <dt className={'col-5'}>
+            <div className={`row ${colorClass} g-3`}>
+              <dt className={'col-6'}>
                 Capacity
               </dt>
               <dd className={'col'}>
                 {shift.capacity} bowlers
               </dd>
             </div>
-            <div className={`row ${colorClass}`}>
-              <dt className={'col-5'}>
-                # Confirmed
+            <div className={`row ${colorClass} g-3`}>
+              <dt className={'col-6'}>
+                Confirmed
               </dt>
               <dd className={'col'}>
                 {shift.confirmed_count}
               </dd>
             </div>
-            <div className={`row ${colorClass}`}>
-              <dt className={'col-5'}>
-                # Requested
+            <div className={`row ${colorClass} g-3`}>
+              <dt className={'col-6'}>
+                Requested
               </dt>
               <dd className={'col'}>
                 {shift.requested_count}
               </dd>
             </div>
 
-            <div className={'row'}>
-              <dt className={'col-5'}>
+            <div className={'row g-3'}>
+              <dt className={'col-6'}>
                 Enabled Entry Types
               </dt>
               <dd className={'col'}>
@@ -471,12 +471,12 @@ const ShiftForm = ({shift}) => {
             {/*</div>*/}
 
             <div className={'row mb-3'}>
-              <div className={'col-6 text-end'}>
-                <label htmlFor={'capacity'} className={'col-form-label ps-0 mb-1'}>
+              <div className={'col-5'}>
+                <label htmlFor={'capacity'} >
                   Capacity (bowlers)
                 </label>
               </div>
-              <div className={'col-6'}>
+              <div className={'col'}>
                 <input type={'number'}
                        className={'form-control'}
                        name={'capacity'}
@@ -501,12 +501,12 @@ const ShiftForm = ({shift}) => {
               {/*</div>*/}
             </div>
             <div className={'row mb-3'}>
-              <div className={'col-6 text-end'}>
+              <div className={'col-5'}>
                 <label>
                   Enabled Registration Routes
                 </label>
               </div>
-              <div className={'col-6'}>
+              <div className={'col'}>
                 {REGISTRATION_TYPE_LABELS.map(kind => (
                   <div className={'form-check form-switch'} key={kind.key}>
                     <input type={'checkbox'}

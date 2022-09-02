@@ -10,7 +10,7 @@ const about = () => (
         </Accordion.Header>
         <Accordion.Body>
           <p>
-            This site is intended to be a low-cost, low-effort way for IGBO tournament directors to offer their bowlers
+            Tournio is intended to be a low-cost, low-effort way for IGBO tournament directors to offer their bowlers
             online registration and purchase of optional events and products, as well as to prepare for their
             tournaments by consolidating and correcting data, monitoring the receipt of payments, and offering the
             export of registration data in spreadsheet format (comma-separated value, or CSV) as well as a format
@@ -18,8 +18,7 @@ const about = () => (
           </p>
           <p>
             When bowlers pay their registration fees and purchase optional events, the transactions are made directly
-            with PayPal using each tournament&apos;s client identifier; no funds pass through this system. Thus, the
-            system charges no transaction fees.
+            with the tournament via Stripe; no funds pass through this system. Thus, Tournio charges no transaction fees.
           </p>
         </Accordion.Body>
       </Accordion.Item>
@@ -30,10 +29,22 @@ const about = () => (
         </Accordion.Header>
         <Accordion.Body>
           <p>
-            I am proud to say the number of tournaments using this system continues to grow. Past and present
+            I am proud to say the number of tournaments using Tournio continues to grow. Past and present
             tournaments include:
           </p>
           <ul>
+            <li>
+              <a href={'https://www.goldengateclassic.org/'}>San Francisco Golden Gate Classic</a>
+            </li>
+            <li>
+              <a href={'https://www.bigdclassic.com/'}>Big D Classic</a>
+            </li>
+            <li>
+              <a href={'https://www.lvshowgirl.net/'}>Las Vegas Showgirl</a>
+            </li>
+            <li>
+              <a href={'http://trotbowling.com/'}>Texas Roll-off Tournament (TROT)</a>
+            </li>
             <li>
               <a href={'https://www.okclassic.com/'}>OKClassic</a>
             </li>
@@ -46,27 +57,18 @@ const about = () => (
               </a>
             </li>
             <li>
-              <a href={'https://www.bigdclassic.com/'}>Big D Classic</a>
-            </li>
-            <li>
               <a href={'https://www.txsuperslam.com/'}>Texas Super Slam</a>
-            </li>
-            <li>
-              <a href={'https://www.lvshowgirl.net/'}>Las Vegas Showgirl</a>
-            </li>
-            <li>
-              <a href={'http://trotbowling.com/'}>Texas Roll-off Tournament (TROT)</a>
-            </li>
-            <li>
-              <a href={'https://www.goldengateclassic.org/'}>San Francisco Golden Gate Classic</a>
             </li>
             <li>
               Dallas Area Masters Invitational Tournament (DAMIT)
             </li>
+            <li>
+              <a href={'https://showmeclassic.com/'}>Show Me St. Louis Classic</a>
+            </li>
+            <li>
+              <a href={'http://beepbeepbowl.org/'}>The Albuquerque Roadrunner Tournament</a>
+            </li>
           </ul>
-          <p>
-            ... with more to come!
-          </p>
         </Accordion.Body>
       </Accordion.Item>
 
@@ -81,7 +83,8 @@ const about = () => (
             to turn a profit, then all proceeds beyond operating costs will be donated to{' '}
             <a href={'https://www.aidslifecycle.org/'}>
               AIDS/LifeCycle
-            </a>.
+            </a>
+            {' '}or another organization doing important work for the LGBTQIA+ community.
           </p>
           <ul>
             <li>
@@ -90,10 +93,10 @@ const about = () => (
                 $150/year
               </strong>
               {' '}for the website and
-              registration bundle.
+              Tournio bundle.
             </li>
             <li>
-              For other tournaments, the fee for using the registration system is equivalent to{' '}
+              For other tournaments, the fee for using Tournio is equivalent to{' '}
               <strong>
                 one tournament entry fee
               </strong>
@@ -118,7 +121,7 @@ const about = () => (
               suitable for import into the IGBO-TS program.)
             </li>
             <li>
-              Correct bowler and team information
+              Fix errors in bowler and team information.
             </li>
             <li>
               Move a bowler to a different team. This allows you to consolidate partial team registrations.
@@ -133,7 +136,8 @@ const about = () => (
               Control configuration details, including choosing which optional events to make available for purchase.
             </li>
             <li>
-              Mark bowlers as paid via a mechanism outside of PayPal, e.g., cash or check.
+              Mark bowlers as paid via a mechanism outside of the regular flow, e.g., direct payment to the
+              tournament via cash, check, or PayPal.
             </li>
             <li>
               Run registration in Test Mode before opening it to the public. In Test Mode, you can:
@@ -143,8 +147,8 @@ const about = () => (
                   registrations, joining an existing partial team, and registering as a solo bowler.
                 </li>
                 <li>
-                  Simulate registrations happening during the early, regular, and late registration periods, to verify
-                  the proper discount/fee gets applied.
+                  Simulate registrations happening during the early, regular, and late registration periods (when applicable),
+                  to verify the proper discount/fee gets applied.
                 </li>
                 <li>
                   Receive emails that would otherwise go to bowlers, e.g., registration confirmations and payment
@@ -169,34 +173,8 @@ const about = () => (
               or to those wishing to join an existing, incomplete team.
             </li>
           </ul>
-          <p>
-            I&apos;ve got a big list of features I&apos;m working on adding to the system in the coming months, all
-            based on feedback I&apos;ve received from other tournament directors. This list includes:
-          </p>
-          <ul>
-            <li>
-              Ability for a tournament director to upload an image to use as logo, along with other assets, like PDFs
-              for rules and results.
-            </li>
-            <li>
-              Charts and reports for tournament directors.
-            </li>
-            <li>
-              Improved experience for bowlers in the time period between registration closing and the tournament&apos;s
-              start date.
-            </li>
-            <li>
-              Being added to a waiting list for a full tournament.
-            </li>
-            <li>
-              Support for tournaments with multiple shifts
-            </li>
-            <li>
-              The ability to save registration data for use on future tournaments, to make registration even faster.
-            </li>
-          </ul>
           <p>Interested in using the system for your tournament?{' '}
-            <a href={'mailto:info@igbo-reg.com'}>
+            <a href={'mailto:info@tourn.io?subject=Using%20Tournio'}>
               Drop me a line
             </a>!
           </p>
@@ -245,9 +223,18 @@ const about = () => (
             directors with greater control and flexibility in how they run their tournaments.
           </p>
           <p>
-            In 2022, I am on disability while I recover from a debilitating illness, so tinkering with this site is a
-            way to hold on to my sanity and give myself something constructive to do when time and mental bandwidth
-            allow.
+            In 2022, tinkering with this site is a way to hold on to my sanity and give myself something constructive to do
+            while I recover from a debilitating illness, when time and mental bandwidth allow.
+            As part of an effort to build a more robust payments integration&mdash;and give the site a more
+            distinctive personality&mdash;I rebranded it, and so{' '}
+            <code>
+              igbo-reg.com
+            </code>
+            {' '}became{' '}
+            <code>
+              tourn.io
+            </code>
+            .
           </p>
         </Accordion.Body>
       </Accordion.Item>
@@ -258,7 +245,7 @@ const about = () => (
         </Accordion.Header>
         <Accordion.Body>
           <p>
-            This website has no official affiliation with IGBO. I&apos;ve simply built it specifically for use by IGBO
+            Tournio has no official affiliation with IGBO. I&apos;ve simply built it specifically for use by IGBO
             tournaments.
           </p>
           <p>

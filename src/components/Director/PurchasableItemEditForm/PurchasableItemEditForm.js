@@ -299,8 +299,7 @@ const PurchasableItemEditForm = ({item}) => {
     switch (item.category) {
       case 'ledger':
         if (item.determination === 'early_discount') {
-          otherValueProps.min = -1000;
-          otherValueProps.max = -1;
+          otherValueProps.min = 1;
           inputElements.push({
             type: 'datepicker',
             props: {
@@ -326,8 +325,7 @@ const PurchasableItemEditForm = ({item}) => {
             }
           });
         } else if (item.determination === 'bundle_discount') {
-          otherValueProps.min = -1000;
-          otherValueProps.max = -1;
+          otherValueProps.min = 1;
         }
         break;
       case 'bowling':

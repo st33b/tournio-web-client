@@ -1,0 +1,78 @@
+.VisibleTournament {
+  .AccordionHeader {
+    button {
+      font-size: 85%;
+    }
+  }
+  .AccordionBody {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .ExternalLink {
+    font-size: 80%;
+    padding-left: 0.5rem;
+  }
+  .Basics {
+    p {
+      margin-bottom: 0;
+      margin-top: 0;
+    }
+  }
+  .Configuration {
+    dl {
+      margin-bottom: 0;
+    }
+    .ConfigItem {
+      .Item {
+        .ExternalLink {
+          font-size: 80%;
+          padding-left: 0.5rem;
+        }
+      }
+    }
+  }
+  .AdditionalQuestions {
+    .ListItem {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+  .PurchasableItems {
+    .PurchasableItem {
+      .Name {
+        display: block;
+      }
+      .Price {
+        font-weight: bold;
+      }
+      .Additional {
+        font-size: 85%;
+      }
+    }
+  }
+  .Capacity {
+    margin-bottom: 1rem;
+  }
+  .Counts {
+    margin-bottom: 0.75rem;
+  }
+  .RegistrationOptions {
+    margin-bottom: 0.75rem;
+  }
+  .EditableConfiguration {
+    margin-bottom: 0.75rem;
+    .ConfigItemForm {
+    }
+  }
+  .Downloads {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .StateChange {
+    text-align: center;
+    padding-bottom: 1rem;
+  }
+  .Chart {
+    margin-bottom: 1rem;
+  }
+}

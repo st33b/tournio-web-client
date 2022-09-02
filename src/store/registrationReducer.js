@@ -73,12 +73,12 @@ export const registrationReducer = (state, action) => {
       });
     case actionTypes.NEW_TEAM_PARTNERS_SELECTED:
       const theNewTeam = {...state.team}
-      theNewTeam.bowlers = action.bowlers.slice(0);
+      theNewTeam.bowlers = [...action.bowlers];
       return updateObject(state, {
         team: theNewTeam,
       });
     case actionTypes.NEW_TEAM_BOWLER_UPDATED:
-      const updatedBowlers = state.team.bowlers.slice(0);
+      const updatedBowlers = [...state.team.bowlers];
       const bowlerIndex = action.bowler.position - 1;
       updatedBowlers[bowlerIndex] = updateObject(state.team.bowlers[bowlerIndex], action.bowler);
       const updatedTeam = {...state.team}
@@ -97,7 +97,7 @@ export const registrationReducer = (state, action) => {
         team: modifiedTeam,
       });
     case actionTypes.EXISTING_TEAM_BOWLER_EDITED:
-      const bowlers = state.team.bowlers.slice(0);
+      const bowlers = [...state.team.bowlers];
       bowlers.pop(); // remove the last bowler, which is the one who's been edited
       bowlers.push(action.bowler);
       const team = {...state.team}
@@ -114,7 +114,7 @@ export const registrationReducer = (state, action) => {
       });
     case actionTypes.SOLO_BOWLER_INFO_ADDED:
     case actionTypes.SOLO_BOWLER_INFO_UPDATED:
-      const soloBowler = action.bowler;
+      const soloBowler = {...action.bowler};
       soloBowler.shift = state.tournament.shifts.find(s => s.identifier === action.bowler.shift);
       return updateObject(state, {
         bowler: soloBowler,
@@ -135,9 +135,6 @@ export const registrationReducer = (state, action) => {
         partner: action.partner,
       });
     case actionTypes.PARTNER_UP_BOWLER_INFO_ADDED:
-      return updateObject(state, {
-        bowler: {...state.bowler, ...action.bowler},
-      });
     case actionTypes.PARTNER_UP_BOWLER_UPDATED:
       return updateObject(state, {
         bowler: {...state.bowler, ...action.bowler},
@@ -151,5 +148,6 @@ export const registrationReducer = (state, action) => {
       console.log("Nope!");
       break;
   }
+  return state;
 }
 

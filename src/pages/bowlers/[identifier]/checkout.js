@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
-import {fetchBowlerDetails, postPurchaseDetails, postPurchasesCompleted} from "../../../utils";
+import {fetchBowlerDetails, purchaseDetailsPostData, postPurchaseDetails, postPurchasesCompleted} from "../../../utils";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
@@ -49,6 +49,7 @@ const Page = () => {
     }
 
     postPurchaseDetails(identifier,
+      'purchase_details',
       purchaseDetailsPostData(commerce.cart),
       onPreparePurchaseSuccess,
       onPreparePurchaseFailure
@@ -56,35 +57,35 @@ const Page = () => {
 
   }, [identifier, commerce, router]);
 
-  const purchaseDetailsPostData = (items) => {
-    const purchaseIdentifiers = [];
-    const purchasableItems = [];
-
-    const sum = (runningTotal, currentValue) => runningTotal + currentValue.value * (currentValue.quantity || 1);
-    const expectedTotal = items.reduce(sum, 0);
-
-    for (let i of items) {
-      if (i.category === 'ledger') {
-        // mandatory things like entry & late fees, early discount
-
-        // some things we want the server to add: bundle discount, event-linked late fees
-        if (i.determination === 'bundle_discount' || i.determination === 'late_fee' && i.refinement === 'event_linked') {
-          continue;
-        }
-        purchaseIdentifiers.push(i.identifier);
-      } else {
-        purchasableItems.push({
-          identifier: i.identifier,
-          quantity: i.quantity,
-        });
-      }
-    }
-    return {
-      purchase_identifiers: purchaseIdentifiers,
-      purchasable_items: purchasableItems,
-      expected_total: expectedTotal,
-    };
-  }
+  // const purchaseDetailsPostData = (items) => {
+  //   const purchaseIdentifiers = [];
+  //   const purchasableItems = [];
+  //
+  //   const sum = (runningTotal, currentValue) => runningTotal + currentValue.value * (currentValue.quantity || 1);
+  //   const expectedTotal = items.reduce(sum, 0);
+  //
+  //   for (let i of items) {
+  //     if (i.category === 'ledger') {
+  //       // mandatory things like entry & late fees, early discount
+  //
+  //       // some things we want the server to add: bundle discount, event-linked late fees
+  //       if (i.determination === 'bundle_discount' || i.determination === 'late_fee' && i.refinement === 'event_linked') {
+  //         continue;
+  //       }
+  //       purchaseIdentifiers.push(i.identifier);
+  //     } else {
+  //       purchasableItems.push({
+  //         identifier: i.identifier,
+  //         quantity: i.quantity,
+  //       });
+  //     }
+  //   }
+  //   return {
+  //     purchase_identifiers: purchaseIdentifiers,
+  //     purchasable_items: purchasableItems,
+  //     expected_total: expectedTotal,
+  //   };
+  // }
 
   if (loading) {
     return <LoadingMessage message={'Preparing checkout'}/>;
@@ -158,12 +159,12 @@ const Page = () => {
         </Col>
 
         {/* checkout buttons (right side on desktop */}
-        <Col md={6}>
-          <PayPalExpressCheckout clientId={paypalClientId}
-                                 amount={serverTotal}
-                                 onPurchaseSuccess={purchaseSucceeded}
-                                 />
-        </Col>
+        {/*<Col md={6}>*/}
+        {/*  <PayPalExpressCheckout clientId={paypalClientId}*/}
+        {/*                         amount={serverTotal}*/}
+        {/*                         onPurchaseSuccess={purchaseSucceeded}*/}
+        {/*                         />*/}
+        {/*</Col>*/}
 
       </Row>
     </div>
