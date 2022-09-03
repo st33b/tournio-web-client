@@ -1,7 +1,6 @@
 import {compareAsc} from "date-fns";
 import * as actionTypes from './actions/actionTypes';
-import {updateObject} from "../utils";
-import availableItems from "../components/Commerce/AvailableItems/AvailableItems";
+import {isStorageSupported, updateObject} from "../utils";
 
 const initialState = {
   tournament: null,
@@ -14,7 +13,7 @@ const initialState = {
 }
 
 export const comInitializer = (initialValue = initialState) => {
-  if (typeof window !== "undefined") {
+  if (isStorageSupported()) {
     return JSON.parse(localStorage.getItem('commerce'));
   }
   return initialValue;
