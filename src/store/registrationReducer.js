@@ -1,5 +1,5 @@
 import * as actionTypes from './actions/actionTypes';
-import {updateObject} from "../utils";
+import {isStorageSupported, updateObject} from "../utils";
 
 const initialState = {
   tournament: null,
@@ -10,7 +10,7 @@ const initialState = {
 }
 
 export const regInitializer = (initialValue = initialState) => {
-  if (typeof window !== "undefined") {
+  if (isStorageSupported()) {
     return JSON.parse(localStorage.getItem('registration'));
   }
   return initialValue;

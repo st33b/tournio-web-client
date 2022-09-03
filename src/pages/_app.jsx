@@ -15,10 +15,6 @@ function MyApp({Component, pageProps})  {
 
     const myVersion = localStorage.getItem(APP_VERSION);
     if (myVersion === null || myVersion !== process.env.NEXT_PUBLIC_IGBO_REGISTRATION_CLIENT_VERSION) {
-      // console.log("env version doesn't match mine");
-      // console.log("Mine:", myVersion);
-      // console.log("Env:", process.env.NEXT_PUBLIC_IGBO_REGISTRATION_CLIENT_VERSION);
-      localStorage.clear();
       localStorage.setItem(APP_VERSION, process.env.NEXT_PUBLIC_IGBO_REGISTRATION_CLIENT_VERSION);
     }
   }, []);

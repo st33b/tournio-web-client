@@ -105,7 +105,7 @@ const SignInSheet = ({bowler, showPrintButton}) => {
           </div>
         </div>
         <div className={'col-7'}>
-          {!!bowler.team && (
+          {bowler.team && (
             <div className={'row'}>
               <div className={'col-5 text-end pe-2'}>
                 Team Name
@@ -120,7 +120,8 @@ const SignInSheet = ({bowler, showPrintButton}) => {
               Doubles Partner
             </div>
             <div className={'col fw-bold'}>
-              {!!bowler.doubles_partner ? bowler.doubles_partner : 'n/a'}
+              {!bowler.doubles_partner && 'n/a'}
+              {bowler.doubles_partner && bowler.doubles_partner.full_name}
             </div>
           </div>
         </div>
