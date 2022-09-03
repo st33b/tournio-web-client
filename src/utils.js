@@ -1,10 +1,20 @@
 import axios from "axios";
 import {
   bowlerCommerceDetailsRetrieved,
-  teamDetailsRetrieved,
   teamListRetrieved,
   tournamentDetailsRetrieved,
 } from "./store/actions/registrationActions";
+
+export const isStorageSupported = () => {
+  try {
+    const storage = window.localStorage;
+    storage.setItem("probe", 1);
+    storage.removeItem("probe");
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
 
 export const updateObject = (oldObject, updatedProperties) => {
   return {
