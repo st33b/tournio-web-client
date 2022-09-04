@@ -13,6 +13,21 @@ html {
   --tournio-accordion-active-bg: var(--tournio-body-bg);
 }
 
+.list-group {
+  @media (prefers-color-scheme: dark) {
+    --tournio-list-group-color: var(--tournio-gray-500);
+    --tournio-list-group-bg: var(--tournio-gray-900);
+    --tournio-list-group-border-color: var(--tournio-gray-700);
+    --tournio-list-group-action-color: var(--tournio-gray-300);
+    --tournio-list-group-action-hover-color: var(--tournio-gray-300);
+    --tournio-list-group-action-hover-bg: var(--tournio-gray-800);
+    --tournio-list-group-action-active-color: var(--tournio-gray-300);
+    --tournio-list-group-action-active-bg: var(--tournio-gray-700);
+    --tournio-list-group-active-color: var(--tournio-gray-400);
+    --tournio-list-group-active-bg: var(--tournio-gray-800);
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   .card {
     background-color: var(--tournio-gray-900);

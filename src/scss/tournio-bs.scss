@@ -33,7 +33,7 @@ $lighter-indigo: #af85f4;
 $lighter-purple: #a77df4;
 $darker-pink: #e08eb7;
 $darker-orange: #fba155;
-$darker-yellow: #f7ea1e;
+$darker-yellow: #9f971a;
 $darker-green: #30733c;
 $darker-teal: #37e3b0;
 
@@ -106,8 +106,8 @@ $dark-mode-colors-rgb: map-loop($dark-mode-colors, to-rgb, "$value");
   :root {
     --tournio-body-bg: #121212;
     --tournio-body-bg-rgb: #{to-rgb(#121212)};
-    --tournio-body-color: #d5d7da;
-    --tournio-body-color-rgb: #{to-rgb(#d5d7da)};
+    --tournio-body-color: #a1a1a1;
+    --tournio-body-color-rgb: #{to-rgb(#a1a1a1)};
     --tournio-link-color: #5398ff;
 
     @each $color, $value in $dark-mode-colors {

@@ -22,14 +22,14 @@ const Contacts = ({tournament}) => {
   };
 
   return (
-    <div className={classes.Contacts}>
+    <div className={`${classes.Contacts} text-body bg-body`} >
       <h5 className={'mt-2'}>
         Contacts
       </h5>
       <ListGroup variant={'flush'}>
         {tournament.contacts.map((c, i) => {
           return (
-            <ListGroup.Item className={classes.ContactItem} key={i}>
+            <ListGroup.Item className={classes.ContactItem} key={i} action>
               <p className={classes.Name}>
                 {c.name}
               </p>
