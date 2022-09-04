@@ -16,10 +16,10 @@ export const DirectorContextProvider = ({children}) => {
   let userData;
   let tournamentData;
 
-  if (isStorageSupported()) {
-    tokenData = localStorage.getItem('token');
-    userData = JSON.parse(localStorage.getItem('currentUser'));
-    tournamentData = JSON.parse(localStorage.getItem('tournament'));
+  if (typeof window !== 'undefined') {
+    tokenData = sessionStorage.getItem('token');
+    userData = JSON.parse(sessionStorage.getItem('currentUser'));
+    tournamentData = JSON.parse(sessionStorage.getItem('tournament'));
   }
 
   let initialToken, initialUser, initialTournament;

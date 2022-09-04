@@ -6,20 +6,20 @@ import {Alert, Col, Row} from "react-bootstrap";
 import {useEffect, useState} from "react";
 
 const ReviewEntries = ({editBowler, context}) => {
-  const {entry} = useRegistrationContext();
+  const {registration} = useRegistrationContext();
 
   const [bowler, setBowler] = useState();
   const [team, setTeam] = useState();
   const [bowlers, setBowlers]= useState();
 
   useEffect(() => {
-    if (!entry) {
+    if (!registration) {
       return;
     }
-    setBowler(entry.bowler);
-    setTeam(entry.team);
-    setBowlers(entry.bowlers);
-  }, [entry]);
+    setBowler(registration.bowler);
+    setTeam(registration.team);
+    setBowlers(registration.bowlers);
+  }, [registration]);
 
   if (!bowler && !bowlers && !team) {
     return '';

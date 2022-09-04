@@ -3,17 +3,13 @@ import {useRouter} from "next/router";
 
 import {directorApiRequest, fetchTournamentDetails} from "../../../../utils";
 import {useDirectorContext} from "../../../../store/DirectorContext";
-import DirectorLayout from "../../../../components/Layout/DirectorLayout/DirectorLayout";
-import BowlerListing from "../../../../components/Director/BowlerListing/BowlerListing";
 import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
-import {useRegistrationContext} from "../../../../store/RegistrationContext";
 import {Col, Row} from "react-bootstrap";
 import SignInSheet from "../../../../components/Director/SignInSheet/SignInSheet";
 
 const Page = () => {
   const router = useRouter();
   const directorContext = useDirectorContext();
-  const {dispatch} = useRegistrationContext();
   const [errorMessage, setErrorMessage] = useState(null);
   const [bowlers, setBowlers] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -45,7 +41,7 @@ const Page = () => {
       return;
     }
     if (directorContext.tournament.identifier !== identifier) {
-      fetchTournamentDetails(identifier, dispatch);
+      fetchTournamentDetails(identifier);
     }
   }, [identifier]);
 

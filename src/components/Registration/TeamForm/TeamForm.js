@@ -5,10 +5,9 @@ import {Map} from "immutable";
 import classes from './TeamForm.module.scss';
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {useClientReady} from "../../../utils";
 
-const TeamForm = ({teamFormCompleted}) => {
-  const {entry} = useRegistrationContext();
-
+const TeamForm = ({tournament, teamFormCompleted}) => {
   const initialFormState = {
     teamName: '',
     shift: '',
@@ -17,18 +16,14 @@ const TeamForm = ({teamFormCompleted}) => {
   const [teamForm, setTeamForm] = useState(Map(initialFormState));
 
   useEffect(() => {
-    if (!entry || !entry.tournament) {
+    if (!tournament) {
       return;
     }
-    if (entry.tournament.available_shifts.length === 1) {
-      const newTeamForm = teamForm.set('shift', entry.tournament.available_shifts[0].identifier);
+    if (tournament.available_shifts.length === 1) {
+      const newTeamForm = teamForm.set('shift', tournament.available_shifts[0].identifier);
       setTeamForm(newTeamForm);
     }
-  }, [entry]);
-
-  if (!entry || !entry.tournament) {
-    return '';
-  }
+  }, [tournament]);
 
   const formHandler = (event) => {
     event.preventDefault();
@@ -52,8 +47,16 @@ const TeamForm = ({teamFormCompleted}) => {
     setTeamForm(changedForm.set('valid', isValid(changedForm)));
   }
 
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
+  if (!tournament) {
+    return '';
+  }
+
   let shiftSelection = '';
-  if (entry.tournament.available_shifts.length > 1) {
+  if (tournament.available_shifts.length > 1) {
     shiftSelection = (
       <Form.Group as={Row}
                   className={'mb-3'}
@@ -70,15 +73,15 @@ const TeamForm = ({teamFormCompleted}) => {
                        value={teamForm.get('shift')}
           >
             <option>-- Choose a shift</option>
-            {entry.tournament.available_shifts.map(shift => (
+            {tournament.available_shifts.map(shift => (
               <option key={shift.identifier} value={shift.identifier}>{shift.name}</option>
             ))}
           </Form.Select>
         </Col>
       </Form.Group>
     )
-  } else if (entry.tournament.shifts.length > 1) {
-    const shiftName = entry.tournament.available_shifts[0].name;
+  } else if (tournament.shifts.length > 1) {
+    const shiftName = tournament.available_shifts[0].name;
     shiftSelection = (
       <Form.Group as={Row}
                   className={'mb-3'}

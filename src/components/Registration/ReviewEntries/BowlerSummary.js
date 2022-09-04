@@ -6,8 +6,8 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import classes from './BowlerSummary.module.scss';
 
 const BowlerSummary = ({bowler, editClicked}) => {
-  const {entry} = useRegistrationContext();
-  if (!bowler || !entry.tournament) {
+  const {registration} = useRegistrationContext();
+  if (!bowler || !registration.tournament) {
     return '';
   }
 
@@ -32,9 +32,9 @@ const BowlerSummary = ({bowler, editClicked}) => {
 
   // Get labels and responses for additional questions, if any
   const aqResponses = {};
-  for (let key in entry.tournament.additional_questions) {
-    labels[key] = entry.tournament.additional_questions[key].label;
-    aqResponses[key] = entry.tournament.additional_questions[key].elementConfig.value;
+  for (let key in registration.tournament.additional_questions) {
+    labels[key] = registration.tournament.additional_questions[key].label;
+    aqResponses[key] = registration.tournament.additional_questions[key].elementConfig.value;
   }
 
   const editClickHandler = (event) => {

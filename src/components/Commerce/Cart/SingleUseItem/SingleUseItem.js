@@ -1,9 +1,9 @@
-import {useRegistrationContext} from "../../../../store/RegistrationContext";
+import {useCommerceContext} from "../../../../store/CommerceContext";
 
 import classes from './SingleUseItem.module.scss';
 
 const SingleUseItem = ({item, removed}) => {
-  const {commerce} = useRegistrationContext();
+  const {commerce} = useCommerceContext();
 
   const removeClickedHandler = (event) => {
     event.preventDefault();

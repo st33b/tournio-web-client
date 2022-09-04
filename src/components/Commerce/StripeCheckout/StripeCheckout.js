@@ -2,13 +2,13 @@ import {useState} from "react";
 import {useRouter} from "next/router";
 
 import {purchaseDetailsPostData, postPurchaseDetails} from "../../../utils";
-import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {useCommerceContext} from "../../../store/CommerceContext";
 import {stripeCheckoutSessionInitiated} from "../../../store/actions/registrationActions";
 
 import classes from './StripeCheckout.module.scss';
 
 const StripeCheckout = () => {
-  const {commerce, commerceDispatch} = useRegistrationContext();
+  const {commerce, dispatch} = useCommerceContext();
   const router = useRouter();
 
   const {identifier} = router.query;
@@ -33,7 +33,7 @@ const StripeCheckout = () => {
   const postDetailsSucceeded = (responseData) => {
     // grab the checkout session id before redirecting, so we can poll for results upon completion
     const csId = responseData.checkout_session_id;
-    commerceDispatch(stripeCheckoutSessionInitiated(csId));
+    dispatch(stripeCheckoutSessionInitiated(csId));
 
     // Redirect to the URL in the response data
     location = responseData.redirect_to;

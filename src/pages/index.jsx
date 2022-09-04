@@ -66,7 +66,7 @@ const Page = () => {
         <Col sm={6} md={4}>
           <Card className={'mb-3'}>
             <Card.Header>
-              <Card.Title>
+              <Card.Title className={'mb-0'}>
                 Flexible Registration
               </Card.Title>
             </Card.Header>
@@ -84,7 +84,7 @@ const Page = () => {
         <Col sm={6} md={4}>
           <Card className={'mb-3'}>
             <Card.Header>
-              <Card.Title>
+              <Card.Title className={'mb-0'}>
                 Powerful Administration
               </Card.Title>
             </Card.Header>
@@ -102,7 +102,7 @@ const Page = () => {
         <Col sm={6} md={4}>
           <Card className={'mb-3'}>
             <Card.Header>
-              <Card.Title>
+              <Card.Title className={'mb-0'}>
                 Go Beyond...
               </Card.Title>
             </Card.Header>

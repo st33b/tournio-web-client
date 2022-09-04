@@ -12,7 +12,7 @@ import ProgressIndicator from "../../../components/Registration/ProgressIndicato
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   const [bowler, setBowler] = useState();
@@ -22,13 +22,13 @@ const Page = () => {
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
-    if (!entry || !entry.tournament || !entry.bowler) {
+    if (!registration || !registration.tournament || !registration.bowler) {
       return;
     }
-    setTournament(entry.tournament);
-    setBowler(entry.bowler);
-    setPartner(entry.partner);
-  }, [entry]);
+    setTournament(registration.tournament);
+    setBowler(registration.bowler);
+    setPartner(registration.partner);
+  }, [registration]);
 
   if (!tournament || !bowler) {
     return '';

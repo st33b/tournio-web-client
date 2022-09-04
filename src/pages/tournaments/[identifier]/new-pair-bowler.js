@@ -10,32 +10,32 @@ import {newPairBowlerAdded} from "../../../store/actions/registrationActions";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   useEffect(() => {
-    if (!entry || !entry.tournament) {
+    if (!registration || !registration.tournament) {
       return;
     }
-    if (entry.bowlers.length === 2) {
+    if (registration.bowlers.length === 2) {
       onFinishedWithBowlers();
     }
-  }, [entry]);
+  }, [registration]);
 
-  if (!entry || !entry.tournament) {
+  if (!registration || !registration.tournament) {
     return '';
   }
 
   const onFinishedWithBowlers = () => {
     // Move on to pair review!
-    router.push(`/tournaments/${entry.tournament.identifier}/new-pair-review`);
+    router.push(`/tournaments/${registration.tournament.identifier}/new-pair-review`);
   }
 
   const onNewBowlerAdded = (bowlerInfo) => {
     dispatch(newPairBowlerAdded(bowlerInfo));
   }
 
-  const includeShift = entry.tournament.available_shifts && entry.tournament.available_shifts.length > 0;
+  const includeShift = registration.tournament.available_shifts && registration.tournament.available_shifts.length > 0;
 
   return (
     <Row>

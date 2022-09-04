@@ -2,7 +2,7 @@ import {useEffect} from "react";
 import {useRouter} from "next/router";
 import {Row} from "react-bootstrap";
 
-import {fetchTournamentDetails} from "../../utils";
+import {fetchTournamentDetails, useClientReady} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentDetails from "../../components/Registration/TournamentDetails/TournamentDetails";
@@ -13,34 +13,38 @@ import classes from "../../components/Registration/TournamentDetails/TournamentD
 
 const Page = () => {
   const router = useRouter();
-  const { entry, dispatch, commerceDispatch } = useRegistrationContext();
   const { identifier } = router.query;
+  const { registration, dispatch } = useRegistrationContext();
 
   // fetch the tournament details and put the tournament into context
   useEffect(() => {
-    if (identifier === undefined) {
+    if (!identifier) {
       return;
     }
 
-    fetchTournamentDetails(identifier, dispatch, commerceDispatch);
-   }, [identifier, dispatch, commerceDispatch]);
+    fetchTournamentDetails(identifier, dispatch);
+   }, [identifier, dispatch]);
 
-  if (!entry || !entry.tournament) {
-    return '';
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
+  if (!registration.tournament) {
+    return null;
   }
 
   return (
     <div className={classes.TournamentDetails}>
       <Row>
         <div className={'d-none d-md-block col-md-4'}>
-          <TournamentLogo url={entry.tournament.image_url}/>
-          <Contacts tournament={entry.tournament}/>
+          <TournamentLogo url={registration.tournament.image_url}/>
+          <Contacts tournament={registration.tournament}/>
         </div>
         <div className={'col-12 col-md-8'}>
-          <TournamentDetails tournament={entry.tournament} />
+          <TournamentDetails tournament={registration.tournament} />
         </div>
         <div className={'d-md-none col-12'}>
-          <Contacts tournament={entry.tournament}/>
+          <Contacts tournament={registration.tournament}/>
         </div>
       </Row>
     </div>

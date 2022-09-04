@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
-import {fetchTeamDetails, fetchTournamentDetails} from "../../utils";
+import {fetchTeamDetails, fetchTournamentDetails, useClientReady} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
@@ -13,7 +13,7 @@ import {joinTeamRegistrationInitiated} from "../../store/actions/registrationAct
 
 const Page = () => {
   const router = useRouter();
-  const { entry, dispatch, commerceDispatch } = useRegistrationContext();
+  const { registration, dispatch } = useRegistrationContext();
   const { identifier, success } = router.query;
 
   const [loading, setLoading] = useState(true);
@@ -45,17 +45,13 @@ const Page = () => {
 
   // ensure that the tournament in context matches the team's
   useEffect(() => {
-    if (!identifier || !entry || !team) {
+    if (!identifier || !registration || !team) {
       return;
     }
-    if (!entry.tournament || entry.tournament.identifier !== team.tournament.identifier) {
-      fetchTournamentDetails(entry.team.tournament.identifier, dispatch, commerceDispatch);
+    if (!registration.tournament || registration.tournament.identifier !== team.tournament.identifier) {
+      fetchTournamentDetails(registration.team.tournament.identifier, dispatch);
     }
-  }, [identifier, entry, team, dispatch, commerceDispatch]);
-
-  if (loading || !entry || !team) {
-    return <LoadingMessage message={'Retrieving team details...'} />
-  }
+  }, [identifier, registration, team, dispatch]);
 
   const joinTeamClicked = (event) => {
     // event.preventDefault();
@@ -63,8 +59,20 @@ const Page = () => {
     // router.push(`/teams/${team.identifier}/join`);
   }
 
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
+  if (!registration) {
+    return '';
+  }
+
+  if (loading || !registration || !team) {
+    return <LoadingMessage message={'Retrieving team details...'} />
+  }
+
   let joinLink = '';
-  if (team.size < entry.tournament.max_bowlers && !success) {
+  if (team.size < registration.tournament.max_bowlers && !success) {
     joinLink = (
       <p className={'text-center mt-2'}>
         <a href={`/teams/${team.identifier}/join`}
@@ -80,23 +88,26 @@ const Page = () => {
     <div>
       <Row>
         <Col md={4} className={'d-none d-md-block'}>
-          <a href={`/tournaments/${entry.tournament.identifier}`} title={'To tournament page'}>
-            <TournamentLogo tournament={entry.tournament}/>
+          <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
+            <TournamentLogo tournament={registration.tournament}/>
             <h4 className={'text-center py-3'}>
-              {entry.tournament.name}
+              {registration.tournament.name}
             </h4>
           </a>
-          <Contacts tournament={entry.tournament}/>
+          <Contacts tournament={registration.tournament}/>
         </Col>
         <Col xs={12} className={'d-md-none'}>
-          <a href={`/tournaments/${entry.tournament.identifier}`} title={'To tournament page'}>
+          <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
             <h4 className={'text-center'}>
-              {entry.tournament.name}
+              {registration.tournament.name}
             </h4>
           </a>
         </Col>
         <Col>
-          <TeamDetails successType={success} enablePayment={enablePurchase} team={team}/>
+          <TeamDetails tournament={registration.tournament}
+                       successType={success}
+                       enablePayment={enablePurchase}
+                       team={team}/>
           {joinLink}
 
           {errorMessage && (

@@ -7,16 +7,19 @@ import Summary from "../../../components/Registration/Summary/Summary";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
-import {submitNewTeamRegistration} from "../../../utils";
+import {submitNewTeamRegistration, useClientReady} from "../../../utils";
 import {newTeamEntryCompleted} from "../../../store/actions/registrationActions";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
+  const [error, setError] = useState(null);
+  const [processing, setProcessing] = useState(false);
+
   const editBowlerClicked = (bowler) => {
-    router.push(`/tournaments/${entry.tournament.identifier}/edit-new-team-bowler?bowler=${bowler.position}`)
+    router.push(`/tournaments/${registration.tournament.identifier}/edit-new-team-bowler?bowler=${bowler.position}`)
   }
 
   const newTeamRegistrationSuccess = (teamData) => {
@@ -24,8 +27,6 @@ const Page = () => {
     router.push(`/teams/${teamData.identifier}?success=new_team`);
   }
 
-  const [error, setError] = useState(null);
-  const [processing, setProcessing] = useState(false);
   const newTeamRegistrationFailure = (errorMessage) => {
     setProcessing(false);
     setError(errorMessage);
@@ -36,14 +37,22 @@ const Page = () => {
 
     if (event.target.elements) {
       // got a partial team with a checkbox in a form
-      entry.team.placeWithOthers = event.target.elements.placeWithOthers.checked;
+      registration.team.placeWithOthers = event.target.elements.placeWithOthers.checked;
     }
 
-    submitNewTeamRegistration(entry.tournament,
-      entry.team,
+    submitNewTeamRegistration(registration.tournament,
+      registration.team,
       newTeamRegistrationSuccess,
       newTeamRegistrationFailure);
     setProcessing(true);
+  }
+
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
+  if (!registration) {
+    return '';
   }
 
   let errorMessage = '';
@@ -60,25 +69,26 @@ const Page = () => {
     output = <LoadingMessage message={'Submitting registration...'} />;
   } else {
     output = (
-      <>
+      <div className={'border-bottom mb-3 mb-sm-0'}>
         <ProgressIndicator active={'review'} />
         {errorMessage}
         <ReviewEntries editBowler={editBowlerClicked} />
-      </>
+      </div>
     )
   }
 
   return (
     <Row>
-      <Col lg={8}>
-        {output}
-      </Col>
-      <Col>
-        <Summary nextStepClicked={submitRegistration}
+      <Col xs={{ order: 2 }}>
+        <Summary tournament={registration.tournament}
+                 nextStepClicked={submitRegistration}
                  nextStepText={'Submit Registration'}
                  enableDoublesEdit={true}
                  finalStep={true}
         />
+      </Col>
+      <Col lg={8} sm={{ order: 2 }}>
+        {output}
       </Col>
     </Row>
   );

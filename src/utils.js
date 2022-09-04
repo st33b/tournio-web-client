@@ -4,16 +4,32 @@ import {
   teamListRetrieved,
   tournamentDetailsRetrieved,
 } from "./store/actions/registrationActions";
+import {useEffect, useState} from "react";
 
-export const isStorageSupported = () => {
-  try {
-    const storage = window.localStorage;
-    storage.setItem("probe", 1);
-    storage.removeItem("probe");
-    return true;
-  } catch (err) {
-    return false;
-  }
+export const useStorage = (key, initialValue) => {
+  const [value, setValue] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedValue = sessionStorage.getItem(key);
+      if (savedValue !== null) {
+        return JSON.parse(savedValue);
+      }
+    }
+    return initialValue;
+  });
+
+  useEffect(() => {
+    sessionStorage.setItem(key, JSON.stringify(value));
+  }, [value]);
+
+  return [value, setValue];
+}
+
+export const useClientReady = () => {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    setReady(true);
+  }, []);
+  return ready;
 }
 
 export const updateObject = (oldObject, updatedProperties) => {
@@ -132,7 +148,7 @@ export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure}) => {
 
 }
 
-export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, commerceDispatch) => {
+export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, dispatch) => {
   const requestConfig = {
     method: 'get',
     url: `${apiHost}/bowlers/${bowlerIdentifier}`,
@@ -145,7 +161,7 @@ export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, commerceDispat
       const bowlerData = response.data.bowler;
       const bowlerTournamentId = bowlerData.tournament.identifier;
       const availableItems = response.data.available_items;
-      commerceDispatch(bowlerCommerceDetailsRetrieved(bowlerData, availableItems));
+      dispatch(bowlerCommerceDetailsRetrieved(bowlerData, availableItems));
     })
     .catch(error => {
       // Display some kind of error message

@@ -1,11 +1,11 @@
-import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {useCommerceContext} from "../../../store/CommerceContext";
 
 import classes from './TeamDetails.module.scss';
 
-const TeamDetails = ({team, successType, enablePayment = true}) => {
-  const {entry, commerce} = useRegistrationContext();
+const TeamDetails = ({tournament, team, successType, enablePayment = true}) => {
+  const {commerce} = useCommerceContext();
 
-  if (!entry.tournament || !team) {
+  if (!tournament || !team) {
     return '';
   }
 

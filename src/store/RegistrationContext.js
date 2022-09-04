@@ -1,27 +1,31 @@
 import {createContext, useContext, useEffect, useReducer} from 'react';
-import {registrationReducer, regInitializer} from "./registrationReducer";
-import {commerceReducer, comInitializer} from "./commerceReducer";
-import {isStorageSupported} from "../utils";
+import {registrationReducer, registrationInitializer} from "./registrationReducer";
+import {useStorage} from "../utils";
 
 const RegistrationContext = createContext({
-  entry: null,
-  commerce: null,
+  registration: null,
   dispatch: null,
 });
 
+const initialRegistrationState = {
+  tournament: null,
+  team: null,
+  bowler: null,
+  bowlers: null,
+  partner: null,
+};
+
 export const RegistrationContextProvider = ({children}) => {
-  const [entry, dispatch] = useReducer(registrationReducer, {}, regInitializer);
-  const [commerce, commerceDispatch] = useReducer(commerceReducer, {}, comInitializer);
+  const [storedRegistrationState, storeRegistrationState] = useStorage('registration', initialRegistrationState);
+
+  const [registration, dispatch] = useReducer(registrationReducer, storedRegistrationState, registrationInitializer);
 
   useEffect(() => {
-    if (isStorageSupported()) {
-      localStorage.setItem('registration', JSON.stringify(entry));
-      localStorage.setItem('commerce', JSON.stringify(commerce));
-    }
-  }, [entry, commerce]);
+    storeRegistrationState(registration);
+  }, [registration]);
 
   return (
-    <RegistrationContext.Provider value={{entry, dispatch, commerce, commerceDispatch}}>
+    <RegistrationContext.Provider value={{registration, dispatch}}>
       {children}
     </RegistrationContext.Provider>
   );

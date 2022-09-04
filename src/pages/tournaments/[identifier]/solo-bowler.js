@@ -10,18 +10,18 @@ import {newSoloRegistrationInitiated, soloBowlerInfoAdded} from "../../../store/
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   useEffect(() => {
-    if (!entry || !entry.tournament) {
+    if (!registration || !registration.tournament) {
       return;
     }
-    const shift = entry.tournament.shifts[0];
+    const shift = registration.tournament.shifts[0];
     if (shift && !shift.registration_types.solo) {
-      router.push(`/tournaments/${entry.tournament.identifier}`);
+      router.push(`/tournaments/${registration.tournament.identifier}`);
     }
-  }, [entry]);
+  }, [registration]);
 
   useEffect(() => {
     dispatch(newSoloRegistrationInitiated());
@@ -29,14 +29,14 @@ const Page = () => {
 
   const onCompletion = (bowler) => {
     dispatch(soloBowlerInfoAdded(bowler));
-    router.push(`/tournaments/${entry.tournament.identifier}/solo-bowler-review`);
+    router.push(`/tournaments/${registration.tournament.identifier}/solo-bowler-review`);
   }
 
-  if (!entry || !entry.tournament) {
+  if (!registration || !registration.tournament) {
     return '';
   }
 
-  const includeShift = entry.tournament.available_shifts && entry.tournament.available_shifts.length > 0;
+  const includeShift = registration.tournament.available_shifts && registration.tournament.available_shifts.length > 0;
 
   return (
     <Row>

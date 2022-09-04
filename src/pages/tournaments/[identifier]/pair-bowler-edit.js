@@ -9,20 +9,20 @@ import {newPairBowlerUpdated} from "../../../store/actions/registrationActions";
 import {useEffect, useState} from "react";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
   const { index } = router.query;
 
   const [bowler, setBowler] = useState();
   const [tournament, setTournament] = useState();
   useEffect(() => {
-    if (!entry) {
+    if (!registration) {
       return;
     }
 
-    setBowler(entry.bowlers[index]);
-    setTournament(entry.tournament);
-  }, [entry]);
+    setBowler(registration.bowlers[index]);
+    setTournament(registration.tournament);
+  }, [registration]);
 
   if (!bowler) {
     return'';

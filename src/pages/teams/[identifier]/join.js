@@ -9,11 +9,11 @@ import {existingTeamBowlerInfoAdded} from "../../../store/actions/registrationAc
 
 const Page = () => {
   const router = useRouter();
-  const { entry, dispatch } = useRegistrationContext();
+  const { registration, dispatch } = useRegistrationContext();
 
   const onNewBowlerAdded = (bowlerInfo) => {
     dispatch(existingTeamBowlerInfoAdded(bowlerInfo));
-    router.push(`/teams/${entry.team.identifier}/review-joining-bowler`);
+    router.push(`/teams/${registration.team.identifier}/review-joining-bowler`);
   }
 
   return (

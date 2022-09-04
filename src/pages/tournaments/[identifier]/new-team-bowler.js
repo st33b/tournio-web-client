@@ -7,17 +7,17 @@ import ProgressIndicator from "../../../components/Registration/ProgressIndicato
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamBowlerInfoAdded, newTeamPartnersChosen} from "../../../store/actions/registrationActions";
+import {useClientReady} from "../../../utils";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   const partnerThePairUp = () => {
     // create a copy of the bowlers array
-    const newBowlers = entry.team.bowlers.slice(0);
+    const newBowlers = registration.team.bowlers.slice(0);
 
     // these are index-based, which is position-1
-
     newBowlers[0].doubles_partner_num = 2;
     newBowlers[1].doubles_partner_num = 1;
 
@@ -25,38 +25,47 @@ const Page = () => {
   }
 
   const onFinishedWithBowlers = () => {
-    switch (entry.team.bowlers.length) {
+    switch (registration.team.bowlers.length) {
       case 1:
-        router.push(`/tournaments/${entry.tournament.identifier}/review-entries`);
+        router.push(`/tournaments/${registration.tournament.identifier}/review-entries`);
         break;
       case 2:
         partnerThePairUp();
-        router.push(`/tournaments/${entry.tournament.identifier}/review-entries`);
+        router.push(`/tournaments/${registration.tournament.identifier}/review-entries`);
         break;
       default:
         // Move on to doubles partner selection!
-        router.push(`/tournaments/${entry.tournament.identifier}/doubles-partners`);
+        router.push(`/tournaments/${registration.tournament.identifier}/doubles-partners`);
     }
   }
 
   const onNewBowlerAdded = (bowlerInfo) => {
     dispatch(newTeamBowlerInfoAdded(bowlerInfo));
-    if (bowlerInfo.position === entry.tournament.max_bowlers) {
+    if (bowlerInfo.position === registration.tournament.max_bowlers) {
       // Move on to doubles partner selection
       onFinishedWithBowlers();
     }
   }
 
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
+  if (!registration) {
+    return '';
+  }
+
   return (
     <Row>
+      <Col>
+        <Summary tournament={registration.tournament}
+                 nextStepClicked={onFinishedWithBowlers}
+                 nextStepText={'Finished With Bowlers'}
+        />
+      </Col>
       <Col lg={8}>
         <ProgressIndicator active={'bowlers'}/>
         <BowlerForm bowlerInfoSaved={onNewBowlerAdded}/>
-      </Col>
-      <Col>
-        <Summary nextStepClicked={onFinishedWithBowlers}
-                 nextStepText={'Finished With Bowlers'}
-        />
       </Col>
     </Row>
   );

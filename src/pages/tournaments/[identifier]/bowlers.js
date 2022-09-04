@@ -12,7 +12,7 @@ import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage
 
 const Page = () => {
   const router = useRouter();
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const { success } = router.query;
 
   const [loading, setLoading] = useState(false);
@@ -31,12 +31,12 @@ const Page = () => {
 
   // fetch the list of bowlers
   useEffect(() => {
-    if (!entry || !entry.tournament) {
+    if (!registration || !registration.tournament) {
       return;
     }
     setLoading(true);
     fetchBowlerList({
-      tournamentIdentifier: entry.tournament.identifier,
+      tournamentIdentifier: registration.tournament.identifier,
       onSuccess: onBowlerListRetrieved,
       onFailure: onBowlerListFailed,
     });
@@ -46,7 +46,7 @@ const Page = () => {
     return <LoadingMessage message={'Retrieving list of bowlers...'}/>
   }
 
-  if (!bowlers || !entry || !entry.tournament) {
+  if (!bowlers || !registration || !registration.tournament) {
     return <LoadingMessage message={'Retrieving list of bowlers...'}/>
   }
 
@@ -64,11 +64,11 @@ const Page = () => {
     <div>
       <Row>
         <Col md={4} className={'d-none d-md-block'}>
-          <a href={`/tournaments/${entry.tournament.identifier}`} title={'To tournament page'}>
-            <TournamentLogo tournament={entry.tournament}/>
-            <h4 className={'text-center py-3'}>{entry.tournament.name}</h4>
+          <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
+            <TournamentLogo tournament={registration.tournament}/>
+            <h4 className={'text-center py-3'}>{registration.tournament.name}</h4>
           </a>
-          <Contacts tournament={entry.tournament}/>
+          <Contacts tournament={registration.tournament}/>
         </Col>
         <Col>
           {error}

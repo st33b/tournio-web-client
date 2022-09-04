@@ -1,9 +1,9 @@
-import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {useCommerceContext} from "../../../store/CommerceContext";
 
 import classes from './PreviousPurchases.module.scss';
 
 const PreviousPurchases = () => {
-  const {commerce} = useRegistrationContext();
+  const {commerce} = useCommerceContext();
 
   if (!commerce) {
     return '';

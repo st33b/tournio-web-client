@@ -1,4 +1,4 @@
-import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {useCommerceContext} from "../../../store/CommerceContext";
 import SingleUseItem from "./SingleUseItem/SingleUseItem";
 import MultiUseItem from "./MultiUseItem/MultiUseItem";
 
@@ -6,7 +6,7 @@ import classes from './Cart.module.scss';
 import StripeCheckout from "../StripeCheckout/StripeCheckout";
 
 const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
-  const {commerce} = useRegistrationContext();
+  const {commerce} = useCommerceContext();
 
   if (!commerce || !commerce.cart) {
     return '';

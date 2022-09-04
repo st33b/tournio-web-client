@@ -8,23 +8,23 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {existingTeamBowlerEdited} from "../../../store/actions/registrationActions";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
-  if (!entry || !entry.team) {
+  if (!registration || !registration.team) {
     return'';
   }
 
-  const bowlerNum = entry.team.bowlers.length;
+  const bowlerNum = registration.team.bowlers.length;
   const onBowlerInfoUpdated = (bowlerInfo) => {
     dispatch(existingTeamBowlerEdited(bowlerInfo));
-    router.push(`/teams/${entry.team.identifier}/review-joining-bowler`);
+    router.push(`/teams/${registration.team.identifier}/review-joining-bowler`);
   }
 
   return (
     <Row>
       <Col lg={8}>
-        <BowlerForm bowlerData={entry.team.bowlers[bowlerNum - 1]}
+        <BowlerForm bowlerData={registration.team.bowlers[bowlerNum - 1]}
                     bowlerInfoSaved={onBowlerInfoUpdated} />
       </Col>
       <Col>

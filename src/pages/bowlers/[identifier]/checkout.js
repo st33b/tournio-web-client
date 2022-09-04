@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
 import {fetchBowlerDetails, purchaseDetailsPostData, postPurchaseDetails, postPurchasesCompleted} from "../../../utils";
-import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {useCommerceContext} from "../../../store/CommerceContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import ItemSummary from "../../../components/Commerce/Checkout/ItemSummary";
@@ -13,7 +13,7 @@ import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage
 
 const Page = () => {
   const router = useRouter();
-  const {commerce, commerceDispatch} = useRegistrationContext();
+  const {commerce, dispatch} = useCommerceContext();
   const {identifier} = router.query;
 
   const [loading, setLoading] = useState(true);
@@ -96,13 +96,13 @@ const Page = () => {
   }
 
   const onCompletePurchaseSuccess = (data) => {
-    commerceDispatch(purchaseCompleted(data));
-    fetchBowlerDetails(identifier, commerce, commerceDispatch);
+    dispatch(purchaseCompleted(data));
+    fetchBowlerDetails(identifier, commerce, dispatch);
     router.push(`/bowlers/${identifier}?success=purchase`);
   }
 
   const onCompletePurchaseFailure = (data) => {
-    commerceDispatch(purchaseFailed(data.error));
+    dispatch(purchaseFailed(data.error));
     router.push(`/bowlers/${identifier}?error=purchase`);
     // TODO: trigger an email to treasurer and admin that paypal transaction went through, but
     // we failed to connect it to our catalog.

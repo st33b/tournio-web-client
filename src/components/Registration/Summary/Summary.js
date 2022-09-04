@@ -1,31 +1,34 @@
-import {Button, Card} from "react-bootstrap";
+import {Button, Card, Col, Row, Image} from "react-bootstrap";
 
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './Summary.module.scss';
 import {useEffect, useState} from "react";
+import {useClientReady} from "../../../utils";
 
-const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEdit, finalStep}) => {
-  const {entry} = useRegistrationContext();
+const Summary = ({tournament, nextStepClicked, nextStepText, buttonDisabled, enableDoublesEdit, finalStep}) => {
+  const {registration} = useRegistrationContext();
 
-  const [tournament, setTournament] = useState();
   const [team, setTeam] = useState();
   const [bowler, setBowler] = useState();
   const [bowlers, setBowlers] = useState();
   const [partner, setPartner] = useState();
 
   useEffect(() => {
-    if (!entry || !entry.tournament) {
+    if (!registration) {
       return;
     }
 
-    setTournament(entry.tournament);
-    setTeam(entry.team);
-    setBowler(entry.bowler);
-    setBowlers(entry.bowlers);
-    setPartner(entry.partner);
-  }, [entry]);
+    setTeam(registration.team);
+    setBowler(registration.bowler);
+    setBowlers(registration.bowlers);
+    setPartner(registration.partner);
+  }, [registration]);
 
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
   if (!tournament) {
     return '';
   }
@@ -156,7 +159,7 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
             {nextStepText}
           </Button>
         </form>
-      )
+      );
     }
   }
 
@@ -166,8 +169,28 @@ const Summary = ({nextStepClicked, nextStepText, buttonDisabled, enableDoublesEd
         <Card.Img variant={'top'}
                   src={tournament.image_url}
                   className={'d-none d-sm-block'}/>
-        <Card.Body>
-          <Card.Title>
+        <Card.Body className={'d-sm-none px-0 py-0'}>
+          <Row className={'mb-3'}>
+            <Col xs={3}>
+              <Image fluid
+                     src={tournament.image_url}
+                     alt={"tournament logo"}
+              />
+            </Col>
+            <Col>
+              <Card.Title>
+                {tournament.name}
+              </Card.Title>
+              {teamText}
+              {bowlersText}
+              {partnerText}
+              {doublesLink}
+              {nextStep}
+            </Col>
+          </Row>
+        </Card.Body>
+        <Card.Body className={'d-none d-sm-block px-3 pt-0'}>
+          <Card.Title className={'mt-3'}>
             {tournament.name}
           </Card.Title>
           {teamText}

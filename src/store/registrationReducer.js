@@ -1,5 +1,5 @@
 import * as actionTypes from './actions/actionTypes';
-import {isStorageSupported, updateObject} from "../utils";
+import {updateObject} from "../utils";
 
 const initialState = {
   tournament: null,
@@ -9,10 +9,7 @@ const initialState = {
   partner: null,
 }
 
-export const regInitializer = (initialValue = initialState) => {
-  if (isStorageSupported()) {
-    return JSON.parse(localStorage.getItem('registration'));
-  }
+export const registrationInitializer = (initialValue = initialState) => {
   return initialValue;
 }
 
@@ -25,6 +22,7 @@ export const registrationReducer = (state, action) => {
     case actionTypes.NEW_TEAM_REGISTRATION_INITIATED:
     case actionTypes.SUBMIT_JOIN_TEAM_COMPLETED:
     case actionTypes.TEAM_LIST_RETRIEVED:
+      console.log("New team initiated. Previous state:", state);
       return updateObject(state, {
         team: {
           name: '',
@@ -102,7 +100,7 @@ export const registrationReducer = (state, action) => {
       bowlers.push(action.bowler);
       const team = {...state.team}
       team.bowlers = bowlers;
-      return updateObject(state,{
+      return updateObject(state, {
         team: team,
       });
     case actionTypes.NEW_SOLO_REGISTRATION_INITIATED:

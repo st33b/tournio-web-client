@@ -1,6 +1,6 @@
 import {compareAsc} from "date-fns";
 import * as actionTypes from './actions/actionTypes';
-import {isStorageSupported, updateObject} from "../utils";
+import {updateObject} from "../utils";
 
 const initialState = {
   tournament: null,
@@ -13,10 +13,7 @@ const initialState = {
   error: null,
 }
 
-export const comInitializer = (initialValue = initialState) => {
-  if (isStorageSupported()) {
-    return JSON.parse(localStorage.getItem('commerce'));
-  }
+export const commerceInitializer = (initialValue = initialState) => {
   return initialValue;
 }
 

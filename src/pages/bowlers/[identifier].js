@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
 import {fetchBowlerDetails, fetchTournamentDetails} from "../../utils";
-import {useRegistrationContext} from "../../store/RegistrationContext";
+import {useCommerceContext} from "../../store/CommerceContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import Menu from '../../components/Commerce/Menu';
@@ -12,7 +12,7 @@ import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
 const Page = () => {
   const router = useRouter();
   const {success} = router.query;
-  const {commerce, commerceDispatch} = useRegistrationContext();
+  const {commerce, dispatch} = useCommerceContext();
   const {identifier} = router.query;
 
   const [successMessage, setSuccessMessage] = useState(null);
@@ -26,7 +26,7 @@ const Page = () => {
     }
 
     if (!commerce || !commerce.bowler || commerce.bowler.identifier !== identifier) {
-      fetchBowlerDetails(identifier, commerce, commerceDispatch);
+      fetchBowlerDetails(identifier, commerce, dispatch);
       return;
     }
 
@@ -43,14 +43,14 @@ const Page = () => {
         // }
       }
     }
-  }, [identifier, commerce, commerceDispatch, success]);
+  }, [identifier, commerce, dispatch, success]);
 
   useEffect(() => {
     if (success === 'purchase') {
       console.log("We've completed a purchase. Retrieving bowler details...");
       setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
       // do we need to refresh our purchase details?
-      fetchBowlerDetails(identifier, commerce, commerceDispatch);
+      fetchBowlerDetails(identifier, commerce, dispatch);
       return;
     } else if (success === 'register') {
       setSuccessMessage('Your registration was received! You may now select events, optional items, and pay entry fees.');
@@ -66,9 +66,9 @@ const Page = () => {
       return;
     }
     if (!commerce.tournament || commerce.bowler.tournament.identifier !== commerce.tournament.identifier) {
-      fetchTournamentDetails(commerce.bowler.tournament.identifier, commerceDispatch);
+      fetchTournamentDetails(commerce.bowler.tournament.identifier, dispatch);
     }
-  }, [identifier, commerce, commerceDispatch]);
+  }, [identifier, commerce, dispatch]);
 
   if (!commerce || !commerce.bowler || !commerce.tournament) {
     return <LoadingMessage message={'One moment, please...'} />;

@@ -14,26 +14,26 @@ import {
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   useEffect(() => {
-    if (!entry || !entry.tournament) {
+    if (!registration || !registration.tournament) {
       return;
     }
-    const shift = entry.tournament.shifts[0];
+    const shift = registration.tournament.shifts[0];
     if (shift && !shift.registration_types.partner) {
-      router.push(`/tournaments/${entry.tournament.identifier}`);
+      router.push(`/tournaments/${registration.tournament.identifier}`);
     }
-  }, [entry]);
+  }, [registration]);
 
-  if (!entry || !entry.tournament) {
+  if (!registration || !registration.tournament) {
     return '';
   }
 
   const onCompletion = (bowler) => {
     dispatch(partnerUpBowlerAdded(bowler));
-    router.push(`/tournaments/${entry.tournament.identifier}/partner-up-bowler-review`);
+    router.push(`/tournaments/${registration.tournament.identifier}/partner-up-bowler-review`);
   }
 
   return (

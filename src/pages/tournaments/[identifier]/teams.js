@@ -10,7 +10,7 @@ import Contacts from "../../../components/Registration/Contacts/Contacts";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
-  const { entry, dispatch } = useRegistrationContext();
+  const { registration, dispatch } = useRegistrationContext();
 
   const [loading, setLoading] = useState(false);
   const [teams, setTeams] = useState(null);
@@ -27,12 +27,12 @@ const Page = () => {
 
   // fetch the list of teams
   useEffect(() => {
-    if (!entry || !entry.tournament) {
+    if (!registration || !registration.tournament) {
       return;
     }
     setLoading(true);
     fetchTeamList({
-      tournamentIdentifier: entry.tournament.identifier,
+      tournamentIdentifier: registration.tournament.identifier,
       dispatch: dispatch,
       onSuccess: onTeamListRetrieved,
       onFailure: onTeamListFailed,
@@ -43,7 +43,7 @@ const Page = () => {
     return <LoadingMessage message={'Retrieving list of teams...'} />
   }
 
-  if (!teams || !entry || !entry.tournament) {
+  if (!teams || !registration || !registration.tournament) {
     return <LoadingMessage message={'Retrieving list of teams...'} />
   }
 
@@ -51,16 +51,16 @@ const Page = () => {
     <div>
       <Row>
         <Col md={4} className={'d-none d-md-block'}>
-          <a href={`/tournaments/${entry.tournament.identifier}`} title={'To tournament page'}>
-            <TournamentLogo tournament={entry.tournament}/>
-            <h4 className={'text-center py-3'}>{entry.tournament.name}</h4>
+          <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
+            <TournamentLogo tournament={registration.tournament}/>
+            <h4 className={'text-center py-3'}>{registration.tournament.name}</h4>
           </a>
-          <Contacts tournament={entry.tournament}/>
+          <Contacts tournament={registration.tournament}/>
         </Col>
         <Col>
-          <a href={`/tournaments/${entry.tournament.identifier}`} title={'To tournament page'}>
+          <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
             <h4 className={'d-md-none text-center'}>
-              {entry.tournament.name}
+              {registration.tournament.name}
             </h4>
           </a>
           <TeamListing caption={'First, find your team...'} teams={teams} />

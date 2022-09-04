@@ -31,7 +31,7 @@ const ProgressIndicator = ({active}) => {
         const itemClass = active === step.id ? classes.Active : '';
         return (
           <Col className={containerClasses} key={i}>
-            <p className={'text-center py-3 m-0'}>
+            <p className={'text-center py-2 py-sm-3 m-0'}>
               <span className={itemClass}>{step.text}</span>
             </p>
           </Col>

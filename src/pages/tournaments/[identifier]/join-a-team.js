@@ -12,7 +12,7 @@ import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage
 import {useRouter} from "next/router";
 
 const Page = () => {
-  const { entry, dispatch } = useRegistrationContext();
+  const { registration, dispatch } = useRegistrationContext();
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
@@ -29,23 +29,23 @@ const Page = () => {
   }
 
   useEffect(() => {
-    if (!entry || !entry.tournament) {
+    if (!registration || !registration.tournament) {
       return;
     }
-    const shift = entry.tournament.shifts[0];
+    const shift = registration.tournament.shifts[0];
     if (shift && !shift.registration_types.join_team) {
-      router.push(`/tournaments/${entry.tournament.identifier}`);
+      router.push(`/tournaments/${registration.tournament.identifier}`);
     }
-  }, [entry]);
+  }, [registration]);
 
   // fetch the team details
   useEffect(() => {
-    if (!entry || !entry.tournament) {
+    if (!registration || !registration.tournament) {
       return;
     }
 
     fetchTeamList({
-      tournamentIdentifier: entry.tournament.identifier,
+      tournamentIdentifier: registration.tournament.identifier,
       dispatch: dispatch,
       onSuccess: onTeamListRetrieved,
       onFailure: onTeamListFailed,
@@ -53,7 +53,7 @@ const Page = () => {
     })
   }, []);
 
-  if (!entry || !entry.tournament || !teams) {
+  if (!registration || !registration.tournament || !teams) {
     return <LoadingMessage message={'Retrieving list of available teams...'} />
   }
 
@@ -61,17 +61,17 @@ const Page = () => {
     return <LoadingMessage message={'Retrieving list of available teams...'} />
   }
 
-  const includeShift = entry.tournament.shifts && entry.tournament.shifts.length > 1;
+  const includeShift = registration.tournament.shifts && registration.tournament.shifts.length > 1;
 
   return (
     <div>
       <Row>
         <Col md={4} className={'d-none d-md-block'}>
-          <a href={`/tournaments/${entry.tournament.identifier}`} title={'To tournament page'}>
-            <TournamentLogo tournament={entry.tournament}/>
-            <h4 className={'text-center py-3'}>{entry.tournament.name}</h4>
+          <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
+            <TournamentLogo tournament={registration.tournament}/>
+            <h4 className={'text-center py-3'}>{registration.tournament.name}</h4>
           </a>
-          <Contacts tournament={entry.tournament}/>
+          <Contacts tournament={registration.tournament}/>
         </Col>
         <Col>
           <TeamListing caption={'Teams Available to Join'} teams={teams} includeShift={includeShift} />

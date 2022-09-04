@@ -10,15 +10,15 @@ import {submitJoinTeamRegistration} from "../../../utils";
 import {submitJoinTeamCompleted} from "../../../store/actions/registrationActions";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   const editBowlerClicked = () => {
-    router.push(`/teams/${entry.team.identifier}/edit-joining-bowler`)
+    router.push(`/teams/${registration.team.identifier}/edit-joining-bowler`)
   }
 
   const joinTeamSuccess = (bowlerIdentifier) => {
-    const teamIdentifier = entry.team.identifier;
+    const teamIdentifier = registration.team.identifier;
     dispatch(submitJoinTeamCompleted(bowlerIdentifier));
     router.push(`/teams/${teamIdentifier}?success=join`);
   }
@@ -31,9 +31,9 @@ const Page = () => {
   }
 
   const submitRegistration = () => {
-    submitJoinTeamRegistration(entry.tournament,
-      entry.team,
-      entry.team.bowlers.slice(-1).pop(),
+    submitJoinTeamRegistration(registration.tournament,
+      registration.team,
+      registration.team.bowlers.slice(-1).pop(),
       joinTeamSuccess,
       joinTeamFailure);
     setProcessing(true);

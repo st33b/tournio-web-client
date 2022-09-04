@@ -1,14 +1,14 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
-import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {useCommerceContext} from "../../../store/CommerceContext";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import {getCheckoutSessionStatus} from '../../../utils';
 import {stripeCheckoutSessionCompleted} from '../../../store/actions/registrationActions';
 
 const Page = () => {
   const router = useRouter();
-  const {commerce, commerceDispatch} = useRegistrationContext();
+  const {commerce, dispatch} = useCommerceContext();
   const {identifier} = router.query;
   const [errorMessage, setErrorMessage] = useState();
 
@@ -62,7 +62,7 @@ const Page = () => {
     console.log("Success callback", data);
     if (data.status === 'completed') {
       // It'd be nice to get a report here, how high did "count" get before we had the full details from Stripe?
-      commerceDispatch(stripeCheckoutSessionCompleted());
+      dispatch(stripeCheckoutSessionCompleted());
       return;
     } else {
       console.log('But our status is not completed. Trying again.');

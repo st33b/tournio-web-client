@@ -1,13 +1,13 @@
 import {useState} from "react";
 
-import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {useCommerceContext} from "../../../store/CommerceContext";
 import {postFreeEntry, updateObject} from "../../../utils";
 import {freeEntryDeclared, freeEntryFailure, freeEntrySuccess} from "../../../store/actions/registrationActions";
 
 import classes from './FreeEntryForm.module.scss';
 
 const FreeEntryForm = () => {
-  const {commerce, commerceDispatch} = useRegistrationContext();
+  const {commerce, dispatch} = useCommerceContext();
 
   let initialCode = '';
   if (commerce.freeEntry && commerce.freeEntry.code) {
@@ -32,11 +32,11 @@ const FreeEntryForm = () => {
   }
 
   const onFreeEntryPostSuccess = (data) => {
-    commerceDispatch(freeEntrySuccess(data.unique_code, data.message));
+    dispatch(freeEntrySuccess(data.unique_code, data.message));
   }
 
   const onFreeEntryPostFailure = (data) => {
-    commerceDispatch(freeEntryFailure(freeEntryForm.freeEntryCode, data.error));
+    dispatch(freeEntryFailure(freeEntryForm.freeEntryCode, data.error));
   }
 
   const freeEntryCompleted = () => {
@@ -88,7 +88,7 @@ const FreeEntryForm = () => {
       display: true,
     });
     setFreeEntryForm(newState);
-    commerceDispatch(freeEntryDeclared());
+    dispatch(freeEntryDeclared());
   }
 
   let serverMessage = '';

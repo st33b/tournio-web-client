@@ -1,10 +1,10 @@
 import {Row} from "react-bootstrap";
-import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {useCommerceContext} from "../../../store/CommerceContext";
 
 import classes from './Navigation.module.scss';
 
 const Navigation = ({showCart}) => {
-  const {commerce} = useRegistrationContext();
+  const {commerce} = useCommerceContext();
 
   let cartText = '';
   if (showCart && commerce && commerce.cart) {

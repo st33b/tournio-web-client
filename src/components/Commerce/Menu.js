@@ -1,5 +1,5 @@
 import {Col, Row} from "react-bootstrap";
-import {useRegistrationContext} from "../../store/RegistrationContext";
+import {useCommerceContext} from "../../store/CommerceContext";
 import {itemAddedToCart, itemRemovedFromCart} from "../../store/actions/registrationActions";
 
 import PreviousPurchases from "./PreviousPurchases/PreviousPurchases";
@@ -10,18 +10,18 @@ import FreeEntryForm from "./FreeEntryForm/FreeEntryForm";
 import classes from './Menu.module.scss';
 
 const Menu = () => {
-  const {commerce, commerceDispatch} = useRegistrationContext();
+  const {commerce, dispatch} = useCommerceContext();
 
   if (!commerce || !commerce.bowler) {
     return '';
   }
 
   const itemAdded = (item) => {
-    commerceDispatch(itemAddedToCart(item));
+    dispatch(itemAddedToCart(item));
   }
 
   const itemRemoved = (item) => {
-    commerceDispatch(itemRemovedFromCart(item));
+    dispatch(itemRemovedFromCart(item));
   }
 
   let freeEntryForm = '';
