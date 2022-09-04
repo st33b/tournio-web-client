@@ -54,9 +54,7 @@ const Page = () => {
   }, [identifier, registration, team, dispatch]);
 
   const joinTeamClicked = (event) => {
-    // event.preventDefault();
     dispatch(joinTeamRegistrationInitiated(team));
-    // router.push(`/teams/${team.identifier}/join`);
   }
 
   const ready = useClientReady();
@@ -86,24 +84,29 @@ const Page = () => {
 
   return (
     <div>
-      <Row>
-        <Col md={4} className={'d-none d-md-block'}>
+      <Row className={'g-1 g-md-4 d-flex align-items-center'}>
+
+        <Col xs={3} className={'d-md-none'}>
+          <TournamentLogo url={registration.tournament.image_url}/>
+        </Col>
+        <Col xs={9} className={'d-md-none'}>
           <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
-            <TournamentLogo tournament={registration.tournament}/>
+            <h4>
+              {registration.tournament.name}
+            </h4>
+          </a>
+        </Col>
+
+        <Col md={4} className={'d-none d-md-block mt-2'}>
+          <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
+            <TournamentLogo url={registration.tournament.image_url}/>
             <h4 className={'text-center py-3'}>
               {registration.tournament.name}
             </h4>
           </a>
-          <Contacts tournament={registration.tournament}/>
         </Col>
-        <Col xs={12} className={'d-md-none'}>
-          <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
-            <h4 className={'text-center'}>
-              {registration.tournament.name}
-            </h4>
-          </a>
-        </Col>
-        <Col>
+
+        <Col xs={12} md={8} className={''}>
           <TeamDetails tournament={registration.tournament}
                        successType={success}
                        enablePayment={enablePurchase}
