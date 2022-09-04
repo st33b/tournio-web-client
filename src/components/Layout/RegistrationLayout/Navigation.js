@@ -1,7 +1,5 @@
-import Image from "next/image";
 import {Row} from "react-bootstrap";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import logoImage from '../../../images/tournio-logo.png';
 
 import classes from './Navigation.module.scss';
 

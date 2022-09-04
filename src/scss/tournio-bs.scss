@@ -34,7 +34,7 @@ $lighter-purple: #a77df4;
 $darker-pink: #e08eb7;
 $darker-orange: #fba155;
 $darker-yellow: #f7ea1e;
-$lighter-green: #6dc87d;
+$darker-green: #30733c;
 $darker-teal: #37e3b0;
 
 $darkest-gray: #121212;
@@ -47,12 +47,12 @@ $dim-white: #d5d7da;
 $dark-mode-colors: (
   "primary": $lighter-blue,
   "secondary": $gray-500,
-  "success": $lighter-green,
+  "success": $darker-green,
   //"info": $dark-cyan,
   "warning": $darker-yellow,
   "danger": $lighter-red,
   "light": $gray-600,
-  "dark": $gray-900
+  "dark": $gray-600
 );
 $dark-mode-colors-rgb: map-loop($dark-mode-colors, to-rgb, "$value");
 
