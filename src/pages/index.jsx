@@ -42,8 +42,8 @@ const Page = () => {
 
           <div className="col-lg-6 pb-2 pb-md-0">
             <div className="mb-3">
-              {scheme === 'light' && <Image src={logoImage}/>}
-              {scheme === 'dark' && <Image src={logoImageDark}/>}
+              {scheme === 'light' && <Image src={logoImage} alt={"Tournio logo"}/>}
+              {scheme === 'dark' && <Image src={logoImageDark} alt={"Tournio logo"}/>}
             </div>
             <p className="lead mb-1">
               A registration system for IGBO bowling tournaments that is easy to use for both bowlers and
