@@ -38,7 +38,7 @@ $darker-green: #30733c;
 $darker-teal: #37e3b0;
 
 $darkest-gray: #121212;
-$dim-white: #d5d7da;
+$dim-white: #a1a1a1;
 
 // The rest of the Bootstrap imports
 @import "../../node_modules/bootstrap/scss/variables";
@@ -51,7 +51,7 @@ $dark-mode-colors: (
   //"info": $dark-cyan,
   "warning": $darker-yellow,
   "danger": $lighter-red,
-  "light": $gray-600,
+  "light": $gray-900,
   "dark": $gray-600
 );
 $dark-mode-colors-rgb: map-loop($dark-mode-colors, to-rgb, "$value");
@@ -104,11 +104,12 @@ $dark-mode-colors-rgb: map-loop($dark-mode-colors, to-rgb, "$value");
 @media (prefers-color-scheme: dark) {
   // Set the CSS variables we need to set
   :root {
-    --tournio-body-bg: #121212;
-    --tournio-body-bg-rgb: #{to-rgb(#121212)};
-    --tournio-body-color: #a1a1a1;
-    --tournio-body-color-rgb: #{to-rgb(#a1a1a1)};
-    --tournio-link-color: #5398ff;
+    --#{$prefix}body-bg: #{$darkest-gray};
+    --#{$prefix}body-bg-rgb: #{to-rgb($darkest-gray)};
+    //--#{$prefix}body-color: #a1a1a1;
+    --#{$prefix}body-color: #{$dim-white};
+    --#{$prefix}body-color-rgb: #{to-rgb($dim-white)};
+    --#{$prefix}border-color: #{$gray-800};
 
     @each $color, $value in $dark-mode-colors {
       --#{$prefix}#{$color}: #{$value};
@@ -116,6 +117,8 @@ $dark-mode-colors-rgb: map-loop($dark-mode-colors, to-rgb, "$value");
     @each $color, $value in $dark-mode-colors-rgb {
       --#{$prefix}#{$color}-rgb: #{$value};
     }
+
+    --#{$prefix}link-color: #{$lighter-blue};
   }
 
   // Set dark-mode style for each theme where we couldn't earlier
