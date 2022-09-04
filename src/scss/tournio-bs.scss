@@ -106,7 +106,6 @@ $dark-mode-colors-rgb: map-loop($dark-mode-colors, to-rgb, "$value");
   :root {
     --#{$prefix}body-bg: #{$darkest-gray};
     --#{$prefix}body-bg-rgb: #{to-rgb($darkest-gray)};
-    //--#{$prefix}body-color: #a1a1a1;
     --#{$prefix}body-color: #{$dim-white};
     --#{$prefix}body-color-rgb: #{to-rgb($dim-white)};
     --#{$prefix}border-color: #{$gray-800};
