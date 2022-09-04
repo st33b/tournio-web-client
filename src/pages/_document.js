@@ -1,6 +1,6 @@
 import {Html, Head, Main, NextScript} from "next/document";
 
-const IgboDocument = () => (
+const TournioDocument = () => (
   <Html>
     <Head>
       <link
@@ -14,4 +14,4 @@ const IgboDocument = () => (
   </Html>
 )
 
-export default IgboDocument;
+export default TournioDocument;
