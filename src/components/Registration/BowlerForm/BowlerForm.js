@@ -331,6 +331,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
   }, []);
 
   if (!registration || !tournament) {
+    console.log("Registration?", registration);
+    console.log("Tournament?", tournament);
     return '';
   }
 

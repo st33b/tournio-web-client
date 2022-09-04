@@ -2,7 +2,7 @@ import {useCommerceContext} from "../../../store/CommerceContext";
 
 import classes from './TeamDetails.module.scss';
 
-const TeamDetails = ({tournament, team, successType, enablePayment = true}) => {
+const TeamDetails = ({tournament, team, successType, context, enablePayment = true}) => {
   const {commerce} = useCommerceContext();
 
   if (!tournament || !team) {

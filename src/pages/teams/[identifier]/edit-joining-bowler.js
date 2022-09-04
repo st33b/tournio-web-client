@@ -6,31 +6,41 @@ import Summary from "../../../components/Registration/Summary/Summary";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {existingTeamBowlerEdited} from "../../../store/actions/registrationActions";
+import {useClientReady} from "../../../utils";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
-  if (!registration || !registration.team) {
-    return'';
-  }
-
-  const bowlerNum = registration.team.bowlers.length;
   const onBowlerInfoUpdated = (bowlerInfo) => {
     dispatch(existingTeamBowlerEdited(bowlerInfo));
     router.push(`/teams/${registration.team.identifier}/review-joining-bowler`);
   }
 
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
+  if (!registration || !registration.team) {
+    return '';
+  }
+
+  const bowlerNum = registration.team.bowlers.length;
+
   return (
     <Row>
-      <Col lg={8}>
-        <BowlerForm bowlerData={registration.team.bowlers[bowlerNum - 1]}
-                    bowlerInfoSaved={onBowlerInfoUpdated} />
-      </Col>
-      <Col>
-        <Summary nextStepClicked={null}
-                 nextStepText={'Submit Registration'}
+      <Col sm={4} xs={{ order: 2 }}>
+        <Summary tournament={registration.tournament}
+                 nextStepClicked={null}
+                 nextStepText={''}
                  buttonDisabled={true}
+        />
+      </Col>
+      <Col sm={8} sm={{ order: 2 }}>
+        <BowlerForm tournament={registration.tournament}
+                    bowlerData={registration.team.bowlers[bowlerNum - 1]}
+                    bowlerInfoSaved={onBowlerInfoUpdated}
+                    cancelHref={`/teams/${registration.team.identifier}/review-joining-bowler`}
         />
       </Col>
     </Row>

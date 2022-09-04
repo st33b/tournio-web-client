@@ -3,6 +3,7 @@ import LoginForm from '../../components/Director/LoginForm/LoginForm';
 import {Card, Col, Row} from "react-bootstrap";
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
+import {useClientReady} from "../../utils";
 
 const Login = () => {
   const router = useRouter();
@@ -16,6 +17,11 @@ const Login = () => {
       router.replace(router.pathname, null, {shallow: true});
     }
   }, [router]);
+
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
 
   let successAlert = '';
   if (successMessage) {

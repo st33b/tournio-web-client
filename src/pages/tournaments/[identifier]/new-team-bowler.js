@@ -65,7 +65,8 @@ const Page = () => {
       </Col>
       <Col lg={8}>
         <ProgressIndicator active={'bowlers'}/>
-        <BowlerForm bowlerInfoSaved={onNewBowlerAdded}/>
+        <BowlerForm tournament={registration.tournament}
+                    bowlerInfoSaved={onNewBowlerAdded}/>
       </Col>
     </Row>
   );

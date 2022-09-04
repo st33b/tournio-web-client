@@ -291,7 +291,7 @@ const TournamentDetails = ({tournament}) => {
             {' '}&ndash;{' '}
             <a href={USBC_ID_LOOKUP_URL} target="_new">
               find a USBC identifier
-              <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>
+              <i className={`${classes.ExternalLink} bi-box-arrow-up-right ps-2`} aria-hidden="true"/>
             </a>
             {/*<ul>*/}
             {/*  <li>*/}

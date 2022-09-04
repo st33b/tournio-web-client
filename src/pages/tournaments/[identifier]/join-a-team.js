@@ -1,12 +1,11 @@
 import {useEffect, useState} from "react";
 import {Col, Row} from "react-bootstrap";
 
-import {fetchTeamList} from "../../../utils";
+import {fetchTeamList, useClientReady} from "../../../utils";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import TeamListing from "../../../components/Registration/TeamListing/TeamListing";
-import {joinTeamRegistrationInitiated} from "../../../store/actions/registrationActions";
 import Contacts from "../../../components/Registration/Contacts/Contacts";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import {useRouter} from "next/router";
@@ -28,6 +27,7 @@ const Page = () => {
     // error!
   }
 
+  // back to tournament home page if joining a team is disabled
   useEffect(() => {
     if (!registration || !registration.tournament) {
       return;
@@ -53,6 +53,14 @@ const Page = () => {
     })
   }, []);
 
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
+  if (!registration) {
+    return '';
+  }
+
   if (!registration || !registration.tournament || !teams) {
     return <LoadingMessage message={'Retrieving list of available teams...'} />
   }
@@ -68,13 +76,16 @@ const Page = () => {
       <Row>
         <Col md={4} className={'d-none d-md-block'}>
           <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
-            <TournamentLogo tournament={registration.tournament}/>
+            <TournamentLogo url={registration.tournament.image_url}/>
             <h4 className={'text-center py-3'}>{registration.tournament.name}</h4>
           </a>
-          <Contacts tournament={registration.tournament}/>
         </Col>
         <Col>
-          <TeamListing caption={'Teams Available to Join'} teams={teams} includeShift={includeShift} />
+          <TeamListing
+            caption={'Teams Available to Join'}
+            teams={teams}
+            context={'join'}
+            includeShift={includeShift} />
         </Col>
       </Row>
     </div>

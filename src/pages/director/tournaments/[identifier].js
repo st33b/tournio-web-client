@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest, useClientReady} from "../../../utils";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
@@ -22,32 +22,6 @@ const Tournament = () => {
 
   const onTournamentFetchFailure = (data) => {
     setErrorMessage(data.error);
-  }
-
-  useEffect(() => {
-    if (!directorContext) {
-      return;
-    }
-    if (identifier === undefined) {
-      return;
-    }
-    const uri = `/director/tournaments/${identifier}`;
-    const requestConfig = {
-      method: 'get',
-    }
-
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: directorContext,
-      router: router,
-      onSuccess: onTournamentFetchSuccess,
-      onFailure: onTournamentFetchFailure,
-    });
-  }, [identifier, directorContext.user, router]);
-
-  if (!directorContext || !directorContext.tournament) {
-    return '';
   }
 
   const stateChangeSuccess = (data) => {
@@ -112,6 +86,37 @@ const Tournament = () => {
       onSuccess: (data) => testEnvUpdateSuccess(data, onSuccess),
       onFailure: testEnvUpdateFailure,
     });
+  }
+
+  useEffect(() => {
+    if (!directorContext) {
+      return;
+    }
+    if (identifier === undefined) {
+      return;
+    }
+    const uri = `/director/tournaments/${identifier}`;
+    const requestConfig = {
+      method: 'get',
+    }
+
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: directorContext,
+      router: router,
+      onSuccess: onTournamentFetchSuccess,
+      onFailure: onTournamentFetchFailure,
+    });
+  }, [identifier, directorContext.user, router]);
+
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
+
+  if (!directorContext || !directorContext.tournament) {
+    return '';
   }
 
   let error = '';

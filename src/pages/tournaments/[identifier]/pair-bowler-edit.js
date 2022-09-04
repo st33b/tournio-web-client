@@ -37,7 +37,8 @@ const Page = () => {
   return (
     <Row>
       <Col lg={8}>
-        <BowlerForm bowlerData={bowler}
+        <BowlerForm tournament={registration.tournament}
+                    bowlerData={bowler}
                     bowlerInfoSaved={onBowlerInfoUpdated}
                     editBowlerNum={bowlerNum}
                     cancelHref={`/tournaments/${tournament.identifier}/new-pair-review`}

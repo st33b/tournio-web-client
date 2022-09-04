@@ -42,7 +42,7 @@ const Page = () => {
     <Row>
       <Col lg={8}>
         <ProgressIndicator active={'bowlers'} />
-        <BowlerForm bowlerInfoSaved={onCompletion} includeShift={includeShift} />
+        <BowlerForm tournament={registration.tournament} bowlerInfoSaved={onCompletion} includeShift={includeShift} />
       </Col>
       <Col>
         <Summary />

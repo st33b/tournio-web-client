@@ -14,11 +14,10 @@ import {joinTeamRegistrationInitiated} from "../../store/actions/registrationAct
 const Page = () => {
   const router = useRouter();
   const { registration, dispatch } = useRegistrationContext();
-  const { identifier, success } = router.query;
+  const { identifier, success, context } = router.query;
 
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [enablePurchase, setEnablePurchase] = useState(true);
   const [team, setTeam] = useState();
 
   const onTeamFetchSuccess = (data) => {
@@ -28,6 +27,7 @@ const Page = () => {
 
   const onTeamFetchFailure = (data) => {
     setLoading(false);
+    router.push(`/tournaments/${registration.tournament.identifier}`)
   }
 
   // fetch the team details
@@ -65,12 +65,13 @@ const Page = () => {
     return '';
   }
 
-  if (loading || !registration || !team) {
+  if (loading) {
     return <LoadingMessage message={'Retrieving team details...'} />
   }
 
+  let enablePurchase = true;
   let joinLink = '';
-  if (team.size < registration.tournament.max_bowlers && !success) {
+  if (team.size < registration.tournament.max_bowlers && context === 'join') {
     joinLink = (
       <p className={'text-center mt-2'}>
         <a href={`/teams/${team.identifier}/join`}
@@ -80,6 +81,7 @@ const Page = () => {
         </a>
       </p>
     );
+    enablePurchase = false;
   }
 
   return (
@@ -110,6 +112,7 @@ const Page = () => {
           <TeamDetails tournament={registration.tournament}
                        successType={success}
                        enablePayment={enablePurchase}
+                       context={context}
                        team={team}/>
           {joinLink}
 

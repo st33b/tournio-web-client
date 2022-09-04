@@ -1,7 +1,7 @@
 import classes from './TeamListing.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 
-const TeamListing = ({teams, caption, includeShift}) => {
+const TeamListing = ({teams, caption, includeShift, context}) => {
   if (!teams) {
     return '';
   }
@@ -23,11 +23,11 @@ const TeamListing = ({teams, caption, includeShift}) => {
     <ErrorBoundary>
       <div className={classes.TeamListing}>
         <div className={'table-responsive'}>
+          <h5 className={'text-center text-md-start'}>
+            {caption}
+          </h5>
           <table className={'table table-striped table-hover caption-top'}>
-            <caption>
-              {caption}
-            </caption>
-            <thead className={'table-light'}>
+            <thead className={''}>
             <tr>
               <th>Name</th>
               <th>Date Registered</th>
@@ -40,7 +40,7 @@ const TeamListing = ({teams, caption, includeShift}) => {
               return (
                 <tr key={i}>
                   <td>
-                    <a href={`/teams/${t.identifier}`}>
+                    <a href={`/teams/${t.identifier}?context=${context}`}>
                       {t.name}
                     </a>
                   </td>

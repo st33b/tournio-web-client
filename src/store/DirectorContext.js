@@ -1,5 +1,4 @@
 import {useState, useCallback, createContext, useContext} from 'react';
-import {isStorageSupported} from "../utils";
 
 const DirectorContext = createContext({
   token: '',
@@ -17,9 +16,9 @@ export const DirectorContextProvider = ({children}) => {
   let tournamentData;
 
   if (typeof window !== 'undefined') {
-    tokenData = sessionStorage.getItem('token');
-    userData = JSON.parse(sessionStorage.getItem('currentUser'));
-    tournamentData = JSON.parse(sessionStorage.getItem('tournament'));
+    tokenData = localStorage.getItem('token');
+    userData = JSON.parse(localStorage.getItem('currentUser'));
+    tournamentData = JSON.parse(localStorage.getItem('tournament'));
   }
 
   let initialToken, initialUser, initialTournament;
