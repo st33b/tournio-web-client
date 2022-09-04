@@ -301,11 +301,11 @@ export const submitJoinTeamRegistration = (tournament, team, bowler, onSuccess, 
   if (team.shift) {
     bowler.shift = team.shift;
   }
+  const teamId = team.identifier;
   const bowlerData = {
     team_identifier: teamId,
     bowlers: [{...convertBowlerDataForPost(tournament, bowler), ...teamDataForBowler(bowler) }],
   };
-  const teamId = team.identifier;
   axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, bowlerData)
     .then(response => {
       const newBowlerIdentifier = response.data.identifier;
