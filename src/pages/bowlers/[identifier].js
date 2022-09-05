@@ -28,13 +28,15 @@ const Page = () => {
       fetchBowlerDetails(identifier, dispatch);
       return;
     }
-  }, [identifier, commerce.bowler]);
+  }, [identifier, commerce]);
 
-  if (success === 'purchase') {
-    setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
-  } else if (success === 'register') {
-    setSuccessMessage('Your registration was received! You may now select events, optional items, and pay entry fees.');
-  }
+  useEffect(() => {
+    if (success === 'purchase') {
+      setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
+    } else if (success === 'register') {
+      setSuccessMessage('Your registration was received! You may now select events, optional items, and pay entry fees.');
+    }
+  }, [success]);
 
   const ready = useClientReady();
   if (!ready) {

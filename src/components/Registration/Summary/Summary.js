@@ -124,16 +124,18 @@ const Summary = ({tournament, nextStepClicked, nextStepText, buttonDisabled, ena
   let nextStep = '';
   if (nextStepText && (team && team.bowlers.length > 0 || !!bowler || !!bowlers && bowlers.length > 0)) {
     nextStep = (
-      <Button variant={'success'}
-              size={'lg'}
-              disabled={buttonDisabled}
-              onClick={nextStepClicked}>
-        {nextStepText}
-      </Button>
+      <div className={'text-end text-sm-center'}>
+        <Button variant={'success'}
+                size={'lg'}
+                disabled={buttonDisabled}
+                onClick={nextStepClicked}>
+          {nextStepText}
+        </Button>
+      </div>
     );
   }
 
-  if (finalStep && !!team) {
+  if (finalStep && team) {
     const teamSize = team.bowlers.length;
     const maxTeamSize = parseInt(tournament.config_items.find(({key}) => key === 'team_size').value);
     if (teamSize < maxTeamSize) {
@@ -190,7 +192,7 @@ const Summary = ({tournament, nextStepClicked, nextStepText, buttonDisabled, ena
           </Row>
         </Card.Body>
         <Card.Body className={'d-none d-sm-block px-3 pt-0'}>
-          <Card.Title className={'mt-3'}>
+          <Card.Title className={'my-3 text-center'}>
             {tournament.name}
           </Card.Title>
           {teamText}
