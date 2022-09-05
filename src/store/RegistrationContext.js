@@ -17,7 +17,6 @@ const initialRegistrationState = {
 
 export const RegistrationContextProvider = ({children}) => {
   const [storedRegistrationState, storeRegistrationState] = useStorage('registration', initialRegistrationState);
-
   const [registration, dispatch] = useReducer(registrationReducer, storedRegistrationState, registrationInitializer);
 
   useEffect(() => {

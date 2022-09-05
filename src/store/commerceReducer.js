@@ -13,10 +13,10 @@ const initialState = {
   error: null,
 }
 
-export const commerceInitializer = (initialValue = initialState) => {
-  return initialValue;
-}
-
+// export const commerceInitializer = (initialValue = initialState) => {
+//   return initialValue;
+// }
+//
 export const commerceReducer = (state, action) => {
   switch (action.type) {
     case actionTypes.TOURNAMENT_DETAILS_RETRIEVED:

@@ -2,9 +2,15 @@ import {Row} from "react-bootstrap";
 import {useCommerceContext} from "../../../store/CommerceContext";
 
 import classes from './Navigation.module.scss';
+import {useClientReady} from "../../../utils";
 
 const Navigation = ({showCart}) => {
   const {commerce} = useCommerceContext();
+
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
 
   let cartText = '';
   if (showCart && commerce && commerce.cart) {

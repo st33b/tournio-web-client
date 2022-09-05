@@ -20,29 +20,15 @@ const Page = () => {
 
   // fetch the bowler details
   useEffect(() => {
-    if (!identifier) {
+    if (!identifier || !commerce) {
       return;
     }
 
-    if (!commerce || !commerce.bowler || commerce.bowler.identifier !== identifier) {
+    if (!commerce.bowler || commerce.bowler.identifier !== identifier) {
       fetchBowlerDetails(identifier, dispatch);
       return;
     }
-
-    if (commerce.bowler.shift_info.full && !commerce.bowler.shift_info.confirmed) {
-      if (commerce.bowler.unpaid_purchases.some(p => p.category === 'ledger' || p.determination === 'event')) {
-        // either the tournament is full, or the chosen shift is full.
-        // first, see if there are available shifts
-        // if (commerce.tournament.available_shifts.length > 0) {
-        //   setErrorMessage("Your team's requested shift is full. Please contact the tournament director about changing to another shift before paying your entry fee.");
-        //   setEnablePurchase(false);
-        // } else {
-          setErrorMessage("The tournament has reached its maximum capacity. Your registration is now provisional.");
-          setEnablePurchase(false);
-        // }
-      }
-    }
-  }, [identifier, commerce, dispatch, success]);
+  }, [identifier, commerce.bowler]);
 
   if (success === 'purchase') {
     setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
@@ -55,8 +41,22 @@ const Page = () => {
     return null;
   }
 
-  if (!commerce || !commerce.bowler) {
+  if (!commerce || !commerce.bowler || !commerce.tournament) {
     return <LoadingMessage message={'One moment, please...'} />;
+  }
+
+  if (commerce.bowler.shift_info.full && !commerce.bowler.shift_info.confirmed) {
+    if (commerce.bowler.unpaid_purchases.some(p => p.category === 'ledger' || p.determination === 'event')) {
+      // either the tournament is full, or the chosen shift is full.
+      // first, see if there are available shifts
+      // if (commerce.tournament.available_shifts.length > 0) {
+      //   setErrorMessage("Your team's requested shift is full. Please contact the tournament director about changing to another shift before paying your entry fee.");
+      //   setEnablePurchase(false);
+      // } else {
+      setErrorMessage("The tournament has reached its maximum capacity. Your registration is now provisional.");
+      setEnablePurchase(false);
+      // }
+    }
   }
 
   let displayed_name = commerce.bowler.first_name;

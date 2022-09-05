@@ -20,8 +20,8 @@ const initialCommerceState = {
 
 export const CommerceContextProvider = ({children}) => {
   const [storedCommerceState, storeCommerceState] = useStorage('commerce', initialCommerceState)
-
-  const [commerce, dispatch] = useReducer(commerceReducer, storedCommerceState, commerceInitializer);
+  // const [commerce, dispatch] = useReducer(commerceReducer, storedCommerceState, commerceInitializer);
+  const [commerce, dispatch] = useReducer(commerceReducer, storedCommerceState);
 
   useEffect(() => {
     storeCommerceState(commerce);
