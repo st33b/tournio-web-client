@@ -36,6 +36,28 @@ const VisibleTournament = ({closeTournament}) => {
   });
   const divisionNames = Array.from(divisionNameSet);
 
+  const lessImportantStuff = (
+    <>
+      <Downloads tournament={context.tournament}/>
+      <Accordion className={'mb-3'}>
+        <Basics eventKey={'0'} tournament={context.tournament}/>
+        <Configuration eventKey={'1'} tournament={context.tournament} />
+        <AdditionalQuestions eventKey={'2'} tournament={context.tournament}/>
+        <PurchasableItems eventKey={'3'} tournament={context.tournament}/>
+      </Accordion>
+
+      <Contacts tournament={context.tournament}/>
+
+      {context.tournament.state === 'active' && (
+        <>
+          <hr />
+          <CloseTournament tournament={context.tournament} closeTournament={closeTournament} />
+        </>
+      )}
+      {context.tournament.state === 'closed' && (<DeleteTournament tournament={context.tournament}/>)}
+    </>
+  );
+
   return (
     <div className={classes.VisibleTournament}>
       <div className={'row'}>
@@ -55,9 +77,14 @@ const VisibleTournament = ({closeTournament}) => {
           <RegistrationOptions tournament={context.tournament}/>
           <EditableConfiguration tournament={context.tournament} />
           <MassActions tournament={context.tournament}/>
+
+          <div className={'d-none d-md-block d-lg-none'}>
+            <hr />
+            {lessImportantStuff}
+          </div>
         </div>
 
-        <div className={'col-12 col-md-8 col-xl-6'}>
+        <div className={'col-12 col-md-8 col-lg-5 col-xl-6'}>
           <Capacity tournament={context.tournament} />
           <RegistrationsWeek tournament={context.tournament}/>
           <RegistrationTypesWeek tournament={context.tournament}/>
@@ -66,24 +93,8 @@ const VisibleTournament = ({closeTournament}) => {
           <OptionalItemsWeek tournament={context.tournament} title={'Extras'} dataKeys={['banquet', 'product']}/>
         </div>
 
-        <div className={'col-12 col-md-4 col-xl-3'}>
-          <Downloads tournament={context.tournament}/>
-          <Accordion className={'mb-3'}>
-            <Basics eventKey={'0'} tournament={context.tournament}/>
-            <Configuration eventKey={'1'} tournament={context.tournament} />
-            <AdditionalQuestions eventKey={'2'} tournament={context.tournament}/>
-            <PurchasableItems eventKey={'3'} tournament={context.tournament}/>
-          </Accordion>
-
-          <Contacts tournament={context.tournament}/>
-
-          {context.tournament.state === 'active' && (
-            <>
-              <hr />
-              <CloseTournament tournament={context.tournament} closeTournament={closeTournament} />
-            </>
-          )}
-          {context.tournament.state === 'closed' && (<DeleteTournament tournament={context.tournament}/>)}
+        <div className={'d-md-none d-lg-block col-12 col-md-4 col-lg-3'}>
+          {lessImportantStuff}
         </div>
       </div>
     </div>
