@@ -299,7 +299,7 @@ const ShiftForm = ({shift}) => {
            className={'text-body text-decoration-none'}
            title={'Edit details'}
            onClick={toggleEdit}>
-          <dl className={classes.ExistingShift}>
+          <dl className={`${classes.ExistingShift} px-2`}>
             {/*<div className={'row'}>*/}
             {/*  <dt className={'col-4'}>*/}
             {/*    Order*/}
@@ -331,10 +331,10 @@ const ShiftForm = ({shift}) => {
             {/*</div>*/}
 
             <div className={`row ${colorClass} g-3`}>
-              <dt className={'col-6'}>
+              <dt className={'col-6 mt-2'}>
                 Capacity
               </dt>
-              <dd className={'col'}>
+              <dd className={'col mt-2'}>
                 {shift.capacity} bowlers
               </dd>
             </div>

@@ -83,18 +83,24 @@ const Downloads = ({tournament}) => {
           <Card.Subtitle className={'mb-3'}>
             Downloads
           </Card.Subtitle>
-          <Card.Link className={'btn btn-sm btn-outline-primary'}
+          <a className={'btn btn-sm btn-outline-primary mx-2'}
                      href={'#'}
                      onClick ={(event) => downloadClicked(event, `/director/tournaments/${tournament.identifier}/csv_download`, 'bowlers.csv')}
           >
             CSV
-          </Card.Link>
-          <Card.Link className={'btn btn-sm btn-outline-primary'}
+          </a>
+          <a className={'btn btn-sm btn-outline-primary mx-2'}
                      href={'#'}
                      onClick ={(event) => downloadClicked(event, `/director/tournaments/${tournament.identifier}/igbots_download`, 'bowlers.xml')}
           >
             IGBO-TS
-          </Card.Link>
+          </a>
+          <a className={'btn btn-sm btn-outline-primary mt-3 mx-2'}
+             target={'_new'}
+             href={`/director/tournaments/${context.tournament.identifier}/sign-in-sheets`}
+          >
+            Sign-in Sheets (beta)
+          </a>
           {downloadMessage}
         </Card.Body>
       </Card>

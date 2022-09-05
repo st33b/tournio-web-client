@@ -79,7 +79,7 @@ const MassActions = ({tournament}) => {
 
   return (
     <Card className={'border-0 text-center'}>
-      <Card.Body className={'bg-white text-dark'}>
+      <Card.Body>
         <Card.Link className={'btn btn-sm btn-outline-dark'}
                    href={'#'}
                    onClick={paymentReminderClickHandler}>

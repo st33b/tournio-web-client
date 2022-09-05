@@ -41,18 +41,20 @@ const VisibleTournament = ({closeTournament}) => {
       <div className={'row'}>
 
         <div className={'col-12 col-md-4 col-xl-3'}>
+          <LogoImage src={context.tournament.image_url} />
+          <Card className={'text-center'} border={'0'}>
+            <Card.Body>
+              <a href={`/tournaments/${context.tournament.identifier}`} target={'_new'}>
+                Front Page
+                <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
+              </a>
+            </Card.Body>
+          </Card>
+
           <Counts tournament={context.tournament} />
           <RegistrationOptions tournament={context.tournament}/>
           <EditableConfiguration tournament={context.tournament} />
-          <Downloads tournament={context.tournament}/>
           <MassActions tournament={context.tournament}/>
-          {context.tournament.state === 'active' && (
-            <>
-              <hr />
-              <CloseTournament tournament={context.tournament} closeTournament={closeTournament} />
-            </>
-          )}
-          {context.tournament.state === 'closed' && (<DeleteTournament tournament={context.tournament}/>)}
         </div>
 
         <div className={'col-12 col-md-8 col-xl-6'}>
@@ -65,17 +67,7 @@ const VisibleTournament = ({closeTournament}) => {
         </div>
 
         <div className={'col-12 col-md-4 col-xl-3'}>
-          <LogoImage src={context.tournament.image_url} />
-
-          <Card className={'text-center'} border={'0'}>
-            <Card.Body>
-              <a href={`/tournaments/${context.tournament.identifier}`} target={'_new'}>
-                Front Page
-                <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
-              </a>
-            </Card.Body>
-          </Card>
-
+          <Downloads tournament={context.tournament}/>
           <Accordion className={'mb-3'}>
             <Basics eventKey={'0'} tournament={context.tournament}/>
             <Configuration eventKey={'1'} tournament={context.tournament} />
@@ -84,6 +76,14 @@ const VisibleTournament = ({closeTournament}) => {
           </Accordion>
 
           <Contacts tournament={context.tournament}/>
+
+          {context.tournament.state === 'active' && (
+            <>
+              <hr />
+              <CloseTournament tournament={context.tournament} closeTournament={closeTournament} />
+            </>
+          )}
+          {context.tournament.state === 'closed' && (<DeleteTournament tournament={context.tournament}/>)}
         </div>
       </div>
     </div>
