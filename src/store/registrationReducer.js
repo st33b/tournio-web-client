@@ -9,12 +9,12 @@ const initialState = {
   partner: null,
 }
 
-export const registrationInitializer = (initialValue = initialState) => {
-  return initialValue;
-}
+export const registrationReducerInit = (initial = initialState) => initial;
 
 export const registrationReducer = (state, action) => {
   switch (action.type) {
+    case actionTypes.RESET:
+      return registrationReducerInit();
     case actionTypes.TOURNAMENT_DETAILS_RETRIEVED:
       return updateObject(state, {
         tournament: action.tournament,

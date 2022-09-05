@@ -1,5 +1,5 @@
 import {createContext, useContext, useEffect, useReducer} from 'react';
-import {registrationReducer, registrationInitializer} from "./registrationReducer";
+import {registrationReducer, registrationReducerInit} from "./registrationReducer";
 import {useStorage} from "../utils";
 
 const RegistrationContext = createContext({
@@ -7,17 +7,9 @@ const RegistrationContext = createContext({
   dispatch: null,
 });
 
-const initialRegistrationState = {
-  tournament: null,
-  team: null,
-  bowler: null,
-  bowlers: null,
-  partner: null,
-};
-
 export const RegistrationContextProvider = ({children}) => {
-  const [storedRegistrationState, storeRegistrationState] = useStorage('registration', initialRegistrationState);
-  const [registration, dispatch] = useReducer(registrationReducer, storedRegistrationState, registrationInitializer);
+  const [storedRegistrationState, storeRegistrationState] = useStorage('registration', registrationReducerInit());
+  const [registration, dispatch] = useReducer(registrationReducer, storedRegistrationState, registrationReducerInit);
 
   useEffect(() => {
     storeRegistrationState(registration);

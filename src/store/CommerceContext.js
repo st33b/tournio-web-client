@@ -1,5 +1,5 @@
 import {createContext, useContext, useEffect, useReducer} from 'react';
-import {commerceReducer, commerceInitializer} from "./commerceReducer";
+import {commerceReducer, commerceReducerInit} from "./commerceReducer";
 import {useStorage} from "../utils";
 
 const CommerceContext = createContext({
@@ -7,21 +7,9 @@ const CommerceContext = createContext({
   dispatch: null,
 });
 
-const initialCommerceState = {
-  tournament: null,
-  bowler: null,
-  cart: [],
-  availableItems: {},
-  purchasedItems: [],
-  freeEntry: null,
-  checkoutSessionId: null,
-  error: null,
-}
-
 export const CommerceContextProvider = ({children}) => {
-  const [storedCommerceState, storeCommerceState] = useStorage('commerce', initialCommerceState)
-  // const [commerce, dispatch] = useReducer(commerceReducer, storedCommerceState, commerceInitializer);
-  const [commerce, dispatch] = useReducer(commerceReducer, storedCommerceState);
+  const [storedCommerceState, storeCommerceState] = useStorage('commerce', commerceReducerInit())
+  const [commerce, dispatch] = useReducer(commerceReducer, storedCommerceState, commerceReducerInit);
 
   useEffect(() => {
     storeCommerceState(commerce);

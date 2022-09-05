@@ -1,5 +1,11 @@
 import * as actionTypes from './actionTypes';
 
+export const reset = () => {
+  return {
+    type: actionTypes.RESET,
+  }
+}
+
 export const tournamentDetailsRetrieved = (tournament) => {
   return {
     type: actionTypes.TOURNAMENT_DETAILS_RETRIEVED,
@@ -11,7 +17,7 @@ export const newTeamRegistrationInitiated = () => {
   return {
     type: actionTypes.NEW_TEAM_REGISTRATION_INITIATED,
   };
-};
+}
 
 export const teamInfoAdded = (name, shiftId) => {
   return {
@@ -19,7 +25,7 @@ export const teamInfoAdded = (name, shiftId) => {
     name: name,
     shiftId: shiftId,
   }
-};
+}
 
 export const newTeamBowlerInfoAdded = (bowlerInfo) => {
   return {
