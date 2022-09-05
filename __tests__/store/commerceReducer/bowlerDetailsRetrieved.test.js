@@ -89,10 +89,6 @@ describe ('action type: bowler details retrieved', () => {
     const result = commerceReducer({}, action);
     expect(result.freeEntry).toBeDefined();
   });
-  it ('includes a tournament property in the return', () => {
-    const result = commerceReducer({}, action);
-    expect(result.tournament).toBeDefined();
-  })
   it ('includes an error property in the return', () => {
     const result = commerceReducer({}, action);
     expect(result.error).toBeDefined();
@@ -129,10 +125,6 @@ describe ('action type: bowler details retrieved', () => {
     const result = commerceReducer({}, action);
     expect(result.cart).toStrictEqual(unpaidLedgerItems.concat(unpaidNonLedgerItems));
   });
-  it ('includes the tournament in the returned object', () => {
-    const result = commerceReducer({}, action);
-    expect(result.tournament).toStrictEqual(tournament);
-  })
 
   //
   // Making changes to the action's contents

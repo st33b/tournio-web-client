@@ -1,4 +1,4 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Row} from "react-bootstrap";
 
@@ -10,26 +10,63 @@ import TournamentLogo from "../../components/Registration/TournamentLogo/Tournam
 import Contacts from "../../components/Registration/Contacts/Contacts";
 
 import classes from "../../components/Registration/TournamentDetails/TournamentDetails.module.scss";
+import {useCommerceContext} from "../../store/CommerceContext";
+import {tournamentDetailsRetrieved} from "../../store/actions/registrationActions";
 
 const Page = () => {
   const router = useRouter();
   const { identifier } = router.query;
-  const { registration, dispatch } = useRegistrationContext();
+  const registrationContext = useRegistrationContext();
+  const commerceContext = useCommerceContext();
+  const [tournament, setTournament] = useState();
+
+  const onFetchSuccess = (data) => {
+    console.log("Success. Dispatching to contexts");
+    setTournament(data);
+    registrationContext.dispatch(tournamentDetailsRetrieved(data));
+    commerceContext.dispatch(tournamentDetailsRetrieved(data));
+  }
+
+  const onFetchFailure = (error) => {
+    console.log("Failed to fetch", error);
+    // let's clear the tournaments out of context
+    router.push('/tournaments');
+  }
 
   // fetch the tournament details and put the tournament into context
   useEffect(() => {
-    if (!identifier) {
+    if (!identifier || !registrationContext || !commerceContext) {
       return;
     }
 
-    fetchTournamentDetails(identifier, dispatch);
-   }, [identifier, dispatch]);
+    const needToFetch = !tournament || tournament.identifier !== identifier;
+
+    const registrationMismatch = registrationContext.registration.tournament && registrationContext.registration.tournament.identifier !== identifier;
+    const commerceMismatch = commerceContext.commerce.tournament && commerceContext.commerce.tournament.identifier !== identifier;
+
+    if (!needToFetch) {
+      if (registrationMismatch) {
+        console.log("Registration context has the wrong tournament, updating it");
+        registrationContext.dispatch(tournamentDetailsRetrieved(tournament));
+      }
+      if (commerceMismatch) {
+        console.log("Commerce context has the wrong tournament, updating it");
+        commerceContext.dispatch(tournamentDetailsRetrieved(tournament));
+      }
+    }
+
+    console.log("Need to fetch?", needToFetch);
+    if (needToFetch) {
+      console.log("Fetching");
+      fetchTournamentDetails(identifier, onFetchSuccess, onFetchFailure);
+    }
+  }, [identifier, tournament]);
 
   const ready = useClientReady();
   if (!ready) {
     return null;
   }
-  if (!registration.tournament) {
+  if (!tournament) {
     return null;
   }
 
@@ -37,14 +74,14 @@ const Page = () => {
     <div className={classes.TournamentDetails}>
       <Row>
         <div className={'d-none d-md-block col-md-4'}>
-          <TournamentLogo url={registration.tournament.image_url}/>
-          <Contacts tournament={registration.tournament}/>
+          <TournamentLogo url={tournament.image_url}/>
+          <Contacts tournament={tournament}/>
         </div>
         <div className={'col-12 col-md-8'}>
-          <TournamentDetails tournament={registration.tournament} />
+          <TournamentDetails tournament={tournament} />
         </div>
         <div className={'d-md-none col-12'}>
-          <Contacts tournament={registration.tournament}/>
+          <Contacts tournament={tournament}/>
         </div>
       </Row>
     </div>

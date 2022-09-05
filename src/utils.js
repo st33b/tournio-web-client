@@ -105,7 +105,7 @@ export const fetchTournamentList = (onSuccess, onFailure) => {
 
 }
 
-export const fetchTournamentDetails = (identifier, ...dispatches) => {
+export const fetchTournamentDetails = (identifier, onSuccess, onFailure) => {
   const requestConfig = {
     method: 'get',
     url: `${apiHost}/tournaments/${identifier}`,
@@ -115,14 +115,15 @@ export const fetchTournamentDetails = (identifier, ...dispatches) => {
   }
   axios(requestConfig)
     .then(response => {
-      dispatches.map(dispatch => {
-        dispatch(tournamentDetailsRetrieved(response.data));
-      });
+      if (response.status >= 200 && response.status < 400) {
+        onSuccess(response.data);
+      } else {
+        onFailure(response.data);
+      }
     })
     .catch(error => {
-      // Let's dispatch a failure, because that's a big deal
+      onFailure({error: 'Tournament not found'});
     });
-
 }
 
 export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure}) => {
@@ -136,7 +137,7 @@ export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure}) => {
   }
   axios(requestConfig)
     .then(response => {
-      if (response.status >= 200 && response.status < 300) {
+      if (response.status >= 200 && response.status < 400) {
         onSuccess(response.data);
       } else {
         onFailure(response.data);
@@ -145,7 +146,6 @@ export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure}) => {
     .catch(error => {
       onFailure({error: 'Unexpected error from the server'});
     });
-
 }
 
 export const fetchBowlerDetails = (bowlerIdentifier, dispatch) => {

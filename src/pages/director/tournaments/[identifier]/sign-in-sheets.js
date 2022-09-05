@@ -41,7 +41,7 @@ const Page = () => {
       return;
     }
     if (directorContext.tournament.identifier !== identifier) {
-      fetchTournamentDetails(identifier);
+      router.push('/director');
     }
   }, [identifier]);
 

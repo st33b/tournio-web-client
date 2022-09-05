@@ -9,7 +9,7 @@ import TournamentLogo from "../../components/Registration/TournamentLogo/Tournam
 import Contacts from "../../components/Registration/Contacts/Contacts";
 import TeamDetails from "../../components/Registration/TeamDetails/TeamDetails";
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
-import {joinTeamRegistrationInitiated} from "../../store/actions/registrationActions";
+import {joinTeamRegistrationInitiated, tournamentDetailsRetrieved} from "../../store/actions/registrationActions";
 
 const Page = () => {
   const router = useRouter();
@@ -43,13 +43,21 @@ const Page = () => {
     });
   }, [identifier]);
 
+  const onTournamentFetchSuccess = (data) => {
+    dispatch(tournamentDetailsRetrieved(data));
+  }
+
+  const onTournamentFetchFailure = (error) => {
+    router.push('/tournaments');
+  }
+
   // ensure that the tournament in context matches the team's
   useEffect(() => {
     if (!identifier || !registration || !team) {
       return;
     }
     if (!registration.tournament || registration.tournament.identifier !== team.tournament.identifier) {
-      fetchTournamentDetails(registration.team.tournament.identifier, dispatch);
+      fetchTournamentDetails(registration.team.tournament.identifier, onTournamentFetchSuccess, onTournamentFetchFailure);
     }
   }, [identifier, registration, team, dispatch]);
 
