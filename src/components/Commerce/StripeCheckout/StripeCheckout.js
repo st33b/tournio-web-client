@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {useRouter} from "next/router";
 
-import {purchaseDetailsPostData, postPurchaseDetails} from "../../../utils";
+import {purchaseDetailsPostData, postPurchaseDetails, useClientReady} from "../../../utils";
 import {useCommerceContext} from "../../../store/CommerceContext";
 import {stripeCheckoutSessionInitiated} from "../../../store/actions/registrationActions";
 
@@ -16,15 +16,20 @@ const StripeCheckout = () => {
   const [requestInProgress, setRequestInProgress] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
+
+  ///////////////////////////////////////////////////////
+
   // If Stripe checkout isn't enabled, bail out
   if (!process.env.NEXT_PUBLIC_ENABLE_STRIPE_CHECKOUT) {
     console.log('Stripe checkout not enabled');
     return '';
   }
 
-  // If we don't have all the data we need, bail out
   if (!commerce || !commerce.bowler || !identifier) {
-    console.log('missing required data');
     return '';
   }
 
@@ -68,7 +73,7 @@ const StripeCheckout = () => {
           <button className={'btn btn-lg btn-success'}
                   disabled={checkoutDisabled}
                   onClick={buttonClicked}>
-            Get Striped!
+            Check Out
           </button>
         )}
         {requestInProgress && (

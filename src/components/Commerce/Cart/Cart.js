@@ -21,7 +21,7 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
   const totalFees = commerce.cart.reduce(sum, 0);
   let cartItems = (
     <div className={classes.EmptyItemList}>
-      <p className={'my-0 py-2 ps-2'}>
+      <p className={'py-2 ps-2 mb-2'}>
         Your cart is empty.
       </p>
     </div>
@@ -59,10 +59,6 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
         Total: ${totalFees}
       </p>
       <div className={'d-flex flex-row-reverse pb-3 pb-md-0'}>
-        <a href={`/bowlers/${commerce.bowler.identifier}/checkout`}
-           className={'btn btn-success btn-lg'}>
-          Check Out
-        </a>
         <StripeCheckout/>
       </div>
     </div>

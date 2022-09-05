@@ -67,13 +67,13 @@ const Page = () => {
 
   return (
     <div>
-      <Row className={'pt-2'}>
-        <Col md={2} className={'d-none d-md-block'}>
+      <Row className={'pt-2 g-0'}>
+        <Col xs={3} md={2} className={''}>
           <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
             <TournamentLogo url={commerce.tournament.image_url}/>
           </a>
         </Col>
-        <Col md={10} className={'d-flex flex-column justify-content-center text-center text-md-start ps-2'}>
+        <Col xs={9} md={10} className={'d-flex flex-column justify-content-center text-md-start ps-2'}>
           <h3 className={'p-0 m-0'}>
             <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
               {commerce.tournament.name}

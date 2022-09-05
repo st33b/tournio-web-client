@@ -126,9 +126,13 @@ const FreeEntryForm = () => {
   }
 
   let declareLink = (
-    <a href={'#'} className={textClass} onClick={linkClicked}>
-      I have a free entry
-    </a>
+    <div className={`${textClass} text-center`}>
+      <a href={'#'}
+         className={`btn btn-primary`}
+         onClick={linkClicked}>
+        I have a free entry
+      </a>
+    </div>
   );
 
   // Hide the link if they have a free entry, confirmed or not
