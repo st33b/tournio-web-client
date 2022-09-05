@@ -34,18 +34,17 @@ const Page = () => {
 
   return (
     <Row>
+      <Col>
+        <Summary tournament={registration.tournament}
+                 nextStepClicked={null}
+        />
+      </Col>
       <Col lg={8}>
         <BowlerForm tournament={registration.tournament}
                     bowlerData={bowler}
                     bowlerInfoSaved={onBowlerInfoUpdated}
                     cancelHref={`/tournaments/${tournament.identifier}/solo-bowler-review`}
                     includeShift={true}
-        />
-      </Col>
-      <Col>
-        <Summary nextStepClicked={null}
-                 nextStepText={'Submit Registration'}
-                 buttonDisabled={true}
         />
       </Col>
     </Row>

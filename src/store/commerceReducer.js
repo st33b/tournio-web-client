@@ -34,6 +34,7 @@ export const commerceReducer = (state, action) => {
         unpaidItems = unpaidItems.filter((element) => element.category !== 'ledger');
       }
       return updateObject(state, {
+        tournament: {...action.bowler.tournament},
         bowler: action.bowler,
         availableItems: action.availableItems,
         cart: unpaidItems,

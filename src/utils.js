@@ -148,7 +148,7 @@ export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure}) => {
 
 }
 
-export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, dispatch) => {
+export const fetchBowlerDetails = (bowlerIdentifier, dispatch) => {
   const requestConfig = {
     method: 'get',
     url: `${apiHost}/bowlers/${bowlerIdentifier}`,
@@ -159,7 +159,6 @@ export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, dispatch) => {
   axios(requestConfig)
     .then(response => {
       const bowlerData = response.data.bowler;
-      const bowlerTournamentId = bowlerData.tournament.identifier;
       const availableItems = response.data.available_items;
       dispatch(bowlerCommerceDetailsRetrieved(bowlerData, availableItems));
     })

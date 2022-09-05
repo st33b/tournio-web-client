@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
-import {fetchBowlerDetails, fetchTournamentDetails} from "../../utils";
+import {fetchBowlerDetails, fetchTournamentDetails, useClientReady} from "../../utils";
 import {useCommerceContext} from "../../store/CommerceContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
@@ -11,9 +11,8 @@ import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const router = useRouter();
-  const {success} = router.query;
+  const {success, identifier} = router.query;
   const {commerce, dispatch} = useCommerceContext();
-  const {identifier} = router.query;
 
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -26,7 +25,7 @@ const Page = () => {
     }
 
     if (!commerce || !commerce.bowler || commerce.bowler.identifier !== identifier) {
-      fetchBowlerDetails(identifier, commerce, dispatch);
+      fetchBowlerDetails(identifier, dispatch);
       return;
     }
 
@@ -45,32 +44,18 @@ const Page = () => {
     }
   }, [identifier, commerce, dispatch, success]);
 
-  useEffect(() => {
-    if (success === 'purchase') {
-      console.log("We've completed a purchase. Retrieving bowler details...");
-      setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
-      // do we need to refresh our purchase details?
-      fetchBowlerDetails(identifier, commerce, dispatch);
-      return;
-    } else if (success === 'register') {
-      setSuccessMessage('Your registration was received! You may now select events, optional items, and pay entry fees.');
-    }
-  }, [success]);
+  if (success === 'purchase') {
+    setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
+  } else if (success === 'register') {
+    setSuccessMessage('Your registration was received! You may now select events, optional items, and pay entry fees.');
+  }
 
-  // ensure that the tournament in context matches the bowler's
-  useEffect(() => {
-    if (!identifier || !commerce) {
-      return;
-    }
-    if (!commerce.bowler || !commerce.tournament) {
-      return;
-    }
-    if (!commerce.tournament || commerce.bowler.tournament.identifier !== commerce.tournament.identifier) {
-      fetchTournamentDetails(commerce.bowler.tournament.identifier, dispatch);
-    }
-  }, [identifier, commerce, dispatch]);
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
 
-  if (!commerce || !commerce.bowler || !commerce.tournament) {
+  if (!commerce || !commerce.bowler) {
     return <LoadingMessage message={'One moment, please...'} />;
   }
 
@@ -85,7 +70,7 @@ const Page = () => {
       <Row className={'pt-2'}>
         <Col md={2} className={'d-none d-md-block'}>
           <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
-            <TournamentLogo tournament={commerce.tournament}/>
+            <TournamentLogo url={commerce.tournament.image_url}/>
           </a>
         </Col>
         <Col md={10} className={'d-flex flex-column justify-content-center text-center text-md-start ps-2'}>

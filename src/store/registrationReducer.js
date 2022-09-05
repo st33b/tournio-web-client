@@ -22,7 +22,6 @@ export const registrationReducer = (state, action) => {
     case actionTypes.NEW_TEAM_REGISTRATION_INITIATED:
     case actionTypes.SUBMIT_JOIN_TEAM_COMPLETED:
     case actionTypes.TEAM_LIST_RETRIEVED:
-      console.log("New team initiated. Previous state:", state);
       return updateObject(state, {
         team: {
           name: '',

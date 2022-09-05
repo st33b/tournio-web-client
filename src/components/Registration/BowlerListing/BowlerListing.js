@@ -81,11 +81,11 @@ const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successT
   if (data.size > 0) {
     list = (
       <div className={'table-responsive'}>
+        <h3>
+          {caption}
+        </h3>
         <table className={'table table-striped table-hover table-sm caption-top'} {...getTableProps}>
-          <caption>
-            {caption}
-          </caption>
-          <thead className={'table-light'}>
+          <thead className={''}>
           {headerGroups.map((headerGroup, i) => (
             <tr key={i} {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column, j) => (

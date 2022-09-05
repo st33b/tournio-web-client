@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {Alert, Col, Row} from "react-bootstrap";
 import {useRouter} from "next/router";
 
-import {fetchBowlerList} from "../../../utils";
+import {fetchBowlerList, useClientReady} from "../../../utils";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
@@ -26,6 +26,7 @@ const Page = () => {
 
   const onBowlerListFailed = (data) => {
     setLoading(false);
+    setBowlers([]);
     setErrorMessage(data.error);
   }
 
@@ -41,6 +42,11 @@ const Page = () => {
       onFailure: onBowlerListFailed,
     });
   }, [dispatch]);
+
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
 
   if (loading) {
     return <LoadingMessage message={'Retrieving list of bowlers...'}/>
@@ -65,10 +71,9 @@ const Page = () => {
       <Row>
         <Col md={4} className={'d-none d-md-block'}>
           <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
-            <TournamentLogo tournament={registration.tournament}/>
+            <TournamentLogo url={registration.tournament.image_url}/>
             <h4 className={'text-center py-3'}>{registration.tournament.name}</h4>
           </a>
-          <Contacts tournament={registration.tournament}/>
         </Col>
         <Col>
           {error}

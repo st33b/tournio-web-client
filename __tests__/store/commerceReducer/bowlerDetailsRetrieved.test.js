@@ -21,12 +21,17 @@ describe ('action type: bowler details retrieved', () => {
       name: 'entry fee',
       category: 'ledger',
     },
-  ]
+  ];
+  const tournament = {
+    name: 'Bowl-a-rama',
+    date: '2023-01-01',
+  };
   const actionBowler = {
     // these are expected to be there
     has_free_entry: false,
     paid_purchases: paidPurchases,
     unpaid_purchases: unpaidLedgerItems.concat(unpaidNonLedgerItems),
+    tournament: tournament,
 
     // these are things added just for the fun of testing
     name: 'Captain Marvel',
@@ -84,6 +89,10 @@ describe ('action type: bowler details retrieved', () => {
     const result = commerceReducer({}, action);
     expect(result.freeEntry).toBeDefined();
   });
+  it ('includes a tournament property in the return', () => {
+    const result = commerceReducer({}, action);
+    expect(result.tournament).toBeDefined();
+  })
   it ('includes an error property in the return', () => {
     const result = commerceReducer({}, action);
     expect(result.error).toBeDefined();
@@ -120,6 +129,10 @@ describe ('action type: bowler details retrieved', () => {
     const result = commerceReducer({}, action);
     expect(result.cart).toStrictEqual(unpaidLedgerItems.concat(unpaidNonLedgerItems));
   });
+  it ('includes the tournament in the returned object', () => {
+    const result = commerceReducer({}, action);
+    expect(result.tournament).toStrictEqual(tournament);
+  })
 
   //
   // Making changes to the action's contents
