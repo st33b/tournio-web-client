@@ -145,7 +145,6 @@ const Tournament = () => {
   const ladder = [{ text: 'Tournaments', path: '/director' }];
   return (
     <div>
-      <Breadcrumbs ladder={ladder} activeText={directorContext.tournament.name} className={classes.Breadcrumbs} />
       {error}
       {tournamentView}
     </div>

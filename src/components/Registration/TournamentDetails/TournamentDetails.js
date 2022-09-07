@@ -274,7 +274,7 @@ const TournamentDetails = ({tournament}) => {
   let youWillNeed = <hr/>;
   if (tournament.state === 'testing' || tournament.state === 'active' || tournament.state === 'demo') {
     youWillNeed = (
-      <div className={'border rounded-sm bg-light p-3'}>
+      <div className={'p-3'}>
         <h6>
           You will need the following information for each registered bowler:
         </h6>
@@ -317,7 +317,7 @@ const TournamentDetails = ({tournament}) => {
   const displayCapacity = !!tournament.config_items.find(ci => ci.key === 'display_capacity' && ci.value)
   if (tournament.shifts.length > 1) {
     shiftContent = (
-      <div className={`${classes.Shifts} my-3 border rounded-sm bg-light p-2 p-sm-3`}>
+      <div className={`${classes.Shifts} my-3 border rounded-sm p-2 p-sm-3`}>
         <h4 className={'fw-light'}>
           Shift Days/Times
         </h4>

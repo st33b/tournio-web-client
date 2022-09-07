@@ -23,15 +23,28 @@
   }
   .AlmostFull {
     background-color: lemonchiffon;
+    @media (prefers-color-scheme: dark) {
+      background-color: goldenrod;
+      color: var(--tournio-gray-900);
+    }
   }
   .Full {
     background-color: mistyrose;
+    @media (prefers-color-scheme: dark) {
+      background-color: maroon;
+    }
   }
   .ExistingShift:hover {
-    background-color: #eee;
     cursor: pointer;
+    background-color: var(--tournio-gray-200);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-800);
+    }
   }
 }
 .FormDisplayed {
-  background-color: #fff;
+  background-color: var(--tournio-white);
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--tournio-gray-800);
+  }
 }

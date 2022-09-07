@@ -1,4 +1,4 @@
-.TournamentInPrep {
+.TournamentDetails {
   dl {
     margin-bottom: 1rem;
   }
@@ -34,7 +34,10 @@
   }
 
   .ShiftInfo {
-    background-color: white;
+    background-color: var(--tournio-gray-100);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-900);
+    }
     h5 {
       //font-weight: 300;
     }

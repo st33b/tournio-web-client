@@ -23,12 +23,9 @@ $success: #40824c;
 $info: #68d3e8;
 $danger: #bf2e3c;
 
-// These are hard-coded in BS, so we're changing them here.
-$component-active-bg: #adb5bd;
-
 // my dark-mode colors
 $lighter-blue: #5398ff;
-$lighter-red: #fa4658;
+$darker-red: #b52b2b;
 $lighter-indigo: #af85f4;
 $lighter-purple: #a77df4;
 $darker-pink: #e08eb7;
@@ -50,9 +47,9 @@ $dark-mode-colors: (
   "success": $darker-green,
   //"info": $dark-cyan,
   "warning": $darker-yellow,
-  "danger": $lighter-red,
-  "light": $gray-900,
-  "dark": $gray-600
+  "danger": $darker-red,
+  "light": $gray-500,
+  "dark": $gray-900
 );
 $dark-mode-colors-rgb: map-loop($dark-mode-colors, to-rgb, "$value");
 
