@@ -79,7 +79,7 @@ const Page = () => {
                  nextStepText={'Submit Registration'}
         />
       </Col>
-      <Col sm={8} sm={{ order: 2 }}>
+      <Col sm={{ span: 8, order: 2 }}>
         {output}
       </Col>
     </Row>

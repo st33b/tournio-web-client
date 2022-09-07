@@ -36,7 +36,7 @@ const Page = () => {
                  buttonDisabled={true}
         />
       </Col>
-      <Col sm={8} sm={{ order: 2 }}>
+      <Col sm={{ span: 8, order: 2 }}>
         <BowlerForm tournament={registration.tournament}
                     bowlerData={registration.team.bowlers[bowlerNum - 1]}
                     bowlerInfoSaved={onBowlerInfoUpdated}
