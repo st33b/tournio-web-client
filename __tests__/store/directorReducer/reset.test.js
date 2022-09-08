@@ -1,4 +1,4 @@
-import * as actionTypes from '../../../src/store/actions/actionTypes';
+import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
 
 describe ('action type: reset', () => {

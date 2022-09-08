@@ -8,16 +8,24 @@ import TournamentInPrep from '../../../components/Director/TournamentInPrep/Tour
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import classes from "../../../components/Director/TournamentInPrep/TournamentInPrep.module.scss";
 import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
+import {tournamentDetailsRetrieved} from "../../../store/actions/directorActions";
 
 const Tournament = () => {
   const directorContext = useDirectorContext();
+  const directorState = directorContext.directorState;
+  const dispatch = directorContext.dispatch;
+
   const router = useRouter();
   const { identifier, stripe } = router.query;
 
   const [errorMessage, setErrorMessage] = useState(null);
 
   const onTournamentFetchSuccess = (data) => {
+    // old and busted
     directorContext.setTournament(data);
+
+    // new hotness
+    dispatch(tournamentDetailsRetrieved(data));
   }
 
   const onTournamentFetchFailure = (data) => {

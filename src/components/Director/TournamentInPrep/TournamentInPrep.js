@@ -16,7 +16,9 @@ import LogoImage from "../LogoImage/LogoImage";
 
 const TournamentInPrep = ({stateChangeInitiated, testEnvironmentUpdated, requestStripeStatus}) => {
   const context = useDirectorContext();
-  if (!context || !context.tournament) {
+  const directorState = context.directorState;
+
+  if (!directorState || !directorState.tournament) {
     return <div className={classes.TournamentInPrep}>
       <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
     </div>;
@@ -36,7 +38,7 @@ const TournamentInPrep = ({stateChangeInitiated, testEnvironmentUpdated, request
           <StatusAndCounts testEnvironmentUpdated={testEnvironmentUpdated} tournament={context.tournament}/>
           <StateChangeButton tournament={context.tournament} stateChangeInitiated={stateChangeInitiated} />
           <PurchasableItems tournament={context.tournament}/>
-          <StripeStatus tournament={context.tournament} needStatus={requestStripeStatus} />
+          <StripeStatus tournament={directorState.tournament} needStatus={requestStripeStatus} />
         </div>
 
         <div className={'col-12 col-md-6 col-lg-4'}>

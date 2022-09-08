@@ -1,4 +1,6 @@
-import {useState, useCallback, createContext, useContext} from 'react';
+import {useState, useCallback, createContext, useContext, useReducer, useEffect} from 'react';
+import {useStorage} from "../utils";
+import {directorReducer, directorReducerInit} from "./directorReducer";
 
 const DirectorContext = createContext({
   token: '',
@@ -57,6 +59,15 @@ export const DirectorContextProvider = ({children}) => {
     localStorage.setItem('tournament', JSON.stringify(newTournament));
   }
 
+  //////////////////////////
+
+  const [storedDirectorState, storeDirectorState] = useStorage('director', directorReducerInit());
+  const [directorState, dispatch] = useReducer(directorReducer, storedDirectorState, directorReducerInit);
+
+  useEffect(() => {
+    storeDirectorState(directorState);
+  }, [directorState]);
+
   const contextValue = {
     token: token,
     isLoggedIn: userIsLoggedIn,
@@ -65,6 +76,9 @@ export const DirectorContextProvider = ({children}) => {
     user: currentUser,
     setTournament: tournamentHandler,
     tournament: tournament,
+
+    directorState: directorState,
+    dispatch: dispatch,
   }
 
   return (
