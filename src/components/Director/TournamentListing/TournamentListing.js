@@ -63,7 +63,7 @@ const TournamentListing = () => {
     list = (
       <div className={'table-responsive'}>
         <table className={'table table-striped'}>
-          <thead className={'table-light'}>
+          <thead>
           <tr>
             <th>
               Name
