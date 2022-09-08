@@ -77,6 +77,7 @@ const ImageUpload = ({tournament}) => {
           <Button variant={'primary'}
                   type={'button'}
                   size={'sm'}
+                  className={'mt-3'}
                   onClick={() => setFormDisplayed(true)}
           >
             Upload new file

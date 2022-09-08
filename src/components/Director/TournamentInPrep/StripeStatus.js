@@ -15,9 +15,11 @@ const StripeStatus = ({tournament, needStatus}) => {
 
   const [errorMessage, setErrorMessage] = useState();
   const [stripeAccount, setStripeAccount] = useState();
+  const [statusRequested, setStatusRequested] = useState(false);
 
   const onStatusFetchSuccess = (data) => {
     setStripeAccount(data);
+    setStatusRequested(false);
     if (!data.can_accept_payments && needStatus) {
       console.log("Can't accept payments, requesting status again soon.");
       setTimeout(initiateStatusRequest, 3000);
@@ -28,6 +30,7 @@ const StripeStatus = ({tournament, needStatus}) => {
 
   const onStatusFetchFailure = (data) => {
     console.log('Failed to check Stripe status.');
+    setStatusRequested(false);
     setErrorMessage(data.error);
   }
 
@@ -39,6 +42,7 @@ const StripeStatus = ({tournament, needStatus}) => {
     const requestConfig = {
       method: 'get',
     };
+    setStatusRequested(true);
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
@@ -124,13 +128,13 @@ const StripeStatus = ({tournament, needStatus}) => {
                 Begin Setup
               </a>
             )}
-            {!status.requested && (
+            {!statusRequested && (
               <button onClick={initiateStatusRequest}
                       className={`btn btn-outline-secondary`}>
                 Refresh Status
               </button>
             )}
-            {status.requested && (
+            {statusRequested && (
               <button disabled
                       className={`btn btn-secondary`}>
                 <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import {useDirectorContext} from "../../../../store/DirectorContext";
 import Breadcrumbs from "../../../../components/Director/Breadcrumbs/Breadcrumbs";
 import classes from "../../../../components/Director/TournamentInPrep/TournamentInPrep.module.scss";
-import {directorApiRequest} from "../../../../utils";
+import {directorApiRequest, useClientReady} from "../../../../utils";
 import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
@@ -42,7 +42,9 @@ const Page = () => {
     console.log("Failure!", data);
   }
 
-  if (!context || !context.tournament) {
+  const ready = useClientReady();
+
+  if (!ready || !context || !context.tournament) {
     return (
       <div>
         <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
