@@ -143,7 +143,7 @@ const DivisionForm = ({onCancel, onComplete}) => {
 
           {/* In each division section: division, value/price, note (optional) */}
           {formData.divisions.map((div, index) => (
-              <div key={index} className={'mb-3 mt-3 pt-2 border-top border-secondary'}>
+              <div key={index} className={'mb-3 mt-3 pt-2 border-top'}>
                 <div className={'row mb-1'}>
                   <div className={'d-flex px-0'}>
                     <label htmlFor={'denomination'} className={'form-label ps-0 mb-1'}>
@@ -209,20 +209,24 @@ const DivisionForm = ({onCancel, onComplete}) => {
           </div>
 
           <div className={'row'}>
-            <div className={'d-flex justify-content-between p-0'}>
+            <div className={'d-flex justify-content-end pe-0'}>
               <button type={'button'}
                       title={'Cancel'}
                       onClick={onCancel}
-                      className={'btn btn-outline-danger'}>
-                <i className={'bi-x-lg pe-2'} aria-hidden={true}/>
-                Cancel
+                      className={'btn btn-outline-danger me-2'}>
+                <i className={'bi-x-lg'} aria-hidden={true}/>
+                <span className={'visually-hidden'}>
+                  Cancel
+                </span>
               </button>
               <button type={'submit'}
                       title={'Save'}
                       disabled={!formData.valid}
-                      className={'btn btn-success'}>
-                Save
-                <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>
+                      className={'btn btn-outline-success'}>
+                <i className={'bi-check-lg'} aria-hidden={true}/>
+                <span className={'visually-hidden'}>
+                  Save
+                </span>
               </button>
             </div>
           </div>

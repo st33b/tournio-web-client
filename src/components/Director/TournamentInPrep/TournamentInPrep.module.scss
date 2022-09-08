@@ -40,10 +40,14 @@
 
   .PurchasableItems {
     .Category {
-      border-bottom: 1px solid #ccc;
       padding-bottom: 0;
       padding-left: 0;
       padding-right: 0;
+
+      border-bottom: 1px solid var(--tournio-gray-400);
+      @media (prefers-color-scheme: dark) {
+        border-bottom-color: var(--tournio-gray-700);
+      }
 
       .Item {
         .Note {

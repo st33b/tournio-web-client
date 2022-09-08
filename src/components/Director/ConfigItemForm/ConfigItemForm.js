@@ -15,7 +15,7 @@ import classes from './ConfigItemForm.module.scss';
 
 const BOOLEAN_CONFIG_ITEMS = ['display_capacity', 'email_in_dev', 'event_selection'];
 
-const ConfigItemForm = ({item}) => {
+const ConfigItemForm = ({item, editable}) => {
   const context = useDirectorContext();
   const router = useRouter();
 
@@ -37,7 +37,7 @@ const ConfigItemForm = ({item}) => {
     setFormData(newFormData);
   }, [item]);
 
-  if (!context || !item) {
+  if (!item) {
     return '';
   }
 
@@ -76,7 +76,7 @@ const ConfigItemForm = ({item}) => {
     },
   }
 
-  const allowEdit = context.tournament.state !== 'active' && !BOOLEAN_CONFIG_ITEMS.includes(item.key);
+  const allowEdit = editable && !BOOLEAN_CONFIG_ITEMS.includes(item.key);
 
   const toggleEdit = (event, enable) => {
     if (event) {
@@ -171,19 +171,19 @@ const ConfigItemForm = ({item}) => {
         displayedValue = formData.value;
         break;
     }
-    content = (
-      <div className={`${classes.Item} d-flex`} key={item.key}>
-        <dt className={'col-4'}>{item.label}</dt>
-        <dd className={'ps-3 flex-grow-1 overflow-hidden'}>{displayedValue}</dd>
-        {allowEdit &&
-          <a href={'#'}
-             className={`${classes.EditLink} ms-auto`}
-             onClick={(event) => toggleEdit(event, true)}>
-            <span className={'visually-hidden'}>Edit</span>
-            <i className={'bi-pencil'} aria-hidden={true}/>
-          </a>
-        }
-      </div>
+    const itemContent = (
+        <div className={`${classes.Item} d-flex`} key={item.key}>
+          <dt className={'col-4'}>{item.label}</dt>
+          <dd className={'ps-3 flex-grow-1 overflow-hidden'}>{displayedValue}</dd>
+        </div>
+    )
+    content = !allowEdit ? itemContent : (
+      <a href={'#'}
+         className={'text-body text-decoration-none'}
+         title={'Edit this item'}
+         onClick={(e) => toggleEdit(e, true)}>
+        {itemContent}
+      </a>
     );
   } else {
     let elementName = '';
@@ -236,7 +236,7 @@ const ConfigItemForm = ({item}) => {
       inputElement = createElement(elementName, elementProps, children);
     }
     content = (
-      <form onSubmit={onFormSubmit} className={`${classes.Form} p-2 mb-3`}>
+      <form onSubmit={onFormSubmit} className={`${classes.Form} p-2 my-2`}>
         {item.key !== 'entry_deadline' &&
           <label className={'form-label'} htmlFor={'config_item'}>
             {item.label}
