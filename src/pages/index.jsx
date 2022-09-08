@@ -5,7 +5,8 @@ import {Card, Col, Row} from "react-bootstrap";
 import FrontLayout from '../components/Layout/FrontLayout/FrontLayout';
 import logoImage from '../images/tournio-logo.png'
 import logoImageDark from '../images/tournio-logo-inverted-gray.png';
-import screenshot from '../images/demo-screenshot.jpg'
+import screenshotLight from '../images/demo-screenshot-light.jpg';
+import screenshotDark from '../images/demo-screenshot-dark.jpg';
 
 const Page = () => {
   const [scheme, setScheme] = useState('light');
@@ -53,10 +54,8 @@ const Page = () => {
           </div>
 
           <div className="d-none d-sm-block col-10 offset-1 col-lg-6 offset-lg-0">
-            <Image src={screenshot}
-                   className={"d-block mx-lg-auto img-fluid"}
-                   alt={"Demo Tournament sample image"}
-            />
+            {scheme === 'light' && <Image src={screenshotLight} className={"d-block mx-lg-auto img-fluid"} alt={"Demo Tournament sample image"} />}
+            {scheme === 'dark' && <Image src={screenshotDark} className={"d-block mx-lg-auto img-fluid"} alt={"Demo Tournament sample image"} />}
           </div>
 
         </div>

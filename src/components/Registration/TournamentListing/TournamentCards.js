@@ -54,7 +54,7 @@ const TournamentCards = () => {
                   </Card.Header>
                   <Card.Body>
                     <Row className={'g-1'}>
-                      <Col xs={3}>
+                      <Col xs={4}>
                         <TournamentLogo url={t.image_url}/>
                       </Col>
                       <Col className={'ps-2'}>
