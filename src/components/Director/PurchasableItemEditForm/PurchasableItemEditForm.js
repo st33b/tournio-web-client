@@ -4,7 +4,7 @@ import {format, formatISO} from "date-fns";
 import Card from "react-bootstrap/Card";
 
 import TextField from "@mui/material/TextField";
-import {DateTimePicker} from "@mui/x-date-pickers";
+import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../utils";

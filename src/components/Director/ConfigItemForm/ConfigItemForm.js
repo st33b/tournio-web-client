@@ -3,9 +3,9 @@ import {format, formatISO} from "date-fns";
 import {useRouter} from "next/router";
 
 import TextField from "@mui/material/TextField";
-import AdapterDateFns from "@mui/x-date-pickers/AdapterDateFns";
-import LocalizationProvider from "@mui/x-date-pickers/LocalizationProvider";
-import DateTimePicker from "@mui/x-date-pickers/DateTimePicker";
+import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../utils";
