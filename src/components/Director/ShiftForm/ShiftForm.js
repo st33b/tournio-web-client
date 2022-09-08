@@ -170,11 +170,6 @@ const ShiftForm = ({shift}) => {
     console.log('damn', data);
   }
 
-  const outerClasses = [classes.ShiftForm];
-  if (formDisplayed) {
-    outerClasses.push(classes.FormDisplayed);
-  }
-
   const toggleEdit = (event) => {
     event.preventDefault();
     setFormDisplayed(!formDisplayed);
@@ -267,6 +262,13 @@ const ShiftForm = ({shift}) => {
     } else if (shift.confirmed_count + shift.requested_count + 16 >= shift.capacity) {
       colorClass = classes.AlmostFull;
     }
+  }
+
+  const outerClasses = [classes.ShiftForm];
+  if (formDisplayed) {
+    outerClasses.push(classes.FormDisplayed);
+  } else {
+    outerClasses.push('mt-3');
   }
 
   // const daysOfWeek = [
@@ -538,7 +540,7 @@ const ShiftForm = ({shift}) => {
                 <button type={'button'}
                         title={'Cancel'}
                         onClick={formCancelled}
-                        className={'btn btn-outline-dark me-2'}>
+                        className={'btn btn-outline-danger me-2'}>
                   <i className={'bi-x-lg'} aria-hidden={true}/>
                   <span className={'visually-hidden'}>
                     Cancel
@@ -547,7 +549,7 @@ const ShiftForm = ({shift}) => {
                 <button type={'submit'}
                         title={'Save'}
                         disabled={!formData.get('valid')}
-                        className={'btn btn-success'}>
+                        className={'btn btn-outline-success'}>
                   <i className={'bi-check-lg'} aria-hidden={true}/>
                   <span className={'visually-hidden'}>
                     Save

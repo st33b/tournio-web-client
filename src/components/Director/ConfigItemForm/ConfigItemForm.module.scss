@@ -1,5 +1,9 @@
 .ConfigItemForm {
   .Form {
+    background-color: var(--tournio-gray-100);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-900);
+    }
     border: 1px solid #ddd;
     label {
       font-weight: 600;

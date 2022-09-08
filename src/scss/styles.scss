@@ -20,20 +20,22 @@ html {
 
 .card {
   @media (prefers-color-scheme: dark) {
-    background-color: var(--tournio-gray-900);
+    --tournio-card-bg: var(--tournio-body-bg);
+    --tournio-card-border-color: var(--tournio-gray-800);
+    --tournio-card-cap-bg: var(--tournio-gray-900);
   }
 }
 
 .list-group {
   @media (prefers-color-scheme: dark) {
-    --tournio-list-group-color: var(--tournio-gray-500);
-    --tournio-list-group-bg: var(--tournio-gray-900);
-    --tournio-list-group-border-color: var(--tournio-gray-700);
+    --tournio-list-group-color: var(--tournio-body-color);
+    --tournio-list-group-bg: var(--tournio-body-bg);
+    --tournio-list-group-border-color: var(--tournio-gray-800);
     --tournio-list-group-action-color: var(--tournio-gray-300);
     --tournio-list-group-action-hover-color: var(--tournio-gray-300);
-    --tournio-list-group-action-hover-bg: var(--tournio-gray-800);
+    --tournio-list-group-action-hover-bg: var(--tournio-gray-900);
     --tournio-list-group-action-active-color: var(--tournio-gray-300);
-    --tournio-list-group-action-active-bg: var(--tournio-gray-700);
+    --tournio-list-group-action-active-bg: var(--tournio-gray-800);
     --tournio-list-group-active-color: var(--tournio-gray-400);
     --tournio-list-group-active-bg: var(--tournio-gray-800);
   }
