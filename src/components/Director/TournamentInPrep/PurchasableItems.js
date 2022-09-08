@@ -1,6 +1,6 @@
 import Card from 'react-bootstrap/Card';
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 
 import classes from './TournamentInPrep.module.scss';
 import {useDirectorContext} from "../../../store/DirectorContext";
