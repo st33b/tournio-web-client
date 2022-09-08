@@ -74,7 +74,7 @@ const ImageUpload = ({tournament}) => {
       <Card.Body>
         <LogoImage src={tournament.image_url}/>
         {!formDisplayed && (
-          <Button variant={'primary'}
+          <Button variant={'outline-primary'}
                   type={'button'}
                   size={'sm'}
                   className={'mt-3'}
@@ -97,7 +97,13 @@ const ImageUpload = ({tournament}) => {
               </Form.Text>
             </Form.Group>
             <Form.Group controlId={'uploadGo'}>
-              <Button variant={'primary'}
+              <Button variant={'outline-danger'}
+                      className={'me-3'}
+                      type={'button'}
+                      onClick={() => setFormDisplayed(false)}>
+                Cancel
+              </Button>
+              <Button variant={'outline-primary'}
                       type={'button'}
                       onClick={uploadTheFile}>
                 Upload

@@ -37,7 +37,7 @@ const AdditionalQuestionForm = () => {
   const inputChanged = (event) => {
     const inputName = event.target.name;
     const newValue = inputName === 'required' ? event.target.checked : event.target.value;
-    const newFormData = { ...formData }
+    const newFormData = {...formData}
     newFormData[inputName] = newValue;
 
     newFormData.valid = !!newFormData.extended_form_field_id;
@@ -47,15 +47,16 @@ const AdditionalQuestionForm = () => {
 
   const submissionSuccess = (data) => {
     setSuccessMessage(
-      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
-        <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
+      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'}
+           role={'alert'}>
+        <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
         <div className={'me-auto'}>
           Question saved.
           <button type="button"
                   className={"btn-close"}
                   data-bs-dismiss="alert"
                   onClick={() => setSuccessMessage(null)}
-                  aria-label="Close" />
+                  aria-label="Close"/>
         </div>
       </div>
     );
@@ -64,15 +65,16 @@ const AdditionalQuestionForm = () => {
 
   const submissionFailure = (data) => {
     setErrorMessage(
-      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
-        <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
+      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'}
+           role={'alert'}>
+        <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
         <div className={'me-auto'}>
           Failed to save the question: {data.error}
           <button type="button"
                   className={"btn-close"}
                   data-bs-dismiss="alert"
                   onClick={() => setErrorMessage(null)}
-                  aria-label="Close" />
+                  aria-label="Close"/>
         </div>
       </div>
     );
@@ -115,8 +117,13 @@ const AdditionalQuestionForm = () => {
     setFormDisplayed(false);
   }
 
+  const outerClasses = [classes.AdditionalQuestionForm];
+  if (formDisplayed) {
+    outerClasses.push(classes.FormDisplayed);
+  }
+
   return (
-    <div className={classes.AdditionalQuestionForm}>
+    <div className={outerClasses.join(' ')}>
       <Card.Body>
         {formDisplayed &&
           <form onSubmit={formSubmitted}>
@@ -140,11 +147,32 @@ const AdditionalQuestionForm = () => {
                 A response is required
               </label>
             </div>
-            <div className={'text-center'}>
+            {/*<div className={'text-center'}>*/}
+            {/*  <button type={'submit'}*/}
+            {/*          className={'btn btn-primary'}*/}
+            {/*          disabled={!formData.valid}>*/}
+            {/*    Save*/}
+            {/*  </button>*/}
+            {/*</div>*/}
+
+            <div className={'d-flex justify-content-end'}>
+              <button type={'button'}
+                      title={'Cancel'}
+                      onClick={() => setFormDisplayed(false)}
+                      className={'btn btn-outline-danger me-2'}>
+                <i className={'bi-x-lg'} aria-hidden={true}/>
+                <span className={'visually-hidden'}>
+                Cancel
+              </span>
+              </button>
               <button type={'submit'}
-                      className={'btn btn-primary'}
-                      disabled={!formData.valid}>
+                      title={'Save'}
+                      disabled={!formData.valid}
+                      className={'btn btn-outline-success'}>
+                <i className={'bi-check-lg'} aria-hidden={true}/>
+                <span className={'visually-hidden'}>
                 Save
+              </span>
               </button>
             </div>
             {errorMessage}

@@ -124,14 +124,18 @@ const ContactForm = ({contact, newContact}) => {
     setEditing(true);
   }
 
+  const outerClasses = [classes.ContactForm];
+  if (editing) {
+    outerClasses.push(classes.Editing);
+  }
+
   return (
     <ErrorBoundary>
-      <div className={`${classes.ContactForm}`}>
+      <div className={outerClasses.join(' ')}>
         {editing &&
-          <form className={'mx-2'}
-                onSubmit={formSubmitted}>
-            <div className={'row mb-3'}>
-              <label className={'form-label ps-0 mb-1'}>
+          <form onSubmit={formSubmitted}>
+            <div className={classes.InputItem}>
+              <label className={'form-label mb-1'}>
                 Name
               </label>
               <input type={'text'}
@@ -141,8 +145,8 @@ const ContactForm = ({contact, newContact}) => {
                      name={'name'}
                      value={formData.name}/>
             </div>
-            <div className={'row mb-3'}>
-              <label className={'form-label ps-0 mb-1'}>
+            <div className={classes.InputItem}>
+              <label className={'form-label mb-1'}>
                 Email Address
               </label>
               <input type={'email'}
@@ -151,8 +155,8 @@ const ContactForm = ({contact, newContact}) => {
                      name={'email'}
                      value={formData.email}/>
             </div>
-            <div className={'row mb-3'}>
-              <label className={'form-label ps-0 mb-1'}>
+            <div className={classes.InputItem}>
+              <label className={'form-label mb-1'}>
                 Role
               </label>
               <select className={'form-select'}
@@ -163,14 +167,14 @@ const ContactForm = ({contact, newContact}) => {
                 {Object.entries(roles).map(pair => <option value={pair[0]} key={pair[0]}>{pair[1]}</option>)}
               </select>
             </div>
-            <div className={'row mb-3'}>
+            <div className={classes.InputItem}>
               <label className={'form-label ps-0 mb-1'}>
                 Notifications to receive
               </label>
-              <div className={'form-check ms-3'}>
+              <div className={'form-check form-switch ms-3'}>
                 <input type={'checkbox'}
                        className={'form-check-input'}
-                  // role={'switch'}
+                       role={'switch'}
                        name={'notify_on_payment'}
                        id={'notify_on_payment'}
                        onChange={inputChanged}
@@ -180,10 +184,10 @@ const ContactForm = ({contact, newContact}) => {
                   Payment received
                 </label>
               </div>
-              <div className={'form-check ms-3'}>
+              <div className={'form-check form-switch ms-3'}>
                 <input type={'checkbox'}
                        className={'form-check-input'}
-                  // role={'switch'}
+                       role={'switch'}
                        name={'notify_on_registration'}
                        id={'notify_on_registration'}
                        onChange={inputChanged}
@@ -194,7 +198,7 @@ const ContactForm = ({contact, newContact}) => {
                 </label>
               </div>
             </div>
-            <div className={'row mb-3'}>
+            <div className={classes.InputItem}>
               <label className={'form-label ps-0 mb-1'}>
                 Notification Frequency
               </label>
@@ -227,19 +231,25 @@ const ContactForm = ({contact, newContact}) => {
                 </label>
               </div>
             </div>
-            <div className={'row'}>
-              <div className={'d-flex justify-content-between p-0'}>
-                <button className={'btn btn-outline-danger'}
-                        type={'button'}
-                        onClick={() => setEditing(false)}>
-                  <i className={'bi-x-lg pe-2'} aria-hidden={true}/>
-                  Cancel
+            <div className={classes.InputItem}>
+              <div className={'d-flex justify-content-end'}>
+                <button type={'button'}
+                        title={'Cancel'}
+                        onClick={() => setEditing(false)}
+                        className={'btn btn-outline-danger me-2'}>
+                  <i className={'bi-x-lg'} aria-hidden={true}/>
+                  <span className={'visually-hidden'}>
+                    Cancel
+                  </span>
                 </button>
                 <button type={'submit'}
+                        title={'Save'}
                         disabled={!formData.valid}
-                        className={'btn btn-primary'}>
-                  Save
-                  <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>
+                        className={'btn btn-outline-success'}>
+                  <i className={'bi-check-lg'} aria-hidden={true}/>
+                  <span className={'visually-hidden'}>
+                    Save
+                  </span>
                 </button>
               </div>
             </div>
@@ -270,7 +280,7 @@ const ContactForm = ({contact, newContact}) => {
           </div>
         }
         {!editing && newContact &&
-          <div className={'row'}>
+          <div className={classes.InputItem}>
             <div className={'text-center'}>
               <button className={'btn btn-outline-primary'}
                       type={'button'}
