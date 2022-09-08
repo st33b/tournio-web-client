@@ -1,5 +1,8 @@
 .NewPurchasableItem {
 }
 .FormDisplayed {
-  background-color: #f8f8f8;
+  background-color: var(--tournio-gray-900);
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--tournio-gray-800);
+  }
 }
