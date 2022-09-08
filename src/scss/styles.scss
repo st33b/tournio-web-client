@@ -6,11 +6,6 @@ html {
   display: block;
 }
 
-//.card-title {
-//  padding-left: var(--tournio-card-spacer-y);
-//  padding-right: var(--tournio-card-spacer-y);
-//}
-//
 .accordion {
   --tournio-accordion-color: var(--tournio-body-color);
   --tournio-accordion-bg: var(--tournio-body-bg);
@@ -41,16 +36,11 @@ html {
   }
 }
 
-.table {
-  @media (prefers-color-scheme: dark) {
-    //--tournio-table-bg
-  }
-}
-
 .form-control {
   @media (prefers-color-scheme: dark) {
     background-color: var(--tournio-gray-900);
     color: var(--tournio-body-color);
+    border-color: var(--tournio-gray-700);
 
     &:focus,
     &:hover {
@@ -71,6 +61,7 @@ html {
     background-color: var(--tournio-gray-900);
     color: var(--tournio-body-color);
     background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%236c757d' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>");
+    border-color: var(--tournio-gray-700);
   }
 }
 

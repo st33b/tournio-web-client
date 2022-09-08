@@ -1,22 +1,20 @@
 .ConfigItemForm {
   .Form {
+    border: 1px solid var(--tournio-gray-300);
     background-color: var(--tournio-gray-100);
     @media (prefers-color-scheme: dark) {
       background-color: var(--tournio-gray-900);
+      border-color: var(--tournio-gray-700);
     }
-    border: 1px solid #ddd;
     label {
       font-weight: 600;
     }
   }
-  .Item {
-    .EditLink {
-      display: none;
-    }
-  }
-  .Item:hover {
-    .EditLink {
-      display: inline;
+  a > .Item:hover {
+    cursor: pointer;
+    background-color: var(--tournio-gray-100);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-900);
     }
   }
   .ExternalLink {

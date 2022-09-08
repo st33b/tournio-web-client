@@ -162,10 +162,11 @@ const MultiUseForm = ({onCancel, onComplete}) => {
             />
           </div>
           <div className={'row mb-3'}>
-            <div className={'form-check'}>
+            <div className={'form-check form-switch'}>
               <input type={'checkbox'}
                      className={'form-check-input'}
                      value={true}
+                     role={'switch'}
                      name={'has_denomination'}
                      onChange={toggleDenominationVisibility}
                      id={'has_denomination'}/>
@@ -231,20 +232,24 @@ const MultiUseForm = ({onCancel, onComplete}) => {
             {itemPreview}
           </div>
           <div className={'row'}>
-            <div className={'d-flex justify-content-between p-0'}>
+            <div className={'d-flex justify-content-end pe-0'}>
               <button type={'button'}
                       title={'Cancel'}
                       onClick={onCancel}
-                      className={'btn btn-outline-danger'}>
-                <i className={'bi-x-lg pe-2'} aria-hidden={true}/>
-                Cancel
+                      className={'btn btn-outline-danger me-2'}>
+                <i className={'bi-x-lg'} aria-hidden={true}/>
+                <span className={'visually-hidden'}>
+                  Cancel
+                </span>
               </button>
               <button type={'submit'}
                       title={'Save'}
                       disabled={!formData.valid}
-                      className={'btn btn-success'}>
-                Save
-                <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>
+                      className={'btn btn-outline-success'}>
+                <i className={'bi-check-lg'} aria-hidden={true}/>
+                <span className={'visually-hidden'}>
+                  Save
+                </span>
               </button>
             </div>
           </div>

@@ -1,7 +1,6 @@
 import Card from 'react-bootstrap/Card';
 
 import classes from './TournamentInPrep.module.scss';
-import {useDirectorContext} from "../../../store/DirectorContext";
 import ConfigItemForm from "../ConfigItemForm/ConfigItemForm";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
@@ -16,11 +15,11 @@ const Configuration = ({tournament}) => {
         <Card.Header as={'h5'} className={'fw-light'}>
           Configuration
         </Card.Header>
-        <Card.Body>
+        <Card.Body className={'px-0'}>
           <dl>
             {tournament.config_items.map((item) => {
               return (
-                <ConfigItemForm item={item} key={item.key} />
+                <ConfigItemForm item={item} key={item.key} editable={true} />
               )
             })}
           </dl>

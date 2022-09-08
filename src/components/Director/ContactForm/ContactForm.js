@@ -256,27 +256,31 @@ const ContactForm = ({contact, newContact}) => {
           </form>
         }
         {!editing && !newContact &&
-          <div className={`row ${classes.Detail}`}>
-            <p className={`fw-bold m-0 d-flex`}>
-              {formData.name}
-              <a href={'#'}
-                 className={`${classes.EditLink} ms-auto`}
-                 onClick={editClicked}>
-                <span className={'visually-hidden'}>Edit</span>
-                <i className={'bi-pencil'} aria-hidden={true}/>
-              </a>
-
-            </p>
-            <p className={'m-0'}>
-              {roles[formData.role]}
-            </p>
-            <p className={'small m-0'}>
-              {formData.email}
-            </p>
-            <p className={'small m-0 fst-italic'}>
-              Notifications: {chosenNotifications.join(', ') || 'none'}
-              {chosenNotifications.length > 0 && ` (${preferenceLabels[formData.notification_preference]})`}
-            </p>
+          <div className={`${classes.Detail} px-3 py-2`}>
+            <a href={'#'}
+               className={'text-body text-decoration-none'}
+               onClick={editClicked}
+               title={'Edit contact details'}>
+              <p className={`fw-bold m-0 d-flex`}>
+                {formData.name}
+                {/*<a href={'#'}*/}
+                {/*   className={`${classes.EditLink} ms-auto`}*/}
+                {/*   onClick={editClicked}>*/}
+                {/*  <span className={'visually-hidden'}>Edit</span>*/}
+                {/*  <i className={'bi-pencil'} aria-hidden={true}/>*/}
+                {/*</a>*/}
+              </p>
+              <p className={'m-0'}>
+                {roles[formData.role]}
+              </p>
+              <p className={'small m-0'}>
+                {formData.email}
+              </p>
+              <p className={'small m-0 fst-italic'}>
+                Notifications: {chosenNotifications.join(', ') || 'none'}
+                {chosenNotifications.length > 0 && ` (${preferenceLabels[formData.notification_preference]})`}
+              </p>
+            </a>
           </div>
         }
         {!editing && newContact &&
