@@ -157,10 +157,10 @@ const ConfigItemForm = ({item, editable}) => {
       case 'email_in_dev':
       case 'event_selection':
         displayedValue = (
-          <div className={'form-check'}>
+          <div className={'form-check form-switch'}>
             <input type={'checkbox'}
                    className={'form-check-input'}
-                   // role={'switch'}
+                   role={'switch'}
                    name={'config_item'}
                    checked={formData.value}
                    onChange={onInputChanged} />

@@ -217,16 +217,21 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
           {formData.determination === 'early_discount' &&
             <div className={'row mb-3'}>
               <DateTimePicker onChange={(newDateTime) => inputChanged('valid_until', newDateTime)}
+                              disablePast={true}
                               value={formData.valid_until}
                               label={'Valid until'}
+                              className={classes.TournioDateTimePicker}
                               renderInput={(params) => <TextField {...params} />}/>
             </div>
           }
           {formData.determination === 'late_fee' &&
             <div className={'row mb-3'}>
               <DateTimePicker onChange={(newDateTime) => inputChanged('applies_at', newDateTime)}
+                              disablePast={true}
+                              hideTabs={true}
                               value={formData.applies_at}
                               label={'Applies at'}
+                              className={classes.TournioDateTimePicker}
                               renderInput={(params) => <TextField {...params} />}/>
             </div>
           }
