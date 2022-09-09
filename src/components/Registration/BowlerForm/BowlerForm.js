@@ -90,16 +90,67 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       //   touched: false,
       // },
       birth_month: {
-        elementType: 'input',
+        elementType: 'select',
         elementConfig: {
-          type: 'number',
+          options: [
+            {
+              value: '',
+              label: '-- Choose your month',
+            },
+            {
+              value: 1,
+              label: 'Jan'
+            },
+            {
+              value: 2,
+              label: 'Feb'
+            },
+            {
+              value: 3,
+              label: 'Mar'
+            },
+            {
+              value: 4,
+              label: 'Apr'
+            },
+            {
+              value: 5,
+              label: 'May'
+            },
+            {
+              value: 6,
+              label: 'Jun'
+            },
+            {
+              value: 7,
+              label: 'Jul'
+            },
+            {
+              value: 8,
+              label: 'Aug'
+            },
+            {
+              value: 9,
+              label: 'Sep'
+            },
+            {
+              value: 10,
+              label: 'Oct'
+            },
+            {
+              value: 11,
+              label: 'Nov'
+            },
+            {
+              value: 12,
+              label: 'Dec'
+            },
+          ],
           value: '',
         },
         label: 'Birth month',
         validation: {
           required: true,
-          min: 1,
-          max: 12,
         },
         valid: false,
         touched: false,
@@ -335,15 +386,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     console.log("Tournament?", tournament);
     return '';
   }
-
-  //. If we aren't editing a bowler, then set the position if it's needs to be something other than 1.
-  // if (!bowlerData) {
-  //   if (registration.team) {
-  //     setPosition (registration.team.bowlers.length + 1);
-  //   } else if (registration.bowlers) {
-  //     setPosition(registration.bowlers.length + 1);
-  //   }
-  // }
 
   const checkValidity = (value, rules) => {
     let isValid = true;
