@@ -24,9 +24,10 @@
   }
 
   .TestingEnvironment {
-    padding-top: 0.5rem;
-    padding-left: 0.5rem;
     background-color: burlywood;
+    @media (prefers-color-scheme: dark) {
+      background-color: #deb88740;
+    }
   }
 
   .Shifts {

@@ -1,4 +1,10 @@
 .BowlerSummary {
+  .Heading {
+    background-color: var(--tournio-gray-200);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-800);
+    }
+  }
   dt {
     text-align: right;
   }

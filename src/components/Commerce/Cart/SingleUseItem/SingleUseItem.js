@@ -41,7 +41,6 @@ const SingleUseItem = ({item, removed}) => {
     classes.SingleUseItem,
     'rounded',
     'border',
-    'border-secondary',
     'mb-3',
     'mx-0',
     'd-flex',
