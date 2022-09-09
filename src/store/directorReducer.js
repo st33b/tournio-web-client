@@ -15,6 +15,7 @@ export const directorReducer = (state, action) => {
     console.log("Director reducer action:", action);
   }
 
+  let index;
   switch (action.type) {
     case actionTypes.RESET:
       return directorReducerInit();
@@ -49,11 +50,30 @@ export const directorReducer = (state, action) => {
       });
     case actionTypes.TOURNAMENT_CONFIG_ITEM_UPDATED:
       const configItems = state.tournament.config_items;
-      const index = configItems.findIndex(i => i.id === action.configItem.id);
+      index = configItems.findIndex(i => i.id === action.configItem.id);
       configItems[index] = {...action.configItem}
       return updateObject(state, {
         tournament: state.tournament.set('config_items', configItems),
       });
+    case actionTypes.TOURNAMENT_SHIFT_ADDED:
+      return updateObject(state, {
+        tournament: state.tournament.set('shifts', state.tournament.shifts.concat(action.shift)),
+      });
+    case actionTypes.TOURNAMENT_SHIFT_DELETED:
+      return updateObject(state, {
+        tournament: state.tournament.set('shifts', state.tournament.shifts.filter(s => s.identifier !== action.shift.identifier)),
+      });
+    case actionTypes.TOURNAMENT_SHIFT_UPDATED:
+      const updatedShift = {...action.shift};
+      const shifts = [...state.tournament.shifts]
+      index = shifts.findIndex(s => s.identifier === updatedShift.identifier);
+      shifts[index] = {
+        ...shifts[index],
+        ...updatedShift,
+      }
+      return updateObject(state, {
+        tournament: state.tournament.set('shifts', shifts),
+      })
     default:
       return state;
   }

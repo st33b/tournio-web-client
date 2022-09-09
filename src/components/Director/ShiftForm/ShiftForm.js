@@ -1,5 +1,5 @@
-import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
+import {useRouter} from "next/router";
 import {Map} from "immutable";
 import Card from 'react-bootstrap/Card';
 
@@ -7,8 +7,13 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../utils";
 
 import classes from './ShiftForm.module.scss';
+import {
+  tournamentShiftAdded,
+  tournamentShiftDeleted,
+  tournamentShiftUpdated
+} from "../../../store/actions/directorActions";
 
-const ShiftForm = ({shift}) => {
+const ShiftForm = ({tournament, shift}) => {
   const context = useDirectorContext();
   const router = useRouter();
 
@@ -59,7 +64,7 @@ const ShiftForm = ({shift}) => {
     setFormData(Map(existingShift));
   }, [shift]);
 
-  if (!context || !context.tournament) {
+  if (!context || !tournament) {
     return '';
   }
 
@@ -72,7 +77,7 @@ const ShiftForm = ({shift}) => {
   //   setFormData(newFormData);
   // }
 
-  const allowDelete = shift && (context.tournament.state !== 'active' && context.tournament.state !== 'demo');
+  const allowDelete = shift && (tournament.state !== 'active' && tournament.state !== 'demo');
 
   const addClicked = (event) => {
     event.preventDefault();
@@ -129,7 +134,7 @@ const ShiftForm = ({shift}) => {
   const addShiftFormSubmitted = (event) => {
     event.preventDefault();
 
-    const uri = `/director/tournaments/${context.tournament.identifier}/shifts`;
+    const uri = `/director/tournaments/${tournament.identifier}/shifts`;
     const registrationTypes = [];
     REGISTRATION_TYPES.forEach(rType => {
       if (formData.get(rType)) {
@@ -155,19 +160,9 @@ const ShiftForm = ({shift}) => {
       requestConfig: requestConfig,
       context: context,
       router: router,
-      onSuccess: addShiftSuccess,
-      onFailure: addShiftFailure,
+      onSuccess: (data) => context.dispatch(tournamentShiftAdded(data)),
+      onFailure: (data) => console.log("D'oh!", data),
     });
-  }
-
-  const addShiftSuccess = (data) => {
-    const tournament = {...context.tournament};
-    tournament.shifts = context.tournament.shifts.concat(data);
-    context.setTournament(tournament);
-  }
-
-  const addShiftFailure = (data) => {
-    console.log('damn', data);
   }
 
   const toggleEdit = (event) => {
@@ -189,20 +184,9 @@ const ShiftForm = ({shift}) => {
       requestConfig: requestConfig,
       context: context,
       router: router,
-      onSuccess: deleteShiftSuccess,
-      onFailure: deleteShiftFailure,
+      onSuccess: () => context.dispatch(tournamentShiftDeleted(shift)),
+      onFailure: (data) => console.log("D'oh!", data),
     });
-  }
-
-  const deleteShiftSuccess = (data) => {
-    const tournament = {...context.tournament};
-    tournament.shifts = context.tournament.shifts.filter(s => s.identifier !== shift.identifier);
-    context.setTournament(tournament);
-    // Anything else we need to do? I'm pretty sure a re-render will take this component instance away entirely...
-  }
-
-  const deleteShiftFailure = (data) => {
-    console.log("Uh oh...", data);
   }
 
   const updateShiftFormSubmitted = (event) => {
@@ -235,22 +219,14 @@ const ShiftForm = ({shift}) => {
       context: context,
       router: router,
       onSuccess: updateShiftSuccess,
-      onFailure: updateShiftFailure,
+      onFailure: (data) => console.log("D'oh!", data),
     })
   }
 
   const updateShiftSuccess = (data) => {
-    const tournament = {...context.tournament};
-    tournament.shifts = [...context.tournament.shifts];
-    const index = tournament.shifts.findIndex(s => s.identifier === shift.identifier)
-    tournament.shifts[index] = data;
-    context.setTournament(tournament);
+    context.dispatch(tournamentShiftUpdated(data));
     setSuccessMessage('Shift updated.');
     setFormDisplayed(false);
-  }
-
-  const updateShiftFailure = (data) => {
-    console.log('damn', data);
   }
 
   let submitFunction = addShiftFormSubmitted;

@@ -1,4 +1,3 @@
-import {useDirectorContext} from "../../../store/DirectorContext";
 import Basics from "./Basics";
 import Configuration from "./Configuration";
 import AdditionalQuestions from "./AdditionalQuestions";
@@ -9,9 +8,10 @@ import StateChangeButton from "./StateChangeButton";
 import DeleteTournament from "./DeleteTournament";
 import Shifts from "./Shifts";
 import StripeStatus from "./StripeStatus";
+import ImageUpload from "./ImageUpload";
+import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './TournamentInPrep.module.scss';
-import ImageUpload from "./ImageUpload";
 
 const TournamentInPrep = ({stateChangeInitiated, requestStripeStatus}) => {
   const {directorState} = useDirectorContext();

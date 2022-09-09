@@ -41,3 +41,24 @@ export const tournamentConfigItemChanged = (configItem) => {
     configItem: configItem,
   }
 }
+
+export const tournamentShiftAdded = (newShift) => {
+  return {
+    type: actionTypes.TOURNAMENT_SHIFT_ADDED,
+    shift: newShift,
+  }
+}
+
+export const tournamentShiftDeleted = (shift) => {
+  return {
+    type: actionTypes.TOURNAMENT_SHIFT_DELETED,
+    shift: shift,
+  }
+}
+
+export const tournamentShiftUpdated = (shift) => {
+  return {
+    type: actionTypes.TOURNAMENT_SHIFT_UPDATED,
+    shift: shift,
+  }
+}
