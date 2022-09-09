@@ -2,7 +2,7 @@ import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
 import {TournamentRecord} from "../../../src/store/records/tournament";
 
-describe('action type: stripe account status changed', () => {
+describe('action type: tournament state changed', () => {
   const previousState = {
     tournament: TournamentRecord({
       identifier: 'abcdefg',

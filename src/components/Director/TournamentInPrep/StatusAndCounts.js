@@ -10,9 +10,12 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './TournamentInPrep.module.scss';
 import {bgBG} from "@mui/material/locale";
+import {tournamentTestEnvironmentUpdated} from "../../../store/actions/directorActions";
 
-const StatusAndCounts = ({testEnvironmentUpdated, tournament}) => {
+const StatusAndCounts = ({tournament}) => {
   const context = useDirectorContext();
+  const directorState = context.directorState;
+  const dispatch = context.dispatch;
   const router = useRouter();
 
   const testEnvFormInitialData = {
@@ -163,11 +166,8 @@ const StatusAndCounts = ({testEnvironmentUpdated, tournament}) => {
   }
 
   const onClearTestDataFailure = (data) => {
+    console.log('Oopsie!', data);
     setLoading(false);
-  }
-
-  const clearDataSuccessAlertClosed = () => {
-    setClearTestDataSuccessMessage(null);
   }
 
   const clearTestDataClickHandler = () => {
@@ -195,17 +195,33 @@ const StatusAndCounts = ({testEnvironmentUpdated, tournament}) => {
     setTestEnvFormData(newForm);
   }
 
-  const testEnvSaveSuccess = () => {
+  const testEnvSaveSuccess = (data) => {
+    dispatch(tournamentTestEnvironmentUpdated(data));
     setTestEnvSuccessMessage('Testing environment updated.');
   }
 
   const testEnvSaved = (event) => {
     event.preventDefault();
-    testEnvironmentUpdated(testEnvFormData, testEnvSaveSuccess);
-  }
-
-  const testEnvAlertClosed = () => {
-    setTestEnvSuccessMessage(null);
+    const uri = `/director/tournaments/${tournament.identifier}/testing_environment`;
+    const requestConfig = {
+      method: 'patch',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        testing_environment: {
+          conditions: testEnvFormData,
+        },
+      },
+    };
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      router: router,
+      onSuccess: testEnvSaveSuccess,
+      onFailure: (data) => console.log('Oops.', data),
+    });
   }
 
   let clearTestData = '';
@@ -225,7 +241,7 @@ const StatusAndCounts = ({testEnvironmentUpdated, tournament}) => {
             <button type="button"
                     className={"btn-close"}
                     data-bs-dismiss="alert"
-                    onClick={clearDataSuccessAlertClosed}
+                    onClick={() => setClearTestDataSuccessMessage(null)}
                     aria-label="Close"/>
           </div>
         </div>
@@ -259,7 +275,7 @@ const StatusAndCounts = ({testEnvironmentUpdated, tournament}) => {
             <button type="button"
                     className={"btn-close"}
                     data-bs-dismiss="alert"
-                    onClick={testEnvAlertClosed}
+                    onClick={() => setTestEnvSuccessMessage(null)}
                     aria-label="Close"/>
           </div>
         </div>

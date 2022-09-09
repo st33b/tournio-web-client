@@ -12,11 +12,9 @@ import StripeStatus from "./StripeStatus";
 
 import classes from './TournamentInPrep.module.scss';
 import ImageUpload from "./ImageUpload";
-import LogoImage from "../LogoImage/LogoImage";
 
-const TournamentInPrep = ({stateChangeInitiated, testEnvironmentUpdated, requestStripeStatus}) => {
-  const context = useDirectorContext();
-  const directorState = context.directorState;
+const TournamentInPrep = ({stateChangeInitiated, requestStripeStatus}) => {
+  const {directorState} = useDirectorContext();
 
   if (!directorState || !directorState.tournament) {
     return <div className={classes.TournamentInPrep}>
@@ -28,23 +26,23 @@ const TournamentInPrep = ({stateChangeInitiated, testEnvironmentUpdated, request
     <div className={classes.TournamentInPrep}>
       <div className={'row'}>
         <div className={'col-12 col-md-6 col-lg-4'}>
-          <Basics tournament={context.tournament}/>
-          <Configuration tournament={context.tournament}/>
-          <Shifts tournament={context.tournament}/>
-          <AdditionalQuestions tournament={context.tournament}/>
+          <Basics tournament={directorState.tournament}/>
+          <Configuration tournament={directorState.tournament}/>
+          <Shifts tournament={directorState.tournament}/>
+          <AdditionalQuestions tournament={directorState.tournament}/>
         </div>
 
         <div className={'col-12 col-md-6 col-lg-4'}>
-          <StatusAndCounts testEnvironmentUpdated={testEnvironmentUpdated} tournament={context.tournament}/>
-          <StateChangeButton tournament={context.tournament} stateChangeInitiated={stateChangeInitiated} />
-          <PurchasableItems tournament={context.tournament}/>
+          <StatusAndCounts tournament={directorState.tournament}/>
+          <StateChangeButton tournament={directorState.tournament} stateChangeInitiated={stateChangeInitiated} />
+          <PurchasableItems tournament={directorState.tournament}/>
           <StripeStatus tournament={directorState.tournament} needStatus={requestStripeStatus} />
         </div>
 
         <div className={'col-12 col-md-6 col-lg-4'}>
-          <ImageUpload tournament={context.tournament}/>
-          <Contacts tournament={context.tournament}/>
-          <DeleteTournament tournament={context.tournament}/>
+          <ImageUpload tournament={directorState.tournament}/>
+          <Contacts tournament={directorState.tournament}/>
+          <DeleteTournament tournament={directorState.tournament}/>
         </div>
       </div>
     </div>

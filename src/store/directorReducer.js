@@ -36,6 +36,17 @@ export const directorReducer = (state, action) => {
       return updateObject(state, {
         tournament: state.tournament.merge(newStatus),
       });
+    case actionTypes.TOURNAMENT_TEST_ENVIRONMENT_UPDATED:
+      const changedProperties = {
+        testing_environment: {
+          settings: {
+            registration_period: action.newRegistrationPeriod,
+          }
+        }
+      }
+      return updateObject(state, {
+        tournament: state.tournament.merge(changedProperties),
+      });
     default:
       return state;
   }

@@ -23,8 +23,14 @@ export const tournamentDetailsRetrieved = (tournament) => {
 export const tournamentStateChanged = (tournament) => {
   return {
     type: actionTypes.TOURNAMENT_STATE_CHANGED,
-    identifier: tournament.identifier,
     newState: tournament.state,
     newStatus: tournament.status,
+  }
+}
+
+export const tournamentTestEnvironmentUpdated = (testingEnvironment) => {
+  return {
+    type: actionTypes.TOURNAMENT_TEST_ENVIRONMENT_UPDATED,
+    newRegistrationPeriod: testingEnvironment.settings.registration_period,
   }
 }
