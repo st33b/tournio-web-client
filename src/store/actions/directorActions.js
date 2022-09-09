@@ -34,3 +34,10 @@ export const tournamentTestEnvironmentUpdated = (testingEnvironment) => {
     newRegistrationPeriod: testingEnvironment.settings.registration_period,
   }
 }
+
+export const tournamentConfigItemChanged = (configItem) => {
+  return {
+    type: actionTypes.TOURNAMENT_CONFIG_ITEM_UPDATED,
+    configItem: configItem,
+  }
+}

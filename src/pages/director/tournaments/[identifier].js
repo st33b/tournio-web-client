@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 
-import {directorApiRequest, useClientReady} from "../../../utils";
-import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
 import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
+import {directorApiRequest, useClientReady} from "../../../utils";
+import {useDirectorContext} from '../../../store/DirectorContext';
 import {tournamentDetailsRetrieved, tournamentStateChanged} from "../../../store/actions/directorActions";
 
 const Tournament = () => {
@@ -51,40 +51,6 @@ const Tournament = () => {
       onFailure: (data) => setErrorMessage(data.error),
     });
   }
-
-  // const testEnvUpdateSuccess = (data, onSuccess) => {
-  //   const tournament = {...directorContext.tournament}
-  //   tournament.testing_environment = data;
-  //   directorContext.setTournament(tournament);
-  //   onSuccess();
-  // }
-  //
-  // const testEnvUpdateFailure = (data) => {
-  //   setErrorMessage(data.error);
-  // }
-  //
-  // const testEnvironmentUpdated = (testEnvFormData, onSuccess) => {
-  //   const uri = `/director/tournaments/${identifier}/testing_environment`;
-  //   const requestConfig = {
-  //     method: 'patch',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     data: {
-  //       testing_environment: {
-  //         conditions: testEnvFormData,
-  //       },
-  //     },
-  //   };
-  //   directorApiRequest({
-  //     uri: uri,
-  //     requestConfig: requestConfig,
-  //     context: directorContext,
-  //     router: router,
-  //     onSuccess: (data) => testEnvUpdateSuccess(data, onSuccess),
-  //     onFailure: testEnvUpdateFailure,
-  //   });
-  // }
 
   useEffect(() => {
     if (!directorContext) {
@@ -136,7 +102,6 @@ const Tournament = () => {
   const tournamentView = directorContext.tournament.state === 'active' || directorContext.tournament.state === 'closed'
     ? <VisibleTournament closeTournament={stateChangeInitiated} />
     : <TournamentInPrep stateChangeInitiated={stateChangeInitiated}
-                        // testEnvironmentUpdated={testEnvironmentUpdated}
                         requestStripeStatus={stripe}
     />;
 

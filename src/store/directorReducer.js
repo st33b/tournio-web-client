@@ -47,6 +47,13 @@ export const directorReducer = (state, action) => {
       return updateObject(state, {
         tournament: state.tournament.merge(changedProperties),
       });
+    case actionTypes.TOURNAMENT_CONFIG_ITEM_UPDATED:
+      const configItems = state.tournament.config_items;
+      const index = configItems.findIndex(i => i.id === action.configItem.id);
+      configItems[index] = {...action.configItem}
+      return updateObject(state, {
+        tournament: state.tournament.set('config_items', configItems),
+      });
     default:
       return state;
   }
