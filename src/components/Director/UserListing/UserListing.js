@@ -84,7 +84,7 @@ const UserListing = ({users, tournaments}) => {
     list = (
       <div className={'table-responsive'}>
         <table className={'table table-striped table-hover'} {...getTableProps}>
-          <thead className={'table-light'}>
+          <thead>
           {headerGroups.map((headerGroup, i) => (
             <tr key={i} {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column, j) => (

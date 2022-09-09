@@ -63,7 +63,7 @@ const UserFilterForm = ({onFilterApplication, onFilterReset, tournaments}) => {
   }
 
   const form = (
-    <Form onSubmit={formHandler} className={'p-3 bg-light col-md-10 offset-md-1'} >
+    <Form onSubmit={formHandler} className={'p-3 col-md-10 offset-md-1'} >
       <Form.Group controlId={'tournament'}
                   as={Row}
                   className={'mb-3'}>
@@ -121,10 +121,10 @@ const UserFilterForm = ({onFilterApplication, onFilterReset, tournaments}) => {
 
       <Form.Group as={Row}>
         <Col className={'d-flex justify-content-evenly'}>
-          <Button variant={'dark'} type={'submit'}>
+          <Button variant={'primary'} type={'submit'}>
             Apply Filters
           </Button>
-          <Button variant={'outline-dark'}
+          <Button variant={'secondary'}
                   type={'button'}
                   onClick={resetFilterHandler}
           >
