@@ -6,9 +6,9 @@ export const reset = () => {
   }
 }
 
-export const stripeAccountStatusChange = (accountStatus) => {
+export const stripeAccountStatusChanged = (accountStatus) => {
   return {
-    type: actionTypes.STRIPE_ACCOUNT_STATUS_CHANGE,
+    type: actionTypes.STRIPE_ACCOUNT_STATUS_CHANGED,
     accountStatus: accountStatus,
   }
 }
@@ -17,5 +17,14 @@ export const tournamentDetailsRetrieved = (tournament) => {
   return {
     type: actionTypes.TOURNAMENT_DETAILS_RETRIEVED,
     tournament: tournament,
+  }
+}
+
+export const tournamentStateChanged = (tournament) => {
+  return {
+    type: actionTypes.TOURNAMENT_STATE_CHANGED,
+    identifier: tournament.identifier,
+    newState: tournament.state,
+    newStatus: tournament.status,
   }
 }

@@ -2,11 +2,11 @@ import React, {useState, useEffect} from "react";
 import {Alert, Button, Card, Form, FormGroup} from "react-bootstrap";
 import {useRouter} from "next/router";
 
+import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 import {directorApiRequest} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './UserForm.module.scss';
-import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 
 const UserForm = ({user, tournaments, userDeleteInitiated}) => {
   const directorContext = useDirectorContext();

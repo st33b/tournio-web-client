@@ -3,12 +3,12 @@ import {useRouter} from "next/router";
 
 import {Col, Row} from "react-bootstrap";
 
-import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import UserListing from '../../../components/Director/UserListing/UserListing';
 import UserForm from '../../../components/Director/UserForm/UserForm';
-import {directorApiRequest} from "../../../utils";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import {directorApiRequest} from "../../../utils";
+import {useDirectorContext} from '../../../store/DirectorContext';
 
 const Page = () => {
   const directorContext = useDirectorContext();

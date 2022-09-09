@@ -24,6 +24,7 @@ import DeleteTournament from "./DeleteTournament";
 
 const VisibleTournament = ({closeTournament}) => {
   const context = useDirectorContext();
+  const directorState = context.directorState;
   if (!context || !context.tournament) {
     return <div className={classes.VisibleTournament}>
       <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
@@ -74,6 +75,9 @@ const VisibleTournament = ({closeTournament}) => {
           <LogoImage src={context.tournament.image_url} />
           <Card className={'text-center'} border={'0'}>
             <Card.Body>
+              <Card.Title>
+                {directorState.tournament.name}
+              </Card.Title>
               <a href={`/tournaments/${context.tournament.identifier}`} target={'_new'}>
                 Front Page
                 <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>

@@ -1,6 +1,6 @@
-import DirectorLayout from '../../components/Layout/DirectorLayout/DirectorLayout';
 import {useEffect} from "react";
 import {useRouter} from "next/router";
+import DirectorLayout from '../../components/Layout/DirectorLayout/DirectorLayout';
 import {useDirectorContext} from "../../store/DirectorContext";
 import {directorApiLogoutRequest} from "../../utils";
 

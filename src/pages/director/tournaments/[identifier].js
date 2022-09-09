@@ -5,10 +5,8 @@ import {directorApiRequest, useClientReady} from "../../../utils";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
-import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
-import classes from "../../../components/Director/TournamentInPrep/TournamentInPrep.module.scss";
 import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
-import {tournamentDetailsRetrieved} from "../../../store/actions/directorActions";
+import {tournamentDetailsRetrieved, tournamentStateChanged} from "../../../store/actions/directorActions";
 
 const Tournament = () => {
   const directorContext = useDirectorContext();
@@ -32,14 +30,6 @@ const Tournament = () => {
     setErrorMessage(data.error);
   }
 
-  const stateChangeSuccess = (data) => {
-    directorContext.setTournament(data);
-  }
-
-  const stateChangeFailure = (data) => {
-    setErrorMessage(data.error);
-  }
-
   const stateChangeInitiated = (stateChangeAction) => {
     const uri = `/director/tournaments/${identifier}/state_change`;
     const requestConfig = {
@@ -57,8 +47,8 @@ const Tournament = () => {
       requestConfig: requestConfig,
       context: directorContext,
       router: router,
-      onSuccess: stateChangeSuccess,
-      onFailure: stateChangeFailure,
+      onSuccess: (data) => dispatch(tournamentStateChanged(data)),
+      onFailure: (data) => setErrorMessage(data.error),
     });
   }
 

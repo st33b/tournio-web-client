@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from "react";
+import {useRouter} from "next/router";
 
 import {Col, Row} from "react-bootstrap";
 
+import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 import {directorApiRequest} from "../../../utils";
 import {useDirectorContext} from '../../../store/DirectorContext';
 
 import classes from './TournamentListing.module.scss';
-import {useRouter} from "next/router";
-import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 
 const TournamentListing = () => {
   const directorContext = useDirectorContext();

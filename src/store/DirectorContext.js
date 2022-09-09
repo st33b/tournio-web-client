@@ -55,6 +55,7 @@ export const DirectorContextProvider = ({children}) => {
   }
 
   const tournamentHandler = (newTournament) => {
+    console.log("Setting tournament in DirectorContext -- got another one to remove!")
     setTournament(newTournament);
     localStorage.setItem('tournament', JSON.stringify(newTournament));
   }

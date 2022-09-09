@@ -1,8 +1,9 @@
+import {useEffect, useState} from "react";
+import {useRouter} from "next/router";
+import {Card, Col, Row} from "react-bootstrap";
+
 import DirectorLayout from '../../components/Layout/DirectorLayout/DirectorLayout';
 import LoginForm from '../../components/Director/LoginForm/LoginForm';
-import {Card, Col, Row} from "react-bootstrap";
-import {useRouter} from "next/router";
-import {useEffect, useState} from "react";
 import {useClientReady} from "../../utils";
 
 const Login = () => {
