@@ -18,7 +18,7 @@
   .Active {
     background-color: var(--tournio-primary);
     @media (prefers-color-scheme: dark) {
-      background-color: color-mod(var(--tournio-primary), tint(50%));
+      filter: brightness(80%);
     }
     color: var(--tournio-gray-300);
     p {

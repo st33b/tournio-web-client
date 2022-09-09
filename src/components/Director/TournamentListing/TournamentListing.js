@@ -62,7 +62,7 @@ const TournamentListing = () => {
   } else {
     list = (
       <div className={'table-responsive'}>
-        <table className={'table table-striped'}>
+        <table className={'table'}>
           <thead>
           <tr>
             <th>
@@ -81,29 +81,6 @@ const TournamentListing = () => {
           </thead>
           <tbody>
           {data.map((row) => {
-            let bgColor = '';
-            let textColor = 'text-white';
-            switch (row.state) {
-              case 'setup':
-                bgColor = 'bg-light';
-                textColor = 'text-dark';
-                break;
-              case 'testing':
-                bgColor = 'bg-warning';
-                textColor = 'text-dark';
-                break;
-              case 'active':
-                bgColor = 'bg-success';
-                break;
-              case 'closed':
-                bgColor = 'bg-secondary';
-                break;
-              case 'demo':
-                bgColor = 'bg-primary';
-                break;
-              default:
-                bgColor = 'bg-dark';
-            }
             return (
               <tr key={row.identifier}>
                 <td>
@@ -117,7 +94,7 @@ const TournamentListing = () => {
                 <td>
                   {row.start_date}
                 </td>
-                <td className={bgColor + ' ' + textColor}>
+                <td className={classes[row.state]}>
                   {row.status}
                 </td>
               </tr>

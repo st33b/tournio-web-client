@@ -45,7 +45,7 @@ const DeleteTournament = ({tournament}) => {
 
   return (
     <Card className={'border-0 text-center'}>
-      <Card.Body className={'bg-white text-dark'}>
+      <Card.Body>
         <button type={'button'}
                 className={'btn btn-lg btn-danger'}
                 onClick={deleteClicked}>

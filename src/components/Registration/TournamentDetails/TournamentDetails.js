@@ -251,9 +251,9 @@ const TournamentDetails = ({tournament}) => {
   let testingEnvironment = '';
   if (tournament.state === 'testing' || tournament.state === 'demo') {
     testingEnvironment = (
-      <div className={classes.TestingEnvironment}>
+      <div className={`${classes.TestingEnvironment} p-2 mb-3`}>
         <h3>Current environment setup</h3>
-        <dl>
+        <dl className={'mt-2 mb-0 mx-0'}>
           {Object.values(tournament.testing_environment.settings).map(setting => {
             return (
               <div key={setting.name} className="row">

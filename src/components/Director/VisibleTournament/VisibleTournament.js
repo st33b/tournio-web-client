@@ -63,6 +63,14 @@ const VisibleTournament = ({closeTournament}) => {
       <div className={'row'}>
 
         <div className={'col-12 col-md-4 col-xl-3'}>
+
+          {context.tournament.state === 'closed' && (
+            <div className={`${classes.Closed} p-3 mb-3`}>
+              <h5 className={'fw-light m-0'}>
+                Registration is Closed
+              </h5>
+            </div>
+          )}
           <LogoImage src={context.tournament.image_url} />
           <Card className={'text-center'} border={'0'}>
             <Card.Body>
