@@ -70,3 +70,9 @@ export const additionalQuestionsUpdated = (tournament) => {
     availableQuestions: [...tournament.available_questions],
   }
 }
+
+export const testDataCleared = () => {
+  return {
+    type: actionTypes.TEST_DATA_CLEARED,
+  }
+}

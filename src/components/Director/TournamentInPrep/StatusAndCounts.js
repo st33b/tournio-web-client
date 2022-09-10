@@ -10,7 +10,7 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './TournamentInPrep.module.scss';
 import {bgBG} from "@mui/material/locale";
-import {tournamentTestEnvironmentUpdated} from "../../../store/actions/directorActions";
+import {testDataCleared, tournamentTestEnvironmentUpdated} from "../../../store/actions/directorActions";
 
 const StatusAndCounts = ({tournament}) => {
   const context = useDirectorContext();
@@ -156,12 +156,8 @@ const StatusAndCounts = ({tournament}) => {
   );
 
   const onClearTestDataSuccess = (_) => {
+    dispatch(testDataCleared());
     setLoading(false);
-    const updatedTournament = {...tournament}
-    updatedTournament.bowler_count = 0;
-    updatedTournament.team_count = 0;
-    updatedTournament.free_entry_count = 0;
-    context.setTournament(updatedTournament);
     setClearTestDataSuccessMessage('Test data cleared!');
   }
 

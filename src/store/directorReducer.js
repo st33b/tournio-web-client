@@ -77,7 +77,24 @@ export const directorReducer = (state, action) => {
     case actionTypes.ADDITIONAL_QUESTIONS_UPDATED:
       return updateObject(state, {
         tournament: state.tournament.set('additional_questions', action.questions).set('available_questions', action.availableQuestions),
-      })
+      });
+    case actionTypes.TEST_DATA_CLEARED:
+      const shiftChanges = state.tournament.shifts.map(shift => (
+        {
+          ...shift,
+          requested_count: 0,
+          confirmed_count: 0,
+        }
+      ));
+      const changes = {
+        bowler_count: 0,
+        team_count: 0,
+        free_entry_count: 0,
+        shifts: shiftChanges,
+      }
+      return updateObject(state, {
+        tournament: state.tournament.merge(changes),
+      });
     default:
       return state;
   }
