@@ -14,7 +14,6 @@ import {testDataCleared, tournamentTestEnvironmentUpdated} from "../../../store/
 
 const StatusAndCounts = ({tournament}) => {
   const context = useDirectorContext();
-  const directorState = context.directorState;
   const dispatch = context.dispatch;
   const router = useRouter();
 
