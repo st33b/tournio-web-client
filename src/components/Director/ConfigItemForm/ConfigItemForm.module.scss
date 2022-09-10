@@ -10,16 +10,15 @@
       font-weight: 600;
     }
   }
-  a > .Item:hover {
+  .ItemWrapper .Item:hover {
     cursor: pointer;
     background-color: var(--tournio-gray-100);
     @media (prefers-color-scheme: dark) {
       background-color: var(--tournio-gray-900);
     }
   }
-  .ExternalLink {
-    font-size: 80%;
-    padding-left: 0.5rem;
+  .Url {
+    font-size: 75%;
+    font-family: monospace;
   }
-
 }

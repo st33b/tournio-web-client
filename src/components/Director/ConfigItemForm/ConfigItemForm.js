@@ -148,13 +148,19 @@ const ConfigItemForm = ({item, editable}) => {
         displayedValue = formData.value ? timeZones[formData.value].display : '';
         break;
       case 'website':
+        let displayValue = formData.value;
+        let ellipsis = '';
+        if (displayValue.length > 15) {
+          displayValue = formData.value.substring(formData.value.length - 15);
+          ellipsis = '...';
+        }
         displayedValue = (
-          <a href={formData.value}
-             title={formData.value}
-             target={'_new'}>
-            visit
-            <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden={true} />
-          </a>
+          <>
+            {ellipsis}
+            <span className={classes.Url}>
+              {displayValue}
+            </span>
+          </>
         );
         break;
       case 'entry_deadline':
@@ -185,12 +191,12 @@ const ConfigItemForm = ({item, editable}) => {
         </div>
     )
     content = !allowEdit ? itemContent : (
-      <a href={'#'}
-         className={'text-body text-decoration-none'}
-         title={'Edit this item'}
-         onClick={(e) => toggleEdit(e, true)}>
+      <span className={classes.ItemWrapper}
+            title={'Edit this item'}
+            onClick={(e) => toggleEdit(e, true)}
+      >
         {itemContent}
-      </a>
+      </span>
     );
   } else {
     let elementName = '';
