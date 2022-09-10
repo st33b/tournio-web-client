@@ -18,18 +18,6 @@ const Tournament = () => {
 
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const onTournamentFetchSuccess = (data) => {
-    // old and busted
-    directorContext.setTournament(data);
-
-    // new hotness
-    dispatch(tournamentDetailsRetrieved(data));
-  }
-
-  const onTournamentFetchFailure = (data) => {
-    setErrorMessage(data.error);
-  }
-
   const stateChangeInitiated = (stateChangeAction) => {
     const uri = `/director/tournaments/${identifier}/state_change`;
     const requestConfig = {
@@ -69,8 +57,8 @@ const Tournament = () => {
       requestConfig: requestConfig,
       context: directorContext,
       router: router,
-      onSuccess: onTournamentFetchSuccess,
-      onFailure: onTournamentFetchFailure,
+      onSuccess: (data) => dispatch(tournamentDetailsRetrieved(data)),
+      onFailure: (data) => setErrorMessage(data.error),
     });
   }, [identifier, directorContext.user, router]);
 

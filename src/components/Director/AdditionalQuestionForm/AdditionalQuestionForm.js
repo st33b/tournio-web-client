@@ -6,8 +6,9 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../utils";
 
 import classes from './AdditionalQuestionForm.module.scss';
+import {additionalQuestionsUpdated} from "../../../store/actions/directorActions";
 
-const AdditionalQuestionForm = () => {
+const AdditionalQuestionForm = ({tournament}) => {
   const context = useDirectorContext();
   const router = useRouter();
 
@@ -21,13 +22,13 @@ const AdditionalQuestionForm = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  if (!context || !context.tournament) {
+  if (!context || !tournament) {
     return '';
   }
 
-  const availableQuestions = context.tournament.available_questions;
+  const availableQuestions = tournament.available_questions;
   const roomForMore = availableQuestions.length > 0;
-  const tooLate = context.tournament.state === 'active' || context.tournament.state === 'closed';
+  const tooLate = tournament.state === 'active' || tournament.state === 'closed';
 
   const addClicked = (event) => {
     event.preventDefault();
@@ -60,7 +61,7 @@ const AdditionalQuestionForm = () => {
         </div>
       </div>
     );
-    context.setTournament(data);
+    context.dispatch(additionalQuestionsUpdated(data));
   }
 
   const submissionFailure = (data) => {
@@ -88,7 +89,7 @@ const AdditionalQuestionForm = () => {
     }
 
     // send over the new question
-    const uri = `/director/tournaments/${context.tournament.identifier}`;
+    const uri = `/director/tournaments/${tournament.identifier}`;
     const requestConfig = {
       method: 'patch',
       data: {
@@ -99,7 +100,7 @@ const AdditionalQuestionForm = () => {
               validation_rules: {
                 required: formData.required,
               },
-              order: context.tournament.additional_questions.length + 1,
+              order: tournament.additional_questions.length + 1,
             },
           ],
         },

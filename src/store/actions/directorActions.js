@@ -62,3 +62,11 @@ export const tournamentShiftUpdated = (shift) => {
     shift: shift,
   }
 }
+
+export const additionalQuestionsUpdated = (tournament) => {
+  return {
+    type: actionTypes.ADDITIONAL_QUESTIONS_UPDATED,
+    questions: [...tournament.additional_questions],
+    availableQuestions: [...tournament.available_questions],
+  }
+}

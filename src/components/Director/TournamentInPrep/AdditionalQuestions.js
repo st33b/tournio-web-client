@@ -8,6 +8,7 @@ import AdditionalQuestionForm from "../AdditionalQuestionForm/AdditionalQuestion
 import {directorApiRequest} from "../../../utils";
 
 import classes from './AdditionalQuestions.module.scss';
+import {additionalQuestionsUpdated} from "../../../store/actions/directorActions";
 
 const AdditionalQuestions = ({tournament}) => {
   const context = useDirectorContext();
@@ -61,7 +62,7 @@ const AdditionalQuestions = ({tournament}) => {
         </div>
       </div>
     );
-    context.setTournament(data);
+    context.dispatch(additionalQuestionsUpdated(data));
   }
 
   const onSaveFailure = (data) => {
@@ -210,7 +211,7 @@ const AdditionalQuestions = ({tournament}) => {
           {!tournamentHasQuestions && <ListGroup.Item>None configured</ListGroup.Item>}
           {tournamentHasQuestions && list}
         </ListGroup>
-        <AdditionalQuestionForm/>
+        <AdditionalQuestionForm tournament={tournament}/>
       </Card>
     </div>
   );

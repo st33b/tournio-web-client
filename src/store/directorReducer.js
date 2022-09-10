@@ -73,6 +73,10 @@ export const directorReducer = (state, action) => {
       }
       return updateObject(state, {
         tournament: state.tournament.set('shifts', shifts),
+      });
+    case actionTypes.ADDITIONAL_QUESTIONS_UPDATED:
+      return updateObject(state, {
+        tournament: state.tournament.set('additional_questions', action.questions).set('available_questions', action.availableQuestions),
       })
     default:
       return state;
