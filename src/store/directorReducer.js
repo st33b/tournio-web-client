@@ -99,7 +99,18 @@ export const directorReducer = (state, action) => {
       const updatedItems = state.tournament.purchasable_items.concat(action.items);
       return updateObject(state, {
         tournament: state.tournament.set('purchasable_items', updatedItems),
-      })
+      });
+    case actionTypes.PURCHASABLE_ITEM_UPDATED:
+      const identifier = action.item.identifier;
+      const index = state.tournament.purchasable_items.findIndex(i => i.identifier === identifier);
+      if (index < 0) {
+        return state;
+      }
+      const items = [...state.tournament.purchasable_items];
+      items[index] = action.item;
+      return updateObject(state, {
+        tournament: state.tournament.set('purchasable_items', items),
+      });
     default:
       return state;
   }

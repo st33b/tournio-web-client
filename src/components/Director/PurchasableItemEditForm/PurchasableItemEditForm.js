@@ -39,7 +39,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     }
     const eventIdentifiers = {};
     if (item.configuration.events) {
-      context.tournament.purchasable_items.filter(({determination}) => determination === 'event').map(event => {
+      tournament.purchasable_items.filter(({determination}) => determination === 'event').map(event => {
         const id = event.identifier;
         eventIdentifiers[id] = item.configuration.events.includes(event.identifier);
       });
@@ -59,11 +59,11 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     setFormData(newFormData);
   }, [item]);
 
-  if (!context) {
+  if (!tournament) {
     return '';
   }
 
-  const allowEdit = context.tournament.state !== 'active' && context.tournament.state !== 'demo';
+  const allowEdit = tournament.state !== 'active' && tournament.state !== 'demo';
 
   const toggleEdit = (event, enable) => {
     if (event) {
@@ -146,8 +146,8 @@ const PurchasableItemEditForm = ({tournament, item}) => {
 
   const deleteSuccess = (data) => {
     toggleEdit(null, false);
-    const newItems = context.tournament.purchasable_items.filter(i => i.identifier !== item.identifier);
-    const newTournament = {...context.tournament};
+    const newItems = tournament.purchasable_items.filter(i => i.identifier !== item.identifier);
+    const newTournament = {...tournament};
     newTournament.purchasable_items = newItems;
     context.setTournament(newTournament);
   }
@@ -191,7 +191,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
           case 'late_fee':
             let part1 = '';
             if (item.refinement === 'event_linked') {
-              const event = context.tournament.purchasable_items.find(
+              const event = tournament.purchasable_items.find(
                 pi => pi.determination === 'event' && pi.identifier === item.configuration.event
               );
               part1 = <span className={classes.Note}>{event.name}</span>;
@@ -210,7 +210,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
           case 'bundle_discount':
             note = (
               <>
-                {context.tournament.purchasable_items.filter(({determination}) => determination === 'event').map(event => {
+                {tournament.purchasable_items.filter(({determination}) => determination === 'event').map(event => {
                   const eventIdentifier = event.identifier;
                   if (formData.eventIdentifiers[eventIdentifier]) {
                     return (

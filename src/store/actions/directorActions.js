@@ -83,3 +83,17 @@ export const purchasableItemsAdded = (items) => {
     items: items,
   }
 }
+
+export const purchasableItemUpdated = (item) => {
+  return {
+    type: actionTypes.PURCHASABLE_ITEM_UPDATED,
+    item: item,
+  }
+}
+
+export const purchasableItemDeleted = (item) => {
+  return {
+    type: actionTypes.PURCHASABLE_ITEM_DELETED,
+    item: item,
+  }
+}

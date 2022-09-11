@@ -2,7 +2,7 @@ import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
 import {TournamentRecord} from "../../../src/store/records/tournament";
 
-describe('action type: tournament shift added', () => {
+describe('action type: tournament shift updated', () => {
   const fellowship = {
     identifier: 'fellowship',
     name: 'The Fellowship of the Ring',
