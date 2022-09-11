@@ -67,7 +67,7 @@ const Tournament = () => {
     return null;
   }
 
-  if (!directorState || !directorState.tournament) {
+  if (!directorState || !directorState.tournament || !directorState.tournament.identifier) {
     return '';
   }
 

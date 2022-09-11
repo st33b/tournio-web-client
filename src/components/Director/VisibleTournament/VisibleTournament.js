@@ -17,7 +17,7 @@ import DivisionItemsWeek from "./Charts/DivisionItemsWeek";
 import OptionalItemsWeek from "./Charts/OptionalItemsWeek";
 import MassActions from "../MassActions/MassActions";
 import LogoImage from "../LogoImage/LogoImage";
-import DeleteTournament from "./DeleteTournament";
+import DeleteTournament from "../Tournament/DeleteTournament";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './VisibleTournament.module.scss';

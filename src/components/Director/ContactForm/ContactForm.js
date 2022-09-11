@@ -4,6 +4,7 @@ import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import {directorApiRequest} from "../../../utils";
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {tournamentContactAdded, tournamentContactUpdated} from "../../../store/actions/directorActions";
 
 const ContactForm = ({tournament, contact, newContact}) => {
   const context = useDirectorContext();
@@ -49,17 +50,12 @@ const ContactForm = ({tournament, contact, newContact}) => {
   }
 
   const onSuccess = (data) => {
-    const tournament = {...tournament};
     if (newContact) {
-      tournament.contacts = tournament.contacts.concat(data);
+      dispatch(tournamentContactAdded(data));
       setFormData(initialState);
     } else {
-      const contacts = tournament.contacts.slice(0);
-      const index = contacts.findIndex(elem => elem.identifier === contact.identifier);
-      contacts[index] = data;
-      tournament.contacts = contacts;
+      dispatch(tournamentContactUpdated(data));
     }
-    context.setTournament(tournament);
     setEditing(false);
   }
 
@@ -163,7 +159,7 @@ const ContactForm = ({tournament, contact, newContact}) => {
               <select className={'form-select'}
                       name={'role'}
                       onChange={inputChanged}
-                      value={formData.role}>
+                      value={formData.role || ''}>
                 <option value={''}>--</option>
                 {Object.entries(roles).map(pair => <option value={pair[0]} key={pair[0]}>{pair[1]}</option>)}
               </select>

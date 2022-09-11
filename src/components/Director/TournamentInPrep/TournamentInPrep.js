@@ -1,3 +1,5 @@
+import DeleteTournament from "../Tournament/DeleteTournament";
+
 import Basics from "./Basics";
 import Configuration from "./Configuration";
 import AdditionalQuestions from "./AdditionalQuestions";
@@ -5,10 +7,10 @@ import StatusAndCounts from "./StatusAndCounts";
 import PurchasableItems from "./PurchasableItems";
 import Contacts from "./Contacts";
 import StateChangeButton from "./StateChangeButton";
-import DeleteTournament from "./DeleteTournament";
 import Shifts from "./Shifts";
 import StripeStatus from "./StripeStatus";
 import ImageUpload from "./ImageUpload";
+
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './TournamentInPrep.module.scss';
