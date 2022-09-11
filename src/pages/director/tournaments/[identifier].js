@@ -67,7 +67,7 @@ const Tournament = () => {
     return null;
   }
 
-  if (!directorContext || !directorContext.tournament) {
+  if (!directorState || !directorState.tournament) {
     return '';
   }
 
@@ -87,13 +87,12 @@ const Tournament = () => {
     );
   }
 
-  const tournamentView = directorContext.tournament.state === 'active' || directorContext.tournament.state === 'closed'
+  const tournamentView = directorState.tournament.state === 'active' || directorState.tournament.state === 'closed'
     ? <VisibleTournament closeTournament={stateChangeInitiated} />
     : <TournamentInPrep stateChangeInitiated={stateChangeInitiated}
                         requestStripeStatus={stripe}
     />;
 
-  const ladder = [{ text: 'Tournaments', path: '/director' }];
   return (
     <div>
       {error}

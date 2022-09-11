@@ -95,6 +95,11 @@ export const directorReducer = (state, action) => {
       return updateObject(state, {
         tournament: state.tournament.merge(changes),
       });
+    case actionTypes.PURCHASABLE_ITEM_ADDED:
+      const updatedItems = state.tournament.purchasable_items.concat(action.items);
+      return updateObject(state, {
+        tournament: state.tournament.set('purchasable_items', updatedItems),
+      })
     default:
       return state;
   }

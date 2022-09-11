@@ -76,3 +76,10 @@ export const testDataCleared = () => {
     type: actionTypes.TEST_DATA_CLEARED,
   }
 }
+
+export const purchasableItemsAdded = (items) => {
+  return {
+    type: actionTypes.PURCHASABLE_ITEM_ADDED,
+    items: items,
+  }
+}

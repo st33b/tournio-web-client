@@ -9,8 +9,7 @@ import NewPurchasableItem from "../NewPurchasableItem/NewPurchasableItem";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 const PurchasableItems = ({tournament}) => {
-  const context = useDirectorContext();
-  if (!context || !tournament) {
+  if (!tournament) {
     return '';
   }
 
@@ -80,38 +79,38 @@ const PurchasableItems = ({tournament}) => {
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             {ledgerItems.length > 0 && (
               <Card.Body className={classes.Category}>
-                {ledgerItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+                {ledgerItems.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/>)}
               </Card.Body>
             )}
 
             {eventItems.length > 0 && (
               <Card.Body className={classes.Category}>
-                {eventItems.map(item => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+                {eventItems.map(item => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/>)}
               </Card.Body>
             )}
 
             {groupValues.map((group, index) => {
               return group.length > 0 && (
                 <Card.Body key={index} className={classes.Category}>
-                  {group.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+                  {group.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/>)}
                 </Card.Body>
               );
             })}
 
             {singleUseItems.length > 0 &&
               <Card.Body className={classes.Category}>
-                {singleUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+                {singleUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/>)}
               </Card.Body>
             }
 
             {multiUseItems.length > 0 &&
               <Card.Body className={classes.Category}>
-                {multiUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+                {multiUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/>)}
               </Card.Body>
             }
 
             <Card.Body className={'p-0'}>
-              <NewPurchasableItem/>
+              <NewPurchasableItem tournament={tournament}/>
             </Card.Body>
           </LocalizationProvider>
         )}

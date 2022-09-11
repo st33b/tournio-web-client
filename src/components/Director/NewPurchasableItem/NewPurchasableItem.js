@@ -10,9 +10,7 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import classes from './NewPurchasableItem.module.scss';
 import EventForm from "./EventForm";
 
-const NewPurchasableItem = () => {
-  const context = useDirectorContext();
-
+const NewPurchasableItem = ({tournament}) => {
   const [formDisplayed, setFormDisplayed] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [availableLedgerTypes, setAvailableLedgerTypes] = useState([]);
@@ -20,13 +18,13 @@ const NewPurchasableItem = () => {
 
   // Determine which types of ledger items can still be created
   useEffect(() => {
-    if (!context) {
+    if (!tournament) {
       return;
     }
-    const eventSelectionEnabled = context.tournament.config_items.some(item => item.key === 'event_selection' && item.value);
+    const eventSelectionEnabled = tournament.config_items.some(item => item.key === 'event_selection' && item.value);
 
     const allLedgerTypes = ['entry_fee', 'late_fee', 'early_discount'];
-    const usedTypes = context.tournament.purchasable_items.filter(item => item.category === 'ledger').map(item => item.determination);
+    const usedTypes = tournament.purchasable_items.filter(item => item.category === 'ledger').map(item => item.determination);
     const typesAvailable = [];
     allLedgerTypes.forEach(type => {
       if (eventSelectionEnabled || !usedTypes.includes(type)) {
@@ -40,9 +38,13 @@ const NewPurchasableItem = () => {
     setEventSelection(eventSelectionEnabled);
 
     setAvailableLedgerTypes(typesAvailable);
-  }, [context])
+  }, [tournament]);
 
-  const allowCreate = context.tournament.state !== 'active';
+  if (!tournament) {
+    return '';
+  }
+
+  const allowCreate = tournament.state !== 'active';
 
   const addClicked = (event, formType) => {
     event.preventDefault();
@@ -132,11 +134,11 @@ const NewPurchasableItem = () => {
           </>
         }
 
-        {formDisplayed === 'ledger' && <LedgerForm availableTypes={availableLedgerTypes} onCancel={cancelClicked} onComplete={itemSaved} />}
-        {formDisplayed === 'event' && <EventForm onCancel={cancelClicked} onComplete={itemSaved} /> }
-        {formDisplayed === 'division' && <DivisionForm onCancel={cancelClicked} onComplete={itemSaved} />}
-        {formDisplayed === 'single_use' && <SingleUseForm onCancel={cancelClicked} onComplete={itemSaved} />}
-        {formDisplayed === 'multi_use' && <MultiUseForm onCancel={cancelClicked} onComplete={itemSaved} />}
+        {formDisplayed === 'ledger' && <LedgerForm tournament={tournament} availableTypes={availableLedgerTypes} onCancel={cancelClicked} onComplete={itemSaved} />}
+        {formDisplayed === 'event' && <EventForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} /> }
+        {formDisplayed === 'division' && <DivisionForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
+        {formDisplayed === 'single_use' && <SingleUseForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
+        {formDisplayed === 'multi_use' && <MultiUseForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
 
       </div>
     </ErrorBoundary>

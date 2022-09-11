@@ -5,9 +5,11 @@ import {useRouter} from "next/router";
 import {useState} from "react";
 import {directorApiRequest} from "../../../utils";
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
-const DivisionForm = ({onCancel, onComplete}) => {
+const DivisionForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();
+  const dispatch = context.dispatch;
   const router = useRouter();
 
   const initialState = {
@@ -73,10 +75,8 @@ const DivisionForm = ({onCancel, onComplete}) => {
   }
 
   const submissionSuccess = (data) => {
+    dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
-    const tournament = {...context.tournament}
-    tournament.purchasable_items = tournament.purchasable_items.concat(data);
-    context.setTournament(tournament);
     onComplete(`Division Items created.`);
   }
 
@@ -98,7 +98,7 @@ const DivisionForm = ({onCancel, onComplete}) => {
 
   const formSubmitted = (event) => {
     event.preventDefault();
-    const uri = `/director/tournaments/${context.tournament.identifier}/purchasable_items`;
+    const uri = `/director/tournaments/${tournament.identifier}/purchasable_items`;
     const requestConfig = {
       method: 'post',
       data: {

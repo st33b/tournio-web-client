@@ -13,7 +13,7 @@ import Item from "../../Commerce/AvailableItems/Item/Item";
 
 import classes from './PurchasableItemEditForm.module.scss';
 
-const PurchasableItemEditForm = ({item}) => {
+const PurchasableItemEditForm = ({tournament, item}) => {
   const context = useDirectorContext();
   const router = useRouter();
 
