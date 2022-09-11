@@ -125,6 +125,22 @@ export const directorReducer = (state, action) => {
       return updateObject(state, {
         tournament: state.tournament.set('image_url', action.imageUrl),
       });
+    case actionTypes.TOURNAMENT_CONTACT_ADDED:
+      return updateObject(state, {
+        tournament: state.tournament.set('contacts', state.tournament.contacts.concat(action.contact)),
+      });
+    case actionTypes.TOURNAMENT_CONTACT_UPDATED:
+      identifier = action.contact.identifier;
+      index = state.tournament.contacts.findIndex(c => c.identifier === identifier);
+      const updatedContact = {
+        ...state.tournament.contacts[index],
+        ...action.contact,
+      }
+      const newContacts = [...state.tournament.contacts];
+      newContacts[index] = updatedContact;
+      return updateObject(state, {
+        tournament: state.tournament.set('contacts', newContacts),
+      });
     default:
       return state;
   }

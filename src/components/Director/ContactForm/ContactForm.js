@@ -5,12 +5,13 @@ import {useEffect, useState} from "react";
 import {directorApiRequest} from "../../../utils";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
-const ContactForm = ({contact, newContact}) => {
+const ContactForm = ({tournament, contact, newContact}) => {
   const context = useDirectorContext();
+  const dispatch = context.dispatch;
   const router = useRouter();
 
   const initialState = {
-    id: '',
+    identifier: '',
     name: '',
     role: '',
     email: '',
@@ -48,13 +49,13 @@ const ContactForm = ({contact, newContact}) => {
   }
 
   const onSuccess = (data) => {
-    const tournament = {...context.tournament};
+    const tournament = {...tournament};
     if (newContact) {
       tournament.contacts = tournament.contacts.concat(data);
       setFormData(initialState);
     } else {
-      const contacts = context.tournament.contacts.slice(0);
-      const index = contacts.findIndex(elem => elem.id === contact.id);
+      const contacts = tournament.contacts.slice(0);
+      const index = contacts.findIndex(elem => elem.identifier === contact.identifier);
       contacts[index] = data;
       tournament.contacts = contacts;
     }
@@ -68,7 +69,7 @@ const ContactForm = ({contact, newContact}) => {
 
   const formSubmitted = (event) => {
     event.preventDefault();
-    const uri = newContact ? `/director/tournaments/${context.tournament.identifier}/contacts` : `/director/contacts/${contact.id}`;
+    const uri = newContact ? `/director/tournaments/${tournament.identifier}/contacts` : `/director/contacts/${contact.identifier}`;
     const requestConfig = {
       method: newContact ? 'post' : 'patch',
       data: {

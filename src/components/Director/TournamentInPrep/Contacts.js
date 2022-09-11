@@ -19,12 +19,12 @@ const Contacts = ({tournament}) => {
         {tournament.contacts.map((contact, i) => {
           return (
             <ListGroup.Item key={i} className={classes.ContactItem}>
-              <ContactForm contact={contact}/>
+              <ContactForm tournament={tournament} contact={contact}/>
             </ListGroup.Item>
           );
         })}
         <ListGroup.Item className={classes.ContactItem}>
-          <ContactForm newContact={true}/>
+          <ContactForm tournament={tournament} newContact={true}/>
         </ListGroup.Item>
       </ListGroup>
     </Card>

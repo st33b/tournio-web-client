@@ -104,3 +104,17 @@ export const logoImageUploaded = (imageUrl) => {
     imageUrl: imageUrl,
   }
 }
+
+export const tournamentContactAdded = (contact) => {
+  return {
+    type: actionTypes.TOURNAMENT_CONTACT_ADDED,
+    contact: contact,
+  }
+}
+
+export const tournamentContactUpdated = (contact) => {
+  return {
+    type: actionTypes.TOURNAMENT_CONTACT_UPDATED,
+    contact: contact,
+  }
+}
