@@ -97,3 +97,10 @@ export const purchasableItemDeleted = (item) => {
     item: item,
   }
 }
+
+export const logoImageUploaded = (imageUrl) => {
+  return {
+    type: actionTypes.LOGO_IMAGE_UPLOADED,
+    imageUrl: imageUrl,
+  }
+}

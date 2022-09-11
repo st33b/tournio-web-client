@@ -121,6 +121,10 @@ export const directorReducer = (state, action) => {
       return updateObject(state, {
         tournament: state.tournament.set('purchasable_items', newItems),
       });
+    case actionTypes.LOGO_IMAGE_UPLOADED:
+      return updateObject(state, {
+        tournament: state.tournament.set('image_url', action.imageUrl),
+      });
     default:
       return state;
   }
