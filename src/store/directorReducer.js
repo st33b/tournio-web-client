@@ -15,7 +15,7 @@ export const directorReducer = (state, action) => {
     console.log("Director reducer action:", action);
   }
 
-  let index;
+  let index, identifier;
   switch (action.type) {
     case actionTypes.RESET:
       return directorReducerInit();
@@ -101,8 +101,8 @@ export const directorReducer = (state, action) => {
         tournament: state.tournament.set('purchasable_items', updatedItems),
       });
     case actionTypes.PURCHASABLE_ITEM_UPDATED:
-      const identifier = action.item.identifier;
-      const index = state.tournament.purchasable_items.findIndex(i => i.identifier === identifier);
+      identifier = action.item.identifier;
+      index = state.tournament.purchasable_items.findIndex(i => i.identifier === identifier);
       if (index < 0) {
         return state;
       }
@@ -110,6 +110,16 @@ export const directorReducer = (state, action) => {
       items[index] = action.item;
       return updateObject(state, {
         tournament: state.tournament.set('purchasable_items', items),
+      });
+    case actionTypes.PURCHASABLE_ITEM_DELETED:
+      identifier = action.item.identifier;
+      index = state.tournament.purchasable_items.findIndex(i => i.identifier === identifier);
+      if (index < 0) {
+        return state;
+      }
+      const newItems = state.tournament.purchasable_items.slice(0, index).concat(state.tournament.purchasable_items.slice(index + 1));
+      return updateObject(state, {
+        tournament: state.tournament.set('purchasable_items', newItems),
       });
     default:
       return state;

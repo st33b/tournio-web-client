@@ -12,9 +12,11 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 import Item from "../../Commerce/AvailableItems/Item/Item";
 
 import classes from './PurchasableItemEditForm.module.scss';
+import {purchasableItemDeleted} from "../../../store/actions/directorActions";
 
 const PurchasableItemEditForm = ({tournament, item}) => {
   const context = useDirectorContext();
+  const dispatch = context.dispatch;
   const router = useRouter();
 
   const initialState = {
@@ -144,13 +146,11 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     });
   }
 
-  const deleteSuccess = (data) => {
+  const deleteSuccess = (_) => {
     toggleEdit(null, false);
-    const newItems = tournament.purchasable_items.filter(i => i.identifier !== item.identifier);
-    const newTournament = {...tournament};
-    newTournament.purchasable_items = newItems;
-    context.setTournament(newTournament);
+    dispatch(purchasableItemDeleted(item));
   }
+
   const onDelete = (event) => {
     event.preventDefault();
     if (!confirm('Are you sure you wish to delete this item?')) {
@@ -166,9 +166,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
       context: context,
       router: router,
       onSuccess: deleteSuccess,
-      onFailure: (_) => {
-        console.log("Failed to delete item.")
-      },
+      onFailure: (data) => console.log("Failed to delete item.", data),
     });
   }
 
