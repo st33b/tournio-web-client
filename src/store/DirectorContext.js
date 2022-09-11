@@ -8,19 +8,15 @@ const DirectorContext = createContext({
   login: (token, userData) => {},
   logout: () => {},
   user: null,
-  tournament: null,
-  setTournament: (t) => {},
 });
 
 export const DirectorContextProvider = ({children}) => {
   let tokenData;
   let userData;
-  let tournamentData;
 
   if (typeof window !== 'undefined') {
     tokenData = localStorage.getItem('token');
     userData = JSON.parse(localStorage.getItem('currentUser'));
-    tournamentData = JSON.parse(localStorage.getItem('tournament'));
   }
 
   let initialToken, initialUser, initialTournament;
@@ -28,23 +24,17 @@ export const DirectorContextProvider = ({children}) => {
     initialToken = tokenData;
     initialUser = userData;
   }
-  if (tournamentData) {
-    initialTournament = tournamentData;
-  }
 
   const [token, setToken] = useState(initialToken);
   const [currentUser, setCurrentUser] = useState(initialUser);
-  const [tournament, setTournament] = useState(initialTournament);
 
   const userIsLoggedIn = !!token;
 
   const logoutHandler = useCallback(() => {
     setToken(null);
     setCurrentUser(null);
-    setTournament(null);
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
-    localStorage.removeItem('tournament');
   }, []);
 
   const loginHandler = (newToken, userDetails) => {
@@ -56,7 +46,6 @@ export const DirectorContextProvider = ({children}) => {
 
   const tournamentHandler = (newTournament) => {
     console.log("Setting tournament in DirectorContext -- got another one to remove!")
-    setTournament(newTournament);
     localStorage.setItem('tournament', JSON.stringify(newTournament));
   }
 
@@ -71,12 +60,10 @@ export const DirectorContextProvider = ({children}) => {
 
   const contextValue = {
     token: token,
-    isLoggedIn: userIsLoggedIn,
+    isLoggedIn: currentUser != null,
     login: loginHandler,
     logout: logoutHandler,
     user: currentUser,
-    setTournament: tournamentHandler,
-    tournament: tournament,
 
     directorState: directorState,
     dispatch: dispatch,
