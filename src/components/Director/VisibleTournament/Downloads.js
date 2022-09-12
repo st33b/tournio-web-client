@@ -9,7 +9,6 @@ import classes from './VisibleTournament.module.scss';
 
 const Downloads = ({tournament}) => {
   const context = useDirectorContext();
-  const directorState = context.directorState;
   const router = useRouter();
   const [downloadMessage, setDownloadMessage] = useState(null);
 

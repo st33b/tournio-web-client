@@ -4,7 +4,7 @@ import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLa
 import TournamentListing from '../../../components/Director/TournamentListing/TournamentListing';
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest, useClientReady} from "../../../utils";
-import {tournamentListRetrieved} from "../../../store/actions/directorActions";
+import {tournamentListReset, tournamentListRetrieved} from "../../../store/actions/directorActions";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import {Col, Row} from "react-bootstrap";
 
@@ -61,11 +61,16 @@ const Page = () => {
       onSuccess: fetchTournamentsSuccess,
       onFailure: fetchTournamentsFailure,
     });
-  }, []);
+  }, [directorState.tournaments]);
 
   const ready = useClientReady();
   if (!ready || loading) {
     return <LoadingMessage message={'Retrieving data...'} />;
+  }
+
+  const refreshList = (e) => {
+    e.preventDefault();
+    dispatch(tournamentListReset());
   }
 
   return (
@@ -79,7 +84,21 @@ const Page = () => {
           </Col>
         </Row>
       )}
-      <TournamentListing />
+      <Row>
+        <Col>
+          <TournamentListing />
+        </Col>
+      </Row>
+      <Row>
+        <Col className={'text-center'}>
+          <a href={'#'}
+             className={'btn btn-sm btn-outline-primary'}
+             onClick={refreshList}
+             >
+            Refresh List
+          </a>
+        </Col>
+      </Row>
     </>
   );
 }

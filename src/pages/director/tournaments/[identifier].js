@@ -63,7 +63,13 @@ const Tournament = () => {
       context: directorContext,
       router: router,
       onSuccess: (data) => dispatch(tournamentDetailsRetrieved(data)),
-      onFailure: (data) => setErrorMessage(data.error),
+      onFailure: (data) => {
+        if (data.error === 'not found') {
+          setErrorMessage('Tournament not found');
+        } else {
+          setErrorMessage(data.error);
+        }
+      },
     });
   }, [identifier, directorContext, router]);
 
@@ -72,7 +78,7 @@ const Tournament = () => {
     return null;
   }
 
-  if (!directorState || !directorState.tournament || !directorState.tournament.identifier) {
+  if (!directorState) {
     return '';
   }
 
@@ -80,7 +86,7 @@ const Tournament = () => {
   if (errorMessage) {
     error = (
       <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center my-3'} role={'alert'}>
-        <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
+        <i className={'bi-exclamation-triangle-fill pe-2'} aria-hidden={true} />
         <div className={'me-auto'}>
           {errorMessage}
           <button type="button"
@@ -92,11 +98,14 @@ const Tournament = () => {
     );
   }
 
-  const tournamentView = directorState.tournament.state === 'active' || directorState.tournament.state === 'closed'
-    ? <VisibleTournament closeTournament={stateChangeInitiated} />
-    : <TournamentInPrep stateChangeInitiated={stateChangeInitiated}
-                        requestStripeStatus={stripe}
-    />;
+  let tournamentView = '';
+  if (directorState.tournament) {
+    tournamentView = directorState.tournament.state === 'active' || directorState.tournament.state === 'closed'
+      ? <VisibleTournament closeTournament={stateChangeInitiated} />
+      : <TournamentInPrep stateChangeInitiated={stateChangeInitiated}
+                          requestStripeStatus={stripe}
+      />;
+  }
 
   return (
     <div>

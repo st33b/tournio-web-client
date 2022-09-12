@@ -243,8 +243,6 @@ const ShiftForm = ({tournament, shift}) => {
   const outerClasses = [classes.ShiftForm];
   if (formDisplayed) {
     outerClasses.push(classes.FormDisplayed);
-  } else {
-    outerClasses.push('mt-3');
   }
 
   // const daysOfWeek = [

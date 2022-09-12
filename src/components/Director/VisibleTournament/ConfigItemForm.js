@@ -15,6 +15,7 @@ const ConfigItemForm = ({item}) => {
   const initialState = {
     prevValue: '',
     value: '',
+    valid: true,
   }
 
   const [formData, setFormData] = useState(initialState);

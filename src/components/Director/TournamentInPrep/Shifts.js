@@ -38,7 +38,7 @@ const Shifts = ({tournament}) => {
 
   return (
     <Card className={classes.Card}>
-      <Card.Header as={'h5'} className={'fw-light'}>
+      <Card.Header as={'h5'} className={'fw-light mb-3'}>
         Capacity &amp; Registration Options
       </Card.Header>
       {content}

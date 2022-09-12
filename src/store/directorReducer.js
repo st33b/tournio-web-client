@@ -25,6 +25,10 @@ export const directorReducer = (state, action) => {
       return updateObject(state, {
         tournament: null,
       });
+    case actionTypes.TOURNAMENT_LIST_RESET:
+      return updateObject(state, {
+        tournaments: [],
+      });
     case actionTypes.TOURNAMENT_LIST_RETRIEVED:
       return updateObject(state, {
         tournaments: [...action.tournaments],
@@ -32,6 +36,12 @@ export const directorReducer = (state, action) => {
     case actionTypes.TOURNAMENT_DETAILS_RETRIEVED:
       return updateObject(state, {
         tournament: {...action.tournament},
+      });
+    case actionTypes.TOURNAMENT_DELETED:
+      const tournament = action.tournament.identifier === state.tournament.identifier ? null : state.tournament;
+      return updateObject(state, {
+        tournament: tournament,
+        tournaments: state.tournaments.filter(t => t.identifier !== action.tournament.identifier),
       });
     case actionTypes.STRIPE_ACCOUNT_STATUS_CHANGED:
       const stripeAccount = {...state.tournament.stripe_account};

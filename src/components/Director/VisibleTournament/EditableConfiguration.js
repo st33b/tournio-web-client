@@ -16,7 +16,7 @@ const EditableConfiguration = ({tournament}) => {
 
     content = (
       <ListGroup>
-        {items.map((item) => <ConfigItemForm item={item} key={item.key}/>)}
+        {items.map((item) => <ConfigItemForm item={item} key={item.key} editable={true}/>)}
       </ListGroup>
     );
   }

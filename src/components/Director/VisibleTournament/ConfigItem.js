@@ -1,5 +1,4 @@
 import {format, formatISO} from "date-fns";
-import {Accordion, Placeholder} from "react-bootstrap";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
 

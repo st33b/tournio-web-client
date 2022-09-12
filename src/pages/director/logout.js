@@ -3,10 +3,12 @@ import {useRouter} from "next/router";
 import DirectorLayout from '../../components/Layout/DirectorLayout/DirectorLayout';
 import {useDirectorContext} from "../../store/DirectorContext";
 import {directorApiLogoutRequest} from "../../utils";
+import {reset} from "../../store/actions/directorActions";
 
 const Logout = () => {
   const router = useRouter();
   const directorContext = useDirectorContext();
+  const dispatch = directorContext.dispatch;
 
   useEffect(() => {
     if (!directorContext) {
@@ -15,6 +17,7 @@ const Logout = () => {
     directorApiLogoutRequest({
       context: directorContext,
       onSuccess: () => {
+        dispatch(reset());
         router.push('/director/login')
       },
       onFailure: (_) => {},
