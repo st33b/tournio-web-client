@@ -1,42 +1,39 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
 
-describe ('action type: tournament details reset', () => {
+import {List} from "immutable";
+
+describe ('action type: bowler list reset', () => {
   const previousState = {
     tournament: {
-      identifier: 'go-away',
+      identifier: 'smores',
     },
+    tournaments: [
+      {
+        identifier: 'chocolate',
+      },
+      {
+        identifier: 'marshmallow',
+      },
+      {
+        identifier: 'graham',
+      },
+    ],
     users: [
       {
-        identifier: 'stick-around',
+        identifier: 'wayne',
       },
       {
-        identifier: 'friend-stay',
+        identifier: 'garth',
       },
-    ],
-    bowlers: [
-      {
-        identifier: 'benny',
-      },
-      {
-        identifier: 'björn',
-      },
-      {
-        identifier: 'agnetha',
-      },
-      {
-        identifier: 'anni-frid',
-      },
-    ],
+    ]
   }
-
   const action = {
-    type: actionTypes.TOURNAMENT_DETAILS_RESET,
+    type: actionTypes.TOURNAMENT_LIST_RESET,
   }
   const expected = {
     ...previousState,
-    tournament: null,
-    bowlers: [],
+    tournaments: [],
   }
 
   it ('returns the expected object', () => {

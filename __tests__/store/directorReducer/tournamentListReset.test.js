@@ -3,7 +3,7 @@ import {directorReducer} from "../../../src/store/directorReducer";
 
 import {List} from "immutable";
 
-describe ('action type: reset', () => {
+describe ('action type: tournament list reset', () => {
   const previousState = {
     tournament: {
       identifier: 'smores',

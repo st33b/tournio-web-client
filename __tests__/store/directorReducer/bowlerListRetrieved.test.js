@@ -1,19 +1,11 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
 
-describe ('action type: tournament details reset', () => {
+describe ('action type: bowler list retrieved', () => {
   const previousState = {
     tournament: {
       identifier: 'go-away',
     },
-    users: [
-      {
-        identifier: 'stick-around',
-      },
-      {
-        identifier: 'friend-stay',
-      },
-    ],
     bowlers: [
       {
         identifier: 'benny',
@@ -31,11 +23,10 @@ describe ('action type: tournament details reset', () => {
   }
 
   const action = {
-    type: actionTypes.TOURNAMENT_DETAILS_RESET,
+    type: actionTypes.BOWLER_LIST_RESET,
   }
   const expected = {
     ...previousState,
-    tournament: null,
     bowlers: [],
   }
 

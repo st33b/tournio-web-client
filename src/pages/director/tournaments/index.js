@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import TournamentListing from '../../../components/Director/TournamentListing/TournamentListing';
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest, useClientReady} from "../../../utils";
+import {devConsoleLog, directorApiRequest, useClientReady} from "../../../utils";
 import {tournamentListReset, tournamentListRetrieved} from "../../../store/actions/directorActions";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import {Col, Row} from "react-bootstrap";
@@ -46,6 +46,7 @@ const Page = () => {
     }
     // Don't fetch the list again if we already have it.
     if (directorState.tournaments && directorState.tournaments.length > 0) {
+      devConsoleLog("Already have a list of tournaments, not re-fetching it");
       return;
     }
     const uri = '/director/tournaments';

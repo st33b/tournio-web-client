@@ -3,12 +3,13 @@ import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
 import {useDirectorContext} from "../../../../store/DirectorContext";
-import {directorApiRequest} from "../../../../utils";
+import {directorApiRequest, useClientReady} from "../../../../utils";
 import SignInSheet from "../../../../components/Director/SignInSheet/SignInSheet";
 
 const Page = () => {
   const router = useRouter();
-  const directorContext = useDirectorContext();
+  const context = useDirectorContext();
+  const directorState = context.directorState;
   let {identifier} = router.query;
 
   const [bowler, setBowler] = useState(null);
@@ -17,18 +18,18 @@ const Page = () => {
 
   // This effect ensures that we're logged in and have permission to administer the current tournament
   useEffect(() => {
-    if (!directorContext || !directorContext.tournament || !directorContext.user) {
+    if (!context || !directorState) {
       return;
     }
-    if (!directorContext.isLoggedIn) {
+    if (!context.isLoggedIn) {
       router.push('/director/login');
     }
-    const tournament = directorContext.tournament;
+    const tournament = directorState.tournament;
     // if the logged-in user is a director but not for this tournament...
-    if (directorContext.user.role === 'director' && !directorContext.user.tournaments.some(t => t.identifier === tournament.identifier)) {
+    if (context.user.role === 'director' && !context.user.tournaments.some(t => t.identifier === tournament.identifier)) {
       router.push('/director');
     }
-  }, [directorContext, router]);
+  }, [context, router]);
 
   const fetchBowlerSuccess = (data) => {
     setLoading(false);
@@ -41,7 +42,7 @@ const Page = () => {
 
   // This effect pulls the bowler details from the backend
   useEffect(() => {
-    if (!identifier || !directorContext || !directorContext.token) {
+    if (!identifier || !context) {
       return;
     }
 
@@ -52,12 +53,17 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
       onSuccess: fetchBowlerSuccess,
       onFailure: fetchBowlerFailure,
     });
-  }, [identifier, directorContext, router]);
+  }, [identifier, context, router]);
+
+  const ready = useClientReady();
+  if (!ready) {
+    return '';
+  }
 
   let displayedError = '';
   if (errorMessage) {
@@ -84,7 +90,7 @@ const Page = () => {
           </Col>
         </Row>
       )}
-      <SignInSheet bowler={bowler} showPrintButton={true}/>
+      <SignInSheet tournament={directorState.tournament} bowler={bowler} showPrintButton={true}/>
     </div>
   );
 }

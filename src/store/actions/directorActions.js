@@ -172,3 +172,31 @@ export const userDeleted = (user) => {
     user: user,
   }
 }
+
+export const bowlerListRetrieved = (bowlers) => {
+  return {
+    type: actionTypes.BOWLER_LIST_RETRIEVED,
+    bowlers: bowlers,
+  }
+}
+
+export const bowlerUpdated = (bowler) => {
+  return {
+    type: actionTypes.BOWLER_UPDATED,
+    bowler: bowler,
+  }
+}
+
+export const bowlerDeleted = (bowler) => {
+  return {
+    type: actionTypes.BOWLER_DELETED,
+    bowler: bowler,
+  }
+}
+
+export const bowlerListReset = () => {
+  return {
+    type: actionTypes.BOWLER_LIST_RESET,
+  }
+}
+

@@ -9,6 +9,7 @@ import classes from './VisibleTournament.module.scss';
 
 const Downloads = ({tournament}) => {
   const context = useDirectorContext();
+  const directorState = context.directorState;
   const router = useRouter();
   const [downloadMessage, setDownloadMessage] = useState(null);
 
@@ -98,6 +99,7 @@ const Downloads = ({tournament}) => {
           <a className={'btn btn-sm btn-outline-primary mt-3 mx-2'}
              target={'_new'}
              href={`/director/tournaments/${tournament.identifier}/sign-in-sheets`}
+             disabled={!directorState.bowlers || directorState.bowlers.length === 0}
           >
             Sign-in Sheets (beta)
           </a>

@@ -1,24 +1,27 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
+import {Col, Row} from "react-bootstrap";
 
-import {directorApiRequest} from "../../../utils";
+import {devConsoleLog, directorApiRequest, useClientReady} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import BowlerListing from "../../../components/Director/BowlerListing/BowlerListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import {bowlerListReset, bowlerListRetrieved} from "../../../store/actions/directorActions";
 
 const Page = () => {
   const router = useRouter();
-  const directorContext = useDirectorContext();
+  const context = useDirectorContext();
+  const dispatch = context.dispatch;
+  const directorState = context.directorState;
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [bowlers, setBowlers] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   let identifier;
-  if (directorContext && directorContext.tournament) {
-    identifier = directorContext.tournament.identifier;
+  if (context && directorState.tournament) {
+    identifier = directorState.tournament.identifier;
   }
 
   // Ensure we're logged in, with appropriate permission
@@ -26,19 +29,19 @@ const Page = () => {
     if (!identifier) {
       return;
     }
-    if (!directorContext || !directorContext.user) {
+    if (!context || !context.user || !directorState) {
       return;
     }
-    if (!directorContext.isLoggedIn) {
+    if (!context.isLoggedIn) {
       router.push('/director/login');
     }
-    if (directorContext.user.role !== 'superuser' && !directorContext.user.tournaments.some(t => t.identifier === identifier)) {
+    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === identifier)) {
       router.push('/director');
     }
-  }, [identifier, router, directorContext]);
+  }, [identifier, router, context]);
 
   const onFetchBowlersSuccess = (data) => {
-    setBowlers(data);
+    dispatch(bowlerListRetrieved(data));
     setLoading(false);
   }
 
@@ -52,20 +55,26 @@ const Page = () => {
     if (!identifier) {
       return;
     }
+    // Don't fetch the list again if we already have it.
+    if (directorState.bowlers && directorState.bowlers.length > 0) {
+      devConsoleLog("Not re-fetching the list of bowlers.");
+      return;
+    }
 
     const uri = `/director/tournaments/${identifier}/bowlers`;
     const requestConfig = {
       method: 'get',
     }
+    setLoading(true);
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
       onSuccess: onFetchBowlersSuccess,
       onFailure: onFetchBowlersFailure,
     })
-  }, [identifier, router, directorContext]);
+  }, [identifier, router, context]);
 
   // Do we have a success query parameter?
   useEffect(() => {
@@ -76,11 +85,16 @@ const Page = () => {
     }
   }, [router]);
 
+  const ready = useClientReady();
+  if (!ready) {
+    return '';
+  }
+
   let success = '';
   let error = '';
   if (successMessage) {
     success = (
-      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
+      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mb-0'} role={'alert'}>
         <i className={'bi-check-circle-fill pe-2'} aria-hidden={true} />
         <div className={'me-auto'}>
           <strong>
@@ -94,7 +108,7 @@ const Page = () => {
   }
   if (errorMessage) {
     error = (
-      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
+      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mb-0'} role={'alert'}>
         <i className={'bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
         <div className={'me-auto'}>
           <strong>
@@ -108,12 +122,17 @@ const Page = () => {
   }
 
   const ladder = [{text: 'Tournaments', path: '/director'}];
-  if (directorContext.tournament) {
-    ladder.push({text: directorContext.tournament.name, path: `/director/tournaments/${identifier}`});
+  if (directorState.tournament) {
+    ladder.push({text: directorState.tournament.name, path: `/director/tournaments/${identifier}`});
   }
 
   if (loading) {
     return <LoadingMessage message={'Retrieving bowler data...'} />
+  }
+
+  const refreshList = (e) => {
+    e.preventDefault();
+    dispatch(bowlerListReset());
   }
 
   return (
@@ -123,9 +142,19 @@ const Page = () => {
         <div className={'col-12'}>
           {success}
           {error}
-          <BowlerListing bowlers={bowlers} />
+          <BowlerListing bowlers={directorState.bowlers} />
         </div>
       </div>
+      <Row>
+        <Col className={'text-center'}>
+          <a href={'#'}
+             className={'btn btn-sm btn-outline-primary'}
+             onClick={refreshList}
+          >
+            Refresh List
+          </a>
+        </Col>
+      </Row>
     </div>
   );
 }

@@ -78,6 +78,12 @@ export const tournamentName = (rows, id, filterValue) => {
   return rows.filter(row => row.values[id].some(t => t.name === filterValue));
 }
 
+export const devConsoleLog = (message, object=null) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(message, object);
+  }
+}
+
 ///////////////////////////////////////////////////
 
 export const apiHost = `${process.env.NEXT_PUBLIC_API_PROTOCOL}://${process.env.NEXT_PUBLIC_API_HOSTNAME}:${process.env.NEXT_PUBLIC_API_PORT}`;

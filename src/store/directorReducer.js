@@ -1,21 +1,19 @@
 import * as actionTypes from './actions/directorActionTypes'
-import {updateObject} from '../utils';
+import {devConsoleLog, updateObject} from '../utils';
 
 const initialState = {
   tournament: null,
   users: [],
   tournaments: [],
+  bowlers: [],
   // user -- logged-in user
 }
 
 export const directorReducerInit = (initial = initialState) => initial;
 
 export const directorReducer = (state, action) => {
-  if (process.env.NODE_ENV === 'development') {
-    // Maybe keep these, and always log reducer actions if we're in the development environment?
-    console.log("Director reducer existing state:", state);
-    console.log("Director reducer action:", action);
-  }
+  devConsoleLog("Director reducer existing state:", state);
+  devConsoleLog("Director reducer action:", action);
 
   let index, identifier;
   switch (action.type) {
@@ -24,6 +22,7 @@ export const directorReducer = (state, action) => {
     case actionTypes.TOURNAMENT_DETAILS_RESET:
       return updateObject(state, {
         tournament: null,
+        bowlers: [],
       });
     case actionTypes.TOURNAMENT_LIST_RESET:
       return updateObject(state, {
@@ -201,6 +200,27 @@ export const directorReducer = (state, action) => {
       identifier = action.user.identifier;
       return updateObject(state, {
         users: state.users.filter(u => u.identifier !== identifier),
+      });
+    case actionTypes.BOWLER_LIST_RETRIEVED:
+      return updateObject(state, {
+        bowlers: [...action.bowlers],
+      });
+    case actionTypes.BOWLER_DELETED:
+      identifier = action.bowler.identifier;
+      return updateObject(state, {
+        bowlers: state.bowlers.filter(b => b.identifier !== identifier),
+      });
+    case actionTypes.BOWLER_UPDATED:
+      identifier = action.bowler.identifier;
+      index = state.bowlers.findIndex(b => b.identifier === identifier);
+      const newBowlers = [...state.bowlers];
+      newBowlers[index] = {...action.bowler};
+      return updateObject(state, {
+        bowlers: newBowlers,
+      });
+    case actionTypes.BOWLER_LIST_RESET:
+      return updateObject(state, {
+        bowlers: [],
       });
     default:
       return state;

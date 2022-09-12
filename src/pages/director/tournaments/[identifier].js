@@ -4,14 +4,18 @@ import {useRouter} from "next/router";
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
 import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
-import {directorApiRequest, useClientReady} from "../../../utils";
+import {devConsoleLog, directorApiRequest, useClientReady} from "../../../utils";
 import {useDirectorContext} from '../../../store/DirectorContext';
-import {tournamentDetailsRetrieved, tournamentStateChanged} from "../../../store/actions/directorActions";
+import {
+  bowlerListReset, bowlerListRetrieved,
+  tournamentDetailsRetrieved,
+  tournamentStateChanged
+} from "../../../store/actions/directorActions";
 
 const Tournament = () => {
-  const directorContext = useDirectorContext();
-  const directorState = directorContext.directorState;
-  const dispatch = directorContext.dispatch;
+  const context = useDirectorContext();
+  const directorState = context.directorState;
+  const dispatch = context.dispatch;
 
   const router = useRouter();
   const { identifier, stripe } = router.query;
@@ -33,13 +37,33 @@ const Tournament = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
       onSuccess: (data) => dispatch(tournamentStateChanged(data)),
       onFailure: (data) => setErrorMessage(data.error),
     });
   }
 
+  const retrieveBowlers = () => {
+    devConsoleLog('retrieving list of bowlers for the tournament');
+    const uri = `/director/tournaments/${identifier}/bowlers`;
+    const requestConfig = {
+      method: 'get',
+      params: {
+        include_details: true,
+      },
+    }
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      router: router,
+      onSuccess: (data) => dispatch(bowlerListRetrieved(data)),
+      onFailure: (_) => setErrorMessage('Failed to retrieve bowlers.'),
+    });
+  }
+
+  // Retrieve the tournament details if we need to
   useEffect(() => {
     if (!directorState) {
       return;
@@ -49,6 +73,7 @@ const Tournament = () => {
     }
     // Don't fetch the tournament details if we already have it in state.
     if (directorState.tournament && identifier === directorState.tournament.identifier) {
+      devConsoleLog("Tournament is already in context, not fetching it again");
       return;
     }
 
@@ -60,9 +85,13 @@ const Tournament = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
-      onSuccess: (data) => dispatch(tournamentDetailsRetrieved(data)),
+      onSuccess: (data) => {
+        dispatch(bowlerListReset());
+        dispatch(tournamentDetailsRetrieved(data));
+        retrieveBowlers();
+      },
       onFailure: (data) => {
         if (data.error === 'not found') {
           setErrorMessage('Tournament not found');
@@ -71,7 +100,7 @@ const Tournament = () => {
         }
       },
     });
-  }, [identifier, directorContext, router]);
+  }, [identifier, context, router]);
 
   const ready = useClientReady();
   if (!ready) {
