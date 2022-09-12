@@ -1,10 +1,9 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
-import {TournamentRecord} from "../../../src/store/records/tournament";
 
 describe ('action type: tournament details retrieved', () => {
   const previousState = {
-    tournament: TournamentRecord(),
+    tournament: null,
   };
   const tournament = {
     id: 14,
@@ -19,11 +18,13 @@ describe ('action type: tournament details retrieved', () => {
     type: actionTypes.TOURNAMENT_DETAILS_RETRIEVED,
     tournament: tournament,
   }
-  const expected = TournamentRecord(tournament);
+  const expected = {
+    tournament: tournament,
+  };
 
   it ('includes the tournament in the response', () => {
     const result = directorReducer(previousState, action);
     expect(result.tournament).toBeDefined();
-    expect(result.tournament).toStrictEqual(expected);
+    expect(result).toStrictEqual(expected);
   });
 });

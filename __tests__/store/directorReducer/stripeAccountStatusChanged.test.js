@@ -1,14 +1,13 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
-import {TournamentRecord} from "../../../src/store/records/tournament";
 
 describe('action type: stripe account status changed', () => {
   const previousState = {
-    tournament: TournamentRecord({
+    tournament: {
       stripe_account: {
         can_accept_payments: 42,
       }
-    }),
+    },
   };
 
   const action = {
@@ -18,15 +17,17 @@ describe('action type: stripe account status changed', () => {
     },
   }
 
-  const expected = TournamentRecord({
-    stripe_account: {
-      can_accept_payments: true,
-    }
-  });
+  const expected = {
+    tournament: {
+      stripe_account: {
+        can_accept_payments: true,
+      },
+    },
+  };
 
   it('returns the expected object', () => {
     const result = directorReducer(previousState, action);
     expect(result.tournament).toBeDefined();
-    expect(result.tournament).toStrictEqual(expected);
+    expect(result).toStrictEqual(expected);
   });
 });

@@ -1,13 +1,12 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
-import {TournamentRecord} from "../../../src/store/records/tournament";
 
 describe('action type: tournament shift added', () => {
   const previousState = {
-    tournament: TournamentRecord({
+    tournament: {
       identifier: 'abcdefg',
       shifts: [],
-    }),
+    },
   };
 
   const newShift = {
@@ -33,14 +32,16 @@ describe('action type: tournament shift added', () => {
     shift: newShift,
   }
 
-  const expected = TournamentRecord({
-    identifier: previousState.tournament.identifier,
-    shifts: [newShift],
-  });
+  const expected = {
+    tournament: {
+      identifier: previousState.tournament.identifier,
+      shifts: [newShift],
+    },
+  };
 
   it('returns the expected object', () => {
     const result = directorReducer(previousState, action);
     expect(result.tournament).toBeDefined();
-    expect(expected.toJS()).toEqual(result.tournament.toJS());
+    expect(result).toStrictEqual(expected);
   });
 });

@@ -1,13 +1,13 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
-import {TournamentRecord} from "../../../src/store/records/tournament";
+
 
 describe('action type: purchasable item added', () => {
   const previousState = {
-    tournament: TournamentRecord({
+    tournament: {
       identifier: 'abcdefg',
       purchasable_items: [],
-    }),
+    },
   };
 
   const newItem = {
@@ -22,14 +22,16 @@ describe('action type: purchasable item added', () => {
     items: [newItem],
   }
 
-  const expected = TournamentRecord({
-    identifier: previousState.tournament.identifier,
-    purchasable_items: [newItem],
-  });
+  const expected = {
+    tournament: {
+      identifier: previousState.tournament.identifier,
+      purchasable_items: [newItem],
+    },
+  };
 
   it('returns the expected object', () => {
     const result = directorReducer(previousState, action);
     expect(result.tournament).toBeDefined();
-    expect(expected.toJS()).toEqual(result.tournament.toJS());
+    expect(result).toStrictEqual(expected);
   });
 });

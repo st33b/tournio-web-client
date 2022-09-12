@@ -28,8 +28,6 @@ export const DirectorContextProvider = ({children}) => {
   const [token, setToken] = useState(initialToken);
   const [currentUser, setCurrentUser] = useState(initialUser);
 
-  const userIsLoggedIn = !!token;
-
   const logoutHandler = useCallback(() => {
     setToken(null);
     setCurrentUser(null);
@@ -42,11 +40,6 @@ export const DirectorContextProvider = ({children}) => {
     setCurrentUser(userDetails);
     localStorage.setItem('token', newToken);
     localStorage.setItem('currentUser', JSON.stringify(userDetails));
-  }
-
-  const tournamentHandler = (newTournament) => {
-    console.log("Setting tournament in DirectorContext -- got another one to remove!")
-    localStorage.setItem('tournament', JSON.stringify(newTournament));
   }
 
   //////////////////////////

@@ -41,12 +41,17 @@ const Tournament = () => {
   }
 
   useEffect(() => {
-    if (!directorContext) {
+    if (!directorState) {
       return;
     }
     if (identifier === undefined) {
       return;
     }
+    // Don't fetch the tournament details if we already have it in state.
+    if (directorState.tournament && identifier === directorState.tournament.identifier) {
+      return;
+    }
+
     const uri = `/director/tournaments/${identifier}`;
     const requestConfig = {
       method: 'get',
@@ -60,7 +65,7 @@ const Tournament = () => {
       onSuccess: (data) => dispatch(tournamentDetailsRetrieved(data)),
       onFailure: (data) => setErrorMessage(data.error),
     });
-  }, [identifier, directorContext.user, router]);
+  }, [identifier, directorContext, router]);
 
   const ready = useClientReady();
   if (!ready) {

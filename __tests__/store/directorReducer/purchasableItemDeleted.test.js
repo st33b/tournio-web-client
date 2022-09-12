@@ -1,6 +1,5 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
-import {TournamentRecord} from "../../../src/store/records/tournament";
 
 describe('action type: purchasable item deleted', () => {
   const item1 = {
@@ -33,7 +32,7 @@ describe('action type: purchasable item deleted', () => {
   }
 
   const previousState = {
-    tournament: TournamentRecord({
+    tournament: {
       identifier: 'abcdefg',
       purchasable_items: [
         item1,
@@ -44,7 +43,7 @@ describe('action type: purchasable item deleted', () => {
         item6,
         item7,
       ],
-    }),
+    },
   };
 
   it('returns the expected object', () => {
@@ -53,21 +52,23 @@ describe('action type: purchasable item deleted', () => {
       item: item2,
     }
 
-    const expected = TournamentRecord({
-      identifier: previousState.tournament.identifier,
-      purchasable_items: [
-        item1,
-        item3,
-        item4,
-        item5,
-        item6,
-        item7,
-      ],
-    });
+    const expected = {
+      tournament: {
+        identifier: previousState.tournament.identifier,
+        purchasable_items: [
+          item1,
+          item3,
+          item4,
+          item5,
+          item6,
+          item7,
+        ],
+      },
+    };
 
     const result = directorReducer(previousState, action);
     expect(result.tournament).toBeDefined();
-    expect(expected.toJS()).toEqual(result.tournament.toJS());
+    expect(result).toStrictEqual(expected);
   });
 
   it('correctly deletes the first item', () => {
@@ -76,21 +77,23 @@ describe('action type: purchasable item deleted', () => {
       item: item1,
     }
 
-    const expected = TournamentRecord({
-      identifier: previousState.tournament.identifier,
-      purchasable_items: [
-        item2,
-        item3,
-        item4,
-        item5,
-        item6,
-        item7,
-      ],
-    });
+    const expected = {
+      tournament: {
+        identifier: previousState.tournament.identifier,
+        purchasable_items: [
+          item2,
+          item3,
+          item4,
+          item5,
+          item6,
+          item7,
+        ],
+      },
+    };
 
     const result = directorReducer(previousState, action);
     expect(result.tournament).toBeDefined();
-    expect(expected.toJS()).toEqual(result.tournament.toJS());
+    expect(result).toStrictEqual(expected);
   });
 
   it('correctly deletes the last item', () => {
@@ -99,21 +102,23 @@ describe('action type: purchasable item deleted', () => {
       item: item7,
     }
 
-    const expected = TournamentRecord({
-      identifier: previousState.tournament.identifier,
-      purchasable_items: [
-        item1,
-        item2,
-        item3,
-        item4,
-        item5,
-        item6,
-      ],
-    });
+    const expected = {
+      tournament: {
+        identifier: previousState.tournament.identifier,
+        purchasable_items: [
+          item1,
+          item2,
+          item3,
+          item4,
+          item5,
+          item6,
+        ],
+      },
+    };
 
     const result = directorReducer(previousState, action);
     expect(result.tournament).toBeDefined();
-    expect(expected.toJS()).toEqual(result.tournament.toJS());
+    expect(result).toStrictEqual(expected);
   });
 
   it('ignores an unrecognized item', () => {
@@ -125,21 +130,23 @@ describe('action type: purchasable item deleted', () => {
       },
     }
 
-    const expected = TournamentRecord({
-      identifier: previousState.tournament.identifier,
-      purchasable_items: [
-        item1,
-        item2,
-        item3,
-        item4,
-        item5,
-        item6,
-        item7,
-      ],
-    });
+    const expected = {
+      tournament: {
+        identifier: previousState.tournament.identifier,
+        purchasable_items: [
+          item1,
+          item2,
+          item3,
+          item4,
+          item5,
+          item6,
+          item7,
+        ],
+      },
+    };
 
     const result = directorReducer(previousState, action);
     expect(result.tournament).toBeDefined();
-    expect(expected.toJS()).toEqual(result.tournament.toJS());
+    expect(result).toStrictEqual(expected);
   });
 });

@@ -13,6 +13,19 @@ export const stripeAccountStatusChanged = (accountStatus) => {
   }
 }
 
+export const tournamentListRetrieved = (tournaments) => {
+  return {
+    type: actionTypes.TOURNAMENT_LIST_RETRIEVED,
+    tournaments: tournaments,
+  }
+}
+
+export const tournamentDetailsReset = () => {
+  return {
+    type: actionTypes.TOURNAMENT_DETAILS_RESET,
+  }
+}
+
 export const tournamentDetailsRetrieved = (tournament) => {
   return {
     type: actionTypes.TOURNAMENT_DETAILS_RETRIEVED,
@@ -66,8 +79,8 @@ export const tournamentShiftUpdated = (shift) => {
 export const additionalQuestionsUpdated = (tournament) => {
   return {
     type: actionTypes.ADDITIONAL_QUESTIONS_UPDATED,
-    questions: [...tournament.additional_questions],
-    availableQuestions: [...tournament.available_questions],
+    questions: tournament.additional_questions,
+    availableQuestions: tournament.available_questions,
   }
 }
 
@@ -116,5 +129,33 @@ export const tournamentContactUpdated = (contact) => {
   return {
     type: actionTypes.TOURNAMENT_CONTACT_UPDATED,
     contact: contact,
+  }
+}
+
+export const userListRetrieved = (users) => {
+  return {
+    type: actionTypes.USER_LIST_RETRIEVED,
+    users: users,
+  }
+}
+
+export const userAdded = (user) => {
+  return {
+    type: actionTypes.USER_ADDED,
+    user: user,
+  }
+}
+
+export const userUpdated = (user) => {
+  return {
+    type: actionTypes.USER_UPDATED,
+    user: user,
+  }
+}
+
+export const userDeleted = (user) => {
+  return {
+    type: actionTypes.USER_DELETED,
+    user: user,
   }
 }

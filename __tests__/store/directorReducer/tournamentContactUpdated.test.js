@@ -1,6 +1,5 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
-import {TournamentRecord} from "../../../src/store/records/tournament";
 
 describe('action type: tournament contact updated', () => {
   const contact1 = {
@@ -15,13 +14,13 @@ describe('action type: tournament contact updated', () => {
   }
 
   const previousState = {
-    tournament: TournamentRecord({
+    tournament: {
       identifier: 'abcdefg',
       contacts: [
         contact1,
         contact2,
       ],
-    }),
+    },
   };
 
   const changedContact = {
@@ -34,17 +33,19 @@ describe('action type: tournament contact updated', () => {
     contact: changedContact,
   }
 
-  const expected = TournamentRecord({
-    identifier: previousState.tournament.identifier,
-    contacts: [
-      contact1,
-      changedContact,
-    ],
-  });
+  const expected = {
+    tournament: {
+      identifier: previousState.tournament.identifier,
+      contacts: [
+        contact1,
+        changedContact,
+      ],
+    },
+  };
 
   it('returns the expected object', () => {
     const result = directorReducer(previousState, action);
     expect(result.tournament).toBeDefined();
-    expect(expected.toJS()).toEqual(result.tournament.toJS());
+    expect(result).toStrictEqual(expected);
   });
 });

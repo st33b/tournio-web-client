@@ -1,10 +1,9 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
-import {TournamentRecord} from "../../../src/store/records/tournament";
 
 describe('action type: tournament test environment updated', () => {
   const previousState = {
-    tournament: TournamentRecord({
+    tournament: {
       identifier: 'abcdefg',
       testing_environment: {
         settings: {
@@ -16,7 +15,7 @@ describe('action type: tournament test environment updated', () => {
           },
         },
       },
-    }),
+    },
   };
 
   const newStateProps = {
@@ -37,14 +36,16 @@ describe('action type: tournament test environment updated', () => {
     newRegistrationPeriod: newStateProps.testing_environment.settings.registration_period,
   }
 
-  const expected = TournamentRecord({
-    identifier: previousState.tournament.identifier,
-    ...newStateProps,
-  });
+  const expected = {
+    tournament: {
+      identifier: previousState.tournament.identifier,
+      ...newStateProps,
+    }
+  }
 
   it('returns the expected object', () => {
     const result = directorReducer(previousState, action);
     expect(result.tournament).toBeDefined();
-    expect(expected.toJS()).toEqual(result.tournament.toJS());
+    expect(result).toStrictEqual(expected);
   });
 });

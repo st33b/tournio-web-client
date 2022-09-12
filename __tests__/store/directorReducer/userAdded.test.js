@@ -1,35 +1,32 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
 
-describe('action type: tournament contact added', () => {
+describe('action type: user added', () => {
   const previousState = {
     tournament: {
       identifier: 'abcdefg',
-      contacts: [],
+      purchasable_items: [],
     },
+    users: [],
   };
 
-  const newContact = {
-    identifier: 'yippie-yay',
-    name: 'Helpful Person',
-    role: 'director',
-  }
+  const newUser = {
+    identifier: 'something-you-can-buy',
+    email: 'electronic@letter.usps',
+  };
 
   const action = {
-    type: actionTypes.TOURNAMENT_CONTACT_ADDED,
-    contact: newContact,
+    type: actionTypes.USER_ADDED,
+    user: newUser,
   }
 
   const expected = {
-    tournament: {
-      identifier: previousState.tournament.identifier,
-      contacts: [newContact],
-    },
+    ...previousState,
+    users: [newUser],
   };
 
   it('returns the expected object', () => {
     const result = directorReducer(previousState, action);
-    expect(result.tournament).toBeDefined();
     expect(result).toStrictEqual(expected);
   });
 });

@@ -1,6 +1,5 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
-import {TournamentRecord} from "../../../src/store/records/tournament";
 
 describe('action type: tournament config item changed', () => {
   const quality = {
@@ -25,14 +24,14 @@ describe('action type: tournament config item changed', () => {
     value_shortened: 'Maui',
   }
   const previousState = {
-    tournament: TournamentRecord({
+    tournament: {
       identifier: 'abcdefg',
       config_items: [
         quality,
         mealtime,
         location,
       ]
-    }),
+    },
   };
 
   const newStateProps = {
@@ -46,18 +45,20 @@ describe('action type: tournament config item changed', () => {
     configItem: newStateProps,
   }
 
-  const expected = TournamentRecord({
-    identifier: previousState.tournament.identifier,
-    config_items: [
-      quality,
-      newStateProps, // Does the position in the array matter?
-      location,
-    ],
-  });
+  const expected = {
+    tournament: {
+      identifier: previousState.tournament.identifier,
+      config_items: [
+        quality,
+        newStateProps, // Does the position in the array matter?
+        location,
+      ],
+    },
+  };
 
   it('returns the expected object', () => {
     const result = directorReducer(previousState, action);
     expect(result.tournament).toBeDefined();
-    expect(expected.toJS()).toEqual(result.tournament.toJS());
+    expect(result).toStrictEqual(expected);
   });
 });

@@ -1,6 +1,5 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
-import {TournamentRecord} from "../../../src/store/records/tournament";
 
 describe('action type: tournament shift deleted', () => {
   const fellowship = {
@@ -16,14 +15,14 @@ describe('action type: tournament shift deleted', () => {
     name: 'The Return of the King',
   }
   const previousState = {
-    tournament: TournamentRecord({
+    tournament: {
       identifier: 'abcdefg',
       shifts: [
         fellowship,
         twoTowers,
         kingsReturn,
       ],
-    }),
+    },
   };
 
   const shift = {
@@ -48,17 +47,19 @@ describe('action type: tournament shift deleted', () => {
     shift: shift,
   }
 
-  const expected = TournamentRecord({
-    identifier: previousState.tournament.identifier,
-    shifts: [
-      fellowship,
-      kingsReturn,
-    ],
-  });
+  const expected = {
+    tournament: {
+      identifier: previousState.tournament.identifier,
+      shifts: [
+        fellowship,
+        kingsReturn,
+      ],
+    },
+  };
 
   it('returns the expected object', () => {
     const result = directorReducer(previousState, action);
     expect(result.tournament).toBeDefined();
-    expect(expected.toJS()).toEqual(result.tournament.toJS());
+    expect(result).toStrictEqual(expected);
   });
 });

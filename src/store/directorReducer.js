@@ -1,9 +1,11 @@
 import * as actionTypes from './actions/directorActionTypes'
 import {updateObject} from '../utils';
-import {TournamentRecord} from "./records/tournament";
 
 const initialState = {
-  tournament: TournamentRecord(),
+  tournament: null,
+  users: [],
+  tournaments: [],
+  // user -- logged-in user
 }
 
 export const directorReducerInit = (initial = initialState) => initial;
@@ -19,15 +21,25 @@ export const directorReducer = (state, action) => {
   switch (action.type) {
     case actionTypes.RESET:
       return directorReducerInit();
+    case actionTypes.TOURNAMENT_DETAILS_RESET:
+      return updateObject(state, {
+        tournament: null,
+      });
+    case actionTypes.TOURNAMENT_LIST_RETRIEVED:
+      return updateObject(state, {
+        tournaments: [...action.tournaments],
+      });
     case actionTypes.TOURNAMENT_DETAILS_RETRIEVED:
       return updateObject(state, {
-        tournament: TournamentRecord(action.tournament),
+        tournament: {...action.tournament},
       });
     case actionTypes.STRIPE_ACCOUNT_STATUS_CHANGED:
-      const stripeAccount = state.tournament.stripe_account;
+      const stripeAccount = {...state.tournament.stripe_account};
       stripeAccount.can_accept_payments = action.accountStatus.can_accept_payments;
       return updateObject(state, {
-        tournament: state.tournament.set('stripe_account', stripeAccount),
+        tournament: updateObject(state.tournament, {
+          stripe_account: stripeAccount,
+        }),
       });
     case actionTypes.TOURNAMENT_STATE_CHANGED:
       const newStatus = {
@@ -35,7 +47,7 @@ export const directorReducer = (state, action) => {
         status: action.newStatus,
       }
       return updateObject(state, {
-        tournament: state.tournament.merge(newStatus),
+        tournament: updateObject(state.tournament, newStatus),
       });
     case actionTypes.TOURNAMENT_TEST_ENVIRONMENT_UPDATED:
       const changedProperties = {
@@ -46,22 +58,28 @@ export const directorReducer = (state, action) => {
         }
       }
       return updateObject(state, {
-        tournament: state.tournament.merge(changedProperties),
+        tournament: updateObject(state.tournament, changedProperties),
       });
     case actionTypes.TOURNAMENT_CONFIG_ITEM_UPDATED:
       const configItems = state.tournament.config_items;
       index = configItems.findIndex(i => i.id === action.configItem.id);
       configItems[index] = {...action.configItem}
       return updateObject(state, {
-        tournament: state.tournament.set('config_items', configItems),
+        tournament: updateObject(state.tournament, {
+          config_items: configItems,
+        }),
       });
     case actionTypes.TOURNAMENT_SHIFT_ADDED:
       return updateObject(state, {
-        tournament: state.tournament.set('shifts', state.tournament.shifts.concat(action.shift)),
+        tournament: updateObject(state.tournament, {
+          shifts: state.tournament.shifts.concat(action.shift),
+        }),
       });
     case actionTypes.TOURNAMENT_SHIFT_DELETED:
       return updateObject(state, {
-        tournament: state.tournament.set('shifts', state.tournament.shifts.filter(s => s.identifier !== action.shift.identifier)),
+        tournament: updateObject(state.tournament, {
+          shifts: state.tournament.shifts.filter(s => s.identifier !== action.shift.identifier)
+        }),
       });
     case actionTypes.TOURNAMENT_SHIFT_UPDATED:
       const updatedShift = {...action.shift};
@@ -72,11 +90,16 @@ export const directorReducer = (state, action) => {
         ...updatedShift,
       }
       return updateObject(state, {
-        tournament: state.tournament.set('shifts', shifts),
+        tournament: updateObject(state.tournament, {
+          shifts: shifts,
+        }),
       });
     case actionTypes.ADDITIONAL_QUESTIONS_UPDATED:
       return updateObject(state, {
-        tournament: state.tournament.set('additional_questions', action.questions).set('available_questions', action.availableQuestions),
+        tournament: updateObject(state.tournament, {
+          additional_questions: [...action.questions],
+          available_questions: [...action.availableQuestions],
+        }),
       });
     case actionTypes.TEST_DATA_CLEARED:
       const shiftChanges = state.tournament.shifts.map(shift => (
@@ -86,19 +109,20 @@ export const directorReducer = (state, action) => {
           confirmed_count: 0,
         }
       ));
-      const changes = {
-        bowler_count: 0,
-        team_count: 0,
-        free_entry_count: 0,
-        shifts: shiftChanges,
-      }
       return updateObject(state, {
-        tournament: state.tournament.merge(changes),
+        tournament: updateObject(state.tournament, {
+          bowler_count: 0,
+          team_count: 0,
+          free_entry_count: 0,
+          shifts: shiftChanges,
+        }),
       });
     case actionTypes.PURCHASABLE_ITEM_ADDED:
       const updatedItems = state.tournament.purchasable_items.concat(action.items);
       return updateObject(state, {
-        tournament: state.tournament.set('purchasable_items', updatedItems),
+        tournament: updateObject(state.tournament, {
+          purchasable_items: updatedItems,
+        }),
       });
     case actionTypes.PURCHASABLE_ITEM_UPDATED:
       identifier = action.item.identifier;
@@ -109,25 +133,29 @@ export const directorReducer = (state, action) => {
       const items = [...state.tournament.purchasable_items];
       items[index] = action.item;
       return updateObject(state, {
-        tournament: state.tournament.set('purchasable_items', items),
+        tournament: updateObject(state.tournament, {
+          purchasable_items: items,
+        }),
       });
     case actionTypes.PURCHASABLE_ITEM_DELETED:
       identifier = action.item.identifier;
-      index = state.tournament.purchasable_items.findIndex(i => i.identifier === identifier);
-      if (index < 0) {
-        return state;
-      }
-      const newItems = state.tournament.purchasable_items.slice(0, index).concat(state.tournament.purchasable_items.slice(index + 1));
+      const newItems = state.tournament.purchasable_items.filter(i => i.identifier !== identifier)
       return updateObject(state, {
-        tournament: state.tournament.set('purchasable_items', newItems),
+        tournament: updateObject(state.tournament, {
+          purchasable_items: newItems,
+        }),
       });
     case actionTypes.LOGO_IMAGE_UPLOADED:
       return updateObject(state, {
-        tournament: state.tournament.set('image_url', action.imageUrl),
+        tournament: updateObject(state.tournament, {
+          image_url: action.imageUrl,
+        }),
       });
     case actionTypes.TOURNAMENT_CONTACT_ADDED:
       return updateObject(state, {
-        tournament: state.tournament.set('contacts', state.tournament.contacts.concat(action.contact)),
+        tournament: updateObject(state.tournament, {
+          contacts: state.tournament.contacts.concat(action.contact),
+        }),
       });
     case actionTypes.TOURNAMENT_CONTACT_UPDATED:
       identifier = action.contact.identifier;
@@ -139,7 +167,30 @@ export const directorReducer = (state, action) => {
       const newContacts = [...state.tournament.contacts];
       newContacts[index] = updatedContact;
       return updateObject(state, {
-        tournament: state.tournament.set('contacts', newContacts),
+        tournament: updateObject(state.tournament, {
+          contacts: newContacts,
+        }),
+      });
+    case actionTypes.USER_LIST_RETRIEVED:
+      return updateObject(state, {
+        users: [...action.users],
+      });
+    case actionTypes.USER_ADDED:
+      return updateObject(state, {
+        users: state.users.concat({...action.user}),
+      });
+    case actionTypes.USER_UPDATED:
+      identifier = action.user.identifier;
+      index = state.users.findIndex(u => u.identifier === identifier);
+      const newUsers = [...state.users];
+      newUsers[index] = {...action.user};
+      return updateObject(state, {
+        users: newUsers,
+      });
+    case actionTypes.USER_DELETED:
+      identifier = action.user.identifier;
+      return updateObject(state, {
+        users: state.users.filter(u => u.identifier !== identifier),
       });
     default:
       return state;

@@ -1,6 +1,5 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
-import {TournamentRecord} from "../../../src/store/records/tournament";
 
 describe('action type: additional questions updated', () => {
   const average = {
@@ -31,9 +30,9 @@ describe('action type: additional questions updated', () => {
     },
   ]
   const previousState = {
-    tournament: TournamentRecord({
+    tournament: {
       identifier: 'abcdefg',
-    }),
+    },
   };
 
   const questions = [
@@ -46,15 +45,17 @@ describe('action type: additional questions updated', () => {
     availableQuestions: availableQuestions,
   }
 
-  const expected = TournamentRecord({
-    identifier: previousState.tournament.identifier,
-    additional_questions: questions,
-    available_questions: availableQuestions,
-  });
+  const expected = {
+    tournament: {
+      identifier: previousState.tournament.identifier,
+      additional_questions: questions,
+      available_questions: availableQuestions,
+    },
+  };
 
   it('returns the expected object', () => {
     const result = directorReducer(previousState, action);
     expect(result.tournament).toBeDefined();
-    expect(expected.toJS()).toEqual(result.tournament.toJS());
+    expect(expected).toStrictEqual(result);
   });
 });
