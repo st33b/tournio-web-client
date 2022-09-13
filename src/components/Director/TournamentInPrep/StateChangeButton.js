@@ -75,9 +75,18 @@ const StateChangeButton = ({tournament, stateChangeInitiated}) => {
       break;
     case 'testing':
       // TODO: update for Stripe usage
-      disabled = process.env.NODE_ENV === 'production' && tournament.config_items.find(item => item.key === 'paypal_client_id').value === 'sb';
+      disabled = unmetOpeningCriteria.length > 0;
       if (disabled) {
-        titleText = 'PayPal Client ID must be set before opening registration';
+        titleText = (
+          <>
+            <p>
+              The following items must be configured before registration can be opened:
+            </p>
+            <ul>
+              {unmetOpeningCriteria.map((item, i) => <li key={i}>{item}</li>)}
+            </ul>
+          </>
+        );
       }
       variant = 'success';
       stateChangeText = 'Open Registration';

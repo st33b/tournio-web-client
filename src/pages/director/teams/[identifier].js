@@ -6,12 +6,14 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import TeamDetails from "../../../components/Director/TeamDetails/TeamDetails";
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest, useClientReady} from "../../../utils";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import {teamDeleted, teamUpdated} from "../../../store/actions/directorActions";
 
 const Page = () => {
   const router = useRouter();
-  const directorContext = useDirectorContext();
+  const context = useDirectorContext();
+  const {directorState, dispatch} = context;
 
   let {identifier} = router.query;
 
@@ -20,21 +22,22 @@ const Page = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  // This effect ensures that we're logged in and have permission to administer the current tournament
+  // Make sure we're logged in
   useEffect(() => {
-    if (!directorContext || !directorContext.tournament || !directorContext.user) {
-      return;
-    }
-    if (!directorContext.isLoggedIn) {
+    if (!context.isLoggedIn) {
       router.push('/director/login');
     }
-    const tournament = directorContext.tournament;
-    // if the logged-in user is a director but not for this tournament...
-    if (directorContext.user.role === 'director' && !directorContext.user.tournaments.some(t => t.identifier === tournament.identifier)) {
+  });
+
+  // This effect ensures we're logged in with appropriate permissions
+  useEffect(() => {
+    const currentTournamentIdentifier = directorState.tournament.identifier;
+
+    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
       router.push('/director');
     }
-  }, [directorContext, router]);
-
+  });
+  
   const onFetchTeamSuccess = (data) => {
     setLoading(false);
     setTeam(data);
@@ -47,7 +50,7 @@ const Page = () => {
 
   // This effect pulls the team details from the backend
   useEffect(() => {
-    if (!identifier || !directorContext || !directorContext.token) {
+    if (!identifier) {
       return;
     }
 
@@ -58,20 +61,25 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
       onSuccess: onFetchTeamSuccess,
       onFailure: onFetchTeamFailure,
     });
-  }, [identifier, router]);
+  }, [identifier, router, context]);
 
-  if (!directorContext || loading) {
+  const ready = useClientReady();
+  if (!ready) {
+    return '';
+  }
+
+  if (!context || loading) {
     return <LoadingMessage message={'Retrieving team data...'} />;
   }
 
   if (errorMessage) {
     return (
-      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
+      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-0 mb-3'} role={'alert'}>
         <i className={'bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
         <div className={'me-auto'}>
           <strong>
@@ -93,6 +101,7 @@ const Page = () => {
 
   const onDeleteTeamSuccess = (_) => {
     setLoading(false);
+    dispatch(teamDeleted(team));
     router.push('/director/teams?success=deleted');
   }
 
@@ -116,7 +125,7 @@ const Page = () => {
       directorApiRequest({
         uri: uri,
         requestConfig: requestConfig,
-        context: directorContext,
+        context: context,
         router: router,
         onSuccess: onDeleteTeamSuccess,
         onFailure: onDeleteTeamFailure,
@@ -140,7 +149,7 @@ const Page = () => {
 
   const ladder = [
     {text: 'Tournaments', path: '/director/tournaments'},
-    {text: directorContext.tournament.name, path: `/director/tournaments/${directorContext.tournament.identifier}`},
+    {text: directorState.tournament.name, path: `/director/tournaments/${directorState.tournament.identifier}`},
     {text: 'Teams', path: `/director/teams`},
   ];
 
@@ -152,6 +161,7 @@ const Page = () => {
   const updateTeamSuccess = (data) => {
     setLoading(false);
     setTeam(data);
+    dispatch(teamUpdated(data));
   }
 
   const updateTeamFailure = (data) => {
@@ -174,7 +184,7 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
       onSuccess: updateTeamSuccess,
       onFailure: updateTeamFailure,

@@ -9,9 +9,11 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../utils";
 import FormData from 'form-data';
 import LogoImage from "../LogoImage/LogoImage";
+import {logoImageUploaded} from "../../../store/actions/directorActions";
 
 const ImageUpload = ({tournament}) => {
   const context = useDirectorContext();
+  const dispatch = context.dispatch;
   const router = useRouter();
 
   const [formDisplayed, setFormDisplayed] = useState(false);
@@ -33,16 +35,10 @@ const ImageUpload = ({tournament}) => {
   }
 
   const onSuccess = (data) => {
-    setSuccess('File successfully uploaded.');
     const imageUrl = data.image_url;
-    const updatedTournament = {...tournament};
-    updatedTournament.image_url = imageUrl;
-    context.setTournament(updatedTournament);
+    dispatch(logoImageUploaded(imageUrl));
+    setSuccess('File successfully uploaded.');
     setFormDisplayed(false);
-  }
-
-  const onFailure = (data) => {
-    setError('File failed to upload');
   }
 
   const uploadTheFile = (e) => {
@@ -62,7 +58,7 @@ const ImageUpload = ({tournament}) => {
       context: context,
       router: router,
       onSuccess: onSuccess,
-      onFailure: onFailure,
+      onFailure: (_) => setError('File failed to upload'),
     });
   }
 

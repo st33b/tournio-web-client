@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Card, Button, Row, Col, ListGroup} from "react-bootstrap";
 
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest, useClientReady} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
@@ -11,10 +11,12 @@ import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage
 import ManualPayment from "../../../components/Director/BowlerDetails/ManualPayment";
 import OfficeUseOnly from "../../../components/Director/BowlerDetails/OfficeUseOnly";
 import ResendEmailButtons from "../../../components/Director/BowlerDetails/ResendEmailButtons";
+import {bowlerDeleted, bowlerUpdated, freeEntryUpdated} from "../../../store/actions/directorActions";
 
 const Page = () => {
   const router = useRouter();
-  const directorContext = useDirectorContext();
+  const context = useDirectorContext();
+  const {directorState, dispatch} = context;
 
   let {identifier} = router.query;
 
@@ -25,7 +27,7 @@ const Page = () => {
     partnerIdentifier: '',
   }
   const linkFreeEntryInitialState = {
-    id: null,
+    identifier: null,
     confirm: false,
   }
 
@@ -39,23 +41,28 @@ const Page = () => {
   const [availableFreeEntries, setAvailableFreeEntries] = useState([]);
   const [unpartneredBowlers, setUnpartneredBowlers] = useState([]);
 
-  // This effect ensures that we're logged in and have permission to administer the current tournament
+  // Make sure we're logged in
   useEffect(() => {
-    if (!directorContext || !directorContext.tournament || !directorContext.user) {
-      return;
-    }
-    if (!directorContext.isLoggedIn) {
+    if (!context.isLoggedIn) {
       router.push('/director/login');
     }
-    const tournament = directorContext.tournament;
-    // if the logged-in user is a director but not for this tournament...
-    if (directorContext.user.role === 'director' && !directorContext.user.tournaments.some(t => t.identifier === tournament.identifier)) {
+  });
+
+  // This effect ensures we're logged in with appropriate permissions
+  useEffect(() => {
+    const currentTournamentIdentifier = directorState.tournament.identifier;
+
+    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
       router.push('/director');
     }
-  }, [directorContext, router]);
+  });
 
   const fetchBowlerSuccess = (data) => {
     setLoading(false);
+    if (data.tournament.identifier !== directorState.tournament.identifier) {
+      // just in case
+      router.push('/director/logout');
+    }
     setBowler(data);
   }
   const fetchBowlerFailure = (data) => {
@@ -65,7 +72,7 @@ const Page = () => {
 
   // This effect pulls the bowler details from the backend
   useEffect(() => {
-    if (!identifier || !directorContext || !directorContext.token) {
+    if (!identifier) {
       return;
     }
 
@@ -76,12 +83,12 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
       onSuccess: fetchBowlerSuccess,
       onFailure: fetchBowlerFailure,
     });
-  }, [identifier, directorContext, router]);
+  }, [identifier, context, router]);
 
   const fetchTeamsSuccess = (data) => {
     setLoading(false);
@@ -93,24 +100,25 @@ const Page = () => {
   }
 
   // This effect retrieves the list of teams available to join
+  // TODO -- this can become a filtered version of the teams list we keep in context
   useEffect(() => {
-    if (!directorContext || !directorContext.tournament || !directorContext.token) {
+    if (!context || !directorState.tournament) {
       return;
     }
 
-    const uri = `/director/tournaments/${directorContext.tournament.identifier}/teams?partial=true`;
+    const uri = `/director/tournaments/${directorState.tournament.identifier}/teams?partial=true`;
     const requestConfig = {
       method: 'get',
     }
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
       onSuccess: fetchTeamsSuccess,
       onFailure: fetchTeamsFailure,
     });
-  }, [directorContext, router]);
+  }, [context, router]);
 
   const fetchBowlersSuccess = (data) => {
     setLoading(false);
@@ -121,25 +129,15 @@ const Page = () => {
     setErrorMessage(data.error);
   }
 
-  // This effect retrieves the list of bowlers without doubles partners
+  // This effect sets the list of bowlers without doubles partners
   useEffect(() => {
-    if (!directorContext || !directorContext.tournament || !directorContext.token) {
+    if (!context || !directorState.bowlers) {
       return;
     }
 
-    const uri = `/director/tournaments/${directorContext.tournament.identifier}/bowlers?unpartnered=true`;
-    const requestConfig = {
-      method: 'get',
-    }
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: directorContext,
-      router: router,
-      onSuccess: fetchBowlersSuccess,
-      onFailure: fetchBowlersFailure,
-    });
-  }, [directorContext, router]);
+    const unpartnered = directorState.bowlers.filter(b => b.doubles_partner === null)
+    setUnpartneredBowlers(unpartnered);
+  }, [context, directorState.bowlers]);
 
   const fetchFreeEntriesSuccess = (data) => {
     setAvailableFreeEntries(data);
@@ -148,27 +146,21 @@ const Page = () => {
     setErrorMessage(data.error);
   }
 
-  // This effect pulls the list of unassigned free entries from the backend
+  // Limit the list of available free entries to those with no bowler attached
   useEffect(() => {
-    if (!directorContext || !directorContext.tournament || !directorContext.token || !bowler) {
+    if (!directorState.freeEntries) {
       return;
     }
+    const availableFEs = directorState.freeEntries.filter(({bowler}) => bowler === null);
+    setAvailableFreeEntries(availableFEs);
+  }, [directorState.freeEntries]);
 
-    const uri = `/director/tournaments/${directorContext.tournament.identifier}/free_entries?unassigned=true`;
-    const requestConfig = {
-      method: 'get',
-    }
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: directorContext,
-      router: router,
-      onSuccess: fetchFreeEntriesSuccess,
-      onFailure: fetchFreeEntriesFailure,
-    });
-  }, [bowler, directorContext, router]);
+  const ready = useClientReady();
+  if (!ready) {
+    return '';
+  }
 
-  if (!directorContext || !directorContext.tournament || loading || !bowler) {
+  if (loading || !bowler) {
     return <LoadingMessage message={'Retrieving bowler details...'} />
   }
 
@@ -190,6 +182,7 @@ const Page = () => {
 
   const deleteBowlerSuccess = (_) => {
     setLoading(false);
+    dispatch(bowlerDeleted(bowler))
     router.push('/director/bowlers?success=deleted');
   }
   const deleteBowlerFailure = (data) => {
@@ -212,7 +205,7 @@ const Page = () => {
       directorApiRequest({
         uri: uri,
         requestConfig: requestConfig,
-        context: directorContext,
+        context: context,
         router: router,
         onSuccess: deleteBowlerSuccess,
         onFailure: deleteBowlerFailure,
@@ -276,6 +269,7 @@ const Page = () => {
   const moveBowlerSuccess = (data) => {
     setLoading(false);
     setBowler(data);
+    dispatch(bowlerUpdated(data));
   }
   const moveBowlerFailure = (data) => {
     setLoading(false);
@@ -302,7 +296,7 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
       onSuccess: moveBowlerSuccess,
       onFailure: moveBowlerFailure,
@@ -350,6 +344,7 @@ const Page = () => {
   const newPartnerSuccess = (data) => {
     setLoading(false);
     setBowler(data);
+    dispatch(bowlerUpdated(data));
   }
   const newPartnerFailure = (data) => {
     setLoading(false);
@@ -376,7 +371,7 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
       onSuccess: newPartnerSuccess,
       onFailure: newPartnerFailure,
@@ -384,8 +379,8 @@ const Page = () => {
   }
 
   let assignPartnerCard = '';
-  const tournamentHasDoublesEvent = directorContext.tournament.purchasable_items.some(pi => {
-    return pi.category === 'bowling' && pi.determination === 'event' && pi.refinement === 'doubles'
+  const tournamentHasDoublesEvent = directorState.tournament.purchasable_items.bowling.some(pi => {
+    return pi.determination === 'event' && pi.refinement === 'doubles'
   });
   if (tournamentHasDoublesEvent && unpartneredBowlers.length > 0) {
     let bowlerPartnerId = '';
@@ -420,7 +415,7 @@ const Page = () => {
 
   const linkFreeEntryOptionChanged = (event) => {
     const newFormData = {...linkFreeEntryFormData}
-    newFormData.id = event.target.value;
+    newFormData.identifier = event.target.value;
     setLinkFreeEntryFormData(newFormData);
   }
 
@@ -431,6 +426,7 @@ const Page = () => {
   }
 
   const linkFreeEntrySuccess = (data) => {
+    dispatch(freeEntryUpdated(data));
     router.reload();
   }
   const linkFreeEntryFailure = (data) => {
@@ -440,7 +436,7 @@ const Page = () => {
   const linkFreeEntrySubmitHandler = (event) => {
     event.preventDefault();
 
-    const uri = `/director/free_entries/${linkFreeEntryFormData.id}`;
+    const uri = `/director/free_entries/${linkFreeEntryFormData.identifier}`;
     const requestConfig = {
       method: 'patch',
       headers: {
@@ -454,7 +450,7 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
       onSuccess: linkFreeEntrySuccess,
       onFailure: linkFreeEntryFailure,
@@ -472,7 +468,7 @@ const Page = () => {
           <form onSubmit={linkFreeEntrySubmitHandler}>
             <select className={'form-select'} name={'destinationTeam'} onChange={linkFreeEntryOptionChanged}>
               <option value={''}>Choose a free entry code</option>
-              {availableFreeEntries.map(fe => <option key={fe.id} value={fe.id}>{fe.unique_code}</option>)}
+              {availableFreeEntries.map(fe => <option key={fe.identifier} value={fe.identifier}>{fe.unique_code}</option>)}
             </select>
             <div className={'form-check pt-3'}>
               <input className={'form-check-input'}
@@ -488,7 +484,7 @@ const Page = () => {
               <Button variant={'primary'}
                       size={'sm'}
                       className={'mt-3'}
-                      disabled={linkFreeEntryFormData.id === null}
+                      disabled={linkFreeEntryFormData.identifier === null}
                       type={'submit'}>
                 Link Free Entry
               </Button>
@@ -586,7 +582,7 @@ const Page = () => {
 
   const convertAdditionalQuestionResponsesForPatch = (bowlerData) => {
     const responses = [];
-    directorContext.tournament.additional_questions.forEach(aq => {
+    directorState.tournament.additional_questions.forEach(aq => {
       const key = aq.name;
       responses.push({
         name: key,
@@ -599,6 +595,7 @@ const Page = () => {
   const bowlerUpdateSuccess = (data) => {
     setLoading(false);
     setBowler(data);
+    dispatch(bowlerUpdated(data));
   }
   const bowlerUpdateFailure = (data) => {
     setLoading(false);
@@ -620,7 +617,7 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
       onSuccess: bowlerUpdateSuccess,
       onFailure: bowlerUpdateFailure,
@@ -634,7 +631,7 @@ const Page = () => {
 
   const ladder = [
     {text: 'Tournaments', path: '/director/tournaments'},
-    {text: directorContext.tournament.name, path: `/director/tournaments/${directorContext.tournament.identifier}`},
+    {text: directorState.tournament.name, path: `/director/tournaments/${directorState.tournament.identifier}`},
     {text: 'Bowlers', path: `/director/bowlers`},
   ];
 
@@ -645,7 +642,8 @@ const Page = () => {
         <Col md={8}>
           {displayedError}
           {bowlerSummary}
-          <BowlerDetails bowler={bowler}
+          <BowlerDetails tournament={directorState.tournament}
+                         bowler={bowler}
                          bowlerUpdateSubmitted={updateSubmitHandler}
           />
         </Col>

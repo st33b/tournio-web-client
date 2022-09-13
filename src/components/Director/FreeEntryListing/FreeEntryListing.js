@@ -14,7 +14,11 @@ const FreeEntryListing = ({freeEntries, confirmClicked, deleteClicked}) => {
     return row.bowler.last_name + ', ' + row.bowler.first_name;
   }
 
-  const data = freeEntries;
+  let data = [];
+  if (freeEntries) {
+    data = freeEntries;
+  }
+
   const columns = useMemo(() => [
       {
         Header: ({column}) => <SortableTableHeader text={'Unique Code'} column={column}/>,
@@ -103,6 +107,10 @@ const FreeEntryListing = ({freeEntries, confirmClicked, deleteClicked}) => {
     {columns, data},
     useSortBy,
   );
+
+  if (!freeEntries) {
+    return '';
+  }
 
   if (data.length === 0) {
     return (

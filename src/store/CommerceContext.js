@@ -8,7 +8,7 @@ const CommerceContext = createContext({
 });
 
 export const CommerceContextProvider = ({children}) => {
-  const [storedCommerceState, storeCommerceState] = useStorage('commerce', commerceReducerInit())
+  const [storedCommerceState, storeCommerceState] = useStorage('commerce', commerceReducerInit());
   const [commerce, dispatch] = useReducer(commerceReducer, storedCommerceState, commerceReducerInit);
 
   useEffect(() => {

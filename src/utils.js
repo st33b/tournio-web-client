@@ -78,6 +78,12 @@ export const tournamentName = (rows, id, filterValue) => {
   return rows.filter(row => row.values[id].some(t => t.name === filterValue));
 }
 
+export const devConsoleLog = (message, object=null) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(message, object);
+  }
+}
+
 ///////////////////////////////////////////////////
 
 export const apiHost = `${process.env.NEXT_PUBLIC_API_PROTOCOL}://${process.env.NEXT_PUBLIC_API_HOSTNAME}:${process.env.NEXT_PUBLIC_API_PORT}`;
@@ -471,30 +477,6 @@ export const postPurchaseDetails = (bowlerIdentifier, path, postData, onSuccess,
     });
 }
 
-export const postPurchasesCompleted = (bowlerIdentifier, postData, onSuccess, onFailure) => {
-  const requestConfig = {
-    method: 'post',
-    url: `${apiHost}/bowlers/${bowlerIdentifier}/purchases`,
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    data: postData,
-    validateStatus: (status) => { return status < 500 },
-  }
-  axios(requestConfig)
-    .then(response => {
-      if (response.status >= 200 && response.status < 300) {
-        onSuccess(response.data);
-      } else {
-        onFailure(response.data);
-      }
-    })
-    .catch(error => {
-      onFailure({error: error.message});
-    });
-}
-
 export const getCheckoutSessionStatus = (identifier, onSuccess, onFailure) => {
   const requestConfig = {
     method: 'get',
@@ -605,6 +587,8 @@ export const directorApiRequest = ({uri, requestConfig, context, router, onSucce
       } else if (response.status === 401) {
         context.logout();
         router.push('/director/login');
+      } else if (response.status === 404) {
+        onFailure({error: 'not found'});
       } else {
         onFailure(response.data);
       }

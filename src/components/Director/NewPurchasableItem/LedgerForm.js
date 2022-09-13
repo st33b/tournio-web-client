@@ -10,9 +10,11 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './LedgerForm.module.scss';
 import {formatISO, parseISO, isValid as isValidDate} from "date-fns";
+import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
-const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
+const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
   const context = useDirectorContext();
+  const dispatch = context.dispatch;
   const router = useRouter();
 
   const initialState = {
@@ -32,16 +34,16 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
   const [eventSelectionAllowed, setEventSelectionAllowed] = useState(false);
 
   useEffect(() => {
-    if (!context || !context.tournament) {
+    if (!tournament) {
       return;
     }
     // It's a tournament where bowlers can select events, rather than a traditional tournament
-    if (context.tournament.config_items.some(ci => ci.key === 'event_selection' && ci.value)) {
+    if (tournament.config_items.some(ci => ci.key === 'event_selection' && ci.value)) {
       setEventSelectionAllowed(true);
 
       // populate the event identifiers, for both bundle_discount (if it's available) and event-linked late fee
       const identifiers = {};
-      context.tournament.purchasable_items.filter(({determination}) => determination === 'event').map(item => {
+      tournament.purchasable_items.filter(({determination}) => determination === 'event').map(item => {
         const id = item.identifier;
         identifiers[id] = false;
       });
@@ -49,7 +51,7 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
       newFormData.eventIdentifiers = identifiers;
       setFormData(newFormData);
     }
-  }, [context]);
+  }, [tournament]);
 
   const inputChanged = (elementName, event) => {
     const newFormData = {...formData};
@@ -110,10 +112,8 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
   }
 
   const submissionSuccess = (data) => {
+    dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
-    const tournament = {...context.tournament}
-    tournament.purchasable_items = tournament.purchasable_items.concat(data);
-    context.setTournament(tournament);
     onComplete(`Item ${data[0].name} created.`);
   }
 
@@ -142,7 +142,7 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
         break;
     }
     itemData.configuration = configuration;
-    const uri = `/director/tournaments/${context.tournament.identifier}/purchasable_items`;
+    const uri = `/director/tournaments/${tournament.identifier}/purchasable_items`;
     const requestConfig = {
       method: 'post',
       data: {
@@ -240,7 +240,7 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
               <label htmlFor={'name'} className={'form-label ps-0 mb-1'}>
                 Bundled Events
               </label>
-              {context.tournament.purchasable_items.filter(({determination}) => determination === 'event').map(item => (
+              {tournament.purchasable_items.filter(({determination}) => determination === 'event').map(item => (
                 <div className={'form-check form-switch'} key={item.identifier}>
                   <input className={'form-check-input'}
                          type={'checkbox'}
@@ -267,7 +267,7 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
                       id={'linkedEvent'}
                       onChange={event => inputChanged('linkedEvent', event)}>
                 <option value={''}>--</option>
-                {context.tournament.purchasable_items.filter(
+                {tournament.purchasable_items.filter(
                   ({category, determination}) => category === 'bowling' && determination === 'event'
                 ).map(event => (
                   <option key={event.identifier} value={event.identifier}>

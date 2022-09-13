@@ -6,9 +6,11 @@ import {directorApiRequest} from "../../../utils";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './SingleUseForm.module.scss';
+import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
-const SingleUseForm = ({onCancel, onComplete}) => {
+const SingleUseForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();
+  const dispatch = context.dispatch;
   const router = useRouter();
 
   const initialState = {
@@ -42,16 +44,14 @@ const SingleUseForm = ({onCancel, onComplete}) => {
   }
 
   const submissionSuccess = (data) => {
+    dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
-    const tournament = {...context.tournament}
-    tournament.purchasable_items = tournament.purchasable_items.concat(data);
-    context.setTournament(tournament);
     onComplete(`Item ${data[0].name} created.`);
   }
 
   const formSubmitted = (event) => {
     event.preventDefault();
-    const uri = `/director/tournaments/${context.tournament.identifier}/purchasable_items`;
+    const uri = `/director/tournaments/${tournament.identifier}/purchasable_items`;
     const requestConfig = {
       method: 'post',
       data: {

@@ -6,17 +6,12 @@ import {directorApiRequest} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './UserForm.module.scss';
-import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
+import {userAdded, userDeleted, userUpdated} from "../../../store/actions/directorActions";
 
-const UserForm = ({user, tournaments, userDeleteInitiated}) => {
+const UserForm = ({user, tournaments}) => {
   const directorContext = useDirectorContext();
+  const dispatch = directorContext.dispatch;
   const router = useRouter();
-
-  let formTitle = 'New User';
-  let submitButtonText = 'Create User';
-  let submittingButtonText = 'Creating...';
-
-  let isSelf = false;
 
   const initialState = {
     fields: {
@@ -30,17 +25,46 @@ const UserForm = ({user, tournaments, userDeleteInitiated}) => {
     touched: false,
   };
 
+  const [errorMessage, setErrorMessage] = useState();
+  const [successMessage, setSuccessMessage] = useState();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userFormData, setUserFormData] = useState(initialState);
   const [banner, setBanner] = useState(null);
 
-  const deleteHandler = (event) => {
-    event.preventDefault();
-    userDeleteInitiated();
-  }
-
   let areWeCreating = true;
   let deleteButton = '';
+  let isSelf = false;
+  let formTitle = 'New User';
+  let submitButtonText = 'Create User';
+  let submittingButtonText = 'Creating...';
+
+  const onDeleteSuccess = (_) => {
+    dispatch(userDeleted(user));
+    router.push('/director/users?success=deleted');
+  }
+
+  const onDeleteFailure = (data) => {
+    setErrorMessage(`Failed to delete user. ${data.error}`);
+  }
+
+  const deleteInitiated = (e) => {
+    e.preventDefault();
+    if (confirm('This will remove the user and their ability to administer any tournaments. Are you sure?')) {
+      const uri = `/director/users/${user.identifier}`;
+      const requestConfig = {
+        method: 'delete',
+      }
+      directorApiRequest({
+        uri: uri,
+        requestConfig: requestConfig,
+        context: directorContext,
+        router: router,
+        onSuccess: onDeleteSuccess,
+        onFailure: onDeleteFailure,
+      });
+    }
+  }
+
   if (user) {
     areWeCreating = false;
     isSelf = user.identifier === directorContext.user.identifier;
@@ -53,13 +77,12 @@ const UserForm = ({user, tournaments, userDeleteInitiated}) => {
       deleteButton = (
         <Card className={'mt-3'}>
           <Card.Body className={'text-center'}>
-            <form onSubmit={deleteHandler}>
-              <Button variant={'danger'}
-                      type={'submit'}
-              >
-                Delete User
-              </Button>
-            </form>
+            <Button variant={'danger'}
+                    type={'submit'}
+                    onClick={deleteInitiated}
+            >
+              Delete User
+            </Button>
           </Card.Body>
         </Card>
       );
@@ -94,21 +117,31 @@ const UserForm = ({user, tournaments, userDeleteInitiated}) => {
   const onSubmitSuccess = (data) => {
     setIsSubmitting(false);
     setBanner(<Alert variant={'success'}
+                     dismissible={true}
+                     onClose={() => setBanner(null)}
                      className={'mt-3 mb-0'}>{areWeCreating ? 'User has been created!' : 'User details updated.'}</Alert>);
-
-    // Update the touched attribute in the userDataForm back to false.
-    const updatedForm = {...userFormData};
-    updatedForm.fields = {...userFormData.fields};
-    updatedForm.touched = false;
-    setUserFormData(updatedForm);
 
     // Call a passed-in "new user created" or "user updated" function
     // so that our parent page can update accordingly, if desired.
+    if (areWeCreating) {
+      dispatch(userAdded(data));
+      setUserFormData(initialState);
+      setSuccessMessage('User created.');
+    } else {
+      dispatch(userUpdated(data));
+      setSuccessMessage('User details updated');
+
+      // Update the touched attribute in the userDataForm back to false.
+      const updatedForm = {...userFormData};
+      updatedForm.fields = {...userFormData.fields};
+      updatedForm.touched = false;
+      setUserFormData(updatedForm);
+    }
   }
 
   const onSubmitFailure = (data) => {
     setIsSubmitting(false);
-    setBanner(<Alert variant={'danger'} className={'mt-3'}>Failed to save. {data.error}</Alert>);
+    setErrorMessage(`Failed to save. ${data.error}`);
   }
 
   const submitHandler = (event) => {
@@ -186,9 +219,36 @@ const UserForm = ({user, tournaments, userDeleteInitiated}) => {
     setUserFormData(updatedForm);
   }
 
-  if (!tournaments) {
-    return <LoadingMessage message={'Retrieving list of tournaments...'} />;
-  }
+  const success = successMessage && (
+    <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
+      <i className={'bi-check-lg pe-2'} aria-hidden={true} />
+      <div className={'me-auto'}>
+        {successMessage}
+      </div>
+      <button type={"button"}
+              className={"btn-close"}
+              data-bs-dismiss={"alert"}
+              onClick={() => setSuccessMessage(null)}
+              aria-label={"Close"} />
+    </div>
+  );
+  const error = errorMessage && (
+    <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
+      <i className={'bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+      <div className={'me-auto'}>
+        <strong>
+          Oh no!
+        </strong>
+        {' '}{errorMessage}
+      </div>
+      <button type={"button"}
+              className={"btn-close"}
+              data-bs-dismiss={"alert"}
+              onClick={() => setErrorMessage(null)}
+              aria-label={"Close"} />
+    </div>
+  );
+
 
   return (
     <div className={classes.UserForm}>
@@ -262,7 +322,7 @@ const UserForm = ({user, tournaments, userDeleteInitiated}) => {
                              value={userFormData.fields.tournamentIds}>
                   {tournaments.map((t) => {
                     return (
-                      <option key={t.identifier} value={t.id}>
+                      <option key={t.id} value={t.id}>
                         {t.name} ({t.year})
                       </option>
                     );
@@ -280,7 +340,8 @@ const UserForm = ({user, tournaments, userDeleteInitiated}) => {
               )}
               {isSubmitting && <Button variant={'secondary'} disabled={true}>{submittingButtonText}</Button>}
             </div>
-            {banner}
+            {success}
+            {error}
           </Form>
         </Card.Body>
       </Card>

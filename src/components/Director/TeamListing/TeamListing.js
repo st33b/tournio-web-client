@@ -9,12 +9,6 @@ import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeade
 import classes from './TeamListing.module.scss';
 
 const TeamListing = ({teams}) => {
-  const directorContext = useDirectorContext();
-
-  let identifier;
-  if (directorContext && directorContext.tournament) {
-    identifier = directorContext.tournament.identifier;
-  }
   const columns = useMemo(() => [
       {
         Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
@@ -132,7 +126,7 @@ const TeamListing = ({teams}) => {
 
   return (
     <div className={classes.TeamListing}>
-      {!!data.length && <TeamFilterForm
+      {data.length > 0 && <TeamFilterForm
         onFilterApplication={filterThatData}
         onFilterReset={resetThoseFilters}
       />}

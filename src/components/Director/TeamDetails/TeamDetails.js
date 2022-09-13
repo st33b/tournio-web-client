@@ -9,7 +9,8 @@ import classes from './TeamDetails.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 const TeamDetails = ({team, teamUpdateSubmitted}) => {
-  const directorContext = useDirectorContext();
+  const context = useDirectorContext();
+  const {directorState, dispatch} = context;
 
   let initialFormData = {
     valid: true,
@@ -28,19 +29,9 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
 
   const [data, setData] = useState([]);
   const [teamForm, setTeamForm] = useState(initialFormData);
-  const [tournament, setTournament] = useState();
-
-  let identifier;
-  useEffect(() => {
-    if (!directorContext || !directorContext.tournament) {
-      return;
-    }
-    setTournament(directorContext.tournament);
-    identifier = directorContext.tournament.identifier;
-  }, [directorContext]);
 
   useEffect(() => {
-    if (!team || !tournament) {
+    if (!team) {
       return;
     }
     const newFormData = {...teamForm}
@@ -54,7 +45,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     }, [team]);
     setData(team.bowlers);
     setTeamForm(newFormData);
-  }, [team, tournament]);
+  }, [team]);
 
   // columns
   const columns = useMemo(() => [
@@ -116,7 +107,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     {columns, data},
   );
 
-  if (!tournament || !team) {
+  if (!directorState || !team) {
     return '';
   }
 
@@ -227,7 +218,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     </div>
   );
 
-  const maxTeamSize = parseInt(tournament.config_items.find(({key}) => key === 'team_size').value);
+  const maxTeamSize = parseInt(directorState.tournament.config_items.find(({key}) => key === 'team_size').value);
 
   return (
     <ErrorBoundary>

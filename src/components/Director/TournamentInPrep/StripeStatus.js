@@ -6,9 +6,11 @@ import {useState, useEffect} from "react";
 import {directorApiRequest} from "../../../utils";
 
 import classes from './StripeStatus.module.scss';
+import {stripeAccountStatusChange} from "../../../store/actions/directorActions";
 
 const StripeStatus = ({tournament, needStatus}) => {
   const context = useDirectorContext();
+  const dispatch = context.dispatch;
 
   // If needStatus is set, then we need to request the Stripe status from the server
   // Otherwise, show a button that can trigger an on-demand status check
@@ -20,11 +22,15 @@ const StripeStatus = ({tournament, needStatus}) => {
   const onStatusFetchSuccess = (data) => {
     setStripeAccount(data);
     setStatusRequested(false);
+    const previousStatus = tournament.stripe_account.can_accept_payments;
     if (!data.can_accept_payments && needStatus) {
       console.log("Can't accept payments, requesting status again soon.");
       setTimeout(initiateStatusRequest, 3000);
     } else {
       console.log("We can accept payments, so we're good.");
+      if (data.can_accept_payments !== previousStatus) {
+        dispatch(stripeAccountStatusChange(data))
+      }
     }
   }
 

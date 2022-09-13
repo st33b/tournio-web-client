@@ -1,20 +1,25 @@
-import {useDirectorContext} from "../../../store/DirectorContext";
 import {useRouter} from "next/router";
+import Card from "react-bootstrap/Card";
+
+import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../utils";
+import {reset, tournamentDeleted, tournamentDetailsReset} from "../../../store/actions/directorActions";
 
 const DeleteTournament = ({tournament}) => {
   const context = useDirectorContext();
+  const dispatch = context.dispatch;
   const router = useRouter();
 
-  if (!context || !context.user) {
+  if (!context || !tournament) {
     return '';
   }
 
-  if (context.user.role !== 'superuser') {
+  if (!context.user || context.user.role !== 'superuser') {
     return '';
   }
 
   const deleteSuccess = (_) => {
+    dispatch(tournamentDeleted(tournament));
     router.push('/director/tournaments');
   }
 
@@ -42,13 +47,15 @@ const DeleteTournament = ({tournament}) => {
   }
 
   return (
-    <div className={'d-flex justify-content-center border-top pt-3'}>
-      <button type={'button'}
-              className={'btn btn-lg btn-danger'}
-              onClick={deleteClicked}>
-        Delete Tournament
-      </button>
-    </div>
+    <Card className={'border-0 text-center'}>
+      <Card.Body>
+        <button type={'button'}
+                className={'btn btn-lg btn-danger'}
+                onClick={deleteClicked}>
+          Delete Tournament
+        </button>
+      </Card.Body>
+    </Card>
   );
 }
 

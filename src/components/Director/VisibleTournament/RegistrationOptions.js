@@ -15,7 +15,8 @@ const RegistrationOptions = ({tournament}) => {
       <Placeholder xs={4} />{' '}
       <Placeholder xs={7} />
     </Placeholder>
-  )
+  );
+
   if (tournament) {
     content = (
       <ListGroup variant={'flush'}>
@@ -27,7 +28,7 @@ const RegistrationOptions = ({tournament}) => {
         }
         {tournament.shifts && tournament.shifts.length > 0 && tournament.shifts.map((shift, i) => (
           <ListGroup.Item key={i} className={'p-0'}>
-            <ShiftForm shift={shift} />
+            <ShiftForm tournament={tournament} shift={shift} />
           </ListGroup.Item>
         ))}
       </ListGroup>

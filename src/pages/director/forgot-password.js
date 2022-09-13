@@ -1,5 +1,6 @@
-import DirectorLayout from "../../components/Layout/DirectorLayout/DirectorLayout";
 import {Card, Col, Row} from "react-bootstrap";
+
+import DirectorLayout from "../../components/Layout/DirectorLayout/DirectorLayout";
 import ForgotPasswordForm from "../../components/Director/ForgotPasswordForm/ForgotPasswordForm";
 
 const Page = () => {

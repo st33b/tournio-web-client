@@ -7,11 +7,12 @@ import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 
+import ErrorBoundary from "../../common/ErrorBoundary";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../utils";
-import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './ConfigItemForm.module.scss';
+import {tournamentConfigItemChanged} from "../../../store/actions/directorActions";
 
 const BOOLEAN_CONFIG_ITEMS = ['display_capacity', 'email_in_dev', 'event_selection'];
 
@@ -109,6 +110,12 @@ const ConfigItemForm = ({item, editable}) => {
     setFormData(newFormData);
     toggleEdit(null, false);
   }
+
+  const onSuccessfulUpdate = (data) => {
+    toggleEdit(null, false);
+    context.dispatch(tournamentConfigItemChanged(data));
+  }
+
   const onFormSubmit = (event, value = null) => {
     if (event) {
       event.preventDefault();
@@ -128,7 +135,7 @@ const ConfigItemForm = ({item, editable}) => {
       requestConfig: requestConfig,
       context: context,
       router: router,
-      onSuccess: (_) => { toggleEdit(null, false) },
+      onSuccess: onSuccessfulUpdate,
       onFailure: (data) => { console.log("Failed to save config item.", data) },
     });
   }
@@ -141,13 +148,19 @@ const ConfigItemForm = ({item, editable}) => {
         displayedValue = formData.value ? timeZones[formData.value].display : '';
         break;
       case 'website':
+        let displayValue = formData.value;
+        let ellipsis = '';
+        if (displayValue.length > 15) {
+          displayValue = formData.value.substring(formData.value.length - 15);
+          ellipsis = '...';
+        }
         displayedValue = (
-          <a href={formData.value}
-             title={formData.value}
-             target={'_new'}>
-            visit
-            <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden={true} />
-          </a>
+          <>
+            {ellipsis}
+            <span className={classes.Url}>
+              {displayValue}
+            </span>
+          </>
         );
         break;
       case 'entry_deadline':
@@ -178,12 +191,12 @@ const ConfigItemForm = ({item, editable}) => {
         </div>
     )
     content = !allowEdit ? itemContent : (
-      <a href={'#'}
-         className={'text-body text-decoration-none'}
-         title={'Edit this item'}
-         onClick={(e) => toggleEdit(e, true)}>
+      <span className={classes.ItemWrapper}
+            title={'Edit this item'}
+            onClick={(e) => toggleEdit(e, true)}
+      >
         {itemContent}
-      </a>
+      </span>
     );
   } else {
     let elementName = '';

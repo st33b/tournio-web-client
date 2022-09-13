@@ -1,6 +1,6 @@
 import {Card, ListGroup} from "react-bootstrap";
+
 import ShiftForm from '../ShiftForm/ShiftForm';
-import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './TournamentInPrep.module.scss';
 
@@ -29,7 +29,7 @@ const Shifts = ({tournament}) => {
         }
         {tournament.shifts && tournament.shifts.length > 0 && tournament.shifts.map((shift, i) => (
           <ListGroup.Item key={i} className={'p-0'}>
-            <ShiftForm shift={shift}/>
+            <ShiftForm tournament={tournament} shift={shift}/>
           </ListGroup.Item>
         ))}
       </ListGroup>
@@ -38,11 +38,11 @@ const Shifts = ({tournament}) => {
 
   return (
     <Card className={classes.Card}>
-      <Card.Header as={'h5'} className={'fw-light'}>
+      <Card.Header as={'h5'} className={'fw-light mb-3'}>
         Capacity &amp; Registration Options
       </Card.Header>
       {content}
-      {tournament.shifts.length === 0 && <ShiftForm />}
+      {tournament.shifts.length === 0 && <ShiftForm tournament={tournament} />}
     </Card>
   )
 }

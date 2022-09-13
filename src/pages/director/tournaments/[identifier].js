@@ -1,36 +1,42 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 
-import {directorApiRequest, useClientReady} from "../../../utils";
-import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
-import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
-import classes from "../../../components/Director/TournamentInPrep/TournamentInPrep.module.scss";
 import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
+import {devConsoleLog, directorApiRequest, useClientReady} from "../../../utils";
+import {useDirectorContext} from '../../../store/DirectorContext';
+import {
+  bowlerListReset, bowlerListRetrieved, freeEntryListRetrieved, teamListRetrieved,
+  tournamentDetailsRetrieved,
+  tournamentStateChanged
+} from "../../../store/actions/directorActions";
 
 const Tournament = () => {
-  const directorContext = useDirectorContext();
+  const context = useDirectorContext();
+  const directorState = context.directorState;
+  const dispatch = context.dispatch;
+
   const router = useRouter();
   const { identifier, stripe } = router.query;
 
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const onTournamentFetchSuccess = (data) => {
-    directorContext.setTournament(data);
-  }
+  // Make sure we're logged in
+  useEffect(() => {
+    if (!context.isLoggedIn) {
+      router.push('/director/login');
+    }
+  });
 
-  const onTournamentFetchFailure = (data) => {
-    setErrorMessage(data.error);
-  }
+  // This effect ensures we're logged in with appropriate permissions
+  useEffect(() => {
+    const currentTournamentIdentifier = directorState.tournament.identifier;
 
-  const stateChangeSuccess = (data) => {
-    directorContext.setTournament(data);
-  }
-
-  const stateChangeFailure = (data) => {
-    setErrorMessage(data.error);
-  }
+    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
+      router.push('/director');
+    }
+  });
 
   const stateChangeInitiated = (stateChangeAction) => {
     const uri = `/director/tournaments/${identifier}/state_change`;
@@ -47,54 +53,78 @@ const Tournament = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
-      onSuccess: stateChangeSuccess,
-      onFailure: stateChangeFailure,
+      onSuccess: (data) => dispatch(tournamentStateChanged(data)),
+      onFailure: (data) => setErrorMessage(data.error),
     });
   }
 
-  const testEnvUpdateSuccess = (data, onSuccess) => {
-    const tournament = {...directorContext.tournament}
-    tournament.testing_environment = data;
-    directorContext.setTournament(tournament);
-    onSuccess();
-  }
-
-  const testEnvUpdateFailure = (data) => {
-    setErrorMessage(data.error);
-  }
-
-  const testEnvironmentUpdated = (testEnvFormData, onSuccess) => {
-    const uri = `/director/tournaments/${identifier}/testing_environment`;
+  const retrieveBowlers = () => {
+    devConsoleLog('retrieving list of bowlers for the tournament');
+    const uri = `/director/tournaments/${identifier}/bowlers`;
     const requestConfig = {
-      method: 'patch',
-      headers: {
-        'Content-Type': 'application/json',
+      method: 'get',
+      params: {
+        include_details: true,
       },
-      data: {
-        testing_environment: {
-          conditions: testEnvFormData,
-        },
-      },
-    };
+    }
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
-      onSuccess: (data) => testEnvUpdateSuccess(data, onSuccess),
-      onFailure: testEnvUpdateFailure,
+      onSuccess: (data) => dispatch(bowlerListRetrieved(data)),
+      onFailure: (_) => setErrorMessage('Failed to retrieve bowlers.'),
     });
   }
 
+  const retrieveTeams = () => {
+    devConsoleLog('retrieving list of teams for the tournament');
+    const uri = `/director/tournaments/${identifier}/teams`;
+    const requestConfig = {
+      method: 'get',
+    }
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      router: router,
+      onSuccess: (data) => dispatch(teamListRetrieved(data)),
+      onFailure: (_) => setErrorMessage('Failed to retrieve teams.'),
+    });
+  }
+
+  const retrieveFreeEntries = () => {
+    devConsoleLog('retrieving list of free entries for the tournament');
+    const uri = `/director/tournaments/${identifier}/free_entries`;
+    const requestConfig = {
+      method: 'get',
+    }
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      router: router,
+      onSuccess: (data) => dispatch(freeEntryListRetrieved(data)),
+      onFailure: (_) => setErrorMessage('Failed to retrieve free entries'),
+    });
+  }
+
+  // Retrieve the tournament details if we need to
   useEffect(() => {
-    if (!directorContext) {
+    if (!directorState) {
       return;
     }
     if (identifier === undefined) {
       return;
     }
+    // Don't fetch the tournament details if we already have it in state.
+    if (directorState.tournament && identifier === directorState.tournament.identifier) {
+      devConsoleLog("Tournament is already in context, not fetching it again");
+      return;
+    }
+
     const uri = `/director/tournaments/${identifier}`;
     const requestConfig = {
       method: 'get',
@@ -103,19 +133,31 @@ const Tournament = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
-      onSuccess: onTournamentFetchSuccess,
-      onFailure: onTournamentFetchFailure,
+      onSuccess: (data) => {
+        dispatch(bowlerListReset());
+        dispatch(tournamentDetailsRetrieved(data));
+        retrieveBowlers();
+        retrieveTeams();
+        retrieveFreeEntries();
+      },
+      onFailure: (data) => {
+        if (data.error === 'not found') {
+          setErrorMessage('Tournament not found');
+        } else {
+          setErrorMessage(data.error);
+        }
+      },
     });
-  }, [identifier, directorContext.user, router]);
+  }, [identifier, context, router]);
 
   const ready = useClientReady();
   if (!ready) {
     return null;
   }
 
-  if (!directorContext || !directorContext.tournament) {
+  if (!directorState) {
     return '';
   }
 
@@ -123,7 +165,7 @@ const Tournament = () => {
   if (errorMessage) {
     error = (
       <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center my-3'} role={'alert'}>
-        <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
+        <i className={'bi-exclamation-triangle-fill pe-2'} aria-hidden={true} />
         <div className={'me-auto'}>
           {errorMessage}
           <button type="button"
@@ -135,14 +177,15 @@ const Tournament = () => {
     );
   }
 
-  const tournamentView = directorContext.tournament.state === 'active' || directorContext.tournament.state === 'closed'
-    ? <VisibleTournament closeTournament={stateChangeInitiated} />
-    : <TournamentInPrep stateChangeInitiated={stateChangeInitiated}
-                        testEnvironmentUpdated={testEnvironmentUpdated}
-                        requestStripeStatus={stripe}
-    />;
+  let tournamentView = '';
+  if (directorState.tournament) {
+    tournamentView = directorState.tournament.state === 'active' || directorState.tournament.state === 'closed'
+      ? <VisibleTournament closeTournament={stateChangeInitiated} />
+      : <TournamentInPrep stateChangeInitiated={stateChangeInitiated}
+                          requestStripeStatus={stripe}
+      />;
+  }
 
-  const ladder = [{ text: 'Tournaments', path: '/director' }];
   return (
     <div>
       {error}

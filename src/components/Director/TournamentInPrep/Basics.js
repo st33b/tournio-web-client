@@ -1,5 +1,4 @@
 import Card from 'react-bootstrap/Card';
-import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './TournamentInPrep.module.scss';
 

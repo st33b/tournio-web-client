@@ -4,13 +4,15 @@ import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import {directorApiRequest} from "../../../utils";
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {tournamentContactAdded, tournamentContactUpdated} from "../../../store/actions/directorActions";
 
-const ContactForm = ({contact, newContact}) => {
+const ContactForm = ({tournament, contact, newContact}) => {
   const context = useDirectorContext();
+  const dispatch = context.dispatch;
   const router = useRouter();
 
   const initialState = {
-    id: '',
+    identifier: '',
     name: '',
     role: '',
     email: '',
@@ -48,17 +50,12 @@ const ContactForm = ({contact, newContact}) => {
   }
 
   const onSuccess = (data) => {
-    const tournament = {...context.tournament};
     if (newContact) {
-      tournament.contacts = tournament.contacts.concat(data);
+      dispatch(tournamentContactAdded(data));
       setFormData(initialState);
     } else {
-      const contacts = context.tournament.contacts.slice(0);
-      const index = contacts.findIndex(elem => elem.id === contact.id);
-      contacts[index] = data;
-      tournament.contacts = contacts;
+      dispatch(tournamentContactUpdated(data));
     }
-    context.setTournament(tournament);
     setEditing(false);
   }
 
@@ -68,7 +65,7 @@ const ContactForm = ({contact, newContact}) => {
 
   const formSubmitted = (event) => {
     event.preventDefault();
-    const uri = newContact ? `/director/tournaments/${context.tournament.identifier}/contacts` : `/director/contacts/${contact.id}`;
+    const uri = newContact ? `/director/tournaments/${tournament.identifier}/contacts` : `/director/contacts/${contact.identifier}`;
     const requestConfig = {
       method: newContact ? 'post' : 'patch',
       data: {
@@ -162,7 +159,7 @@ const ContactForm = ({contact, newContact}) => {
               <select className={'form-select'}
                       name={'role'}
                       onChange={inputChanged}
-                      value={formData.role}>
+                      value={formData.role || ''}>
                 <option value={''}>--</option>
                 {Object.entries(roles).map(pair => <option value={pair[0]} key={pair[0]}>{pair[1]}</option>)}
               </select>
