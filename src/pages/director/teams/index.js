@@ -20,23 +20,21 @@ const Page = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  let identifier;
-  if (context && directorState.tournament) {
-    identifier = directorState.tournament.identifier;
-  }
-
-  // This effect ensures we're logged in with appropriate permissions
+  // Make sure we're logged in
   useEffect(() => {
-    if (!identifier || !context) {
-      return;
-    }
     if (!context.isLoggedIn) {
       router.push('/director/login');
     }
-    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === identifier)) {
+  });
+
+  // This effect ensures we're logged in with appropriate permissions
+  useEffect(() => {
+    const currentTournamentIdentifier = directorState.tournament.identifier;
+
+    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
       router.push('/director');
     }
-  }, [identifier, router, context]);
+  });
 
   const onFetchTeamsSuccess = (data) => {
     dispatch(teamListRetrieved(data));
@@ -50,17 +48,15 @@ const Page = () => {
 
   // This effect fetches the teams from the backend, if needed
   useEffect(() => {
-    if (!identifier) {
-      return;
-    }
-
     // Don't fetch the list again if we already have it.
-    if (directorState.teams && directorState.teams.length > 0) {
+    const needToFetch = directorState.teams && directorState.tournament &&
+      directorState.teams.length === 0 && directorState.tournament.team_count > 0;
+    if (!needToFetch) {
       devConsoleLog("Not re-fetching the list of teams.");
       return;
     }
 
-    const uri = `/director/tournaments/${identifier}/teams`;
+    const uri = `/director/tournaments/${directorState.tournament.identifier}/teams`;
     const requestConfig = {
       method: 'get',
     }
@@ -73,7 +69,7 @@ const Page = () => {
       onSuccess: onFetchTeamsSuccess,
       onFailure: onFetchTeamsFailure,
     });
-  }, [identifier, router, context]);
+  });
 
   // Do we have a success query parameter?
   useEffect(() => {
@@ -99,7 +95,7 @@ const Page = () => {
   }
 
   const newTeamSubmitted = (teamName) => {
-    const uri = `/director/tournaments/${identifier}/teams`;
+    const uri = `/director/tournaments/${directorState.tournament.identifier}/teams`;
     const requestConfig = {
       method: 'post',
       headers: {
@@ -125,7 +121,7 @@ const Page = () => {
   let error = '';
   if (successMessage) {
     success = (
-      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
+      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-0 mb-3'} role={'alert'}>
         <i className={'bi-check-circle-fill pe-2'} aria-hidden={true} />
         <div className={'me-auto'}>
           <strong>
@@ -139,7 +135,7 @@ const Page = () => {
   }
   if (errorMessage) {
     error = (
-      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
+      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-0 mb-3'} role={'alert'}>
         <i className={'bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
         <div className={'me-auto'}>
           <strong>
@@ -165,7 +161,7 @@ const Page = () => {
 
   const ladder = [{text: 'Tournaments', path: '/director'}];
   if (directorState.tournament) {
-    ladder.push({text: directorState.tournament.name, path: `/director/tournaments/${identifier}`});
+    ladder.push({text: directorState.tournament.name, path: `/director/tournaments/${directorState.tournament.identifier}`});
   }
 
   if (loading) {

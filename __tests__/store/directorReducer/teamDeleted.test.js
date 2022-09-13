@@ -17,6 +17,7 @@ describe('action type: team deleted', () => {
   const previousState = {
     tournament: {
       identifier: 'abcdefg',
+      team_count: 42,
     },
     teams: [
       team1,
@@ -31,7 +32,10 @@ describe('action type: team deleted', () => {
   }
 
   const expected = {
-    ...previousState,
+    tournament: {
+      ...previousState.tournament,
+      team_count: previousState.tournament.team_count - 1,
+    },
     teams: [
       team1,
       team3,

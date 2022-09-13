@@ -6,6 +6,7 @@ describe('action type: team added', () => {
     tournament: {
       identifier: 'abcdefg',
       purchasable_items: [],
+      team_count: 17,
     },
     teams: [],
   };
@@ -21,7 +22,10 @@ describe('action type: team added', () => {
   }
 
   const expected = {
-    ...previousState,
+    tournament: {
+      ...previousState.tournament,
+      team_count: previousState.tournament.team_count + 1,
+    },
     teams: [newTeam],
   };
 

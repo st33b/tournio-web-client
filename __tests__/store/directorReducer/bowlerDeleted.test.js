@@ -24,6 +24,7 @@ describe('action type: bowler deleted', () => {
     tournament: {
       identifier: 'abcdefg',
       purchasable_items: [],
+      bowler_count: 29,
     },
     bowlers: [
       bowler1,
@@ -38,7 +39,10 @@ describe('action type: bowler deleted', () => {
   }
 
   const expected = {
-    ...previousState,
+    tournament: {
+      ...previousState.tournament,
+      bowler_count: previousState.tournament.bowler_count - 1,
+    },
     bowlers: [
       bowler1,
       bowler3,

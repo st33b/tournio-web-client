@@ -209,6 +209,10 @@ export const directorReducer = (state, action) => {
     case actionTypes.BOWLER_DELETED:
       identifier = action.bowler.identifier;
       return updateObject(state, {
+        tournament: {
+          ...state.tournament,
+          bowler_count: state.tournament.bowler_count - 1,
+        },
         bowlers: state.bowlers.filter(b => b.identifier !== identifier),
       });
     case actionTypes.BOWLER_UPDATED:
@@ -229,6 +233,10 @@ export const directorReducer = (state, action) => {
       });
     case actionTypes.TEAM_ADDED:
       return updateObject(state, {
+        tournament: {
+          ...state.tournament,
+          team_count: state.tournament.team_count + 1,
+        },
         teams: state.teams.concat({...action.team}),
       });
     case actionTypes.TEAM_UPDATED:
@@ -242,6 +250,10 @@ export const directorReducer = (state, action) => {
     case actionTypes.TEAM_DELETED:
       identifier = action.team.identifier;
       return updateObject(state, {
+        tournament: {
+          ...state.tournament,
+          team_count: state.tournament.team_count - 1,
+        },
         teams: state.teams.filter(u => u.identifier !== identifier),
       });
     case actionTypes.TEAM_LIST_RESET:

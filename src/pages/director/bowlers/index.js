@@ -19,26 +19,21 @@ const Page = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  let identifier;
-  if (context && directorState.tournament) {
-    identifier = directorState.tournament.identifier;
-  }
-
-  // Ensure we're logged in, with appropriate permission
+  // Make sure we're logged in
   useEffect(() => {
-    if (!identifier) {
-      return;
-    }
-    if (!context || !context.user || !directorState) {
-      return;
-    }
     if (!context.isLoggedIn) {
       router.push('/director/login');
     }
-    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === identifier)) {
+  });
+
+  // This effect ensures we're logged in with appropriate permissions
+  useEffect(() => {
+    const currentTournamentIdentifier = directorState.tournament.identifier;
+
+    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
       router.push('/director');
     }
-  }, [identifier, router, context]);
+  });
 
   const onFetchBowlersSuccess = (data) => {
     dispatch(bowlerListRetrieved(data));
@@ -52,16 +47,13 @@ const Page = () => {
 
   // Fetch the bowlers from the backend
   useEffect(() => {
-    if (!identifier) {
-      return;
-    }
     // Don't fetch the list again if we already have it.
     if (directorState.bowlers && directorState.bowlers.length > 0) {
       devConsoleLog("Not re-fetching the list of bowlers.");
       return;
     }
 
-    const uri = `/director/tournaments/${identifier}/bowlers`;
+    const uri = `/director/tournaments/${directorState.tournament.identifier}/bowlers`;
     const requestConfig = {
       method: 'get',
     }
@@ -74,7 +66,7 @@ const Page = () => {
       onSuccess: onFetchBowlersSuccess,
       onFailure: onFetchBowlersFailure,
     })
-  }, [identifier, router, context]);
+  });
 
   // Do we have a success query parameter?
   useEffect(() => {
@@ -123,7 +115,7 @@ const Page = () => {
 
   const ladder = [{text: 'Tournaments', path: '/director'}];
   if (directorState.tournament) {
-    ladder.push({text: directorState.tournament.name, path: `/director/tournaments/${identifier}`});
+    ladder.push({text: directorState.tournament.name, path: `/director/tournaments/${directorState.tournament.identifier}`});
   }
 
   if (loading) {
