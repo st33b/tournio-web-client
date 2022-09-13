@@ -11,6 +11,15 @@ const DirectorContext = createContext({
 });
 
 export const DirectorContextProvider = ({children}) => {
+  const [storedDirectorState, storeDirectorState] = useStorage('director', directorReducerInit());
+  const [directorState, dispatch] = useReducer(directorReducer, storedDirectorState, directorReducerInit);
+
+  useEffect(() => {
+    storeDirectorState(directorState);
+  }, [directorState]);
+
+  ////////////////////////////////////////
+
   let tokenData;
   let userData;
 
@@ -44,12 +53,12 @@ export const DirectorContextProvider = ({children}) => {
 
   //////////////////////////
 
-  const [storedDirectorState, storeDirectorState] = useStorage('director', directorReducerInit());
-  const [directorState, dispatch] = useReducer(directorReducer, storedDirectorState, directorReducerInit);
-
-  useEffect(() => {
-    storeDirectorState(directorState);
-  }, [directorState]);
+  // const [storedDirectorState, storeDirectorState] = useStorage('director', directorReducerInit());
+  // const [directorState, dispatch] = useReducer(directorReducer, storedDirectorState, directorReducerInit);
+  //
+  // useEffect(() => {
+  //   storeDirectorState(directorState);
+  // }, [directorState]);
 
   const contextValue = {
     token: token,

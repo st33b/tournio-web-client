@@ -261,3 +261,16 @@ export const freeEntryAdded = (freeEntry) => {
     freeEntry: freeEntry,
   }
 }
+
+export const loggedIn = (user) => {
+  return {
+    type: actionTypes.LOGGED_IN,
+    user: user,
+  }
+}
+
+export const loggedOut = () => {
+  return {
+    type: actionTypes.LOGGED_OUT,
+  }
+}

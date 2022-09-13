@@ -8,7 +8,7 @@ const initialState = {
   bowlers: [],
   teams: [],
   freeEntries: [],
-  // user -- logged-in user
+  user: null,
 }
 
 export const directorReducerInit = (initial = initialState) => initial;
@@ -292,7 +292,14 @@ export const directorReducer = (state, action) => {
         },
         freeEntries: state.freeEntries.filter(u => u.identifier !== identifier),
       });
-
+    case actionTypes.LOGGED_IN:
+      return updateObject(state, {
+        user: {...action.user},
+      });
+    case actionTypes.LOGGED_OUT:
+      return updateObject(state, {
+        user: null,
+      });
     default:
       return state;
   }
