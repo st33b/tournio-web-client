@@ -200,3 +200,36 @@ export const bowlerListReset = () => {
   }
 }
 
+export const teamListRetrieved = (teams) => {
+  return {
+    type: actionTypes.TEAM_LIST_RETRIEVED,
+    teams: teams,
+  }
+}
+
+export const teamUpdated = (team) => {
+  return {
+    type: actionTypes.TEAM_UPDATED,
+    team: team,
+  }
+}
+
+export const teamDeleted = (team) => {
+  return {
+    type: actionTypes.TEAM_DELETED,
+    team: team,
+  }
+}
+
+export const teamListReset = () => {
+  return {
+    type: actionTypes.TEAM_LIST_RESET,
+  }
+}
+
+export const teamAdded = (team) => {
+  return {
+    type: actionTypes.TEAM_ADDED,
+    team: team,
+  }
+}

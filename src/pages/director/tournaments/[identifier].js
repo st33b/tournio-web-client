@@ -7,7 +7,7 @@ import VisibleTournament from "../../../components/Director/VisibleTournament/Vi
 import {devConsoleLog, directorApiRequest, useClientReady} from "../../../utils";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import {
-  bowlerListReset, bowlerListRetrieved,
+  bowlerListReset, bowlerListRetrieved, teamListRetrieved,
   tournamentDetailsRetrieved,
   tournamentStateChanged
 } from "../../../store/actions/directorActions";
@@ -63,6 +63,22 @@ const Tournament = () => {
     });
   }
 
+  const retrieveTeams = () => {
+    devConsoleLog('retrieving list of teams for the tournament');
+    const uri = `/director/tournaments/${identifier}/teams`;
+    const requestConfig = {
+      method: 'get',
+    }
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      router: router,
+      onSuccess: (data) => dispatch(teamListRetrieved(data)),
+      onFailure: (_) => setErrorMessage('Failed to retrieve teams.'),
+    });
+  }
+
   // Retrieve the tournament details if we need to
   useEffect(() => {
     if (!directorState) {
@@ -91,6 +107,7 @@ const Tournament = () => {
         dispatch(bowlerListReset());
         dispatch(tournamentDetailsRetrieved(data));
         retrieveBowlers();
+        retrieveTeams();
       },
       onFailure: (data) => {
         if (data.error === 'not found') {

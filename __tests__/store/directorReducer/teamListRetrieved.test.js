@@ -1,15 +1,14 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
 
-describe ('action type: bowler list retrieved', () => {
+describe ('action type: team list retrieved', () => {
   const previousState = {
     tournament: {
       identifier: 'go-away',
     },
-    bowlers: [],
   }
 
-  const bowlers = [
+  const teams = [
     {
       identifier: 'benny',
     },
@@ -25,12 +24,12 @@ describe ('action type: bowler list retrieved', () => {
   ];
 
   const action = {
-    type: actionTypes.BOWLER_LIST_RETRIEVED,
-    bowlers: bowlers,
+    type: actionTypes.TEAM_LIST_RETRIEVED,
+    teams: teams,
   }
   const expected = {
     ...previousState,
-    bowlers: bowlers,
+    teams: teams,
   }
 
   it ('returns the expected object', () => {

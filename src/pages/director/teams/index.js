@@ -7,40 +7,39 @@ import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLa
 import TeamListing from "../../../components/Director/TeamListing/TeamListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import NewTeamForm from "../../../components/Director/NewTeamForm/NewTeamForm";
-import {directorApiRequest} from "../../../utils";
+import {devConsoleLog, directorApiRequest, useClientReady} from "../../../utils";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import {teamAdded, teamListRetrieved} from "../../../store/actions/directorActions";
 
 const Page = () => {
   const router = useRouter();
-  const directorContext = useDirectorContext();
+  const context = useDirectorContext();
+  const directorState = context.directorState;
+  const dispatch = context.dispatch;
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [teams, setTeams] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   let identifier;
-  if (directorContext && directorContext.tournament) {
-    identifier = directorContext.tournament.identifier;
+  if (context && directorState.tournament) {
+    identifier = directorState.tournament.identifier;
   }
 
   // This effect ensures we're logged in with appropriate permissions
   useEffect(() => {
-    if (!identifier) {
+    if (!identifier || !context) {
       return;
     }
-    if (!directorContext) {
-      return;
-    }
-    if (!directorContext.isLoggedIn) {
+    if (!context.isLoggedIn) {
       router.push('/director/login');
     }
-    if (directorContext.user.role !== 'superuser' && !directorContext.user.tournaments.some(t => t.identifier === identifier)) {
+    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === identifier)) {
       router.push('/director');
     }
-  }, [identifier, router, directorContext]);
+  }, [identifier, router, context]);
 
   const onFetchTeamsSuccess = (data) => {
-    setTeams(data);
+    dispatch(teamListRetrieved(data));
     setLoading(false);
   }
 
@@ -49,9 +48,15 @@ const Page = () => {
     setLoading(false);
   }
 
-  // This effect fetches the teams from the backend
+  // This effect fetches the teams from the backend, if needed
   useEffect(() => {
     if (!identifier) {
+      return;
+    }
+
+    // Don't fetch the list again if we already have it.
+    if (directorState.teams && directorState.teams.length > 0) {
+      devConsoleLog("Not re-fetching the list of teams.");
       return;
     }
 
@@ -59,15 +64,16 @@ const Page = () => {
     const requestConfig = {
       method: 'get',
     }
+    setLoading(true);
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
       onSuccess: onFetchTeamsSuccess,
       onFailure: onFetchTeamsFailure,
     });
-  }, [identifier, router, directorContext]);
+  }, [identifier, router, context]);
 
   // Do we have a success query parameter?
   useEffect(() => {
@@ -78,11 +84,14 @@ const Page = () => {
     }
   }, [router]);
 
+  const ready = useClientReady();
+  if (!ready) {
+    return '';
+  }
+
   const newTeamSubmitSuccess = (data) => {
     setSuccessMessage('New team created!');
-    const newData = teams.splice(0);
-    newData.push(data);
-    setTeams(newData);
+    dispatch(teamAdded(data));
   }
 
   const newTeamSubmitFailure = (data) => {
@@ -105,7 +114,7 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
       onSuccess: newTeamSubmitSuccess,
       onFailure: newTeamSubmitFailure,
@@ -155,8 +164,8 @@ const Page = () => {
   );
 
   const ladder = [{text: 'Tournaments', path: '/director'}];
-  if (directorContext.tournament) {
-    ladder.push({text: directorContext.tournament.name, path: `/director/tournaments/${identifier}`});
+  if (directorState.tournament) {
+    ladder.push({text: directorState.tournament.name, path: `/director/tournaments/${identifier}`});
   }
 
   if (loading) {
@@ -170,7 +179,7 @@ const Page = () => {
         <div className={'order-2 order-md-1 col'}>
           {success}
           {error}
-          <TeamListing teams={teams} />
+          <TeamListing teams={directorState.teams} />
         </div>
         <div className={'order-1 order-md-2 col-12 col-md-4'}>
           {newTeam}

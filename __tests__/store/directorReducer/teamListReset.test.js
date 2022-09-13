@@ -3,12 +3,12 @@ import {directorReducer} from "../../../src/store/directorReducer";
 
 import {List} from "immutable";
 
-describe ('action type: bowler list reset', () => {
+describe ('action type: team list reset', () => {
   const previousState = {
     tournament: {
       identifier: 'smores',
     },
-    bowlers: [
+    teams: [
       {
         identifier: 'chocolate',
       },
@@ -29,11 +29,11 @@ describe ('action type: bowler list reset', () => {
     ]
   }
   const action = {
-    type: actionTypes.BOWLER_LIST_RESET,
+    type: actionTypes.TEAM_LIST_RESET,
   }
   const expected = {
     ...previousState,
-    bowlers: [],
+    teams: [],
   }
 
   it ('returns the expected object', () => {

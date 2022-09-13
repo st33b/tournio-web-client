@@ -12,6 +12,7 @@ describe ('action type: reset', () => {
     users: [],
     tournaments: [],
     bowlers: [],
+    teams: [],
   }
 
   it ('returns the expected object', () => {

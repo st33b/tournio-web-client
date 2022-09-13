@@ -129,11 +129,15 @@ const BowlerListing = ({bowlers}) => {
     {
       Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
       accessor: 'team_name',
-      Cell: ({row, cell}) => (
-        <a href={row.original.team_identifier === 'n/a' ? undefined : `/director/teams/${row.original.team_identifier}`}>
-          {cell.value}
-        </a>
-      ),
+      Cell: ({row, cell}) => {
+        return row.original.team === null ? 'n/a' : (
+          <a
+            href={`/director/teams/${row.original.team.identifier}`}>
+            {row.original.team.name}
+          </a>
+          )
+      },
+      disableSortBy: true,
       filter: equals,
     },
     // {

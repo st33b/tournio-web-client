@@ -6,6 +6,7 @@ const initialState = {
   users: [],
   tournaments: [],
   bowlers: [],
+  teams: [],
   // user -- logged-in user
 }
 
@@ -221,6 +222,31 @@ export const directorReducer = (state, action) => {
     case actionTypes.BOWLER_LIST_RESET:
       return updateObject(state, {
         bowlers: [],
+      });
+    case actionTypes.TEAM_LIST_RETRIEVED:
+      return updateObject(state, {
+        teams: [...action.teams],
+      });
+    case actionTypes.TEAM_ADDED:
+      return updateObject(state, {
+        teams: state.teams.concat({...action.team}),
+      });
+    case actionTypes.TEAM_UPDATED:
+      identifier = action.team.identifier;
+      index = state.teams.findIndex(t => t.identifier === identifier);
+      const newTeams = [...state.teams];
+      newTeams[index] = {...action.team};
+      return updateObject(state, {
+        teams: newTeams,
+      });
+    case actionTypes.TEAM_DELETED:
+      identifier = action.team.identifier;
+      return updateObject(state, {
+        teams: state.teams.filter(u => u.identifier !== identifier),
+      });
+    case actionTypes.TEAM_LIST_RESET:
+      return updateObject(state, {
+        teams: [],
       });
     default:
       return state;

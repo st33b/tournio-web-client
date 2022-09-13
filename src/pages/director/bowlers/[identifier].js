@@ -128,26 +128,15 @@ const Page = () => {
     setErrorMessage(data.error);
   }
 
-  // This effect retrieves the list of bowlers without doubles partners
-  // TODO -- this can become a filtered version of the bowler list we keep in context
+  // This effect sets the list of bowlers without doubles partners
   useEffect(() => {
-    if (!context || !directorState.tournament || !context.token) {
+    if (!context || !directorState.bowlers) {
       return;
     }
 
-    const uri = `/director/tournaments/${directorState.tournament.identifier}/bowlers?unpartnered=true`;
-    const requestConfig = {
-      method: 'get',
-    }
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      router: router,
-      onSuccess: fetchBowlersSuccess,
-      onFailure: fetchBowlersFailure,
-    });
-  }, [context, router]);
+    const unpartnered = directorState.bowlers.filter(b => b.doubles_partner === null)
+    setUnpartneredBowlers(unpartnered);
+  }, [context, directorState.bowlers]);
 
   const fetchFreeEntriesSuccess = (data) => {
     setAvailableFreeEntries(data);
@@ -291,6 +280,7 @@ const Page = () => {
   const moveBowlerSuccess = (data) => {
     setLoading(false);
     setBowler(data);
+    dispatch(bowlerUpdated(data));
   }
   const moveBowlerFailure = (data) => {
     setLoading(false);
@@ -365,6 +355,7 @@ const Page = () => {
   const newPartnerSuccess = (data) => {
     setLoading(false);
     setBowler(data);
+    dispatch(bowlerUpdated(data));
   }
   const newPartnerFailure = (data) => {
     setLoading(false);
