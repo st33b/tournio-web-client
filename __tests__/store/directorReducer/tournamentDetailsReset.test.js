@@ -28,6 +28,14 @@ describe ('action type: tournament details reset', () => {
         identifier: 'anni-frid',
       },
     ],
+    teams: [
+      {
+        identifier: 'group 1',
+      },
+      {
+        identifier: 'group 2',
+      },
+    ],
   }
 
   const action = {
@@ -37,6 +45,7 @@ describe ('action type: tournament details reset', () => {
     ...previousState,
     tournament: null,
     bowlers: [],
+    teams: [],
   }
 
   it ('returns the expected object', () => {

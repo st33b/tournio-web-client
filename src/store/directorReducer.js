@@ -24,6 +24,7 @@ export const directorReducer = (state, action) => {
       return updateObject(state, {
         tournament: null,
         bowlers: [],
+        teams: [],
       });
     case actionTypes.TOURNAMENT_LIST_RESET:
       return updateObject(state, {
