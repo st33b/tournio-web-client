@@ -19,7 +19,7 @@ export const DirectorContextProvider = ({children}) => {
     userData = JSON.parse(localStorage.getItem('currentUser'));
   }
 
-  let initialToken, initialUser, initialTournament;
+  let initialToken, initialUser;
   if (tokenData) {
     initialToken = tokenData;
     initialUser = userData;
