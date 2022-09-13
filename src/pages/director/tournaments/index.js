@@ -14,6 +14,7 @@ const Page = () => {
   const directorState = context.directorState;
   const dispatch = context.dispatch;
 
+  // Make sure we're logged in
   useEffect(() => {
     if (!context.isLoggedIn) {
       router.push('/director/login');

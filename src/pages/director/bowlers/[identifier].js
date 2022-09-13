@@ -11,13 +11,12 @@ import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage
 import ManualPayment from "../../../components/Director/BowlerDetails/ManualPayment";
 import OfficeUseOnly from "../../../components/Director/BowlerDetails/OfficeUseOnly";
 import ResendEmailButtons from "../../../components/Director/BowlerDetails/ResendEmailButtons";
-import {bowlerDeleted, bowlerUpdated} from "../../../store/actions/directorActions";
+import {bowlerDeleted, bowlerUpdated, freeEntryUpdated} from "../../../store/actions/directorActions";
 
 const Page = () => {
   const router = useRouter();
   const context = useDirectorContext();
-  const directorState = context.directorState;
-  const dispatch = context.dispatch;
+  const {directorState, dispatch} = context;
 
   let {identifier} = router.query;
 
@@ -28,7 +27,7 @@ const Page = () => {
     partnerIdentifier: '',
   }
   const linkFreeEntryInitialState = {
-    id: null,
+    identifier: null,
     confirm: false,
   }
 
@@ -42,19 +41,21 @@ const Page = () => {
   const [availableFreeEntries, setAvailableFreeEntries] = useState([]);
   const [unpartneredBowlers, setUnpartneredBowlers] = useState([]);
 
-  // This effect ensures that we're logged in and have permission to administer the current tournament
+  // Make sure we're logged in
   useEffect(() => {
-    if (!context || !directorState.tournament || !context.user) {
-      return;
-    }
     if (!context.isLoggedIn) {
       router.push('/director/login');
     }
-    // if the logged-in user is a director but not for this tournament...
-    if (context.user.role === 'director' && !context.user.tournaments.some(t => t.identifier === directorState.tournament.identifier)) {
+  });
+
+  // This effect ensures we're logged in with appropriate permissions
+  useEffect(() => {
+    const currentTournamentIdentifier = directorState.tournament.identifier;
+
+    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
       router.push('/director');
     }
-  }, [context, router]);
+  });
 
   const fetchBowlerSuccess = (data) => {
     setLoading(false);
@@ -145,26 +146,14 @@ const Page = () => {
     setErrorMessage(data.error);
   }
 
-  // This effect pulls the list of unassigned free entries from the backend
-  // TODO -- this can become a filtered verson of the free entries list we keep in context
+  // Limit the list of available free entries to those with no bowler attached
   useEffect(() => {
-    if (!context || !directorState.tournament || !context.token || !bowler) {
+    if (!directorState.freeEntries) {
       return;
     }
-
-    const uri = `/director/tournaments/${directorState.tournament.identifier}/free_entries?unassigned=true`;
-    const requestConfig = {
-      method: 'get',
-    }
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      router: router,
-      onSuccess: fetchFreeEntriesSuccess,
-      onFailure: fetchFreeEntriesFailure,
-    });
-  }, [bowler, context, router]);
+    const availableFEs = directorState.freeEntries.filter(({bowler}) => bowler === null);
+    setAvailableFreeEntries(availableFEs);
+  }, [directorState.freeEntries]);
 
   const ready = useClientReady();
   if (!ready) {
@@ -426,7 +415,7 @@ const Page = () => {
 
   const linkFreeEntryOptionChanged = (event) => {
     const newFormData = {...linkFreeEntryFormData}
-    newFormData.id = event.target.value;
+    newFormData.identifier = event.target.value;
     setLinkFreeEntryFormData(newFormData);
   }
 
@@ -437,6 +426,7 @@ const Page = () => {
   }
 
   const linkFreeEntrySuccess = (data) => {
+    dispatch(freeEntryUpdated(data));
     router.reload();
   }
   const linkFreeEntryFailure = (data) => {
@@ -446,7 +436,7 @@ const Page = () => {
   const linkFreeEntrySubmitHandler = (event) => {
     event.preventDefault();
 
-    const uri = `/director/free_entries/${linkFreeEntryFormData.id}`;
+    const uri = `/director/free_entries/${linkFreeEntryFormData.identifier}`;
     const requestConfig = {
       method: 'patch',
       headers: {
@@ -478,7 +468,7 @@ const Page = () => {
           <form onSubmit={linkFreeEntrySubmitHandler}>
             <select className={'form-select'} name={'destinationTeam'} onChange={linkFreeEntryOptionChanged}>
               <option value={''}>Choose a free entry code</option>
-              {availableFreeEntries.map(fe => <option key={fe.id} value={fe.id}>{fe.unique_code}</option>)}
+              {availableFreeEntries.map(fe => <option key={fe.identifier} value={fe.identifier}>{fe.unique_code}</option>)}
             </select>
             <div className={'form-check pt-3'}>
               <input className={'form-check-input'}
@@ -494,7 +484,7 @@ const Page = () => {
               <Button variant={'primary'}
                       size={'sm'}
                       className={'mt-3'}
-                      disabled={linkFreeEntryFormData.id === null}
+                      disabled={linkFreeEntryFormData.identifier === null}
                       type={'submit'}>
                 Link Free Entry
               </Button>

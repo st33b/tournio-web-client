@@ -7,6 +7,7 @@ const initialState = {
   tournaments: [],
   bowlers: [],
   teams: [],
+  freeEntries: [],
   // user -- logged-in user
 }
 
@@ -25,6 +26,7 @@ export const directorReducer = (state, action) => {
         tournament: null,
         bowlers: [],
         teams: [],
+        freeEntries: [],
       });
     case actionTypes.TOURNAMENT_LIST_RESET:
       return updateObject(state, {
@@ -261,6 +263,36 @@ export const directorReducer = (state, action) => {
       return updateObject(state, {
         teams: [],
       });
+    case actionTypes.FREE_ENTRY_LIST_RETRIEVED:
+      return updateObject(state, {
+        freeEntries: [...action.freeEntries],
+      });
+    case actionTypes.FREE_ENTRY_ADDED:
+      return updateObject(state, {
+        tournament: {
+          ...state.tournament,
+          free_entry_count: state.tournament.free_entry_count + 1,
+        },
+        freeEntries: state.freeEntries.concat({...action.freeEntry}),
+      });
+    case actionTypes.FREE_ENTRY_UPDATED:
+      identifier = action.freeEntry.identifier;
+      index = state.freeEntries.findIndex(t => t.identifier === identifier);
+      const newFreeEntries = [...state.freeEntries];
+      newFreeEntries[index] = {...action.freeEntry};
+      return updateObject(state, {
+        freeEntries: newFreeEntries,
+      });
+    case actionTypes.FREE_ENTRY_DELETED:
+      identifier = action.freeEntry.identifier;
+      return updateObject(state, {
+        tournament: {
+          ...state.tournament,
+          free_entry_count: state.tournament.free_entry_count - 1,
+        },
+        freeEntries: state.freeEntries.filter(u => u.identifier !== identifier),
+      });
+
     default:
       return state;
   }

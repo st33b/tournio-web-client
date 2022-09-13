@@ -233,3 +233,31 @@ export const teamAdded = (team) => {
     team: team,
   }
 }
+
+export const freeEntryListRetrieved = (freeEntries) => {
+  return {
+    type: actionTypes.FREE_ENTRY_LIST_RETRIEVED,
+    freeEntries: freeEntries,
+  }
+}
+
+export const freeEntryUpdated = (freeEntry) => {
+  return {
+    type: actionTypes.FREE_ENTRY_UPDATED,
+    freeEntry: freeEntry,
+  }
+}
+
+export const freeEntryDeleted = (freeEntry) => {
+  return {
+    type: actionTypes.FREE_ENTRY_DELETED,
+    freeEntry: freeEntry,
+  }
+}
+
+export const freeEntryAdded = (freeEntry) => {
+  return {
+    type: actionTypes.FREE_ENTRY_ADDED,
+    freeEntry: freeEntry,
+  }
+}

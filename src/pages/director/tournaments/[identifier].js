@@ -7,7 +7,7 @@ import VisibleTournament from "../../../components/Director/VisibleTournament/Vi
 import {devConsoleLog, directorApiRequest, useClientReady} from "../../../utils";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import {
-  bowlerListReset, bowlerListRetrieved, teamListRetrieved,
+  bowlerListReset, bowlerListRetrieved, freeEntryListRetrieved, teamListRetrieved,
   tournamentDetailsRetrieved,
   tournamentStateChanged
 } from "../../../store/actions/directorActions";
@@ -21,6 +21,22 @@ const Tournament = () => {
   const { identifier, stripe } = router.query;
 
   const [errorMessage, setErrorMessage] = useState(null);
+
+  // Make sure we're logged in
+  useEffect(() => {
+    if (!context.isLoggedIn) {
+      router.push('/director/login');
+    }
+  });
+
+  // This effect ensures we're logged in with appropriate permissions
+  useEffect(() => {
+    const currentTournamentIdentifier = directorState.tournament.identifier;
+
+    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
+      router.push('/director');
+    }
+  });
 
   const stateChangeInitiated = (stateChangeAction) => {
     const uri = `/director/tournaments/${identifier}/state_change`;
@@ -79,6 +95,22 @@ const Tournament = () => {
     });
   }
 
+  const retrieveFreeEntries = () => {
+    devConsoleLog('retrieving list of free entries for the tournament');
+    const uri = `/director/tournaments/${identifier}/free_entries`;
+    const requestConfig = {
+      method: 'get',
+    }
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      router: router,
+      onSuccess: (data) => dispatch(freeEntryListRetrieved(data)),
+      onFailure: (_) => setErrorMessage('Failed to retrieve free entries'),
+    });
+  }
+
   // Retrieve the tournament details if we need to
   useEffect(() => {
     if (!directorState) {
@@ -108,6 +140,7 @@ const Tournament = () => {
         dispatch(tournamentDetailsRetrieved(data));
         retrieveBowlers();
         retrieveTeams();
+        retrieveFreeEntries();
       },
       onFailure: (data) => {
         if (data.error === 'not found') {

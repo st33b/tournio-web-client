@@ -48,7 +48,9 @@ const Page = () => {
   // Fetch the bowlers from the backend
   useEffect(() => {
     // Don't fetch the list again if we already have it.
-    if (directorState.bowlers && directorState.bowlers.length > 0) {
+    const needToFetch = directorState.bowlers && directorState.tournament &&
+      directorState.bowlers.length === 0 && directorState.tournament.bowler_count > 0;
+    if (!needToFetch) {
       devConsoleLog("Not re-fetching the list of bowlers.");
       return;
     }
@@ -128,15 +130,15 @@ const Page = () => {
   }
 
   return (
-    <div>
+    <>
       <Breadcrumbs ladder={ladder} activeText={'Bowlers'}/>
-      <div className={'row'}>
-        <div className={'col-12'}>
+      <Row>
+        <Col>
           {success}
           {error}
           <BowlerListing bowlers={directorState.bowlers} />
-        </div>
-      </div>
+        </Col>
+      </Row>
       <Row>
         <Col className={'text-center'}>
           <a href={'#'}
@@ -147,7 +149,7 @@ const Page = () => {
           </a>
         </Col>
       </Row>
-    </div>
+    </>
   );
 }
 

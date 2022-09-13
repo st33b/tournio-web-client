@@ -95,13 +95,6 @@ const IgboMemberCell = ({
 }
 
 const BowlerListing = ({bowlers}) => {
-  const directorContext = useDirectorContext();
-
-  let identifier;
-  if (directorContext && directorContext.tournament) {
-    identifier = directorContext.tournament.identifier;
-  }
-
   const columns = useMemo(() => [
     {
       id: 'name',
@@ -189,12 +182,12 @@ const BowlerListing = ({bowlers}) => {
       filter: doesNotEqual,
       Cell: ({value}) => `$${value}`,
     },
-  ], [identifier]);
+  ], []);
 
-  const [data, setData] = useState(List(bowlers));
-  useEffect(() => {
-    setData(List(bowlers));
-  }, [bowlers]);
+  let data = [];
+  if (bowlers) {
+    data = bowlers;
+  }
 
   const updateTheData = (rowIndex, columnId, isChecked) => {
     const oldRow = data.get(rowIndex);
@@ -289,7 +282,7 @@ const BowlerListing = ({bowlers}) => {
 
   return (
     <div className={classes.BowlerListing}>
-      {!!data.size && <BowlerFilterForm onFilterApplication={filterThatData} onFilterReset={resetThoseFilters}/>}
+      {data.length > 0 && <BowlerFilterForm onFilterApplication={filterThatData} onFilterReset={resetThoseFilters}/>}
       {list}
     </div>
   );

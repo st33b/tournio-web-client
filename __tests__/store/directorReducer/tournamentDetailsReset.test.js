@@ -36,6 +36,14 @@ describe ('action type: tournament details reset', () => {
         identifier: 'group 2',
       },
     ],
+    freeEntries: [
+      {
+        identifier: 'free_for_all',
+      },
+      {
+        identifier: 'free_for_many',
+      },
+    ],
   }
 
   const action = {
@@ -46,6 +54,7 @@ describe ('action type: tournament details reset', () => {
     tournament: null,
     bowlers: [],
     teams: [],
+    freeEntries: [],
   }
 
   it ('returns the expected object', () => {

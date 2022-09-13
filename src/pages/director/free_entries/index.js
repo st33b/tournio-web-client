@@ -2,45 +2,47 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Row, Col, Card} from "react-bootstrap";
 
-import {directorApiRequest} from "../../../utils";
+import {devConsoleLog, directorApiRequest, useClientReady} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import FreeEntryListing from "../../../components/Director/FreeEntryListing/FreeEntryListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import NewFreeEntryForm from "../../../components/Director/NewFreeEntryForm/NewFreeEntryForm";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import {
+  freeEntryAdded,
+  freeEntryDeleted,
+  freeEntryListRetrieved,
+  freeEntryUpdated
+} from "../../../store/actions/directorActions";
 
 const Page = () => {
   const router = useRouter();
-  const directorContext = useDirectorContext();
+  const context = useDirectorContext();
+  const {directorState, dispatch} = context;
+
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [freeEntries, setFreeEntries] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  let identifier;
-  if (directorContext && directorContext.tournament) {
-    identifier = directorContext.tournament.identifier;
-  }
-
-  // Ensure we're logged in, with appropriate permission
+  // Make sure we're logged in
   useEffect(() => {
-    if (!identifier) {
-      return;
-    }
-    if (!directorContext) {
-      return;
-    }
-    if (!directorContext.isLoggedIn) {
+    if (!context.isLoggedIn) {
       router.push('/director/login');
     }
-    if (directorContext.user.role !== 'superuser' && !directorContext.user.tournaments.some(t => t.identifier === identifier)) {
+  });
+
+  // Make sure we're logged in with appropriate permissions
+  useEffect(() => {
+    const currentTournamentIdentifier = directorState.tournament.identifier;
+
+    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
       router.push('/director');
     }
-  }, [identifier, router, directorContext]);
+  });
 
   const freeEntriesFetched = (data) => {
-    setFreeEntries(data);
+    dispatch(freeEntryListRetrieved(data));
     setLoading(false);
   }
 
@@ -51,23 +53,28 @@ const Page = () => {
 
   // Fetch the free entries from the backend
   useEffect(() => {
-    if (!identifier) {
+    // Don't fetch the list again if we already have it.
+    const needToFetch = directorState.freeEntries && directorState.tournament &&
+      directorState.freeEntries.length === 0 && directorState.tournament.free_entry_count > 0;
+    if (!needToFetch) {
+      devConsoleLog("Not re-fetching the list of teams.");
       return;
     }
 
-    const uri = `/director/tournaments/${identifier}/free_entries`;
+    const uri = `/director/tournaments/${directorState.tournament.identifier}/free_entries`;
     const requestConfig = {
       method: 'get',
     }
+    setLoading(true);
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
       onSuccess: freeEntriesFetched,
       onFailure: freeEntriesFetchFailed,
     });
-  }, [identifier, directorContext, router]);
+  });
 
   // Do we have a success query parameter?
   useEffect(() => {
@@ -77,6 +84,11 @@ const Page = () => {
       router.replace(router.pathname, null, { shallow: true });
     }
   }, [router]);
+
+  const ready = useClientReady();
+  if (!ready) {
+    return '';
+  }
 
   let success = '';
   let error = '';
@@ -111,76 +123,53 @@ const Page = () => {
     );
   }
 
-  const deleteFreeEntrySuccess = (data, i) => {
+  const deleteFreeEntrySuccess = (data, freeEntry) => {
     setSuccessMessage('Free entry deleted!');
-    const newFreeEntries = [...freeEntries];
-    newFreeEntries.splice(i, 1);
-    setFreeEntries(newFreeEntries);
-  }
-
-  const deleteFreeEntryFailure = (data) => {
-    setErrorMessage(data.error);
-    setLoading(false);
+    dispatch(freeEntryDeleted(freeEntry));
   }
 
   const onDelete = (freeEntry) => {
-    const index = freeEntries.indexOf(freeEntry);
-    const uri = `/director/free_entries/${freeEntry.id}`;
+    const uri = `/director/free_entries/${freeEntry.identifier}`;
     const requestConfig = {
       method: 'delete',
     }
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
-      onSuccess: (data) => deleteFreeEntrySuccess(data, index),
-      onFailure: deleteFreeEntryFailure,
+      onSuccess: (data) => deleteFreeEntrySuccess(data, freeEntry),
+      onFailure: (data) => setErrorMessage(data.error),
     });
   }
 
-  const confirmFreeEntrySuccess = (data, i) => {
+  const confirmFreeEntrySuccess = (data) => {
     setSuccessMessage('Free entry confirmed!');
-    const newFreeEntries = freeEntries.splice(0);
-    newFreeEntries[i].confirmed = true;
-    setFreeEntries(newFreeEntries);
-  }
-
-  const confirmFreeEntryFailure = (data) => {
-    setErrorMessage(data.error);
-    setLoading(false);
+    dispatch(freeEntryUpdated(data));
   }
 
   const onConfirm = (freeEntry) => {
-    const index = freeEntries.indexOf(freeEntry);
-    const uri = `/director/free_entries/${freeEntry.id}/confirm`;
+    const uri = `/director/free_entries/${freeEntry.identifier}/confirm`;
     const requestConfig = {
       method: 'post',
     }
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
-      onSuccess: (data) => confirmFreeEntrySuccess(data, index),
-      onFailure: confirmFreeEntryFailure,
+      onSuccess: (data) => confirmFreeEntrySuccess(data),
+      onFailure: (data) => setErrorMessage(data.error),
     });
   }
 
   const newFreeEntrySuccess = (data) => {
     setSuccessMessage('Free entry created!');
-    const newFreeEntries = [...freeEntries];
-    newFreeEntries.push(data);
-    setFreeEntries(newFreeEntries);
-  }
-
-  const newFreeEntryFailure = (data) => {
-    setErrorMessage(data.error);
-    setLoading(false);
+    dispatch(freeEntryAdded(data));
   }
 
   const newFreeEntrySubmitted = (freeEntryCode) => {
-    const uri = `/director/tournaments/${identifier}/free_entries`;
+    const uri = `/director/tournaments/${directorState.tournament.identifier}/free_entries`;
     const requestConfig = {
       method: 'post',
       headers: {
@@ -195,10 +184,10 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       router: router,
       onSuccess: newFreeEntrySuccess,
-      onFailure: newFreeEntryFailure,
+      onFailure: (data) => setErrorMessage(data.error),
     });
   }
 
@@ -216,9 +205,9 @@ const Page = () => {
   const ladder = [
     {text: 'Tournaments', path: '/director/tournaments'},
   ];
-  if (directorContext.tournament) {
-    ladder.push({text: directorContext.tournament.name, path: `/director/tournaments/${identifier}`});
-  }
+  // if (directorState.tournament) {
+    ladder.push({text: directorState.tournament.name, path: `/director/tournaments/${directorState.tournament.identifier}`});
+  // }
 
   if (loading) {
     return <LoadingMessage message={'Retrieving free entry data...'} />
@@ -231,7 +220,7 @@ const Page = () => {
         <Col md={8}>
           {success}
           {error}
-          <FreeEntryListing freeEntries={freeEntries}
+          <FreeEntryListing freeEntries={directorState.freeEntries}
                             confirmClicked={onConfirm}
                             deleteClicked={onDelete}
           />

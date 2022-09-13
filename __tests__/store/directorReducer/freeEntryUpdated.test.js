@@ -1,33 +1,37 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
 
-describe('action type: team added', () => {
+describe('action type: free entry updated', () => {
+  const existingFreeEntry = {
+    identifier: 'the-more-things-change',
+    code: 'abc',
+  }
+
   const previousState = {
     tournament: {
       identifier: 'abcdefg',
       purchasable_items: [],
-      team_count: 17,
     },
-    teams: [],
-  };
+    freeEntries: [
+      existingFreeEntry,
+    ],
+  }
 
-  const newTeam = {
-    identifier: 'something-you-can-buy',
-    name: 'Reyna Terror',
-  };
+  const changedFreeEntry = {
+    ...existingFreeEntry,
+    code: '123',
+  }
 
   const action = {
-    type: actionTypes.TEAM_ADDED,
-    team: newTeam,
+    type: actionTypes.FREE_ENTRY_UPDATED,
+    freeEntry: changedFreeEntry,
   }
 
   const expected = {
     ...previousState,
-    tournament: {
-      ...previousState.tournament,
-      team_count: previousState.tournament.team_count + 1,
-    },
-    teams: [newTeam],
+    freeEntries: [
+      changedFreeEntry,
+    ],
   };
 
   it('returns the expected object', () => {
