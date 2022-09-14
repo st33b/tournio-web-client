@@ -1,16 +1,14 @@
 import {useEffect, useState} from "react";
-import {useRouter} from "next/router";
 import {ListGroupItem} from "react-bootstrap";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../director";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './VisibleTournament.module.scss';
 
 const ConfigItemForm = ({item}) => {
   const context = useDirectorContext();
-  const router = useRouter();
 
   const initialState = {
     prevValue: '',
@@ -51,7 +49,6 @@ const ConfigItemForm = ({item}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: (_) => {},
       onFailure: (data) => { console.log("Failed to save config item.", data) },
     });

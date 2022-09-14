@@ -1,8 +1,7 @@
 import {useState} from "react";
-import {useRouter} from "next/router";
 import {Card, Placeholder} from "react-bootstrap";
 
-import {directorApiDownloadRequest} from "../../../utils";
+import {directorApiDownloadRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './VisibleTournament.module.scss';
@@ -10,7 +9,6 @@ import classes from './VisibleTournament.module.scss';
 const Downloads = ({tournament}) => {
   const context = useDirectorContext();
   const directorState = context.directorState;
-  const router = useRouter();
   const [downloadMessage, setDownloadMessage] = useState(null);
 
   if (!tournament) {
@@ -71,7 +69,6 @@ const Downloads = ({tournament}) => {
     directorApiDownloadRequest({
       uri: uri,
       context: context,
-      router: router,
       onSuccess: (data) => downloadSuccess(data, saveAsName),
       onFailure: (data) => downloadFailure(data),
     });
@@ -86,12 +83,14 @@ const Downloads = ({tournament}) => {
           </Card.Subtitle>
           <a className={'btn btn-sm btn-outline-primary mx-2'}
                      href={'#'}
+                     disabled={!directorState.bowlers || directorState.bowlers.length === 0}
                      onClick ={(event) => downloadClicked(event, `/director/tournaments/${tournament.identifier}/csv_download`, 'bowlers.csv')}
           >
             CSV
           </a>
           <a className={'btn btn-sm btn-outline-primary mx-2'}
                      href={'#'}
+                     disabled={!directorState.bowlers || directorState.bowlers.length === 0}
                      onClick ={(event) => downloadClicked(event, `/director/tournaments/${tournament.identifier}/igbots_download`, 'bowlers.xml')}
           >
             IGBO-TS

@@ -1,14 +1,13 @@
 import {useState} from "react";
+import Card from "react-bootstrap/Card";
+
+import {directorApiRequest} from "../../../director";
+import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './MassActions.module.scss';
-import {directorApiRequest} from "../../../utils";
-import Card from "react-bootstrap/Card";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {useRouter} from "next/router";
 
 const MassActions = ({tournament}) => {
   const context = useDirectorContext();
-  const router = useRouter();
 
   const [paymentReminderMessage, setPaymentReminderMessage] = useState(null);
 
@@ -71,7 +70,6 @@ const MassActions = ({tournament}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: paymentRemindersKickedOff,
       onFailure: paymentRemindersFailed,
     });

@@ -2,19 +2,20 @@ import {useRouter} from "next/router";
 import Card from "react-bootstrap/Card";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../utils";
-import {reset, tournamentDeleted, tournamentDetailsReset} from "../../../store/actions/directorActions";
+import {directorApiRequest} from "../../../director";
+import {tournamentDeleted, tournamentDetailsReset} from "../../../store/actions/directorActions";
+import {devConsoleLog} from "../../../utils";
 
 const DeleteTournament = ({tournament}) => {
   const context = useDirectorContext();
-  const dispatch = context.dispatch;
+  const {directorState, dispatch} = context;
   const router = useRouter();
 
-  if (!context || !tournament) {
+  if (!context || !tournament || !directorState.user) {
     return '';
   }
 
-  if (!context.user || context.user.role !== 'superuser') {
+  if (directorState.user.role !== 'superuser') {
     return '';
   }
 
@@ -40,7 +41,6 @@ const DeleteTournament = ({tournament}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: deleteSuccess,
       onFailure: deleteFailure,
     });

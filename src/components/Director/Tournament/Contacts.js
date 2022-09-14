@@ -3,7 +3,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 
 import ContactForm from "../ContactForm/ContactForm";
 
-import classes from './TournamentInPrep.module.scss';
+import classes from '../TournamentInPrep/TournamentInPrep.module.scss';
 
 const Contacts = ({tournament}) => {
   if (!tournament) {

@@ -5,7 +5,7 @@ import Configuration from "./Configuration";
 import AdditionalQuestions from "./AdditionalQuestions";
 import StatusAndCounts from "./StatusAndCounts";
 import PurchasableItems from "./PurchasableItems";
-import Contacts from "./Contacts";
+import Contacts from "../Tournament/Contacts";
 import StateChangeButton from "./StateChangeButton";
 import Shifts from "./Shifts";
 import StripeStatus from "./StripeStatus";
