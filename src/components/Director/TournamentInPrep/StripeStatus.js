@@ -3,10 +3,10 @@ import Card from 'react-bootstrap/Card';
 import {useDirectorContext} from "../../../store/DirectorContext";
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {useState, useEffect} from "react";
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../director";
+import {stripeAccountStatusChanged} from "../../../store/actions/directorActions";
 
 import classes from './StripeStatus.module.scss';
-import {stripeAccountStatusChange} from "../../../store/actions/directorActions";
 
 const StripeStatus = ({tournament, needStatus}) => {
   const context = useDirectorContext();
@@ -29,7 +29,7 @@ const StripeStatus = ({tournament, needStatus}) => {
     } else {
       console.log("We can accept payments, so we're good.");
       if (data.can_accept_payments !== previousStatus) {
-        dispatch(stripeAccountStatusChange(data))
+        dispatch(stripeAccountStatusChange(data));
       }
     }
   }
@@ -62,6 +62,7 @@ const StripeStatus = ({tournament, needStatus}) => {
     if (!tournament) {
       return;
     }
+
     setStripeAccount(tournament.stripe_account);
 
     if (!needStatus) {
@@ -71,9 +72,9 @@ const StripeStatus = ({tournament, needStatus}) => {
     if (tournament.stripe_account && !tournament.stripe_account.can_accept_payments) {
       initiateStatusRequest();
     }
-  }, [needStatus, tournament]);
+  }, [tournament]);
 
-  if (!context || !tournament) {
+  if (!tournament) {
     return '';
   }
 

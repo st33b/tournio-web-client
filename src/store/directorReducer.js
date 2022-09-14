@@ -47,11 +47,9 @@ export const directorReducer = (state, action) => {
         tournaments: state.tournaments.filter(t => t.identifier !== action.tournament.identifier),
       });
     case actionTypes.STRIPE_ACCOUNT_STATUS_CHANGED:
-      const stripeAccount = {...state.tournament.stripe_account};
-      stripeAccount.can_accept_payments = action.accountStatus.can_accept_payments;
       return updateObject(state, {
         tournament: updateObject(state.tournament, {
-          stripe_account: stripeAccount,
+          stripe_account: {...action.stripeAccount},
         }),
       });
     case actionTypes.TOURNAMENT_STATE_CHANGED:

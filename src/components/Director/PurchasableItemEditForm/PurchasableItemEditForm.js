@@ -11,7 +11,7 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 import Item from "../../Commerce/AvailableItems/Item/Item";
 
 import classes from './PurchasableItemEditForm.module.scss';
-import {purchasableItemDeleted} from "../../../store/actions/directorActions";
+import {purchasableItemDeleted, purchasableItemUpdated} from "../../../store/actions/directorActions";
 
 const PurchasableItemEditForm = ({tournament, item}) => {
   const context = useDirectorContext();
@@ -136,7 +136,10 @@ const PurchasableItemEditForm = ({tournament, item}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      onSuccess: (_) => toggleEdit(null, false),
+      onSuccess: (data) => {
+        toggleEdit(null, false);
+        dispatch(purchasableItemUpdated(data));
+      },
       onFailure: (_) => console.log("Failed to save item."),
     });
   }

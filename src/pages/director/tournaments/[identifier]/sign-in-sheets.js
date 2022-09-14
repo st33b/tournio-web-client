@@ -1,11 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {useRouter} from "next/router";
 
-import {devConsoleLog, directorApiRequest, fetchTournamentDetails, useClientReady} from "../../../../utils";
-import {useDirectorContext} from "../../../../store/DirectorContext";
-import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
-import {Col, Row} from "react-bootstrap";
 import SignInSheet from "../../../../components/Director/SignInSheet/SignInSheet";
+import {useDirectorContext} from "../../../../store/DirectorContext";
+import {useLoggedIn} from "../../../../director";
 
 const Page = () => {
   const router = useRouter();
@@ -14,18 +12,21 @@ const Page = () => {
 
   const {identifier} = router.query;
 
-  // Ensure we're logged in, with appropriate permission
+  // Make sure we're logged in
+  const loggedInState = useLoggedIn();
+  if (!loggedInState) {
+    router.push('/director/login');
+  }
+
+  // Ensure we're logged in with appropriate permission
   useEffect(() => {
-    if (!identifier || !context) {
+    if (!identifier || !directorState.user) {
       return;
     }
-    if (!context.isLoggedIn) {
-      router.push('/director/login');
-    }
-    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === identifier)) {
+    if (directorState.user.role !== 'superuser' && !directorState.user.tournaments.some(t => t.identifier === identifier)) {
       router.push('/director');
     }
-  }, [identifier, router, context]);
+  }, [identifier, router, directorState.user]);
 
   // Ensure that the tournament in context matches the one identified in the URL
   useEffect(() => {
@@ -37,12 +38,9 @@ const Page = () => {
     }
   }, [identifier, directorState.tournament]);
 
-  const ready = useClientReady();
-  if (!ready) {
-    return '';
-  }
-
-  if (!context || !directorState.bowlers) {
+  // Are we ready?
+  const ready = loggedInState >= 0;
+  if (!ready || !directorState.bowlers) {
     return '';
   }
 

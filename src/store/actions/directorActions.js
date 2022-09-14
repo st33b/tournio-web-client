@@ -12,10 +12,10 @@ export const tournamentListReset = () => {
   }
 }
 
-export const stripeAccountStatusChanged = (accountStatus) => {
+export const stripeAccountStatusChanged = (account) => {
   return {
     type: actionTypes.STRIPE_ACCOUNT_STATUS_CHANGED,
-    accountStatus: accountStatus,
+    stripeAccount: account,
   }
 }
 
