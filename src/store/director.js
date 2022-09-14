@@ -3,6 +3,19 @@ import {apiHost} from "../utils";
 import {useDirectorContext} from "./DirectorContext";
 import {loggedIn, loggedOut} from "./actions/directorActions";
 import {useRouter} from "next/router";
+import {useEffect, useState} from "react";
+
+export const useLoggedIn = () => {
+  const {directorState} = useDirectorContext();
+  const [loggedIn, setLoggedIn] = useState(-1);
+  useEffect(() => {
+    if (!directorState) {
+      return;
+    }
+    setLoggedIn(directorState.user !== null ? 1 : 0);
+  }, [directorState]);
+  return loggedIn;
+}
 
 const handleError = (error, callbackFn) => {
   if (error.request) {

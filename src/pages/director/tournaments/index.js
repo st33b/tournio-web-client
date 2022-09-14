@@ -6,29 +6,15 @@ import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLa
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import TournamentListing from '../../../components/Director/TournamentListing/TournamentListing';
 import {useDirectorContext} from "../../../store/DirectorContext";
-// import {devConsoleLog, directorApiRequest, useClientReady} from "../../../utils";
 import {tournamentListReset, tournamentListRetrieved} from "../../../store/actions/directorActions";
-import {devConsoleLog, useClientReady} from "../../../utils";
-import {directorApiRequest} from "../../../store/director";
+import {devConsoleLog} from "../../../utils";
+import {directorApiRequest, useLoggedIn} from "../../../store/director";
 
 const Page = () => {
   const router = useRouter();
   const context = useDirectorContext();
   const directorState = context.directorState;
   const dispatch = context.dispatch;
-
-  // Make sure we're logged in
-  useEffect(() => {
-    // if (!context.isLoggedIn) {
-    //   router.push('/director/login');
-    // }
-    if (!directorState) {
-      return;
-    }
-    if (!directorState.user) {
-      router.push('/director/login');
-    }
-  }, [directorState]);
 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
@@ -51,9 +37,6 @@ const Page = () => {
   }
 
   useEffect(() => {
-    // if (!context || !directorState) {
-    //   return;
-    // }
     if (!directorState || !directorState.tournaments) {
       return;
     }
@@ -72,13 +55,17 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: fetchTournamentsSuccess,
       onFailure: fetchTournamentsFailure,
     });
   }, [directorState.tournaments]);
 
-  const ready = useClientReady();
+  const loggedInState = useLoggedIn();
+  const ready = loggedInState >= 0;
+  if (!loggedInState) {
+    router.push('/director/login');
+  }
+
   if (!ready || loading) {
     return <LoadingMessage message={'Retrieving data...'} />;
   }

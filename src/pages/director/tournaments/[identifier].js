@@ -4,7 +4,8 @@ import {useRouter} from "next/router";
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
 import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
-import {devConsoleLog, directorApiRequest, useClientReady} from "../../../utils";
+import {devConsoleLog, useClientReady} from "../../../utils";
+import {directorApiRequest} from "../../../store/director";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import {
   bowlerListReset, bowlerListRetrieved, freeEntryListRetrieved, teamListRetrieved,
@@ -13,9 +14,7 @@ import {
 } from "../../../store/actions/directorActions";
 
 const Tournament = () => {
-  const context = useDirectorContext();
-  const directorState = context.directorState;
-  const dispatch = context.dispatch;
+  const {directorState, dispatch} = useDirectorContext();
 
   const router = useRouter();
   const { identifier, stripe } = router.query;
@@ -24,10 +23,13 @@ const Tournament = () => {
 
   // Make sure we're logged in
   useEffect(() => {
-    if (!context.isLoggedIn) {
+    if (!directorState) {
+      return;
+    }
+    if (!directorState.user) {
       router.push('/director/login');
     }
-  });
+  }, [directorState]);
 
   // This effect ensures we're logged in with appropriate permissions
   useEffect(() => {
@@ -54,7 +56,6 @@ const Tournament = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: (data) => dispatch(tournamentStateChanged(data)),
       onFailure: (data) => setErrorMessage(data.error),
     });

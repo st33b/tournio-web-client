@@ -5,6 +5,7 @@ import {
   tournamentDetailsRetrieved,
 } from "./store/actions/registrationActions";
 import {useEffect, useState} from "react";
+import {useDirectorContext} from "./store/DirectorContext";
 
 export const useStorage = (key, initialValue) => {
   const [value, setValue] = useState(() => {
@@ -626,67 +627,6 @@ export const directorApiDownloadRequest = ({uri, context, router, onSuccess = nu
         router.push('/director/login');
       } else {
         onFailure({error: 'The file did not download for some reason'});
-      }
-    })
-    .catch(error => {
-      if (error.request) {
-        console.log('No response was received.');
-        onFailure({error: 'The server did not respond'});
-      } else {
-        console.log('Exceptional error', error.message);
-        onFailure({error: error.message});
-      }
-    });
-}
-
-export const directorApiLoginRequest = ({userCreds, context, onSuccess = null, onFailure = null}) => {
-  const config = {
-    url: `${apiHost}/login`,
-    headers: {
-      'Accept': 'application/json',
-    },
-    method: 'post',
-    data: userCreds,
-    validateStatus: (status) => { return status < 500 },
-  };
-  axios(config)
-    .then(response => {
-      if (response.status >= 200 && response.status < 300) {
-        const authHeader = response.headers.authorization;
-        const userData = response.data;
-        context.login(authHeader, userData);
-        onSuccess(response.data);
-      } else {
-        onFailure(response.data);
-      }
-    })
-    .catch(error => {
-      if (error.request) {
-        console.log('No response was received.');
-        onFailure({error: 'The server did not respond'});
-      } else {
-        console.log('Exceptional error', error.message);
-        onFailure({error: error.message});
-      }
-    });
-}
-
-export const directorApiLogoutRequest = ({context, onSuccess, onFailure}) => {
-  const config = {
-    url: `${apiHost}/logout`,
-    headers: {
-      'Accept': 'application/json',
-    },
-    method: 'delete',
-    validateStatus: (status) => { return status < 500 },
-  };
-  axios(config)
-    .then(response => {
-      if (response.status >= 200 && response.status < 300) {
-        context.logout();
-        onSuccess();
-      } else {
-        onFailure({error: 'Got a strange response from the server.'});
       }
     })
     .catch(error => {
