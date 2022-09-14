@@ -294,7 +294,10 @@ export const directorReducer = (state, action) => {
       });
     case actionTypes.LOGGED_IN:
       return updateObject(state, {
-        user: {...action.user},
+        user: {
+          ...action.user,
+          authToken: action.authToken,
+        },
       });
     case actionTypes.LOGGED_OUT:
       return updateObject(state, {

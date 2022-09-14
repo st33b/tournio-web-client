@@ -4,9 +4,9 @@ import {useRouter} from "next/router";
 import {Button, Card, FloatingLabel, Form} from "react-bootstrap";
 
 import {useDirectorContext} from '../../../store/DirectorContext';
-import {directorApiLoginRequest} from "../../../utils";
 
 import classes from './LoginForm.module.scss';
+import {directorLogin} from "../../../store/director";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -18,13 +18,13 @@ const LoginForm = () => {
 
   const directorContext = useDirectorContext();
 
-  const loginSuccess = (data) => {
+  const loginSuccess = () => {
     setLoading(false);
     setLoginFailed(false);
     router.push('/director')
   }
 
-  const loginFailure = (_) => {
+  const loginFailure = (data) => {
     setLoading(false);
     setLoginFailed(true);
   }
@@ -46,12 +46,11 @@ const LoginForm = () => {
         password: enteredPassword,
       }
     };
-    directorApiLoginRequest({
+    directorLogin({
       userCreds: userCreds,
-      context: directorContext,
       onSuccess: loginSuccess,
       onFailure: loginFailure,
-    })
+    });
   }
 
   return (

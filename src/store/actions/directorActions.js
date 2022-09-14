@@ -262,10 +262,11 @@ export const freeEntryAdded = (freeEntry) => {
   }
 }
 
-export const loggedIn = (user) => {
+export const loggedIn = (user, authToken) => {
   return {
     type: actionTypes.LOGGED_IN,
     user: user,
+    authToken: authToken,
   }
 }
 
