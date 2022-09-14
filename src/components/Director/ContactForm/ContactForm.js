@@ -1,15 +1,15 @@
-import classes from './ContactForm.module.scss';
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
-import {directorApiRequest} from "../../../utils";
+
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {useDirectorContext} from "../../../store/DirectorContext";
+import {directorApiRequest} from "../../../director";
 import {tournamentContactAdded, tournamentContactUpdated} from "../../../store/actions/directorActions";
+
+import classes from './ContactForm.module.scss';
 
 const ContactForm = ({tournament, contact, newContact}) => {
   const context = useDirectorContext();
   const dispatch = context.dispatch;
-  const router = useRouter();
 
   const initialState = {
     identifier: '',
@@ -83,7 +83,6 @@ const ContactForm = ({tournament, contact, newContact}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: onSuccess,
       onFailure: onFailure,
     })

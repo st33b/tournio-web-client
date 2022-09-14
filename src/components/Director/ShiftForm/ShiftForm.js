@@ -1,10 +1,9 @@
 import {useEffect, useState} from "react";
-import {useRouter} from "next/router";
 import {Map} from "immutable";
 import Card from 'react-bootstrap/Card';
 
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../director";
 
 import classes from './ShiftForm.module.scss';
 import {
@@ -15,7 +14,6 @@ import {
 
 const ShiftForm = ({tournament, shift}) => {
   const context = useDirectorContext();
-  const router = useRouter();
 
   const REGISTRATION_TYPES = ['new_team', 'solo', 'join_team', 'partner', 'new_pair'];
   const REGISTRATION_TYPE_LABELS = [
@@ -45,6 +43,7 @@ const ShiftForm = ({tournament, shift}) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
+  // Populate form data with the shift prop
   useEffect(() => {
     if (!shift) {
       return;
@@ -159,7 +158,6 @@ const ShiftForm = ({tournament, shift}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: (data) => context.dispatch(tournamentShiftAdded(data)),
       onFailure: (data) => console.log("D'oh!", data),
     });
@@ -183,7 +181,6 @@ const ShiftForm = ({tournament, shift}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: () => context.dispatch(tournamentShiftDeleted(shift)),
       onFailure: (data) => console.log("D'oh!", data),
     });
@@ -217,7 +214,6 @@ const ShiftForm = ({tournament, shift}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: updateShiftSuccess,
       onFailure: (data) => console.log("D'oh!", data),
     })

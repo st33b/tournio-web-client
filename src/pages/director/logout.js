@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import DirectorLayout from '../../components/Layout/DirectorLayout/DirectorLayout';
 import {useDirectorContext} from "../../store/DirectorContext";
 import {useClientReady} from "../../utils";
-import {directorLogout} from "../../store/director";
+import {directorLogout} from "../../director";
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
 
 const Logout = () => {

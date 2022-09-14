@@ -1,8 +1,7 @@
 import {useState} from "react";
-import {useRouter} from "next/router";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../director";
 import ErrorBoundary from "../../common/ErrorBoundary";
 import Item from "../../Commerce/AvailableItems/Item/Item";
 
@@ -12,7 +11,6 @@ import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 const MultiUseForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();
   const dispatch = context.dispatch;
-  const router = useRouter();
 
   const initialState = {
     category: '', // banquet, product
@@ -84,11 +82,8 @@ const MultiUseForm = ({tournament, onCancel, onComplete}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: submissionSuccess,
-      onFailure: (_) => {
-        console.log("Failed to save new item.")
-      },
+      onFailure: (_) => console.log("Failed to save new item."),
     });
   }
 

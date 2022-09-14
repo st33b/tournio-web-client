@@ -1,17 +1,15 @@
 import {useState} from "react";
-import {useRouter} from "next/router";
 
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../utils";
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {useDirectorContext} from "../../../store/DirectorContext";
+import {directorApiRequest} from "../../../director";
+import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
 import classes from './EventForm.module.scss';
-import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
 const EventForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();
   const dispatch = context.dispatch;
-  const router = useRouter();
 
   const initialState = {
     category: 'bowling',
@@ -80,11 +78,8 @@ const EventForm = ({tournament, onCancel, onComplete}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: submissionSuccess,
-      onFailure: (_) => {
-        console.log("Failed to save new item.")
-      },
+      onFailure: (_) => console.log("Failed to save new item."),
     });
   }
 

@@ -9,7 +9,7 @@ import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../director";
 
 import classes from './ConfigItemForm.module.scss';
 import {tournamentConfigItemChanged} from "../../../store/actions/directorActions";
@@ -18,7 +18,6 @@ const BOOLEAN_CONFIG_ITEMS = ['display_capacity', 'email_in_dev', 'event_selecti
 
 const ConfigItemForm = ({item, editable}) => {
   const context = useDirectorContext();
-  const router = useRouter();
 
   const initialState = {
     prevValue: '',
@@ -28,6 +27,8 @@ const ConfigItemForm = ({item, editable}) => {
 
   const [formData, setFormData] = useState(initialState);
   const [editing, setEditing] = useState(false);
+
+  // Populate the form data with the item prop
   useEffect(() => {
     if (!item) {
       return;
@@ -134,7 +135,6 @@ const ConfigItemForm = ({item, editable}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: onSuccessfulUpdate,
       onFailure: (data) => { console.log("Failed to save config item.", data) },
     });

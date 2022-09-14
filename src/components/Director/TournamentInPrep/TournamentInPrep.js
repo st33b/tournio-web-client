@@ -18,7 +18,7 @@ import classes from './TournamentInPrep.module.scss';
 const TournamentInPrep = ({stateChangeInitiated, requestStripeStatus}) => {
   const {directorState} = useDirectorContext();
 
-  if (!directorState || !directorState.tournament) {
+  if (!directorState.tournament) {
     return <div className={classes.TournamentInPrep}>
       <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
     </div>;

@@ -1,16 +1,15 @@
-import classes from './DivisionForm.module.scss';
-
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {useRouter} from "next/router";
 import {useState} from "react";
-import {directorApiRequest} from "../../../utils";
+
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {useDirectorContext} from "../../../store/DirectorContext";
+import {directorApiRequest} from "../../../director";
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
+
+import classes from './DivisionForm.module.scss';
 
 const DivisionForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();
   const dispatch = context.dispatch;
-  const router = useRouter();
 
   const initialState = {
     name: '',
@@ -109,11 +108,8 @@ const DivisionForm = ({tournament, onCancel, onComplete}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: submissionSuccess,
-      onFailure: (_) => {
-        console.log("Failed to save new items.")
-      },
+      onFailure: (_) => console.log("Failed to save new items."),
     });
   }
 

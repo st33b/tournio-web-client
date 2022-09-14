@@ -5,17 +5,16 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 
-import {directorApiDownloadRequest, directorApiRequest} from "../../../utils";
+// import {directorApiDownloadRequest} from "../../../utils";
+import {directorApiRequest, directorApiDownloadRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
+import {testDataCleared, tournamentTestEnvironmentUpdated} from "../../../store/actions/directorActions";
 
 import classes from './TournamentInPrep.module.scss';
-import {bgBG} from "@mui/material/locale";
-import {testDataCleared, tournamentTestEnvironmentUpdated} from "../../../store/actions/directorActions";
 
 const StatusAndCounts = ({tournament}) => {
   const context = useDirectorContext();
   const dispatch = context.dispatch;
-  const router = useRouter();
 
   const testEnvFormInitialData = {
     registration_period: 'regular',
@@ -98,7 +97,6 @@ const StatusAndCounts = ({tournament}) => {
     directorApiDownloadRequest({
       uri: uri,
       context: context,
-      router: router,
       onSuccess: (data) => downloadSuccess(data, saveAsName),
       onFailure: (data) => downloadFailure(data),
     });
@@ -213,7 +211,6 @@ const StatusAndCounts = ({tournament}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: testEnvSaveSuccess,
       onFailure: (data) => console.log('Oops.', data),
     });

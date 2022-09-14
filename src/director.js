@@ -1,7 +1,7 @@
 import axios from "axios";
-import {apiHost} from "../utils";
-import {useDirectorContext} from "./DirectorContext";
-import {loggedIn, loggedOut} from "./actions/directorActions";
+import {apiHost} from "./utils";
+import {useDirectorContext} from "./store/DirectorContext";
+import {loggedIn, loggedOut} from "./store/actions/directorActions";
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 
@@ -15,6 +15,27 @@ export const useLoggedIn = () => {
     setLoggedIn(directorState.user !== null ? 1 : 0);
   }, [directorState]);
   return loggedIn;
+}
+
+const handleSuccess = (response, dispatch, onSuccess, onFailure) => {
+  if (response.status >= 200 && response.status < 300) {
+    if (onSuccess) {
+      onSuccess(response.data);
+    }
+  } else if (response.status === 401) {
+    dispatch(loggedOut());
+    if (onFailure) {
+      onFailure({error: 'Login session timed out'})
+    }
+  } else if (response.status === 404) {
+    if (onFailure) {
+      onFailure({error: 'Not found'});
+    }
+  } else {
+    if (onFailure) {
+      onFailure(response.data);
+    }
+  }
 }
 
 const handleError = (error, callbackFn) => {
@@ -95,19 +116,30 @@ export const directorApiRequest = ({uri, requestConfig, context, onSuccess = nul
   config.headers = {...requestConfig.headers}
   config.headers['Accept'] = 'application/json';
   config.headers['Authorization'] = context.directorState.user.authToken;
-  config.validateStatus = (status) => { return status < 500 }
+  config.validateStatus = (status) => status < 500;
   axios(config)
     .then(response => {
-      if (response.status >= 200 && response.status < 300) {
-        onSuccess(response.data);
-      } else if (response.status === 401) {
-        context.dispatch(loggedOut());
-        onFailure({error: 'Login session timed out'})
-      } else if (response.status === 404) {
-        onFailure({error: 'Not found'});
-      } else {
-        onFailure(response.data);
-      }
+      handleSuccess(response, context.dispatch, onSuccess, onFailure);
+    })
+    .catch(error => {
+      handleError(error, onFailure);
+    });
+}
+
+export const directorApiDownloadRequest = ({uri, context, onSuccess = null, onFailure = null}) => {
+  const url = `${apiHost}${uri}`;
+  const config = {
+    method: 'get',
+    url: url,
+    headers: {
+      'Authorization': context.directorState.user.authToken,
+    },
+    responseType: 'blob',
+    validateStatus: (status) => status < 500,
+  }
+  axios(config)
+    .then(response => {
+      handleSuccess(response, context.dispatch, onSuccess, onFailure)
     })
     .catch(error => {
       handleError(error, onFailure);

@@ -8,7 +8,7 @@ import TournamentListing from '../../../components/Director/TournamentListing/To
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {tournamentListReset, tournamentListRetrieved} from "../../../store/actions/directorActions";
 import {devConsoleLog} from "../../../utils";
-import {directorApiRequest, useLoggedIn} from "../../../store/director";
+import {directorApiRequest, useLoggedIn} from "../../../director";
 
 const Page = () => {
   const router = useRouter();

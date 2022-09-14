@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import {useRouter} from "next/router";
 import {format, formatISO} from "date-fns";
 import Card from "react-bootstrap/Card";
 
@@ -7,7 +6,7 @@ import TextField from "@mui/material/TextField";
 import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../director";
 import ErrorBoundary from "../../common/ErrorBoundary";
 import Item from "../../Commerce/AvailableItems/Item/Item";
 
@@ -17,7 +16,6 @@ import {purchasableItemDeleted} from "../../../store/actions/directorActions";
 const PurchasableItemEditForm = ({tournament, item}) => {
   const context = useDirectorContext();
   const dispatch = context.dispatch;
-  const router = useRouter();
 
   const initialState = {
     applies_at: '', // for ledger -> late fee
@@ -35,6 +33,8 @@ const PurchasableItemEditForm = ({tournament, item}) => {
 
   const [formData, setFormData] = useState(initialState);
   const [editing, setEditing] = useState(false);
+
+  // Populate form data
   useEffect(() => {
     if (!item) {
       return;
@@ -136,13 +136,8 @@ const PurchasableItemEditForm = ({tournament, item}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
-      onSuccess: (_) => {
-        toggleEdit(null, false)
-      },
-      onFailure: (_) => {
-        console.log("Failed to save item.")
-      },
+      onSuccess: (_) => toggleEdit(null, false),
+      onFailure: (_) => console.log("Failed to save item."),
     });
   }
 
@@ -164,7 +159,6 @@ const PurchasableItemEditForm = ({tournament, item}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: deleteSuccess,
       onFailure: (data) => console.log("Failed to delete item.", data),
     });

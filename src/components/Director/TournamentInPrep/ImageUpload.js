@@ -1,12 +1,11 @@
 import classes from './ImageUpload.module.scss';
 
-import {useEffect, useState} from "react";
-import {useRouter} from "next/router";
+import {useState} from "react";
 import Card from 'react-bootstrap/Card';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../director";
 import FormData from 'form-data';
 import LogoImage from "../LogoImage/LogoImage";
 import {logoImageUploaded} from "../../../store/actions/directorActions";
@@ -14,7 +13,6 @@ import {logoImageUploaded} from "../../../store/actions/directorActions";
 const ImageUpload = ({tournament}) => {
   const context = useDirectorContext();
   const dispatch = context.dispatch;
-  const router = useRouter();
 
   const [formDisplayed, setFormDisplayed] = useState(false);
   const [fileInput, setFileInput] = useState({
@@ -31,7 +29,6 @@ const ImageUpload = ({tournament}) => {
     const newValue = {...fileInput};
     newValue.file = event.target.value;
     setFileInput(newValue);
-    console.log("New file input value:", newValue.file);
   }
 
   const onSuccess = (data) => {
@@ -56,7 +53,6 @@ const ImageUpload = ({tournament}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: onSuccess,
       onFailure: (_) => setError('File failed to upload'),
     });

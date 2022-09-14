@@ -1,16 +1,14 @@
 import {useState} from "react";
-import {useRouter} from "next/router";
 import {Card} from "react-bootstrap";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../director";
+import {additionalQuestionsUpdated} from "../../../store/actions/directorActions";
 
 import classes from './AdditionalQuestionForm.module.scss';
-import {additionalQuestionsUpdated} from "../../../store/actions/directorActions";
 
 const AdditionalQuestionForm = ({tournament}) => {
   const context = useDirectorContext();
-  const router = useRouter();
 
   const initialFormData = {
     extended_form_field_id: '',
@@ -110,7 +108,6 @@ const AdditionalQuestionForm = ({tournament}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: submissionSuccess,
       onFailure: submissionFailure,
     });

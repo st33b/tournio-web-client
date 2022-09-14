@@ -12,7 +12,6 @@ import {additionalQuestionsUpdated} from "../../../store/actions/directorActions
 
 const AdditionalQuestions = ({tournament}) => {
   const context = useDirectorContext();
-  const router = useRouter();
 
   const initialSaveData = {
     questions: [],
@@ -26,6 +25,7 @@ const AdditionalQuestions = ({tournament}) => {
 
   const tournamentHasQuestions = tournament.additional_questions.length > 0;
 
+  // Populate form data
   useEffect(() => {
     if (!context || !tournament) {
       return;
@@ -99,7 +99,6 @@ const AdditionalQuestions = ({tournament}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: onSaveSuccess,
       onFailure: onSaveFailure,
     })

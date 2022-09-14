@@ -6,7 +6,7 @@ import {Button, Card, FloatingLabel, Form} from "react-bootstrap";
 import {useDirectorContext} from '../../../store/DirectorContext';
 
 import classes from './LoginForm.module.scss';
-import {directorLogin} from "../../../store/director";
+import {directorLogin} from "../../../director";
 
 const LoginForm = () => {
   const {dispatch} = useDirectorContext();

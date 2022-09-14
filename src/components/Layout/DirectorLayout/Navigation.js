@@ -40,20 +40,20 @@ const Navigation = () => {
     return markup();
   }
 
-  let superUserLinks = '';
+  const links = [];
+
+  if (directorState.user.role === 'superuser' || directorState.user.tournaments.length > 1) {
+    links.push({
+      href: '/director/tournaments',
+      text: 'Tournaments',
+    });
+  }
+
   if (directorState.user.role === 'superuser') {
-    superUserLinks = (
-      <>
-        <Nav.Link href={'/director/users'}>
-          User Accounts
-        </Nav.Link>
-        {(directorState.user.tournaments.length > 1) && (
-          <Nav.Link href={'/director/tournaments'}>
-            Tournaments
-          </Nav.Link>
-        )}
-      </>
-    );
+    links.push({
+      href: '/director/users',
+      text: 'User Accounts',
+    });
   }
 
   const navContent = (
@@ -61,7 +61,11 @@ const Navigation = () => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id={'basic-navbar-nav'}>
         <Nav className={'ms-4 me-auto'}>
-          {superUserLinks}
+          {links.map((l, i) => (
+            <Nav.Link key={i} href={l.href}>
+              {l.text}
+            </Nav.Link>
+          ))}
           <Nav.Link href={'/director/users/' + directorState.user.identifier}>
             My Profile
           </Nav.Link>

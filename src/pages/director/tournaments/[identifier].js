@@ -4,8 +4,8 @@ import {useRouter} from "next/router";
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
 import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
-import {devConsoleLog, useClientReady} from "../../../utils";
-import {directorApiRequest} from "../../../store/director";
+import {devConsoleLog} from "../../../utils";
+import {directorApiRequest, useLoggedIn} from "../../../director";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import {
   bowlerListReset, bowlerListRetrieved, freeEntryListRetrieved, teamListRetrieved,
@@ -14,31 +14,13 @@ import {
 } from "../../../store/actions/directorActions";
 
 const Tournament = () => {
-  const {directorState, dispatch} = useDirectorContext();
+  const context = useDirectorContext();
+  const {directorState, dispatch} = context;
 
   const router = useRouter();
   const { identifier, stripe } = router.query;
 
   const [errorMessage, setErrorMessage] = useState(null);
-
-  // Make sure we're logged in
-  useEffect(() => {
-    if (!directorState) {
-      return;
-    }
-    if (!directorState.user) {
-      router.push('/director/login');
-    }
-  }, [directorState]);
-
-  // This effect ensures we're logged in with appropriate permissions
-  useEffect(() => {
-    const currentTournamentIdentifier = directorState.tournament.identifier;
-
-    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
-      router.push('/director');
-    }
-  });
 
   const stateChangeInitiated = (stateChangeAction) => {
     const uri = `/director/tournaments/${identifier}/state_change`;
@@ -74,7 +56,6 @@ const Tournament = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: (data) => dispatch(bowlerListRetrieved(data)),
       onFailure: (_) => setErrorMessage('Failed to retrieve bowlers.'),
     });
@@ -90,7 +71,6 @@ const Tournament = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: (data) => dispatch(teamListRetrieved(data)),
       onFailure: (_) => setErrorMessage('Failed to retrieve teams.'),
     });
@@ -106,7 +86,6 @@ const Tournament = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: (data) => dispatch(freeEntryListRetrieved(data)),
       onFailure: (_) => setErrorMessage('Failed to retrieve free entries'),
     });
@@ -120,6 +99,7 @@ const Tournament = () => {
     if (identifier === undefined) {
       return;
     }
+
     // Don't fetch the tournament details if we already have it in state.
     if (directorState.tournament && identifier === directorState.tournament.identifier) {
       devConsoleLog("Tournament is already in context, not fetching it again");
@@ -135,7 +115,6 @@ const Tournament = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: (data) => {
         dispatch(bowlerListReset());
         dispatch(tournamentDetailsRetrieved(data));
@@ -144,20 +123,37 @@ const Tournament = () => {
         retrieveFreeEntries();
       },
       onFailure: (data) => {
-        if (data.error === 'not found') {
+        if (data.error === 'Not found') {
           setErrorMessage('Tournament not found');
         } else {
           setErrorMessage(data.error);
         }
       },
     });
-  }, [identifier, context, router]);
+  }, [identifier, directorState]);
 
-  const ready = useClientReady();
+  // Ensure we're logged in with appropriate permissions
+  useEffect(() => {
+    if (!directorState.tournament || !directorState.user) {
+      return;
+    }
+
+    const currentTournamentIdentifier = directorState.tournament.identifier;
+
+    if (directorState.user.role !== 'superuser' && !directorState.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
+      router.push('/director');
+    }
+  }, [directorState.tournament, directorState.user]);
+
+  // Make sure we're logged in
+  const loggedInState = useLoggedIn();
+  const ready = loggedInState >= 0;
   if (!ready) {
-    return null;
+    return '';
   }
-
+  if (!loggedInState) {
+    router.push('/director/login');
+  }
   if (!directorState) {
     return '';
   }

@@ -6,8 +6,8 @@ import classes from './TournamentInPrep.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 const StateChangeButton = ({tournament, stateChangeInitiated}) => {
-  const context = useDirectorContext();
-  if (!context || !tournament || !tournament.config_items) {
+  const {directorState} = useDirectorContext();
+  if (!directorState.user || !tournament || !tournament.config_items) {
     return '';
   }
 
@@ -62,7 +62,7 @@ const StateChangeButton = ({tournament, stateChangeInitiated}) => {
       stateChangeText = 'Begin Testing';
       stateChangeValue = 'test';
 
-      if (context.user && context.user.role === 'superuser') {
+      if (directorState.user.role === 'superuser') {
         demoButton = (
           <button className={'btn btn-outline-warning'}
                   type={'button'}
@@ -93,7 +93,7 @@ const StateChangeButton = ({tournament, stateChangeInitiated}) => {
       stateChangeValue = 'open';
       break;
     case 'demo':
-      if (context.user && context.user.role === 'superuser') {
+      if (directorState.user.role === 'superuser') {
         demoButton = (
           <button className={'btn btn-outline-danger'}
                   type={'button'}

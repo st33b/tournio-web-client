@@ -81,7 +81,7 @@ export const tournamentName = (rows, id, filterValue) => {
 
 export const devConsoleLog = (message, object=null) => {
   if (process.env.NODE_ENV === 'development') {
-    console.log(message, object);
+    console.log(`[DEV] ${message}`, object);
   }
 }
 
@@ -574,6 +574,7 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
 ////////////////////////////////////////////////
 
 export const directorApiRequest = ({uri, requestConfig, context, router, onSuccess = null, onFailure = null}) => {
+  devConsoleLog('Using the old directorApiRequest!');
   const url = `${apiHost}${uri}`;
   const config = {...requestConfig};
   config.url = url;

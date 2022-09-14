@@ -3,7 +3,6 @@ import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 
 import classes from './TournamentInPrep.module.scss';
-import {useDirectorContext} from "../../../store/DirectorContext";
 import PurchasableItemEditForm from "../PurchasableItemEditForm/PurchasableItemEditForm";
 import NewPurchasableItem from "../NewPurchasableItem/NewPurchasableItem";
 import ErrorBoundary from "../../common/ErrorBoundary";
