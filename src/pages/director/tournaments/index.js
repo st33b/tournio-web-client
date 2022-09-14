@@ -1,12 +1,15 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
+import {Col, Row} from "react-bootstrap";
 import {useRouter} from "next/router";
+
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
+import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import TournamentListing from '../../../components/Director/TournamentListing/TournamentListing';
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {devConsoleLog, directorApiRequest, useClientReady} from "../../../utils";
+// import {devConsoleLog, directorApiRequest, useClientReady} from "../../../utils";
 import {tournamentListReset, tournamentListRetrieved} from "../../../store/actions/directorActions";
-import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import {Col, Row} from "react-bootstrap";
+import {devConsoleLog, useClientReady} from "../../../utils";
+import {directorApiRequest} from "../../../store/director";
 
 const Page = () => {
   const router = useRouter();
@@ -16,10 +19,16 @@ const Page = () => {
 
   // Make sure we're logged in
   useEffect(() => {
-    if (!context.isLoggedIn) {
+    // if (!context.isLoggedIn) {
+    //   router.push('/director/login');
+    // }
+    if (!directorState) {
+      return;
+    }
+    if (!directorState.user) {
       router.push('/director/login');
     }
-  });
+  }, [directorState]);
 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
@@ -42,11 +51,15 @@ const Page = () => {
   }
 
   useEffect(() => {
-    if (!context || !directorState) {
+    // if (!context || !directorState) {
+    //   return;
+    // }
+    if (!directorState || !directorState.tournaments) {
       return;
     }
+
     // Don't fetch the list again if we already have it.
-    if (directorState.tournaments && directorState.tournaments.length > 0) {
+    if (directorState.tournaments.length > 0) {
       devConsoleLog("Already have a list of tournaments, not re-fetching it");
       return;
     }

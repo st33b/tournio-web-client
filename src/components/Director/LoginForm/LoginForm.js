@@ -9,6 +9,7 @@ import classes from './LoginForm.module.scss';
 import {directorLogin} from "../../../store/director";
 
 const LoginForm = () => {
+  const {dispatch} = useDirectorContext();
   const router = useRouter();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
@@ -16,11 +17,7 @@ const LoginForm = () => {
   const [loginFailed, setLoginFailed] = useState(false);
   const [validated, setValidated] = useState(false);
 
-  const directorContext = useDirectorContext();
-
   const loginSuccess = () => {
-    setLoading(false);
-    setLoginFailed(false);
     router.push('/director')
   }
 
@@ -48,6 +45,7 @@ const LoginForm = () => {
     };
     directorLogin({
       userCreds: userCreds,
+      dispatch: dispatch,
       onSuccess: loginSuccess,
       onFailure: loginFailure,
     });

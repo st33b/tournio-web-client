@@ -24,21 +24,15 @@ function MyApp({Component, pageProps})  {
   const getLayout = Component.getLayout || ((page) => page);
   const router = useRouter();
 
-  if (router.pathname.startsWith('/director')) {
     return (
       <DirectorContextProvider>
-        {getLayout(<Component {...pageProps} />)}
+        <CommerceContextProvider>
+          <RegistrationContextProvider>
+            {getLayout(<Component {...pageProps} />)}
+          </RegistrationContextProvider>
+        </CommerceContextProvider>
       </DirectorContextProvider>
     );
-  }
-
-  return (
-    <CommerceContextProvider>
-      <RegistrationContextProvider>
-        {getLayout(<Component {...pageProps} />)}
-      </RegistrationContextProvider>
-    </CommerceContextProvider>
-  );
 }
 
 export default MyApp;

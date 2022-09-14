@@ -1,7 +1,6 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {Col, Row} from "react-bootstrap";
 import {useTable, useSortBy, useFilters} from 'react-table';
-import {List} from 'immutable';
 
 import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
