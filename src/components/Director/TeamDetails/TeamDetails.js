@@ -9,8 +9,7 @@ import classes from './TeamDetails.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 const TeamDetails = ({team, teamUpdateSubmitted}) => {
-  const context = useDirectorContext();
-  const {directorState, dispatch} = context;
+  const {directorState} = useDirectorContext();
 
   let initialFormData = {
     valid: true,
@@ -117,6 +116,8 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
 
     switch (inputName) {
       case 'name':
+        updatedTeamForm.fields.name.value = event.target.value;
+        break;
       case 'position':
         updatedTeamForm.fields.bowlers_attributes.value[index].position = parseInt(event.target.value);
         const positions = updatedTeamForm.fields.bowlers_attributes.value.map((attrs) => attrs.position).sort();

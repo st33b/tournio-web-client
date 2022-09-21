@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Card, Button, Row, Col} from "react-bootstrap";
 
@@ -6,7 +6,7 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import TeamDetails from "../../../components/Director/TeamDetails/TeamDetails";
-import {directorApiRequest, useClientReady} from "../../../utils";
+import {directorApiRequest, useLoggedIn} from "../../../director";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import {teamDeleted, teamUpdated} from "../../../store/actions/directorActions";
 
@@ -22,18 +22,11 @@ const Page = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  // Make sure we're logged in
-  useEffect(() => {
-    if (!context.isLoggedIn) {
-      router.push('/director/login');
-    }
-  });
-
   // This effect ensures we're logged in with appropriate permissions
   useEffect(() => {
     const currentTournamentIdentifier = directorState.tournament.identifier;
 
-    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
+    if (directorState.user.role !== 'superuser' && !directorState.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
       router.push('/director');
     }
   });
@@ -62,14 +55,20 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: onFetchTeamSuccess,
       onFailure: onFetchTeamFailure,
     });
   }, [identifier, router, context]);
 
-  const ready = useClientReady();
+  const loggedInState = useLoggedIn();
+  const ready = loggedInState >= 0;
   if (!ready) {
+    return '';
+  }
+  if (!loggedInState) {
+    router.push('/director/login');
+  }
+  if (!directorState) {
     return '';
   }
 
@@ -126,7 +125,6 @@ const Page = () => {
         uri: uri,
         requestConfig: requestConfig,
         context: context,
-        router: router,
         onSuccess: onDeleteTeamSuccess,
         onFailure: onDeleteTeamFailure,
       });
@@ -185,7 +183,6 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: updateTeamSuccess,
       onFailure: updateTeamFailure,
     });

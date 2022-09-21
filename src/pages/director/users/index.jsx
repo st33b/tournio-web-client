@@ -7,7 +7,7 @@ import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLa
 import UserListing from '../../../components/Director/UserListing/UserListing';
 import UserForm from '../../../components/Director/UserForm/UserForm';
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import {directorApiRequest, useClientReady} from "../../../utils";
+import {directorApiRequest, useLoggedIn} from "../../../director";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import {tournamentListRetrieved, userListRetrieved} from "../../../store/actions/directorActions";
 
@@ -17,17 +17,21 @@ const Page = () => {
   const dispatch = context.dispatch;
   const router = useRouter();
 
-  const isSuperuser = context.user && context.user.role === 'superuser';
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  // are we a superuser?
   useEffect(() => {
+    if (!directorState.user) {
+      return;
+    }
+    const isSuperuser = directorState.user && directorState.user.role === 'superuser';
     if (!isSuperuser) {
       console.log("Nice try, but you're not logged in as a superuser.");
       router.push('/director');
     }
-  });
-
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
+  }, [directorState.user]);
 
   // Do we have a success query parameter?
   useEffect(() => {
@@ -51,7 +55,7 @@ const Page = () => {
 
   // fetch the list of users to send to the listing component -- but only if we haven't fetched them yet
   useEffect(() => {
-    if (!context || !directorState) {
+    if (!directorState) {
       return;
     }
 
@@ -73,7 +77,7 @@ const Page = () => {
       onSuccess: usersRetrieved,
       onFailure: usersFailedToRetrieve,
     });
-  }, []);
+  }, [directorState.users]);
 
   const fetchTournamentsFailure = (data) => {
     setErrorMessage(data.error);
@@ -97,14 +101,21 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: (data) => dispatch(tournamentListRetrieved(data)),
       onFailure: (_) => setErrorMessage(data.error),
     });
   }, []);
 
-  const ready = useClientReady();
+  // Make sure we're logged in and ready to go
+  const loggedInState = useLoggedIn();
+  const ready = loggedInState >= 0;
   if (!ready) {
+    return '';
+  }
+  if (!loggedInState) {
+    router.push('/director/login');
+  }
+  if (!directorState) {
     return '';
   }
 

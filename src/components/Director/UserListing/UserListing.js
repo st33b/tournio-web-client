@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import {useMemo} from "react";
 import {Col, Row} from "react-bootstrap";
 import {useTable, useSortBy, useFilters} from 'react-table';
 

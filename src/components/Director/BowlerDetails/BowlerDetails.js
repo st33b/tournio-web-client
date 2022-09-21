@@ -1,17 +1,11 @@
 import {useState, useEffect, useMemo} from "react";
-import {Button} from "react-bootstrap";
 import {CountryDropdown} from 'react-country-region-selector';
 
-import {useDirectorContext} from "../../../store/DirectorContext";
 import Input from "../../ui/Input/Input";
 
 import classes from './BowlerDetails.module.scss';
 
 const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
-  const context = useDirectorContext();
-  const directorState = context.directorState;
-  const dispatch = context.dispatch;
-
   const initialFormData = {
     formFields: {
       first_name: {

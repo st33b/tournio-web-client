@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Card} from "react-bootstrap";
 
@@ -7,7 +7,8 @@ import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLa
 import TeamListing from "../../../components/Director/TeamListing/TeamListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import NewTeamForm from "../../../components/Director/NewTeamForm/NewTeamForm";
-import {devConsoleLog, directorApiRequest, useClientReady} from "../../../utils";
+import {devConsoleLog} from "../../../utils";
+import {directorApiRequest, useLoggedIn} from "../../../director";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import {teamAdded, teamListRetrieved} from "../../../store/actions/directorActions";
 
@@ -20,18 +21,11 @@ const Page = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Make sure we're logged in
-  useEffect(() => {
-    if (!context.isLoggedIn) {
-      router.push('/director/login');
-    }
-  });
-
   // This effect ensures we're logged in with appropriate permissions
   useEffect(() => {
     const currentTournamentIdentifier = directorState.tournament.identifier;
 
-    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
+    if (directorState.user.role !== 'superuser' && !directorState.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
       router.push('/director');
     }
   });
@@ -65,7 +59,6 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: onFetchTeamsSuccess,
       onFailure: onFetchTeamsFailure,
     });
@@ -80,8 +73,15 @@ const Page = () => {
     }
   }, [router]);
 
-  const ready = useClientReady();
+  const loggedInState = useLoggedIn();
+  const ready = loggedInState >= 0;
   if (!ready) {
+    return '';
+  }
+  if (!loggedInState) {
+    router.push('/director/login');
+  }
+  if (!directorState) {
     return '';
   }
 
@@ -111,7 +111,6 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: newTeamSubmitSuccess,
       onFailure: newTeamSubmitFailure,
     });

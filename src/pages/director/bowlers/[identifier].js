@@ -2,7 +2,8 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Card, Button, Row, Col, ListGroup} from "react-bootstrap";
 
-import {directorApiRequest, useClientReady} from "../../../utils";
+import {useLoggedIn, directorApiRequest} from "../../../director";
+import {devConsoleLog} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
@@ -11,7 +12,11 @@ import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage
 import ManualPayment from "../../../components/Director/BowlerDetails/ManualPayment";
 import OfficeUseOnly from "../../../components/Director/BowlerDetails/OfficeUseOnly";
 import ResendEmailButtons from "../../../components/Director/BowlerDetails/ResendEmailButtons";
-import {bowlerDeleted, bowlerUpdated, freeEntryUpdated} from "../../../store/actions/directorActions";
+import {
+  bowlerDeleted, bowlerListReset,
+  bowlerUpdated,
+  freeEntryUpdated, teamListReset,
+} from "../../../store/actions/directorActions";
 
 const Page = () => {
   const router = useRouter();
@@ -41,18 +46,11 @@ const Page = () => {
   const [availableFreeEntries, setAvailableFreeEntries] = useState([]);
   const [unpartneredBowlers, setUnpartneredBowlers] = useState([]);
 
-  // Make sure we're logged in
-  useEffect(() => {
-    if (!context.isLoggedIn) {
-      router.push('/director/login');
-    }
-  });
-
   // This effect ensures we're logged in with appropriate permissions
   useEffect(() => {
     const currentTournamentIdentifier = directorState.tournament.identifier;
 
-    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
+    if (directorState.user.role !== 'superuser' && !directorState.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
       router.push('/director');
     }
   });
@@ -80,45 +78,26 @@ const Page = () => {
     const requestConfig = {
       method: 'get',
     }
+    devConsoleLog("Retrieving bowler details.");
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: fetchBowlerSuccess,
       onFailure: fetchBowlerFailure,
     });
-  }, [identifier, context, router]);
+  }, [identifier, context]);
 
-  const fetchTeamsSuccess = (data) => {
-    setLoading(false);
-    setAvailableTeams(data);
-  }
-  const fetchTeamsFailure = (data) => {
-    setLoading(false);
-    setErrorMessage(data.error);
-  }
-
-  // This effect retrieves the list of teams available to join
-  // TODO -- this can become a filtered version of the teams list we keep in context
+  // This effect sets the list of teams available to join
   useEffect(() => {
-    if (!context || !directorState.tournament) {
+    if (!directorState.teams || !directorState.tournament) {
       return;
     }
 
-    const uri = `/director/tournaments/${directorState.tournament.identifier}/teams?partial=true`;
-    const requestConfig = {
-      method: 'get',
-    }
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      router: router,
-      onSuccess: fetchTeamsSuccess,
-      onFailure: fetchTeamsFailure,
-    });
-  }, [context, router]);
+    const teamSize = directorState.tournament.config_items.find(({key}) => key === 'team_size').value;
+    const joinableTeams = directorState.teams.filter(t => t.size < teamSize);
+    setAvailableTeams(joinableTeams);
+  }, [directorState.teams, directorState.tournament]);
 
   const fetchBowlersSuccess = (data) => {
     setLoading(false);
@@ -155,8 +134,15 @@ const Page = () => {
     setAvailableFreeEntries(availableFEs);
   }, [directorState.freeEntries]);
 
-  const ready = useClientReady();
+  const loggedInState = useLoggedIn();
+  const ready = loggedInState >= 0;
   if (!ready) {
+    return '';
+  }
+  if (!loggedInState) {
+    router.push('/director/login');
+  }
+  if (!directorState) {
     return '';
   }
 
@@ -206,7 +192,6 @@ const Page = () => {
         uri: uri,
         requestConfig: requestConfig,
         context: context,
-        router: router,
         onSuccess: deleteBowlerSuccess,
         onFailure: deleteBowlerFailure,
       });
@@ -270,6 +255,7 @@ const Page = () => {
     setLoading(false);
     setBowler(data);
     dispatch(bowlerUpdated(data));
+    dispatch(teamListReset());
   }
   const moveBowlerFailure = (data) => {
     setLoading(false);
@@ -297,7 +283,6 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: moveBowlerSuccess,
       onFailure: moveBowlerFailure,
     });
@@ -372,7 +357,6 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: newPartnerSuccess,
       onFailure: newPartnerFailure,
     });
@@ -427,6 +411,7 @@ const Page = () => {
 
   const linkFreeEntrySuccess = (data) => {
     dispatch(freeEntryUpdated(data));
+    dispatch(bowlerListReset());
     router.reload();
   }
   const linkFreeEntryFailure = (data) => {
@@ -451,7 +436,6 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: linkFreeEntrySuccess,
       onFailure: linkFreeEntryFailure,
     });
@@ -525,6 +509,7 @@ const Page = () => {
     newBowler.ledger_entries = bowler.ledger_entries.concat(newEntry);
     newBowler.amount_due = 0;
     setBowler(newBowler);
+    dispatch(bowlerUpdated(newBowler));
   }
 
   const ledgerEntries = (
@@ -618,7 +603,6 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: bowlerUpdateSuccess,
       onFailure: bowlerUpdateFailure,
     });

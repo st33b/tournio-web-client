@@ -1,14 +1,16 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
-import {devConsoleLog, directorApiRequest, useClientReady} from "../../../utils";
+import {devConsoleLog} from "../../../utils";
+import {directorApiRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import BowlerListing from "../../../components/Director/BowlerListing/BowlerListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import {bowlerListReset, bowlerListRetrieved} from "../../../store/actions/directorActions";
+import {useLoggedIn} from "../../../director";
 
 const Page = () => {
   const router = useRouter();
@@ -19,21 +21,17 @@ const Page = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Make sure we're logged in
-  useEffect(() => {
-    if (!context.isLoggedIn) {
-      router.push('/director/login');
-    }
-  });
-
   // This effect ensures we're logged in with appropriate permissions
   useEffect(() => {
+    if (!directorState.user) {
+      return;
+    }
     const currentTournamentIdentifier = directorState.tournament.identifier;
 
-    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
+    if (directorState.user.role !== 'superuser' && !directorState.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
       router.push('/director');
     }
-  });
+  }, [directorState.user]);
 
   const onFetchBowlersSuccess = (data) => {
     dispatch(bowlerListRetrieved(data));
@@ -64,7 +62,6 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: onFetchBowlersSuccess,
       onFailure: onFetchBowlersFailure,
     })
@@ -79,8 +76,15 @@ const Page = () => {
     }
   }, [router]);
 
-  const ready = useClientReady();
+  const loggedInState = useLoggedIn();
+  const ready = loggedInState >= 0;
   if (!ready) {
+    return '';
+  }
+  if (!loggedInState) {
+    router.push('/director/login');
+  }
+  if (!directorState) {
     return '';
   }
 

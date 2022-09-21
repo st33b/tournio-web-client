@@ -110,6 +110,10 @@ export const directorLogout = ({dispatch, onSuccess = null, onFailure = null}) =
 }
 
 export const directorApiRequest = ({uri, requestConfig, context, onSuccess = null, onFailure = null}) => {
+  if (!context.directorState.user) {
+    handleError({error: 'Not logged in'}, onFailure);
+    return;
+  }
   const url = `${apiHost}${uri}`;
   const config = {...requestConfig};
   config.url = url;

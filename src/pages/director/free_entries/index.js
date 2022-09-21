@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Row, Col, Card} from "react-bootstrap";
 
-import {devConsoleLog, directorApiRequest, useClientReady} from "../../../utils";
+import {devConsoleLog} from "../../../utils";
+import {directorApiRequest, useLoggedIn} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import FreeEntryListing from "../../../components/Director/FreeEntryListing/FreeEntryListing";
@@ -25,18 +26,11 @@ const Page = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Make sure we're logged in
-  useEffect(() => {
-    if (!context.isLoggedIn) {
-      router.push('/director/login');
-    }
-  });
-
   // Make sure we're logged in with appropriate permissions
   useEffect(() => {
     const currentTournamentIdentifier = directorState.tournament.identifier;
 
-    if (context.user.role !== 'superuser' && !context.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
+    if (directorState.user.role !== 'superuser' && !directorState.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
       router.push('/director');
     }
   });
@@ -57,7 +51,7 @@ const Page = () => {
     const needToFetch = directorState.freeEntries && directorState.tournament &&
       directorState.freeEntries.length === 0 && directorState.tournament.free_entry_count > 0;
     if (!needToFetch) {
-      devConsoleLog("Not re-fetching the list of teams.");
+      devConsoleLog("Not re-fetching the list of free entries.");
       return;
     }
 
@@ -70,7 +64,6 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: freeEntriesFetched,
       onFailure: freeEntriesFetchFailed,
     });
@@ -85,8 +78,15 @@ const Page = () => {
     }
   }, [router]);
 
-  const ready = useClientReady();
+  const loggedInState = useLoggedIn();
+  const ready = loggedInState >= 0;
   if (!ready) {
+    return '';
+  }
+  if (!loggedInState) {
+    router.push('/director/login');
+  }
+  if (!directorState) {
     return '';
   }
 
@@ -137,7 +137,6 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: (data) => deleteFreeEntrySuccess(data, freeEntry),
       onFailure: (data) => setErrorMessage(data.error),
     });
@@ -157,7 +156,6 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: (data) => confirmFreeEntrySuccess(data),
       onFailure: (data) => setErrorMessage(data.error),
     });
@@ -185,7 +183,6 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: newFreeEntrySuccess,
       onFailure: (data) => setErrorMessage(data.error),
     });
@@ -202,16 +199,14 @@ const Page = () => {
     </Card>
   );
 
-  const ladder = [
-    {text: 'Tournaments', path: '/director/tournaments'},
-  ];
-  // if (directorState.tournament) {
-    ladder.push({text: directorState.tournament.name, path: `/director/tournaments/${directorState.tournament.identifier}`});
-  // }
-
   if (loading) {
     return <LoadingMessage message={'Retrieving free entry data...'} />
   }
+
+  const ladder = [
+    {text: 'Tournaments', path: '/director/tournaments'},
+  ];
+  ladder.push({text: directorState.tournament.name, path: `/director/tournaments/${directorState.tournament.identifier}`});
 
   return (
     <div>
@@ -231,7 +226,6 @@ const Page = () => {
       </Row>
     </div>
   );
-
 }
 
 Page.getLayout = function getLayout(page) {

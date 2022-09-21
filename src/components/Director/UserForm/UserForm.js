@@ -2,15 +2,15 @@ import React, {useState, useEffect} from "react";
 import {Alert, Button, Card, Form, FormGroup} from "react-bootstrap";
 import {useRouter} from "next/router";
 
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './UserForm.module.scss';
 import {userAdded, userDeleted, userUpdated} from "../../../store/actions/directorActions";
 
 const UserForm = ({user, tournaments}) => {
-  const directorContext = useDirectorContext();
-  const dispatch = directorContext.dispatch;
+  const context = useDirectorContext();
+  const {dispatch, directorState} = context;
   const router = useRouter();
 
   const initialState = {
@@ -30,6 +30,35 @@ const UserForm = ({user, tournaments}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userFormData, setUserFormData] = useState(initialState);
   const [banner, setBanner] = useState(null);
+
+  // If we're editing an existing user, then put the existing user's values into the form
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    const newUserFormData = {...userFormData};
+
+    newUserFormData.fields.email = user.email;
+    newUserFormData.fields.role = user.role;
+    newUserFormData.fields.first_name = user.first_name;
+    newUserFormData.fields.last_name = user.last_name;
+    newUserFormData.fields.tournamentIds = user.tournaments.map(t => t.id);
+
+    const isSelf = user.identifier === directorState.user.identifier;
+    if (isSelf) {
+      delete newUserFormData.fields.role;
+      delete newUserFormData.fields.tournamentIds;
+    }
+
+    newUserFormData.valid = true;
+
+    setUserFormData(newUserFormData);
+  }, [user, directorState.user]);
+
+  if (!directorState.user) {
+    return '';
+  }
 
   let areWeCreating = true;
   let deleteButton = '';
@@ -57,8 +86,7 @@ const UserForm = ({user, tournaments}) => {
       directorApiRequest({
         uri: uri,
         requestConfig: requestConfig,
-        context: directorContext,
-        router: router,
+        context: context,
         onSuccess: onDeleteSuccess,
         onFailure: onDeleteFailure,
       });
@@ -67,7 +95,7 @@ const UserForm = ({user, tournaments}) => {
 
   if (user) {
     areWeCreating = false;
-    isSelf = user.identifier === directorContext.user.identifier;
+    isSelf = user.identifier === directorState.user.identifier;
 
     formTitle = 'User Details';
     submitButtonText = 'Update';
@@ -88,31 +116,6 @@ const UserForm = ({user, tournaments}) => {
       );
     }
   }
-
-  // If we're editing an existing user, then put the existing user's values into the form
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-
-    const newUserFormData = {...userFormData};
-
-    newUserFormData.fields.email = user.email;
-    newUserFormData.fields.role = user.role;
-    newUserFormData.fields.first_name = user.first_name;
-    newUserFormData.fields.last_name = user.last_name;
-    newUserFormData.fields.tournamentIds = user.tournaments.map(t => t.id);
-
-    const isSelf = user.identifier === directorContext.user.identifier;
-    if (isSelf) {
-      delete newUserFormData.fields.role;
-      delete newUserFormData.fields.tournamentIds;
-    }
-
-    newUserFormData.valid = true;
-
-    setUserFormData(newUserFormData);
-  }, [user, directorContext]);
 
   const onSubmitSuccess = (data) => {
     setIsSubmitting(false);
@@ -183,8 +186,7 @@ const UserForm = ({user, tournaments}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
-      router: router,
+      context: context,
       onSuccess: onSubmitSuccess,
       onFailure: onSubmitFailure,
     });
@@ -248,7 +250,6 @@ const UserForm = ({user, tournaments}) => {
               aria-label={"Close"} />
     </div>
   );
-
 
   return (
     <div className={classes.UserForm}>

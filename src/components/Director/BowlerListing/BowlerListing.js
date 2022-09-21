@@ -1,7 +1,6 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {useRouter} from "next/router";
 import {useTable, useSortBy, useFilters} from 'react-table';
-import {List} from 'immutable';
 import {Overlay, Popover} from "react-bootstrap";
 
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
@@ -53,7 +52,6 @@ const IgboMemberCell = ({
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: (data) => onChangeSuccess(newStatus, data),
       onFailure: onChangeFailure,
     });
@@ -99,7 +97,6 @@ const BowlerListing = ({bowlers}) => {
     {
       id: 'name',
       Header: ({column}) => <SortableTableHeader text={'Name'} column={column}/>,
-      // accessor: (props) => props.last_name + ', ' + props.first_name,
       accessor: 'full_name',
       Cell: ({row, cell}) => {
         return (
@@ -114,16 +111,11 @@ const BowlerListing = ({bowlers}) => {
       Header: 'Email',
       accessor: 'email',
     },
-    // {
-    //   Header: 'Preferred Name',
-    //   accessor: 'preferred_name',
-    //   disableSortBy: true,
-    // },
     {
       Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
       accessor: 'team_name',
       Cell: ({row, cell}) => {
-        return row.original.team === null ? 'n/a' : (
+        return (!row.original.team) ? 'n/a' : (
           <a
             href={`/director/teams/${row.original.team.identifier}`}>
             {row.original.team.name}
@@ -133,16 +125,6 @@ const BowlerListing = ({bowlers}) => {
       disableSortBy: true,
       filter: equals,
     },
-    // {
-    //   Header: 'Position',
-    //   accessor: 'position',
-    //   disableSortBy: true,
-    //   Cell: ({value}) => (
-    //     <div className={'text-center'}>
-    //       {value}
-    //     </div>
-    //   )
-    // },
     {
       Header: ({column}) => <SortableTableHeader text={'Date Registered'} column={column}/>,
       accessor: 'date_registered',
@@ -211,6 +193,10 @@ const BowlerListing = ({bowlers}) => {
     useFilters,
     useSortBy,
   );
+
+  if (!bowlers) {
+    return '';
+  }
 
   let list = '';
   if (data.size === 0) {

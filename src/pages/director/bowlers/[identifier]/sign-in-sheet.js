@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
 import {useDirectorContext} from "../../../../store/DirectorContext";
-import {directorApiRequest, useClientReady} from "../../../../utils";
+import {directorApiRequest, useLoggedIn} from "../../../../director";
 import SignInSheet from "../../../../components/Director/SignInSheet/SignInSheet";
 
 const Page = () => {
@@ -16,20 +16,17 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  // This effect ensures that we're logged in and have permission to administer the current tournament
+  // This effect ensures that we have permission to administer the current tournament
   useEffect(() => {
-    if (!context || !directorState) {
+    if (!directorState) {
       return;
-    }
-    if (!context.isLoggedIn) {
-      router.push('/director/login');
     }
     const tournament = directorState.tournament;
     // if the logged-in user is a director but not for this tournament...
-    if (context.user.role === 'director' && !context.user.tournaments.some(t => t.identifier === tournament.identifier)) {
+    if (directorState.user.role === 'director' && !directorState.user.tournaments.some(t => t.identifier === tournament.identifier)) {
       router.push('/director');
     }
-  }, [context, router]);
+  }, [directorState, router]);
 
   const fetchBowlerSuccess = (data) => {
     setLoading(false);
@@ -54,14 +51,20 @@ const Page = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: fetchBowlerSuccess,
       onFailure: fetchBowlerFailure,
     });
   }, [identifier, context, router]);
 
-  const ready = useClientReady();
+  const loggedInState = useLoggedIn();
+  const ready = loggedInState >= 0;
   if (!ready) {
+    return '';
+  }
+  if (!loggedInState) {
+    router.push('/director/login');
+  }
+  if (!directorState) {
     return '';
   }
 

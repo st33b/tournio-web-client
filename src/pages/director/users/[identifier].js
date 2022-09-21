@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 
 import {Col, Row} from "react-bootstrap";
 
-import {directorApiRequest, useClientReady} from "../../../utils";
+import {useLoggedIn} from "../../../director";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import UserForm from '../../../components/Director/UserForm/UserForm';
@@ -14,8 +14,8 @@ const Page = () => {
   const router = useRouter();
   const { identifier } = router.query;
 
-  const isSuperuser = context.user && context.user.role === 'superuser';
-  const isEditingSelf = context.user && context.user.identifier === identifier;
+  const isSuperuser = directorState.user && directorState.user.role === 'superuser';
+  const isEditingSelf = directorState.user && directorState.user.identifier === identifier;
 
   const [user, setUser] = useState();
 
@@ -29,15 +29,23 @@ const Page = () => {
   });
 
   useEffect(() => {
-    if (!identifier || !context) {
+    if (!identifier || !directorState.users) {
       return;
     }
 
     setUser(directorState.users.find(u => u.identifier === identifier));
   }, [identifier]);
 
-  const ready = useClientReady();
+  // Make sure we're logged in and ready to go
+  const loggedInState = useLoggedIn();
+  const ready = loggedInState >= 0;
   if (!ready) {
+    return '';
+  }
+  if (!loggedInState) {
+    router.push('/director/login');
+  }
+  if (!directorState) {
     return '';
   }
 
