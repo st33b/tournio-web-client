@@ -94,7 +94,7 @@ const Page = () => {
       return;
     }
 
-    const teamSize = directorState.tournament.config_items.find(({key}) => key === 'team_size').value;
+    const teamSize = directorState.tournament.team_size;
     const joinableTeams = directorState.teams.filter(t => t.size < teamSize);
     setAvailableTeams(joinableTeams);
   }, [directorState.teams, directorState.tournament]);

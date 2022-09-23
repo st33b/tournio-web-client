@@ -7,7 +7,7 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 
 const StateChangeButton = ({tournament, stateChangeInitiated}) => {
   const {directorState} = useDirectorContext();
-  if (!directorState.user || !tournament || !tournament.config_items) {
+  if (!directorState.user || !tournament) {
     return '';
   }
 

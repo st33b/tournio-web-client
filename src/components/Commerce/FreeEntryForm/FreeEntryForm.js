@@ -26,11 +26,6 @@ const FreeEntryForm = () => {
     return '';
   }
 
-  // No free entry form for tournaments with event selection. (At least, not yet.)
-  if (commerce.tournament.config_items.some(({key, value}) => key === 'event_selection' && value)) {
-    return '';
-  }
-
   const onFreeEntryPostSuccess = (data) => {
     dispatch(freeEntrySuccess(data.unique_code, data.message));
   }

@@ -20,7 +20,7 @@ const NewPurchasableItem = ({tournament}) => {
     if (!tournament) {
       return;
     }
-    const eventSelectionEnabled = tournament.config_items.some(item => item.key === 'event_selection' && item.value);
+    const eventSelectionEnabled = tournament.purchasable_items.some(pi => pi.determination === 'event');
 
     const allLedgerTypes = ['entry_fee', 'late_fee', 'early_discount'];
     const usedTypes = tournament.purchasable_items.filter(item => item.category === 'ledger').map(item => item.determination);

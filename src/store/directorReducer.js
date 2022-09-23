@@ -72,13 +72,12 @@ export const directorReducer = (state, action) => {
         tournament: updateObject(state.tournament, changedProperties),
       });
     case actionTypes.TOURNAMENT_CONFIG_ITEM_UPDATED:
-      const configItems = state.tournament.config_items;
-      index = configItems.findIndex(i => i.id === action.configItem.id);
-      configItems[index] = {...action.configItem}
+      const property = action.configItem.key;
+      const value = action.configItem.value;
       return updateObject(state, {
-        tournament: updateObject(state.tournament, {
-          config_items: configItems,
-        }),
+        tournament: updateObject(state.tournament,
+          Object.defineProperty({}, property, { value: value, enumerable: true })
+        ),
       });
     case actionTypes.TOURNAMENT_SHIFT_ADDED:
       return updateObject(state, {

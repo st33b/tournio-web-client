@@ -36,7 +36,7 @@ const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
       return;
     }
     // It's a tournament where bowlers can select events, rather than a traditional tournament
-    if (tournament.config_items.some(ci => ci.key === 'event_selection' && ci.value)) {
+    if (tournament.purchasable_items.some(pi => pi.determination === 'event')) {
       setEventSelectionAllowed(true);
 
       // populate the event identifiers, for both bundle_discount (if it's available) and event-linked late fee

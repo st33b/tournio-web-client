@@ -17,11 +17,17 @@ const Configuration = ({eventKey, tournament}) => {
       <Placeholder xs={7} />
     </Placeholder>
   )
+  // These items should not appear in this list.
+  const EDITABLE_ITEMS = [
+    "display_capacity",
+    "email_in_dev",
+  ];
+
   if (tournament) {
     content = (
       <dl>
         {tournament.config_items.map((item) => {
-          if (item.key === 'display_capacity' || item.key === 'email_in_dev') {
+          if (EDITABLE_ITEMS.includes(item.key)) {
             return '';
           }
           return (

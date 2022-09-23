@@ -11,8 +11,13 @@ const EditableConfiguration = ({tournament}) => {
       <Placeholder xs={8} />
     </Placeholder>
   )
+  const EDITABLE_ITEMS = [
+    "display_capacity",
+    "email_in_dev",
+  ];
+
   if (tournament) {
-    const items = tournament.config_items.filter(({key}) => ['display_capacity', 'email_in_dev'].includes(key));
+    const items = tournament.config_items.filter(({key}) => EDITABLE_ITEMS.includes(key));
 
     content = (
       <ListGroup>

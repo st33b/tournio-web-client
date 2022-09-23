@@ -137,7 +137,7 @@ const Summary = ({tournament, nextStepClicked, nextStepText, buttonDisabled, ena
 
   if (finalStep && team) {
     const teamSize = team.bowlers.length;
-    const maxTeamSize = parseInt(tournament.config_items.find(({key}) => key === 'team_size').value);
+    const maxTeamSize = tournament.team_size;
     if (teamSize < maxTeamSize) {
       nextStep = (
         <form onSubmit={nextStepClicked}>

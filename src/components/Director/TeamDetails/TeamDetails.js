@@ -219,7 +219,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     </div>
   );
 
-  const maxTeamSize = parseInt(directorState.tournament.config_items.find(({key}) => key === 'team_size').value);
+  const maxTeamSize = parseInt(directorState.tournament.team_size);
 
   return (
     <ErrorBoundary>

@@ -190,7 +190,7 @@ const TournamentDetails = ({tournament}) => {
         linkText: 'Register a Pair of Bowlers',
       },
     ]
-    const eventSelectionEnabled = tournament.config_items.some(item => item.key === 'event_selection' && item.value);
+    const eventSelectionEnabled = tournament.purchasable_items.some(item => item.determination === 'event');
     let registrationOptions = '';
     if (eventSelectionEnabled) {
       // only show what's enabled
@@ -314,7 +314,7 @@ const TournamentDetails = ({tournament}) => {
   }
 
   let shiftContent = '';
-  const displayCapacity = !!tournament.config_items.find(ci => ci.key === 'display_capacity' && ci.value)
+  const displayCapacity = tournament.display_capacity;
   if (tournament.shifts.length > 1) {
     shiftContent = (
       <div className={`${classes.Shifts} my-3 border rounded-sm p-2 p-sm-3`}>
