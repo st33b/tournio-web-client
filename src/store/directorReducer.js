@@ -2,13 +2,18 @@ import * as actionTypes from './actions/directorActionTypes'
 import {devConsoleLog, updateObject} from '../utils';
 
 const initialState = {
+  user: null,
+  tournaments: null,
   tournament: null,
+
+  // An argument could be made for nesting these under tournament, since they're all collection associations of
+  // the tournament currently in context. But they're potentially big collections (bowlers and teams, especially),
+  // and the server API doesn't actually include them in the tournament object sent back. For that reason, we
+  // treat them as top-level collections.
   users: [],
-  tournaments: [],
   bowlers: [],
   teams: [],
   freeEntries: [],
-  user: null,
 }
 
 export const directorReducerInit = (initial = initialState) => initial;
@@ -19,8 +24,6 @@ export const directorReducer = (state, action) => {
 
   let index, identifier;
   switch (action.type) {
-    case actionTypes.RESET:
-      return directorReducerInit();
     case actionTypes.TOURNAMENT_DETAILS_RESET:
       return updateObject(state, {
         tournament: null,
@@ -30,7 +33,7 @@ export const directorReducer = (state, action) => {
       });
     case actionTypes.TOURNAMENT_LIST_RESET:
       return updateObject(state, {
-        tournaments: [],
+        tournaments: null,
       });
     case actionTypes.TOURNAMENT_LIST_RETRIEVED:
       return updateObject(state, {

@@ -37,12 +37,12 @@ const Page = () => {
   }
 
   useEffect(() => {
-    if (!directorState || !directorState.tournaments) {
+    if (!directorState) {
       return;
     }
 
     // Don't fetch the list again if we already have it.
-    if (directorState.tournaments.length > 0) {
+    if (directorState.tournaments) {
       devConsoleLog("Already have a list of tournaments, not re-fetching it");
       return;
     }

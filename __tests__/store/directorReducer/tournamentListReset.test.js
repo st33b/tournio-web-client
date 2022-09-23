@@ -33,7 +33,7 @@ describe ('action type: tournament list reset', () => {
   }
   const expected = {
     ...previousState,
-    tournaments: [],
+    tournaments: null,
   }
 
   it ('returns the expected object', () => {

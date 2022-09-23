@@ -1,11 +1,5 @@
 import * as actionTypes from './directorActionTypes';
 
-export const reset = () => {
-  return {
-    type: actionTypes.RESET,
-  }
-}
-
 export const tournamentListReset = () => {
   return {
     type: actionTypes.TOURNAMENT_LIST_RESET,
