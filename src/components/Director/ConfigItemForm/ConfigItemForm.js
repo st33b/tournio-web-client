@@ -42,41 +42,6 @@ const ConfigItemForm = ({item, editable}) => {
     return '';
   }
 
-  const timeZones = {
-    'Pacific/Honolulu': {
-      key: 'Pacific/Honolulu',
-      display: 'Hawaii (HST)',
-    },
-    'America/Adak': {
-      key: 'America/Adak',
-      display: 'Hawaii-Aleutian (HST/HDT)',
-    },
-    'America/Anchorage': {
-      key: 'America/Anchorage',
-      display: 'Alaska (AKST/AKDT)',
-    },
-    'America/Los_Angeles': {
-      key: 'America/Los_Angeles',
-      display: 'Pacific (PST/PDT)',
-    },
-    'America/Phoenix': {
-      key: 'America/Phoenix',
-      display: 'Phoenix (MST)',
-    },
-    'America/Denver': {
-      key: 'America/Denver',
-      display: 'Mountain (MST/MDT)',
-    },
-    'America/Chicago': {
-      key: 'America/Chicago',
-      display: 'Central (CST/CDT)',
-    },
-    'America/New_York': {
-      key: 'America/New_York',
-      display: 'Eastern (EST/EDT)',
-    },
-  }
-
   const allowEdit = editable && !BOOLEAN_CONFIG_ITEMS.includes(item.key);
 
   const toggleEdit = (event, enable) => {
@@ -88,9 +53,7 @@ const ConfigItemForm = ({item, editable}) => {
 
   const onInputChanged = (event) => {
     const newFormData = {...formData};
-    if (item.key === 'entry_deadline') {
-      newFormData.value = formatISO(event);
-    } else if (BOOLEAN_CONFIG_ITEMS.includes(item.key)) {
+    if (BOOLEAN_CONFIG_ITEMS.includes(item.key)) {
       newFormData.value = event.target.checked;
     } else {
       newFormData.value = event.target.value;
@@ -143,9 +106,6 @@ const ConfigItemForm = ({item, editable}) => {
   if (!editing) {
     let displayedValue = '';
     switch (item.key) {
-      case 'time_zone':
-        displayedValue = formData.value ? timeZones[formData.value].display : '';
-        break;
       case 'website':
         let displayValue = formData.value;
         let ellipsis = '';
@@ -162,12 +122,8 @@ const ConfigItemForm = ({item, editable}) => {
           </>
         );
         break;
-      case 'entry_deadline':
-        displayedValue = formData.value ? format(new Date(formData.value), 'PPp') : '';
-        break;
       case 'display_capacity':
       case 'email_in_dev':
-      case 'event_selection':
         displayedValue = (
           <div className={'form-check form-switch'}>
             <input type={'checkbox'}
@@ -208,13 +164,7 @@ const ConfigItemForm = ({item, editable}) => {
     const elementClassNames = [];
     let children = null;
     let inputElement = null;
-    let wrapperClass = '';
     switch (item.key) {
-      case 'time_zone':
-        elementName = 'select';
-        children = Object.values(timeZones).map(tz => <option value={tz.key} key={tz.key}>{tz.display}</option>);
-        elementClassNames.push('form-select');
-        break;
       case 'team_size':
         elementName = 'input';
         elementProps.type = 'number';
@@ -222,19 +172,6 @@ const ConfigItemForm = ({item, editable}) => {
         elementProps.max = 6;
         elementClassNames.push('form-control');
         break;
-      case 'entry_deadline':
-        inputElement = (
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DateTimePicker onChange={onInputChanged}
-                            value={formData.value}
-                            label={'Entry Deadline'}
-                            renderInput={(params) => <TextField {...params} />}
-                            />
-          </LocalizationProvider>
-        )
-        break;
-      case 'location':
-      case 'paypal_client_id':
       case 'website':
         elementName = 'input';
         elementProps.type = 'text';
@@ -249,11 +186,9 @@ const ConfigItemForm = ({item, editable}) => {
     }
     content = (
       <form onSubmit={onFormSubmit} className={`${classes.Form} p-2 my-2`}>
-        {item.key !== 'entry_deadline' &&
           <label className={'form-label'} htmlFor={'config_item'}>
             {item.label}
           </label>
-        }
         {inputElement}
         <div className={'text-end pt-2'}>
           <button type={'button'}
