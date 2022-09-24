@@ -300,9 +300,7 @@ export const directorReducer = (state, action) => {
         },
       });
     case actionTypes.LOGGED_OUT:
-      return updateObject(state, {
-        user: null,
-      });
+      return directorReducerInit();
     default:
       return state;
   }
