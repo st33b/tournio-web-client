@@ -22,12 +22,6 @@ const Page = () => {
   const fetchTournamentsSuccess = (data) => {
     const tournaments = data;
     dispatch(tournamentListRetrieved(data));
-    if (tournaments.length === 1) {
-      // redirect to the details page for their one tournament.
-      const identifier = tournaments[0]['identifier'];
-      router.push(`/director/tournaments/${identifier}`);
-      return;
-    }
     setLoading(false);
   }
 
