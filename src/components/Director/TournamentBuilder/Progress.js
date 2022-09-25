@@ -51,7 +51,7 @@ const Progress = ({activeStep}) => {
           stepClass = classes.Active;
         }
         const content = (
-          <div className={stepClass} key={key}>
+          <div className={`${classes.Step} ${stepClass}`} key={key}>
             <p>
               {i < activeIndex  && (
                 <a href={`/director/tournaments/new?step=${key}`}
