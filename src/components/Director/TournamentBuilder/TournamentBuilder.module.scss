@@ -1,0 +1,105 @@
+.TournamentBuilder {
+  .Progress {
+    p {
+      margin: 1rem 0;
+
+      .Text {
+        margin-left: 0.75rem;
+      }
+    }
+    .Done {
+      p::before {
+        font-family: 'Bootstrap-icons';
+        content: '\F270';
+      }
+    }
+    .Active {
+      p::before {
+        font-family: 'Bootstrap-icons';
+        content: '\F138';
+      }
+
+    }
+    .Upcoming {
+      p::before {
+        font-family: 'Bootstrap-icons';
+        content: '\F2E4';
+      }
+    }
+  }
+
+  .FormContainer {
+    .FieldRow {
+      margin-top: 1rem;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .TournamentBuilder {
+    .Progress {
+      .Done {
+
+      }
+      .Active {
+
+      }
+      .Upcoming {
+
+      }
+
+    }
+  }
+
+  .FormContainer {
+
+  }
+}
+
+@media (min-width: 576px) {
+  .TournamentBuilder {
+    max-width: 800px;
+    margin: 0 auto;
+
+    .Progress {
+      .Done {
+
+      }
+      .Active {
+
+      }
+      .Upcoming {
+
+      }
+
+    }
+
+    .FormContainer {
+      label {
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .TournamentBuilder {
+    .Progress {
+      .Done {
+
+      }
+      .Active {
+
+      }
+      .Upcoming {
+
+      }
+
+    }
+
+    .FormContainer {
+      label {
+        text-align: right;
+      }
+    }
+  }
+}

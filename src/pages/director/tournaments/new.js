@@ -2,6 +2,7 @@ import {useRouter} from "next/router";
 
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import {useLoggedIn} from "../../../director";
+import TournamentBuilder from "../../../components/Director/TournamentBuilder/TournamentBuilder";
 
 const Page = () => {
   const router = useRouter();
@@ -14,9 +15,11 @@ const Page = () => {
     return '';
   }
 
+  const {step} = router.query;
+
   return (
     <div>
-      <h3>OMG new tournament!</h3>
+      <TournamentBuilder step={step}/>
     </div>
   );
 }

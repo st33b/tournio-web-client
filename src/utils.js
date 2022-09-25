@@ -85,6 +85,42 @@ export const devConsoleLog = (message, object=null) => {
   }
 }
 
+export const timezones = {
+  'Pacific/Honolulu': {
+    key: 'Pacific/Honolulu',
+    display: 'Hawaii (HST)',
+  },
+  'America/Adak': {
+    key: 'America/Adak',
+    display: 'Hawaii-Aleutian (HST/HDT)',
+  },
+  'America/Anchorage': {
+    key: 'America/Anchorage',
+    display: 'Alaska (AKST/AKDT)',
+  },
+  'America/Los_Angeles': {
+    key: 'America/Los_Angeles',
+    display: 'Pacific (PST/PDT)',
+  },
+  'America/Phoenix': {
+    key: 'America/Phoenix',
+    display: 'Phoenix (MST)',
+  },
+  'America/Denver': {
+    key: 'America/Denver',
+    display: 'Mountain (MST/MDT)',
+  },
+  'America/Chicago': {
+    key: 'America/Chicago',
+    display: 'Central (CST/CDT)',
+  },
+  'America/New_York': {
+    key: 'America/New_York',
+    display: 'Eastern (EST/EDT)',
+  },
+}
+
+
 ///////////////////////////////////////////////////
 
 export const apiHost = `${process.env.NEXT_PUBLIC_API_PROTOCOL}://${process.env.NEXT_PUBLIC_API_HOSTNAME}:${process.env.NEXT_PUBLIC_API_PORT}`;
