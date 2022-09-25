@@ -4,7 +4,7 @@ import {timezones} from "../../../../utils";
 
 import classes from '../TournamentBuilder.module.scss';
 
-const Name = () => {
+const Details = () => {
   const {directorState, dispatch} = useDirectorContext();
 
   const initialState = {
@@ -83,8 +83,14 @@ const Name = () => {
         </div>
       </div>
 
-      <div className={`row ${classes.FieldRow}`}>
-        <div className={'col-12 d-flex justify-content-end'}>
+      <div className={`row ${classes.ButtonRow}`}>
+        <div className={'col-12 d-flex justify-content-between'}>
+          <button className={'btn btn-outline-secondary'}
+                  role={'button'}
+                  onClick={() => {}}>
+            <i className={'bi-arrow-left pe-2'} aria-hidden={true}/>
+            Previous
+          </button>
           <button className={'btn btn-outline-primary'}
                   role={'button'}
                   onClick={() => {}}>
@@ -97,4 +103,4 @@ const Name = () => {
   );
 }
 
-export default Name;
+export default Details;

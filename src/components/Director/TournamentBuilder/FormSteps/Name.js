@@ -94,7 +94,7 @@ const Name = () => {
         </div>
       </div>
 
-      <div className={`row ${classes.FieldRow}`}>
+      <div className={`row ${classes.ButtonRow}`}>
         <div className={'col-12 d-flex justify-content-end'}>
           <button className={'btn btn-outline-primary'}
                   role={'button'}
