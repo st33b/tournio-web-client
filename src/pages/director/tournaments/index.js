@@ -87,8 +87,12 @@ const Page = () => {
       </Row>
       <Row>
         <Col className={'text-center'}>
+          <a href={"/director/tournaments/new"}
+             className={"btn btn-sm btn-outline-success mx-2"}>
+            Create a Tournament
+          </a>
           <a href={'#'}
-             className={'btn btn-sm btn-outline-primary'}
+             className={'btn btn-sm btn-outline-primary mx-2'}
              onClick={refreshList}
              >
             Refresh List
