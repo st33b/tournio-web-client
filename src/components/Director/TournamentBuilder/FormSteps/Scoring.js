@@ -35,6 +35,15 @@ const Scoring = () => {
     setFormData(changedData);
   }
 
+  const divisionInputChanged = (event, index) => {
+    const changedData = {...formData};
+    const newValue = event.target.value;
+    const fieldName = event.target.name;
+    changedData.fields.divisions[index][fieldName] = newValue;
+    changedData.valid = isValid(changedData.fields);
+    setFormData(changedData);
+  }
+
   const addDivision = (key) => {
     const data = {...formData};
     data.fields.divisions = formData.fields.divisions.concat({
@@ -160,11 +169,11 @@ const Scoring = () => {
                 </label>
                 <div className={'col-8 col-md-1'}>
                   <input type={'text'}
-                         name={`divisions[${i}]key`}
+                         name={'key'}
                          id={`divisions_${i}_key`}
                          className={'form-control'}
                          value={divisionFormData.key}
-                         onChange={inputChanged}/>
+                         onChange={(e) => divisionInputChanged(e, i)}/>
                 </div>
 
                 <label htmlFor={`divisions_${i}_low_average`}
@@ -175,11 +184,11 @@ const Scoring = () => {
                   <input type={'number'}
                          min={0}
                          max={300}
-                         name={`divisions[${i}]low_average`}
+                         name={'low_average'}
                          id={`divisions_${i}_low_average`}
                          className={'form-control'}
                          value={divisionFormData.low_average}
-                         onChange={inputChanged}/>
+                         onChange={(e) => divisionInputChanged(e, i)}/>
                 </div>
 
                 <label htmlFor={`divisions_${i}_high_average`}
@@ -190,11 +199,11 @@ const Scoring = () => {
                   <input type={'number'}
                          min={0}
                          max={300}
-                         name={`divisions[${i}]high_average`}
+                         name={'high_average'}
                          id={`divisions_${i}_high_average`}
                          className={'form-control'}
                          value={divisionFormData.high_average}
-                         onChange={inputChanged}/>
+                         onChange={(e) => divisionInputChanged(e, i)}/>
                 </div>
               </div>
 
@@ -205,12 +214,12 @@ const Scoring = () => {
                 </label>
                 <div className={'col'}>
                   <input type={'text'}
-                         name={`divisions[${i}]name`}
+                         name={'name'}
                          id={`divisions_${i}_name`}
                          className={'form-control'}
                          value={divisionFormData.name}
                          placeholder={`e.g., ${divisionNamePlaceholders[divisionFormData.key]}`}
-                         onChange={inputChanged}/>
+                         onChange={(e) => divisionInputChanged(e, i)}/>
                   <div className={'form-text'}>
                     Optional
                   </div>

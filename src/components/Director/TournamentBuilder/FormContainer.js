@@ -6,6 +6,7 @@ import Logo from "./FormSteps/Logo";
 
 import classes from './TournamentBuilder.module.scss';
 import Scoring from "./FormSteps/Scoring";
+import RequiredEvents from "./FormSteps/RequiredEvents";
 
 const FormContainer = ({activeStep}) => {
   const {directorState, dispatch} = useDirectorContext();
@@ -17,6 +18,7 @@ const FormContainer = ({activeStep}) => {
       {activeStep === 'dates' && <Dates/>}
       {activeStep === 'logo' && <Logo/>}
       {activeStep === 'scoring' && <Scoring/>}
+      {activeStep === 'required_events' && <RequiredEvents/>}
     </div>
   );
 }
