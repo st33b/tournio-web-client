@@ -46,6 +46,14 @@ const Scoring = () => {
     setFormData(data);
   }
 
+  const removeLastDivision = () => {
+    const data = {...formData};
+    const lastDivision = formData.fields.divisions[formData.fields.divisions.length - 1]
+    data.fields.divisions = formData.fields.divisions.slice(0, -1);
+    setFormData(data);
+    setNextDivisionKey(lastDivision.key);
+  }
+
   const enableDivisions = () => {
     let key = nextDivisionKey;
     for (let i = 0; i < 4; i++) {
@@ -63,6 +71,11 @@ const Scoring = () => {
     if (nextKey === 'H') {
       setPermitAddingDivision(false);
     }
+  }
+
+  const removeDivisionClicked = () => {
+    removeLastDivision();
+    setPermitAddingDivision(true);
   }
 
   const divisionNamePlaceholders = {
@@ -185,7 +198,7 @@ const Scoring = () => {
                 </div>
               </div>
 
-              <div className={`row ${classes.FieldRow}`}>
+              <div className={`row ${classes.FieldRow} g-1`}>
                 <label htmlFor={`divisions_${i}_name`}
                        className={'col-4 col-md-2 col-form-label'}>
                   Name
@@ -203,6 +216,18 @@ const Scoring = () => {
                   </div>
                 </div>
               </div>
+              {i == formData.fields.divisions.length - 1 && (
+                <div className={`row ${classes.FieldRow}`}>
+                  <div className={'col d-flex justify-content-end'}>
+                    <button type={'button'}
+                            className={'btn btn-sm btn-outline-danger'}
+                            onClick={removeDivisionClicked}>
+                      <i className={'bi-dash-lg pe-2'} aria-hidden={true}/>
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
 
