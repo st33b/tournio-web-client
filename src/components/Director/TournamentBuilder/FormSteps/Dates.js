@@ -69,7 +69,7 @@ const Dates = () => {
                className={'col-12 col-md-3 col-form-label'}>
           Start Date
         </label>
-        <div className={'col-5'}>
+        <div className={'col-8 col-md-5'}>
           <div className={'input-group'}>
             <input type={'date'}
                    className={'form-control'}
@@ -90,7 +90,7 @@ const Dates = () => {
                className={'col-12 col-md-3 col-form-label'}>
           End Date
         </label>
-        <div className={'col-5'}>
+        <div className={'col-8 col-md-5'}>
           <div className={'input-group'}>
             <input type={'date'}
                    className={'form-control'}
@@ -111,7 +111,7 @@ const Dates = () => {
                className={'col-12 col-md-3 col-form-label'}>
           Entry Deadline
         </label>
-        <div className={'col-7'}>
+        <div className={'col col-md-7'}>
           <div className={'input-group'}>
             <input type={'datetime-local'}
                    className={'form-control'}

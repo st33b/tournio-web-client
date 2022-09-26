@@ -4,7 +4,7 @@ import {useDirectorContext} from "../../../../store/DirectorContext";
 import classes from '../TournamentBuilder.module.scss';
 import {devConsoleLog} from "../../../../utils";
 
-const AdditionalEvents = () => {
+const DerivedEvents = () => {
   const {directorState, dispatch} = useDirectorContext();
 
   const DEFAULT_EVENT_DETAILS = {
@@ -14,6 +14,7 @@ const AdditionalEvents = () => {
     use_scratch_divisions: false,
     entry_fee: 0,
     entry_fees_per_division: [],
+    permit_multiple_entries: false,
   };
 
   const initialState = {
@@ -76,10 +77,10 @@ const AdditionalEvents = () => {
 
   return (
     <div>
-      <h2>New Tournament: Additional Events</h2>
+      <h2>New Tournament: Derived Events</h2>
 
       <p>
-        Optional, bowled tournament events, such as Scratch Masters or a 9-pin no-tap mixer. These are in addition to any required events.
+        Optional events where the scores come from the bowled events, such as Mystery Doubles and Best 3 Across 9.
       </p>
 
       <fieldset>
@@ -114,6 +115,22 @@ const AdditionalEvents = () => {
                   <option value={''}>-- select one --</option>
                   {rosterTypes.map(value => <option key={value} value={value}>{rosterTypeOptions[value]}</option>)}
                 </select>
+              </div>
+            </div>
+
+            <div className={`row ${classes.FieldRow}`}>
+              <div className={'col-12 col-md-9 offset-md-3'}>
+                <div className={'form-check'}>
+                  <input type={'checkbox'}
+                         id={`events_${i}_permit_multiple_entries`}
+                         name={`events.${i}.permit_multiple_entries`}
+                         className={'form-check-input'}
+                         onChange={inputChanged}/>
+                  <label className={'form-check-label'}
+                         htmlFor={`events_${i}_permit_multiple_entries`}>
+                    Bowlers may enter this event multiple times
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -266,4 +283,4 @@ const AdditionalEvents = () => {
   );
 }
 
-export default AdditionalEvents;
+export default DerivedEvents;

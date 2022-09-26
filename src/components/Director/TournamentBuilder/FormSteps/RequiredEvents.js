@@ -71,6 +71,10 @@ const RequiredEvents = () => {
     <div>
       <h2>New Tournament: Required Events</h2>
 
+      <p>
+        Events that all participants in the tournament will bowl.
+      </p>
+
       <fieldset>
         {formData.fields.events.map(({roster_type, name}, i) => (
           <div key={i} className={classes.Event}>
