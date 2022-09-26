@@ -1,19 +1,22 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useDirectorContext} from "../../../../store/DirectorContext";
 
 import classes from '../TournamentBuilder.module.scss';
-import {devConsoleLog} from "../../../../utils";
 
 const RequiredEvents = () => {
   const {directorState, dispatch} = useDirectorContext();
 
+  const DEFAULT_EVENT_DETAILS = {
+    roster_type: '',
+    name: '',
+    game_count: 3,
+  };
+
+  // Default to 3 games until we add support for customizing the number of games in a required event.
   const initialState = {
     fields: {
       events: [
-        {
-          roster_type: '',
-          name: '',
-        }
+        {...DEFAULT_EVENT_DETAILS},
       ],
     },
     valid: false,
@@ -25,9 +28,9 @@ const RequiredEvents = () => {
     trio: 'Trios',
     team: 'Team',
   }
+  const rosterTypes = Object.keys(rosterTypeOptions);
 
   const [formData, setFormData] = useState(initialState);
-  const [availableRosterOptions, setAvailableRosterOptions] = useState(['single', 'double', 'trio', 'team']);
 
   const isValid = (fields) => {
     return fields.events.every(({roster_type, name}) => !!rosterTypeOptions[roster_type] && name.length > 0)
@@ -48,21 +51,20 @@ const RequiredEvents = () => {
     const rosterType = data.fields.events[index].roster_type;
     data.fields.events[index].name = rosterTypeOptions[rosterType];
     setFormData(data);
-
-    // presumably, update the available roster types here
   }
 
   const addEventClicked = () => {
     const data = {...formData};
-    data.fields.events = formData.fields.events.concat({
-      roster_type: '',
-      name: '',
-    });
+    data.fields.events = formData.fields.events.concat(
+      {...DEFAULT_EVENT_DETAILS},
+    );
     setFormData(data);
   }
 
   const removeEventClicked = () => {
-
+    const data = {...formData};
+    data.fields.events = formData.fields.events.slice(0, -1);
+    setFormData(data);
   }
 
   return (
@@ -85,7 +87,7 @@ const RequiredEvents = () => {
                         onChange={(e) => inputChanged(e, i)}
                         onBlur={() => rosterTypeBlurred(i)}>
                   <option value={''}>-- select one --</option>
-                  {availableRosterOptions.map(value => <option key={value} value={value}>{rosterTypeOptions[value]}</option>)}
+                  {rosterTypes.map(value => <option key={value} value={value}>{rosterTypeOptions[value]}</option>)}
                 </select>
               </div>
             </div>
@@ -105,7 +107,7 @@ const RequiredEvents = () => {
               </div>
             </div>
 
-            {i == Object.keys(rosterTypeOptions).length - 1 && (
+            {i === formData.fields.events.length - 1 && (
               <div className={`row ${classes.FieldRow}`}>
                 <div className={'col d-flex justify-content-end'}>
                   <button type={'button'}
