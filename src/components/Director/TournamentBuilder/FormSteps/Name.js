@@ -8,19 +8,26 @@ import classes from '../TournamentBuilder.module.scss';
 const Name = () => {
   const {directorState, dispatch} = useDirectorContext();
 
+  const currentYear = (new Date()).getFullYear();
+
   const initialState = {
     fields: {
       name: '',
       abbreviation: '',
-      year: (new Date()).getFullYear(),
+      year: currentYear,
     },
     valid: false,
   }
 
   const [formData, setFormData] = useState(initialState);
 
+  const yearOptions = [];
+  for (const i = 0; i < 3; i++) {
+    yearOptions.push(currentYear + i);
+  }
+
   const isValid = (fields) => {
-    return fields.name.length > 0 && fields.year >= initialState.fields.year
+    return fields.name.length > 0 && yearOptions.includes(fields.year);
   }
 
   const inputChanged = (event) => {
@@ -83,14 +90,13 @@ const Name = () => {
           Year
         </label>
         <div className={'col-5'}>
-          <input type={'number'}
-                 min={(new Date()).getFullYear()}
-                 max={2099}
-                 name={'year'}
-                 id={'year'}
-                 className={'form-control'}
-                 value={formData.fields.year}
-                 onChange={inputChanged}/>
+          <select name={'year'}
+                  id={'year'}
+                  className={'form-select'}
+                  value={formData.fields.year}
+                  onChange={inputChanged}>
+            {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
+          </select>
         </div>
       </div>
 
