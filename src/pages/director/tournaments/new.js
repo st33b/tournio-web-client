@@ -16,7 +16,26 @@ const Page = () => {
   }
 
   const {step} = router.query;
-  let activeStep = step || 'name';
+
+  const SUPPORTED_STEPS = [
+    'name',
+    'details',
+    'dates',
+    'logo',
+    'scoring',
+    'required_events',
+    'additional_events',
+    'derived_events',
+  ];
+
+  let activeStep = '';
+  if (step) {
+    if (SUPPORTED_STEPS.includes(step)) {
+      activeStep = step;
+    } else {
+      activeStep = 'name';
+    }
+  }
 
   return (
     <div>

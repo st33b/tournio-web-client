@@ -7,32 +7,21 @@ import {useEffect, useState} from "react";
 import {newTournamentInitiated} from "../../../store/actions/directorActions";
 
 const TournamentBuilder = ({step}) => {
-  const SUPPORTED_STEPS = [
-    'name',
-    'details',
-    'dates',
-    'logo',
-    'scoring',
-    'required_events',
-    'additional_events',
-    'derived_events',
-  ];
 
   const {directorState, dispatch} = useDirectorContext();
   const [activeStep, setActiveStep] = useState();
 
   // Get the current step from context, unless we have a step param passed in
-  // Pick up here.
   useEffect(() => {
-    if (!directorState || !step) {
+    if (!directorState.builder || !directorState.builder.currentStep) {
       return;
     }
-    if (!SUPPORTED_STEPS.includes(step)) {
-      setActiveStep('name');
-    } else {
+    if (step) {
       setActiveStep(step);
+    } else {
+      setActiveStep(directorState.builder.currentStep)
     }
-  }, [directorState, step]);
+  }, [directorState.builder, step]);
 
   if (!activeStep) {
     return '';

@@ -311,6 +311,24 @@ export const directorReducer = (state, action) => {
           saved: false,
         },
       });
+    case actionTypes.NEW_TOURNAMENT_SAVED:
+      return updateObject(state, {
+        builder: updateObject( state.builder, {
+          tournament: {...action.tournament},
+          saved: true,
+        })
+      });
+    case actionTypes.NEW_TOURNAMENT_STEP_COMPLETED:
+      const newCompletedSteps = [...state.builder.completedSteps];
+      if (!newCompletedSteps.includes(action.completedStep)) {
+        newCompletedSteps.push(action.completedStep);
+      }
+      return updateObject(state, {
+        builder: updateObject(state.builder, {
+          completedSteps: newCompletedSteps,
+          currentStep: action.nextStep,
+        }),
+      });
     default:
       return state;
   }

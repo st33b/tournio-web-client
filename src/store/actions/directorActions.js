@@ -1,4 +1,5 @@
 import * as actionTypes from './directorActionTypes';
+import {NEW_TOURNAMENT_STEP_COMPLETED} from "./directorActionTypes";
 
 export const tournamentListReset = () => {
   return {
@@ -276,10 +277,17 @@ export const newTournamentInitiated = () => {
   }
 }
 
-export const newTournamentSaved = (tournament, nextStep) => {
+export const newTournamentSaved = (tournament) => {
   return {
     type: actionTypes.NEW_TOURNAMENT_SAVED,
     tournament: tournament,
+  }
+}
+
+export const newTournamentStepCompleted = (completedStep, nextStep) => {
+  return {
+    type: actionTypes.NEW_TOURNAMENT_STEP_COMPLETED,
+    completedStep: completedStep,
     nextStep: nextStep,
   }
 }

@@ -1,11 +1,14 @@
 import {useState} from "react";
 import {useDirectorContext} from "../../../../store/DirectorContext";
-import {timezones} from "../../../../utils";
+import {devConsoleLog, timezones} from "../../../../utils";
 
 import classes from '../TournamentBuilder.module.scss';
+import {newTournamentSaved, newTournamentStepCompleted} from "../../../../store/actions/directorActions";
+import {directorApiRequest} from "../../../../director";
 
 const Details = () => {
-  const {directorState, dispatch} = useDirectorContext();
+  const context = useDirectorContext();
+  const {directorState, dispatch} = context
 
   const initialState = {
     fields: {
@@ -31,9 +34,50 @@ const Details = () => {
     setFormData(changedData);
   }
 
+  if (!directorState.builder) {
+    return '';
+  }
+
+  const saveSuccess = (data) => {
+    // put the new tournament into context, and set the next step
+    dispatch(newTournamentSaved(data));
+    dispatch(newTournamentStepCompleted('details', 'dates'));
+  }
+
+  const nextClicked = () => {
+    const identifier = directorState.builder.tournament.identifier;
+    const uri = `/director/tournaments/${identifier}`;
+    const requestConfig = {
+      method: 'patch',
+      data: {
+        tournament: {
+          location: formData.fields.location,
+          timezone: formData.fields.timezone,
+          config_items_attributes: [
+            {
+              key: 'website',
+              value: formData.fields.website,
+            },
+          ],
+        },
+      },
+    };
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      onSuccess: saveSuccess,
+      onFailure: (err) => devConsoleLog("Failed to update tournament.", err),
+    });
+  }
+
   return (
     <div>
-      <h2>New Tournament: Details</h2>
+      <h3>
+        {directorState.builder.tournament.name}{' '}
+        ({directorState.builder.tournament.abbreviation}){' '}
+        {directorState.builder.tournament.year}
+      </h3>
 
       <div className={`row ${classes.FieldRow}`}>
         <label htmlFor={'location'}
@@ -87,13 +131,14 @@ const Details = () => {
         <div className={'col-12 d-flex justify-content-between'}>
           <button className={'btn btn-outline-secondary'}
                   role={'button'}
-                  onClick={() => {}}>
+                  onClick={() => {
+                  }}>
             <i className={'bi-arrow-left pe-2'} aria-hidden={true}/>
             Previous
           </button>
           <button className={'btn btn-outline-primary'}
                   role={'button'}
-                  onClick={() => {}}>
+                  onClick={nextClicked}>
             Next
             <i className={'bi-arrow-right ps-2'} aria-hidden={true}/>
           </button>

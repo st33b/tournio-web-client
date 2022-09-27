@@ -12,27 +12,26 @@ describe ('action type: new tournament saved', () => {
     builder: {
       completedSteps: [],
       currentStep: 'name',
-      tournament: null,
-      saved: false,
+      tournament: {
+        name: 'Florida Associated Invitational National Tournament',
+        year: 2023,
+        abbreviation: 'FAINT',
+      },
+      saved: true,
     },
   };
 
-  const newTournament = {
-    name: 'Florida Associated Invitational National Tournament',
-    year: 2023,
-    abbreviation: 'FAINT',
-  }
-
   const action = {
-    type: actionTypes.NEW_TOURNAMENT_SAVED,
-    tournament: newTournament,
+    type: actionTypes.NEW_TOURNAMENT_STEP_COMPLETED,
+    completedStep: 'name',
+    nextStep: 'details',
   }
   const expected = {
     ...previousState,
     builder: {
       ...previousState.builder,
-      tournament: {...newTournament},
-      saved: true,
+      completedSteps: ['name'],
+      currentStep: 'details',
     }
   }
 
