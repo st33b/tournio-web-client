@@ -78,7 +78,6 @@ const DerivedEvents = () => {
   return (
     <div>
       <h2>New Tournament: Derived Events</h2>
-
       <p>
         Optional events where the scores come from the bowled events, such as Mystery Doubles and Best 3 Across 9.
       </p>
@@ -106,7 +105,7 @@ const DerivedEvents = () => {
                      className={'col-12 col-md-3 col-form-label'}>
                 Roster Type
               </label>
-              <div className={'col-4'}>
+              <div className={'col col-md-4'}>
                 <select name={`events.${i}.roster_type`}
                         id={`events_${i}_roster_type`}
                         className={'form-select'}
@@ -190,7 +189,7 @@ const DerivedEvents = () => {
                 <label className={'col-12 col-md-3 col-form-label'}>
                   Entry Fee
                 </label>
-                <div className={'col-3'}>
+                <div className={'col col-md-3'}>
                   <div className={'input-group'}>
                     <span className={'input-group-text'}>
                       <i className={'bi-currency-dollar'} aria-hidden={true}/>

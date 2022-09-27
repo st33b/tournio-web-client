@@ -83,7 +83,7 @@ const RequiredEvents = () => {
                      className={'col-12 col-md-3 col-form-label'}>
                 Roster Type
               </label>
-              <div className={'col-6'}>
+              <div className={'col col-md-6'}>
                 <select name={'roster_type'}
                         id={`events_${i}_roster_type`}
                         className={'form-select'}
@@ -101,7 +101,7 @@ const RequiredEvents = () => {
                      className={'col-12 col-md-3 col-form-label'}>
                 Event Name
               </label>
-              <div className={'col-6'}>
+              <div className={'col col-md-6'}>
                 <input type={'text'}
                        name={'name'}
                        id={`events_${i}_name`}

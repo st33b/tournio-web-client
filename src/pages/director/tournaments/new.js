@@ -7,19 +7,20 @@ import TournamentBuilder from "../../../components/Director/TournamentBuilder/To
 const Page = () => {
   const router = useRouter();
   const loggedInState = useLoggedIn();
-  const ready = loggedInState >= 0;
   if (!loggedInState) {
     router.push('/director/login');
   }
+  const ready = loggedInState >= 0;
   if (!ready) {
     return '';
   }
 
   const {step} = router.query;
+  let activeStep = step || 'name';
 
   return (
     <div>
-      <TournamentBuilder step={step}/>
+      <TournamentBuilder step={activeStep}/>
     </div>
   );
 }

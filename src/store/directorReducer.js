@@ -5,6 +5,7 @@ const initialState = {
   user: null,
   tournaments: null,
   tournament: null,
+  builder: null,
 
   // An argument could be made for nesting these under tournament, since they're all collection associations of
   // the tournament currently in context. But they're potentially big collections (bowlers and teams, especially),
@@ -24,6 +25,15 @@ export const directorReducer = (state, action) => {
 
   let index, identifier;
   switch (action.type) {
+    case actionTypes.LOGGED_IN:
+      return updateObject(state, {
+        user: {
+          ...action.user,
+          authToken: action.authToken,
+        },
+      });
+    case actionTypes.LOGGED_OUT:
+      return directorReducerInit();
     case actionTypes.TOURNAMENT_DETAILS_RESET:
       return updateObject(state, {
         tournament: null,
@@ -292,15 +302,15 @@ export const directorReducer = (state, action) => {
         },
         freeEntries: state.freeEntries.filter(u => u.identifier !== identifier),
       });
-    case actionTypes.LOGGED_IN:
+    case actionTypes.NEW_TOURNAMENT_INITIATED:
       return updateObject(state, {
-        user: {
-          ...action.user,
-          authToken: action.authToken,
+        builder: {
+          completedSteps: [],
+          currentStep: 'name',
+          tournament: null,
+          saved: false,
         },
       });
-    case actionTypes.LOGGED_OUT:
-      return directorReducerInit();
     default:
       return state;
   }

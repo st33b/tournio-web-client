@@ -1,11 +1,11 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import chars from 'voca/chars';
 import isUpperCase from 'voca/is_upper_case';
 import {useDirectorContext} from "../../../../store/DirectorContext";
 
 import classes from '../TournamentBuilder.module.scss';
 
-const Name = () => {
+const Name = ({nextStep}) => {
   const {directorState, dispatch} = useDirectorContext();
 
   const currentYear = (new Date()).getFullYear();
@@ -47,6 +47,14 @@ const Name = () => {
 
     data.fields.abbreviation = upperChars.join('');
     setFormData(data);
+  }
+
+  const saveSuccess = (data) => {
+
+  }
+
+  const nextClicked = () => {
+
   }
 
   return (
@@ -104,6 +112,7 @@ const Name = () => {
         <div className={'col-12 d-flex justify-content-end'}>
           <button className={'btn btn-outline-primary'}
                   role={'button'}
+                  disabled={!formData.valid}
                   onClick={() => {}}>
             Next
             <i className={'bi-arrow-right ps-2'} aria-hidden={true}/>

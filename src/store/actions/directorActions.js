@@ -269,3 +269,17 @@ export const loggedOut = () => {
     type: actionTypes.LOGGED_OUT,
   }
 }
+
+export const newTournamentInitiated = () => {
+  return {
+    type: actionTypes.NEW_TOURNAMENT_INITIATED,
+  }
+}
+
+export const newTournamentSaved = (tournament, nextStep) => {
+  return {
+    type: actionTypes.NEW_TOURNAMENT_SAVED,
+    tournament: tournament,
+    nextStep: nextStep,
+  }
+}
