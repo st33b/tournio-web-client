@@ -1,15 +1,13 @@
 import classes from './OfficeUseOnly.module.scss';
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {useRouter} from "next/router";
 import React, {useEffect, useState} from "react";
 import {Map} from 'immutable';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {Button, Card} from "react-bootstrap";
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../director";
 
 const OfficeUseOnly = ({bowler}) => {
   const context = useDirectorContext();
-  const router = useRouter();
 
   const initialFormData = Map({
     verified_average: '',
@@ -87,7 +85,6 @@ const OfficeUseOnly = ({bowler}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: updateSuccess,
       onFailure: updateFailure,
     });

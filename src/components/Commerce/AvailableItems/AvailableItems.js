@@ -1,11 +1,11 @@
 import {Col, Row} from "react-bootstrap";
-import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {useCommerceContext} from "../../../store/CommerceContext";
 import Item from "./Item/Item";
 
 import classes from './AvailableItems.module.scss';
 
 const AvailableItems = ({itemAddedToCart}) => {
-  const {commerce} = useRegistrationContext();
+  const {commerce} = useCommerceContext();
 
   if (!commerce || !commerce.availableItems) {
     return '';

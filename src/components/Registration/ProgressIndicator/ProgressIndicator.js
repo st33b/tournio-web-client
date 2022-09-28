@@ -25,14 +25,14 @@ const ProgressIndicator = ({active}) => {
   return (
     <Row className={classes.ProgressIndicator}>
       {steps.map((step, i) => {
-        const containerClasses = active === step.id
-          ? 'bg-primary text-white ' + classes.Step
-          : 'bg-light text-dark ' + classes.Step;
-        const itemClass = active === step.id ? classes.Active : '';
+        const containerClasses = [classes.Step];
+        if (active === step.id) {
+          containerClasses.push(classes.Active);
+        }
         return (
-          <Col className={containerClasses} key={i}>
-            <p className={'text-center py-3 m-0'}>
-              <span className={itemClass}>{step.text}</span>
+          <Col className={containerClasses.join(' ')} key={i}>
+            <p className={'text-center py-2 py-sm-3 m-0'}>
+              {step.text}
             </p>
           </Col>
         )

@@ -1,0 +1,25 @@
+import {Record} from "immutable";
+
+export const TournamentRecord = Record({
+  additional_questions: null,
+  available_conditions: null,
+  available_questions: null,
+  bowler_count: null,
+  chart_data: null,
+  config_items: null,
+  contacts: null,
+  free_entry_count: null,
+  id: null,
+  identifier: null,
+  image_url: null,
+  name: null,
+  purchasable_items: null,
+  shifts: null,
+  start_date: null,
+  state: null,
+  status: null,
+  stripe_account: null,
+  team_count: null,
+  testing_environment: null,
+  year: null,
+});

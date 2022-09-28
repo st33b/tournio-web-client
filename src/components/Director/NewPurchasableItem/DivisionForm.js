@@ -1,14 +1,15 @@
+import {useState} from "react";
+
+import ErrorBoundary from "../../common/ErrorBoundary";
+import {useDirectorContext} from "../../../store/DirectorContext";
+import {directorApiRequest} from "../../../director";
+import {purchasableItemsAdded} from "../../../store/actions/directorActions";
+
 import classes from './DivisionForm.module.scss';
 
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {useRouter} from "next/router";
-import {useState} from "react";
-import {directorApiRequest} from "../../../utils";
-import ErrorBoundary from "../../common/ErrorBoundary";
-
-const DivisionForm = ({onCancel, onComplete}) => {
+const DivisionForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();
-  const router = useRouter();
+  const dispatch = context.dispatch;
 
   const initialState = {
     name: '',
@@ -73,10 +74,8 @@ const DivisionForm = ({onCancel, onComplete}) => {
   }
 
   const submissionSuccess = (data) => {
+    dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
-    const tournament = {...context.tournament}
-    tournament.purchasable_items = tournament.purchasable_items.concat(data);
-    context.setTournament(tournament);
     onComplete(`Division Items created.`);
   }
 
@@ -98,7 +97,7 @@ const DivisionForm = ({onCancel, onComplete}) => {
 
   const formSubmitted = (event) => {
     event.preventDefault();
-    const uri = `/director/tournaments/${context.tournament.identifier}/purchasable_items`;
+    const uri = `/director/tournaments/${tournament.identifier}/purchasable_items`;
     const requestConfig = {
       method: 'post',
       data: {
@@ -109,11 +108,8 @@ const DivisionForm = ({onCancel, onComplete}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: submissionSuccess,
-      onFailure: (_) => {
-        console.log("Failed to save new items.")
-      },
+      onFailure: (_) => console.log("Failed to save new items."),
     });
   }
 
@@ -143,7 +139,7 @@ const DivisionForm = ({onCancel, onComplete}) => {
 
           {/* In each division section: division, value/price, note (optional) */}
           {formData.divisions.map((div, index) => (
-              <div key={index} className={'mb-3 mt-3 pt-2 border-top border-secondary'}>
+              <div key={index} className={'mb-3 mt-3 pt-2 border-top'}>
                 <div className={'row mb-1'}>
                   <div className={'d-flex px-0'}>
                     <label htmlFor={'denomination'} className={'form-label ps-0 mb-1'}>
@@ -209,20 +205,24 @@ const DivisionForm = ({onCancel, onComplete}) => {
           </div>
 
           <div className={'row'}>
-            <div className={'d-flex justify-content-between p-0'}>
+            <div className={'d-flex justify-content-end pe-0'}>
               <button type={'button'}
                       title={'Cancel'}
                       onClick={onCancel}
-                      className={'btn btn-outline-danger'}>
-                <i className={'bi-x-lg pe-2'} aria-hidden={true}/>
-                Cancel
+                      className={'btn btn-outline-danger me-2'}>
+                <i className={'bi-x-lg'} aria-hidden={true}/>
+                <span className={'visually-hidden'}>
+                  Cancel
+                </span>
               </button>
               <button type={'submit'}
                       title={'Save'}
                       disabled={!formData.valid}
-                      className={'btn btn-success'}>
-                Save
-                <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>
+                      className={'btn btn-outline-success'}>
+                <i className={'bi-check-lg'} aria-hidden={true}/>
+                <span className={'visually-hidden'}>
+                  Save
+                </span>
               </button>
             </div>
           </div>

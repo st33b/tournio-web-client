@@ -10,24 +10,24 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamBowlerEdited} from "../../../store/actions/registrationActions";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   const [bowlerNum, setBowlerNum] = useState(null);
 
   // Validate the 'bowler' query parameter
   useEffect(() => {
-    if (!router || !entry) {
+    if (!router || !registration) {
       return;
     }
     const { bowler } = router.query;
     const result = parseInt(bowler);
-    if (isNaN(result) || result <= 0 || result > entry.team.bowlers.length) {
-      router.push(`/tournaments/${entry.tournament.identifier}`);
+    if (isNaN(result) || result <= 0 || result > registration.team.bowlers.length) {
+      router.push(`/tournaments/${registration.tournament.identifier}`);
     } else {
       setBowlerNum(result);
     }
-  }, [router, entry]);
+  }, [router, registration]);
 
   if (!bowlerNum) {
     return '';
@@ -37,16 +37,16 @@ const Page = () => {
 
   const onBowlerInfoUpdated = (bowlerInfo) => {
     dispatch(newTeamBowlerEdited(bowlerInfo));
-    router.push(`/tournaments/${entry.tournament.identifier}/review-entries`);
+    router.push(`/tournaments/${registration.tournament.identifier}/review-entries`);
   }
 
   return (
     <Row>
       <Col lg={8}>
         <ProgressIndicator active={'bowlers'} />
-        <BowlerForm bowlerData={entry.team.bowlers[bowlerIndex]}
+        <BowlerForm bowlerData={registration.team.bowlers[bowlerIndex]}
                     bowlerInfoSaved={onBowlerInfoUpdated}
-                    cancelHref={`/tournaments/${entry.tournament.identifier}/review-entries`}
+                    cancelHref={`/tournaments/${registration.tournament.identifier}/review-entries`}
         />
       </Col>
       <Col>

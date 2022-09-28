@@ -1,6 +1,9 @@
 .PurchasableItemEditForm {
   .Form {
-    background-color: #f8f8f8;
+    background-color: var(--tournio-gray-200);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-800);
+    }
     legend {
       text-align: center;
         font-size: 1.2rem;
@@ -33,7 +36,10 @@
     }
   }
   .Item:hover {
-    background-color: #eee;
+    background-color: var(--tournio-gray-200);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-800);
+    }
   }
   .PreviewText {
     font-size: 90%;

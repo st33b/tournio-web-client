@@ -3,30 +3,35 @@ import {useRouter} from "next/router";
 
 import {Col, Row} from "react-bootstrap";
 
-import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import UserListing from '../../../components/Director/UserListing/UserListing';
 import UserForm from '../../../components/Director/UserForm/UserForm';
-import {directorApiRequest} from "../../../utils";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import {directorApiRequest, useLoggedIn} from "../../../director";
+import {useDirectorContext} from '../../../store/DirectorContext';
+import {tournamentListRetrieved, userListRetrieved} from "../../../store/actions/directorActions";
 
 const Page = () => {
-  const directorContext = useDirectorContext();
+  const context = useDirectorContext();
+  const directorState = context.directorState;
+  const dispatch = context.dispatch;
   const router = useRouter();
 
-  const isSuperuser = directorContext.user && directorContext.user.role === 'superuser';
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  // are we a superuser?
   useEffect(() => {
+    if (!directorState.user) {
+      return;
+    }
+    const isSuperuser = directorState.user && directorState.user.role === 'superuser';
     if (!isSuperuser) {
       console.log("Nice try, but you're not logged in as a superuser.");
       router.push('/director');
     }
-  });
-
-  const [users, setUsers] = useState();
-  const [tournaments, setTournaments] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
+  }, [directorState.user]);
 
   // Do we have a success query parameter?
   useEffect(() => {
@@ -38,17 +43,28 @@ const Page = () => {
   }, [router]);
 
   const usersRetrieved = (data) => {
-    setUsers(data);
+    dispatch(userListRetrieved(data));
     setLoading(false);
   }
 
   const usersFailedToRetrieve = (data) => {
     setLoading(false);
-    // TODO
+    console.log("D'oh!", data);
+    setErrorMessage('Failed to retrieve list of users');
   }
 
-  // fetch the list of users to send to the listing component
+  // fetch the list of users to send to the listing component -- but only if we haven't fetched them yet
   useEffect(() => {
+    if (!directorState) {
+      return;
+    }
+
+    // Don't fetch the list if we have some in state already.
+    if (directorState.users.length > 0) {
+      console.log("User list already in state, not fetching again");
+      return;
+    }
+
     const uri = `/director/users`;
     const requestConfig = {
       method: 'get',
@@ -57,48 +73,54 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
+      context: context,
       onSuccess: usersRetrieved,
       onFailure: usersFailedToRetrieve,
     });
-  }, [directorContext]);
+  }, [directorState.users]);
 
-  const onTournamentsFetched = (data) => {
-    setTournaments(data);
-    setLoading(false);
+  const fetchTournamentsFailure = (data) => {
+    setErrorMessage(data.error);
   }
 
-  const onTournamentsFetchFailure = (data) => {
-    setLoading(false);
-    // TODO
-  }
-
-  // Retrieve list of available tournaments
+  // Retrieve the list of tournaments if we need to, for the new-user form
   useEffect(() => {
-    const uri = `/director/tournaments?upcoming`;
+    if (!context || !directorState) {
+      return;
+    }
+    // Don't fetch the list again if we already have it.
+    if (directorState.tournaments && directorState.tournaments.length > 0) {
+      console.log("List of tournaments is already in state, not re-fetching");
+      return;
+    }
+    const uri = '/director/tournaments';
     const requestConfig = {
       method: 'get',
     }
-    setLoading(true);
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: directorContext,
-      router: router,
-      onSuccess: onTournamentsFetched,
-      onFailure: onTournamentsFetchFailure,
+      context: context,
+      onSuccess: (data) => dispatch(tournamentListRetrieved(data)),
+      onFailure: (_) => setErrorMessage(data.error),
     });
-  }, [directorContext, router]);
+  }, []);
 
-  if (loading) {
-    return <LoadingMessage message={'Retrieving users & tournaments, gimme a sec...'} />
+  // Make sure we're logged in and ready to go
+  const loggedInState = useLoggedIn();
+  const ready = loggedInState >= 0;
+  if (!ready) {
+    return '';
+  }
+  if (!loggedInState) {
+    router.push('/director/login');
+  }
+  if (!directorState) {
+    return '';
   }
 
-  const userAdded = (newUser) => {
-    const existingUsers = [...users];
-    existingUsers.push(newUser);
-    existingUsers.sort((left, right) => (left.email.localeCompare(right.email)));
-    setUsers(users);
+  if (loading) {
+    return <LoadingMessage message={'Retrieving users, gimme a sec...'} />
   }
 
   let success = '';
@@ -138,10 +160,10 @@ const Page = () => {
         <Col lg={8}>
           {success}
           {error}
-          <UserListing users={users} tournaments={tournaments}/>
+          <UserListing tournaments={directorState.tournaments}/>
         </Col>
         <Col>
-          <UserForm tournaments={tournaments}/>
+          <UserForm tournaments={directorState.tournaments}/>
         </Col>
       </Row>
     </div>

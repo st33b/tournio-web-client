@@ -6,23 +6,34 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import Summary from "../../../components/Registration/Summary/Summary";
 import {existingTeamBowlerInfoAdded} from "../../../store/actions/registrationActions";
+import {useClientReady} from "../../../utils";
 
 const Page = () => {
   const router = useRouter();
-  const { entry, dispatch } = useRegistrationContext();
+  const { registration, dispatch } = useRegistrationContext();
 
   const onNewBowlerAdded = (bowlerInfo) => {
     dispatch(existingTeamBowlerInfoAdded(bowlerInfo));
-    router.push(`/teams/${entry.team.identifier}/review-joining-bowler`);
+    router.push(`/teams/${registration.team.identifier}/review-joining-bowler`);
+  }
+
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
+  if (!registration) {
+    return '';
   }
 
   return (
     <Row>
-      <Col lg={8}>
-        <BowlerForm bowlerInfoSaved={onNewBowlerAdded} />
-      </Col>
       <Col>
-        <Summary />
+        <Summary tournament={registration.tournament} />
+      </Col>
+      <Col lg={8}>
+        <BowlerForm tournament={registration.tournament}
+                    bowlerInfoSaved={onNewBowlerAdded}
+        />
       </Col>
     </Row>
   );

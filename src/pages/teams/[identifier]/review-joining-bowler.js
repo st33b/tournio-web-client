@@ -6,37 +6,46 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import Summary from "../../../components/Registration/Summary/Summary";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
-import {submitJoinTeamRegistration} from "../../../utils";
+import {submitJoinTeamRegistration, useClientReady} from "../../../utils";
 import {submitJoinTeamCompleted} from "../../../store/actions/registrationActions";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
+  const [error, setError] = useState(null);
+  const [processing, setProcessing] = useState(false);
+
   const editBowlerClicked = () => {
-    router.push(`/teams/${entry.team.identifier}/edit-joining-bowler`)
+    router.push(`/teams/${registration.team.identifier}/edit-joining-bowler`)
   }
 
   const joinTeamSuccess = (bowlerIdentifier) => {
-    const teamIdentifier = entry.team.identifier;
+    const teamIdentifier = registration.team.identifier;
     dispatch(submitJoinTeamCompleted(bowlerIdentifier));
     router.push(`/teams/${teamIdentifier}?success=join`);
   }
 
-  const [error, setError] = useState(null);
-  const [processing, setProcessing] = useState(false);
   const joinTeamFailure = (errorMessage) => {
     setProcessing(false);
     setError(errorMessage);
   }
 
   const submitRegistration = () => {
-    submitJoinTeamRegistration(entry.tournament,
-      entry.team,
-      entry.team.bowlers.slice(-1).pop(),
+    submitJoinTeamRegistration(registration.tournament,
+      registration.team,
+      registration.team.bowlers.slice(-1).pop(),
       joinTeamSuccess,
       joinTeamFailure);
     setProcessing(true);
+  }
+
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
+  if (!registration) {
+    return '';
   }
 
   let errorMessage = '';
@@ -51,9 +60,7 @@ const Page = () => {
   }
   if (processing) {
     output = (
-      <>
-        <h3 className={'display-6 text-center pt-2'}>Processing, sit tight...</h3>
-      </>
+      <h3 className={'display-6 text-center pt-2'}>Processing, sit tight...</h3>
     )
   } else {
     output = (
@@ -66,13 +73,14 @@ const Page = () => {
 
   return (
     <Row>
-      <Col lg={8}>
-        {output}
-      </Col>
-      <Col>
-        <Summary nextStepClicked={submitRegistration}
+      <Col sm={4} xs={{ order: 2 }}>
+        <Summary tournament={registration.tournament}
+                 nextStepClicked={submitRegistration}
                  nextStepText={'Submit Registration'}
         />
+      </Col>
+      <Col sm={{ span: 8, order: 2 }}>
+        {output}
       </Col>
     </Row>
   );

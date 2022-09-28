@@ -9,18 +9,18 @@ import {soloBowlerInfoUpdated} from "../../../store/actions/registrationActions"
 import {useEffect, useState} from "react";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   const [bowler, setBowler] = useState();
   const [tournament, setTournament] = useState();
   useEffect(() => {
-    if (!entry) {
+    if (!registration) {
       return;
     }
-    setBowler(entry.bowler);
-    setTournament(entry.tournament);
-  }, [entry]);
+    setBowler(registration.bowler);
+    setTournament(registration.tournament);
+  }, [registration]);
 
   if (!bowler) {
     return'';
@@ -34,17 +34,17 @@ const Page = () => {
 
   return (
     <Row>
+      <Col>
+        <Summary tournament={registration.tournament}
+                 nextStepClicked={null}
+        />
+      </Col>
       <Col lg={8}>
-        <BowlerForm bowlerData={bowler}
+        <BowlerForm tournament={registration.tournament}
+                    bowlerData={bowler}
                     bowlerInfoSaved={onBowlerInfoUpdated}
                     cancelHref={`/tournaments/${tournament.identifier}/solo-bowler-review`}
                     includeShift={true}
-        />
-      </Col>
-      <Col>
-        <Summary nextStepClicked={null}
-                 nextStepText={'Submit Registration'}
-                 buttonDisabled={true}
         />
       </Col>
     </Row>

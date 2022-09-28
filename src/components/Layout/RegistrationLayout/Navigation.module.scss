@@ -7,8 +7,17 @@
     font-size: 2rem;
   }
   .HomeLinkMd {
-    background: url('../../../images/bowling.svg') no-repeat left top;
-    a { margin-left: 5rem; }
+    background: url('../../../images/tournio-logo.png') no-repeat left top;
+    @media (prefers-color-scheme: dark) {
+      background-image: url('../../../images/tournio-logo-inverted-gray.png');
+    }
+    background-size: contain;
+    //a { margin-left: 5rem; }
+    height: 2rem;
+    a {
+      height: 2rem;
+      width: 100%;
+    }
   }
   .Bag {
     .Badge {

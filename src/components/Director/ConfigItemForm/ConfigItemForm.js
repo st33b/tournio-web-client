@@ -1,23 +1,22 @@
 import {useEffect, useState, createElement} from "react";
 import {format, formatISO} from "date-fns";
-import {useRouter} from "next/router";
 
 import TextField from "@mui/material/TextField";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import DateTimePicker from "@mui/lab/DateTimePicker";
+import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../utils";
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {useDirectorContext} from "../../../store/DirectorContext";
+import {directorApiRequest} from "../../../director";
 
 import classes from './ConfigItemForm.module.scss';
+import {tournamentConfigItemChanged} from "../../../store/actions/directorActions";
 
 const BOOLEAN_CONFIG_ITEMS = ['display_capacity', 'email_in_dev', 'event_selection'];
 
-const ConfigItemForm = ({item}) => {
+const ConfigItemForm = ({item, editable}) => {
   const context = useDirectorContext();
-  const router = useRouter();
 
   const initialState = {
     prevValue: '',
@@ -27,6 +26,8 @@ const ConfigItemForm = ({item}) => {
 
   const [formData, setFormData] = useState(initialState);
   const [editing, setEditing] = useState(false);
+
+  // Populate the form data with the item prop
   useEffect(() => {
     if (!item) {
       return;
@@ -37,46 +38,11 @@ const ConfigItemForm = ({item}) => {
     setFormData(newFormData);
   }, [item]);
 
-  if (!context || !item) {
+  if (!item) {
     return '';
   }
 
-  const timeZones = {
-    'Pacific/Honolulu': {
-      key: 'Pacific/Honolulu',
-      display: 'Hawaii (HST)',
-    },
-    'America/Adak': {
-      key: 'America/Adak',
-      display: 'Hawaii-Aleutian (HST/HDT)',
-    },
-    'America/Anchorage': {
-      key: 'America/Anchorage',
-      display: 'Alaska (AKST/AKDT)',
-    },
-    'America/Los_Angeles': {
-      key: 'America/Los_Angeles',
-      display: 'Pacific (PST/PDT)',
-    },
-    'America/Phoenix': {
-      key: 'America/Phoenix',
-      display: 'Phoenix (MST)',
-    },
-    'America/Denver': {
-      key: 'America/Denver',
-      display: 'Mountain (MST/MDT)',
-    },
-    'America/Chicago': {
-      key: 'America/Chicago',
-      display: 'Central (CST/CDT)',
-    },
-    'America/New_York': {
-      key: 'America/New_York',
-      display: 'Eastern (EST/EDT)',
-    },
-  }
-
-  const allowEdit = context.tournament.state !== 'active' && !BOOLEAN_CONFIG_ITEMS.includes(item.key);
+  const allowEdit = editable && !BOOLEAN_CONFIG_ITEMS.includes(item.key);
 
   const toggleEdit = (event, enable) => {
     if (event) {
@@ -87,9 +53,7 @@ const ConfigItemForm = ({item}) => {
 
   const onInputChanged = (event) => {
     const newFormData = {...formData};
-    if (item.key === 'entry_deadline') {
-      newFormData.value = formatISO(event);
-    } else if (BOOLEAN_CONFIG_ITEMS.includes(item.key)) {
+    if (BOOLEAN_CONFIG_ITEMS.includes(item.key)) {
       newFormData.value = event.target.checked;
     } else {
       newFormData.value = event.target.value;
@@ -109,6 +73,12 @@ const ConfigItemForm = ({item}) => {
     setFormData(newFormData);
     toggleEdit(null, false);
   }
+
+  const onSuccessfulUpdate = (data) => {
+    toggleEdit(null, false);
+    context.dispatch(tournamentConfigItemChanged(data));
+  }
+
   const onFormSubmit = (event, value = null) => {
     if (event) {
       event.preventDefault();
@@ -127,8 +97,7 @@ const ConfigItemForm = ({item}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
-      onSuccess: (_) => { toggleEdit(null, false) },
+      onSuccess: onSuccessfulUpdate,
       onFailure: (data) => { console.log("Failed to save config item.", data) },
     });
   }
@@ -137,30 +106,29 @@ const ConfigItemForm = ({item}) => {
   if (!editing) {
     let displayedValue = '';
     switch (item.key) {
-      case 'time_zone':
-        displayedValue = formData.value ? timeZones[formData.value].display : '';
-        break;
       case 'website':
+        let displayValue = formData.value;
+        let ellipsis = '';
+        if (displayValue.length > 15) {
+          displayValue = formData.value.substring(formData.value.length - 15);
+          ellipsis = '...';
+        }
         displayedValue = (
-          <a href={formData.value}
-             title={formData.value}
-             target={'_new'}>
-            visit
-            <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden={true} />
-          </a>
+          <>
+            {ellipsis}
+            <span className={classes.Url}>
+              {displayValue}
+            </span>
+          </>
         );
-        break;
-      case 'entry_deadline':
-        displayedValue = formData.value ? format(new Date(formData.value), 'PPp') : '';
         break;
       case 'display_capacity':
       case 'email_in_dev':
-      case 'event_selection':
         displayedValue = (
-          <div className={'form-check'}>
+          <div className={'form-check form-switch'}>
             <input type={'checkbox'}
                    className={'form-check-input'}
-                   // role={'switch'}
+                   role={'switch'}
                    name={'config_item'}
                    checked={formData.value}
                    onChange={onInputChanged} />
@@ -171,19 +139,19 @@ const ConfigItemForm = ({item}) => {
         displayedValue = formData.value;
         break;
     }
-    content = (
-      <div className={`${classes.Item} d-flex`} key={item.key}>
-        <dt className={'col-4'}>{item.label}</dt>
-        <dd className={'ps-3 flex-grow-1 overflow-hidden'}>{displayedValue}</dd>
-        {allowEdit &&
-          <a href={'#'}
-             className={`${classes.EditLink} ms-auto`}
-             onClick={(event) => toggleEdit(event, true)}>
-            <span className={'visually-hidden'}>Edit</span>
-            <i className={'bi-pencil'} aria-hidden={true}/>
-          </a>
-        }
-      </div>
+    const itemContent = (
+        <div className={`${classes.Item} d-flex`} key={item.key}>
+          <dt className={'col-4'}>{item.label}</dt>
+          <dd className={'ps-3 flex-grow-1 overflow-hidden'}>{displayedValue}</dd>
+        </div>
+    )
+    content = !allowEdit ? itemContent : (
+      <span className={classes.ItemWrapper}
+            title={'Edit this item'}
+            onClick={(e) => toggleEdit(e, true)}
+      >
+        {itemContent}
+      </span>
     );
   } else {
     let elementName = '';
@@ -196,13 +164,7 @@ const ConfigItemForm = ({item}) => {
     const elementClassNames = [];
     let children = null;
     let inputElement = null;
-    let wrapperClass = '';
     switch (item.key) {
-      case 'time_zone':
-        elementName = 'select';
-        children = Object.values(timeZones).map(tz => <option value={tz.key} key={tz.key}>{tz.display}</option>);
-        elementClassNames.push('form-select');
-        break;
       case 'team_size':
         elementName = 'input';
         elementProps.type = 'number';
@@ -210,19 +172,6 @@ const ConfigItemForm = ({item}) => {
         elementProps.max = 6;
         elementClassNames.push('form-control');
         break;
-      case 'entry_deadline':
-        inputElement = (
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DateTimePicker onChange={onInputChanged}
-                            value={formData.value}
-                            label={'Entry Deadline'}
-                            renderInput={(params) => <TextField {...params} />}
-                            />
-          </LocalizationProvider>
-        )
-        break;
-      case 'location':
-      case 'paypal_client_id':
       case 'website':
         elementName = 'input';
         elementProps.type = 'text';
@@ -236,12 +185,10 @@ const ConfigItemForm = ({item}) => {
       inputElement = createElement(elementName, elementProps, children);
     }
     content = (
-      <form onSubmit={onFormSubmit} className={`${classes.Form} p-2 mb-3`}>
-        {item.key !== 'entry_deadline' &&
+      <form onSubmit={onFormSubmit} className={`${classes.Form} p-2 my-2`}>
           <label className={'form-label'} htmlFor={'config_item'}>
             {item.label}
           </label>
-        }
         {inputElement}
         <div className={'text-end pt-2'}>
           <button type={'button'}

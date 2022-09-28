@@ -1,10 +1,78 @@
-//$backgroundColor: #2ecc71;
-
 html {
   font-size: 1rem;
 }
 
 .line {
   display: block;
+}
+
+.accordion {
+  --tournio-accordion-color: var(--tournio-body-color);
+  --tournio-accordion-bg: var(--tournio-body-bg);
+  --tournio-accordion-active-color: var(--tournio-body-color);
+  --tournio-accordion-active-bg: var(--tournio-body-bg);
+}
+
+.card {
+  @media (prefers-color-scheme: dark) {
+    --tournio-card-bg: var(--tournio-body-bg);
+    --tournio-card-border-color: var(--tournio-gray-800);
+    --tournio-card-cap-bg: var(--tournio-gray-900);
+  }
+}
+
+.list-group {
+  @media (prefers-color-scheme: dark) {
+    --tournio-list-group-color: var(--tournio-body-color);
+    --tournio-list-group-bg: var(--tournio-body-bg);
+    --tournio-list-group-border-color: var(--tournio-gray-800);
+    --tournio-list-group-action-color: var(--tournio-gray-300);
+    --tournio-list-group-action-hover-color: var(--tournio-gray-300);
+    --tournio-list-group-action-hover-bg: var(--tournio-gray-900);
+    --tournio-list-group-action-active-color: var(--tournio-gray-300);
+    --tournio-list-group-action-active-bg: var(--tournio-gray-800);
+    --tournio-list-group-active-color: var(--tournio-gray-400);
+    --tournio-list-group-active-bg: var(--tournio-gray-800);
+  }
+}
+
+.form-control {
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--tournio-gray-900);
+    color: var(--tournio-body-color);
+    border-color: var(--tournio-gray-700);
+
+    &:focus,
+    &:hover {
+      background-color: var(--tournio-gray-800);
+      color: var(--tournio-body-color);
+    }
+  }
+}
+
+.form-control-plaintext {
+  @media (prefers-color-scheme: dark) {
+    color: var(--tournio-body-color);
+  }
+}
+
+.form-select {
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--tournio-gray-900);
+    color: var(--tournio-body-color);
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%236c757d' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>");
+    border-color: var(--tournio-gray-700);
+  }
+}
+
+.form-check-input {
+  background-color: var(--tournio-gray-200);
+  border-color: var(--tournio-gray-500);
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--tournio-gray-700);
+  }
+  &:checked {
+    background-color: var(--tournio-primary);
+  }
 }
 

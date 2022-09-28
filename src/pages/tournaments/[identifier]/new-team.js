@@ -8,20 +8,22 @@ import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamRegistrationInitiated, teamInfoAdded} from "../../../store/actions/registrationActions";
 import {useEffect} from "react";
+import {useClientReady} from "../../../utils";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
+  // If new-team registrations aren't enabled, go back to the tournament home page
   useEffect(() => {
-    if (!entry || !entry.tournament) {
+    if (!registration.tournament) {
       return;
     }
-    const shift = entry.tournament.shifts[0];
+    const shift = registration.tournament.shifts[0];
     if (shift && !shift.registration_types.new_team) {
-      router.push(`/tournaments/${entry.tournament.identifier}`);
+      router.push(`/tournaments/${registration.tournament.identifier}`);
     }
-  }, [entry]);
+  }, [registration]);
 
   useEffect(() => {
     dispatch(newTeamRegistrationInitiated());
@@ -29,17 +31,25 @@ const Page = () => {
 
   const onTeamFormCompleted = (teamName, shift) => {
     dispatch(teamInfoAdded(teamName, shift));
-    router.push(`/tournaments/${entry.tournament.identifier}/new-team-bowler`);
+    router.push(`/tournaments/${registration.tournament.identifier}/new-team-bowler`);
+  }
+
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
+  if (!registration.tournament) {
+    return '';
   }
 
   return (
     <Row>
+      <Col>
+        <Summary tournament={registration.tournament}/>
+      </Col>
       <Col lg={8}>
         <ProgressIndicator active={'team'} />
-        <TeamForm teamFormCompleted={onTeamFormCompleted} />
-      </Col>
-      <Col>
-        <Summary />
+        <TeamForm tournament={registration.tournament} teamFormCompleted={onTeamFormCompleted} />
       </Col>
     </Row>
   );

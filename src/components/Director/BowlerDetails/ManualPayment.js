@@ -1,14 +1,14 @@
-import classes from './ManualPayment.module.scss';
+import {Button} from "react-bootstrap";
+
 import {useDirectorContext} from "../../../store/DirectorContext";
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
-import {Button} from "react-bootstrap";
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../director";
+
+import classes from './ManualPayment.module.scss';
 
 const ManualPayment = ({bowler, added}) => {
   const context = useDirectorContext();
-  const router = useRouter();
 
   const initialFormState = {
     amount: '',
@@ -81,7 +81,6 @@ const ManualPayment = ({bowler, added}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: createSuccess,
       onFailure: createFailure,
     });

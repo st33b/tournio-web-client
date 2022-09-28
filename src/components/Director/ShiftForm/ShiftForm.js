@@ -1,16 +1,19 @@
-import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import {Map} from "immutable";
 import Card from 'react-bootstrap/Card';
 
 import {useDirectorContext} from "../../../store/DirectorContext";
+import {directorApiRequest} from "../../../director";
 
 import classes from './ShiftForm.module.scss';
-import {directorApiRequest} from "../../../utils";
+import {
+  tournamentShiftAdded,
+  tournamentShiftDeleted,
+  tournamentShiftUpdated
+} from "../../../store/actions/directorActions";
 
-const ShiftForm = ({shift}) => {
+const ShiftForm = ({tournament, shift}) => {
   const context = useDirectorContext();
-  const router = useRouter();
 
   const REGISTRATION_TYPES = ['new_team', 'solo', 'join_team', 'partner', 'new_pair'];
   const REGISTRATION_TYPE_LABELS = [
@@ -40,6 +43,7 @@ const ShiftForm = ({shift}) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
+  // Populate form data with the shift prop
   useEffect(() => {
     if (!shift) {
       return;
@@ -59,7 +63,7 @@ const ShiftForm = ({shift}) => {
     setFormData(Map(existingShift));
   }, [shift]);
 
-  if (!context || !context.tournament) {
+  if (!context || !tournament) {
     return '';
   }
 
@@ -72,7 +76,7 @@ const ShiftForm = ({shift}) => {
   //   setFormData(newFormData);
   // }
 
-  const allowDelete = shift && (context.tournament.state !== 'active' || context.tournament.state !== 'demo');
+  const allowDelete = shift && (tournament.state !== 'active' && tournament.state !== 'demo');
 
   const addClicked = (event) => {
     event.preventDefault();
@@ -129,7 +133,7 @@ const ShiftForm = ({shift}) => {
   const addShiftFormSubmitted = (event) => {
     event.preventDefault();
 
-    const uri = `/director/tournaments/${context.tournament.identifier}/shifts`;
+    const uri = `/director/tournaments/${tournament.identifier}/shifts`;
     const registrationTypes = [];
     REGISTRATION_TYPES.forEach(rType => {
       if (formData.get(rType)) {
@@ -154,25 +158,9 @@ const ShiftForm = ({shift}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
-      onSuccess: addShiftSuccess,
-      onFailure: addShiftFailure,
+      onSuccess: (data) => context.dispatch(tournamentShiftAdded(data)),
+      onFailure: (data) => console.log("D'oh!", data),
     });
-  }
-
-  const addShiftSuccess = (data) => {
-    const tournament = {...context.tournament};
-    tournament.shifts = context.tournament.shifts.concat(data);
-    context.setTournament(tournament);
-  }
-
-  const addShiftFailure = (data) => {
-    console.log('damn', data);
-  }
-
-  const outerClasses = [classes.ShiftForm];
-  if (formDisplayed) {
-    outerClasses.push(classes.FormDisplayed);
   }
 
   const toggleEdit = (event) => {
@@ -193,21 +181,9 @@ const ShiftForm = ({shift}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
-      onSuccess: deleteShiftSuccess,
-      onFailure: deleteShiftFailure,
+      onSuccess: () => context.dispatch(tournamentShiftDeleted(shift)),
+      onFailure: (data) => console.log("D'oh!", data),
     });
-  }
-
-  const deleteShiftSuccess = (data) => {
-    const tournament = {...context.tournament};
-    tournament.shifts = context.tournament.shifts.filter(s => s.identifier !== shift.identifier);
-    context.setTournament(tournament);
-    // Anything else we need to do? I'm pretty sure a re-render will take this component instance away entirely...
-  }
-
-  const deleteShiftFailure = (data) => {
-    console.log("Uh oh...", data);
   }
 
   const updateShiftFormSubmitted = (event) => {
@@ -238,24 +214,15 @@ const ShiftForm = ({shift}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: updateShiftSuccess,
-      onFailure: updateShiftFailure,
+      onFailure: (data) => console.log("D'oh!", data),
     })
   }
 
   const updateShiftSuccess = (data) => {
-    const tournament = {...context.tournament};
-    tournament.shifts = [...context.tournament.shifts];
-    const index = tournament.shifts.findIndex(s => s.identifier === shift.identifier)
-    tournament.shifts[index] = data;
-    context.setTournament(tournament);
+    context.dispatch(tournamentShiftUpdated(data));
     setSuccessMessage('Shift updated.');
     setFormDisplayed(false);
-  }
-
-  const updateShiftFailure = (data) => {
-    console.log('damn', data);
   }
 
   let submitFunction = addShiftFormSubmitted;
@@ -267,6 +234,11 @@ const ShiftForm = ({shift}) => {
     } else if (shift.confirmed_count + shift.requested_count + 16 >= shift.capacity) {
       colorClass = classes.AlmostFull;
     }
+  }
+
+  const outerClasses = [classes.ShiftForm];
+  if (formDisplayed) {
+    outerClasses.push(classes.FormDisplayed);
   }
 
   // const daysOfWeek = [
@@ -299,7 +271,7 @@ const ShiftForm = ({shift}) => {
            className={'text-body text-decoration-none'}
            title={'Edit details'}
            onClick={toggleEdit}>
-          <dl className={classes.ExistingShift}>
+          <dl className={`${classes.ExistingShift} px-2`}>
             {/*<div className={'row'}>*/}
             {/*  <dt className={'col-4'}>*/}
             {/*    Order*/}
@@ -330,33 +302,33 @@ const ShiftForm = ({shift}) => {
             {/*  </dd>*/}
             {/*</div>*/}
 
-            <div className={`row ${colorClass}`}>
-              <dt className={'col-5'}>
+            <div className={`row ${colorClass} g-3`}>
+              <dt className={'col-6 mt-2'}>
                 Capacity
               </dt>
-              <dd className={'col'}>
+              <dd className={'col mt-2'}>
                 {shift.capacity} bowlers
               </dd>
             </div>
-            <div className={`row ${colorClass}`}>
-              <dt className={'col-5'}>
-                # Confirmed
+            <div className={`row ${colorClass} g-3`}>
+              <dt className={'col-6'}>
+                Confirmed
               </dt>
               <dd className={'col'}>
                 {shift.confirmed_count}
               </dd>
             </div>
-            <div className={`row ${colorClass}`}>
-              <dt className={'col-5'}>
-                # Requested
+            <div className={`row ${colorClass} g-3`}>
+              <dt className={'col-6'}>
+                Requested
               </dt>
               <dd className={'col'}>
                 {shift.requested_count}
               </dd>
             </div>
 
-            <div className={'row'}>
-              <dt className={'col-5'}>
+            <div className={'row g-3'}>
+              <dt className={'col-6'}>
                 Enabled Entry Types
               </dt>
               <dd className={'col'}>
@@ -471,12 +443,12 @@ const ShiftForm = ({shift}) => {
             {/*</div>*/}
 
             <div className={'row mb-3'}>
-              <div className={'col-6 text-end'}>
-                <label htmlFor={'capacity'} className={'col-form-label ps-0 mb-1'}>
+              <div className={'col-5'}>
+                <label htmlFor={'capacity'} >
                   Capacity (bowlers)
                 </label>
               </div>
-              <div className={'col-6'}>
+              <div className={'col'}>
                 <input type={'number'}
                        className={'form-control'}
                        name={'capacity'}
@@ -501,12 +473,12 @@ const ShiftForm = ({shift}) => {
               {/*</div>*/}
             </div>
             <div className={'row mb-3'}>
-              <div className={'col-6 text-end'}>
+              <div className={'col-5'}>
                 <label>
                   Enabled Registration Routes
                 </label>
               </div>
-              <div className={'col-6'}>
+              <div className={'col'}>
                 {REGISTRATION_TYPE_LABELS.map(kind => (
                   <div className={'form-check form-switch'} key={kind.key}>
                     <input type={'checkbox'}
@@ -538,7 +510,7 @@ const ShiftForm = ({shift}) => {
                 <button type={'button'}
                         title={'Cancel'}
                         onClick={formCancelled}
-                        className={'btn btn-outline-dark me-2'}>
+                        className={'btn btn-outline-danger me-2'}>
                   <i className={'bi-x-lg'} aria-hidden={true}/>
                   <span className={'visually-hidden'}>
                     Cancel
@@ -547,7 +519,7 @@ const ShiftForm = ({shift}) => {
                 <button type={'submit'}
                         title={'Save'}
                         disabled={!formData.get('valid')}
-                        className={'btn btn-success'}>
+                        className={'btn btn-outline-success'}>
                   <i className={'bi-check-lg'} aria-hidden={true}/>
                   <span className={'visually-hidden'}>
                     Save

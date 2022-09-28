@@ -1,15 +1,14 @@
 import {useState} from "react";
-import {useRouter} from "next/router";
 import {Card} from "react-bootstrap";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../director";
+import {additionalQuestionsUpdated} from "../../../store/actions/directorActions";
 
 import classes from './AdditionalQuestionForm.module.scss';
 
-const AdditionalQuestionForm = () => {
+const AdditionalQuestionForm = ({tournament}) => {
   const context = useDirectorContext();
-  const router = useRouter();
 
   const initialFormData = {
     extended_form_field_id: '',
@@ -21,13 +20,13 @@ const AdditionalQuestionForm = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  if (!context || !context.tournament) {
+  if (!context || !tournament) {
     return '';
   }
 
-  const availableQuestions = context.tournament.available_questions;
+  const availableQuestions = tournament.available_questions;
   const roomForMore = availableQuestions.length > 0;
-  const tooLate = context.tournament.state === 'active' || context.tournament.state === 'closed';
+  const tooLate = tournament.state === 'active' || tournament.state === 'closed';
 
   const addClicked = (event) => {
     event.preventDefault();
@@ -37,7 +36,7 @@ const AdditionalQuestionForm = () => {
   const inputChanged = (event) => {
     const inputName = event.target.name;
     const newValue = inputName === 'required' ? event.target.checked : event.target.value;
-    const newFormData = { ...formData }
+    const newFormData = {...formData}
     newFormData[inputName] = newValue;
 
     newFormData.valid = !!newFormData.extended_form_field_id;
@@ -47,32 +46,34 @@ const AdditionalQuestionForm = () => {
 
   const submissionSuccess = (data) => {
     setSuccessMessage(
-      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
-        <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
+      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'}
+           role={'alert'}>
+        <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
         <div className={'me-auto'}>
           Question saved.
           <button type="button"
                   className={"btn-close"}
                   data-bs-dismiss="alert"
                   onClick={() => setSuccessMessage(null)}
-                  aria-label="Close" />
+                  aria-label="Close"/>
         </div>
       </div>
     );
-    context.setTournament(data);
+    context.dispatch(additionalQuestionsUpdated(data));
   }
 
   const submissionFailure = (data) => {
     setErrorMessage(
-      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
-        <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
+      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'}
+           role={'alert'}>
+        <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
         <div className={'me-auto'}>
           Failed to save the question: {data.error}
           <button type="button"
                   className={"btn-close"}
                   data-bs-dismiss="alert"
                   onClick={() => setErrorMessage(null)}
-                  aria-label="Close" />
+                  aria-label="Close"/>
         </div>
       </div>
     );
@@ -86,7 +87,7 @@ const AdditionalQuestionForm = () => {
     }
 
     // send over the new question
-    const uri = `/director/tournaments/${context.tournament.identifier}`;
+    const uri = `/director/tournaments/${tournament.identifier}`;
     const requestConfig = {
       method: 'patch',
       data: {
@@ -97,7 +98,7 @@ const AdditionalQuestionForm = () => {
               validation_rules: {
                 required: formData.required,
               },
-              order: context.tournament.additional_questions.length + 1,
+              order: tournament.additional_questions.length + 1,
             },
           ],
         },
@@ -107,7 +108,6 @@ const AdditionalQuestionForm = () => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: submissionSuccess,
       onFailure: submissionFailure,
     });
@@ -115,8 +115,13 @@ const AdditionalQuestionForm = () => {
     setFormDisplayed(false);
   }
 
+  const outerClasses = [classes.AdditionalQuestionForm];
+  if (formDisplayed) {
+    outerClasses.push(classes.FormDisplayed);
+  }
+
   return (
-    <div className={classes.AdditionalQuestionForm}>
+    <div className={outerClasses.join(' ')}>
       <Card.Body>
         {formDisplayed &&
           <form onSubmit={formSubmitted}>
@@ -140,11 +145,32 @@ const AdditionalQuestionForm = () => {
                 A response is required
               </label>
             </div>
-            <div className={'text-center'}>
+            {/*<div className={'text-center'}>*/}
+            {/*  <button type={'submit'}*/}
+            {/*          className={'btn btn-primary'}*/}
+            {/*          disabled={!formData.valid}>*/}
+            {/*    Save*/}
+            {/*  </button>*/}
+            {/*</div>*/}
+
+            <div className={'d-flex justify-content-end'}>
+              <button type={'button'}
+                      title={'Cancel'}
+                      onClick={() => setFormDisplayed(false)}
+                      className={'btn btn-outline-danger me-2'}>
+                <i className={'bi-x-lg'} aria-hidden={true}/>
+                <span className={'visually-hidden'}>
+                Cancel
+              </span>
+              </button>
               <button type={'submit'}
-                      className={'btn btn-primary'}
-                      disabled={!formData.valid}>
+                      title={'Save'}
+                      disabled={!formData.valid}
+                      className={'btn btn-outline-success'}>
+                <i className={'bi-check-lg'} aria-hidden={true}/>
+                <span className={'visually-hidden'}>
                 Save
+              </span>
               </button>
             </div>
             {errorMessage}

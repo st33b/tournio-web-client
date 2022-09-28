@@ -1,21 +1,27 @@
-import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {useCommerceContext} from "../../../store/CommerceContext";
 import SingleUseItem from "./SingleUseItem/SingleUseItem";
 import MultiUseItem from "./MultiUseItem/MultiUseItem";
 
 import classes from './Cart.module.scss';
+import StripeCheckout from "../StripeCheckout/StripeCheckout";
 
 const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
-  const {commerce} = useRegistrationContext();
+  const {commerce} = useCommerceContext();
 
   if (!commerce || !commerce.cart) {
     return '';
   }
 
-  const sum = (runningTotal, currentValue) => runningTotal + currentValue.value * (currentValue.quantity || 1);
+  const sum = (runningTotal, currentValue) => {
+    if (currentValue.category === 'ledger' && (currentValue.determination === 'early_discount' || currentValue.determination === 'bundle_discount')) {
+      return runningTotal - currentValue.value * (currentValue.quantity || 1);
+    }
+    return runningTotal + currentValue.value * (currentValue.quantity || 1);
+  };
   const totalFees = commerce.cart.reduce(sum, 0);
   let cartItems = (
     <div className={classes.EmptyItemList}>
-      <p className={'my-0 py-2 ps-2'}>
+      <p className={'py-2 ps-2 mb-2'}>
         Your cart is empty.
       </p>
     </div>
@@ -53,10 +59,7 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
         Total: ${totalFees}
       </p>
       <div className={'d-flex flex-row-reverse pb-3 pb-md-0'}>
-        <a href={`/bowlers/${commerce.bowler.identifier}/checkout`}
-           className={'btn btn-success btn-lg'}>
-          Check Out
-        </a>
+        <StripeCheckout/>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import Head from 'next/head';
 
-export const siteTitle = 'IGBO Tournament Registration';
+export const siteTitle = 'Tournio';
 
 const SiteHeader = () => (
   <Head>
@@ -10,6 +10,7 @@ const SiteHeader = () => (
     <meta name={"viewport"} content={"width=device-width, initial-scale=1.0, shrink-to-fit=no"} />
     <meta name={'description'} content={'Registration portal for IGBO tournaments'} />
     <meta name={'twitter:card'} content={'summary_large_image'} />
+    <link rel="icon" type="image/x-icon" href="/tournio/tournio-favicon.png" />
   </Head>
 );
 

@@ -1,30 +1,32 @@
-import DirectorLayout from '../../components/Layout/DirectorLayout/DirectorLayout';
-import {useEffect} from "react";
+import React, {useEffect} from "react";
 import {useRouter} from "next/router";
+import DirectorLayout from '../../components/Layout/DirectorLayout/DirectorLayout';
 import {useDirectorContext} from "../../store/DirectorContext";
-import {directorApiLogoutRequest} from "../../utils";
+import {useClientReady} from "../../utils";
+import {directorLogout} from "../../director";
+import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
 
 const Logout = () => {
   const router = useRouter();
-  const directorContext = useDirectorContext();
+  const {dispatch} = useDirectorContext();
 
   useEffect(() => {
-    if (!directorContext) {
+    if (!dispatch || !router) {
       return;
     }
-    directorApiLogoutRequest({
-      context: directorContext,
-      onSuccess: () => {
-        router.push('/director/login')
-      },
-      onFailure: (_) => {},
+    directorLogout({
+      dispatch: dispatch,
+      onSuccess: () => router.push('/director/login'),
     })
-  }, [directorContext, router]);
+  }, [dispatch, router]);
+
+  const ready = useClientReady();
+  if (!ready) {
+    return '';
+  }
 
   return (
-    <div>
-      <h5>Log Out</h5>
-    </div>
+    <LoadingMessage message={'Logging you out...'} />
   );
 }
 

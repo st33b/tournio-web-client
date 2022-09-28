@@ -4,16 +4,33 @@ import {
   teamListRetrieved,
   tournamentDetailsRetrieved,
 } from "./store/actions/registrationActions";
+import {useEffect, useState} from "react";
+import {useDirectorContext} from "./store/DirectorContext";
 
-export const isStorageSupported = () => {
-  try {
-    const storage = window.localStorage;
-    storage.setItem("probe", 1);
-    storage.removeItem("probe");
-    return true;
-  } catch (err) {
-    return false;
-  }
+export const useStorage = (key, initialValue) => {
+  const [value, setValue] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedValue = sessionStorage.getItem(key);
+      if (savedValue !== null) {
+        return JSON.parse(savedValue);
+      }
+    }
+    return initialValue;
+  });
+
+  useEffect(() => {
+    sessionStorage.setItem(key, JSON.stringify(value));
+  }, [value]);
+
+  return [value, setValue];
+}
+
+export const useClientReady = () => {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    setReady(true);
+  }, []);
+  return ready;
 }
 
 export const updateObject = (oldObject, updatedProperties) => {
@@ -62,6 +79,12 @@ export const tournamentName = (rows, id, filterValue) => {
   return rows.filter(row => row.values[id].some(t => t.name === filterValue));
 }
 
+export const devConsoleLog = (message, object=null) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[DEV] ${message}`, object);
+  }
+}
+
 ///////////////////////////////////////////////////
 
 export const apiHost = `${process.env.NEXT_PUBLIC_API_PROTOCOL}://${process.env.NEXT_PUBLIC_API_HOSTNAME}:${process.env.NEXT_PUBLIC_API_PORT}`;
@@ -89,7 +112,7 @@ export const fetchTournamentList = (onSuccess, onFailure) => {
 
 }
 
-export const fetchTournamentDetails = (identifier, ...dispatches) => {
+export const fetchTournamentDetails = (identifier, onSuccess, onFailure) => {
   const requestConfig = {
     method: 'get',
     url: `${apiHost}/tournaments/${identifier}`,
@@ -99,14 +122,15 @@ export const fetchTournamentDetails = (identifier, ...dispatches) => {
   }
   axios(requestConfig)
     .then(response => {
-      dispatches.map(dispatch => {
-        dispatch(tournamentDetailsRetrieved(response.data));
-      });
+      if (response.status >= 200 && response.status < 400) {
+        onSuccess(response.data);
+      } else {
+        onFailure(response.data);
+      }
     })
     .catch(error => {
-      // Let's dispatch a failure, because that's a big deal
+      onFailure({error: 'Tournament not found'});
     });
-
 }
 
 export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure}) => {
@@ -120,7 +144,7 @@ export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure}) => {
   }
   axios(requestConfig)
     .then(response => {
-      if (response.status >= 200 && response.status < 300) {
+      if (response.status >= 200 && response.status < 400) {
         onSuccess(response.data);
       } else {
         onFailure(response.data);
@@ -129,10 +153,9 @@ export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure}) => {
     .catch(error => {
       onFailure({error: 'Unexpected error from the server'});
     });
-
 }
 
-export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, commerceDispatch) => {
+export const fetchBowlerDetails = (bowlerIdentifier, dispatch) => {
   const requestConfig = {
     method: 'get',
     url: `${apiHost}/bowlers/${bowlerIdentifier}`,
@@ -143,9 +166,8 @@ export const fetchBowlerDetails = (bowlerIdentifier, commerceObj, commerceDispat
   axios(requestConfig)
     .then(response => {
       const bowlerData = response.data.bowler;
-      const bowlerTournamentId = bowlerData.tournament.identifier;
       const availableItems = response.data.available_items;
-      commerceDispatch(bowlerCommerceDetailsRetrieved(bowlerData, availableItems));
+      dispatch(bowlerCommerceDetailsRetrieved(bowlerData, availableItems));
     })
     .catch(error => {
       // Display some kind of error message
@@ -285,11 +307,12 @@ export const submitJoinTeamRegistration = (tournament, team, bowler, onSuccess, 
   if (team.shift) {
     bowler.shift = team.shift;
   }
+  const teamId = team.identifier;
   const bowlerData = {
+    team_identifier: teamId,
     bowlers: [{...convertBowlerDataForPost(tournament, bowler), ...teamDataForBowler(bowler) }],
   };
-  const teamId = team.identifier;
-  axios.post(`${apiHost}/teams/${teamId}/bowlers`, bowlerData)
+  axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, bowlerData)
     .then(response => {
       const newBowlerIdentifier = response.data.identifier;
       onSuccess(newBowlerIdentifier);
@@ -401,10 +424,40 @@ export const postFreeEntry = (tournamentIdentifier, postData, onSuccess, onFailu
     });
 }
 
-export const postPurchaseDetails = (bowlerIdentifier, postData, onSuccess, onFailure) => {
+export const purchaseDetailsPostData = (items) => {
+  const purchaseIdentifiers = [];
+  const purchasableItems = [];
+
+  const sum = (runningTotal, currentValue) => runningTotal + currentValue.value * (currentValue.quantity || 1);
+  const expectedTotal = items.reduce(sum, 0);
+
+  for (let i of items) {
+    if (i.category === 'ledger') {
+      // mandatory things like entry & late fees, early discount
+
+      // some things we want the server to add: bundle discount, event-linked late fees
+      if (i.determination === 'bundle_discount' || i.determination === 'late_fee' && i.refinement === 'event_linked') {
+        continue;
+      }
+      purchaseIdentifiers.push(i.identifier);
+    } else {
+      purchasableItems.push({
+        identifier: i.identifier,
+        quantity: i.quantity,
+      });
+    }
+  }
+  return {
+    purchase_identifiers: purchaseIdentifiers,
+    purchasable_items: purchasableItems,
+    expected_total: expectedTotal,
+  };
+}
+
+export const postPurchaseDetails = (bowlerIdentifier, path, postData, onSuccess, onFailure) => {
   const requestConfig = {
     method: 'post',
-    url: `${apiHost}/bowlers/${bowlerIdentifier}/purchase_details`,
+    url: `${apiHost}/bowlers/${bowlerIdentifier}/${path}`,
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
@@ -425,15 +478,13 @@ export const postPurchaseDetails = (bowlerIdentifier, postData, onSuccess, onFai
     });
 }
 
-export const postPurchasesCompleted = (bowlerIdentifier, postData, onSuccess, onFailure) => {
+export const getCheckoutSessionStatus = (identifier, onSuccess, onFailure) => {
   const requestConfig = {
-    method: 'post',
-    url: `${apiHost}/bowlers/${bowlerIdentifier}/purchases`,
+    method: 'get',
+    url: `${apiHost}/checkout_sessions/${identifier}`,
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
     },
-    data: postData,
     validateStatus: (status) => { return status < 500 },
   }
   axios(requestConfig)
@@ -445,8 +496,9 @@ export const postPurchasesCompleted = (bowlerIdentifier, postData, onSuccess, on
       }
     })
     .catch(error => {
-      onFailure({error: error.message});
+      onFailure(error);
     });
+
 }
 
 ////////////////////////////////////////////////
@@ -522,6 +574,7 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
 ////////////////////////////////////////////////
 
 export const directorApiRequest = ({uri, requestConfig, context, router, onSuccess = null, onFailure = null}) => {
+  devConsoleLog('Using the old directorApiRequest!');
   const url = `${apiHost}${uri}`;
   const config = {...requestConfig};
   config.url = url;
@@ -536,6 +589,8 @@ export const directorApiRequest = ({uri, requestConfig, context, router, onSucce
       } else if (response.status === 401) {
         context.logout();
         router.push('/director/login');
+      } else if (response.status === 404) {
+        onFailure({error: 'not found'});
       } else {
         onFailure(response.data);
       }
@@ -573,67 +628,6 @@ export const directorApiDownloadRequest = ({uri, context, router, onSuccess = nu
         router.push('/director/login');
       } else {
         onFailure({error: 'The file did not download for some reason'});
-      }
-    })
-    .catch(error => {
-      if (error.request) {
-        console.log('No response was received.');
-        onFailure({error: 'The server did not respond'});
-      } else {
-        console.log('Exceptional error', error.message);
-        onFailure({error: error.message});
-      }
-    });
-}
-
-export const directorApiLoginRequest = ({userCreds, context, onSuccess = null, onFailure = null}) => {
-  const config = {
-    url: `${apiHost}/login`,
-    headers: {
-      'Accept': 'application/json',
-    },
-    method: 'post',
-    data: userCreds,
-    validateStatus: (status) => { return status < 500 },
-  };
-  axios(config)
-    .then(response => {
-      if (response.status >= 200 && response.status < 300) {
-        const authHeader = response.headers.authorization;
-        const userData = response.data;
-        context.login(authHeader, userData);
-        onSuccess(response.data);
-      } else {
-        onFailure(response.data);
-      }
-    })
-    .catch(error => {
-      if (error.request) {
-        console.log('No response was received.');
-        onFailure({error: 'The server did not respond'});
-      } else {
-        console.log('Exceptional error', error.message);
-        onFailure({error: error.message});
-      }
-    });
-}
-
-export const directorApiLogoutRequest = ({context, onSuccess, onFailure}) => {
-  const config = {
-    url: `${apiHost}/logout`,
-    headers: {
-      'Accept': 'application/json',
-    },
-    method: 'delete',
-    validateStatus: (status) => { return status < 500 },
-  };
-  axios(config)
-    .then(response => {
-      if (response.status >= 200 && response.status < 300) {
-        context.logout();
-        onSuccess();
-      } else {
-        onFailure({error: 'Got a strange response from the server.'});
       }
     })
     .catch(error => {

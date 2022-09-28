@@ -1,23 +1,24 @@
 .ConfigItemForm {
   .Form {
-    border: 1px solid #ddd;
+    border: 1px solid var(--tournio-gray-300);
+    background-color: var(--tournio-gray-100);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-900);
+      border-color: var(--tournio-gray-700);
+    }
     label {
       font-weight: 600;
     }
   }
-  .Item {
-    .EditLink {
-      display: none;
+  .ItemWrapper .Item:hover {
+    cursor: pointer;
+    background-color: var(--tournio-gray-100);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-900);
     }
   }
-  .Item:hover {
-    .EditLink {
-      display: inline;
-    }
+  .Url {
+    font-size: 75%;
+    font-family: monospace;
   }
-  .ExternalLink {
-    font-size: 80%;
-    padding-left: 0.5rem;
-  }
-
 }

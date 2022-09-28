@@ -42,7 +42,7 @@ const multiUseItem = ({item, increase, decrease}) => {
   }
 
   return (
-    <div className={`${classes.MultiUseItem} rounded border border-secondary mb-3 mx-0 d-flex`}>
+    <div className={`${classes.MultiUseItem} rounded border mb-3 mx-0 d-flex`}>
       <div className={'ps-2'}>
         <p>
           {item.name}

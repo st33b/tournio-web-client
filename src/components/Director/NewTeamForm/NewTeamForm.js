@@ -1,27 +1,16 @@
 import {useState} from 'react';
-import {FloatingLabel, Form, Button} from "react-bootstrap";
+import {FloatingLabel, Form, Button, Row, Col} from "react-bootstrap";
 
 import {updateObject} from "../../../utils";
 
 import classes from './NewTeamForm.module.scss';
-import {useDirectorContext} from "../../../store/DirectorContext";
 
 const NewTeamForm = ({submitted}) => {
-  const directorContext = useDirectorContext();
-  let identifier;
-  if (directorContext && directorContext.tournament) {
-    identifier = directorContext.tournament.identifier;
-  }
-
   const initialState = {
     name: '',
   }
   const formClass = 'needs-validation';
   const [newTeamForm, setNewTeamForm] = useState(initialState);
-
-  if (!identifier) {
-    return '';
-  }
 
   const formHandler = (event) => {
     event.preventDefault();
@@ -64,10 +53,14 @@ const NewTeamForm = ({submitted}) => {
             Need a name here.
           </Form.Control.Feedback>
         </FloatingLabel>
-        <Button type={'submit'} className={'btn btn-primary'}>
-          Create
-          <i className={[classes.CreateTeamButtonIcon, 'bi-chevron-right'].join(' ')} aria-hidden={'true'} />
-        </Button>
+        <Row>
+          <Col className={'text-end'}>
+            <Button type={'submit'} className={'btn btn-primary'}>
+              Create
+              <i className={[classes.CreateTeamButtonIcon, 'bi-chevron-right'].join(' ')} aria-hidden={'true'} />
+            </Button>
+          </Col>
+        </Row>
       </Form>
   );
 

@@ -14,7 +14,11 @@ const FreeEntryListing = ({freeEntries, confirmClicked, deleteClicked}) => {
     return row.bowler.last_name + ', ' + row.bowler.first_name;
   }
 
-  const data = freeEntries;
+  let data = [];
+  if (freeEntries) {
+    data = freeEntries;
+  }
+
   const columns = useMemo(() => [
       {
         Header: ({column}) => <SortableTableHeader text={'Unique Code'} column={column}/>,
@@ -104,6 +108,10 @@ const FreeEntryListing = ({freeEntries, confirmClicked, deleteClicked}) => {
     useSortBy,
   );
 
+  if (!freeEntries) {
+    return '';
+  }
+
   if (data.length === 0) {
     return (
       <div className={'display-6 text-center'}>
@@ -115,7 +123,7 @@ const FreeEntryListing = ({freeEntries, confirmClicked, deleteClicked}) => {
   return (
     <div className={`${classes.FreeEntryListing} table-responsive`}>
       <table className={`table table-striped table-hover`} {...getTableProps}>
-        <thead className={'table-light'}>
+        <thead>
         {headerGroups.map((headerGroup, i) => (
           <tr key={i} {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column, j) => (

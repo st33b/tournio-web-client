@@ -17,19 +17,35 @@
     }
   }
   .ExistingShift {
-    padding: 0.5rem 1rem;
+    //padding-left: 0.5rem;
+    //padding-right: 0.5rem;
+    margin-bottom: 0;
   }
   .AlmostFull {
     background-color: lemonchiffon;
+    @media (prefers-color-scheme: dark) {
+      background-color: goldenrod;
+      color: var(--tournio-gray-900);
+    }
   }
   .Full {
     background-color: mistyrose;
+    @media (prefers-color-scheme: dark) {
+      background-color: maroon;
+    }
   }
   .ExistingShift:hover {
-    background-color: #eee;
     cursor: pointer;
+    background-color: var(--tournio-gray-100);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-900);
+    }
   }
+  //margin-top: 1rem;
 }
 .FormDisplayed {
-  background-color: #f8f8f8;
+  background-color: var(--tournio-gray-100);
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--tournio-gray-900);
+  }
 }

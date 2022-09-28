@@ -8,20 +8,22 @@ import ProgressIndicator from "../../../components/Registration/ProgressIndicato
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newSoloRegistrationInitiated, soloBowlerInfoAdded} from "../../../store/actions/registrationActions";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
+import {useClientReady} from "../../../utils";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
+  // If solo registration is not allowed, go back to the tournament page.
   useEffect(() => {
-    if (!entry || !entry.tournament) {
+    if (!registration || !registration.tournament) {
       return;
     }
-    const shift = entry.tournament.shifts[0];
+    const shift = registration.tournament.shifts[0];
     if (shift && !shift.registration_types.solo) {
-      router.push(`/tournaments/${entry.tournament.identifier}`);
+      router.push(`/tournaments/${registration.tournament.identifier}`);
     }
-  }, [entry]);
+  }, [registration]);
 
   useEffect(() => {
     dispatch(newSoloRegistrationInitiated());
@@ -29,23 +31,30 @@ const Page = () => {
 
   const onCompletion = (bowler) => {
     dispatch(soloBowlerInfoAdded(bowler));
-    router.push(`/tournaments/${entry.tournament.identifier}/solo-bowler-review`);
+    router.push(`/tournaments/${registration.tournament.identifier}/solo-bowler-review`);
   }
 
-  if (!entry || !entry.tournament) {
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
+
+  if (!registration || !registration.tournament) {
     return '';
   }
 
-  const includeShift = entry.tournament.available_shifts && entry.tournament.available_shifts.length > 0;
+  const includeShift = registration.tournament.available_shifts && registration.tournament.available_shifts.length > 0;
 
   return (
     <Row>
+      <Col>
+        <Summary tournament={registration.tournament} />
+      </Col>
       <Col lg={8}>
         <ProgressIndicator active={'bowlers'} />
-        <BowlerForm bowlerInfoSaved={onCompletion} includeShift={includeShift} />
-      </Col>
-      <Col>
-        <Summary />
+        <BowlerForm tournament={registration.tournament}
+                    bowlerInfoSaved={onCompletion}
+                    includeShift={includeShift} />
       </Col>
     </Row>
   );

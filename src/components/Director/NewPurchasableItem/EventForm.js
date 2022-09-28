@@ -1,15 +1,15 @@
 import {useState} from "react";
-import {useRouter} from "next/router";
 
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../utils";
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {useDirectorContext} from "../../../store/DirectorContext";
+import {directorApiRequest} from "../../../director";
+import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
 import classes from './EventForm.module.scss';
 
-const EventForm = ({onCancel, onComplete}) => {
+const EventForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();
-  const router = useRouter();
+  const dispatch = context.dispatch;
 
   const initialState = {
     category: 'bowling',
@@ -49,16 +49,14 @@ const EventForm = ({onCancel, onComplete}) => {
   }
 
   const submissionSuccess = (data) => {
+    dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
-    const tournament = {...context.tournament}
-    tournament.purchasable_items = tournament.purchasable_items.concat(data);
-    context.setTournament(tournament);
     onComplete(`Item ${data[0].name} created.`);
   }
 
   const formSubmitted = (event) => {
     event.preventDefault();
-    const uri = `/director/tournaments/${context.tournament.identifier}/purchasable_items`;
+    const uri = `/director/tournaments/${tournament.identifier}/purchasable_items`;
     const requestConfig = {
       method: 'post',
       data: {
@@ -80,11 +78,8 @@ const EventForm = ({onCancel, onComplete}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: submissionSuccess,
-      onFailure: (_) => {
-        console.log("Failed to save new item.")
-      },
+      onFailure: (_) => console.log("Failed to save new item."),
     });
   }
 
@@ -159,20 +154,24 @@ const EventForm = ({onCancel, onComplete}) => {
             </div>
           </div>
           <div className={'row'}>
-            <div className={'d-flex justify-content-between p-0'}>
+            <div className={'d-flex justify-content-end pe-0'}>
               <button type={'button'}
                       title={'Cancel'}
                       onClick={onCancel}
-                      className={'btn btn-outline-danger'}>
-                <i className={'bi-x-lg pe-2'} aria-hidden={true}/>
-                Cancel
+                      className={'btn btn-outline-danger me-2'}>
+                <i className={'bi-x-lg'} aria-hidden={true}/>
+                <span className={'visually-hidden'}>
+                  Cancel
+                </span>
               </button>
               <button type={'submit'}
                       title={'Save'}
                       disabled={!formData.valid}
-                      className={'btn btn-success'}>
-                Save
-                <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>
+                      className={'btn btn-outline-success'}>
+                <i className={'bi-check-lg'} aria-hidden={true}/>
+                <span className={'visually-hidden'}>
+                  Save
+                </span>
               </button>
             </div>
           </div>

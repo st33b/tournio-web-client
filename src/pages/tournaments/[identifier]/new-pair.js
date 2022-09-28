@@ -6,22 +6,22 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newPairRegistrationInitiated} from "../../../store/actions/registrationActions";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   useEffect(() => {
-    if (!entry || !entry.tournament) {
+    if (!registration || !registration.tournament) {
       return;
     }
-    const shift = entry.tournament.shifts[0];
+    const shift = registration.tournament.shifts[0];
     if (shift && !shift.registration_types.new_pair) {
-      router.push(`/tournaments/${entry.tournament.identifier}`);
+      router.push(`/tournaments/${registration.tournament.identifier}`);
     }
-  }, [entry]);
+  }, [registration]);
 
   useEffect(() => {
     dispatch(newPairRegistrationInitiated());
-    router.push(`/tournaments/${entry.tournament.identifier}/new-pair-bowler`);
+    router.push(`/tournaments/${registration.tournament.identifier}/new-pair-bowler`);
   }, [dispatch]);
 
   return <div>

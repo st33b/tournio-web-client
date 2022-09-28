@@ -1,21 +1,21 @@
 import {useEffect, useState} from "react";
-import {useRouter} from "next/router";
 import {format, formatISO} from "date-fns";
 import Card from "react-bootstrap/Card";
 
 import TextField from "@mui/material/TextField";
-import DateTimePicker from "@mui/lab/DateTimePicker";
+import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../director";
 import ErrorBoundary from "../../common/ErrorBoundary";
 import Item from "../../Commerce/AvailableItems/Item/Item";
 
 import classes from './PurchasableItemEditForm.module.scss';
+import {purchasableItemDeleted, purchasableItemUpdated} from "../../../store/actions/directorActions";
 
-const PurchasableItemEditForm = ({item}) => {
+const PurchasableItemEditForm = ({tournament, item}) => {
   const context = useDirectorContext();
-  const router = useRouter();
+  const dispatch = context.dispatch;
 
   const initialState = {
     applies_at: '', // for ledger -> late fee
@@ -33,13 +33,15 @@ const PurchasableItemEditForm = ({item}) => {
 
   const [formData, setFormData] = useState(initialState);
   const [editing, setEditing] = useState(false);
+
+  // Populate form data
   useEffect(() => {
     if (!item) {
       return;
     }
     const eventIdentifiers = {};
     if (item.configuration.events) {
-      context.tournament.purchasable_items.filter(({determination}) => determination === 'event').map(event => {
+      tournament.purchasable_items.filter(({determination}) => determination === 'event').map(event => {
         const id = event.identifier;
         eventIdentifiers[id] = item.configuration.events.includes(event.identifier);
       });
@@ -59,11 +61,11 @@ const PurchasableItemEditForm = ({item}) => {
     setFormData(newFormData);
   }, [item]);
 
-  if (!context) {
+  if (!tournament) {
     return '';
   }
 
-  const allowEdit = context.tournament.state !== 'active' && context.tournament.state !== 'demo';
+  const allowEdit = tournament.state !== 'active' && tournament.state !== 'demo';
 
   const toggleEdit = (event, enable) => {
     if (event) {
@@ -134,23 +136,19 @@ const PurchasableItemEditForm = ({item}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
-      onSuccess: (_) => {
-        toggleEdit(null, false)
+      onSuccess: (data) => {
+        toggleEdit(null, false);
+        dispatch(purchasableItemUpdated(data));
       },
-      onFailure: (_) => {
-        console.log("Failed to save item.")
-      },
+      onFailure: (_) => console.log("Failed to save item."),
     });
   }
 
-  const deleteSuccess = (data) => {
+  const deleteSuccess = (_) => {
     toggleEdit(null, false);
-    const newItems = context.tournament.purchasable_items.filter(i => i.identifier !== item.identifier);
-    const newTournament = {...context.tournament};
-    newTournament.purchasable_items = newItems;
-    context.setTournament(newTournament);
+    dispatch(purchasableItemDeleted(item));
   }
+
   const onDelete = (event) => {
     event.preventDefault();
     if (!confirm('Are you sure you wish to delete this item?')) {
@@ -164,11 +162,8 @@ const PurchasableItemEditForm = ({item}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: deleteSuccess,
-      onFailure: (_) => {
-        console.log("Failed to delete item.")
-      },
+      onFailure: (data) => console.log("Failed to delete item.", data),
     });
   }
 
@@ -191,7 +186,7 @@ const PurchasableItemEditForm = ({item}) => {
           case 'late_fee':
             let part1 = '';
             if (item.refinement === 'event_linked') {
-              const event = context.tournament.purchasable_items.find(
+              const event = tournament.purchasable_items.find(
                 pi => pi.determination === 'event' && pi.identifier === item.configuration.event
               );
               part1 = <span className={classes.Note}>{event.name}</span>;
@@ -210,7 +205,7 @@ const PurchasableItemEditForm = ({item}) => {
           case 'bundle_discount':
             note = (
               <>
-                {context.tournament.purchasable_items.filter(({determination}) => determination === 'event').map(event => {
+                {tournament.purchasable_items.filter(({determination}) => determination === 'event').map(event => {
                   const eventIdentifier = event.identifier;
                   if (formData.eventIdentifiers[eventIdentifier]) {
                     return (
@@ -299,8 +294,7 @@ const PurchasableItemEditForm = ({item}) => {
     switch (item.category) {
       case 'ledger':
         if (item.determination === 'early_discount') {
-          otherValueProps.min = -1000;
-          otherValueProps.max = -1;
+          otherValueProps.min = 1;
           inputElements.push({
             type: 'datepicker',
             props: {
@@ -326,8 +320,7 @@ const PurchasableItemEditForm = ({item}) => {
             }
           });
         } else if (item.determination === 'bundle_discount') {
-          otherValueProps.min = -1000;
-          otherValueProps.max = -1;
+          otherValueProps.min = 1;
         }
         break;
       case 'bowling':

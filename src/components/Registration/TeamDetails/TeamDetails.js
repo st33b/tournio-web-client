@@ -1,11 +1,11 @@
-import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {useCommerceContext} from "../../../store/CommerceContext";
 
 import classes from './TeamDetails.module.scss';
 
-const TeamDetails = ({team, successType, enablePayment = true}) => {
-  const {entry, commerce} = useRegistrationContext();
+const TeamDetails = ({tournament, team, successType, context, enablePayment = true}) => {
+  const {commerce} = useCommerceContext();
 
-  if (!entry.tournament || !team) {
+  if (!tournament || !team) {
     return '';
   }
 
@@ -31,7 +31,7 @@ const TeamDetails = ({team, successType, enablePayment = true}) => {
     }
 
     successBanner = (
-      <div className={'alert alert-success'} role={'alert'}>
+      <div className={'alert alert-success p-2 mt-2 mt-md-0'} role={'alert'}>
         <h5 className={'alert-heading'}>
           <i className={'bi-check-circle-fill pe-2'} aria-hidden={true} />
           Success!
@@ -47,8 +47,10 @@ const TeamDetails = ({team, successType, enablePayment = true}) => {
     <div className={classes.TeamDetails}>
       {successBanner}
       <div className={'table-responsive'}>
+        <h3>
+          Team: {team.name}
+        </h3>
         <table className={'table table-striped caption-top'}>
-          <caption>Team: {team.name}</caption>
           <thead>
             <tr className={'align-middle'}>
               <th><span className={'d-none d-sm-block'}>Position</span></th>

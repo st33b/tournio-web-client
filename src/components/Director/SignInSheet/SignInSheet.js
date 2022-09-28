@@ -1,10 +1,10 @@
 import {useDirectorContext} from "../../../store/DirectorContext";
 import classes from './SignInSheet.module.scss';
 
-const SignInSheet = ({bowler, showPrintButton}) => {
+const SignInSheet = ({tournament, bowler, showPrintButton}) => {
   const context = useDirectorContext();
 
-  if (!bowler || !context) {
+  if (!bowler || !tournament) {
     return '';
   }
 
@@ -17,10 +17,10 @@ const SignInSheet = ({bowler, showPrintButton}) => {
     <div className={classes.SignInSheetHtml}>
       <div className={'d-flex align-items-center justify-content-center pb-3 pt-4'}>
         <img className={`${classes.Logo} img-fluid`}
-             src={context.tournament.image_path}
+             src={tournament.image_url}
              alt={'Tournament logo'}/>
         <h2 className={'ps-2'}>
-          {context.tournament.name} {context.tournament.year}
+          {tournament.name} {tournament.year}
         </h2>
       </div>
 

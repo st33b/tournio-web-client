@@ -1,20 +1,11 @@
 import {useState, useEffect, useMemo} from "react";
-import {Button} from "react-bootstrap";
 import {CountryDropdown} from 'react-country-region-selector';
 
-import {useDirectorContext} from "../../../store/DirectorContext";
 import Input from "../../ui/Input/Input";
 
 import classes from './BowlerDetails.module.scss';
 
-const BowlerDetails = ({bowler, bowlerUpdateSubmitted}) => {
-  const directorContext = useDirectorContext();
-
-  let tournament;
-  if (directorContext && directorContext.tournament) {
-    tournament = directorContext.tournament;
-  }
-
+const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
   const initialFormData = {
     formFields: {
       first_name: {
@@ -73,23 +64,23 @@ const BowlerDetails = ({bowler, bowlerUpdateSubmitted}) => {
         valid: true,
         touched: false,
       },
-      igbo_id: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          value: '',
-        },
-        label: 'IGBO ID',
-        validation: {
-          required: false,
-        },
-        helper: {
-          url: 'http://www.igbo.org/igbots-id-lookup/',
-          text: 'Look up an IGBO ID',
-        },
-        valid: true,
-        touched: false,
-      },
+      // igbo_id: {
+      //   elementType: 'input',
+      //   elementConfig: {
+      //     type: 'text',
+      //     value: '',
+      //   },
+      //   label: 'IGBO ID',
+      //   validation: {
+      //     required: false,
+      //   },
+      //   helper: {
+      //     url: 'http://www.igbo.org/igbots-id-lookup/',
+      //     text: 'Look up an IGBO ID',
+      //   },
+      //   valid: true,
+      //   touched: false,
+      // },
       birth_month: {
         elementType: 'input',
         elementConfig: {
@@ -240,9 +231,9 @@ const BowlerDetails = ({bowler, bowlerUpdateSubmitted}) => {
   const [bowlerForm, setBowlerForm] = useState(initialFormData);
 
   // This effect populates the form data with the bowler's details,
-  // which should happen only once.
+  // which should happen only once (maybe twice, since there are two dependencies)
   useEffect(() => {
-    if (!bowler) {
+    if (!bowler || !tournament) {
       return;
     }
     const newFormData = {...bowlerForm}
@@ -269,7 +260,7 @@ const BowlerDetails = ({bowler, bowlerUpdateSubmitted}) => {
     });
 
     setBowlerForm(newFormData);
-  }, [bowler]);
+  }, [bowler, tournament]);
 
   const checkValidity = (value, rules) => {
     let isValid = true;
@@ -351,7 +342,7 @@ const BowlerDetails = ({bowler, bowlerUpdateSubmitted}) => {
     bowlerUpdateSubmitted(bowlerData);
   }
 
-  if (!bowler) {
+  if (!bowler || !tournament) {
     return '';
   }
 

@@ -1,7 +1,6 @@
-import React, {useEffect, useMemo, useState} from "react";
+import {useMemo} from "react";
 import {Col, Row} from "react-bootstrap";
 import {useTable, useSortBy, useFilters} from 'react-table';
-import {List} from 'immutable';
 
 import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
@@ -9,8 +8,11 @@ import UserFilterForm from "../UserFilterForm/UserFilterForm";
 import {tournamentName} from '../../../utils';
 
 import classes from './UserListing.module.scss';
+import {useDirectorContext} from "../../../store/DirectorContext";
 
-const UserListing = ({users, tournaments}) => {
+const UserListing = ({tournaments}) => {
+  const {directorState} = useDirectorContext();
+
   const columns = useMemo(() => [
     {
       id: 'last_name',
@@ -52,12 +54,7 @@ const UserListing = ({users, tournaments}) => {
       accessor: 'last_sign_in_at',
       Header: ({column}) => <SortableTableHeader text={'Last Signed In'} column={column}/>,
     },
-  ], [users]);
-
-  const [data, setData] = useState(List(users));
-  useEffect(() => {
-    setData(List(users));
-  }, [users]);
+  ], [directorState.users]);
 
   // tell react-table which things we want to use (sorting, filtering)
   // and retrieve properties/functions they let us hook into
@@ -70,21 +67,21 @@ const UserListing = ({users, tournaments}) => {
     setFilter,
     setAllFilters,
   } = useTable(
-    {columns, data},
+    {columns, data: directorState.users},
     useFilters,
     useSortBy,
   );
 
   let list = '';
-  if (!users) {
+  if (!directorState.users) {
     list = <LoadingMessage message={'Retrieving users...'} />;
-  } else if (users.length === 0) {
+  } else if (directorState.users.length === 0) {
     list = <p>No users to display.</p>;
   } else {
     list = (
       <div className={'table-responsive'}>
         <table className={'table table-striped table-hover'} {...getTableProps}>
-          <thead className={'table-light'}>
+          <thead>
           {headerGroups.map((headerGroup, i) => (
             <tr key={i} {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column, j) => (
@@ -140,7 +137,7 @@ const UserListing = ({users, tournaments}) => {
     <div className={classes.UserListing}>
       <Row>
         <Col>
-          {!!data.size && <UserFilterForm onFilterApplication={filterThatData} onFilterReset={resetThoseFilters} tournaments={tournaments}/>}
+          {!!directorState.users.size && <UserFilterForm onFilterApplication={filterThatData} onFilterReset={resetThoseFilters} tournaments={tournaments}/>}
           {list}
         </Col>
       </Row>

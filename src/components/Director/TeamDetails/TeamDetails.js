@@ -9,17 +9,13 @@ import classes from './TeamDetails.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 const TeamDetails = ({team, teamUpdateSubmitted}) => {
-  const directorContext = useDirectorContext();
+  const {directorState} = useDirectorContext();
 
   let initialFormData = {
     valid: true,
     touched: false,
     fields: {
       name: {
-        value: '',
-        valid: true,
-      },
-      shift: {
         value: '',
         valid: true,
       },
@@ -32,29 +28,13 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
 
   const [data, setData] = useState([]);
   const [teamForm, setTeamForm] = useState(initialFormData);
-  const [tournament, setTournament] = useState();
-
-  let identifier;
-  useEffect(() => {
-    if (!directorContext || !directorContext.tournament) {
-      return;
-    }
-    setTournament(directorContext.tournament);
-    identifier = directorContext.tournament.identifier;
-  }, [directorContext]);
 
   useEffect(() => {
-    if (!team || !tournament) {
+    if (!team) {
       return;
     }
     const newFormData = {...teamForm}
     newFormData.fields.name.value = team.name;
-    if (tournament.shifts.length > 1) {
-      newFormData.fields.shift = {
-        value: team.shift.identifier,
-        valid: true,
-      };
-    }
     newFormData.fields.bowlers_attributes.value = team.bowlers.map((b) => {
       return {
         id: b.id,
@@ -64,7 +44,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     }, [team]);
     setData(team.bowlers);
     setTeamForm(newFormData);
-  }, [team, tournament]);
+  }, [team]);
 
   // columns
   const columns = useMemo(() => [
@@ -126,7 +106,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     {columns, data},
   );
 
-  if (!tournament || !team) {
+  if (!directorState || !team) {
     return '';
   }
 
@@ -136,9 +116,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
 
     switch (inputName) {
       case 'name':
-      case 'shift':
-        updatedTeamForm.fields[inputName].value = event.target.value;
-        updatedTeamForm.fields[inputName].valid = updatedTeamForm.fields[inputName].value.length > 0;
+        updatedTeamForm.fields.name.value = event.target.value;
         break;
       case 'position':
         updatedTeamForm.fields.bowlers_attributes.value[index].position = parseInt(event.target.value);
@@ -241,7 +219,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     </div>
   );
 
-  const maxTeamSize = parseInt(tournament.config_items.find(({key}) => key === 'team_size').value);
+  const maxTeamSize = parseInt(directorState.tournament.team_size);
 
   return (
     <ErrorBoundary>
@@ -260,43 +238,6 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
             />
           </div>
         </div>
-        {tournament.shifts.length > 1 &&
-          <div className={'row mb-2'}>
-            <label htmlFor={'shift'}
-                   className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
-              Requested Shift
-            </label>
-            <div className={'col'}>
-              <select className={'form-select'}
-                      name={'shift'}
-                      id={'shift'}
-                      onChange={(event) => inputChangedHandler(event, 'shift')}
-                      value={teamForm.fields.shift.value}>
-                {tournament.shifts.map(shift => (
-                  <option key={shift.identifier} value={shift.identifier}>
-                    {shift.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        }
-        {tournament.shifts.length > 0 &&
-          <div className={'row mb-2'}>
-            <label htmlFor={'shift_confirmed'}
-                   className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
-              Place Confirmed?
-            </label>
-            <div className={'col'}>
-              <input type={'text'}
-                     readOnly={true}
-                     className={'form-control-plaintext'}
-                     id={'shift_confirmed'}
-                     value={team.shift_confirmed ? 'Yes' : 'No'}
-              />
-            </div>
-          </div>
-        }
         {team.size < maxTeamSize &&
           <div className={'row mb-2'}>
             <label htmlFor={'place_with_others'}

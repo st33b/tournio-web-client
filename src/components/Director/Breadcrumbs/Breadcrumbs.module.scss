@@ -1,6 +1,10 @@
 .Breadcrumbs {
-  margin-top: 1rem;
   margin-bottom: 1rem;
+
+  background-color: var(--tournio-gray-200);
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--tournio-gray-800);
+  }
   ol {
     margin-bottom: 0;
   }

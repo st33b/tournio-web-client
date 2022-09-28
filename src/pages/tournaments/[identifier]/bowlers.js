@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {Alert, Col, Row} from "react-bootstrap";
 import {useRouter} from "next/router";
 
-import {fetchBowlerList} from "../../../utils";
+import {fetchBowlerList, useClientReady} from "../../../utils";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
@@ -12,7 +12,7 @@ import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage
 
 const Page = () => {
   const router = useRouter();
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const { success } = router.query;
 
   const [loading, setLoading] = useState(false);
@@ -26,27 +26,33 @@ const Page = () => {
 
   const onBowlerListFailed = (data) => {
     setLoading(false);
+    setBowlers([]);
     setErrorMessage(data.error);
   }
 
   // fetch the list of bowlers
   useEffect(() => {
-    if (!entry || !entry.tournament) {
+    if (!registration || !registration.tournament) {
       return;
     }
     setLoading(true);
     fetchBowlerList({
-      tournamentIdentifier: entry.tournament.identifier,
+      tournamentIdentifier: registration.tournament.identifier,
       onSuccess: onBowlerListRetrieved,
       onFailure: onBowlerListFailed,
     });
   }, [dispatch]);
 
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
+
   if (loading) {
     return <LoadingMessage message={'Retrieving list of bowlers...'}/>
   }
 
-  if (!bowlers || !entry || !entry.tournament) {
+  if (!bowlers || !registration || !registration.tournament) {
     return <LoadingMessage message={'Retrieving list of bowlers...'}/>
   }
 
@@ -64,11 +70,10 @@ const Page = () => {
     <div>
       <Row>
         <Col md={4} className={'d-none d-md-block'}>
-          <a href={`/tournaments/${entry.tournament.identifier}`} title={'To tournament page'}>
-            <TournamentLogo tournament={entry.tournament}/>
-            <h4 className={'text-center py-3'}>{entry.tournament.name}</h4>
+          <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
+            <TournamentLogo url={registration.tournament.image_url}/>
+            <h4 className={'text-center py-3'}>{registration.tournament.name}</h4>
           </a>
-          <Contacts tournament={entry.tournament}/>
         </Col>
         <Col>
           {error}

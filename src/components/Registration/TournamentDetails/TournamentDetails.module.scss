@@ -24,9 +24,10 @@
   }
 
   .TestingEnvironment {
-    padding-top: 0.5rem;
-    padding-left: 0.5rem;
     background-color: burlywood;
+    @media (prefers-color-scheme: dark) {
+      background-color: #deb88740;
+    }
   }
 
   .Shifts {
@@ -34,15 +35,12 @@
   }
 
   .ShiftInfo {
-    background-color: white;
+    background-color: var(--tournio-gray-100);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-900);
+    }
     h5 {
       //font-weight: 300;
-    }
-    .ProgressBar {
-      .EndLabel {
-        font-size: 85%;
-        font-weight: 100;
-      }
     }
   }
 }

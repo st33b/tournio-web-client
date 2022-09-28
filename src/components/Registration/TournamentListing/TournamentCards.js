@@ -4,6 +4,8 @@ import {fetchTournamentList} from "../../../utils";
 
 import classes from './TournamentCards.module.scss';
 import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
+import {Card, Col, Image, Row} from "react-bootstrap";
+import TournamentLogo from "../TournamentLogo/TournamentLogo";
 
 const TournamentCards = () => {
   const [tournaments, setTournaments] = useState([]);
@@ -23,14 +25,14 @@ const TournamentCards = () => {
   }, []);
 
   if (loading) {
-    return <LoadingMessage message={'Retrieving list of tournaments...'} />
+    return <LoadingMessage message={'Retrieving list of tournaments...'}/>
   }
 
   return (
     <div className={classes.TournamentCards}>
-      {tournaments.length === 0 && <p>No tournaments to display.</p>}
+      {tournaments.length === 0 && <h6 className={'display-6 fw-light mt-4'}>No upcoming tournaments at the moment.</h6>}
       {tournaments.length > 0 && (
-        <div className={'row'}>
+        <Row xs={1} sm={2} lg={3} xl={4}>
           {tournaments.map((t) => {
             let bgColor = '';
             let textColor = 'text-white';
@@ -45,41 +47,43 @@ const TournamentCards = () => {
                 bgColor = 'bg-dark';
             }
             return (
-              <div className={`col-12 col-sm-6 col-md-4 mb-3 ${classes.Tournament}`}key={t.identifier}>
-                <div className={'card h-100'} >
-                  <div className={`card-header ${bgColor} ${textColor}`}>
+              <div className={`mb-3 ${classes.Tournament}`} key={t.identifier}>
+                <Card>
+                  <Card.Header className={`card-header ${bgColor} ${textColor}`}>
                     {t.status}
-                  </div>
-                  <div className={'card-body d-flex flex-column'}>
-                    <p className={'d-block text-center d-none d-sm-block'}>
-                      <img src={t.image_path}
-                           className={`card-img-top ${classes.Logo}`}
-                           alt={'Tournament logo'} />
-                    </p>
-                    <h6 className={'card-title'}>
-                      <a href={`/tournaments/${t.identifier}`}>
-                        {t.name}
-                      </a>
-                    </h6>
-                    <p className={'card-text'}>
-                      {t.location}
-                    </p>
-                    <p className={'card-text'}>
-                      {t.start_date}
-                    </p>
-                    <p className={'card-text text-end mt-auto'}>
-                      <a className={'btn btn-sm btn-outline-primary'}
-                         href={`/tournaments/${t.identifier}`}>
-                        Go
-                        <i className={'bi-chevron-right ps-2'} aria-hidden={true} />
-                      </a>
-                    </p>
-                  </div>
-                </div>
+                  </Card.Header>
+                  <Card.Body>
+                    <Row className={'g-1'}>
+                      <Col xs={4}>
+                        <TournamentLogo url={t.image_url}/>
+                      </Col>
+                      <Col className={'ps-2'}>
+                        <Card.Title className={'mb-3'}>
+                          <Card.Link href={`/tournaments/${t.identifier}`}>
+                            {t.name}
+                          </Card.Link>
+                        </Card.Title>
+                        <Card.Text>
+                          {t.location}
+                        </Card.Text>
+                        <Card.Text>
+                          {t.start_date}
+                        </Card.Text>
+                        <Card.Text className={'py-0 text-end'}>
+                          <Card.Link className={'btn btn-outline-primary'}
+                                     href={`/tournaments/${t.identifier}`}>
+                            Go
+                            <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>
+                          </Card.Link>
+                        </Card.Text>
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
               </div>
             );
           })}
-        </div>
+        </Row>
       )}
     </div>
   )

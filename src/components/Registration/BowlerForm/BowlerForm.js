@@ -7,8 +7,8 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import classes from './BowlerForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 
-const BowlerForm = ({bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => {
-  const {entry} = useRegistrationContext();
+const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => {
+  const {registration} = useRegistrationContext();
 
   const initialFormState = {
     formFields: {
@@ -90,16 +90,67 @@ const BowlerForm = ({bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => 
       //   touched: false,
       // },
       birth_month: {
-        elementType: 'input',
+        elementType: 'select',
         elementConfig: {
-          type: 'number',
+          options: [
+            {
+              value: '',
+              label: '-- Choose your month',
+            },
+            {
+              value: 1,
+              label: 'Jan'
+            },
+            {
+              value: 2,
+              label: 'Feb'
+            },
+            {
+              value: 3,
+              label: 'Mar'
+            },
+            {
+              value: 4,
+              label: 'Apr'
+            },
+            {
+              value: 5,
+              label: 'May'
+            },
+            {
+              value: 6,
+              label: 'Jun'
+            },
+            {
+              value: 7,
+              label: 'Jul'
+            },
+            {
+              value: 8,
+              label: 'Aug'
+            },
+            {
+              value: 9,
+              label: 'Sep'
+            },
+            {
+              value: 10,
+              label: 'Oct'
+            },
+            {
+              value: 11,
+              label: 'Nov'
+            },
+            {
+              value: 12,
+              label: 'Dec'
+            },
+          ],
           value: '',
         },
         label: 'Birth month',
         validation: {
           required: true,
-          min: 1,
-          max: 12,
         },
         valid: false,
         touched: false,
@@ -255,11 +306,11 @@ const BowlerForm = ({bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => 
 
   const additionalFormFields = () => {
     const formFields = {};
-    for (let key in entry.tournament.additional_questions) {
-      formFields[key] = { ...entry.tournament.additional_questions[key] }
-      formFields[key].valid = !entry.tournament.additional_questions[key].validation.required
+    for (let key in tournament.additional_questions) {
+      formFields[key] = { ...tournament.additional_questions[key] }
+      formFields[key].valid = !tournament.additional_questions[key].validation.required
       formFields[key].touched = false;
-      formFields[key].elementConfig = { ...entry.tournament.additional_questions[key].elementConfig }
+      formFields[key].elementConfig = { ...tournament.additional_questions[key].elementConfig }
     }
     return formFields;
   }
@@ -272,16 +323,16 @@ const BowlerForm = ({bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => 
 
     // put shift info in there, if needed
     if (includeShift) {
-      if (entry.tournament.available_shifts.length > 1) {
+      if (tournament.available_shifts.length > 1) {
         formData.soloBowlerFields.shift.elementConfig.options = [{value: '', label: '-- Choose a shift'}];
-        entry.tournament.available_shifts.map(shift => {
+        tournament.available_shifts.map(shift => {
           formData.soloBowlerFields.shift.elementConfig.options.push(
             { value: shift.identifier, label: shift.name }
           );
         });
         setShowShiftSelection(true);
       } else {
-        formData.soloBowlerFields.shift.elementConfig.value = entry.tournament.available_shifts[0].identifier;
+        formData.soloBowlerFields.shift.elementConfig.value = tournament.available_shifts[0].identifier;
         formData.soloBowlerFields.shift.valid = true;
       }
     }
@@ -291,12 +342,12 @@ const BowlerForm = ({bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => 
 
   // get the additional questions into the bowler form, along with shift info if needed
   useEffect(() => {
-    if (!entry) {
+    if (!tournament) {
       return;
     }
 
     resetFormData();
-  }, [entry]);
+  }, [tournament]);
 
   // We're editing a bowler. Put their data into the form.
   useEffect(() => {
@@ -330,18 +381,11 @@ const BowlerForm = ({bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => 
     setShowCancelButton(true);
   }, []);
 
-  if (!entry || !entry.tournament) {
+  if (!registration || !tournament) {
+    console.log("Registration?", registration);
+    console.log("Tournament?", tournament);
     return '';
   }
-
-  //. If we aren't editing a bowler, then set the position if it's needs to be something other than 1.
-  // if (!bowlerData) {
-  //   if (entry.team) {
-  //     setPosition (entry.team.bowlers.length + 1);
-  //   } else if (entry.bowlers) {
-  //     setPosition(entry.bowlers.length + 1);
-  //   }
-  // }
 
   const checkValidity = (value, rules) => {
     let isValid = true;
@@ -506,10 +550,10 @@ const BowlerForm = ({bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => 
   let position = 1;
   if (bowlerData) {
     position = bowlerData.position;
-  } else if (entry.team) {
-    position = entry.team.bowlers.length + 1;
-  } else if (entry.bowlers) {
-    position = entry.bowlers.length + 1;
+  } else if (registration.team) {
+    position = registration.team.bowlers.length + 1;
+  } else if (registration.bowlers) {
+    position = registration.bowlers.length + 1;
   }
 
   let headerText = 'Bowler #' + position;

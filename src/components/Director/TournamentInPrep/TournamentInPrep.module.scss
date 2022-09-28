@@ -1,0 +1,101 @@
+.TournamentInPrep {
+  .Breadcrumbs {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  h2 {
+    margin-bottom: 1rem;
+  }
+  dl {
+    margin-bottom: 0;
+  }
+  dt {
+    text-align: right;
+    padding-right: 0;
+  }
+  dd {
+    text-align: left;
+  }
+  .Card {
+    margin-bottom: 1rem;
+  }
+  .Logo {
+    max-height: 300px;
+    width: auto;
+    max-width: 100%;
+  }
+
+  .Configuration {
+    .Item {
+      a {
+        display: none;
+      }
+    }
+    .Item:hover {
+      a {
+        display: inline;
+      }
+    }
+  }
+
+  .PurchasableItems {
+    .Category {
+      padding-bottom: 0;
+      padding-left: 0;
+      padding-right: 0;
+
+      border-bottom: 1px solid var(--tournio-gray-400);
+      @media (prefers-color-scheme: dark) {
+        border-bottom-color: var(--tournio-gray-700);
+      }
+
+      .Item {
+        .Note {
+          display: block;
+          font-size: 85%;
+          text-indent: 1rem;
+        }
+      }
+    }
+    .Category:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  .Downloads {
+    a {
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+    }
+  }
+
+  .StateChange {
+    text-align: center;
+    padding-bottom: 1rem;
+
+    .WhyDisabledText {
+      font-size: 90%;
+      font-weight: 200;
+      text-align: left;
+      margin-left: 1rem;
+      margin-right: 1rem;
+      p {
+        margin-bottom: 0;
+      }
+      ul {
+        margin: 0.5rem 0;
+
+      }
+    }
+  }
+
+  .ContactItem {
+    margin: 0;
+    padding: 0;
+  }
+
+  .ExternalLink {
+    font-size: 80%;
+    padding-left: 0.5rem;
+  }
+}

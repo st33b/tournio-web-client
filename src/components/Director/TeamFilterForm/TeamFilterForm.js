@@ -67,14 +67,14 @@ const TeamFilterForm = (props) => {
 
       <Form.Group as={Row}>
         <Col sm={{span: 9, offset: 3}} className={'d-flex'}>
-          <Button variant={'dark'}
+          <Button variant={'primary'}
                   type={'submit'}
                   className={'me-2'}>
             Apply Filters
           </Button>
-          <Button variant={'outline-dark'}
+          <Button variant={'secondary'}
                   type={'button'}
-                  className={'me-auto'}
+                  className={'ms-auto'}
                   onClick={resetFilterHandler}>
             Reset Filters
           </Button>

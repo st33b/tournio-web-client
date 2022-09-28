@@ -1,3 +1,28 @@
 .TournamentListing {
-  margin-top: 1rem;
+  .setup {
+    background-color: var(--tournio-info);
+  }
+  .testing {
+    background-color: var(--tournio-warning);
+    @media (prefers-color-scheme: dark) {
+      color: var(--tournio-black);
+    }
+  }
+  .active {
+    background-color: var(--tournio-success);
+    color: var(--tournio-body-bg);
+    @media (prefers-color-scheme: dark) {
+      color: var(--tournio-gray-400);
+    }
+  }
+  .closed {
+    background-color: var(--tournio-gray-500);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-800);
+      color: var(--tournio-gray-400);
+    }
+  }
+  .demo {
+    background-color: var(--tournio-primary);
+  }
 }

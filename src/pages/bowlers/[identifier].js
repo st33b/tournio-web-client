@@ -2,8 +2,8 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
-import {fetchBowlerDetails, fetchTournamentDetails} from "../../utils";
-import {useRegistrationContext} from "../../store/RegistrationContext";
+import {fetchBowlerDetails, fetchTournamentDetails, useClientReady} from "../../utils";
+import {useCommerceContext} from "../../store/CommerceContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import Menu from '../../components/Commerce/Menu';
@@ -11,9 +11,8 @@ import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const router = useRouter();
-  const {success} = router.query;
-  const {commerce, commerceDispatch} = useRegistrationContext();
-  const {identifier} = router.query;
+  const {success, identifier} = router.query;
+  const {commerce, dispatch} = useCommerceContext();
 
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -21,51 +20,45 @@ const Page = () => {
 
   // fetch the bowler details
   useEffect(() => {
-    if (!identifier) {
+    if (!identifier || !commerce) {
       return;
     }
 
-    if (!commerce || !commerce.bowler || commerce.bowler.identifier !== identifier) {
-      fetchBowlerDetails(identifier, commerce, commerceDispatch);
+    if (!commerce.bowler || commerce.bowler.identifier !== identifier) {
+      fetchBowlerDetails(identifier, dispatch);
       return;
     }
+  }, [identifier, commerce]);
 
+  useEffect(() => {
     if (success === 'purchase') {
       setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
     } else if (success === 'register') {
       setSuccessMessage('Your registration was received! You may now select events, optional items, and pay entry fees.');
     }
+  }, [success]);
 
-    if (commerce.bowler.shift_info.full && !commerce.bowler.shift_info.confirmed) {
-      if (commerce.bowler.unpaid_purchases.some(p => p.category === 'ledger' || p.determination === 'event')) {
-        // either the tournament is full, or the chosen shift is full.
-        // first, see if there are available shifts
-        // if (commerce.tournament.available_shifts.length > 0) {
-        //   setErrorMessage("Your team's requested shift is full. Please contact the tournament director about changing to another shift before paying your entry fee.");
-        //   setEnablePurchase(false);
-        // } else {
-          setErrorMessage("The tournament has reached its maximum capacity. Your registration is now provisional.");
-          setEnablePurchase(false);
-        // }
-      }
-    }
-  }, [identifier, commerce, commerceDispatch, success]);
-
-  // ensure that the tournament in context matches the bowler's
-  useEffect(() => {
-    if (!identifier || !commerce) {
-      return;
-    }
-    if (!commerce.bowler || !commerce.tournament) {
-      return;
-    }
-    if (!commerce.tournament || commerce.bowler.tournament.identifier !== commerce.tournament.identifier) {
-      fetchTournamentDetails(commerce.bowler.tournament.identifier, commerceDispatch);
-    }
-  }, [identifier, commerce, commerceDispatch]);
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
 
   if (!commerce || !commerce.bowler || !commerce.tournament) {
     return <LoadingMessage message={'One moment, please...'} />;
+  }
+
+  if (commerce.bowler.shift_info.full && !commerce.bowler.shift_info.confirmed) {
+    if (commerce.bowler.unpaid_purchases.some(p => p.category === 'ledger' || p.determination === 'event')) {
+      // either the tournament is full, or the chosen shift is full.
+      // first, see if there are available shifts
+      // if (commerce.tournament.available_shifts.length > 0) {
+      //   setErrorMessage("Your team's requested shift is full. Please contact the tournament director about changing to another shift before paying your entry fee.");
+      //   setEnablePurchase(false);
+      // } else {
+      setErrorMessage("The tournament has reached its maximum capacity. Your registration is now provisional.");
+      setEnablePurchase(false);
+      // }
+    }
   }
 
   let displayed_name = commerce.bowler.first_name;
@@ -76,13 +69,13 @@ const Page = () => {
 
   return (
     <div>
-      <Row className={'pt-2'}>
-        <Col md={2} className={'d-none d-md-block'}>
+      <Row className={'pt-2 g-0'}>
+        <Col xs={3} md={2} className={''}>
           <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
-            <TournamentLogo tournament={commerce.tournament}/>
+            <TournamentLogo url={commerce.tournament.image_url}/>
           </a>
         </Col>
-        <Col md={10} className={'d-flex flex-column justify-content-center text-center text-md-start ps-2'}>
+        <Col xs={9} md={10} className={'d-flex flex-column justify-content-center text-md-start ps-2'}>
           <h3 className={'p-0 m-0'}>
             <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
               {commerce.tournament.name}

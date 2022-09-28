@@ -1,10 +1,10 @@
-import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {useCommerceContext} from "../../../store/CommerceContext";
 import Item from "./Item";
 
 import classes from './ItemSummary.module.scss';
 
 const ItemSummary = ({totalFees}) => {
-  const {commerce} = useRegistrationContext();
+  const {commerce} = useCommerceContext();
 
   if (!commerce || !commerce.cart) {
     return;

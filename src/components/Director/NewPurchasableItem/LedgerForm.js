@@ -1,19 +1,19 @@
 import {useEffect, useState} from "react";
-import {useRouter} from "next/router";
-
-import TextField from "@mui/material/TextField";
-import DateTimePicker from "@mui/lab/DateTimePicker";
-
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../utils";
-import ErrorBoundary from "../../common/ErrorBoundary";
-
-import classes from './LedgerForm.module.scss';
 import {formatISO, parseISO, isValid as isValidDate} from "date-fns";
 
-const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
+import TextField from "@mui/material/TextField";
+import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
+
+import ErrorBoundary from "../../common/ErrorBoundary";
+import {useDirectorContext} from "../../../store/DirectorContext";
+import {directorApiRequest} from "../../../director";
+import {purchasableItemsAdded} from "../../../store/actions/directorActions";
+
+import classes from './LedgerForm.module.scss';
+
+const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
   const context = useDirectorContext();
-  const router = useRouter();
+  const dispatch = context.dispatch;
 
   const initialState = {
     category: 'ledger',
@@ -32,16 +32,16 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
   const [eventSelectionAllowed, setEventSelectionAllowed] = useState(false);
 
   useEffect(() => {
-    if (!context || !context.tournament) {
+    if (!tournament) {
       return;
     }
     // It's a tournament where bowlers can select events, rather than a traditional tournament
-    if (context.tournament.config_items.some(ci => ci.key === 'event_selection' && ci.value)) {
+    if (tournament.purchasable_items.some(pi => pi.determination === 'event')) {
       setEventSelectionAllowed(true);
 
       // populate the event identifiers, for both bundle_discount (if it's available) and event-linked late fee
       const identifiers = {};
-      context.tournament.purchasable_items.filter(({determination}) => determination === 'event').map(item => {
+      tournament.purchasable_items.filter(({determination}) => determination === 'event').map(item => {
         const id = item.identifier;
         identifiers[id] = false;
       });
@@ -49,7 +49,7 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
       newFormData.eventIdentifiers = identifiers;
       setFormData(newFormData);
     }
-  }, [context]);
+  }, [tournament]);
 
   const inputChanged = (elementName, event) => {
     const newFormData = {...formData};
@@ -96,13 +96,13 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
   const isFormDataValid = (data) => {
     let valid = data.name.length > 0;
     if (data.determination === 'early_discount') {
-      valid = valid && data.value < 0 && isValidDate(parseISO(data.valid_until));
+      valid = valid && data.value > 0 && isValidDate(parseISO(data.valid_until));
     } else if (data.determination === 'late_fee') {
       valid = valid && data.value > 0 && isValidDate(parseISO(data.applies_at));
     } else if (data.determination === 'bundle_discount') {
       const checkedEvents = Object.values(data.eventIdentifiers)
         .reduce((prev, current) => current ? prev + 1 : prev, 0);
-      valid = valid && data.value < 0 && checkedEvents > 1;
+      valid = valid && data.value > 0 && checkedEvents > 1;
     } else {
       valid = valid && data.value > 0;
     }
@@ -110,10 +110,8 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
   }
 
   const submissionSuccess = (data) => {
+    dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
-    const tournament = {...context.tournament}
-    tournament.purchasable_items = tournament.purchasable_items.concat(data);
-    context.setTournament(tournament);
     onComplete(`Item ${data[0].name} created.`);
   }
 
@@ -142,7 +140,7 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
         break;
     }
     itemData.configuration = configuration;
-    const uri = `/director/tournaments/${context.tournament.identifier}/purchasable_items`;
+    const uri = `/director/tournaments/${tournament.identifier}/purchasable_items`;
     const requestConfig = {
       method: 'post',
       data: {
@@ -155,21 +153,17 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: submissionSuccess,
-      onFailure: (_) => {
-        console.log("Failed to save new item.")
-      },
+      onFailure: (_) => console.log("Failed to save new item."),
     });
   }
 
-  const valueProperties = {}
+  const valueProperties = {
+    min: 1,
+  }
   let amountLabel = 'Fee';
   if (formData.determination === 'early_discount' || formData.determination === 'bundle_discount') {
-    amountLabel = 'Discount (must be negative)';
-    valueProperties.max = -1;
-  } else {
-    valueProperties.min = 1;
+    amountLabel = 'Discount Amount';
   }
 
   const labels = {
@@ -178,7 +172,6 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
     early_discount: 'Early registration discount',
     bundle_discount: 'Event Bundle Discount',
   };
-
 
   return (
     <ErrorBoundary>
@@ -219,16 +212,21 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
           {formData.determination === 'early_discount' &&
             <div className={'row mb-3'}>
               <DateTimePicker onChange={(newDateTime) => inputChanged('valid_until', newDateTime)}
+                              disablePast={true}
                               value={formData.valid_until}
                               label={'Valid until'}
+                              className={classes.TournioDateTimePicker}
                               renderInput={(params) => <TextField {...params} />}/>
             </div>
           }
           {formData.determination === 'late_fee' &&
             <div className={'row mb-3'}>
               <DateTimePicker onChange={(newDateTime) => inputChanged('applies_at', newDateTime)}
+                              disablePast={true}
+                              hideTabs={true}
                               value={formData.applies_at}
                               label={'Applies at'}
+                              className={classes.TournioDateTimePicker}
                               renderInput={(params) => <TextField {...params} />}/>
             </div>
           }
@@ -237,7 +235,7 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
               <label htmlFor={'name'} className={'form-label ps-0 mb-1'}>
                 Bundled Events
               </label>
-              {context.tournament.purchasable_items.filter(({determination}) => determination === 'event').map(item => (
+              {tournament.purchasable_items.filter(({determination}) => determination === 'event').map(item => (
                 <div className={'form-check form-switch'} key={item.identifier}>
                   <input className={'form-check-input'}
                          type={'checkbox'}
@@ -245,7 +243,7 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
                          id={`event_${item.identifier}`}
                          name={`event_${item.identifier}`}
                          checked={formData.eventIdentifiers[item.identifier]}
-                         onChange={(event) => inputChanged(`event_${item.identifier}`, event)} />
+                         onChange={(event) => inputChanged(`event_${item.identifier}`, event)}/>
                   <label className={'form-check-label'}
                          htmlFor={`event_${item.identifier}`}>
                     {item.name}
@@ -264,13 +262,13 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
                       id={'linkedEvent'}
                       onChange={event => inputChanged('linkedEvent', event)}>
                 <option value={''}>--</option>
-                {context.tournament.purchasable_items.filter(
+                {tournament.purchasable_items.filter(
                   ({category, determination}) => category === 'bowling' && determination === 'event'
                 ).map(event => (
                   <option key={event.identifier} value={event.identifier}>
                     {event.name}
                   </option>
-                  ))}
+                ))}
               </select>
             </div>
           }
@@ -289,20 +287,24 @@ const LedgerForm = ({availableTypes, onCancel, onComplete}) => {
             />
           </div>
           <div className={'row'}>
-            <div className={'d-flex justify-content-between p-0'}>
+            <div className={'d-flex justify-content-end pe-0'}>
               <button type={'button'}
                       title={'Cancel'}
                       onClick={onCancel}
-                      className={'btn btn-outline-danger'}>
-                <i className={'bi-x-lg pe-2'} aria-hidden={true}/>
-                Cancel
+                      className={'btn btn-outline-danger me-2'}>
+                <i className={'bi-x-lg'} aria-hidden={true}/>
+                <span className={'visually-hidden'}>
+                  Cancel
+                </span>
               </button>
               <button type={'submit'}
                       title={'Save'}
                       disabled={!formData.valid}
-                      className={'btn btn-success'}>
-                Save
-                <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>
+                      className={'btn btn-outline-success'}>
+                <i className={'bi-check-lg'} aria-hidden={true}/>
+                <span className={'visually-hidden'}>
+                  Save
+                </span>
               </button>
             </div>
           </div>

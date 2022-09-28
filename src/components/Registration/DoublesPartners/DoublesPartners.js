@@ -1,22 +1,18 @@
-import {useEffect, useState} from "react";
 import PartnerSelectionRow from "./PartnerSelectionRow";
-import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './DoublesPartners.module.scss';
 
-const DoublesPartners = ({partnersChosen}) => {
-  const {entry} = useRegistrationContext();
-
-  if (!entry.team) {
+const DoublesPartners = ({team, partnersChosen}) => {
+  if (!team) {
     return '';
   }
 
   return (
     <div className={`${classes.DoublesPartners} table-responsive`}>
+      <h3>
+        Doubles Partner Assignment
+      </h3>
       <table className={'table table-hover caption-top align-middle'}>
-        <caption className={classes.Caption}>
-          Doubles Partner Assignment
-        </caption>
         <thead className={'table-light'}>
         <tr>
           <th scope={'col'}>
@@ -28,8 +24,8 @@ const DoublesPartners = ({partnersChosen}) => {
         </tr>
         </thead>
         <tbody>
-        {entry.team.bowlers.map(bowler => {
-          const teammates = entry.team.bowlers.filter((value) => { return value.position !== bowler.position });
+        {team.bowlers.map(bowler => {
+          const teammates = team.bowlers.filter((value) => { return value.position !== bowler.position });
           return <PartnerSelectionRow key={bowler.position}
                                       bowler={bowler}
                                       teammates={teammates}

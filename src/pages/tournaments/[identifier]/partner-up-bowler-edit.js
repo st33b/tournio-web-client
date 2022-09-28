@@ -5,22 +5,22 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import Summary from "../../../components/Registration/Summary/Summary";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {partnerUpBowlerUpdated, soloBowlerInfoUpdated} from "../../../store/actions/registrationActions";
+import {partnerUpBowlerUpdated} from "../../../store/actions/registrationActions";
 import {useEffect, useState} from "react";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   const [bowler, setBowler] = useState();
   const [tournament, setTournament] = useState();
   useEffect(() => {
-    if (!entry) {
+    if (!registration) {
       return;
     }
-    setBowler(entry.bowler);
-    setTournament(entry.tournament);
-  }, [entry]);
+    setBowler(registration.bowler);
+    setTournament(registration.tournament);
+  }, [registration]);
 
   if (!bowler) {
     return'';

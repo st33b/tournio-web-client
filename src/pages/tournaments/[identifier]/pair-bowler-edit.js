@@ -5,24 +5,24 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import Summary from "../../../components/Registration/Summary/Summary";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {newPairBowlerUpdated, soloBowlerInfoUpdated} from "../../../store/actions/registrationActions";
+import {newPairBowlerUpdated} from "../../../store/actions/registrationActions";
 import {useEffect, useState} from "react";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
   const { index } = router.query;
 
   const [bowler, setBowler] = useState();
   const [tournament, setTournament] = useState();
   useEffect(() => {
-    if (!entry) {
+    if (!registration) {
       return;
     }
 
-    setBowler(entry.bowlers[index]);
-    setTournament(entry.tournament);
-  }, [entry]);
+    setBowler(registration.bowlers[index]);
+    setTournament(registration.tournament);
+  }, [registration]);
 
   if (!bowler) {
     return'';
@@ -37,7 +37,8 @@ const Page = () => {
   return (
     <Row>
       <Col lg={8}>
-        <BowlerForm bowlerData={bowler}
+        <BowlerForm tournament={registration.tournament}
+                    bowlerData={bowler}
                     bowlerInfoSaved={onBowlerInfoUpdated}
                     editBowlerNum={bowlerNum}
                     cancelHref={`/tournaments/${tournament.identifier}/new-pair-review`}

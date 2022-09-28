@@ -1,6 +1,6 @@
-import DirectorLayout from "../../components/Layout/DirectorLayout/DirectorLayout";
 import {useRouter} from "next/router";
 import {Card, Col, Row} from "react-bootstrap";
+import DirectorLayout from "../../components/Layout/DirectorLayout/DirectorLayout";
 import PasswordResetForm from "../../components/Director/PasswordResetForm/PasswordResetForm";
 
 const Page = () => {

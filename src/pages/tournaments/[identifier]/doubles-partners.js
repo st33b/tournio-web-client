@@ -8,26 +8,27 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import DoublesPartners from "../../../components/Registration/DoublesPartners/DoublesPartners";
 import {newTeamPartnersChosen} from "../../../store/actions/registrationActions";
 import {useEffect, useState} from "react";
+import {useClientReady} from "../../../utils";
 
 const Page = () => {
-  const {entry, dispatch} = useRegistrationContext();
+  const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
   const [partnersChosen, setPartnersChosen] = useState(false);
 
   useEffect(() => {
-    if (!entry || !entry.bowlers) {
+    if (!registration || !registration.bowlers) {
       return;
     }
-    const theyHavePartners = entry.bowlers.reduce(
+    const theyHavePartners = registration.bowlers.reduce(
       (prev, bowler) => prev || !!bowler.doubles_partner_num,
-      entry.bowlers.length < 2
+      registration.bowlers.length < 2
     );
     setPartnersChosen(theyHavePartners);
-  }, [entry]);
+  }, [registration]);
 
   const moveOnToReview = () => {
-    router.push(`/tournaments/${entry.tournament.identifier}/review-entries`);
+    router.push(`/tournaments/${registration.tournament.identifier}/review-entries`);
   }
 
   // When a doubles partner is clicked, what needs to happen:
@@ -38,7 +39,7 @@ const Page = () => {
   //  - set C and D to be partners (the remaining two)
   const gimmeNewDoublesPartners = (bowlerNum, partnerNum) => {
     // create a copy of the bowlers array
-    const newBowlers = entry.team.bowlers.slice(0);
+    const newBowlers = registration.team.bowlers.slice(0);
 
     // these are index-based, which is position-1
 
@@ -71,17 +72,26 @@ const Page = () => {
     dispatch(newTeamPartnersChosen(newBowlers));
   }
 
+  const ready = useClientReady();
+  if (!ready) {
+    return null;
+  }
+  if (!registration) {
+    return '';
+  }
+
   return (
     <Row>
-      <Col lg={8}>
-        <ProgressIndicator active={'doubles'} />
-        <DoublesPartners partnersChosen={gimmeNewDoublesPartners} />
-      </Col>
-      <Col>
-        <Summary nextStepClicked={moveOnToReview}
+      <Col xs={{ order: 2 }}>
+        <Summary tournament={registration.tournament}
+                 nextStepClicked={moveOnToReview}
                  nextStepText={'Review Entries'}
                  buttonDisabled={!partnersChosen}
         />
+      </Col>
+      <Col lg={8} sm={{ order: 2 }}>
+        <ProgressIndicator active={'doubles'} />
+        <DoublesPartners team={registration.team} partnersChosen={gimmeNewDoublesPartners} />
       </Col>
     </Row>
   );

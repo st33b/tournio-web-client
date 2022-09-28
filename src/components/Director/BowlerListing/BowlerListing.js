@@ -1,7 +1,6 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {useRouter} from "next/router";
 import {useTable, useSortBy, useFilters} from 'react-table';
-import {List} from 'immutable';
 import {Overlay, Popover} from "react-bootstrap";
 
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
@@ -53,7 +52,6 @@ const IgboMemberCell = ({
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: (data) => onChangeSuccess(newStatus, data),
       onFailure: onChangeFailure,
     });
@@ -95,18 +93,10 @@ const IgboMemberCell = ({
 }
 
 const BowlerListing = ({bowlers}) => {
-  const directorContext = useDirectorContext();
-
-  let identifier;
-  if (directorContext && directorContext.tournament) {
-    identifier = directorContext.tournament.identifier;
-  }
-
   const columns = useMemo(() => [
     {
       id: 'name',
       Header: ({column}) => <SortableTableHeader text={'Name'} column={column}/>,
-      // accessor: (props) => props.last_name + ', ' + props.first_name,
       accessor: 'full_name',
       Cell: ({row, cell}) => {
         return (
@@ -121,31 +111,20 @@ const BowlerListing = ({bowlers}) => {
       Header: 'Email',
       accessor: 'email',
     },
-    // {
-    //   Header: 'Preferred Name',
-    //   accessor: 'preferred_name',
-    //   disableSortBy: true,
-    // },
     {
       Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
       accessor: 'team_name',
-      Cell: ({row, cell}) => (
-        <a href={row.original.team_identifier === 'n/a' ? undefined : `/director/teams/${row.original.team_identifier}`}>
-          {cell.value}
-        </a>
-      ),
+      Cell: ({row, cell}) => {
+        return (!row.original.team) ? 'n/a' : (
+          <a
+            href={`/director/teams/${row.original.team.identifier}`}>
+            {row.original.team.name}
+          </a>
+          )
+      },
+      disableSortBy: true,
       filter: equals,
     },
-    // {
-    //   Header: 'Position',
-    //   accessor: 'position',
-    //   disableSortBy: true,
-    //   Cell: ({value}) => (
-    //     <div className={'text-center'}>
-    //       {value}
-    //     </div>
-    //   )
-    // },
     {
       Header: ({column}) => <SortableTableHeader text={'Date Registered'} column={column}/>,
       accessor: 'date_registered',
@@ -185,12 +164,12 @@ const BowlerListing = ({bowlers}) => {
       filter: doesNotEqual,
       Cell: ({value}) => `$${value}`,
     },
-  ], [identifier]);
+  ], []);
 
-  const [data, setData] = useState(List(bowlers));
-  useEffect(() => {
-    setData(List(bowlers));
-  }, [bowlers]);
+  let data = [];
+  if (bowlers) {
+    data = bowlers;
+  }
 
   const updateTheData = (rowIndex, columnId, isChecked) => {
     const oldRow = data.get(rowIndex);
@@ -215,6 +194,10 @@ const BowlerListing = ({bowlers}) => {
     useSortBy,
   );
 
+  if (!bowlers) {
+    return '';
+  }
+
   let list = '';
   if (data.size === 0) {
     list = (
@@ -226,7 +209,7 @@ const BowlerListing = ({bowlers}) => {
     list = (
       <div className={'table-responsive'}>
         <table className={'table table-striped table-hover'} {...getTableProps}>
-          <thead className={'table-light'}>
+          <thead>
           {headerGroups.map((headerGroup, i) => (
             <tr key={i} {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column, j) => (
@@ -285,7 +268,7 @@ const BowlerListing = ({bowlers}) => {
 
   return (
     <div className={classes.BowlerListing}>
-      {!!data.size && <BowlerFilterForm onFilterApplication={filterThatData} onFilterReset={resetThoseFilters}/>}
+      {data.length > 0 && <BowlerFilterForm onFilterApplication={filterThatData} onFilterReset={resetThoseFilters}/>}
       {list}
     </div>
   );
