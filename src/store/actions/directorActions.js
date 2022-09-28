@@ -1,5 +1,4 @@
 import * as actionTypes from './directorActionTypes';
-import {NEW_TOURNAMENT_STEP_COMPLETED} from "./directorActionTypes";
 
 export const tournamentListReset = () => {
   return {
