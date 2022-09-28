@@ -7,9 +7,11 @@ import {devConsoleLog} from "../../../../utils";
 import LogoImage from "../../LogoImage/LogoImage";
 
 import classes from '../TournamentBuilder.module.scss';
+import {newTournamentSaved, newTournamentStepCompleted} from "../../../../store/actions/directorActions";
 
 const Logo = () => {
-  const {directorState, dispatch} = useDirectorContext();
+  const context = useDirectorContext();
+  const {directorState, dispatch} = context;
 
   const initialState = {
     fields: {
@@ -21,37 +23,44 @@ const Logo = () => {
   const [formData, setFormData] = useState(initialState);
 
   const isValid = (fields) => {
-    return fields.file.length > 0;
+    return fields.file && fields.file.size > 0;
   }
 
   const inputChanged = (event) => {
     const changedData = {...formData};
-    const newValue = event.target.value;
-    const fieldName = event.target.name;
-    changedData.fields[fieldName] = newValue;
+    changedData.fields.file = event.target.files[0];
     changedData.valid = isValid(changedData.fields);
     setFormData(changedData);
+  }
+
+  const onSuccess = (data) => {
+    const tournament = {...directorState.builder.tournament};
+    tournament.image_url = data.image_url;
+    dispatch(newTournamentSaved(tournament));
   }
 
   const uploadTheFile = (e) => {
     e.preventDefault();
 
-    devConsoleLog("Here is where we upload the file");
-    // const formData = new FormData();
-    // formData.append('file', imageFile.files[0]);
+    const form = new FormData();
+    form.append('file', formData.fields.file);
 
-    // const uri = `/director/tournaments/${tournament.identifier}/logo_upload`;
-    // const requestConfig = {
-    //   method: 'post',
-    //   data: formData,
-    // };
-    // directorApiRequest({
-    //   uri: uri,
-    //   requestConfig: requestConfig,
-    //   context: context,
-    //   onSuccess: onSuccess,
-    //   onFailure: (_) => setError('File failed to upload'),
-    // });
+    const uri = `/director/tournaments/${directorState.builder.tournament.identifier}/logo_upload`;
+    const requestConfig = {
+      method: 'post',
+      data: form,
+    };
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      onSuccess: onSuccess,
+      onFailure: (_) => setError('File failed to upload'),
+    });
+  }
+
+  const nextClicked = () => {
+    dispatch(newTournamentStepCompleted('logo', 'scoring'));
   }
 
   return (
@@ -59,7 +68,7 @@ const Logo = () => {
       <h2>New Tournament: Logo</h2>
 
       {/* Show the existing image if there is one. */}
-      {/*<LogoImage src={tournament.image_url}/>*/}
+      <LogoImage src={directorState.builder.tournament.image_url}/>
 
       <div className={`row ${classes.FieldRow}`}>
         <label htmlFor={'file'}
@@ -95,7 +104,7 @@ const Logo = () => {
           </button>
           <button className={'btn btn-outline-primary'}
                   role={'button'}
-                  onClick={() => {}}>
+                  onClick={nextClicked}>
             Next
             <i className={'bi-arrow-right ps-2'} aria-hidden={true}/>
           </button>
