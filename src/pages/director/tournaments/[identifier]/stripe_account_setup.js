@@ -39,13 +39,20 @@ const Page = () => {
     });
   }, [directorState.tournament]);
 
+  // Make sure we're logged in
   const loggedInState = useLoggedIn();
+  const ready = loggedInState >= 0;
+  if (!ready) {
+    return '';
+  }
   if (!loggedInState) {
     router.push('/director/login');
   }
+  if (!directorState) {
+    return '';
+  }
 
-  const ready = loggedInState >= 0;
-  if (!ready || !directorState.tournament) {
+  if (!directorState.tournament) {
     return (
       <div>
         <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
