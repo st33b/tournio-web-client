@@ -1,11 +1,15 @@
-import {useState} from "react";
+import {useRef, useState} from "react";
 
 import {useDirectorContext} from "../../../../store/DirectorContext";
 
 import classes from '../TournamentBuilder.module.scss';
+import {newTournamentSaved, newTournamentStepCompleted} from "../../../../store/actions/directorActions";
+import {directorApiRequest} from "../../../../director";
+import {devConsoleLog} from "../../../../utils";
 
 const Dates = () => {
-  const {directorState, dispatch} = useDirectorContext();
+  const context = useDirectorContext();
+  const {directorState, dispatch} = context;
 
   const initialState = {
     fields: {
@@ -60,6 +64,38 @@ const Dates = () => {
     setFormData(changedData);
   }
 
+  const saveSuccess = (data) => {
+    // put the updated tournament into context, and set the next step
+    dispatch(newTournamentSaved(data));
+    dispatch(newTournamentStepCompleted('dates', 'logo'));
+  }
+
+  const nextClicked = () => {
+    const identifier = directorState.builder.tournament.identifier;
+    const uri = `/director/tournaments/${identifier}`;
+    const requestConfig = {
+      method: 'patch',
+      data: {
+        tournament: {
+          start_date: formData.fields.start_date,
+          end_date: formData.fields.end_date,
+          entry_deadline: formData.fields.entry_deadline,
+        },
+      },
+    };
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      onSuccess: saveSuccess,
+      onFailure: (err) => devConsoleLog("Failed to update tournament.", err),
+    });
+  }
+
+  const startDateElement = useRef(null);
+  const endDateElement = useRef(null);
+  const deadlineElement = useRef(null);
+
   return (
     <div>
       <h2>New Tournament: Dates</h2>
@@ -75,12 +111,16 @@ const Dates = () => {
                    className={'form-control'}
                    name={'start_date'}
                    id={'start_date'}
+                   ref={startDateElement}
                    onChange={inputChanged}
                    value={formData.fields.start_date}
             />
-            <span className={'input-group-text'}>
+            <button className={`btn ${classes.DateTimeButton}`}
+                    type={'button'}
+                    role={'button'}
+                    onClick={() => startDateElement.current.focus()}>
               <i className={'bi-calendar2-event'} aria-hidden={true}/>
-            </span>
+            </button>
           </div>
         </div>
       </div>
@@ -96,12 +136,16 @@ const Dates = () => {
                    className={'form-control'}
                    name={'end_date'}
                    id={'end_date'}
+                   ref={endDateElement}
                    onChange={inputChanged}
                    value={formData.fields.end_date}
             />
-            <span className={'input-group-text'}>
+            <button className={`btn ${classes.DateTimeButton}`}
+                    type={'button'}
+                    role={'button'}
+                    onClick={() => endDateElement.current.focus()}>
               <i className={'bi-calendar2-event'} aria-hidden={true}/>
-            </span>
+            </button>
           </div>
         </div>
       </div>
@@ -117,12 +161,16 @@ const Dates = () => {
                    className={'form-control'}
                    name={'entry_deadline'}
                    id={'entry_deadline'}
+                   ref={deadlineElement}
                    onChange={inputChanged}
                    value={formData.fields.entry_deadline}
             />
-            <span className={'input-group-text'}>
+            <button className={`btn ${classes.DateTimeButton}`}
+                    type={'button'}
+                    role={'button'}
+                    onClick={() => deadlineElement.current.focus()}>
               <i className={'bi-clock'} aria-hidden={true}/>
-            </span>
+            </button>
           </div>
         </div>
       </div>
@@ -137,7 +185,7 @@ const Dates = () => {
           </button>
           <button className={'btn btn-outline-primary'}
                   role={'button'}
-                  onClick={() => {}}>
+                  onClick={nextClicked}>
             Next
             <i className={'bi-arrow-right ps-2'} aria-hidden={true}/>
           </button>

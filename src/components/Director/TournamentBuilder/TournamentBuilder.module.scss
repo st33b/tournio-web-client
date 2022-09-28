@@ -37,6 +37,13 @@
         margin-top: 1rem;
       };
     }
+    .DateTimeButton {
+      background-color: var(--tournio-gray-200);
+      border-color: #CED4DA;
+    }
+    .DateTimeButton:hover {
+      background-color: var(--tournio-gray-400);
+    }
     .ButtonRow {
       margin-top: 2rem;
     }

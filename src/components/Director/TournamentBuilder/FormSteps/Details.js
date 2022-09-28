@@ -8,7 +8,7 @@ import {directorApiRequest} from "../../../../director";
 
 const Details = () => {
   const context = useDirectorContext();
-  const {directorState, dispatch} = context
+  const {directorState, dispatch} = context;
 
   const initialState = {
     fields: {
@@ -39,7 +39,7 @@ const Details = () => {
   }
 
   const saveSuccess = (data) => {
-    // put the new tournament into context, and set the next step
+    // put the updated tournament into context, and set the next step
     dispatch(newTournamentSaved(data));
     dispatch(newTournamentStepCompleted('details', 'dates'));
   }
