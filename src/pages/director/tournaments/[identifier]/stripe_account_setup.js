@@ -63,7 +63,7 @@ const Page = () => {
   const ladder = [{ text: 'Tournaments', path: '/director' }];
   return (
     <div>
-      <Breadcrumbs ladder={ladder} activeText={directorState.tournament.name} className={classes.Breadcrumbs} />
+      {/*<Breadcrumbs ladder={ladder} activeText={directorState.tournament.name} className={classes.Breadcrumbs} />*/}
       <LoadingMessage message={'Initiating setup...'} />
     </div>
   );
