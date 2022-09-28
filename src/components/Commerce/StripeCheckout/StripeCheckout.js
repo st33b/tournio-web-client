@@ -23,12 +23,6 @@ const StripeCheckout = () => {
 
   ///////////////////////////////////////////////////////
 
-  // If Stripe checkout isn't enabled, bail out
-  if (!process.env.NEXT_PUBLIC_ENABLE_STRIPE_CHECKOUT) {
-    console.log('Stripe checkout not enabled');
-    return '';
-  }
-
   if (!commerce || !commerce.bowler || !identifier) {
     return '';
   }
