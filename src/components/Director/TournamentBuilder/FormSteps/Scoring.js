@@ -22,23 +22,24 @@ const Scoring = () => {
   const [permitAddingDivision, setPermitAddingDivision] = useState(true);
 
   const isValid = (fields) => {
-    // TODO
-    return true;
+    const divisionsValid = formData.fields.divisions.every(({key, low_average, high_average}) => {
+      return key.length > 0 && low_average >= 0 && low_average < 300 && high_average > 0 && high_average <= 300 && low_average <= high_average;
+    });
+    return divisionsValid && formData.fields.percentage >= 0 && formData.fields.percentage <= 100 && formData.fields.average > 0 && formData.fields.average <= 300;
   }
 
   const inputChanged = (event) => {
     const changedData = {...formData};
-    const newValue = event.target.value;
     const fieldName = event.target.name;
-    changedData.fields[fieldName] = newValue;
+    changedData.fields[fieldName] = parseInt(event.target.value);
     changedData.valid = isValid(changedData.fields);
     setFormData(changedData);
   }
 
   const divisionInputChanged = (event, index) => {
     const changedData = {...formData};
-    const newValue = event.target.value;
     const fieldName = event.target.name;
+    const newValue = event.target.value.length > 0 && (fieldName === 'low_average' || fieldName === 'high_average') ? parseInt(event.target.value) : event.target.value;
     changedData.fields.divisions[index][fieldName] = newValue;
     changedData.valid = isValid(changedData.fields);
     setFormData(changedData);
@@ -49,8 +50,8 @@ const Scoring = () => {
     data.fields.divisions = formData.fields.divisions.concat({
       key: key,
       name: '',
-      lowAverage: '',
-      highAverage: '',
+      low_average: '',
+      high_average: '',
     });
     setFormData(data);
   }
@@ -97,6 +98,14 @@ const Scoring = () => {
     G: 'Gloria Estefan',
   }
 
+  const onSuccess = (data) => {
+    // dispatch saved & step completed
+  }
+
+  const nextClicked = () => {
+    // send it up
+  }
+
   return (
     <div>
       <h2>New Tournament: Scoring</h2>
@@ -132,7 +141,7 @@ const Scoring = () => {
         <div className={'col-5 col-md-3'}>
           <input type={'number'}
                  min={0}
-                 max={100}
+                 max={300}
                  name={'average'}
                  id={'average'}
                  className={'form-control'}
