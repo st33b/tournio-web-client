@@ -1,6 +1,5 @@
 import {useState} from "react";
 import {useDirectorContext} from "../../../../store/DirectorContext";
-import {timezones} from "../../../../utils";
 
 import classes from '../TournamentBuilder.module.scss';
 
