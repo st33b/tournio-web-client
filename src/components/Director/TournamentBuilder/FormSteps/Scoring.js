@@ -101,12 +101,12 @@ const Scoring = () => {
 
   const onSaveSuccess = (data) => {
     dispatch(newTournamentSaved(data));
-    dispatch(newTournamentStepCompleted('scoring', 'required_events'));
+    dispatch(newTournamentStepCompleted('scoring', 'additional_events'));
   }
 
   const nextClicked = () => {
     if (formData.fields.divisions.length === 0 ) {
-      dispatch(newTournamentStepCompleted('scoring', 'required_events'));
+      dispatch(newTournamentStepCompleted('scoring', 'additional_events'));
     } else {
       const identifier = directorState.builder.tournament.identifier;
       const uri = `/director/tournaments/${identifier}`;

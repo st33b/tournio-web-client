@@ -2,14 +2,19 @@ import {useState} from "react";
 import {useDirectorContext} from "../../../../store/DirectorContext";
 
 import classes from '../TournamentBuilder.module.scss';
+import {newTournamentSaved, newTournamentStepCompleted} from "../../../../store/actions/directorActions";
+import {directorApiRequest} from "../../../../director";
+import {devConsoleLog} from "../../../../utils";
 
 const RequiredEvents = () => {
-  const {directorState, dispatch} = useDirectorContext();
+  const context = useDirectorContext();
+  const directorState = context.directorState;
+  const dispatch = context.dispatch;
 
   const DEFAULT_EVENT_DETAILS = {
     roster_type: '',
     name: '',
-    game_count: 3,
+    // game_count: 3,
   };
 
   // Default to 3 games until we add support for customizing the number of games in a required event.
@@ -67,9 +72,39 @@ const RequiredEvents = () => {
     setFormData(data);
   }
 
+  const onSaveSuccess = (data) => {
+    dispatch(newTournamentSaved(data));
+    dispatch(newTournamentStepCompleted('required_events', 'additional_events'));
+  }
+
+  const nextClicked = () => {
+    if (formData.fields.events.length === 0 ) {
+      dispatch(newTournamentStepCompleted('required_events', 'additional_events'));
+    } else {
+      const identifier = directorState.builder.tournament.identifier;
+      const uri = `/director/tournaments/${identifier}`;
+      const requestData = {
+        tournament: {
+          events_attributes: formData.fields.events,
+        },
+      }
+      const requestConfig = {
+        method: 'patch',
+        data: requestData,
+      };
+      directorApiRequest({
+        uri: uri,
+        requestConfig: requestConfig,
+        context: context,
+        onSuccess: onSaveSuccess,
+        onFailure: (err) => devConsoleLog("Failed to update tournament.", err),
+      });
+    }
+  }
+
   return (
     <div>
-      <h2>New Tournament: Required Events</h2>
+      <h2>{directorState.builder.tournament.name}: Required Events</h2>
 
       <p>
         Events that all participants in the tournament will bowl.
@@ -152,8 +187,7 @@ const RequiredEvents = () => {
           </button>
           <button className={'btn btn-outline-primary'}
                   role={'button'}
-                  onClick={() => {
-                  }}>
+                  onClick={nextClicked}>
             Next
             <i className={'bi-arrow-right ps-2'} aria-hidden={true}/>
           </button>

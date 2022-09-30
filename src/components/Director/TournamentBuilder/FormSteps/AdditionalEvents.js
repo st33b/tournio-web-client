@@ -76,7 +76,7 @@ const AdditionalEvents = () => {
 
   return (
     <div>
-      <h2>New Tournament: Additional Events</h2>
+      <h2>{directorState.builder.tournament.name}: Additional Events</h2>
 
       <p>
         Optional, bowled tournament events, such as Scratch Masters or a 9-pin no-tap mixer. These are in addition to any required events.

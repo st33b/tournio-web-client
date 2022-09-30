@@ -26,18 +26,18 @@ const Progress = ({activeStep}) => {
       key: 'scoring',
       display: 'Scoring',
     },
-    {
-      key: 'required_events',
-      display: 'Required Events',
-    },
+    // {
+    //   key: 'required_events',
+    //   display: 'Required Events',
+    // },
     {
       key: 'additional_events',
       display: 'Additional Events',
     },
-    {
-      key: 'derived_events',
-      display: 'Derived Events',
-    },
+    // {
+    //   key: 'derived_events',
+    //   display: 'Derived Events',
+    // },
   ];
 
   const activeIndex = steps.findIndex(({key}) => key === activeStep);
