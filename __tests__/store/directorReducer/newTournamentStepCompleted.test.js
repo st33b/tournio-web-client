@@ -10,7 +10,7 @@ describe ('action type: new tournament saved', () => {
       { b: 2 },
     ],
     builder: {
-      completedSteps: [],
+      navigableSteps: ['name'],
       currentStep: 'name',
       tournament: {
         name: 'Florida Associated Invitational National Tournament',
@@ -30,7 +30,7 @@ describe ('action type: new tournament saved', () => {
     ...previousState,
     builder: {
       ...previousState.builder,
-      completedSteps: ['name'],
+      navigableSteps: ['name', 'details'],
       currentStep: 'details',
     }
   }

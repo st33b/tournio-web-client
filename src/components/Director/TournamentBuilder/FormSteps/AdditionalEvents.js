@@ -19,7 +19,7 @@ const AdditionalEvents = () => {
   const initialState = {
     fields: {
       events: [
-        {...DEFAULT_EVENT_DETAILS},
+        // {...DEFAULT_EVENT_DETAILS},
       ],
     },
     valid: false,

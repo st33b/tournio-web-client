@@ -1,7 +1,7 @@
 import * as actionTypes from '../../../src/store/actions/directorActionTypes';
 import {directorReducer} from "../../../src/store/directorReducer";
 
-describe ('action type: new tournament saved', () => {
+describe ('action type: new tournament previous step chosen', () => {
   const previousState = {
     user: { identifier: '123' },
     tournament: null,
@@ -10,29 +10,26 @@ describe ('action type: new tournament saved', () => {
       { b: 2 },
     ],
     builder: {
-      navigableSteps: ['name'],
-      currentStep: 'name',
-      tournament: null,
-      saved: false,
+      navigableSteps: ['name', 'details', 'dates'],
+      currentStep: 'dates',
+      tournament: {
+        name: 'Florida Associated Invitational National Tournament',
+        year: 2023,
+        abbreviation: 'FAINT',
+      },
+      saved: true,
     },
   };
 
-  const newTournament = {
-    name: 'Florida Associated Invitational National Tournament',
-    year: 2023,
-    abbreviation: 'FAINT',
-  }
-
   const action = {
-    type: actionTypes.NEW_TOURNAMENT_SAVED,
-    tournament: newTournament,
+    type: actionTypes.NEW_TOURNAMENT_PREVIOUS_STEP_CHOSEN,
+    step: 'name',
   }
   const expected = {
     ...previousState,
     builder: {
       ...previousState.builder,
-      tournament: {...newTournament},
-      saved: true,
+      currentStep: 'name',
     }
   }
 

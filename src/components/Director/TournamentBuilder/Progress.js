@@ -1,9 +1,23 @@
 import {useDirectorContext} from "../../../store/DirectorContext";
+import {newTournamentPreviousStepChosen} from "../../../store/actions/directorActions";
 
 import classes from './TournamentBuilder.module.scss';
+import {devConsoleLog} from "../../../utils";
+import {useEffect, useState} from "react";
 
 const Progress = ({activeStep}) => {
   const {directorState, dispatch} = useDirectorContext();
+  const [linkedSteps, setLinkedSteps] = useState([]);
+  useEffect(() => {
+    if (!directorState || !directorState.builder) {
+      return;
+    }
+    setLinkedSteps(directorState.builder.navigableSteps);
+  }, [directorState.builder.navigableSteps]);
+
+  if (!linkedSteps) {
+    return '';
+  }
 
   const steps = [
     {
@@ -40,28 +54,46 @@ const Progress = ({activeStep}) => {
     // },
   ];
 
+  const previousStepClicked = (event, step) => {
+    event.preventDefault();
+    dispatch(newTournamentPreviousStepChosen(step));
+  }
+
   const activeIndex = steps.findIndex(({key}) => key === activeStep);
 
   let activeStepText = '';
   return (
     <div className={classes.Progress}>
       <div className={'d-sm-none'}>
+        {/* small mobile devices */}
         <div className={'d-flex justify-content-center'}>
           {steps.map(({key, display}, i) => {
             const onActiveStep = i === activeIndex;
-            const stepClass = i < activeIndex ? classes.Done : (onActiveStep ? classes.Active : classes.Upcoming);
-            const iconClass = i < activeIndex ? 'bi-check2-circle' : (onActiveStep ? 'bi-arrow-down' : 'bi-dash-circle-dotted');
+            const stepClass = !onActiveStep ? (i < linkedSteps.length ? classes.Done : classes.Upcoming) : classes.Active;
+            const iconClass = !onActiveStep ? (i < linkedSteps.length ? 'bi-check2-circle' : 'bi-dash-circle-dotted') : 'bi-arrow-down';
             if (onActiveStep) {
               activeStepText = display;
             }
+            const linkTheStep = i !== activeIndex && i < linkedSteps.length;
             return (
               <div className={`flex-fill ${classes.Step} ${stepClass}`} key={key}>
-                <a href={i < activeIndex ? `/director/tournaments/new?step=${key}` : null}>
-                  <i className={iconClass} aria-hidden={true}/>
-                  <span className={'visually-hidden'}>
+                {linkTheStep && (
+                  <a href={`/director/tournaments/new?step=${key}`}
+                     onClick={(e) => previousStepClicked(e, key)}>
+                    <i className={iconClass} aria-hidden={true}/>
+                    <span className={'visually-hidden'}>
                     {display}
                   </span>
-                </a>
+                  </a>
+                )}
+                {!linkTheStep && (
+                  <span>
+                    <i className={iconClass} aria-hidden={true}/>
+                    <span className={'visually-hidden'}>
+                      {display}
+                    </span>
+                  </span>
+                )}
               </div>
             );
           })}
@@ -71,19 +103,22 @@ const Progress = ({activeStep}) => {
         </h6>
       </div>
       <div className={'d-none d-sm-block'}>
+        {/* tablet and larger */}
         {steps.map(({key, display}, i) => {
-          const stepClass = i < activeIndex ? classes.Done : (i === activeIndex ? classes.Active : classes.Upcoming);
+          const stepClass = i !== activeIndex ? (i < linkedSteps.length ? classes.Done : classes.Upcoming) : classes.Active;
+          const linkTheStep = i !== activeIndex && i < linkedSteps.length;
           return (
             <div className={`${classes.Step} ${stepClass}`} key={key}>
               <h6>
-                {i < activeIndex && (
+                {linkTheStep && (
                   <a href={`/director/tournaments/new?step=${key}`}
-                     className={classes.Text}>
+                     onClick={(e) => previousStepClicked(e, key)}
+                     className={classes.StepText}>
                     {display}
                   </a>
                 )}
-                {i >= activeIndex && (
-                  <span className={classes.Text}>
+                {!linkTheStep && (
+                  <span className={classes.StepText}>
                     {display}
                   </span>
                 )}

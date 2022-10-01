@@ -5,6 +5,7 @@ import Progress from "./Progress";
 import FormContainer from "./FormContainer";
 import {useEffect, useState} from "react";
 import {newTournamentInitiated} from "../../../store/actions/directorActions";
+import {devConsoleLog} from "../../../utils";
 
 const TournamentBuilder = ({step}) => {
 
@@ -19,9 +20,9 @@ const TournamentBuilder = ({step}) => {
     if (step) {
       setActiveStep(step);
     } else {
-      setActiveStep(directorState.builder.currentStep)
+      setActiveStep(directorState.builder.currentStep);
     }
-  }, [directorState.builder, step]);
+  }, [directorState.builder.currentStep, step]);
 
   if (!activeStep) {
     return '';

@@ -1,4 +1,4 @@
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 import {useDirectorContext} from "../../../../store/DirectorContext";
 
@@ -21,6 +21,20 @@ const Dates = () => {
   }
 
   const [formData, setFormData] = useState(initialState);
+  useEffect(() => {
+    if (!directorState || !directorState.builder) {
+      return;
+    }
+    if (directorState.builder.tournament) {
+      // We've returned to this page after advancing.
+      const newFormData = {...formData};
+      newFormData.fields.start_date = directorState.builder.tournament.start_date;
+      newFormData.fields.end_date = directorState.builder.tournament.end_date;
+      newFormData.fields.entry_deadline = directorState.builder.tournament.entry_deadline;
+      newFormData.valid = isValid(newFormData.fields);
+      setFormData(newFormData);
+    }
+  }, [directorState, directorState.builder])
 
   const isValid = (fields) => {
     const allHaveValues = fields.start_date.length > 0 &&

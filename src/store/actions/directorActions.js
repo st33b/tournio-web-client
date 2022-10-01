@@ -283,6 +283,13 @@ export const newTournamentSaved = (tournament) => {
   }
 }
 
+export const newTournamentPreviousStepChosen = (chosenStep) => {
+  return {
+    type: actionTypes.NEW_TOURNAMENT_PREVIOUS_STEP_CHOSEN,
+    step: chosenStep,
+  }
+}
+
 export const newTournamentStepCompleted = (completedStep, nextStep) => {
   return {
     type: actionTypes.NEW_TOURNAMENT_STEP_COMPLETED,

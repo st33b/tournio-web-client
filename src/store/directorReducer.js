@@ -305,7 +305,7 @@ export const directorReducer = (state, action) => {
     case actionTypes.NEW_TOURNAMENT_INITIATED:
       return updateObject(state, {
         builder: {
-          completedSteps: [],
+          navigableSteps: ['name'],
           currentStep: 'name',
           tournament: null,
           saved: false,
@@ -319,14 +319,20 @@ export const directorReducer = (state, action) => {
         })
       });
     case actionTypes.NEW_TOURNAMENT_STEP_COMPLETED:
-      const newCompletedSteps = [...state.builder.completedSteps];
-      if (!newCompletedSteps.includes(action.completedStep)) {
-        newCompletedSteps.push(action.completedStep);
+      const newNavigableSteps = [...state.builder.navigableSteps];
+      if (!newNavigableSteps.includes(action.nextStep)) {
+        newNavigableSteps.push(action.nextStep);
       }
       return updateObject(state, {
         builder: updateObject(state.builder, {
-          completedSteps: newCompletedSteps,
+          navigableSteps: newNavigableSteps,
           currentStep: action.nextStep,
+        }),
+      });
+    case actionTypes.NEW_TOURNAMENT_PREVIOUS_STEP_CHOSEN:
+      return updateObject(state, {
+        builder: updateObject(state.builder, {
+          currentStep: action.step,
         }),
       });
     default:

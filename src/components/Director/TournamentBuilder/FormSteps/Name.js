@@ -24,6 +24,20 @@ const Name = ({nextStep}) => {
   }
 
   const [formData, setFormData] = useState(initialState);
+  useEffect(() => {
+    if (!directorState || !directorState.builder) {
+      return;
+    }
+    if (directorState.builder.tournament) {
+      // We've returned to this page after advancing.
+      const newFormData = {...formData};
+      newFormData.fields.name = directorState.builder.tournament.name;
+      newFormData.fields.abbreviation = directorState.builder.tournament.abbreviation;
+      newFormData.fields.year = directorState.builder.tournament.year;
+      newFormData.valid = isValid(newFormData.fields);
+      setFormData(newFormData);
+    }
+  }, [directorState, directorState.builder])
 
   const yearOptions = [];
   for (let i = 0; i < 3; i++) {
@@ -57,35 +71,38 @@ const Name = ({nextStep}) => {
   }
 
   const saveSuccess = (data) => {
-    // put the new tournament into context, and set the next step
+    // put the new/updated tournament into context, and set the next step
     dispatch(newTournamentSaved(data));
     dispatch(newTournamentStepCompleted('name', 'details'));
   }
 
   const nextClicked = () => {
     const alreadyExists = directorState.builder.saved;
-    if (alreadyExists) {
-      devConsoleLog("TODO... updating name/abbr/year for an existing tournament");
-    } else {
-      const uri = '/director/tournaments';
-      const requestConfig = {
-        method: 'post',
-        data: {
-          tournament: {
-            name: formData.fields.name,
+    let uri = '/director/tournaments';
+    const requestConfig = {
+      data: {
+        tournament: {
+          name: formData.fields.name,
             abbreviation: formData.fields.abbreviation,
             year: formData.fields.year,
-          },
         },
-      };
-      directorApiRequest({
-        uri: uri,
-        requestConfig: requestConfig,
-        context: context,
-        onSuccess: saveSuccess,
-        onFailure: (err) => devConsoleLog("Failed to create tournament.", err),
-      });
+      },
+    };
+    if (alreadyExists) {
+      devConsoleLog("Tournament already exists, PATCHing");
+      uri += `/${directorState.builder.tournament.identifier}`;
+      requestConfig.method = 'patch';
+    } else {
+      devConsoleLog("Tournament is brand new, POSTing");
+      requestConfig.method = 'post';
     }
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      onSuccess: saveSuccess,
+      onFailure: (err) => devConsoleLog("Failed to save tournament.", err),
+    });
   }
 
   return (

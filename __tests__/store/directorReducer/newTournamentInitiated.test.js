@@ -18,7 +18,7 @@ describe ('action type: new tournament initiated', () => {
   const expected = {
     ...previousState,
     builder: {
-      completedSteps: [],
+      navigableSteps: ['name'],
       currentStep: 'name',
       tournament: null,
       saved: false,

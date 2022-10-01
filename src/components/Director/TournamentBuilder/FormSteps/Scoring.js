@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useDirectorContext} from "../../../../store/DirectorContext";
 
 import classes from '../TournamentBuilder.module.scss';
@@ -13,9 +13,10 @@ const Scoring = () => {
 
   const initialState = {
     fields: {
-      useHandicapRule: false,
-      percentage: 90,
-      average: 225,
+      // we aren't using the handicap rule yet
+      // useHandicapRule: false,
+      // percentage: 90,
+      // average: 225,
       divisions: [],
     },
     valid: false,
@@ -26,6 +27,24 @@ const Scoring = () => {
   const [nextDivisionKey, setNextDivisionKey] = useState('A');
   const [permitAddingDivision, setPermitAddingDivision] = useState(true);
 
+  useEffect(() => {
+    if (!directorState || !directorState.builder) {
+      return;
+    }
+    if (directorState.builder.tournament.scratch_divisions.length > 0) {
+      // We've returned to this page after advancing.
+      const newFormData = {...formData};
+
+      // skip handicap rule for now, since we aren't using that just yet...
+
+      newFormData.fields.divisions = [...directorState.builder.tournament.scratch_divisions];
+
+      newFormData.valid = isValid(newFormData.fields);
+      setFormData(newFormData);
+      setUseScratchDivisions(true);
+    }
+  }, [directorState, directorState.builder])
+
   if (!directorState || !directorState.builder) {
     return '';
   }
@@ -34,9 +53,10 @@ const Scoring = () => {
     const divisionsValid = formData.fields.divisions.every(({key, low_average, high_average}) => {
       return key.length > 0 && low_average >= 0 && low_average < 300 && high_average > 0 && high_average <= 300 && low_average <= high_average;
     });
-    const handicapRuleIsValid = !formData.fields.useHandicapRule ||
-      formData.fields.percentage >= 0 && formData.fields.percentage <= 100 && formData.fields.average > 0 && formData.fields.average <= 300;
-    return divisionsValid && handicapRuleIsValid;
+    return divisionsValid;
+    // const handicapRuleIsValid = !formData.fields.useHandicapRule ||
+    //   formData.fields.percentage >= 0 && formData.fields.percentage <= 100 && formData.fields.average > 0 && formData.fields.average <= 300;
+    // return divisionsValid && handicapRuleIsValid;
   }
 
   const inputChanged = (event) => {

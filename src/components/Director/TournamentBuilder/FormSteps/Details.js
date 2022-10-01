@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useDirectorContext} from "../../../../store/DirectorContext";
 import {devConsoleLog, timezones} from "../../../../utils";
 
@@ -15,11 +15,27 @@ const Details = () => {
       location: '',
       timezone: '',
       website: '',
+      website_config_item_id: null,
     },
     valid: false,
   }
 
   const [formData, setFormData] = useState(initialState);
+  useEffect(() => {
+    if (!directorState || !directorState.builder) {
+      return;
+    }
+    if (directorState.builder.tournament) {
+      // We've returned to this page after advancing.
+      const newFormData = {...formData};
+      newFormData.fields.location = directorState.builder.tournament.location;
+      newFormData.fields.timezone = directorState.builder.tournament.timezone;
+      newFormData.fields.website = directorState.builder.tournament.website;
+      newFormData.fields.website_config_item_id = directorState.builder.tournament.config_items.find(({key}) => key === 'website').id
+      newFormData.valid = isValid(newFormData.fields);
+      setFormData(newFormData);
+    }
+  }, [directorState, directorState.builder])
 
   const isValid = (fields) => {
     return fields.location.length > 0 && fields.timezone.length > 0;
@@ -47,6 +63,13 @@ const Details = () => {
   const nextClicked = () => {
     const identifier = directorState.builder.tournament.identifier;
     const uri = `/director/tournaments/${identifier}`;
+    const configItemAttributes = {
+      key: 'website',
+      value: formData.fields.website,
+    }
+    if (formData.fields.website_config_item_id) {
+      configItemAttributes.id = formData.fields.website_config_item_id;
+    }
     const requestConfig = {
       method: 'patch',
       data: {
@@ -54,10 +77,7 @@ const Details = () => {
           location: formData.fields.location,
           timezone: formData.fields.timezone,
           config_items_attributes: [
-            {
-              key: 'website',
-              value: formData.fields.website,
-            },
+            configItemAttributes,
           ],
         },
       },
