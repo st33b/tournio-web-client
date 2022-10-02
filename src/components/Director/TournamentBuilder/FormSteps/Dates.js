@@ -26,11 +26,11 @@ const Dates = () => {
       return;
     }
     if (directorState.builder.tournament) {
-      // We've returned to this page after advancing.
+      // We might have returned to this page after advancing.
       const newFormData = {...formData};
-      newFormData.fields.start_date = directorState.builder.tournament.start_date;
-      newFormData.fields.end_date = directorState.builder.tournament.end_date;
-      newFormData.fields.entry_deadline = directorState.builder.tournament.entry_deadline;
+      newFormData.fields.start_date = directorState.builder.tournament.start_date || '';
+      newFormData.fields.end_date = directorState.builder.tournament.end_date || '';
+      newFormData.fields.entry_deadline = directorState.builder.tournament.entry_deadline || '';
       newFormData.valid = isValid(newFormData.fields);
       setFormData(newFormData);
     }

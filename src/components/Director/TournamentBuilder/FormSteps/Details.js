@@ -26,12 +26,16 @@ const Details = () => {
       return;
     }
     if (directorState.builder.tournament) {
-      // We've returned to this page after advancing.
+      // We might have returned to this page after advancing.
       const newFormData = {...formData};
-      newFormData.fields.location = directorState.builder.tournament.location;
-      newFormData.fields.timezone = directorState.builder.tournament.timezone;
-      newFormData.fields.website = directorState.builder.tournament.website;
-      newFormData.fields.website_config_item_id = directorState.builder.tournament.config_items.find(({key}) => key === 'website').id
+      newFormData.fields.location = directorState.builder.tournament.location || '';
+      newFormData.fields.timezone = directorState.builder.tournament.timezone || '';
+      newFormData.fields.website = directorState.builder.tournament.website || '';
+      const websiteConfigItem = directorState.builder.tournament.config_items.find(({key}) => key === 'website');
+      if (websiteConfigItem) {
+        newFormData.fields.website_config_item_id = websiteConfigItem.id
+      }
+
       newFormData.valid = isValid(newFormData.fields);
       setFormData(newFormData);
     }

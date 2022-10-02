@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useDirectorContext} from "../../../../store/DirectorContext";
 
 import classes from '../TournamentBuilder.module.scss';
@@ -34,6 +34,16 @@ const AdditionalEvents = () => {
   const rosterTypes = Object.keys(rosterTypeOptions);
 
   const [formData, setFormData] = useState(initialState);
+  const [scratchDivisions, setScratchDivisions] = useState([]);
+  useEffect(() => {
+    if (!directorState || !directorState.builder) {
+      return;
+    }
+    if (directorState.builder.tournament.scratch_divisions) {
+      devConsoleLog("Found scratch divisions in context");
+      setScratchDivisions(directorState.builder.tournament.scratch_divisions);
+    }
+  }, [directorState.builder.tournament]);
 
   const isValid = (fields) => {
     return fields.events.every(({roster_type, name, entry_fee}) => !!rosterTypeOptions[roster_type] && name.length > 0 && entry_fee >= 0)
@@ -48,16 +58,40 @@ const AdditionalEvents = () => {
     const changedData = {...formData};
     let newValue = event.target.value;
 
-    // devConsoleLog("Checkbox event", event.target);
     if (event.target.type === 'radio') {
       newValue = newValue === 'true';
     } else if (event.target.type === 'checkbox') {
       newValue = event.target.checked;
     }
 
-    changedData.fields.events[index][fieldName] = newValue;
+    if (fieldName === 'entry_fees_per_division') {
+      // `events.${i}.entry_fees_per_division.${divisionIndex}.fee`
+      const divisionIndex = parseInt(parts[3]);
+      changedData.fields.events[index].entry_fees_per_division[divisionIndex].fee = parseInt(newValue);
+    } else {
+      changedData.fields.events[index][fieldName] = newValue;
+      if (fieldName === 'use_scratch_divisions' && newValue) {
+        const divisions = directorState.builder.tournament.scratch_divisions;
+        if (divisions || divisions.length > 0) {
+          changedData.fields.events[index].entry_fees_per_division = getDivisionEntryFees(changedData.fields.events[index]);
+        }
+      }
+    }
+
     changedData.valid = isValid(changedData.fields);
     setFormData(changedData);
+  }
+
+  const getDivisionEntryFees = (event) => {
+    if (event.entry_fees_per_division.length > 0) {
+      return [...event.entry_fees_per_division];
+    }
+    return scratchDivisions.map(({key}) => (
+      {
+        key: key,
+        fee: '',
+      }
+    ));
   }
 
   const addEventClicked = () => {
@@ -150,7 +184,7 @@ const AdditionalEvents = () => {
               </div>
             </div>
 
-            {formData.fields.events[i].scratch && (
+            {formData.fields.events[i].scratch && scratchDivisions.length > 0 && (
               <div className={`row ${classes.FieldRow}`}>
                 <div className={'col-12 col-md-9 offset-md-3'}>
                   <div className={'form-check'}>
@@ -158,6 +192,7 @@ const AdditionalEvents = () => {
                            id={`events_${i}_use_scratch_divisions`}
                            name={`events.${i}.use_scratch_divisions`}
                            className={'form-check-input'}
+                           checked={formData.fields.events[i].use_scratch_divisions}
                            onChange={inputChanged}/>
                     <label className={'form-check-label'}
                            htmlFor={`events_${i}_use_scratch_divisions`}>
@@ -168,7 +203,7 @@ const AdditionalEvents = () => {
               </div>
             )}
 
-            {!formData.fields.events[i].use_scratch_divisions && (
+            {(!formData.fields.events[i].scratch || !formData.fields.events[i].use_scratch_divisions) && (
               <div className={`row ${classes.FieldRow}`}>
                 <label className={'col-12 col-md-3 col-form-label'}>
                   Entry Fee
@@ -189,26 +224,45 @@ const AdditionalEvents = () => {
               </div>
             )}
 
-            {formData.fields.events[i].use_scratch_divisions && (
+            {formData.fields.events[i].scratch && formData.fields.events[i].use_scratch_divisions && (
               <div className={`row ${classes.FieldRow}`}>
                 <label className={'col-12 col-md-3 col-form-label'}>
                   Entry Fees per Division
                 </label>
                 <div className={'col'}>
-                  <div className={'form-control-plaintext'}>
-                    TBD after divisions are saved and retrievable
-                  </div>
-                  {/*<div className={'input-group'}>*/}
-                  {/*  <span className={'input-group-text'}>*/}
-                  {/*    <i className={'bi-currency-dollar'} aria-hidden={true}/>*/}
-                  {/*  </span>*/}
-                  {/*  <input type={'number'}*/}
-                  {/*         name={`events.${i}.entry_fee`}*/}
-                  {/*         id={`events_${i}_entry_fee`}*/}
-                  {/*         className={'form-control'}*/}
-                  {/*         value={formData.fields.events[i].entry_fee}*/}
-                  {/*         onChange={inputChanged}/>*/}
-                  {/*</div>*/}
+                  {formData.fields.events[i].entry_fees_per_division.map((division, j) => (
+                      <div className={'row mb-2'} key={j}>
+                        <label className={'col-2 col-form-label'}>
+                          Key
+                        </label>
+                        <div className={'col-2'}>
+                          <input type={'text'}
+                                 readOnly={true}
+                                 className={'form-control-plaintext'}
+                                 value={division.key}
+                                 />
+                        </div>
+                        <label htmlFor={`events_${i}_entry_fees_per_division_${j}_fee`}
+                               className={'col-2 col-form-label'}>
+                          Fee
+                        </label>
+                        <div className={'col-6'}>
+                          <div className={'input-group'}>
+                          <span className={'input-group-text'}>
+                            <i className={'bi-currency-dollar'} aria-hidden={true}/>
+                          </span>
+                            <input type={'number'}
+                                   min={0}
+                                   name={`events.${i}.entry_fees_per_division.${j}.fee`}
+                                   id={`events_${i}_entry_fees_per_division_${j}_fee`}
+                                   className={'form-control'}
+                                   value={division.fee}
+                                   onChange={inputChanged}/>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  )}
                 </div>
               </div>
 
