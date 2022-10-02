@@ -71,8 +71,7 @@ const AdditionalEvents = () => {
     } else {
       changedData.fields.events[index][fieldName] = newValue;
       if (fieldName === 'use_scratch_divisions' && newValue) {
-        const divisions = directorState.builder.tournament.scratch_divisions;
-        if (divisions || divisions.length > 0) {
+        if (scratchDivisions || scratchDivisions.length > 0) {
           changedData.fields.events[index].entry_fees_per_division = getDivisionEntryFees(changedData.fields.events[index]);
         }
       }
@@ -86,8 +85,9 @@ const AdditionalEvents = () => {
     if (event.entry_fees_per_division.length > 0) {
       return [...event.entry_fees_per_division];
     }
-    return scratchDivisions.map(({key}) => (
+    return scratchDivisions.map(({id, key}) => (
       {
+        id: id,
         key: key,
         fee: '',
       }
