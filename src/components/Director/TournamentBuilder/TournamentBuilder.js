@@ -9,7 +9,7 @@ import {devConsoleLog} from "../../../utils";
 
 const TournamentBuilder = ({step}) => {
 
-  const {directorState, dispatch} = useDirectorContext();
+  const {directorState} = useDirectorContext();
   const [activeStep, setActiveStep] = useState();
 
   // Get the current step from context, unless we have a step param passed in
@@ -22,7 +22,7 @@ const TournamentBuilder = ({step}) => {
     } else {
       setActiveStep(directorState.builder.currentStep);
     }
-  }, [directorState.builder.currentStep, step]);
+  }, [directorState.builder, step]);
 
   if (!activeStep) {
     return '';

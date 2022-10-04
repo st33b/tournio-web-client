@@ -13,7 +13,7 @@ const Progress = ({activeStep}) => {
       return;
     }
     setLinkedSteps(directorState.builder.navigableSteps);
-  }, [directorState.builder.navigableSteps]);
+  }, [directorState.builder]);
 
   if (!linkedSteps) {
     return '';
