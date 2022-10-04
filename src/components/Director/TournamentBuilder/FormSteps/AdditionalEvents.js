@@ -1,11 +1,16 @@
 import {useEffect, useState} from "react";
+import {useRouter} from "next/router";
 import {useDirectorContext} from "../../../../store/DirectorContext";
+import {devConsoleLog} from "../../../../utils";
+import {newTournamentCompleted, newTournamentStepCompleted} from "../../../../store/actions/directorActions";
+import {directorApiRequest} from "../../../../director";
 
 import classes from '../TournamentBuilder.module.scss';
-import {devConsoleLog} from "../../../../utils";
 
 const AdditionalEvents = () => {
-  const {directorState, dispatch} = useDirectorContext();
+  const router = useRouter();
+  const context = useDirectorContext();
+  const {directorState, dispatch} = context;
 
   const DEFAULT_EVENT_DETAILS = {
     roster_type: '',
@@ -13,7 +18,7 @@ const AdditionalEvents = () => {
     scratch: false,
     use_scratch_divisions: false,
     entry_fee: 0,
-    entry_fees_per_division: [],
+    scratch_division_entry_fees: [],
   };
 
   const initialState = {
@@ -88,7 +93,6 @@ const AdditionalEvents = () => {
     return scratchDivisions.map(({id, key}) => (
       {
         id: id,
-        key: key,
         fee: '',
       }
     ));
@@ -106,6 +110,50 @@ const AdditionalEvents = () => {
     const data = {...formData};
     data.fields.events = formData.fields.events.slice(0, -1);
     setFormData(data);
+  }
+
+  const onSaveSuccess = () => {
+    const identifier = directorState.builder.tournament.identifier;
+    dispatch(newTournamentCompleted());
+    router.push(`/director/tournaments/${identifier}`);
+  }
+
+  const finishClicked = () => {
+    if (formData.fields.events.length === 0 ) {
+      onSaveSuccess();
+    } else {
+      const identifier = directorState.builder.tournament.identifier;
+      const uri = `/director/tournaments/${identifier}`;
+      const requestData = {
+        tournament: {
+          events_attributes: dataForUpdate(formData.fields.events),
+        },
+      }
+      const requestConfig = {
+        method: 'patch',
+        data: requestData,
+      };
+      directorApiRequest({
+        uri: uri,
+        requestConfig: requestConfig,
+        context: context,
+        onSuccess: onSaveSuccess,
+        onFailure: (err) => devConsoleLog("Failed to save additional events.", err),
+      });
+    }
+  }
+
+  const dataForUpdate = (eventFormData) => {
+    return eventFormData.map(e => {
+      const eventData = (({roster_type, name, scratch}) => ({ roster_type, name, scratch}))(e);
+      if (e.use_scratch_divisions) {
+        eventData.scratch_division_entry_fees = e.scratch_division_entry_fees;
+      } else {
+        eventData.entry_fee = e.entry_fee;
+      }
+      eventData.required = false;
+      return eventData;
+    });
   }
 
   return (
@@ -232,8 +280,8 @@ const AdditionalEvents = () => {
                 <div className={'col'}>
                   {formData.fields.events[i].entry_fees_per_division.map((division, j) => (
                       <div className={'row mb-2'} key={j}>
-                        <label className={'col-2 col-form-label'}>
-                          Key
+                        <label className={'col-3 col-form-label'}>
+                          Division
                         </label>
                         <div className={'col-2'}>
                           <input type={'text'}
@@ -246,7 +294,7 @@ const AdditionalEvents = () => {
                                className={'col-2 col-form-label'}>
                           Fee
                         </label>
-                        <div className={'col-6'}>
+                        <div className={'col-5'}>
                           <div className={'input-group'}>
                           <span className={'input-group-text'}>
                             <i className={'bi-currency-dollar'} aria-hidden={true}/>
@@ -299,19 +347,11 @@ const AdditionalEvents = () => {
       </fieldset>
 
       <div className={`row ${classes.ButtonRow}`}>
-        <div className={'col-12 d-flex justify-content-between'}>
-          <button className={'btn btn-outline-secondary'}
+        <div className={'col-12 d-flex justify-content-end'}>
+          <button className={'btn btn-primary'}
                   role={'button'}
-                  onClick={() => {
-                  }}>
-            <i className={'bi-arrow-left pe-2'} aria-hidden={true}/>
-            Previous
-          </button>
-          <button className={'btn btn-outline-primary'}
-                  role={'button'}
-                  onClick={() => {
-                  }}>
-            Next
+                  onClick={finishClicked}>
+            Finish
             <i className={'bi-arrow-right ps-2'} aria-hidden={true}/>
           </button>
         </div>

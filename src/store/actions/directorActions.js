@@ -297,3 +297,9 @@ export const newTournamentStepCompleted = (completedStep, nextStep) => {
     nextStep: nextStep,
   }
 }
+
+export const newTournamentCompleted = () => {
+  return {
+    type: actionTypes.NEW_TOURNAMENT_COMPLETED,
+  }
+}

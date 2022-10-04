@@ -322,14 +322,7 @@ const Scoring = () => {
 
 
       <div className={`row ${classes.ButtonRow}`}>
-        <div className={'col-12 d-flex justify-content-between'}>
-          <button className={'btn btn-outline-secondary'}
-                  role={'button'}
-                  onClick={() => {
-                  }}>
-            <i className={'bi-arrow-left pe-2'} aria-hidden={true}/>
-            Previous
-          </button>
+        <div className={'col-12 d-flex justify-content-end'}>
           <button className={'btn btn-outline-primary'}
                   role={'button'}
                   onClick={nextClicked}>

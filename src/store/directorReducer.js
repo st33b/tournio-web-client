@@ -335,6 +335,12 @@ export const directorReducer = (state, action) => {
           currentStep: action.step,
         }),
       });
+    case actionTypes.NEW_TOURNAMENT_COMPLETED:
+      return updateObject(state, {
+        builder: null,
+        tournament: {...state.builder.tournament},
+        tournaments: null,
+      })
     default:
       return state;
   }
