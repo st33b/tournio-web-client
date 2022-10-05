@@ -27,7 +27,7 @@ const ImageUpload = ({tournament}) => {
 
   const whereTheFileIsChanged = (event) => {
     const newValue = {...fileInput};
-    newValue.file = event.target.value;
+    newValue.file = event.target.files[0];
     setFileInput(newValue);
   }
 
@@ -42,7 +42,7 @@ const ImageUpload = ({tournament}) => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append('file', imageFile.files[0]);
+    formData.append('file', fileInput.file);
 
     const uri = `/director/tournaments/${tournament.identifier}/logo_upload`;
     const requestConfig = {

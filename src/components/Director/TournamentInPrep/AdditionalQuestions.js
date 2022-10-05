@@ -5,7 +5,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 import AdditionalQuestionForm from "../AdditionalQuestionForm/AdditionalQuestionForm";
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../director";
 
 import classes from './AdditionalQuestions.module.scss';
 import {additionalQuestionsUpdated} from "../../../store/actions/directorActions";

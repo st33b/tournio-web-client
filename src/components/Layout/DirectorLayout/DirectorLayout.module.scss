@@ -13,6 +13,12 @@
     @media (prefers-color-scheme: dark) {
       background-color: var(--tournio-gray-900);
     }
+    position: fixed;
+    bottom: 0;
+    width: 100%
+  }
+  main {
+    margin-bottom: 6rem;
   }
 
   @media (min-width: 576px) {
@@ -30,11 +36,6 @@
   @media (min-width: 768px) {
     main {
       margin-bottom: 4rem;
-    }
-    footer {
-      position: fixed;
-      bottom: 0;
-      width: 100%
     }
     h1 { font-size: 2.0rem; }
     h2 { font-size: 1.8rem; }

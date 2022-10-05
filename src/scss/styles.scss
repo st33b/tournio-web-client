@@ -76,3 +76,10 @@ html {
   }
 }
 
+.input-group-text {
+  color: var(--tournio-body-color);
+  @media (prefers-color-scheme: dark) {
+    border-color: var(--tournio-gray-600);
+    background-color: var(--tournio-gray-700);
+  }
+}

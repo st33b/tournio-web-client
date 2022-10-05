@@ -1,5 +1,5 @@
 import classes from './EmailButton.module.scss';
-import {directorApiRequest} from "../../../utils";
+import {directorApiRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {useRouter} from "next/router";
 import {useRef, useState} from "react";

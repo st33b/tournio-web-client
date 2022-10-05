@@ -1,0 +1,172 @@
+.TournamentBuilder {
+  .Progress {
+    .Step {
+      padding: 0.5rem 0;
+      text-align: center;
+      i {
+        font-size: 1.5rem;
+      }
+    }
+    .StepText {
+      font-size: 1.2rem;
+      font-weight: 200;
+      text-align: center;
+      padding: 1rem 0.5rem;
+    }
+    .Done {
+      background-color: var(--tournio-gray-400);
+    }
+    .Active {
+      background-color: #d1f9d3;
+      border-bottom: none;
+    }
+    .Upcoming {
+      background-color: var(--tournio-gray-100);
+    }
+  }
+
+  .FormContainer {
+    h2 {
+      display: none;
+    }
+    .FieldRow,
+    fieldset {
+      margin-top: 1rem;
+
+      .FieldButton {
+        margin-top: 1rem;
+      };
+    }
+    .DateTimeButton {
+      background-color: var(--tournio-gray-200);
+      border-color: #CED4DA;
+    }
+    .DateTimeButton:hover {
+      background-color: var(--tournio-gray-400);
+    }
+    .ButtonRow {
+      margin-top: 2rem;
+    }
+    .ScratchDivision,
+    .Event {
+      padding-bottom: 1rem;
+      padding-right: 0.5rem;
+      border: 1px dashed;
+      border-radius: 5px;
+      margin-bottom: 0.5rem;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .TournamentBuilder {
+    .Progress {
+      .Step {
+
+      }
+      .Done {
+        background-color: var(--tournio-gray-800);
+      }
+      .Active {
+        background-color: #234f25;
+      }
+      .Upcoming {
+        background-color: var(--tournio-gray-900);
+        color: var(--tournio-gray-600);
+      }
+
+    }
+  }
+
+  .FormContainer {
+
+  }
+}
+
+@media (min-width: 576px) {
+  .TournamentBuilder {
+    margin: 0 auto;
+
+    .Progress {
+      .Step {
+        text-align: left;
+        border: 1px dotted;
+        border-bottom: none;
+        h6 {
+          padding: 1rem 0;
+          margin: 0 0 0 1rem;
+          .Text {
+            margin-left: 0.75rem;
+            text-decoration: none;
+          }
+          .Text:hover,
+          .Text:active,
+          .Text:focus {
+            text-decoration: underline;
+          }
+        }
+      }
+      .Step:first-child {
+        border-radius: 5px 5px 0 0;
+      }
+      .Step:last-child {
+        border-bottom: 1px dotted;
+        border-radius: 0 0 5px 5px;
+      }
+      .Done {
+        h6::before {
+          font-family: 'Bootstrap-icons';
+          content: '\F270';
+        }
+
+      }
+      .Active {
+        h6::before {
+          font-family: 'Bootstrap-icons';
+          content: '\F138';
+        }
+      }
+      .Upcoming {
+        h6::before {
+          font-family: 'Bootstrap-icons';
+          content: '\F2E4';
+        }
+      }
+    }
+
+    .FormContainer {
+      h2 {
+        display: block;
+        margin-bottom: 1.5rem;
+      }
+      label {
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .TournamentBuilder {
+    .Progress {
+      .Step {
+
+      }
+      .Done {
+
+      }
+      .Active {
+
+      }
+      .Upcoming {
+
+      }
+
+    }
+
+    .FormContainer {
+      label {
+        text-align: right;
+      }
+    }
+  }
+}

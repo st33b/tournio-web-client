@@ -13,7 +13,7 @@ import {stripeAccountStatusChanged} from "../../../../store/actions/directorActi
 const Page = () => {
   const router = useRouter();
   const context = useDirectorContext();
-  const {directorState, dispatch} = context.directorState;
+  const {directorState, dispatch} = context;
 
   const onSuccess = (data) => {
     dispatch(stripeAccountStatusChanged(data))
@@ -37,22 +37,15 @@ const Page = () => {
       onSuccess: onSuccess,
       onFailure: (data) => console.log("Failure!", data),
     });
-  }, [directorState]);
+  }, [directorState.tournament]);
 
-  // Make sure we're logged in
   const loggedInState = useLoggedIn();
-  const ready = loggedInState >= 0;
-  if (!ready) {
-    return '';
-  }
   if (!loggedInState) {
     router.push('/director/login');
   }
-  if (!directorState) {
-    return '';
-  }
 
-  if (!directorState.tournament) {
+  const ready = loggedInState >= 0;
+  if (!ready || !directorState.tournament) {
     return (
       <div>
         <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>

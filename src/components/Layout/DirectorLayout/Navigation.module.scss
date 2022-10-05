@@ -10,14 +10,9 @@
       padding: 0;
     }
   }
-  //@media (min-width: 768px) {
-  //  .BrandWrapper {
-  //    background: url('../../../images/tournio-logo-inverted.png') no-repeat left center;
-  //    background-size: contain;
-  //    .Brand {
-  //      margin: 0;
-  //      padding: 0;
-  //    }
-  //  }
-  //}
+}
+@media (min-width: 576px) {
+  .Navigation {
+    padding-bottom: 1rem;
+  }
 }

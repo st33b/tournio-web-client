@@ -6,7 +6,11 @@ import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLa
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import TournamentListing from '../../../components/Director/TournamentListing/TournamentListing';
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {tournamentListReset, tournamentListRetrieved} from "../../../store/actions/directorActions";
+import {
+  newTournamentInitiated,
+  tournamentListReset,
+  tournamentListRetrieved
+} from "../../../store/actions/directorActions";
 import {devConsoleLog} from "../../../utils";
 import {directorApiRequest, useLoggedIn} from "../../../director";
 
@@ -22,12 +26,6 @@ const Page = () => {
   const fetchTournamentsSuccess = (data) => {
     const tournaments = data;
     dispatch(tournamentListRetrieved(data));
-    if (tournaments.length === 1) {
-      // redirect to the details page for their one tournament.
-      const identifier = tournaments[0]['identifier'];
-      router.push(`/director/tournaments/${identifier}`);
-      return;
-    }
     setLoading(false);
   }
 
@@ -75,6 +73,12 @@ const Page = () => {
     dispatch(tournamentListReset());
   }
 
+  const newTournamentClicked = (e) => {
+    e.preventDefault();
+    dispatch(newTournamentInitiated());
+    router.push(e.target.href);
+  }
+
   return (
     <>
       {errorMessage && (
@@ -93,8 +97,13 @@ const Page = () => {
       </Row>
       <Row>
         <Col className={'text-center'}>
+          <a href={"/director/tournaments/new"}
+             className={"btn btn-sm btn-outline-success mx-2"}
+             onClick={newTournamentClicked}>
+            Create a Tournament
+          </a>
           <a href={'#'}
-             className={'btn btn-sm btn-outline-primary'}
+             className={'btn btn-sm btn-outline-primary mx-2'}
              onClick={refreshList}
              >
             Refresh List

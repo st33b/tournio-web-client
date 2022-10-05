@@ -85,6 +85,42 @@ export const devConsoleLog = (message, object=null) => {
   }
 }
 
+export const timezones = {
+  'Pacific/Honolulu': {
+    key: 'Pacific/Honolulu',
+    display: 'Hawaii (HST)',
+  },
+  'America/Adak': {
+    key: 'America/Adak',
+    display: 'Hawaii-Aleutian (HST/HDT)',
+  },
+  'America/Anchorage': {
+    key: 'America/Anchorage',
+    display: 'Alaska (AKST/AKDT)',
+  },
+  'America/Los_Angeles': {
+    key: 'America/Los_Angeles',
+    display: 'Pacific (PST/PDT)',
+  },
+  'America/Phoenix': {
+    key: 'America/Phoenix',
+    display: 'Phoenix (MST)',
+  },
+  'America/Denver': {
+    key: 'America/Denver',
+    display: 'Mountain (MST/MDT)',
+  },
+  'America/Chicago': {
+    key: 'America/Chicago',
+    display: 'Central (CST/CDT)',
+  },
+  'America/New_York': {
+    key: 'America/New_York',
+    display: 'Eastern (EST/EDT)',
+  },
+}
+
+
 ///////////////////////////////////////////////////
 
 export const apiHost = `${process.env.NEXT_PUBLIC_API_PROTOCOL}://${process.env.NEXT_PUBLIC_API_HOSTNAME}:${process.env.NEXT_PUBLIC_API_PORT}`;
@@ -558,76 +594,6 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
       } else {
         console.log(response.data);
         onFailure(response.data);
-      }
-    })
-    .catch(error => {
-      if (error.request) {
-        console.log('No response was received.');
-        onFailure({error: 'The server did not respond'});
-      } else {
-        console.log('Exceptional error', error.message);
-        onFailure({error: error.message});
-      }
-    });
-}
-
-////////////////////////////////////////////////
-
-export const directorApiRequest = ({uri, requestConfig, context, router, onSuccess = null, onFailure = null}) => {
-  devConsoleLog('Using the old directorApiRequest!');
-  const url = `${apiHost}${uri}`;
-  const config = {...requestConfig};
-  config.url = url;
-  config.headers = {...requestConfig.headers}
-  config.headers['Accept'] = 'application/json';
-  config.headers['Authorization'] = context.token;
-  config.validateStatus = (status) => { return status < 500 }
-  axios(config)
-    .then(response => {
-      if (response.status >= 200 && response.status < 300) {
-        onSuccess(response.data);
-      } else if (response.status === 401) {
-        context.logout();
-        router.push('/director/login');
-      } else if (response.status === 404) {
-        onFailure({error: 'not found'});
-      } else {
-        onFailure(response.data);
-      }
-    })
-    .catch(error => {
-      if (error.request) {
-        console.log('No response was received.');
-        onFailure({error: 'The server did not respond'});
-      } else {
-        console.log('Exceptional error', error.message);
-        onFailure({error: error.message});
-      }
-    });
-}
-
-export const directorApiDownloadRequest = ({uri, context, router, onSuccess = null, onFailure = null}) => {
-  const url = `${apiHost}${uri}`;
-  const config = {
-    method: 'get',
-    url: url,
-    headers: {
-      'Authorization': context.token,
-    },
-    responseType: 'blob',
-    validateStatus: (status) => {
-      return status < 500;
-    },
-  }
-  axios(config)
-    .then(response => {
-      if (response.status >= 200 && response.status < 300) {
-        onSuccess(response.data);
-      } else if (response.status === 401) {
-        context.logout();
-        router.push('/director/login');
-      } else {
-        onFailure({error: 'The file did not download for some reason'});
       }
     })
     .catch(error => {

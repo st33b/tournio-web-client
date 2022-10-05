@@ -42,12 +42,10 @@ const Navigation = () => {
 
   const links = [];
 
-  if (directorState.user.role === 'superuser' || directorState.user.tournaments.length > 1) {
-    links.push({
-      href: '/director/tournaments',
-      text: 'Tournaments',
-    });
-  }
+  links.push({
+    href: '/director/tournaments',
+    text: 'Tournaments',
+  });
 
   if (directorState.user.role === 'superuser') {
     links.push({

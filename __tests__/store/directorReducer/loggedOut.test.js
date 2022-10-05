@@ -25,6 +25,7 @@ describe('action type: logged out', () => {
     user: null,
     tournaments: null,
     tournament: null,
+    builder: null,
 
     users: [],
     bowlers: [],

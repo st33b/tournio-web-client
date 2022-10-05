@@ -5,6 +5,7 @@ const initialState = {
   user: null,
   tournaments: null,
   tournament: null,
+  builder: null,
 
   // An argument could be made for nesting these under tournament, since they're all collection associations of
   // the tournament currently in context. But they're potentially big collections (bowlers and teams, especially),
@@ -24,6 +25,15 @@ export const directorReducer = (state, action) => {
 
   let index, identifier;
   switch (action.type) {
+    case actionTypes.LOGGED_IN:
+      return updateObject(state, {
+        user: {
+          ...action.user,
+          authToken: action.authToken,
+        },
+      });
+    case actionTypes.LOGGED_OUT:
+      return directorReducerInit();
     case actionTypes.TOURNAMENT_DETAILS_RESET:
       return updateObject(state, {
         tournament: null,
@@ -292,15 +302,45 @@ export const directorReducer = (state, action) => {
         },
         freeEntries: state.freeEntries.filter(u => u.identifier !== identifier),
       });
-    case actionTypes.LOGGED_IN:
+    case actionTypes.NEW_TOURNAMENT_INITIATED:
       return updateObject(state, {
-        user: {
-          ...action.user,
-          authToken: action.authToken,
+        builder: {
+          navigableSteps: ['name'],
+          currentStep: 'name',
+          tournament: null,
+          saved: false,
         },
       });
-    case actionTypes.LOGGED_OUT:
-      return directorReducerInit();
+    case actionTypes.NEW_TOURNAMENT_SAVED:
+      return updateObject(state, {
+        builder: updateObject( state.builder, {
+          tournament: {...action.tournament},
+          saved: true,
+        })
+      });
+    case actionTypes.NEW_TOURNAMENT_STEP_COMPLETED:
+      const newNavigableSteps = [...state.builder.navigableSteps];
+      if (!newNavigableSteps.includes(action.nextStep)) {
+        newNavigableSteps.push(action.nextStep);
+      }
+      return updateObject(state, {
+        builder: updateObject(state.builder, {
+          navigableSteps: newNavigableSteps,
+          currentStep: action.nextStep,
+        }),
+      });
+    case actionTypes.NEW_TOURNAMENT_PREVIOUS_STEP_CHOSEN:
+      return updateObject(state, {
+        builder: updateObject(state.builder, {
+          currentStep: action.step,
+        }),
+      });
+    case actionTypes.NEW_TOURNAMENT_COMPLETED:
+      return updateObject(state, {
+        builder: null,
+        tournament: {...state.builder.tournament},
+        tournaments: null,
+      })
     default:
       return state;
   }

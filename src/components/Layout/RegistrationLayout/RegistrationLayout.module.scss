@@ -11,8 +11,12 @@
   }
   main {
     margin-top: 1rem;
+    margin-bottom: 6rem;
   }
   footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
     background-color: var(--tournio-gray-200);
     @media (prefers-color-scheme: dark) {
       background-color: var(--tournio-gray-800);
@@ -50,13 +54,5 @@
     h4 { font-size: 1.5rem; }
     h5 { font-size: 1.4rem; }
     h6 { font-size: 1.3rem; }
-    main {
-      margin-bottom: 5rem;
-    }
-    footer {
-      position: fixed;
-      bottom: 0;
-      width: 100%
-    }
   }
 }
