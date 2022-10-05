@@ -5,6 +5,7 @@ import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 import classes from './TournamentDetails.module.scss';
 import ShiftCapacity from "../../common/ShiftCapacity/ShiftCapacity";
 import ProgressBarLegend from "../../common/ShiftCapacity/ProgressBarLegend";
+import {format} from "date-fns";
 
 const USBC_ID_LOOKUP_URL = 'https://webapps.bowl.com/USBCFindA/Home/Member';
 const IGBO_ID_LOOKUP_URL = 'http://igbo.org/tournaments/igbots-id-lookup/';
@@ -139,7 +140,7 @@ const TournamentDetails = ({tournament}) => {
             Start date:
           </dt>
           <dd className={ddClass}>
-            {tournament.start_date}
+            {format(new Date(`${tournament.start_date}T12:00`), 'PP')}
           </dd>
         </div>
       </dl>
@@ -190,7 +191,8 @@ const TournamentDetails = ({tournament}) => {
         linkText: 'Register a Pair of Bowlers',
       },
     ]
-    const eventSelectionEnabled = tournament.purchasable_items.some(item => item.determination === 'event');
+    // const eventSelectionEnabled = tournament.purchasable_items.some(item => item.determination === 'event');
+    const eventSelectionEnabled = false;
     let registrationOptions = '';
     if (eventSelectionEnabled) {
       // only show what's enabled
