@@ -5,7 +5,8 @@ import {Overlay, Popover} from "react-bootstrap";
 
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
 import BowlerFilterForm from "../BowlerFilterForm/BowlerFilterForm";
-import {directorApiRequest, doesNotEqual, isOrIsNot, equals} from "../../../utils";
+import {doesNotEqual, isOrIsNot, equals} from "../../../utils";
+import {directorApiRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './BowlerListing.module.scss';

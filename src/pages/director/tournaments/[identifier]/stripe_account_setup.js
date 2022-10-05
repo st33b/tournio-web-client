@@ -13,7 +13,7 @@ import {stripeAccountStatusChanged} from "../../../../store/actions/directorActi
 const Page = () => {
   const router = useRouter();
   const context = useDirectorContext();
-  const {directorState, dispatch} = context.directorState;
+  const {directorState, dispatch} = context;
 
   const onSuccess = (data) => {
     dispatch(stripeAccountStatusChanged(data))
