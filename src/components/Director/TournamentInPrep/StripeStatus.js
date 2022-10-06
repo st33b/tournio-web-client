@@ -29,7 +29,7 @@ const StripeStatus = ({tournament, needStatus}) => {
     } else {
       console.log("We can accept payments, so we're good.");
       if (data.can_accept_payments !== previousStatus) {
-        dispatch(stripeAccountStatusChange(data));
+        dispatch(stripeAccountStatusChanged(data));
       }
     }
   }
@@ -72,7 +72,7 @@ const StripeStatus = ({tournament, needStatus}) => {
     if (tournament.stripe_account && !tournament.stripe_account.can_accept_payments) {
       initiateStatusRequest();
     }
-  }, [tournament]);
+  }, [tournament, needStatus]);
 
   if (!tournament) {
     return '';
