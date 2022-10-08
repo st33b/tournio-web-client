@@ -5,6 +5,7 @@ import LedgerForm from "./LedgerForm";
 import DivisionForm from './DivisionForm';
 import SingleUseForm from "./SingleUseForm";
 import MultiUseForm from "./MultiUseForm";
+import SanctionForm from "./SanctionForm";
 
 import classes from './NewPurchasableItem.module.scss';
 import EventForm from "./EventForm";
@@ -13,6 +14,7 @@ const NewPurchasableItem = ({tournament}) => {
   const [formDisplayed, setFormDisplayed] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [availableLedgerTypes, setAvailableLedgerTypes] = useState([]);
+  const [availableSanctionTypes, setAvailableSanctionTypes] = useState([]);
   const [eventSelection, setEventSelection] = useState(false);
 
   // Determine which types of ledger items can still be created
@@ -23,8 +25,8 @@ const NewPurchasableItem = ({tournament}) => {
     const eventSelectionEnabled = tournament.purchasable_items.some(pi => pi.determination === 'event');
 
     const allLedgerTypes = ['entry_fee', 'late_fee', 'early_discount'];
-    const usedTypes = tournament.purchasable_items.filter(item => item.category === 'ledger').map(item => item.determination);
-    const typesAvailable = [];
+    let usedTypes = tournament.purchasable_items.filter(item => item.category === 'ledger').map(item => item.determination);
+    let typesAvailable = [];
     allLedgerTypes.forEach(type => {
       if (eventSelectionEnabled || !usedTypes.includes(type)) {
         typesAvailable.push(type);
@@ -37,6 +39,16 @@ const NewPurchasableItem = ({tournament}) => {
     setEventSelection(eventSelectionEnabled);
 
     setAvailableLedgerTypes(typesAvailable);
+
+    const allSanctionTypes = ['igbo'];
+    usedTypes = tournament.purchasable_items.filter(item => item.category === 'sanction').map(item => item.determination);
+    typesAvailable = [];
+    allSanctionTypes.forEach(type => {
+      if (eventSelectionEnabled || !usedTypes.includes(type)) {
+        typesAvailable.push(type);
+      }
+    });
+    setAvailableSanctionTypes(typesAvailable);
   }, [tournament]);
 
   if (!tournament) {
@@ -94,6 +106,16 @@ const NewPurchasableItem = ({tournament}) => {
                 New Ledger Item
               </button>
             </div>
+            <div className={'text-center my-3'}>
+              <button type={'button'}
+                      className={`btn btn-outline-primary`}
+                      role={'button'}
+                      disabled={availableSanctionTypes.length === 0}
+                      onClick={(event) => addClicked(event, 'sanction')}>
+                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
+                New Sanction Item
+              </button>
+            </div>
             {eventSelection && (<div className={'text-center my-3'}>
               <button type={'button'}
                       className={'btn btn-outline-primary'}
@@ -138,6 +160,7 @@ const NewPurchasableItem = ({tournament}) => {
         {formDisplayed === 'division' && <DivisionForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
         {formDisplayed === 'single_use' && <SingleUseForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
         {formDisplayed === 'multi_use' && <MultiUseForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
+        {formDisplayed === 'sanction' && <SanctionForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
 
       </div>
     </ErrorBoundary>

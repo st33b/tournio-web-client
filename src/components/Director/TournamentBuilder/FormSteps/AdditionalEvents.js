@@ -69,15 +69,15 @@ const AdditionalEvents = () => {
       newValue = event.target.checked;
     }
 
-    if (fieldName === 'entry_fees_per_division') {
-      // `events.${i}.entry_fees_per_division.${divisionIndex}.fee`
+    if (fieldName === 'scratch_division_entry_fees') {
+      // `events.${i}.scratch_division_entry_fees.${divisionIndex}.fee`
       const divisionIndex = parseInt(parts[3]);
-      changedData.fields.events[index].entry_fees_per_division[divisionIndex].fee = parseInt(newValue);
+      changedData.fields.events[index].scratch_division_entry_fees[divisionIndex].fee = parseInt(newValue);
     } else {
       changedData.fields.events[index][fieldName] = newValue;
       if (fieldName === 'use_scratch_divisions' && newValue) {
         if (scratchDivisions || scratchDivisions.length > 0) {
-          changedData.fields.events[index].entry_fees_per_division = getDivisionEntryFees(changedData.fields.events[index]);
+          changedData.fields.events[index].scratch_division_entry_fees = getDivisionEntryFees(changedData.fields.events[index]);
         }
       }
     }
@@ -87,8 +87,8 @@ const AdditionalEvents = () => {
   }
 
   const getDivisionEntryFees = (event) => {
-    if (event.entry_fees_per_division.length > 0) {
-      return [...event.entry_fees_per_division];
+    if (event.scratch_division_entry_fees.length > 0) {
+      return [...event.scratch_division_entry_fees];
     }
     return scratchDivisions.map(({id, key}) => (
       {
@@ -114,7 +114,6 @@ const AdditionalEvents = () => {
 
   const onSaveSuccess = () => {
     const identifier = directorState.builder.tournament.identifier;
-    dispatch(newTournamentCompleted());
     router.push(`/director/tournaments/${identifier}`);
   }
 
@@ -278,7 +277,7 @@ const AdditionalEvents = () => {
                   Entry Fees per Division
                 </label>
                 <div className={'col'}>
-                  {formData.fields.events[i].entry_fees_per_division.map((division, j) => (
+                  {formData.fields.events[i].scratch_division_entry_fees.map((division, j) => (
                       <div className={'row mb-2'} key={j}>
                         <label className={'col-3 col-form-label'}>
                           Division
@@ -290,7 +289,7 @@ const AdditionalEvents = () => {
                                  value={division.key}
                                  />
                         </div>
-                        <label htmlFor={`events_${i}_entry_fees_per_division_${j}_fee`}
+                        <label htmlFor={`events_${i}_scratch_division_entry_fees_${j}_fee`}
                                className={'col-2 col-form-label'}>
                           Fee
                         </label>
@@ -301,8 +300,8 @@ const AdditionalEvents = () => {
                           </span>
                             <input type={'number'}
                                    min={0}
-                                   name={`events.${i}.entry_fees_per_division.${j}.fee`}
-                                   id={`events_${i}_entry_fees_per_division_${j}_fee`}
+                                   name={`events.${i}.scratch_division_entry_fees.${j}.fee`}
+                                   id={`events_${i}_scratch_division_entry_fees_${j}_fee`}
                                    className={'form-control'}
                                    value={division.fee}
                                    onChange={inputChanged}/>

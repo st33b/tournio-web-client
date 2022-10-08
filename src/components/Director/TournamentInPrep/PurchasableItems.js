@@ -49,6 +49,11 @@ const PurchasableItems = ({tournament}) => {
     return leftOrder - rightOrder;
   }
 
+  // sort the sanction items by their order
+  const sanctionItems = tournament.purchasable_items.filter(item => {
+    return item.category === 'sanction' && !item.refinement;
+  }).sort(sortByOrder);
+
   // sort the single_use items by their order
   const singleUseItems = tournament.purchasable_items.filter(item => {
     return item.determination === 'single_use' && !item.refinement;
@@ -70,7 +75,7 @@ const PurchasableItems = ({tournament}) => {
 
         {(!tournament.stripe_account || !tournament.stripe_account.can_accept_payments) && (
           <Card.Body className={'text-muted text-center small'}>
-            Payment Integration must be set up before adding any fees or events/items.
+            Payment Integration must be set up before adding fees or events/items.
           </Card.Body>
         )}
 
@@ -81,6 +86,12 @@ const PurchasableItems = ({tournament}) => {
                 {ledgerItems.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/>)}
               </Card.Body>
             )}
+
+            {sanctionItems.length > 0 &&
+              <Card.Body className={classes.Category}>
+                {sanctionItems.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/>)}
+              </Card.Body>
+            }
 
             {eventItems.length > 0 && (
               <Card.Body className={classes.Category}>
@@ -113,6 +124,9 @@ const PurchasableItems = ({tournament}) => {
             </Card.Body>
           </LocalizationProvider>
         )}
+        {/*<Card.Body className={'p-0'}>*/}
+        {/*  <NewPurchasableItem tournament={tournament}/>*/}
+        {/*</Card.Body>*/}
       </Card>
     </ErrorBoundary>
   );
