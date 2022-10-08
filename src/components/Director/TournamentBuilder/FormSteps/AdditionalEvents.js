@@ -114,7 +114,6 @@ const AdditionalEvents = () => {
 
   const onSaveSuccess = () => {
     const identifier = directorState.builder.tournament.identifier;
-    dispatch(newTournamentCompleted());
     router.push(`/director/tournaments/${identifier}`);
   }
 
