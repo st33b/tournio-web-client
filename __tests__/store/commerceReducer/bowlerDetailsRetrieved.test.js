@@ -125,6 +125,10 @@ describe ('action type: bowler details retrieved', () => {
     const result = commerceReducer({}, action);
     expect(result.cart).toStrictEqual(unpaidLedgerItems.concat(unpaidNonLedgerItems));
   });
+  it ('populates the tournament property', () => {
+    const result = commerceReducer({}, action);
+    expect(result.tournament).toStrictEqual(tournament);
+  })
 
   //
   // Making changes to the action's contents

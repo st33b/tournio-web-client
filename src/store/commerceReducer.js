@@ -40,6 +40,7 @@ export const commerceReducer = (state, action) => {
         purchasedItems: action.bowler.paid_purchases,
         freeEntry: null,
         error: null,
+        tournament: {...action.bowler.tournament},
       });
     case actionTypes.ITEM_ADDED_TO_CART:
       return itemAdded(state, action.item);
