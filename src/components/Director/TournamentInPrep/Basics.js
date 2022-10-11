@@ -1,4 +1,6 @@
 import Card from 'react-bootstrap/Card';
+import {format} from "date-fns";
+import {timezones} from "../../../utils";
 
 import classes from './TournamentInPrep.module.scss';
 
@@ -29,8 +31,24 @@ const Basics = ({tournament}) => {
             <dd className={'col'}>{tournament.year}</dd>
           </div>
           <div className={'row'}>
-            <dt className={'col-4'}>Start Date</dt>
-            <dd className={'col mb-0'}>{tournament.start_date}</dd>
+            <dt className={'col-4'}>Location</dt>
+            <dd className={'col'}>{tournament.location}</dd>
+          </div>
+          <div className={'row'}>
+            <dt className={'col-4'}>Timezone</dt>
+            <dd className={'col'}>{timezones[tournament.timezone].display}</dd>
+          </div>
+          <div className={'row'}>
+            <dt className={'col-4'}>Entry Deadline</dt>
+            <dd className={'col'}>{format(new Date(tournament.entry_deadline), 'PP p')}</dd>
+          </div>
+          <div className={'row'}>
+            <dt className={'col-4'}>Starts</dt>
+            <dd className={'col'}>{tournament.start_date}</dd>
+          </div>
+          <div className={'row'}>
+            <dt className={'col-4'}>Ends</dt>
+            <dd className={'col mb-0'}>{tournament.end_date}</dd>
           </div>
         </dl>
       </Card.Body>
