@@ -21,6 +21,7 @@ const Tournament = () => {
   const { identifier, stripe } = router.query;
 
   const [errorMessage, setErrorMessage] = useState(null);
+  const [tournament, setTournament] = useState(null);
 
   const stateChangeInitiated = (stateChangeAction) => {
     const uri = `/director/tournaments/${identifier}/state_change`;
@@ -91,18 +92,9 @@ const Tournament = () => {
     });
   }
 
-  // Retrieve the tournament details if we need to
+  // Retrieve the tournament details
   useEffect(() => {
-    if (!directorState) {
-      return;
-    }
     if (identifier === undefined) {
-      return;
-    }
-
-    // Don't fetch the tournament details if we already have it in state.
-    if (directorState.tournament && identifier === directorState.tournament.identifier) {
-      devConsoleLog("Tournament is already in context, not fetching it again");
       return;
     }
 
@@ -116,6 +108,7 @@ const Tournament = () => {
       requestConfig: requestConfig,
       context: context,
       onSuccess: (data) => {
+        setTournament(data);
         dispatch(bowlerListReset());
         dispatch(tournamentDetailsRetrieved(data));
         retrieveBowlers();
@@ -130,7 +123,7 @@ const Tournament = () => {
         }
       },
     });
-  }, [identifier, directorState]);
+  }, [identifier]);
 
   // Ensure we're logged in with appropriate permissions
   useEffect(() => {
@@ -175,8 +168,8 @@ const Tournament = () => {
   }
 
   let tournamentView = '';
-  if (directorState.tournament) {
-    tournamentView = directorState.tournament.state === 'active' || directorState.tournament.state === 'closed'
+  if (tournament) {
+    tournamentView = tournament.state === 'active' || tournament.state === 'closed'
       ? <VisibleTournament closeTournament={stateChangeInitiated} />
       : <TournamentInPrep stateChangeInitiated={stateChangeInitiated}
                           requestStripeStatus={stripe}
