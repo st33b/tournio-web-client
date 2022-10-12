@@ -363,7 +363,7 @@ const Page = () => {
   }
 
   let assignPartnerCard = '';
-  const tournamentHasDoublesEvent = directorState.tournament.purchasable_items.bowling.some(pi => {
+  const tournamentHasDoublesEvent = ['active', 'closed'].includes(directorState.tournament.state) && directorState.tournament.purchasable_items.bowling.some(pi => {
     return pi.determination === 'event' && pi.refinement === 'doubles'
   });
   if (tournamentHasDoublesEvent && unpartneredBowlers.length > 0) {
