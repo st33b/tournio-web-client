@@ -1,5 +1,5 @@
 import DirectorLayout from "../../../../components/Layout/DirectorLayout/DirectorLayout";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 
 import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
@@ -9,6 +9,7 @@ import {directorApiRequest, useLoggedIn} from "../../../../director";
 
 import classes from "../../../../components/Director/TournamentInPrep/TournamentInPrep.module.scss";
 import {stripeAccountStatusChanged} from "../../../../store/actions/directorActions";
+import {devConsoleLog} from "../../../../utils";
 
 const Page = () => {
   const router = useRouter();
@@ -18,18 +19,26 @@ const Page = () => {
   const onSuccess = (data) => {
     dispatch(stripeAccountStatusChanged(data))
     location = data.link_url;
+    devConsoleLog("Success! Here is where we redirect.");
   }
 
+  const [tournamentId, setTournamentId] = useState(null);
   useEffect(() => {
     if (!directorState.tournament) {
+      return;
+    }
+    setTournamentId(directorState.tournament.identifier);
+  }, [directorState.tournament]);
+
+  useEffect(() => {
+    if (!tournamentId) {
       return;
     }
 
     const requestConfig = {
       method: 'get',
-
     }
-    const uri = `/director/tournaments/${directorState.tournament.identifier}/stripe_refresh`;
+    const uri = `/director/tournaments/${tournamentId}/stripe_refresh`;
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
@@ -37,7 +46,7 @@ const Page = () => {
       onSuccess: onSuccess,
       onFailure: (data) => console.log("Failure!", data),
     });
-  }, [directorState.tournament]);
+  }, [tournamentId]);
 
   const loggedInState = useLoggedIn();
   if (!loggedInState) {

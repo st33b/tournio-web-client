@@ -6,7 +6,7 @@ import {directorApiRequest} from "../../../director";
 import classes from './ConfigItemForm.module.scss';
 import {tournamentConfigItemChanged} from "../../../store/actions/directorActions";
 
-const BOOLEAN_CONFIG_ITEMS = ['display_capacity', 'email_in_dev', 'event_selection'];
+const BOOLEAN_CONFIG_ITEMS = ['display_capacity', 'email_in_dev', 'skip_stripe', 'event_selection'];
 
 const ConfigItemForm = ({item, editable}) => {
   const context = useDirectorContext();
@@ -117,6 +117,7 @@ const ConfigItemForm = ({item, editable}) => {
         break;
       case 'display_capacity':
       case 'email_in_dev':
+      case 'skip_stripe':
         displayedValue = (
           <div className={'form-check form-switch'}>
             <input type={'checkbox'}
