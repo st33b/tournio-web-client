@@ -183,7 +183,7 @@ const itemRemoved = (state, item) => {
   const newAvailableItems = {...state.availableItems}
   newAvailableItems[identifier] = removedItem;
 
-  if (removedItem.determination === 'single_use' || removedItem.determination === 'event') {
+  if (removedItem.determination === 'single_use' || removedItem.determination === 'event' || removedItem.category === 'sanction') {
     removedItem.addedToCart = false;
     markOtherItemsInDivisionAsAvailable(newAvailableItems, removedItem);
   }
