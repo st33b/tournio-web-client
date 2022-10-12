@@ -59,6 +59,9 @@ const AvailableItems = ({itemAddedToCart}) => {
     return item.determination === 'multi_use';
   }).sort(sortByOrder);
 
+  // Sanction items
+  const sanctionItems = allItems.filter(({category}) => category === 'sanction');
+
   const groupValues = [...divisionGroups.values()];
 
   return (
@@ -99,6 +102,14 @@ const AvailableItems = ({itemAddedToCart}) => {
 
         <Col xs={12} className={'pt-3 border-top'}>
           {multiUseItems.map((item) => (
+            <Item key={item.identifier}
+                  item={item}
+                  added={itemAddedToCart} />
+          ))}
+        </Col>
+
+        <Col xs={12}>
+          {sanctionItems.map((item) => (
             <Item key={item.identifier}
                   item={item}
                   added={itemAddedToCart} />
