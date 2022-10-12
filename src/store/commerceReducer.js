@@ -115,7 +115,7 @@ const itemAdded = (state, item) => {
 
   let newAvailableItems = {...state.availableItems}
 
-  if (item.determination === 'single_use' || item.determination === 'event') {
+  if (item.determination === 'single_use' || item.determination === 'event' || item.category === 'sanction') {
     if (cartItemIndex >= 0) {
       // We've already got this in our cart, so we shouldn't be allowed to add it again. Bail out with no changes.
       return state;

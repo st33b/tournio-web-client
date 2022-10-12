@@ -81,9 +81,55 @@ describe('item added to cart', () => {
         expect(item.quantity).toStrictEqual(1);
       });
     });
+    describe('sanction', () => {
+      const myAction = {...action};
+      const myPreviousState = {...previousState};
+      myPreviousState.cart = [
+        {
+          identifier: 'woof',
+          category: 'sanction',
+          determination: 'igbo',
+          quantity: 1,
+        }
+      ];
+      myAction.item = {
+        identifier: 'woof',
+        category: 'sanction',
+        determination: 'igbo',
+      }
+
+      const result = commerceReducer(myPreviousState, myAction);
+      it ('makes no changes', () => {
+        expect(result.cart.length).toEqual(myPreviousState.cart.length);
+        const item = result.cart[0];
+        expect(item.quantity).toStrictEqual(1);
+      });
+    });
   });
 
   describe ('the item is not yet in the cart', () => {
+    describe ('a sanction item', () => {
+      const myAction = {...action};
+      myAction.item = {
+        identifier: 'meow',
+        category: 'sanction',
+        determination: 'some_org',
+      };
+
+      it ('adds it to the cart', () => {
+        const result = commerceReducer(previousState, myAction);
+        expect(result.cart.length).toStrictEqual(1);
+        const item = result.cart[0];
+        expect(item.quantity).toStrictEqual(1);
+      });
+
+      it ('marks the item in availableItems as added to cart', () => {
+        const result = commerceReducer(previousState, myAction);
+        const item = result.availableItems[myAction.item.identifier];
+        expect(item.addedToCart).toBeDefined();
+        expect(item.addedToCart).toBeTruthy();
+      });
+    });
     describe ('a single-use item', () => {
       const myAction = {...action};
       myAction.item = {

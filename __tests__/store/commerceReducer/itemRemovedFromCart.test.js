@@ -191,4 +191,36 @@ describe('item added to cart', () => {
       });
     });
   });
+
+  describe ('a sanction item', () => {
+    const myItem = {
+      ...basicItem,
+      category: 'sanction',
+      determination: 'org',
+      quantity: 1,
+    };
+    const myAction = {
+      ...action,
+      item: myItem,
+    }
+    const myPreviousState = {
+      ...previousState,
+      cart: [myItem],
+      availableItems: {
+        meh: {
+          ...myItem,
+          addedToCart: true,
+        },
+      },
+    };
+    it('removes the item from the cart', () => {
+      const result = commerceReducer(myPreviousState, myAction);
+      expect(result.cart.length).toBe(0);
+    });
+
+    it('marks the item in availableItems as no longer added to cart', () => {
+      const result = commerceReducer(myPreviousState, myAction);
+      expect(result.availableItems.meh.addedToCart).toBeFalsy();
+    });
+  });
 });
