@@ -19,7 +19,6 @@ const Page = () => {
   const onSuccess = (data) => {
     dispatch(stripeAccountStatusChanged(data))
     location = data.link_url;
-    devConsoleLog("Success! Here is where we redirect.");
   }
 
   const [tournamentId, setTournamentId] = useState(null);
