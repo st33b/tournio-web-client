@@ -149,6 +149,14 @@ const StripeStatus = ({tournament, needStatus}) => {
               </button>
             )}
           </div>
+          <div className={'pt-3 d-flex justify-content-center'}>
+            <a href={'https://dashboard.stripe.com/dashboard'}
+               className={'btn btn-outline-success'}
+               target={'_new'}>
+              Stripe dashboard
+              <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden={true} />
+            </a>
+          </div>
         </Card.Body>
       </Card>
     </ErrorBoundary>
