@@ -1,11 +1,9 @@
 import {useEffect, useState} from "react";
-import {useRouter} from "next/router";
 import Card from 'react-bootstrap/Card';
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 
-// import {directorApiDownloadRequest} from "../../../utils";
 import {directorApiRequest, directorApiDownloadRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {testDataCleared, tournamentTestEnvironmentUpdated} from "../../../store/actions/directorActions";
@@ -174,7 +172,6 @@ const StatusAndCounts = ({tournament}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      router: router,
       onSuccess: onClearTestDataSuccess,
       onFailure: onClearTestDataFailure,
     });

@@ -21,6 +21,7 @@ const Configuration = ({eventKey, tournament}) => {
   const EDITABLE_ITEMS = [
     "display_capacity",
     "email_in_dev",
+    "skip_stripe",
   ];
 
   if (tournament) {
