@@ -8,6 +8,9 @@ describe ('action type: stripe checkout session completed', () => {
         identifier: 'an-object',
       },
     ],
+    bowler: {
+      identifier: '23045890ldf',
+    },
     checkoutSessionId: 'session-id',
   };
   const action = {
@@ -23,4 +26,9 @@ describe ('action type: stripe checkout session completed', () => {
     const result = commerceReducer(previousState, action);
     expect(result.cart.length).toBe(0);
   });
+
+  it ('nulls out the bowler', () => {
+    const result = commerceReducer(previousState, action);
+    expect(result.bowler).toBeNull();
+  })
 });

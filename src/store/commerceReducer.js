@@ -94,6 +94,7 @@ export const commerceReducer = (state, action) => {
       return updateObject(state, {
         checkoutSessionId: null,
         cart: [],
+        bowler: null,
       });
     default:
       console.log('Haha, no', action.type);
