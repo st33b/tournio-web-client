@@ -30,15 +30,6 @@ const Page = () => {
     }
   }, [identifier, commerce]);
 
-  // // fetch the tournament details
-  // useEffect(() => {
-  //   if (!commerce.bowler) {
-  //     return;
-  //   }
-  //   const tournamentIdentifier = commerce.bowler.tournament.identifier;
-  //   fetchTournamentDetails(tournamentIdentifier)
-  // }, [commerce.bowler])
-
   useEffect(() => {
     if (success === 'purchase') {
       setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
