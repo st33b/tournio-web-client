@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useCommerceContext} from "../../../store/CommerceContext";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import {getCheckoutSessionStatus} from '../../../utils';
+import {devConsoleLog, getCheckoutSessionStatus, useClientReady} from '../../../utils';
 import {stripeCheckoutSessionCompleted} from '../../../store/actions/registrationActions';
 
 const Page = () => {
@@ -11,6 +11,7 @@ const Page = () => {
   const {commerce, dispatch} = useCommerceContext();
   const {identifier} = router.query;
   const [errorMessage, setErrorMessage] = useState();
+  const ready = useClientReady();
 
   // Do we have an identifier and a commerce object?
   useEffect(() => {
@@ -22,7 +23,7 @@ const Page = () => {
     if (commerce.bowler && commerce.bowler.identifier !== identifier) {
       router.push('/');
     }
-  }, [identifier, commerce, router]);
+  }, [identifier, commerce.bowler, router]);
 
   // If we have a commerce object but no checkout session id, then we're done, and can redirect with success.
   useEffect(() => {
@@ -36,15 +37,15 @@ const Page = () => {
 
   // once we have a commerce object, begin polling for changes to the checkout session id's status
   useEffect(() => {
-    if (!commerce) {
+    if (!commerce || !identifier || !ready) {
       return;
     }
 
     if (commerce.checkoutSessionId) {
-      console.log("First call to checkTheStatus!");
+      devConsoleLog("First call to checkTheStatus! with identifier", identifier);
       checkTheStatus();
     }
-  }, []);
+  }, [ready, identifier]);
 
   const checkTheStatus = (count = 0) => {
     if (count < 10) {
@@ -59,13 +60,15 @@ const Page = () => {
   }
 
   const success = (data, count) => {
-    console.log("Success callback", data);
+    devConsoleLog("Success callback", data);
     if (data.status === 'completed') {
       // It'd be nice to get a report here, how high did "count" get before we had the full details from Stripe?
       dispatch(stripeCheckoutSessionCompleted());
       return;
+    } else if (data.status === 'expired') {
+      router.push(`/bowlers/${identifier}?success=expired`);
     } else {
-      console.log('But our status is not completed. Trying again.');
+      devConsoleLog('But our status is not completed. Trying again.');
       setTimeout(() => checkTheStatus(count), 2 ** count * 10);
     }
   }
@@ -73,6 +76,10 @@ const Page = () => {
   const failure = (data) => {
     console.log("Failure callback", data);
     setErrorMessage(data.error);
+  }
+
+  if (!ready) {
+    return null;
   }
 
   return (

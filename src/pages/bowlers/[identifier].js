@@ -35,6 +35,8 @@ const Page = () => {
       setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
     } else if (success === 'register') {
       setSuccessMessage('Your registration was received! You may now select events, optional items, and pay entry fees.');
+    } else if (success === 'expired') {
+      setErrorMessage('Checkout was not successful.');
     }
   }, [success]);
 
