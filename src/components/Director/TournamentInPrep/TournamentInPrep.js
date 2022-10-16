@@ -10,6 +10,7 @@ import StateChangeButton from "./StateChangeButton";
 import Shifts from "./Shifts";
 import StripeStatus from "./StripeStatus";
 import ImageUpload from "./ImageUpload";
+import Users from '../Tournament/Users';
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 
@@ -44,6 +45,7 @@ const TournamentInPrep = ({stateChangeInitiated, requestStripeStatus}) => {
         <div className={'col-12 col-md-6 col-lg-4'}>
           <ImageUpload tournament={directorState.tournament}/>
           <Contacts tournament={directorState.tournament}/>
+          <Users users={directorState.tournament.users}/>
           <DeleteTournament tournament={directorState.tournament}/>
         </div>
       </div>

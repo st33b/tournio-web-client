@@ -21,6 +21,7 @@ import DeleteTournament from "../Tournament/DeleteTournament";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './VisibleTournament.module.scss';
+import Users from "../Tournament/Users";
 
 const VisibleTournament = ({closeTournament}) => {
   const {directorState} = useDirectorContext();
@@ -48,6 +49,7 @@ const VisibleTournament = ({closeTournament}) => {
       </Accordion>
 
       <Contacts tournament={directorState.tournament}/>
+      <Users users={directorState.tournament.users}/>
 
       {directorState.tournament.state === 'active' && (
         <>
