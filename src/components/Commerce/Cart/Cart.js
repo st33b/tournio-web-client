@@ -49,6 +49,8 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
     );
   }
 
+  const enableFailure = commerce.tournament.state === 'testing';
+
   return (
     <div className={classes.Cart}>
       <h4 className={'py-2 py-md-0'}>
@@ -59,7 +61,8 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
         Total: ${totalFees}
       </p>
       <div className={'d-flex flex-row-reverse pb-3 pb-md-0'}>
-        <StripeCheckout/>
+        {/*<StripeCheckout />*/}
+        <StripeCheckout enableFailure={enableFailure}/>
       </div>
     </div>
   );

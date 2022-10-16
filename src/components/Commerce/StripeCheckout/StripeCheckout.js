@@ -7,7 +7,7 @@ import {stripeCheckoutSessionInitiated} from "../../../store/actions/registratio
 
 import classes from './StripeCheckout.module.scss';
 
-const StripeCheckout = () => {
+const StripeCheckout = ({enableFailure}) => {
   const {commerce, dispatch} = useCommerceContext();
   const router = useRouter();
 
@@ -56,6 +56,18 @@ const StripeCheckout = () => {
     );
   }
 
+  const failureClicked = () => {
+    setRequestInProgress(true);
+    const postData = purchaseDetailsPostData(commerce.cart);
+    postData.simulate_failure = true;
+    postPurchaseDetails(identifier,
+      'stripe_checkout',
+      postData,
+      postDetailsSucceeded,
+      postDetailsFailed
+    );
+  }
+
   const sum = (runningTotal, currentValue) => runningTotal + currentValue.value * (currentValue.quantity || 1);
   const totalFees = commerce.cart.reduce(sum, 0);
   const checkoutDisabled = totalFees === 0;
@@ -63,6 +75,20 @@ const StripeCheckout = () => {
   return (
     <div className={classes.StripeCheckout}>
       <div className={`d-flex flex-row-reverse pb-3 pb-md-0`}>
+        {!requestInProgress && enableFailure && (
+          <button className={'btn btn-lg btn-danger ms-1'}
+                  disabled={checkoutDisabled}
+                  onClick={failureClicked}>
+            Check Out &amp; Fail
+          </button>
+        )}
+        {requestInProgress && enableFailure && (
+          <button className={'btn btn-lg btn-danger ms-1'}
+                  disabled>
+            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Processing
+          </button>
+        )}
         {!requestInProgress && (
           <button className={'btn btn-lg btn-success'}
                   disabled={checkoutDisabled}
