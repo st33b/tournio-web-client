@@ -29,7 +29,7 @@ const Page = () => {
     }
   }, [router, registration]);
 
-  if (!bowlerNum) {
+  if (!bowlerNum || !registration) {
     return '';
   }
 
@@ -46,6 +46,7 @@ const Page = () => {
         <ProgressIndicator active={'bowlers'} />
         <BowlerForm bowlerData={registration.team.bowlers[bowlerIndex]}
                     bowlerInfoSaved={onBowlerInfoUpdated}
+                    tournament={registration.tournament}
                     cancelHref={`/tournaments/${registration.tournament.identifier}/review-entries`}
         />
       </Col>
