@@ -85,7 +85,8 @@ const Page = () => {
         {output}
       </Col>
       <Col>
-        <Summary nextStepClicked={submitRegistration}
+        <Summary tournament={tournament}
+                 nextStepClicked={submitRegistration}
                  nextStepText={'Submit Registration'}
         />
       </Col>

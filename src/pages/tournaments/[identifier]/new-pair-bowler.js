@@ -44,7 +44,7 @@ const Page = () => {
         <BowlerForm tournament={registration.tournament} bowlerInfoSaved={onNewBowlerAdded} includeShift={includeShift} />
       </Col>
       <Col>
-        <Summary />
+        <Summary tournament={registration.tournament}/>
       </Col>
     </Row>
   );
