@@ -51,7 +51,7 @@ const Page = () => {
     return null;
   }
 
-  if (!commerce || !commerce.tournament) {
+  if (!commerce) {
     return <LoadingMessage message={'One moment, please...'} />;
   }
 
@@ -81,23 +81,25 @@ const Page = () => {
 
   return (
     <div>
-      <Row className={'pt-2 g-0'}>
-        <Col xs={3} md={2} className={''}>
-          <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
-            <TournamentLogo url={commerce.tournament.image_url}/>
-          </a>
-        </Col>
-        <Col xs={9} md={10} className={'d-flex flex-column justify-content-center text-md-start ps-2'}>
-          <h3 className={'p-0 m-0'}>
+      {commerce.tournament && (
+        <Row className={'pt-2 g-0'}>
+          <Col xs={3} md={2} className={''}>
             <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
-              {commerce.tournament.name}
+              <TournamentLogo url={commerce.tournament.image_url}/>
             </a>
-          </h3>
-          <h4 className={'p-0 my-2 my-md-3'}>
-            Bowler: {name}
-          </h4>
-        </Col>
-      </Row>
+          </Col>
+          <Col xs={9} md={10} className={'d-flex flex-column justify-content-center text-md-start ps-2'}>
+            <h3 className={'p-0 m-0'}>
+              <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
+                {commerce.tournament.name}
+              </a>
+            </h3>
+            <h4 className={'p-0 my-2 my-md-3'}>
+              Bowler: {name}
+            </h4>
+          </Col>
+        </Row>
+      )}
 
       <hr/>
 
