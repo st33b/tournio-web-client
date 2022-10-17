@@ -56,6 +56,18 @@ $dark-mode-colors: (
 );
 $dark-mode-colors-rgb: map-loop($dark-mode-colors, to-rgb, "$value");
 
+$dark-table-bg-scale: 40% !default;
+$dark-table-variants: (
+  "primary": shift-color($lighter-blue, $dark-table-bg-scale),
+  "secondary": shift-color($gray-500, $dark-table-bg-scale),
+  "success": shift-color($darker-green, $dark-table-bg-scale),
+  "info": shift-color($darker-cyan, $dark-table-bg-scale),
+  "warning": shift-color($darker-yellow, $dark-table-bg-scale),
+  "danger": shift-color($darker-red, $dark-table-bg-scale),
+  "light": $gray-500,
+  "dark": $gray-900
+);
+
 // The rest of what's required
 @import "../../node_modules/bootstrap/scss/maps";
 @import "../../node_modules/bootstrap/scss/mixins";
@@ -142,5 +154,9 @@ $dark-mode-colors-rgb: map-loop($dark-mode-colors, to-rgb, "$value");
     .btn-outline-#{$color} {
       @include button-outline-variant($value);
     }
+  }
+
+  @each $color, $value in $dark-table-variants {
+    @include table-variant($color, $value);
   }
 }

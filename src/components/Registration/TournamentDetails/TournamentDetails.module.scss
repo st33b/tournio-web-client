@@ -1,6 +1,7 @@
 .TournamentDetails {
   dl {
-    margin-bottom: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
   }
   dt {
     font-weight: normal;
@@ -27,6 +28,12 @@
     background-color: burlywood;
     @media (prefers-color-scheme: dark) {
       background-color: #deb88740;
+    }
+  }
+
+  .Details {
+    .Date {
+      font-weight: 700;
     }
   }
 

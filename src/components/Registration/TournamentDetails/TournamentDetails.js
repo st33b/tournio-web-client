@@ -6,6 +6,7 @@ import classes from './TournamentDetails.module.scss';
 import ShiftCapacity from "../../common/ShiftCapacity/ShiftCapacity";
 import ProgressBarLegend from "../../common/ShiftCapacity/ProgressBarLegend";
 import {format} from "date-fns";
+import Details from "./Details";
 
 const USBC_ID_LOOKUP_URL = 'https://webapps.bowl.com/USBCFindA/Home/Member';
 const IGBO_ID_LOOKUP_URL = 'http://igbo.org/tournaments/igbots-id-lookup/';
@@ -398,16 +399,24 @@ const TournamentDetails = ({tournament}) => {
     );
   }
 
+  const start = new Date(tournament.start_date);
+  const end = new Date(tournament.end_date);
+  const datesString = `${format(start, 'LLLL')} ${start.getDate()}-${end.getDate()}, ${end.getFullYear()}`;
+
   return (
     <div className={classes.TournamentDetails}>
-      <h2>
-        {tournament.name} ({tournament.year})
+      <h2 className={'mb-3'}>
+        {tournament.name}
       </h2>
+      <h5 className={'fst-italic'}>
+        {datesString}
+      </h5>
       {website}
       {stateBanner}
       {testingEnvironment}
 
-      {dates}
+      {/*{dates}*/}
+      <Details tournament={tournament}/>
 
       {shiftContent}
 
