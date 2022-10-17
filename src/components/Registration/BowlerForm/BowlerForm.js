@@ -304,35 +304,35 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
   const [buttonText, setButtonText] = useState('Save Bowler');
   const [showCancelButton, setShowCancelButton] = useState(false);
 
-  const additionalFormFields = () => {
+  const additionalFormFields = (tourn) => {
     const formFields = {};
-    for (let key in tournament.additional_questions) {
-      formFields[key] = { ...tournament.additional_questions[key] }
-      formFields[key].valid = !tournament.additional_questions[key].validation.required
+    for (let key in tourn.additional_questions) {
+      formFields[key] = { ...tourn.additional_questions[key] }
+      formFields[key].valid = !tourn.additional_questions[key].validation.required
       formFields[key].touched = false;
-      formFields[key].elementConfig = { ...tournament.additional_questions[key].elementConfig }
+      formFields[key].elementConfig = { ...tourn.additional_questions[key].elementConfig }
     }
     return formFields;
   }
 
-  const resetFormData = () => {
+  const resetFormData = (tourn) => {
     const formData = {...initialFormState};
 
     // get the additional questions
-    formData.formFields = {...formData.formFields, ...additionalFormFields()};
+    formData.formFields = {...formData.formFields, ...additionalFormFields(tourn)};
 
     // put shift info in there, if needed
     if (includeShift) {
-      if (tournament.available_shifts.length > 1) {
+      if (tourn.available_shifts.length > 1) {
         formData.soloBowlerFields.shift.elementConfig.options = [{value: '', label: '-- Choose a shift'}];
-        tournament.available_shifts.map(shift => {
+        tourn.available_shifts.map(shift => {
           formData.soloBowlerFields.shift.elementConfig.options.push(
             { value: shift.identifier, label: shift.name }
           );
         });
         setShowShiftSelection(true);
       } else {
-        formData.soloBowlerFields.shift.elementConfig.value = tournament.available_shifts[0].identifier;
+        formData.soloBowlerFields.shift.elementConfig.value = tourn.available_shifts[0].identifier;
         formData.soloBowlerFields.shift.valid = true;
       }
     }
@@ -346,16 +346,16 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       return;
     }
 
-    resetFormData();
+    resetFormData(tournament);
   }, [tournament]);
 
   // We're editing a bowler. Put their data into the form.
   useEffect(() => {
-    if (!bowlerData) {
+    if (!bowlerData || !tournament) {
       return;
     }
     const updatedBowlerForm = {...bowlerForm};
-    updatedBowlerForm.formFields = {...updatedBowlerForm.formFields, ...additionalFormFields()};
+    updatedBowlerForm.formFields = {...updatedBowlerForm.formFields, ...additionalFormFields(tournament)};
 
     // First, all the standard fields and additional questions
     // for (const inputIdentifier in initialFormState.formFields) {
@@ -379,7 +379,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     setBowlerForm(updatedBowlerForm);
     setButtonText('Save Changes');
     setShowCancelButton(true);
-  }, []);
+  }, [bowlerData, tournament]);
 
   if (!registration || !tournament) {
     console.log("Registration?", registration);
@@ -424,7 +424,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     }
 
     // Reset the form to take in the next bowler's info
-    resetFormData(initialFormState);
+    resetFormData(tournament);
 
     bowlerInfoSaved(bowlerData);
   }
