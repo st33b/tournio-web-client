@@ -42,18 +42,19 @@ const Page = () => {
 
   return (
     <Row>
-      <Col lg={8}>
+      <Col xs={{ order: 2 }}>
+        <Summary tournament={registration.tournament}
+                 nextStepClicked={null}
+                 nextStepText={'Finished With Bowlers'}
+                 buttonDisabled={true}
+        />
+      </Col>
+      <Col lg={8} sm={{ order: 2 }}>
         <ProgressIndicator active={'bowlers'} />
         <BowlerForm bowlerData={registration.team.bowlers[bowlerIndex]}
                     bowlerInfoSaved={onBowlerInfoUpdated}
                     tournament={registration.tournament}
                     cancelHref={`/tournaments/${registration.tournament.identifier}/review-entries`}
-        />
-      </Col>
-      <Col>
-        <Summary nextStepClicked={null}
-                 nextStepText={'Finished With Bowlers'}
-                 buttonDisabled={true}
         />
       </Col>
     </Row>
