@@ -64,6 +64,10 @@ const OptionalItemsWeek = ({tournament, title, dataKeys}) => {
     datasets: datasets,
   };
 
+  if (datasets.length == 0) {
+    return '';
+  }
+
   return (
     <div className={classes.Chart}>
       <Bar options={options} data={chartData} />
