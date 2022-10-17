@@ -6,6 +6,7 @@ import {color} from "chart.js/helpers";
 import {chartColors} from "./common";
 
 import classes from '../VisibleTournament.module.scss';
+import {devConsoleLog} from "../../../../utils";
 
 const OptionalItemsWeek = ({tournament, title, dataKeys}) => {
   if (!tournament) {
@@ -39,16 +40,23 @@ const OptionalItemsWeek = ({tournament, title, dataKeys}) => {
   const datasets = [];
   const bgColors = chartColors();
   dataKeys.forEach(dataKey => {
-    Object.entries(tournament.chart_data.last_week_purchases_by_day[dataKey]).forEach(pair => {
-      const itemIdentifier = pair[0];
-      const label = tournament.purchasable_items[dataKey].find(({identifier}) => identifier === itemIdentifier).name;
-      datasets.push({
-        label: label,
-        data: pair[1],
-        backgroundColor: bgColors[colorIndex],
+    devConsoleLog("Data key:", dataKey);
+    devConsoleLog("daily purchases for that key:", tournament.chart_data.last_week_purchases_by_day[dataKey]);
+    if (tournament.chart_data.last_week_purchases_by_day[dataKey]) {
+      Object.entries(tournament.chart_data.last_week_purchases_by_day[dataKey]).forEach(pair => {
+        const itemIdentifier = pair[0];
+        const item = tournament.purchasable_items[dataKey].find(({identifier}) => identifier === itemIdentifier);
+        if (item) {
+          const label = item.name;
+          datasets.push({
+            label: label,
+            data: pair[1],
+            backgroundColor: bgColors[colorIndex],
+          });
+          colorIndex++;
+        }
       });
-      colorIndex++;
-    });
+    }
   });
 
   const chartData = {
