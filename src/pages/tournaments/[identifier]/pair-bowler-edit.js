@@ -46,7 +46,8 @@ const Page = () => {
         />
       </Col>
       <Col>
-        <Summary nextStepClicked={null}
+        <Summary tournament={registration.tournament}
+                 nextStepClicked={null}
                  nextStepText={'Submit Registration'}
                  buttonDisabled={true}
         />

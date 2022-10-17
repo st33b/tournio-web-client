@@ -44,7 +44,7 @@ const Page = () => {
                     bowlerInfoSaved={onCompletion} />
       </Col>
       <Col>
-        <Summary />
+        <Summary tournament={registration.tournament}/>
       </Col>
     </Row>
   );
