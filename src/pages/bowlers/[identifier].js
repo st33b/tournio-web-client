@@ -18,6 +18,12 @@ const Page = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [enablePurchase, setEnablePurchase] = useState(true);
 
+  const onFetchFailure = (response) => {
+    if (response.status === 404) {
+      setErrorMessage('The requested bowler was not found.');
+    }
+  }
+
   // fetch the bowler details
   useEffect(() => {
     if (!identifier || !commerce) {
@@ -25,7 +31,7 @@ const Page = () => {
     }
 
     if (!commerce.bowler || commerce.bowler.identifier !== identifier) {
-      fetchBowlerDetails(identifier, dispatch);
+      fetchBowlerDetails(identifier, dispatch, onFetchFailure);
       return;
     }
   }, [identifier, commerce]);
@@ -45,11 +51,11 @@ const Page = () => {
     return null;
   }
 
-  if (!commerce || !commerce.bowler || !commerce.tournament) {
+  if (!commerce || !commerce.tournament) {
     return <LoadingMessage message={'One moment, please...'} />;
   }
 
-  if (commerce.bowler.shift_info.full && !commerce.bowler.shift_info.confirmed) {
+  if (commerce.bowler && commerce.bowler.shift_info.full && !commerce.bowler.shift_info.confirmed) {
     if (commerce.bowler.unpaid_purchases.some(p => p.category === 'ledger' || p.determination === 'event')) {
       // either the tournament is full, or the chosen shift is full.
       // first, see if there are available shifts
@@ -63,11 +69,15 @@ const Page = () => {
     }
   }
 
-  let displayed_name = commerce.bowler.first_name;
-  if (commerce.bowler.preferred_name) {
-    displayed_name = commerce.bowler.preferred_name;
+  let displayed_name = '';
+  let name = '';
+  if (commerce.bowler) {
+    displayed_name = commerce.bowler.first_name;
+    if (commerce.bowler.preferred_name) {
+      displayed_name = commerce.bowler.preferred_name;
+    }
+    name = displayed_name + ' ' + commerce.bowler.last_name;
   }
-  const name = displayed_name + ' ' + commerce.bowler.last_name;
 
   return (
     <div>
@@ -112,7 +122,7 @@ const Page = () => {
         </div>
       )}
 
-      {enablePurchase && <Menu/>}
+      {commerce.bowler && enablePurchase && <Menu/>}
 
     </div>
   );

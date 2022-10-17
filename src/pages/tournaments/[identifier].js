@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Row} from "react-bootstrap";
 
-import {fetchTournamentDetails, useClientReady} from "../../utils";
+import {devConsoleLog, fetchTournamentDetails, useClientReady} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentDetails from "../../components/Registration/TournamentDetails/TournamentDetails";
@@ -21,14 +21,14 @@ const Page = () => {
   const [tournament, setTournament] = useState();
 
   const onFetchSuccess = (data) => {
-    console.log("Success. Dispatching to contexts");
+    devConsoleLog("Success. Dispatching to contexts");
     setTournament(data);
     registrationContext.dispatch(tournamentDetailsRetrieved(data));
     commerceContext.dispatch(tournamentDetailsRetrieved(data));
   }
 
   const onFetchFailure = (error) => {
-    console.log("Failed to fetch", error);
+    devConsoleLog("Failed to fetch", error);
     // let's clear the tournaments out of context
     router.push('/tournaments');
   }
@@ -46,18 +46,18 @@ const Page = () => {
 
     if (!needToFetch) {
       if (registrationMismatch) {
-        console.log("Registration context has the wrong tournament, updating it");
+        devConsoleLog("Registration context has the wrong tournament, updating it");
         registrationContext.dispatch(tournamentDetailsRetrieved(tournament));
       }
       if (commerceMismatch) {
-        console.log("Commerce context has the wrong tournament, updating it");
+        devConsoleLog("Commerce context has the wrong tournament, updating it");
         commerceContext.dispatch(tournamentDetailsRetrieved(tournament));
       }
     }
 
-    console.log("Need to fetch?", needToFetch);
+    devConsoleLog("Need to fetch?", needToFetch);
     if (needToFetch) {
-      console.log("Fetching");
+      devConsoleLog("Fetching");
       fetchTournamentDetails(identifier, onFetchSuccess, onFetchFailure);
     }
   }, [identifier, tournament]);

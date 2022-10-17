@@ -191,23 +191,29 @@ export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure}) => {
     });
 }
 
-export const fetchBowlerDetails = (bowlerIdentifier, dispatch) => {
+export const fetchBowlerDetails = (bowlerIdentifier, dispatch, onFailure) => {
   const requestConfig = {
     method: 'get',
     url: `${apiHost}/bowlers/${bowlerIdentifier}`,
     headers: {
       'Accept': 'application/json',
-    }
+    },
+    validateStatus: (status) => { return status < 500 },
   }
   axios(requestConfig)
     .then(response => {
-      const bowlerData = response.data.bowler;
-      const availableItems = response.data.available_items;
-      dispatch(bowlerCommerceDetailsRetrieved(bowlerData, availableItems));
+      if (response.status === 404) {
+        onFailure(response);
+      } else if (response.data) {
+        const bowlerData = response.data.bowler;
+        const availableItems = response.data.available_items;
+        dispatch(bowlerCommerceDetailsRetrieved(bowlerData, availableItems));
+      }
     })
     .catch(error => {
       // Display some kind of error message
       console.log('Whoops!', error);
+      onFailure(error);
     });
 }
 
