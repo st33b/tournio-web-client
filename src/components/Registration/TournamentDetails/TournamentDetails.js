@@ -1,12 +1,13 @@
 import {useRouter} from "next/router";
 import {Card, Col, ListGroup, Row, ProgressBar} from "react-bootstrap";
-import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
+import {format} from "date-fns";
 
-import classes from './TournamentDetails.module.scss';
+import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 import ShiftCapacity from "../../common/ShiftCapacity/ShiftCapacity";
 import ProgressBarLegend from "../../common/ShiftCapacity/ProgressBarLegend";
-import {format} from "date-fns";
 import Details from "./Details";
+
+import classes from './TournamentDetails.module.scss';
 
 const USBC_ID_LOOKUP_URL = 'https://webapps.bowl.com/USBCFindA/Home/Member';
 const IGBO_ID_LOOKUP_URL = 'http://igbo.org/tournaments/igbots-id-lookup/';
@@ -62,89 +63,6 @@ const TournamentDetails = ({tournament}) => {
       <p className={'mb-0'}>
         {stateText}
       </p>
-    </div>
-  );
-
-  ////////////////////////////////////////////////////
-
-  const dtClass = 'col-6 col-lg-5 col-xl-4 pe-1';
-  const ddClass = 'col-6 col-lg-7 col-xl-8 ps-1';
-
-  let early_registration = '';
-  if (tournament.early_registration_ends) {
-    early_registration = (
-      <div className={'row pb-2'}>
-        <dt className={dtClass}>
-          Early registration deadline:
-        </dt>
-        <dd className={ddClass}>
-          {tournament.early_registration_ends}
-        </dd>
-        <dt className={dtClass}>
-          Early registration discount:
-        </dt>
-        <dd className={ddClass}>
-          ${tournament.early_registration_discount}
-        </dd>
-      </div>
-    )
-  }
-
-  let late_fee_date = '';
-  if (tournament.late_fee_applies_at) {
-    late_fee_date = (
-      <div className={'row pb-2'}>
-        <dt className={dtClass}>
-          Late fee applies:
-        </dt>
-        <dd className={ddClass}>
-          {tournament.late_fee_applies_at}
-        </dd>
-        <dt className={dtClass}>
-          Late registration fee:
-        </dt>
-        <dd className={ddClass}>
-          ${tournament.late_registration_fee}
-        </dd>
-      </div>
-    )
-  }
-
-  const dates = (
-    <div className={''}>
-      <h6>
-        Important details:
-      </h6>
-      <dl>
-        {!!tournament.registration_fee && (
-          <div className={'row pb-2'}>
-            <dt className={dtClass}>
-              Registration fee:
-            </dt>
-            <dd className={ddClass}>
-              ${tournament.registration_fee}
-            </dd>
-          </div>
-        )}
-        {early_registration}
-        {late_fee_date}
-        <div className={'row pb-2'}>
-          <dt className={dtClass}>
-            Registration deadline:
-          </dt>
-          <dd className={ddClass}>
-            {tournament.registration_deadline}
-          </dd>
-        </div>
-        <div className={'row'}>
-          <dt className={dtClass}>
-            Start date:
-          </dt>
-          <dd className={ddClass}>
-            {format(new Date(`${tournament.start_date}T12:00`), 'PP')}
-          </dd>
-        </div>
-      </dl>
     </div>
   );
 
@@ -415,7 +333,6 @@ const TournamentDetails = ({tournament}) => {
       {stateBanner}
       {testingEnvironment}
 
-      {/*{dates}*/}
       <Details tournament={tournament}/>
 
       {shiftContent}
