@@ -90,7 +90,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     {
       id: 'free_entry',
       Header: 'Free Entry',
-      accessor: freeEntryDeets,
+      accessor: 'freeEntryDeets',
     }
   ], [teamForm]);
 
