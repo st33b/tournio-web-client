@@ -180,6 +180,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         label: 'Email address',
         validation: {
           required: true,
+          pattern: /^[^\s]+@\S+\.\S{2,}$/,
         },
         valid: false,
         touched: false,
@@ -400,6 +401,10 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     }
     if (rules.max) {
       isValid = isValid && value <= rules.max;
+    }
+
+    if (rules.pattern) {
+      isValid = isValid && rules.pattern.test(value);
     }
 
     return isValid;

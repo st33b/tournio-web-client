@@ -113,7 +113,7 @@ const Input = (props) => {
         <div>
           <i className="bi-x" aria-hidden="true"/>
           <span className={classes.InvalidFeedback}>
-            This field is required.
+            Please enter a valid value.
           </span>
         </div>
       </div>
@@ -122,7 +122,7 @@ const Input = (props) => {
       <div className="d-inline">
         <i className={`${classes.RequiredLabel} align-top bi-asterisk`} />
         <span className="visually-hidden">
-          This field is required.
+          Please enter a valid value.
         </span>
       </div>
     );
