@@ -9,7 +9,7 @@ const ResendEmailButtons = ({bowler}) => {
   if (!bowler || !bowler.ledger_entries) {
     return '';
   }
-  const paymentEntries = bowler.ledger_entries.filter(entry => entry.source === 'paypal');
+  const paymentEntries = bowler.ledger_entries.filter(entry => entry.source === 'stripe');
 
   return (
     <ErrorBoundary>
