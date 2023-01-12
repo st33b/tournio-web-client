@@ -42,9 +42,31 @@ const Page = () => {
         <div className="row d-flex align-items-center g-2 g-md-4 g-lg-5 py-0 py-md-3">
 
           <div className="col-lg-6 pb-2 pb-md-0">
-            <div className="mb-3">
-              {scheme === 'light' && <Image src={logoImage} alt={"Tournio logo"}/>}
-              {scheme === 'dark' && <Image src={logoImageDark} alt={"Tournio logo"}/>}
+            <div className="mb-3 position-relative">
+              {scheme === 'light' &&
+                <Image src={logoImage}
+                       alt={"Tournio logo"}
+                       width={800}
+                       height={169}
+                       sizes={'100vw'}
+                       style={{
+                         width: '100%',
+                         height: 'auto',
+                       }}
+                />
+              }
+              {scheme === 'dark' &&
+                <Image src={logoImageDark}
+                       alt={"Tournio logo"}
+                       width={800}
+                       height={166}
+                       sizes={'100vw'}
+                       style={{
+                         width: '100%',
+                         height: 'auto',
+                       }}
+                />
+              }
             </div>
             <p className="lead mb-1">
               A registration system for IGBO bowling tournaments that is easy to use for both bowlers and
