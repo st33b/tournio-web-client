@@ -106,9 +106,15 @@ const ShiftForm = ({tournament, shift}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      onSuccess: (data) => context.dispatch(tournamentShiftAdded(data)),
+      onSuccess: addShiftSuccess,
       onFailure: (data) => console.log("D'oh!", data),
     });
+  }
+
+  const addShiftSuccess = (data) => {
+    context.dispatch(tournamentShiftAdded(data));
+    setSuccessMessage('Shift added.');
+    setFormDisplayed(false);
   }
 
   const toggleEdit = (event) => {
@@ -175,6 +181,11 @@ const ShiftForm = ({tournament, shift}) => {
     }
   }
 
+  let [dtClass, ddClass] = ['col-6', 'col-6'];
+  if (['setup', 'testing'].includes(tournament.state)) {
+    [dtClass, ddClass] = ['col-5', 'col-7'];
+  }
+
   const outerClasses = [classes.ShiftForm];
   if (formDisplayed) {
     outerClasses.push(classes.FormDisplayed);
@@ -200,53 +211,39 @@ const ShiftForm = ({tournament, shift}) => {
            className={'text-body text-decoration-none'}
            title={'Edit details'}
            onClick={toggleEdit}>
-          <dl className={`${classes.ExistingShift} px-2`}>
+          <dl className={`${classes.ExistingShift} px-1 mt-1`}>
             <div className={'row'}>
-              <dt className={'col-4'}>
-                Order
-              </dt>
-              <dd className={'col'}>
-                {shift.display_order}
-              </dd>
-            </div>
-            <div className={'row'}>
-              <dt className={'col-4'}>
+              <dt className={dtClass}>
                 Name
               </dt>
-              <dd className={'col'}>
-                {shift.name}
+              <dd className={ddClass}>
+                {shift.name || 'n/a'}
               </dd>
-            </div>
-            <div className={'row'}>
-              <dt className={'col-4'}>
+              <dt className={dtClass}>
                 Description
               </dt>
-              <dd className={'col'}>
-                {shift.description}
+              <dd className={ddClass}>
+                {shift.description || 'n/a'}
               </dd>
             </div>
 
-            <div className={`row ${colorClass} g-3`}>
-              <dt className={'col-6 mt-2'}>
+            <div className={`row ${colorClass}`}>
+              <dt className={dtClass}>
                 Capacity
               </dt>
-              <dd className={'col mt-2'}>
+              <dd className={ddClass}>
                 {shift.capacity} bowlers
               </dd>
-            </div>
-            <div className={`row ${colorClass} g-3`}>
-              <dt className={'col-6'}>
+              <dt className={dtClass}>
                 Confirmed
               </dt>
-              <dd className={'col'}>
+              <dd className={ddClass}>
                 {shift.confirmed_count}
               </dd>
-            </div>
-            <div className={`row ${colorClass} g-3`}>
-              <dt className={'col-6'}>
+              <dt className={dtClass}>
                 Requested
               </dt>
-              <dd className={'col'}>
+              <dd className={ddClass}>
                 {shift.requested_count}
               </dd>
             </div>
@@ -360,20 +357,20 @@ const ShiftForm = ({tournament, shift}) => {
           </form>
         </Card.Body>
       }
-      {successMessage && (
-        <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mx-3'}
-             role={'alert'}>
-          <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
-          <div className={'me-auto'}>
-            {successMessage}
-            <button type="button"
-                    className={"btn-close"}
-                    data-bs-dismiss="alert"
-                    onClick={() => setSuccessMessage(null)}
-                    aria-label="Close"/>
-          </div>
-        </div>
-      )}
+      {/*{successMessage && (*/}
+      {/*  <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mx-3'}*/}
+      {/*       role={'alert'}>*/}
+      {/*    <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>*/}
+      {/*    <div className={'me-auto'}>*/}
+      {/*      {successMessage}*/}
+      {/*      <button type="button"*/}
+      {/*              className={"btn-close"}*/}
+      {/*              data-bs-dismiss="alert"*/}
+      {/*              onClick={() => setSuccessMessage(null)}*/}
+      {/*              aria-label="Close"/>*/}
+      {/*    </div>*/}
+      {/*  </div>*/}
+      {/*)}*/}
     </div>
   )
 }

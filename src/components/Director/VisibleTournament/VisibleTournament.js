@@ -23,6 +23,7 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './VisibleTournament.module.scss';
 import Users from "../Tournament/Users";
+import Shifts from "../TournamentInPrep/Shifts";
 
 const VisibleTournament = ({closeTournament}) => {
   const {directorState} = useDirectorContext();
@@ -91,6 +92,7 @@ const VisibleTournament = ({closeTournament}) => {
           <Counts tournament={directorState.tournament} />
           <RegistrationOptions tournament={directorState.tournament}/>
           <EditableConfiguration tournament={directorState.tournament} />
+          <Shifts tournament={directorState.tournament} />
           <MassActions tournament={directorState.tournament}/>
 
           <div className={'d-none d-md-block d-lg-none'}>

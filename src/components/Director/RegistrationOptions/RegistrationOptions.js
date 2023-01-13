@@ -83,7 +83,7 @@ const RegistrationOptions = ({tournament}) => {
   }
 
   return (
-    <Card className={'mb-3'}>
+    <Card className={'mb-2'}>
       <Card.Header as={'h5'} className={'fw-light'}>
         Registration Options
       </Card.Header>

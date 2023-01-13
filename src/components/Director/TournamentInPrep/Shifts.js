@@ -24,6 +24,7 @@ const Shifts = ({tournament}) => {
           ))}
         </ListGroup>
       }
+      <ShiftForm tournament={tournament}/>
 
       {tournament.shifts.length === 0 && <ShiftForm tournament={tournament} />}
     </Card>
