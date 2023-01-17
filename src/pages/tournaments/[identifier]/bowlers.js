@@ -2,25 +2,29 @@ import {useEffect, useState} from "react";
 import {Alert, Col, Row} from "react-bootstrap";
 import {useRouter} from "next/router";
 
-import {fetchBowlerList, useClientReady} from "../../../utils";
+import {devConsoleLog, fetchBowlerList, fetchTournamentDetails, useClientReady} from "../../../utils";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import BowlerListing from "../../../components/Registration/BowlerListing/BowlerListing";
 import Contacts from "../../../components/Registration/Contacts/Contacts";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import {tournamentDetailsRetrieved} from "../../../store/actions/registrationActions";
 
 const Page = () => {
   const router = useRouter();
   const {registration, dispatch} = useRegistrationContext();
-  const { success } = router.query;
+  const { identifier, success } = router.query;
 
   const [loading, setLoading] = useState(false);
   const [bowlers, setBowlers] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
   const onBowlerListRetrieved = (data) => {
-    setBowlers(data);
+    const bowlerComparison = (left, right) => {
+      return left.last_name.toLocaleLowerCase().localeCompare(right.last_name.toLocaleLowerCase());
+    }
+    setBowlers(data.sort(bowlerComparison)); // sort this!
     setLoading(false);
   }
 
@@ -30,18 +34,34 @@ const Page = () => {
     setErrorMessage(data.error);
   }
 
+  const onTournamentFetchSuccess = (data) => {
+    devConsoleLog("Dispatching tournament details retrieved");
+    dispatch(tournamentDetailsRetrieved(data));
+  }
+
   // fetch the list of bowlers
   useEffect(() => {
-    if (!registration || !registration.tournament) {
+    if (!registration || !identifier) {
+      return;
+    }
+    const tournamentIdentifier = identifier;
+    if (!registration.tournament || registration.tournament.identifier !== tournamentIdentifier) {
+      devConsoleLog("Need to fetch the identified tournament");
+      fetchTournamentDetails(
+        tournamentIdentifier,
+        onTournamentFetchSuccess,
+        (data) => { console.log("Failed to load tournament", data)}
+      );
+      setLoading(true);
       return;
     }
     setLoading(true);
     fetchBowlerList({
-      tournamentIdentifier: registration.tournament.identifier,
+      tournamentIdentifier: tournamentIdentifier,
       onSuccess: onBowlerListRetrieved,
       onFailure: onBowlerListFailed,
     });
-  }, [dispatch]);
+  }, [identifier, registration]);
 
   const ready = useClientReady();
   if (!ready) {
