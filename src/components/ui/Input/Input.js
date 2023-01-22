@@ -92,7 +92,7 @@ const Input = (props) => {
     let helper = props.helper.text;
     if (props.helper.url) {
       helper = (
-        <a href={props.helper.url} target="_blank">
+        <a href={props.helper.url} target="_blank" rel="noreferrer">
           {props.helper.text}{' '}
           <i className={`${classes.ExternalLink} bi-box-arrow-up-right pl-2`} aria-hidden="true"/>
         </a>
