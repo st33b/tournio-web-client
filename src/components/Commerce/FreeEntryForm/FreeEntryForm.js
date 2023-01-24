@@ -86,6 +86,14 @@ const FreeEntryForm = () => {
     dispatch(freeEntryDeclared());
   }
 
+  const cancelClicked = (event) => {
+    event.preventDefault();
+    const newState = updateObject(freeEntryForm, {
+      display: false,
+    });
+    setFreeEntryForm(newState);
+  }
+
   let serverMessage = '';
   if (commerce.freeEntry && commerce.freeEntry.message) {
     serverMessage = (
@@ -121,7 +129,7 @@ const FreeEntryForm = () => {
   }
 
   let declareLink = (
-    <div className={`${textClass} text-center`}>
+    <div className={`${textClass} mt-3 text-center`}>
       <a href={'#'}
          className={`btn btn-primary`}
          onClick={linkClicked}>
@@ -143,7 +151,7 @@ const FreeEntryForm = () => {
       {errorMessage}
       <form onSubmit={formHandler} className={formClass}>
         <div className={'row mb-0'}>
-          <label className={'col-12 col-form-label col-form-label-lg pb-1'} htmlFor={'free_entry_code'}>
+          <label className={'col-12 col-form-label col-form-label pb-1'} htmlFor={'free_entry_code'}>
             Free Entry Code
           </label>
           <div className={'col-12'}>
@@ -158,7 +166,10 @@ const FreeEntryForm = () => {
         </div>
 
         <div className={'text-end pt-2'}>
-          <button className={'btn btn-primary'} type={'submit'} disabled={!freeEntryForm.valid}>
+          <button className={'btn btn-outline-dark btn-sm me-3'} type={'button'} onClick={cancelClicked}>
+            Cancel
+          </button>
+          <button className={'btn btn-primary btn-sm'} type={'submit'} disabled={!freeEntryForm.valid}>
             Submit
           </button>
         </div>
