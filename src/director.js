@@ -1,8 +1,7 @@
 import axios from "axios";
-import {apiHost} from "./utils";
+import {apiHost, devConsoleLog} from "./utils";
 import {useDirectorContext} from "./store/DirectorContext";
 import {loggedIn, loggedOut} from "./store/actions/directorActions";
-import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 
 export const useLoggedIn = () => {
@@ -45,9 +44,9 @@ const handleError = (error, callbackFn) => {
       callbackFn({error: 'The server did not respond'});
     }
   } else {
-    console.log('Exceptional error', error.message);
+    devConsoleLog('Exceptional error', error);
     if (callbackFn) {
-      callbackFn({error: error.message});
+      callbackFn(error);
     }
   }
 }

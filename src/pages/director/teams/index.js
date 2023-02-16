@@ -23,6 +23,10 @@ const Page = () => {
 
   // This effect ensures we're logged in with appropriate permissions
   useEffect(() => {
+    if (directorState.tournament === null) {
+      router.push('/director');
+    }
+
     const currentTournamentIdentifier = directorState.tournament.identifier;
 
     if (directorState.user.role !== 'superuser' && !directorState.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
