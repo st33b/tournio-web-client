@@ -35,7 +35,11 @@
 
       .FieldButton {
         margin-top: 1rem;
-      };
+      }
+      .RequiredLabel {
+        margin-left: 5px;
+        color: darkred;
+      }
     }
     .DateTimeButton {
       background-color: var(--tournio-gray-200);
@@ -48,6 +52,7 @@
       margin-top: 2rem;
     }
     .ScratchDivision,
+    .Shift,
     .Event {
       padding-bottom: 1rem;
       padding-right: 0.5rem;

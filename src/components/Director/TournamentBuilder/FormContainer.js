@@ -7,6 +7,7 @@ import Name from './FormSteps/Name';
 import Details from "./FormSteps/Details";
 import Dates from './FormSteps/Dates';
 import Logo from "./FormSteps/Logo";
+import Shifts from './FormSteps/Shifts';
 import Scoring from "./FormSteps/Scoring";
 import RequiredEvents from "./FormSteps/RequiredEvents";
 import AdditionalEvents from "./FormSteps/AdditionalEvents";
@@ -28,6 +29,7 @@ const FormContainer = ({activeStep}) => {
       {activeStep === 'details' && <Details/>}
       {activeStep === 'dates' && <Dates/>}
       {activeStep === 'logo' && <Logo/>}
+      {activeStep === 'shifts' && <Shifts/>}
       {activeStep === 'scoring' && <Scoring/>}
       {activeStep === 'required_events' && <RequiredEvents/>}
       {activeStep === 'additional_events' && <AdditionalEvents/>}
