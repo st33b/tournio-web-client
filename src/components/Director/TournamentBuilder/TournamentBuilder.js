@@ -7,7 +7,7 @@ import {useEffect, useState} from "react";
 import {newTournamentInitiated} from "../../../store/actions/directorActions";
 import {devConsoleLog} from "../../../utils";
 
-const TournamentBuilder = ({step}) => {
+const TournamentBuilder = ({step, substep}) => {
 
   const {directorState} = useDirectorContext();
   const [activeStep, setActiveStep] = useState();
@@ -35,7 +35,7 @@ const TournamentBuilder = ({step}) => {
           <Progress activeStep={activeStep}/>
         </div>
         <div className={'col-12 col-sm-8'}>
-          <FormContainer activeStep={activeStep} />
+          <FormContainer activeStep={activeStep} substep={substep}/>
         </div>
       </div>
     </div>

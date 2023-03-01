@@ -8,7 +8,7 @@ import {directorApiRequest} from "../../../../director";
 import classes from '../TournamentBuilder.module.scss';
 import {newTournamentSaved, newTournamentStepCompleted} from "../../../../store/actions/directorActions";
 
-const Name = ({nextStep}) => {
+const Name = () => {
   const context = useDirectorContext();
   const {directorState, dispatch} = context;
 

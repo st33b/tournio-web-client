@@ -60,6 +60,14 @@
       border-radius: 5px;
       margin-bottom: 0.5rem;
     }
+    .ShiftStyle {
+      .Chosen {
+        background-color: var(--tournio-gray-800);
+      }
+      .NotChosen {
+
+      }
+    }
   }
 }
 
@@ -84,7 +92,14 @@
   }
 
   .FormContainer {
+    .ShiftStyle {
+      .Chosen {
+        background-color: var(--tournio-gray-100);
+      }
+      .NotChosen {
 
+      }
+    }
   }
 }
 
