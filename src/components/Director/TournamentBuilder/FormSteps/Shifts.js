@@ -18,7 +18,7 @@ const Shifts = ({substep}) => {
   const INITIAL_SHIFT_STATE = {
     name: '',
     description: '',
-    capacity: 0,
+    capacity: '',
     display_order: 1,
   };
 
@@ -141,17 +141,17 @@ const Shifts = ({substep}) => {
         </div>
       )}
 
-      {/*<div className={`row ${classes.ButtonRow}`}>*/}
-      {/*  <div className={`col-12 d-flex justify-content-end`}>*/}
-      {/*    <button className={`btn btn-primary`}*/}
-      {/*            disabled={true}*/}
-      {/*            onClick={() => {}}*/}
-      {/*    >*/}
-      {/*      Next*/}
-      {/*      <i className={'bi-arrow-right ps-2'} aria-hidden={true}/>*/}
-      {/*    </button>*/}
-      {/*  </div>*/}
-      {/*</div>*/}
+      <div className={`row ${classes.ButtonRow}`}>
+        <div className={`col-12 d-flex justify-content-end`}>
+          <button className={`btn btn-primary`}
+                  disabled={!valid}
+                  onClick={() => {}}
+          >
+            Next
+            <i className={'bi-arrow-right ps-2'} aria-hidden={true}/>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
