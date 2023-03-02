@@ -41,6 +41,10 @@
         color: darkred;
       }
     }
+    .FieldRow {
+      margin-left: 0;
+      margin-right: 0;
+    }
     .DateTimeButton {
       background-color: var(--tournio-gray-200);
       border-color: #CED4DA;
@@ -61,8 +65,9 @@
       margin-bottom: 0.5rem;
     }
     .ShiftStyle {
+      margin-bottom: 0.5rem;
       .Chosen {
-        background-color: var(--tournio-gray-800);
+        background-color: var(--tournio-gray-200);
       }
       .NotChosen {
 
@@ -89,15 +94,14 @@
       }
 
     }
-  }
+    .FormContainer {
+      .ShiftStyle {
+        .Chosen {
+          background-color: var(--tournio-gray-800);
+        }
+        .NotChosen {
 
-  .FormContainer {
-    .ShiftStyle {
-      .Chosen {
-        background-color: var(--tournio-gray-100);
-      }
-      .NotChosen {
-
+        }
       }
     }
   }
@@ -161,6 +165,10 @@
       }
       label {
       }
+      //.FieldRow {
+      //  margin-left: -0.75rem;
+      //  margin-right: -0.75rem;
+      //}
     }
   }
 }
@@ -185,7 +193,7 @@
 
     .FormContainer {
       label {
-        text-align: right;
+        //text-align: right;
       }
     }
   }

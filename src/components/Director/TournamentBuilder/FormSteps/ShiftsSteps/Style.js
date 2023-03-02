@@ -2,26 +2,13 @@ import {useDirectorContext} from "../../../../../store/DirectorContext";
 
 import classes from '../../TournamentBuilder.module.scss';
 import {useState} from "react";
-import {devConsoleLog} from "../../../../../utils";
 
 const Style = ({style, styleChosen}) => {
-  const {directorState, dispatch} = useDirectorContext();
-
   const STYLES = {
     'one': 'One shift for all bowlers in all events',
     'multi_inclusive': '2+ shifts, inclusive of all events',
     'mix_and_match': 'Mix-and-match shifts for sets of events',
   }
-  // const VALID_VALUES = [
-  //   'one',
-  //   'multi_inclusive',
-  //   'mix_and_match',
-  // ];
-  // const STYLE_LABELS = [
-  //   'One shift for all bowlers in all events',
-  //   '2+ shifts, inclusive of all events',
-  //   'Mix-and-match shifts for sets of events',
-  // ];
 
   const initialFormState = {
     fields: {
@@ -51,11 +38,11 @@ const Style = ({style, styleChosen}) => {
 
   return (
     <div className={classes.ShiftStyle}>
-      <div className={`row ${style ? classes.Chosen : classes.NotChosen} py-1`}>
+      <div className={`row ${!!style ? classes.Chosen : classes.NotChosen} py-1 mx-0`}>
         <div className={`col-12 col-sm-3 col-md-2`}>
-          <p className={`lead mb-0`}>
+          <label className={'col-form-label'}>
             Style
-          </p>
+          </label>
         </div>
         <div className={`col`}>
           {!style && Object.keys(STYLES).map(key => (
@@ -85,7 +72,6 @@ const Style = ({style, styleChosen}) => {
                  onClick={changeStyle}>
                 Change
               </a>
-
             </div>
           )}
         </div>
