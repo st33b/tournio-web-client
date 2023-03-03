@@ -11,7 +11,6 @@ import ShiftForm from "./ShiftsSteps/ShiftForm";
 import classes from '../TournamentBuilder.module.scss';
 
 const Shifts = ({substep}) => {
-  const router = useRouter();
   const context = useDirectorContext();
   const {directorState, dispatch} = context;
 
@@ -119,6 +118,45 @@ const Shifts = ({substep}) => {
     setValid(false);
   }
 
+  const onSuccess = (data) => {
+    dispatch(newTournamentSaved(data));
+    dispatch(newTournamentStepCompleted('shifts', 'scoring'));
+  }
+
+  const onFailure = (data) => {
+    devConsoleLog("Failed to save the shifts :(", data);
+  }
+
+  const nextClicked = () => {
+    // build the data to send
+    let shiftData = [];
+    if (chosenStyle === 'one') {
+      shiftData.push(singleShift);
+    } else {
+      shiftData = [...shiftSet];
+    }
+
+    // send it up, with success/failure handlers
+    const identifier = directorState.builder.tournament.identifier;
+    const uri = `/director/tournaments/${identifier}`;
+    const requestData = {
+      tournament: {
+        shifts_attributes: shiftData,
+      }
+    };
+    const requestConfig = {
+      method: 'patch',
+      data: requestData,
+    };
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      onSuccess: onSuccess,
+      onFailure: onFailure,
+    });
+  }
+
   return (
     <div>
       <h2>{directorState.builder.tournament.name}: Shifts</h2>
@@ -145,7 +183,7 @@ const Shifts = ({substep}) => {
         <div className={`col-12 d-flex justify-content-end`}>
           <button className={`btn btn-primary`}
                   disabled={!valid}
-                  onClick={() => {}}
+                  onClick={nextClicked}
           >
             Next
             <i className={'bi-arrow-right ps-2'} aria-hidden={true}/>

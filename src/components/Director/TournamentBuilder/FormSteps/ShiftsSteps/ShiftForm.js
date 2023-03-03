@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from "react";
-import Card from 'react-bootstrap/Card';
+import {devConsoleLog} from "../../../../../utils";
 
 import classes from '../../TournamentBuilder.module.scss';
-import {devConsoleLog} from "../../../../../utils";
 
 const ShiftForm = ({shift, onShiftUpdated, withDetails, onShiftDeleted}) => {
   const areAllValid = (fields) => {
@@ -19,7 +18,10 @@ const ShiftForm = ({shift, onShiftUpdated, withDetails, onShiftDeleted}) => {
         validation: {
           required: true,
         },
-        validityErrors: ['valueMissing', 'tooShort'],
+        validityErrors: [
+          'valueMissing',
+          'tooShort'
+        ],
         validated: false,
         touched: false,
       },
@@ -34,7 +36,10 @@ const ShiftForm = ({shift, onShiftUpdated, withDetails, onShiftDeleted}) => {
           required: true,
           min: 1,
         },
-        validityErrors: ['valueMissing', 'rangeUnderflow'],
+        validityErrors: [
+          'valueMissing',
+          'rangeUnderflow'
+        ],
         validated: false,
         touched: false,
       },
@@ -45,7 +50,10 @@ const ShiftForm = ({shift, onShiftUpdated, withDetails, onShiftDeleted}) => {
           required: true,
           min: 1,
         },
-        validityErrors: ['valueMissing', 'rangeUnderflow'],
+        validityErrors: [
+          'valueMissing',
+          'rangeUnderflow'
+        ],
         validated: false,
         touched: false,
       },
