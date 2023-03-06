@@ -135,7 +135,7 @@ const ShiftForm = ({shift, onShiftUpdated, withDetails, onShiftDeleted}) => {
             <button type={'button'}
                     title={'Delete'}
                     onClick={onShiftDeleted}
-                    className={'btn btn-sm text-danger fs-3 px-0 position-absolute top-0 end-0'}>
+                    className={`${classes.DeleteButton} btn btn-sm text-danger fs-3 px-0 pt-0 position-absolute top-0 end-0`}>
               <i className={'bi-x-circle'} aria-hidden={true}/>
               <span className={'visually-hidden'}>
               Delete

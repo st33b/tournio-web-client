@@ -6,9 +6,10 @@ import FormContainer from "./FormContainer";
 import {useEffect, useState} from "react";
 import {newTournamentInitiated} from "../../../store/actions/directorActions";
 import {devConsoleLog} from "../../../utils";
+import ErrorBoundary from "../../common/ErrorBoundary";
 
 const TournamentBuilder = ({step, substep}) => {
-
+  devConsoleLog("Rendering TournamentBuilder...");
   const {directorState} = useDirectorContext();
   const [activeStep, setActiveStep] = useState();
 
@@ -34,9 +35,11 @@ const TournamentBuilder = ({step, substep}) => {
         <div className={'col-12 col-sm-4'}>
           <Progress activeStep={activeStep}/>
         </div>
-        <div className={'col-12 col-sm-8'}>
-          <FormContainer activeStep={activeStep} substep={substep}/>
-        </div>
+        <ErrorBoundary>
+          <div className={'col-12 col-sm-8'}>
+            <FormContainer activeStep={activeStep} substep={substep}/>
+          </div>
+        </ErrorBoundary>
       </div>
     </div>
   );

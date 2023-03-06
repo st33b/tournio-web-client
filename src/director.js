@@ -7,12 +7,18 @@ import {useEffect, useState} from "react";
 export const useLoggedIn = () => {
   const {directorState} = useDirectorContext();
   const [loggedIn, setLoggedIn] = useState(-1);
+
   useEffect(() => {
     if (!directorState) {
       return;
     }
-    setLoggedIn(directorState.user !== null ? 1 : 0);
-  }, [directorState]);
+    if (!directorState.user) {
+      setLoggedIn(0);
+      return;
+    }
+
+    setLoggedIn(1);
+  }, [directorState.user]);
   return loggedIn;
 }
 
@@ -23,9 +29,6 @@ const handleSuccess = (response, dispatch, onSuccess, onFailure) => {
     }
   } else if (response.status === 401) {
     dispatch(loggedOut());
-    if (onFailure) {
-      onFailure({error: 'Login session timed out'})
-    }
   } else if (response.status === 404) {
     if (onFailure) {
       onFailure({error: 'Not found'});
