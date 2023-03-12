@@ -80,7 +80,7 @@ const TournamentDetails = ({tournament}) => {
     )
   }
 
-  let registrationSection = '';
+  let registrationOptions = '';
   if (tournament.state === 'testing' || tournament.state === 'active' || tournament.state === 'demo') {
     const shift = tournament.shifts[0];
     const optionTypes = [
@@ -112,11 +112,10 @@ const TournamentDetails = ({tournament}) => {
     ]
     // const eventSelectionEnabled = tournament.purchasable_items.some(item => item.determination === 'event');
     const eventSelectionEnabled = false;
-    let registrationOptions = '';
     if (eventSelectionEnabled) {
       // only show what's enabled
       registrationOptions = optionTypes.map(({name, path, linkText}) => {
-        if (!shift.registration_types[name]) {
+        if (!tournament.registration_options[name]) {
           return '';
         }
         return (
@@ -135,8 +134,8 @@ const TournamentDetails = ({tournament}) => {
         if (name === 'partner' || name === 'new_pair') {
           return '';
         }
-        const className = shift.registration_types[name] ? 'link-primary' : 'text-decoration-line-through';
-        const enableLink = shift.registration_types[name];
+        const className = tournament.registration_options[name] ? 'link-primary' : 'text-decoration-line-through';
+        const enableLink = tournament.registration_options[name];
         return (
           <ListGroup.Item key={name}
                           className={className}
@@ -148,26 +147,7 @@ const TournamentDetails = ({tournament}) => {
         );
       });
     }
-    registrationSection = (
-      <Col md={6}>
-        <Card>
-          <Card.Header as={'h6'}>
-            Registration Options
-          </Card.Header>
-          <ListGroup variant={'flush'}>
-            {registrationOptions}
-          </ListGroup>
-        </Card>
-      </Col>
-    );
   }
-
-  const payFeeLink = (
-    <a href={`${router.asPath}/bowlers`}
-       className={''}>
-      Choose Events &amp; Pay
-    </a>
-  );
 
   let testingEnvironment = '';
   if (tournament.state === 'testing' || tournament.state === 'demo') {
@@ -195,11 +175,11 @@ const TournamentDetails = ({tournament}) => {
   let youWillNeed = <hr/>;
   if (tournament.state === 'testing' || tournament.state === 'active' || tournament.state === 'demo') {
     youWillNeed = (
-      <div className={'p-3'}>
+      <div className={classes.YouWillNeed}>
         <h6>
           You will need the following information for each registered bowler:
         </h6>
-        <ul className={'mb-1'}>
+        <ul>
           <li>
             Names and contact information (email, phone, address)
           </li>
@@ -238,54 +218,27 @@ const TournamentDetails = ({tournament}) => {
   const displayCapacity = tournament.display_capacity;
   if (tournament.shifts.length > 1) {
     shiftContent = (
-      <div className={`${classes.Shifts} my-3 border rounded-sm p-2 p-sm-3`}>
+      <div className={`${classes.Shifts}`}>
         <h4 className={'fw-light'}>
-          Shift Days/Times
+          Shifts
         </h4>
         {tournament.shifts.map((shift, i) => {
           const requestedCount = Math.min(shift.requested_count, shift.capacity - shift.confirmed_count);
           return (
-            <div key={i} className={`${classes.ShiftInfo} border rounded-sm p-2 p-sm-3 mb-2 mb-sm-3`}>
+            <div key={i} className={`${classes.ShiftInfo} border rounded-2`}>
               <div className={'row'}>
-                <div className={'col-12 col-sm-4'}>
+                <div className={'col'}>
                   <h5>
                     {shift.name}
                   </h5>
-                  <p>
+                  {shift.description && (
+                    <h6 className={'fw-light'}>
+                      {shift.description}
+                    </h6>
+                  )}
+                  <p className={'mb-0'}>
                     Capacity: {shift.capacity} bowlers / {shift.capacity / 4} teams
                   </p>
-                </div>
-                <div className={'col'}>
-                  <table className={'table table-sm table-bordered mb-0'}>
-                    <thead>
-                    <tr>
-                      <th>
-                        Event
-                      </th>
-                      <th>
-                        Day
-                      </th>
-                      <th>
-                        Time
-                      </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {shift.events.map((event, j) => (
-                      <tr key={j}>
-                        <td>
-                          {event.event}
-                        </td>
-                        <td>
-                          {event.day}
-                        </td>
-                        <td>
-                          {event.time}
-                        </td>
-                      </tr>
-                    ))}
-                    </tbody>
-                  </table>
                 </div>
               </div>
 
@@ -299,20 +252,21 @@ const TournamentDetails = ({tournament}) => {
     );
   } else if (tournament.shifts.length === 1) {
     const shift = tournament.shifts[0];
-    const requestedCount = Math.min(shift.requested_count, shift.capacity - shift.confirmed_count);
     shiftContent = displayCapacity && (
-      <div className={`${classes.ShiftInfo} my-3 border rounded-sm p-2 p-sm-3`}>
-        <div>
-          <h5 className={'fw-light'}>
-            Capacity
-          </h5>
-          <p>
-            The tournament can accommodate up to {shift.capacity} bowlers.
-          </p>
+      <div className={classes.Shifts}>
+        <div className={`${classes.ShiftInfo} border rounded-2`}>
+          <div>
+            <h5 className={'fw-light'}>
+              Capacity
+            </h5>
+            <p>
+              The tournament can accommodate up to {shift.capacity} bowlers.
+            </p>
 
-          <ShiftCapacity shift={shift} />
+            <ShiftCapacity shift={shift} />
+          </div>
+          <ProgressBarLegend/>
         </div>
-        <ProgressBarLegend/>
       </div>
     );
   }
@@ -354,31 +308,36 @@ const TournamentDetails = ({tournament}) => {
 
       {youWillNeed}
 
-      <Row className={'mt-3'}>
-        {registrationSection}
-        <Col>
-          <h6 className="my-2">
-            Already registered?
-          </h6>
-          <ul>
-            <li className={'my-2'}>
-              {payFeeLink}
-            </li>
-          </ul>
+      <Row className={classes.Actions}>
+        <Col xs={12} md={6}>
+          <Card>
+            <Card.Header as={'h6'}>
+              Registration Options
+            </Card.Header>
+            <ListGroup variant={'flush'}>
+              {registrationOptions}
+            </ListGroup>
+          </Card>
+        </Col>
+        <Col xs={12} md={6} className={'text-center mt-4 mt-md-0'}>
+          <div>
+            <a href={`${router.asPath}/bowlers`}
+               className={'btn btn-success'}
+               role={'link'}>
+              Choose Events &amp; Pay
+            </a>
+          </div>
+        </Col>
 
-          <h6 className="mt-4">
-            Not an IGBO member yet?
-          </h6>
-          <ul>
-            <li>
-              <a href='https://reg.sportlomo.com/club/igbo/igboassociates'
-                 target='_new'>
-                Apply for Associate Membership
-                <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
-              </a>
-            </li>
-          </ul>
-
+        <Col className={'text-center mt-4'}>
+          <a href={'https://reg.sportlomo.com/club/igbo/igboassociates'}
+             target={'_new'}>
+            Apply for Associate Membership
+            <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
+          </a>
+          <span className={`${classes.Explainer} text-muted`}>
+            (required only if you aren&apos;t already an IGBO member.)
+          </span>
         </Col>
       </Row>
     </div>

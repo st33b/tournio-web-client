@@ -12,6 +12,7 @@ import Contacts from "../../components/Registration/Contacts/Contacts";
 import classes from "../../components/Registration/TournamentDetails/TournamentDetails.module.scss";
 import {useCommerceContext} from "../../store/CommerceContext";
 import {tournamentDetailsRetrieved} from "../../store/actions/registrationActions";
+import ErrorBoundary from "../../components/common/ErrorBoundary";
 
 const Page = () => {
   const router = useRouter();
@@ -78,7 +79,9 @@ const Page = () => {
           <Contacts tournament={tournament}/>
         </div>
         <div className={'col-12 col-md-8'}>
-          <TournamentDetails tournament={tournament} />
+          <ErrorBoundary>
+            <TournamentDetails tournament={tournament} />
+          </ErrorBoundary>
         </div>
         <div className={'d-md-none col-12'}>
           <Contacts tournament={tournament}/>
