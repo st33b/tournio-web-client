@@ -1,5 +1,4 @@
 import classes from './TournamentDetails.module.scss';
-import {format} from "date-fns";
 import {formatInTimeZone} from 'date-fns-tz';
 import {Col, Row} from "react-bootstrap";
 
@@ -20,13 +19,11 @@ const Details = ({tournament}) => {
 
   const start = new Date(tournament.start_date);
   const end = new Date(tournament.end_date);
-  const datesString = `${format(start, 'LLLL')} ${start.getDate()}-${end.getDate()}, ${end.getFullYear()}`;
 
   const earlyRegEnds = tournament.early_registration_ends;
   const lateRegStarts = tournament.late_fee_applies_at;
   const noFeeChanges = !earlyRegEnds && !lateRegStarts;
 
-  // const zonedDeadline = utcToZonedTime(new Date(tournament.entry_deadline), tournament.timezone);
   const formattedDeadline = formatInTimeZone(new Date(tournament.entry_deadline), tournament.timezone,'PP p z');
 
   return (

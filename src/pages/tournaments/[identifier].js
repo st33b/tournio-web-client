@@ -83,7 +83,7 @@ const Page = () => {
             <TournamentDetails tournament={tournament} />
           </ErrorBoundary>
         </div>
-        <div className={'d-md-none col-12'}>
+        <div className={'col-12 d-md-none mt-3'}>
           <Contacts tournament={tournament}/>
         </div>
       </Row>

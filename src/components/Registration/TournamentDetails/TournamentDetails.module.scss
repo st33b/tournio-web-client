@@ -64,12 +64,21 @@
   }
 
   .Actions {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    margin-top: 1.5rem;
 
-    .Explainer {
-      display: block;
-      font-size: 80%;
+    .Action {
+      margin: 0.5rem 0;
+
+      .Explainer {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 80%;
+      }
+    }
+
+    .MoneyAction {
+      margin-top: 1.25rem;
+      margin-bottom: 1.25rem;
     }
   }
 }

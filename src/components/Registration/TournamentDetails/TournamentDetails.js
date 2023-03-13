@@ -134,16 +134,19 @@ const TournamentDetails = ({tournament}) => {
         if (name === 'partner' || name === 'new_pair') {
           return '';
         }
-        const className = tournament.registration_options[name] ? 'link-primary' : 'text-decoration-line-through';
+        // const className = tournament.registration_options[name] ? 'link-primary' : 'text-decoration-line-through';
         const enableLink = tournament.registration_options[name];
+        const disabledClass = enableLink ? '' : 'disabled';
+        const ariaDisabled = enableLink ? 'false' : 'true';
+        const tabindex = enableLink ? '' : '-1';
         return (
-          <ListGroup.Item key={name}
-                          className={className}
-                          href={enableLink ? `${router.asPath}/${path}` : undefined}
-                          disabled={!enableLink}
-                          action={enableLink}>
+          <a href={enableLink ? `${router.asPath}/${path}` : undefined}
+             className={`btn btn-outline-primary ${disabledClass} ${classes.Action}`}
+             aria-disabled={ariaDisabled}
+             tabIndex={tabindex}
+             key={name}>
             {linkText}
-          </ListGroup.Item>
+          </a>
         );
       });
     }
@@ -309,36 +312,39 @@ const TournamentDetails = ({tournament}) => {
       {youWillNeed}
 
       <Row className={classes.Actions}>
-        <Col xs={12} md={6}>
+        <Col xs={12} md={{span: 10, offset: 1}} lg={{span: 8, offset: 2}} xxl={{span: 6, offset: 3}} >
           <Card>
             <Card.Header as={'h6'}>
-              Registration Options
+              I want to...
             </Card.Header>
-            <ListGroup variant={'flush'}>
-              {registrationOptions}
-            </ListGroup>
+
+            <Card.Body>
+              <Card.Text className={'d-flex flex-column align-items-end'}>
+                {registrationOptions}
+
+                <a href={`${router.asPath}/bowlers`}
+                   className={`btn btn-outline-success ${classes.Action} ${classes.MoneyAction}`}
+                   role={'link'}>
+                  Choose Events &amp; Pay
+                </a>
+
+                <span className={`${classes.Action} text-end`}>
+                  <a href={'https://reg.sportlomo.com/club/igbo/igboassociates'}
+                     className={`btn btn-outline-dark btn-sm`}
+                     role={'link'}
+                     target={'_new'}>
+                    Apply for Associate Membership
+                    <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
+                  </a>
+                  <span className={`${classes.Explainer} text-muted`}>
+                    (required only if you aren&apos;t already an IGBO member)
+                  </span>
+                </span>
+              </Card.Text>
+            </Card.Body>
           </Card>
         </Col>
-        <Col xs={12} md={6} className={'text-center mt-4 mt-md-0'}>
-          <div>
-            <a href={`${router.asPath}/bowlers`}
-               className={'btn btn-success'}
-               role={'link'}>
-              Choose Events &amp; Pay
-            </a>
-          </div>
-        </Col>
 
-        <Col className={'text-center mt-4'}>
-          <a href={'https://reg.sportlomo.com/club/igbo/igboassociates'}
-             target={'_new'}>
-            Apply for Associate Membership
-            <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
-          </a>
-          <span className={`${classes.Explainer} text-muted`}>
-            (required only if you aren&apos;t already an IGBO member.)
-          </span>
-        </Col>
       </Row>
     </div>
   );
