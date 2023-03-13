@@ -38,6 +38,9 @@ const TeamListing = ({teams}) => {
         Header: 'Shift',
         accessor: 'shift',
         Cell: ({row, value}) => {
+          if (value === null) {
+            return '';
+          }
           const confClass = `text-${confClasses[row.original.confirmation]}`;
           return (
             <span>
