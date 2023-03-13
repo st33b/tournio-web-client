@@ -3,6 +3,13 @@
     text-align: left;
     font-weight: normal;
   }
+  .NoteIndicator {
+    font-size: 60%;
+  }
+  .ConfirmationText {
+    margin-top: 1rem;
+    font-size: 90%
+  }
   @media (min-width: 768px) {
     .Label {
       text-align: right;

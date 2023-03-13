@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Form, Row, Col, Button} from "react-bootstrap";
 import {Map} from "immutable";
 
@@ -64,8 +64,9 @@ const TeamForm = ({tournament, teamFormCompleted}) => {
                     className={classes.Label}
                     md={4}>
           Shift Preference
+          <i className={`${classes.NoteIndicator} align-top bi-asterisk ms-1`} aria-hidden={true} />
         </Form.Label>
-        <Col md={4}>
+        <Col>
           {tournament.available_shifts.map((shift, i) => (
             <Form.Check type={'radio'}
                         key={i}
@@ -77,6 +78,10 @@ const TeamForm = ({tournament, teamFormCompleted}) => {
                         id={`shift_${i}`}
                         name={'shift'} />
           ))}
+          <div className={classes.ConfirmationText}>
+            <i className={`${classes.NoteIndicator} align-top bi-asterisk me-1`} aria-hidden={true} />
+            A bowler&apos;s place in a shift is not confirmed until they have paid their registration fees.
+          </div>
         </Col>
       </Form.Group>
     )

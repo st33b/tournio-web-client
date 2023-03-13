@@ -9,6 +9,11 @@ import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeade
 import classes from './TeamListing.module.scss';
 
 const TeamListing = ({teams}) => {
+  const confClasses = {
+    none: 'danger',
+    some: 'warning',
+    all: 'success',
+  }
   const columns = useMemo(() => [
       {
         Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
@@ -29,20 +34,34 @@ const TeamListing = ({teams}) => {
         disableSortBy: true,
         filter: lessThan,
       },
-    {
-      Header: 'Place with Others?',
-      accessor: 'place_with_others',
-      Cell: ({cell: {value}}) => {
-        const classes = value ? ['text-success', 'bi-check-lg'] : ['text-danger', 'bi-x-lg'];
-        const text = value ? 'Yes' : 'No';
-        return (
-          <div className={'text-center'}>
-            <i className={classes.join(' ')} aria-hidden={true}/>
-            <span className={'visually-hidden'}>{text}</span>
-          </div>
-        );
+      {
+        Header: 'Shift',
+        accessor: 'shift',
+        Cell: ({row, value}) => {
+          const confClass = `text-${confClasses[row.original.confirmation]}`;
+          return (
+            <span>
+              {value.name}
+              <i className={`bi-circle-fill ms-1 ${confClass}`} aria-hidden={true}/>
+              <span className={'visually-hidden'}>{row.original.confirmation} confirmed</span>
+            </span>
+          )
+        },
       },
-    }
+      {
+        Header: 'Place with Others?',
+        accessor: 'place_with_others',
+        Cell: ({value}) => {
+          const classes = value ? ['text-success', 'bi-check-lg'] : ['text-danger', 'bi-dash-circle'];
+          const text = value ? 'Yes' : 'No';
+          return (
+            <div className={'text-center'}>
+              <i className={classes.join(' ')} aria-hidden={true}/>
+              <span className={'visually-hidden'}>{text}</span>
+            </div>
+          );
+        },
+      },
     ], []);
 
   let data = [];
