@@ -3,7 +3,6 @@ import {Form, Row, Col, Button} from "react-bootstrap";
 import {Map} from "immutable";
 
 import classes from './TeamForm.module.scss';
-import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {useClientReady} from "../../../utils";
 
@@ -59,24 +58,25 @@ const TeamForm = ({tournament, teamFormCompleted}) => {
   if (tournament.available_shifts.length > 1) {
     shiftSelection = (
       <Form.Group as={Row}
-                  className={'mb-3'}
+                  className={'my-3'}
                   controlId={'shift'}>
         <Form.Label column={true}
                     className={classes.Label}
                     md={4}>
-          Requested Shift
+          Shift Preference
         </Form.Label>
         <Col md={4}>
-          <Form.Select name={'shift'}
-                       required
-                       onChange={inputChangedHandler}
-                       value={teamForm.get('shift')}
-          >
-            <option>-- Choose a shift</option>
-            {tournament.available_shifts.map(shift => (
-              <option key={shift.identifier} value={shift.identifier}>{shift.name}</option>
-            ))}
-          </Form.Select>
+          {tournament.available_shifts.map((shift, i) => (
+            <Form.Check type={'radio'}
+                        key={i}
+                        required={true}
+                        onChange={inputChangedHandler}
+                        label={shift.name}
+                        value={shift.identifier}
+                        checked={teamForm.get('shift') === shift.identifier}
+                        id={`shift_${i}`}
+                        name={'shift'} />
+          ))}
         </Col>
       </Form.Group>
     )
@@ -89,7 +89,7 @@ const TeamForm = ({tournament, teamFormCompleted}) => {
         <Form.Label column={true}
                     className={classes.Label}
                     md={4}>
-          Requested Shift
+          Shift Preference
         </Form.Label>
         <Col>
           <span className={`${classes.OneShift} align-middle`}>
