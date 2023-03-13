@@ -325,7 +325,7 @@ const TournamentDetails = ({tournament}) => {
                 <a href={`${router.asPath}/bowlers`}
                    className={`btn btn-outline-success ${classes.Action} ${classes.MoneyAction}`}
                    role={'link'}>
-                  Choose Events &amp; Pay
+                  Choose Events &amp; Pay Fees
                 </a>
 
                 <span className={`${classes.Action} text-end`}>
