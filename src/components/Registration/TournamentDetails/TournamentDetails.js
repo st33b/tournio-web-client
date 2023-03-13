@@ -128,25 +128,22 @@ const TournamentDetails = ({tournament}) => {
         );
       });
     } else {
-      // show the standard ways, striking them out if disabled
+      // show the standard ways
       registrationOptions = optionTypes.map(({name, path, linkText}) => {
         // partnering and a new pair aren't part of a standard tournament
         if (name === 'partner' || name === 'new_pair') {
           return '';
         }
-        // const className = tournament.registration_options[name] ? 'link-primary' : 'text-decoration-line-through';
         const enableLink = tournament.registration_options[name];
-        const disabledClass = enableLink ? '' : 'disabled';
-        const ariaDisabled = enableLink ? 'false' : 'true';
-        const tabindex = enableLink ? '' : '-1';
         return (
-          <a href={enableLink ? `${router.asPath}/${path}` : undefined}
-             className={`btn btn-outline-primary ${disabledClass} ${classes.Action}`}
-             aria-disabled={ariaDisabled}
-             tabIndex={tabindex}
-             key={name}>
+          <ListGroup.Item action={true}
+                          key={name}
+                          className={`${classes.Action} ${enableLink ? '' : 'text-decoration-line-through'}`}
+                          variant={'primary'}
+                          disabled={!enableLink}
+                          href={enableLink ? `${router.asPath}/${path}` : undefined}>
             {linkText}
-          </a>
+          </ListGroup.Item>
         );
       });
     }
@@ -245,7 +242,7 @@ const TournamentDetails = ({tournament}) => {
                 </div>
               </div>
 
-              {displayCapacity && <ShiftCapacity shift={shift} key={i} />}
+              {displayCapacity && <ShiftCapacity shift={shift} key={i}/>}
             </div>
           )
         })}
@@ -266,7 +263,7 @@ const TournamentDetails = ({tournament}) => {
               The tournament can accommodate up to {shift.capacity} bowlers.
             </p>
 
-            <ShiftCapacity shift={shift} />
+            <ShiftCapacity shift={shift}/>
           </div>
           <ProgressBarLegend/>
         </div>
@@ -312,36 +309,39 @@ const TournamentDetails = ({tournament}) => {
       {youWillNeed}
 
       <Row className={classes.Actions}>
-        <Col xs={12} md={{span: 10, offset: 1}} lg={{span: 8, offset: 2}} xxl={{span: 6, offset: 3}} >
+        <Col xs={12} sm={{span: 8, offset: 2}} md={{span: 10, offset: 1}} lg={{span: 6, offset: 3}}
+             xxl={{span: 5, offset: 1}}>
           <Card>
             <Card.Header as={'h6'}>
               I want to...
             </Card.Header>
 
-            <Card.Body>
-              <Card.Text className={'d-flex flex-column align-items-end'}>
-                {registrationOptions}
+            <ListGroup variant={'flush'}
+                       className={'text-center'}>
 
-                <a href={`${router.asPath}/bowlers`}
-                   className={`btn btn-outline-success ${classes.Action} ${classes.MoneyAction}`}
-                   role={'link'}>
-                  Choose Events &amp; Pay Fees
-                </a>
+              {registrationOptions}
 
-                <span className={`${classes.Action} text-end`}>
-                  <a href={'https://reg.sportlomo.com/club/igbo/igboassociates'}
-                     className={`btn btn-outline-dark btn-sm`}
-                     role={'link'}
-                     target={'_new'}>
-                    Apply for Associate Membership
-                    <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
-                  </a>
+              <ListGroup.Item action={true}
+                              variant={'success'}
+                              href={`${router.asPath}/bowlers`}
+                              className={`${classes.MoneyAction}`}>
+                Choose Events &amp; Pay Fees
+              </ListGroup.Item>
+
+              <ListGroup.Item action={true}
+                              variant={'secondary'}
+                              href={'https://reg.sportlomo.com/club/igbo/igboassociates'}
+                              target={'_new'}>
+
+                <span className={`${classes.Action}`}>
+                  Apply for Associate Membership
+                  <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
                   <span className={`${classes.Explainer} text-muted`}>
                     (required only if you aren&apos;t already an IGBO member)
                   </span>
                 </span>
-              </Card.Text>
-            </Card.Body>
+              </ListGroup.Item>
+            </ListGroup>
           </Card>
         </Col>
 

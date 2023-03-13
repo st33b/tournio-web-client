@@ -67,8 +67,6 @@
     margin-top: 1.5rem;
 
     .Action {
-      margin: 0.5rem 0;
-
       .Explainer {
         display: block;
         margin-top: 0.25rem;
@@ -77,8 +75,10 @@
     }
 
     .MoneyAction {
-      margin-top: 1.25rem;
-      margin-bottom: 1.25rem;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
     }
   }
 }
