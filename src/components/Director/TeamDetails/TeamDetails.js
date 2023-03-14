@@ -222,7 +222,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
         <caption className={classes.Caption}>
           Doubles Partner Assignment
         </caption>
-        <thead className={'table-light'}>
+        <thead>
         <tr>
           <th scope={'col'}>
             Bowler
@@ -293,7 +293,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
                 <caption className={classes.Caption}>
                   Roster
                 </caption>
-                <thead className={'table-light'}>
+                <thead>
                 {headerGroups.map((headerGroup, i) => (
                   <tr key={i} {...headerGroup.getHeaderGroupProps()}>
                     {headerGroup.headers.map((column, j) => (

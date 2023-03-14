@@ -1,7 +1,7 @@
 .PartnerSelectionRow {
   .ChoosingBowler {
     font-weight: bold;
-    border-right: 1px solid #ccc;
+    border-right: 1px solid var(--tournio-gray-600);
   }
   .PartnerCandidate {
     text-align: center;

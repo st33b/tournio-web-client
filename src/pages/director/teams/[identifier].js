@@ -147,6 +147,7 @@ const Page = () => {
     setLoading(false);
     setTeam(data);
     dispatch(teamUpdated(data));
+    setSuccessMessage('Changes applied.');
   }
 
   const updateTeamFailure = (data) => {
@@ -163,6 +164,29 @@ const Page = () => {
       },
       data: {
         team: teamData,
+      },
+    }
+    setLoading(true);
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      onSuccess: updateTeamSuccess,
+      onFailure: updateTeamFailure,
+    });
+  }
+
+  const shiftChangeHandler = (newShiftIdentifier) => {
+    const uri = `/director/teams/${identifier}`;
+    const requestConfig = {
+      method: 'patch',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        team: {
+          shift_identifier: newShiftIdentifier,
+        },
       },
     }
     setLoading(true);
@@ -204,7 +228,7 @@ const Page = () => {
               Shift
             </Card.Header>
             <Card.Body>
-              <TeamShiftForm allShifts={directorState.tournament.shifts} team={team}/>
+              <TeamShiftForm allShifts={directorState.tournament.shifts} team={team} onShiftChange={shiftChangeHandler}/>
             </Card.Body>
           </Card>
 

@@ -4,7 +4,7 @@ import {useClientReady} from "../../../utils";
 
 import classes from './TeamShiftForm.module.scss';
 
-const TeamShiftForm = ({allShifts, team}) => {
+const TeamShiftForm = ({allShifts, team, onShiftChange}) => {
   const initialFormData = {
     touched: false,
     valid: false,
@@ -42,8 +42,9 @@ const TeamShiftForm = ({allShifts, team}) => {
     setFormData(newFormData);
   }
 
-  const submitClicked = () => {
-
+  const submitClicked = (e) => {
+    e.preventDefault();
+    onShiftChange(formData.fields.shift_identifier);
   }
 
   const ready = useClientReady();
@@ -70,6 +71,7 @@ const TeamShiftForm = ({allShifts, team}) => {
           <div className={'text-center mt-3'}>
             <Button variant={'primary'}
                     type={'submit'}
+                    disabled={!formData.valid || !formData.touched}
             >
               Set Shift
             </Button>
