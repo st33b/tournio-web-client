@@ -54,7 +54,7 @@ const Summary = ({tournament, nextStepClicked, nextStepText, buttonDisabled, ena
     if (!team && bowler) {
       shiftSource = bowler;
     }
-    if (shiftSource.shift) {
+    if (shiftSource && shiftSource.shift) {
       shiftText = (
         <p>
         <span>

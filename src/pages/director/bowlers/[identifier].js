@@ -147,7 +147,7 @@ const Page = () => {
   }
 
   if (loading || !bowler) {
-    return <LoadingMessage message={'Retrieving bowler details...'} />
+    return <LoadingMessage message={'Retrieving bowler details...'}/>
   }
 
   let displayedError = '';
@@ -219,13 +219,31 @@ const Page = () => {
                 <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team position</dt>
                 <dd className={'col'}>{bowler.position}</dd>
               </div>
+              <div className={'row'}>
+                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Doubles partner</dt>
+                {bowler.doubles_partner && <dd className={'col'}>{bowler.doubles_partner.full_name}</dd>}
+                {!bowler.doubles_partner && <dd className={'col'}>n/a</dd>}
+              </div>
             </>
           )}
-          <div className={'row'}>
-            <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Doubles partner</dt>
-            {bowler.doubles_partner && <dd className={'col'}>{bowler.doubles_partner.full_name}</dd>}
-            {!bowler.doubles_partner && <dd className={'col'}>n/a</dd>}
-          </div>
+          {!bowler.team && (
+            <>
+              <div className={'row'}>
+                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
+                <dd className={'col'}>
+                  n/a
+                </dd>
+              </div>
+              <div className={'row'}>
+                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Preferred Shift</dt>
+                <dd className={'col'}>{bowler.shift.name}</dd>
+              </div>
+              <div className={'row'}>
+                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Shift Confirmed?</dt>
+                <dd className={'col'}>{bowler.confirmation ? 'Yes' : 'No'}</dd>
+              </div>
+            </>
+          )}
         </dl>
       </Card.Body>
     </Card>
@@ -452,7 +470,8 @@ const Page = () => {
           <form onSubmit={linkFreeEntrySubmitHandler}>
             <select className={'form-select'} name={'destinationTeam'} onChange={linkFreeEntryOptionChanged}>
               <option value={''}>Choose a free entry code</option>
-              {availableFreeEntries.map(fe => <option key={fe.identifier} value={fe.identifier}>{fe.unique_code}</option>)}
+              {availableFreeEntries.map(fe => <option key={fe.identifier}
+                                                      value={fe.identifier}>{fe.unique_code}</option>)}
             </select>
             <div className={'form-check pt-3'}>
               <input className={'form-check-input'}
@@ -632,14 +651,14 @@ const Page = () => {
           />
         </Col>
         <Col md={4}>
-          <OfficeUseOnly bowler={bowler} />
-          <ResendEmailButtons bowler={bowler} />
+          <OfficeUseOnly bowler={bowler}/>
+          <ResendEmailButtons bowler={bowler}/>
           {linkFreeEntryCard}
           {moveToTeamCard}
           {assignPartnerCard}
           {bowler.purchases && bowler.purchases.length > 0 && purchases}
           {ledgerEntries}
-          <hr />
+          <hr/>
           {deleteBowlerCard}
         </Col>
       </Row>
