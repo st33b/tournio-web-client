@@ -7,7 +7,7 @@ const ProgressBarLegend = () => (
         <div>
           <i className={'bi-square-fill text-success pe-2'}/>
           <span className={'visually-hidden'}>Green</span>
-          Confirmed*
+          Paid*
         </div>
         <div>
           <i className={'bi-square-fill text-primary pe-2'}/>
@@ -22,7 +22,7 @@ const ProgressBarLegend = () => (
       </div>
     </div>
     <div className={classes.ConfirmedNote}>
-      * A bowler&apos;s place in a shift is not confirmed until they have paid their registration fees.
+      * A bowler&apos;s place in a shift cannot be confirmed until they have paid their registration fees.
     </div>
   </div>
 );

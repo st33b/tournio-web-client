@@ -80,7 +80,7 @@ const TeamForm = ({tournament, teamFormCompleted}) => {
           ))}
           <div className={classes.ConfirmationText}>
             <i className={`${classes.NoteIndicator} align-top bi-asterisk me-1`} aria-hidden={true} />
-            A bowler&apos;s place in a shift is not confirmed until they have paid their registration fees.
+            A bowler&apos;s place in a shift cannot be confirmed until they have paid their registration fees.
           </div>
         </Col>
       </Form.Group>

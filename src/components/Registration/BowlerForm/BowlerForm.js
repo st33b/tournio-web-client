@@ -298,7 +298,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         },
         helper: {
           url: null,
-          text: `Note: A bowler's place in a shift is not confirmed until they have paid their registration fees.`,
+          text: `Note: A bowler's place in a shift cannot be confirmed until they have paid their registration fees.`,
         },
         valid: false,
         touched: false,
