@@ -107,7 +107,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
       }
     },
     {
-      Header: 'Shift Confirmed?',
+      Header: 'Place Confirmed?',
       accessor: 'confirmation',
       Cell: ({value}) => {
         const className = value ? 'bi-check-lg text-success' : 'bi-dash-circle text-danger';
@@ -169,13 +169,6 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     }
     teamUpdateSubmitted(formData);
   }
-
-  // const freeEntryDeets = (row, rowIndex) => {
-  //   if (row.free_entry === null) {
-  //     return '--'
-  //   }
-  //   return row.free_entry.unique_code;
-  // }
 
   // When a doubles partner is clicked, what needs to happen:
   // - update the double partner assignments in state. (One click is enough to know everyone.)

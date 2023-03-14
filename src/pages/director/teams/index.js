@@ -178,7 +178,7 @@ const Page = () => {
         <div className={'order-2 order-md-1 col'}>
           {success}
           {error}
-          <TeamListing teams={directorState.teams} />
+          <TeamListing teams={directorState.teams} shiftCount={directorState.tournament.shifts.length}/>
         </div>
         <div className={'order-1 order-md-2 col-12 col-md-4'}>
           {newTeam}

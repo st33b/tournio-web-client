@@ -32,8 +32,7 @@ const Page = () => {
     if (!registration || !registration.tournament) {
       return;
     }
-    const shift = registration.tournament.shifts[0];
-    if (shift && !shift.registration_types.join_team) {
+    if (!registration.tournament.registration_options.join_team) {
       router.push(`/tournaments/${registration.tournament.identifier}`);
     }
   }, [registration]);

@@ -8,7 +8,7 @@ import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeade
 
 import classes from './TeamListing.module.scss';
 
-const TeamListing = ({teams}) => {
+const TeamListing = ({teams, shiftCount = 1}) => {
   const confClasses = {
     none: 'danger',
     some: 'warning',
@@ -35,17 +35,28 @@ const TeamListing = ({teams}) => {
         filter: lessThan,
       },
       {
-        Header: 'Shift',
+        Header: shiftCount > 1 ? 'Shift' : 'Confirmation',
         accessor: 'shift',
         Cell: ({row, value}) => {
           if (value === null) {
             return '';
           }
           const confClass = `text-${confClasses[row.original.confirmation]}`;
+          let tooltip = '';
+          switch(row.original.confirmation) {
+            case 'none':
+              tooltip = 'No members confirmed yet';
+              break;
+            case 'some':
+              tooltip = 'At least one member confirmed, but not all';
+              break;
+            default:
+              tooltip = 'All team members confirmed';
+          }
           return (
             <span>
-              {value.name}
-              <i className={`bi-circle-fill ms-1 ${confClass}`} aria-hidden={true}/>
+              {shiftCount > 1 && value.name}
+              <i className={`bi-circle-fill ms-1 ${confClass}`} aria-hidden={true} title={tooltip}/>
               <span className={'visually-hidden'}>{row.original.confirmation} confirmed</span>
             </span>
           )
@@ -97,7 +108,7 @@ const TeamListing = ({teams}) => {
     );
   } else {
     list = (
-      <div className={'table-responsive'}>
+      <div className={'table-responsive mt-3'}>
         <table className={'table table-striped table-hover'} {...getTableProps}>
           <thead>
           {headerGroups.map((headerGroup, i) => (

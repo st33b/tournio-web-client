@@ -223,14 +223,16 @@ const Page = () => {
             </div>
           )}
 
-          <Card className={'mb-3'}>
-            <Card.Header as={'h5'}>
-              Shift
-            </Card.Header>
-            <Card.Body>
-              <TeamShiftForm allShifts={directorState.tournament.shifts} team={team} onShiftChange={shiftChangeHandler}/>
-            </Card.Body>
-          </Card>
+          {directorState.tournament.shifts.length > 1 && (
+            <Card className={'mb-3'}>
+              <Card.Header as={'h5'}>
+                Shift
+              </Card.Header>
+              <Card.Body>
+                <TeamShiftForm allShifts={directorState.tournament.shifts} team={team} onShiftChange={shiftChangeHandler}/>
+              </Card.Body>
+            </Card>
+          )}
 
           <Card>
             <Card.Body className={'text-center'}>
