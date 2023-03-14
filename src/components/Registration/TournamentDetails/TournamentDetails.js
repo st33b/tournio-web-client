@@ -309,7 +309,10 @@ const TournamentDetails = ({tournament}) => {
       {youWillNeed}
 
       <Row className={classes.Actions}>
-        <Col xs={12} sm={{span: 8, offset: 2}} md={{span: 10, offset: 1}} lg={{span: 6, offset: 3}}
+        <Col xs={12}
+             sm={{span: 8, offset: 2}}
+             md={{span: 10, offset: 1}}
+             lg={{span: 6, offset: 3}}
              xxl={{span: 5, offset: 1}}>
           <Card>
             <Card.Header as={'h6'}>
@@ -327,24 +330,9 @@ const TournamentDetails = ({tournament}) => {
                               className={`${classes.MoneyAction}`}>
                 Choose Events &amp; Pay Fees
               </ListGroup.Item>
-
-              <ListGroup.Item action={true}
-                              variant={'secondary'}
-                              href={'https://reg.sportlomo.com/club/igbo/igboassociates'}
-                              target={'_new'}>
-
-                <span className={`${classes.Action}`}>
-                  Apply for Associate Membership
-                  <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
-                  <span className={`${classes.Explainer} text-muted`}>
-                    (required only if you aren&apos;t already an IGBO member)
-                  </span>
-                </span>
-              </ListGroup.Item>
             </ListGroup>
           </Card>
         </Col>
-
       </Row>
     </div>
   );

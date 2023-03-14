@@ -19,8 +19,7 @@ const Page = () => {
     if (!registration || !registration.tournament) {
       return;
     }
-    const shift = registration.tournament.shifts[0];
-    if (shift && !shift.registration_types.solo) {
+    if (!registration.tournament.registration_options.solo) {
       router.push(`/tournaments/${registration.tournament.identifier}`);
     }
   }, [registration]);

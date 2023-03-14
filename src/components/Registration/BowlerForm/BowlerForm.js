@@ -6,6 +6,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './BowlerForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {devConsoleLog} from "../../../utils";
 
 const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => {
   const {registration} = useRegistrationContext();
@@ -285,15 +286,19 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     valid: false,
     touched: false,
     soloBowlerFields: {
-      shift: {
-        elementType: 'select',
+      preferred_shift: {
+        elementType: 'radio',
         elementConfig: {
           value: '',
-          options: [],
+          choices: [],
         },
         label: 'Preferred Shift',
         validation: {
           required: true,
+        },
+        helper: {
+          url: null,
+          text: `Note: A bowler's place in a shift is not confirmed until they have paid their registration fees.`,
         },
         valid: false,
         touched: false,
@@ -317,6 +322,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
   }
 
   const resetFormData = (tourn) => {
+    devConsoleLog("calling resetFormData");
     const formData = {...initialFormState};
 
     // get the additional questions
@@ -325,16 +331,16 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     // put shift info in there, if needed
     if (includeShift) {
       if (tourn.available_shifts.length > 1) {
-        formData.soloBowlerFields.shift.elementConfig.options = [{value: '', label: '-- Choose a shift'}];
+        formData.soloBowlerFields.preferred_shift.elementConfig.choices = [];
         tourn.available_shifts.map(shift => {
-          formData.soloBowlerFields.shift.elementConfig.options.push(
+          formData.soloBowlerFields.preferred_shift.elementConfig.choices.push(
             { value: shift.identifier, label: shift.name }
           );
         });
         setShowShiftSelection(true);
       } else {
-        formData.soloBowlerFields.shift.elementConfig.value = tourn.available_shifts[0].identifier;
-        formData.soloBowlerFields.shift.valid = true;
+        formData.soloBowlerFields.preferred_shift.elementConfig.value = tourn.available_shifts[0].identifier;
+        formData.soloBowlerFields.preferred_shift.valid = true;
       }
     }
 
@@ -343,6 +349,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
 
   // get the additional questions into the bowler form, along with shift info if needed
   useEffect(() => {
+    devConsoleLog("tournament effect...")
     if (!tournament) {
       return;
     }
@@ -373,8 +380,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
 
     // Now, shift information, if there is any
     if (includeShift) {
-      updatedBowlerForm.soloBowlerFields.shift.elementConfig.value = bowlerData.shift.identifier;
-      updatedBowlerForm.soloBowlerFields.shift.valid = true;
+      updatedBowlerForm.soloBowlerFields.preferred_shift.elementConfig.value = bowlerData.shift.identifier;
+      updatedBowlerForm.soloBowlerFields.preferred_shift.valid = true;
     }
 
     setBowlerForm(updatedBowlerForm);
@@ -383,8 +390,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
   }, [bowlerData, tournament]);
 
   if (!registration || !tournament) {
-    console.log("Registration?", registration);
-    console.log("Tournament?", tournament);
+    devConsoleLog("Registration?", registration);
+    devConsoleLog("Tournament?", tournament);
     return '';
   }
 
@@ -425,7 +432,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     bowlerData.position = position;
 
     if (includeShift) {
-      bowlerData.shift = bowlerForm.soloBowlerFields.shift.elementConfig.value;
+      bowlerData.shift = bowlerForm.soloBowlerFields.preferred_shift.elementConfig.value;
     }
 
     // Reset the form to take in the next bowler's info
@@ -440,8 +447,9 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       ...bowlerForm
     };
 
-    if (inputIdentifier === 'shift') {
-      updatedBowlerForm.soloBowlerFields.shift.elementConfig.value = event.target.value;
+    if (inputIdentifier === 'preferred_shift') {
+      devConsoleLog("Value of preferred shift", event.target.value);
+      updatedBowlerForm.soloBowlerFields.preferred_shift.elementConfig.value = event.target.value;
       updatedBowlerForm.touched = true;
     } else {
       // This is the part of the form concerning the input that's changed
@@ -476,7 +484,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
 
     // Now, determine whether the whole form is valid
     let formIsValid = includeShift
-      ? updatedBowlerForm.soloBowlerFields.shift.elementConfig.value.length > 0
+      ? updatedBowlerForm.soloBowlerFields.preferred_shift.elementConfig.value.length > 0
       : true;
     for (let inputIdentifier in updatedBowlerForm.formFields) {
       formIsValid = formIsValid && updatedBowlerForm.formFields[inputIdentifier].valid;
@@ -502,16 +510,17 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       {showShiftSelection && (
         <div>
           <Input
-            key={'shift'}
-            identifier={'shift'}
-            elementType={bowlerForm.soloBowlerFields.shift.elementType}
-            elementConfig={bowlerForm.soloBowlerFields.shift.elementConfig}
-            changed={(event) => inputChangedHandler(event, 'shift')}
-            label={bowlerForm.soloBowlerFields.shift.label}
+            key={'preferred_shift'}
+            identifier={'preferred_shift'}
+            elementType={bowlerForm.soloBowlerFields.preferred_shift.elementType}
+            elementConfig={bowlerForm.soloBowlerFields.preferred_shift.elementConfig}
+            changed={(event) => inputChangedHandler(event, 'preferred_shift')}
+            label={bowlerForm.soloBowlerFields.preferred_shift.label}
             shouldValidate={true}
-            touched={bowlerForm.soloBowlerFields.shift.touched}
-            invalid={!bowlerForm.soloBowlerFields.shift.valid}
-            validationRules={bowlerForm.soloBowlerFields.shift.validation}
+            touched={bowlerForm.soloBowlerFields.preferred_shift.touched}
+            invalid={!bowlerForm.soloBowlerFields.preferred_shift.valid}
+            validationRules={bowlerForm.soloBowlerFields.preferred_shift.validation}
+            helper={bowlerForm.soloBowlerFields.preferred_shift.helper}
           />
           <hr />
         </div>

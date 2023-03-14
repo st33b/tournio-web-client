@@ -49,19 +49,25 @@ const Summary = ({tournament, nextStepClicked, nextStepText, buttonDisabled, ena
   }
 
   let shiftText = '';
-  // TODO: adapt for bowler / pair
-  if (team && team.shift && tournament.shifts.length > 1) {
-    shiftText = (
-      <p>
+  if (tournament.available_shifts.length > 1) {
+    let shiftSource = team;
+    if (!team && bowler) {
+      shiftSource = bowler;
+    }
+    if (shiftSource.shift) {
+      shiftText = (
+        <p>
         <span>
-          Requested Shift:{' '}
+          Preferred Shift:{' '}
         </span>
-        <span className={'fw-bold'}>
-          {team.shift.name}
+          <span className={'fw-bold'}>
+          {shiftSource.shift.name}
         </span>
-      </p>
-    );
+        </p>
+      );
+    }
   }
+  // TODO: adapt for pair (if we need to)
 
   // list the names of bowlers added to the team so far
   let bowlersText = '';
