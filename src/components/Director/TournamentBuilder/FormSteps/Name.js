@@ -85,6 +85,7 @@ const Name = () => {
           name: formData.fields.name,
             abbreviation: formData.fields.abbreviation,
             year: formData.fields.year,
+            identifier: `${formData.fields.abbreviation.toLocaleLowerCase()}-${formData.fields.year}`,
         },
       },
     };
