@@ -6,7 +6,8 @@ import AdditionalQuestions from "./AdditionalQuestions";
 import Capacity from './Capacity';
 import CloseTournament from "./CloseTournament";
 import Counts from "./Counts";
-import RegistrationOptions from "./RegistrationOptions";
+// import RegistrationOptions from "./RegistrationOptions";
+import RegistrationOptions from "../RegistrationOptions/RegistrationOptions";
 import EditableConfiguration from "./EditableConfiguration";
 import Contacts from "../Tournament/Contacts";
 import PurchasableItems from "./PurchasableItems";
@@ -22,6 +23,7 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './VisibleTournament.module.scss';
 import Users from "../Tournament/Users";
+import Shifts from "../TournamentInPrep/Shifts";
 
 const VisibleTournament = ({closeTournament}) => {
   const {directorState} = useDirectorContext();
@@ -90,6 +92,7 @@ const VisibleTournament = ({closeTournament}) => {
           <Counts tournament={directorState.tournament} />
           <RegistrationOptions tournament={directorState.tournament}/>
           <EditableConfiguration tournament={directorState.tournament} />
+          <Shifts tournament={directorState.tournament} />
           <MassActions tournament={directorState.tournament}/>
 
           <div className={'d-none d-md-block d-lg-none'}>

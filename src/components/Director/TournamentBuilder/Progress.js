@@ -37,6 +37,10 @@ const Progress = ({activeStep}) => {
       display: 'Logo',
     },
     {
+      key: 'shifts',
+      display: 'Shifts',
+    },
+    {
       key: 'scoring',
       display: 'Scoring',
     },

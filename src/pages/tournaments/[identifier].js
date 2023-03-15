@@ -1,17 +1,23 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import {Row} from "react-bootstrap";
+import {Row, Col} from "react-bootstrap";
 
 import {devConsoleLog, fetchTournamentDetails, useClientReady} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
-import TournamentDetails from "../../components/Registration/TournamentDetails/TournamentDetails";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import Contacts from "../../components/Registration/Contacts/Contacts";
 
 import classes from "../../components/Registration/TournamentDetails/TournamentDetails.module.scss";
 import {useCommerceContext} from "../../store/CommerceContext";
 import {tournamentDetailsRetrieved} from "../../store/actions/registrationActions";
+import Heading from "../../components/Registration/TournamentDetails/Heading";
+import Details from "../../components/Registration/TournamentDetails/Details";
+import RegisterButtons from "../../components/Registration/TournamentDetails/RegisterButtons";
+import PayButton from "../../components/Registration/TournamentDetails/PayButton";
+import Shifts from "../../components/Registration/TournamentDetails/Shifts";
+import YouWillNeed from "../../components/Registration/TournamentDetails/YouWillNeed";
+import StateBanners from "../../components/Registration/TournamentDetails/StateBanners";
 
 const Page = () => {
   const router = useRouter();
@@ -73,16 +79,36 @@ const Page = () => {
   return (
     <div className={classes.TournamentDetails}>
       <Row>
-        <div className={'d-none d-md-block col-md-4'}>
-          <TournamentLogo url={tournament.image_url}/>
+        <Col xs={12}>
+          <StateBanners tournament={tournament}/>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={{order: 2}} md={{span: 4, order: 1}}>
+          <div className={'d-none d-md-flex justify-content-center'}>
+            <TournamentLogo url={tournament.image_url}/>
+          </div>
           <Contacts tournament={tournament}/>
-        </div>
-        <div className={'col-12 col-md-8'}>
-          <TournamentDetails tournament={tournament} />
-        </div>
-        <div className={'d-md-none col-12'}>
-          <Contacts tournament={tournament}/>
-        </div>
+        </Col>
+        <Col xs={{order: 1}} md={{span: 8, order: 2}}>
+          <Heading tournament={tournament}/>
+          <div className={'d-flex'}>
+            <div className={'flex-fill w-100'}>
+              <Details tournament={tournament}/>
+            </div>
+            <div className={'d-none d-xl-block flex-shrink-1'}>
+              <YouWillNeed tournament={tournament}/>
+            </div>
+          </div>
+          <PayButton />
+          <RegisterButtons tournament={tournament}/>
+          <div className={'d-xl-none mb-4'}>
+            <YouWillNeed tournament={tournament}/>
+          </div>
+          <div className={''}>
+            <Shifts tournament={tournament}/>
+          </div>
+        </Col>
       </Row>
     </div>
   );

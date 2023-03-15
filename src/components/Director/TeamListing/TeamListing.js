@@ -8,7 +8,12 @@ import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeade
 
 import classes from './TeamListing.module.scss';
 
-const TeamListing = ({teams}) => {
+const TeamListing = ({teams, shiftCount = 1}) => {
+  const confClasses = {
+    none: 'danger',
+    some: 'warning',
+    all: 'success',
+  }
   const columns = useMemo(() => [
       {
         Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
@@ -29,20 +34,48 @@ const TeamListing = ({teams}) => {
         disableSortBy: true,
         filter: lessThan,
       },
-    {
-      Header: 'Place with Others?',
-      accessor: 'place_with_others',
-      Cell: ({cell: {value}}) => {
-        const classes = value ? ['text-success', 'bi-check-lg'] : ['text-danger', 'bi-x-lg'];
-        const text = value ? 'Yes' : 'No';
-        return (
-          <div className={'text-center'}>
-            <i className={classes.join(' ')} aria-hidden={true}/>
-            <span className={'visually-hidden'}>{text}</span>
-          </div>
-        );
+      {
+        Header: shiftCount > 1 ? 'Shift' : 'All Paid?',
+        accessor: 'shift',
+        Cell: ({row, value}) => {
+          if (value === null) {
+            return '';
+          }
+          const confClass = `text-${confClasses[row.original.who_has_paid]}`;
+          let tooltip = '';
+          switch(row.original.who_has_paid) {
+            case 'none':
+              tooltip = 'No members paid yet';
+              break;
+            case 'some':
+              tooltip = 'At least one member paid, but not all';
+              break;
+            default:
+              tooltip = 'All team members paid';
+          }
+          return (
+            <span>
+              {shiftCount > 1 && value.name}
+              <i className={`bi-circle-fill ms-1 ${confClass}`} aria-hidden={true} title={tooltip}/>
+              <span className={'visually-hidden'}>{tooltip}</span>
+            </span>
+          )
+        },
       },
-    }
+      {
+        Header: 'Place with Others?',
+        accessor: 'place_with_others',
+        Cell: ({value}) => {
+          const classes = value ? ['text-success', 'bi-check-lg'] : ['text-danger', 'bi-dash-circle'];
+          const text = value ? 'Yes' : 'No';
+          return (
+            <div className={'text-center'}>
+              <i className={classes.join(' ')} aria-hidden={true}/>
+              <span className={'visually-hidden'}>{text}</span>
+            </div>
+          );
+        },
+      },
     ], []);
 
   let data = [];
@@ -75,7 +108,7 @@ const TeamListing = ({teams}) => {
     );
   } else {
     list = (
-      <div className={'table-responsive'}>
+      <div className={'table-responsive mt-3'}>
         <table className={'table table-striped table-hover'} {...getTableProps}>
           <thead>
           {headerGroups.map((headerGroup, i) => (

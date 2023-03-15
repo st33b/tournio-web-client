@@ -84,7 +84,7 @@ const Page = () => {
       <p className={'text-center mt-2'}>
         <a href={`/teams/${team.identifier}/join`}
            onClick={joinTeamClicked}
-           className={'btn btn-outline-info'}>
+           className={'btn btn-outline-primary'}>
           Join this Team
         </a>
       </p>

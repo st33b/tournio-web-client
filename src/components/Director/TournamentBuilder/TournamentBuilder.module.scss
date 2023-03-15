@@ -35,7 +35,19 @@
 
       .FieldButton {
         margin-top: 1rem;
-      };
+      }
+      .RequiredLabel {
+        margin-left: 5px;
+        color: darkred;
+        font-size: 60%;
+      }
+      .InvalidFeedback {
+        margin-left: 5px;
+      }
+    }
+    .FieldRow {
+      margin-left: 0;
+      margin-right: 0;
     }
     .DateTimeButton {
       background-color: var(--tournio-gray-200);
@@ -48,12 +60,27 @@
       margin-top: 2rem;
     }
     .ScratchDivision,
+    .Shift,
     .Event {
       padding-bottom: 1rem;
       padding-right: 0.5rem;
       border: 1px dashed;
       border-radius: 5px;
       margin-bottom: 0.5rem;
+    }
+    .Shift {
+      .DeleteButton {
+        margin-top: -0.5rem;
+      }
+    }
+    .ShiftStyle {
+      margin-bottom: 0.5rem;
+      .Chosen {
+        background-color: var(--tournio-gray-200);
+      }
+      .NotChosen {
+
+      }
     }
   }
 }
@@ -76,10 +103,16 @@
       }
 
     }
-  }
+    .FormContainer {
+      .ShiftStyle {
+        .Chosen {
+          background-color: var(--tournio-gray-800);
+        }
+        .NotChosen {
 
-  .FormContainer {
-
+        }
+      }
+    }
   }
 }
 
@@ -141,6 +174,10 @@
       }
       label {
       }
+      //.FieldRow {
+      //  margin-left: -0.75rem;
+      //  margin-right: -0.75rem;
+      //}
     }
   }
 }
@@ -165,7 +202,7 @@
 
     .FormContainer {
       label {
-        text-align: right;
+        //text-align: right;
       }
     }
   }

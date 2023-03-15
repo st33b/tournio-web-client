@@ -7,6 +7,7 @@ import PartnerSelectionRow from "./PartnerSelectionRow";
 
 import classes from './TeamDetails.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {devConsoleLog} from "../../../utils";
 
 const TeamDetails = ({team, teamUpdateSubmitted}) => {
   const {directorState} = useDirectorContext();
@@ -90,7 +91,33 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     {
       id: 'free_entry',
       Header: 'Free Entry',
-      accessor: 'freeEntryDeets',
+      accessor: 'free_entry',
+      Cell: ({row, value}) => {
+        if (value === null) {
+          return '--';
+        }
+        if (value.confirmed) {
+          return value.unique_code;
+        }
+        return (
+          <span title="Free entry is not yet confirmed">
+            {value.unique_code} *
+          </span>
+        )
+      }
+    },
+    {
+      Header: 'Fees Paid?',
+      accessor: 'paid',
+      Cell: ({value}) => {
+        const className = value ? 'bi-check-lg text-success' : 'bi-dash-circle text-danger';
+        return (
+          <span>
+            <i className={className} aria-hidden={true}/>
+            <span className={'visually-hidden'}>{value ? 'Paid' : 'Unpaid'}</span>
+          </span>
+        )
+      }
     }
   ], [teamForm]);
 
@@ -143,13 +170,6 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     teamUpdateSubmitted(formData);
   }
 
-  const freeEntryDeets = (row, rowIndex) => {
-    if (row.free_entry === null) {
-      return '--'
-    }
-    return row.free_entry.unique_code;
-  }
-
   // When a doubles partner is clicked, what needs to happen:
   // - update the double partner assignments in state. (One click is enough to know everyone.)
   //  - Ex: Bowler A clicked on Bowler B
@@ -195,7 +215,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
         <caption className={classes.Caption}>
           Doubles Partner Assignment
         </caption>
-        <thead className={'table-light'}>
+        <thead>
         <tr>
           <th scope={'col'}>
             Bowler
@@ -254,47 +274,56 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
             </div>
           </div>
         }
-        <div className={'table-responsive'}>
-          <table className={'table table-striped caption-top align-middle'} {...getTableProps}>
-            <caption className={classes.Caption}>
-              Roster
-            </caption>
-            <thead className={'table-light'}>
-            {headerGroups.map((headerGroup, i) => (
-              <tr key={i} {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column, j) => (
-                  <th key={j} {...column.getHeaderProps()}>
-                    {column.render('Header')}
-                  </th>
+        {team.size === 0 && (
+          <div className={'border-top border-1 mt-3'}>
+            <p className={'lead text-center mt-3'}>No bowlers on this team.</p>
+          </div>
+        )}
+        {team.size > 0 && (
+          <>
+            <div className={'table-responsive'}>
+              <table className={'table table-striped caption-top align-middle'} {...getTableProps}>
+                <caption className={classes.Caption}>
+                  Roster
+                </caption>
+                <thead>
+                {headerGroups.map((headerGroup, i) => (
+                  <tr key={i} {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map((column, j) => (
+                      <th key={j} {...column.getHeaderProps()}>
+                        {column.render('Header')}
+                      </th>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-            </thead>
-            <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
-              prepareRow(row);
-              return (
-                <tr key={i} {...row.getRowProps()}>
-                  {row.cells.map((cell, j) => (
-                    <td key={j} {...cell.getCellProps()}>
-                      {cell.render('Cell')}
-                    </td>
-                  ))}
-                </tr>
-              )
-            })}
-            </tbody>
-          </table>
-        </div>
-        {doublesPartnerSelection}
-        <div className={'text-center mt-4'}>
-          <Button variant={'primary'}
-                  disabled={!teamForm.touched || !teamForm.valid}
-                  onClick={updateSubmitHandler}
-          >
-            Update Details
-          </Button>
-        </div>
+                </thead>
+                <tbody {...getTableBodyProps()}>
+                {rows.map((row, i) => {
+                  prepareRow(row);
+                  return (
+                    <tr key={i} {...row.getRowProps()}>
+                      {row.cells.map((cell, j) => (
+                        <td key={j} {...cell.getCellProps()}>
+                          {cell.render('Cell')}
+                        </td>
+                      ))}
+                    </tr>
+                  )
+                })}
+                </tbody>
+              </table>
+            </div>
+            {doublesPartnerSelection}
+            <div className={'text-center mt-4'}>
+              <Button variant={'primary'}
+                      disabled={!teamForm.touched || !teamForm.valid}
+                      onClick={updateSubmitHandler}
+              >
+                Update Details
+              </Button>
+            </div>
+          </>
+        )}
       </div>
     </ErrorBoundary>
 

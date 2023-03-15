@@ -22,7 +22,7 @@ const Contacts = ({tournament}) => {
   };
 
   return (
-    <div className={`${classes.Contacts} text-body bg-body`} >
+    <div className={`${classes.Contacts}`} >
       <h5 className={'mt-2'}>
         Contacts
       </h5>

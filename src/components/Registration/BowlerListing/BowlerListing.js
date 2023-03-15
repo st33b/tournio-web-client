@@ -111,7 +111,7 @@ const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successT
                 {enablePayment && (
                   <td className={'text-end'}>
                     <a href={`/bowlers/${row.original.identifier}`}
-                       className={'btn btn-sm btn-success'}>
+                       className={'btn btn-sm btn-outline-success'}>
                       Choose Events &amp; Pay
                     </a>
                   </td>
@@ -120,7 +120,7 @@ const BowlerListing = ({caption, bowlers, enablePayment, includeEvents, successT
                   <td className={'text-end'}>
                     <a href={`/bowlers/${row.original.identifier}`}
                        onClick={(event) => confirmPartnerUp(event, row.original)}
-                       className={'btn btn-sm btn-outline-success'}>
+                       className={'btn btn-sm btn-outline-primary'}>
                       Partner Up
                     </a>
                   </td>

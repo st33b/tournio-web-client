@@ -9,6 +9,7 @@ import TeamDetails from "../../../components/Director/TeamDetails/TeamDetails";
 import {directorApiRequest, useLoggedIn} from "../../../director";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import {teamDeleted, teamUpdated} from "../../../store/actions/directorActions";
+import TeamShiftForm from "../../../components/Director/TeamDetails/TeamShiftForm";
 
 const Page = () => {
   const router = useRouter();
@@ -131,20 +132,6 @@ const Page = () => {
     }
   }
 
-  const deleteTeamCard = (
-    <Card>
-      <Card.Body className={'text-center'}>
-        <form onSubmit={deleteSubmitHandler}>
-          <Button variant={'danger'}
-                  type={'submit'}
-          >
-            Delete Team
-          </Button>
-        </form>
-      </Card.Body>
-    </Card>
-  );
-
   const ladder = [
     {text: 'Tournaments', path: '/director/tournaments'},
     {text: directorState.tournament.name, path: `/director/tournaments/${directorState.tournament.identifier}`},
@@ -160,6 +147,7 @@ const Page = () => {
     setLoading(false);
     setTeam(data);
     dispatch(teamUpdated(data));
+    setSuccessMessage('Changes applied.');
   }
 
   const updateTeamFailure = (data) => {
@@ -188,6 +176,29 @@ const Page = () => {
     });
   }
 
+  const shiftChangeHandler = (newShiftIdentifier) => {
+    const uri = `/director/teams/${identifier}`;
+    const requestConfig = {
+      method: 'patch',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        team: {
+          shift_identifier: newShiftIdentifier,
+        },
+      },
+    }
+    setLoading(true);
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      onSuccess: updateTeamSuccess,
+      onFailure: updateTeamFailure,
+    });
+  }
+
   return (
     <div>
       <Breadcrumbs ladder={ladder} activeText={teamName} />
@@ -197,6 +208,7 @@ const Page = () => {
                        teamUpdateSubmitted={updateSubmitHandler}
           />
         </Col>
+
         <Col md={4}>
           {successMessage && (
             <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mb-3'} role={'alert'}>
@@ -210,7 +222,30 @@ const Page = () => {
               <button type={"button"} className={"btn-close"} data-bs-dismiss={"alert"} aria-label={"Close"} />
             </div>
           )}
-          {deleteTeamCard}
+
+          {directorState.tournament.shifts.length > 1 && (
+            <Card className={'mb-3'}>
+              <Card.Header as={'h5'}>
+                Shift
+              </Card.Header>
+              <Card.Body>
+                <TeamShiftForm allShifts={directorState.tournament.shifts} team={team} onShiftChange={shiftChangeHandler}/>
+              </Card.Body>
+            </Card>
+          )}
+
+          <Card>
+            <Card.Body className={'text-center'}>
+              <form onSubmit={deleteSubmitHandler}>
+                <Button variant={'danger'}
+                        type={'submit'}
+                >
+                  Delete Team
+                </Button>
+              </form>
+            </Card.Body>
+          </Card>
+
         </Col>
       </Row>
     </div>

@@ -69,6 +69,25 @@ const Input = (props) => {
         </div>
       );
       break;
+    case('radio'):
+      inputElement = props.elementConfig.choices.map((choice, i) => (
+        <div className={`form-check ${invalidClass}`} key={i}>
+          <input type={'radio'}
+                 className={'form-check-input'}
+                 required={true}
+                 value={choice.value}
+                 onChange={props.changed}
+                 checked={props.elementConfig.value === choice.value}
+                 id={`${props.identifier}_${choice.value}`}
+                 name={props.identifier}>
+          </input>
+          <label className={'form-check-label'}
+                 htmlFor={`${props.identifier}_${choice.value}`}>
+            {choice.label}
+          </label>
+        </div>
+      ));
+      break;
     default:
       console.log("I don't recognize that element type: " + props.elementType);
       return null;

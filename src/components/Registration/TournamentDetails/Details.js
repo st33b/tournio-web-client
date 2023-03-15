@@ -1,5 +1,4 @@
 import classes from './TournamentDetails.module.scss';
-import {format} from "date-fns";
 import {formatInTimeZone} from 'date-fns-tz';
 import {Col, Row} from "react-bootstrap";
 
@@ -18,46 +17,35 @@ const Details = ({tournament}) => {
     return '';
   }
 
-  const start = new Date(tournament.start_date);
-  const end = new Date(tournament.end_date);
-  const datesString = `${format(start, 'LLLL')} ${start.getDate()}-${end.getDate()}, ${end.getFullYear()}`;
-
   const earlyRegEnds = tournament.early_registration_ends;
   const lateRegStarts = tournament.late_fee_applies_at;
   const noFeeChanges = !earlyRegEnds && !lateRegStarts;
 
-  // const zonedDeadline = utcToZonedTime(new Date(tournament.entry_deadline), tournament.timezone);
   const formattedDeadline = formatInTimeZone(new Date(tournament.entry_deadline), tournament.timezone,'PP p z');
 
   return (
     <div className={classes.Details}>
-      <dl>
-        {noFeeChanges && (
-          <Row>
-            <Col xs={4}>
-              <dt>Entry Fee</dt>
-            </Col>
-            <Col>
-              <dd>${tournament.registration_fee}</dd>
-            </Col>
-          </Row>
-        )}
-        <Row>
-          <Col xs={4}>
-            <dt>Registration Deadline</dt>
-          </Col>
-          <Col>
-            <dd>{formattedDeadline}</dd>
-          </Col>
-        </Row>
-      </dl>
+      <p className={'my-3'}>
+        <strong>
+          Entry Deadline:{' '}
+        </strong>
+        {formattedDeadline}
+      </p>
+      {noFeeChanges && (
+        <p>
+          <strong>
+            Entry Fee:{' '}
+          </strong>
+          ${tournament.registration_fee}
+        </p>
+      )}
       {!noFeeChanges && (
         <div className={'table-responsive'}>
-          <table className={'table table-borderless'}>
+          <table className={`table table-borderless ${classes.FeeTable}`}>
             <thead>
             <tr>
               <th colSpan={2}>
-                Registration Fee
+                Entry Fee
               </th>
             </tr>
             </thead>

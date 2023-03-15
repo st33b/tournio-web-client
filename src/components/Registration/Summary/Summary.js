@@ -5,6 +5,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import classes from './Summary.module.scss';
 import {useEffect, useState} from "react";
 import {useClientReady} from "../../../utils";
+import ErrorBoundary from "../../common/ErrorBoundary";
 
 const Summary = ({tournament, nextStepClicked, nextStepText, buttonDisabled, enableDoublesEdit, finalStep}) => {
   const {registration} = useRegistrationContext();
@@ -48,19 +49,25 @@ const Summary = ({tournament, nextStepClicked, nextStepText, buttonDisabled, ena
   }
 
   let shiftText = '';
-  // TODO: adapt for bowler / pair
-  if (tournament.shifts.length > 1) {
-    shiftText = (
-      <p>
+  if (tournament.available_shifts.length > 1) {
+    let shiftSource = team;
+    if (!team && bowler) {
+      shiftSource = bowler;
+    }
+    if (shiftSource && shiftSource.shift) {
+      shiftText = (
+        <p>
         <span>
-          Requested Shift:{' '}
+          Preferred Shift:{' '}
         </span>
-        <span className={'fw-bold'}>
-          {team.shift.name}
+          <span className={'fw-bold'}>
+          {shiftSource.shift.name}
         </span>
-      </p>
-    );
+        </p>
+      );
+    }
   }
+  // TODO: adapt for pair (if we need to)
 
   // list the names of bowlers added to the team so far
   let bowlersText = '';
@@ -166,44 +173,46 @@ const Summary = ({tournament, nextStepClicked, nextStepText, buttonDisabled, ena
   }
 
   return (
-    <div className={classes.Summary}>
-      <Card className={`border-0`}>
-        <Card.Img variant={'top'}
-                  src={tournament.image_url}
-                  className={'d-none d-sm-block'}/>
-        <Card.Body className={'d-sm-none px-0 py-0'}>
-          <Row className={'mb-3'}>
-            <Col xs={3}>
-              <Image fluid
-                     src={tournament.image_url}
-                     alt={"tournament logo"}
-              />
-            </Col>
-            <Col>
-              <Card.Title>
-                {tournament.name}
-              </Card.Title>
-              {teamText}
-              {bowlersText}
-              {partnerText}
-              {doublesLink}
-              {nextStep}
-            </Col>
-          </Row>
-        </Card.Body>
-        <Card.Body className={'d-none d-sm-block px-3 pt-0'}>
-          <Card.Title className={'my-3 text-center'}>
-            {tournament.name}
-          </Card.Title>
-          {teamText}
-          {shiftText}
-          {bowlersText}
-          {partnerText}
-          {doublesLink}
-          {nextStep}
-        </Card.Body>
-      </Card>
-    </div>
+    <ErrorBoundary>
+      <div className={classes.Summary}>
+        <Card className={`border-0`}>
+          <Card.Img variant={'top'}
+                    src={tournament.image_url}
+                    className={'d-none d-sm-block'}/>
+          <Card.Body className={'d-sm-none px-0 py-0'}>
+            <Row className={'mb-3'}>
+              <Col xs={3}>
+                <Image fluid
+                       src={tournament.image_url}
+                       alt={"tournament logo"}
+                />
+              </Col>
+              <Col>
+                <Card.Title>
+                  {tournament.name}
+                </Card.Title>
+                {teamText}
+                {bowlersText}
+                {partnerText}
+                {doublesLink}
+                {nextStep}
+              </Col>
+            </Row>
+          </Card.Body>
+          <Card.Body className={'d-none d-sm-block px-3 pt-0'}>
+            <Card.Title className={'my-3 text-center'}>
+              {tournament.name}
+            </Card.Title>
+            {teamText}
+            {shiftText}
+            {bowlersText}
+            {partnerText}
+            {doublesLink}
+            {nextStep}
+          </Card.Body>
+        </Card>
+      </div>
+    </ErrorBoundary>
   );
 };
 

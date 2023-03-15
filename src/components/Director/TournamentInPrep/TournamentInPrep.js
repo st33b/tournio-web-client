@@ -15,6 +15,7 @@ import Users from '../Tournament/Users';
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './TournamentInPrep.module.scss';
+import RegistrationOptions from "../RegistrationOptions/RegistrationOptions";
 
 const TournamentInPrep = ({stateChangeInitiated, requestStripeStatus}) => {
   const {directorState} = useDirectorContext();
@@ -30,22 +31,23 @@ const TournamentInPrep = ({stateChangeInitiated, requestStripeStatus}) => {
       <div className={'row'}>
         <div className={'col-12 col-md-6 col-lg-4'}>
           <Basics tournament={directorState.tournament}/>
-          <Configuration tournament={directorState.tournament}/>
-          <Shifts tournament={directorState.tournament}/>
-          <AdditionalQuestions tournament={directorState.tournament}/>
+          <ImageUpload tournament={directorState.tournament}/>
+          <Contacts tournament={directorState.tournament}/>
+          <Users users={directorState.tournament.users}/>
         </div>
 
         <div className={'col-12 col-md-6 col-lg-4'}>
           <StatusAndCounts tournament={directorState.tournament}/>
           <StateChangeButton tournament={directorState.tournament} stateChangeInitiated={stateChangeInitiated} />
-          <PurchasableItems tournament={directorState.tournament}/>
-          <StripeStatus tournament={directorState.tournament} needStatus={requestStripeStatus} />
+          <AdditionalQuestions tournament={directorState.tournament}/>
+          <Shifts tournament={directorState.tournament}/>
         </div>
 
         <div className={'col-12 col-md-6 col-lg-4'}>
-          <ImageUpload tournament={directorState.tournament}/>
-          <Contacts tournament={directorState.tournament}/>
-          <Users users={directorState.tournament.users}/>
+          <Configuration tournament={directorState.tournament}/>
+          <RegistrationOptions tournament={directorState.tournament}/>
+          <PurchasableItems tournament={directorState.tournament}/>
+          <StripeStatus tournament={directorState.tournament} needStatus={requestStripeStatus} />
           <DeleteTournament tournament={directorState.tournament}/>
         </div>
       </div>

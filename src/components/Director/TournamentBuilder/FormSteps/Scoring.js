@@ -320,7 +320,6 @@ const Scoring = () => {
         </fieldset>
       )} {/* useScratchDivisions */}
 
-
       <div className={`row ${classes.ButtonRow}`}>
         <div className={'col-12 d-flex justify-content-end'}>
           <button className={'btn btn-outline-primary'}

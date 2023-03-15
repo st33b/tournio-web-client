@@ -20,6 +20,20 @@
     //padding-left: 0.5rem;
     //padding-right: 0.5rem;
     margin-bottom: 0;
+    div {
+      margin-left: -0.25rem;
+      margin-right: -0.25rem;
+      dt {
+        padding-left: 0.5rem;
+        padding-right: 0.25rem;
+        text-align: right;
+      }
+      dd {
+        padding-left: 0.25rem;
+        padding-right: 0.5rem;
+        text-align: left;
+      }
+    }
   }
   .AlmostFull {
     background-color: lemonchiffon;

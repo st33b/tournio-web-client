@@ -60,7 +60,7 @@ const Logo = () => {
   }
 
   const nextClicked = () => {
-    dispatch(newTournamentStepCompleted('logo', 'scoring'));
+    dispatch(newTournamentStepCompleted('logo', 'shifts'));
   }
 
   return (

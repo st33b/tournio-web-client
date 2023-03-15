@@ -23,6 +23,10 @@ const Page = () => {
 
   // This effect ensures we're logged in with appropriate permissions
   useEffect(() => {
+    if (directorState.tournament === null) {
+      router.push('/director');
+    }
+
     const currentTournamentIdentifier = directorState.tournament.identifier;
 
     if (directorState.user.role !== 'superuser' && !directorState.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
@@ -174,7 +178,7 @@ const Page = () => {
         <div className={'order-2 order-md-1 col'}>
           {success}
           {error}
-          <TeamListing teams={directorState.teams} />
+          <TeamListing teams={directorState.teams} shiftCount={directorState.tournament.shifts.length}/>
         </div>
         <div className={'order-1 order-md-2 col-12 col-md-4'}>
           {newTeam}

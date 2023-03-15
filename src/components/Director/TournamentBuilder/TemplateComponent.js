@@ -1,4 +1,4 @@
-import {useDirectorContext} from "../../../store/DirectorContext";
+import {useDirectorContext} from "../../../../store/DirectorContext";
 
 import classes from './TournamentBuilder.module.scss';
 
