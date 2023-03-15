@@ -238,12 +238,12 @@ const Page = () => {
                 <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Preferred Shift</dt>
                 <dd className={'col'}>{bowler.shift.name}</dd>
               </div>
-              <div className={'row'}>
-                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Shift Confirmed?</dt>
-                <dd className={'col'}>{bowler.confirmation ? 'Yes' : 'No'}</dd>
-              </div>
             </>
           )}
+          <div className={'row'}>
+            <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Fees Paid?</dt>
+            <dd className={'col'}>{bowler.paid ? 'Yes' : 'No'}</dd>
+          </div>
         </dl>
       </Card.Body>
     </Card>

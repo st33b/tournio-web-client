@@ -21,9 +21,6 @@ const ProgressBarLegend = () => (
         </div>
       </div>
     </div>
-    <div className={classes.ConfirmedNote}>
-      * A bowler&apos;s place in a shift cannot be confirmed until they have paid their registration fees.
-    </div>
   </div>
 );
 

@@ -174,9 +174,9 @@ const ShiftForm = ({tournament, shift}) => {
   let colorClass = '';
   if (shift) {
     submitFunction = updateShiftFormSubmitted;
-    if (shift.confirmed_count === shift.capacity) {
+    if (shift.paid_count === shift.capacity) {
       colorClass = classes.Full;
-    } else if (shift.confirmed_count + shift.requested_count + 16 >= shift.capacity) {
+    } else if (shift.paid_count + shift.unpaid_count + 16 >= shift.capacity) {
       colorClass = classes.AlmostFull;
     }
   }
@@ -235,16 +235,16 @@ const ShiftForm = ({tournament, shift}) => {
                 {shift.capacity} bowlers
               </dd>
               <dt className={dtClass}>
-                Confirmed
+                Paid
               </dt>
               <dd className={ddClass}>
-                {shift.confirmed_count}
+                {shift.paid_count}
               </dd>
               <dt className={dtClass}>
-                Requested
+                Unpaid
               </dt>
               <dd className={ddClass}>
-                {shift.requested_count}
+                {shift.unpaid_count}
               </dd>
             </div>
           </dl>
@@ -357,20 +357,6 @@ const ShiftForm = ({tournament, shift}) => {
           </form>
         </Card.Body>
       }
-      {/*{successMessage && (*/}
-      {/*  <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mx-3'}*/}
-      {/*       role={'alert'}>*/}
-      {/*    <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>*/}
-      {/*    <div className={'me-auto'}>*/}
-      {/*      {successMessage}*/}
-      {/*      <button type="button"*/}
-      {/*              className={"btn-close"}*/}
-      {/*              data-bs-dismiss="alert"*/}
-      {/*              onClick={() => setSuccessMessage(null)}*/}
-      {/*              aria-label="Close"/>*/}
-      {/*    </div>*/}
-      {/*  </div>*/}
-      {/*)}*/}
     </div>
   )
 }

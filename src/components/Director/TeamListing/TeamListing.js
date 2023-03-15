@@ -35,29 +35,29 @@ const TeamListing = ({teams, shiftCount = 1}) => {
         filter: lessThan,
       },
       {
-        Header: shiftCount > 1 ? 'Shift' : 'Confirmation',
+        Header: shiftCount > 1 ? 'Shift' : 'All Paid?',
         accessor: 'shift',
         Cell: ({row, value}) => {
           if (value === null) {
             return '';
           }
-          const confClass = `text-${confClasses[row.original.confirmation]}`;
+          const confClass = `text-${confClasses[row.original.who_has_paid]}`;
           let tooltip = '';
-          switch(row.original.confirmation) {
+          switch(row.original.who_has_paid) {
             case 'none':
-              tooltip = 'No members confirmed yet';
+              tooltip = 'No members paid yet';
               break;
             case 'some':
-              tooltip = 'At least one member confirmed, but not all';
+              tooltip = 'At least one member paid, but not all';
               break;
             default:
-              tooltip = 'All team members confirmed';
+              tooltip = 'All team members paid';
           }
           return (
             <span>
               {shiftCount > 1 && value.name}
               <i className={`bi-circle-fill ms-1 ${confClass}`} aria-hidden={true} title={tooltip}/>
-              <span className={'visually-hidden'}>{row.original.confirmation} confirmed</span>
+              <span className={'visually-hidden'}>{tooltip}</span>
             </span>
           )
         },

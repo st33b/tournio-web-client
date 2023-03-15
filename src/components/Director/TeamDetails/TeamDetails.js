@@ -107,14 +107,14 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
       }
     },
     {
-      Header: 'Place Confirmed?',
-      accessor: 'confirmation',
+      Header: 'Fees Paid?',
+      accessor: 'paid',
       Cell: ({value}) => {
         const className = value ? 'bi-check-lg text-success' : 'bi-dash-circle text-danger';
         return (
           <span>
             <i className={className} aria-hidden={true}/>
-            <span className={'visually-hidden'}>{value ? 'Confirmed' : 'Not confirmed'}</span>
+            <span className={'visually-hidden'}>{value ? 'Paid' : 'Unpaid'}</span>
           </span>
         )
       }

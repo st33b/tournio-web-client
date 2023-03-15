@@ -73,23 +73,23 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         valid: false,
         touched: false,
       },
-      // igbo_id: {
-      //   elementType: 'input',
-      //   elementConfig: {
-      //     type: 'text',
-      //     value: '',
-      //   },
-      //   label: 'IGBO ID',
-      //   validation: {
-      //     required: true,
-      //   },
-      //   helper: {
-      //     url: 'http://www.igbo.org/igbots-id-lookup/',
-      //     text: 'Look up your IGBO ID; enter "n/a" if you don\'t have one',
-      //   },
-      //   valid: true,
-      //   touched: false,
-      // },
+      igbo_id: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          value: '',
+        },
+        label: 'IGBO ID',
+        validation: {
+          required: false,
+        },
+        helper: {
+          url: 'https://tad.igbo.org/',
+          text: `'Look up your IGBO ID; enter "n/a" if you don't have one'`,
+        },
+        valid: true,
+        touched: false,
+      },
       birth_month: {
         elementType: 'select',
         elementConfig: {

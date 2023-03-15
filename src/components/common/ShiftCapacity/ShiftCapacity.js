@@ -10,7 +10,7 @@ const ShiftCapacity = ({shift, includeName}) => {
     return Math.round(num / outOf * 100);
   }
 
-  const requestedCount = Math.min(shift.requested_count, shift.capacity - shift.confirmed_count);
+  const unpaidCount = Math.min(shift.unpaid_count, shift.capacity - shift.paid_count);
 
   return (
     <div className={`${classes.ProgressBar} d-flex align-items-center my-2`}>
@@ -22,11 +22,11 @@ const ShiftCapacity = ({shift, includeName}) => {
         </div>
         <div>
           <ProgressBar style={{height: '2rem'}}>
-            <ProgressBar now={percent(shift.confirmed_count, shift.capacity)}
-                         label={`${percent(shift.confirmed_count, shift.capacity)}%`}
+            <ProgressBar now={percent(shift.paid_count, shift.capacity)}
+                         label={`${percent(shift.paid_count, shift.capacity)}%`}
                          variant={'success'}/>
-            <ProgressBar now={percent(requestedCount, shift.capacity)}
-                         label={`${percent(requestedCount, shift.capacity)}%`}
+            <ProgressBar now={percent(unpaidCount, shift.capacity)}
+                         label={`${percent(unpaidCount, shift.capacity)}%`}
                          variant={'primary'}/>
           </ProgressBar>
         </div>

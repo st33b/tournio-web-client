@@ -82,7 +82,6 @@ const TournamentDetails = ({tournament}) => {
 
   let registrationOptions = '';
   if (tournament.state === 'testing' || tournament.state === 'active' || tournament.state === 'demo') {
-    const shift = tournament.shifts[0];
     const optionTypes = [
       {
         name: 'solo',
