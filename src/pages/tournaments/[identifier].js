@@ -5,14 +5,12 @@ import {Row, Col} from "react-bootstrap";
 import {devConsoleLog, fetchTournamentDetails, useClientReady} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
-import TournamentDetails from "../../components/Registration/TournamentDetails/TournamentDetails";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import Contacts from "../../components/Registration/Contacts/Contacts";
 
 import classes from "../../components/Registration/TournamentDetails/TournamentDetails.module.scss";
 import {useCommerceContext} from "../../store/CommerceContext";
 import {tournamentDetailsRetrieved} from "../../store/actions/registrationActions";
-import ErrorBoundary from "../../components/common/ErrorBoundary";
 import Heading from "../../components/Registration/TournamentDetails/Heading";
 import Details from "../../components/Registration/TournamentDetails/Details";
 import RegisterButtons from "../../components/Registration/TournamentDetails/RegisterButtons";
@@ -112,21 +110,6 @@ const Page = () => {
           </div>
         </Col>
       </Row>
-
-      {/*<Row>*/}
-      {/*  <div className={'d-none d-md-block col-md-4'}>*/}
-      {/*    <TournamentLogo url={tournament.image_url}/>*/}
-      {/*    <Contacts tournament={tournament}/>*/}
-      {/*  </div>*/}
-      {/*  <div className={'col-12 col-md-8'}>*/}
-      {/*    <ErrorBoundary>*/}
-      {/*      <TournamentDetails tournament={tournament} />*/}
-      {/*    </ErrorBoundary>*/}
-      {/*  </div>*/}
-      {/*  <div className={'col-12 d-md-none mt-3'}>*/}
-      {/*    <Contacts tournament={tournament}/>*/}
-      {/*  </div>*/}
-      {/*</Row>*/}
     </div>
   );
 }
