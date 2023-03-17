@@ -96,7 +96,7 @@ const Page = () => {
                 Allow your bowlers to register full or partial teams, join existing partial teams, or register individually.
               </Card.Text>
               <Card.Text>
-                There&apos;s even support for tournaments with non-traditional formats.
+                There&apos;s even support for tournaments with non-traditional formats, as well as tournaments with multiple shifts.
               </Card.Text>
             </Card.Body>
           </Card>
@@ -130,8 +130,7 @@ const Page = () => {
             <Card.Body>
               <Card.Text>
                 Let your bowlers sign up for additional events and buy extra stuff: Division-based events, optional
-                events,
-                banquet tickets for non-bowlers, raffle ticket bundles, and more.
+                events, banquet tickets for non-bowlers, raffle ticket bundles, and more.
               </Card.Text>
             </Card.Body>
           </Card>
@@ -139,7 +138,7 @@ const Page = () => {
       </Row>
 
       <div className="d-grid gap-3 d-sm-flex justify-content-sm-center pt-sm-3">
-        <a href="mailto:info@tourn.io?subject=Using%20Tournio"
+        <a href="mailto:hello@tourn.io?subject=Using%20Tournio"
            className="btn btn-outline-primary btn-lg px-4 gap-3">
           Get In Touch
         </a>
