@@ -44,54 +44,6 @@ const Tournament = () => {
     });
   }
 
-  const retrieveBowlers = () => {
-    devConsoleLog('retrieving list of bowlers for the tournament');
-    const uri = `/director/tournaments/${identifier}/bowlers`;
-    const requestConfig = {
-      method: 'get',
-      params: {
-        include_details: true,
-      },
-    }
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      onSuccess: (data) => dispatch(bowlerListRetrieved(data)),
-      onFailure: (_) => setErrorMessage('Failed to retrieve bowlers.'),
-    });
-  }
-
-  const retrieveTeams = () => {
-    devConsoleLog('retrieving list of teams for the tournament');
-    const uri = `/director/tournaments/${identifier}/teams`;
-    const requestConfig = {
-      method: 'get',
-    }
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      onSuccess: (data) => dispatch(teamListRetrieved(data)),
-      onFailure: (_) => setErrorMessage('Failed to retrieve teams.'),
-    });
-  }
-
-  const retrieveFreeEntries = () => {
-    devConsoleLog('retrieving list of free entries for the tournament');
-    const uri = `/director/tournaments/${identifier}/free_entries`;
-    const requestConfig = {
-      method: 'get',
-    }
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      onSuccess: (data) => dispatch(freeEntryListRetrieved(data)),
-      onFailure: (_) => setErrorMessage('Failed to retrieve free entries'),
-    });
-  }
-
   // Retrieve the tournament details
   useEffect(() => {
     if (identifier === undefined) {
@@ -109,11 +61,7 @@ const Tournament = () => {
       context: context,
       onSuccess: (data) => {
         setTournament(data);
-        dispatch(bowlerListReset());
         dispatch(tournamentDetailsRetrieved(data));
-        retrieveBowlers();
-        retrieveTeams();
-        retrieveFreeEntries();
       },
       onFailure: (data) => {
         if (data.error === 'Not found') {
@@ -134,6 +82,7 @@ const Tournament = () => {
     const currentTournamentIdentifier = directorState.tournament.identifier;
 
     if (directorState.user.role !== 'superuser' && !directorState.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
+      devConsoleLog("User login has expired. Kicking them out.");
       router.push('/director');
     }
   }, [directorState.tournament, directorState.user]);
@@ -145,6 +94,7 @@ const Tournament = () => {
     return '';
   }
   if (!loggedInState) {
+    devConsoleLog("We've determined that the logged-in state is bad. Back to login!");
     router.push('/director/login');
   }
   if (!directorState) {
