@@ -8,7 +8,7 @@ import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import TeamDetails from "../../../components/Director/TeamDetails/TeamDetails";
 import {directorApiRequest, useLoggedIn} from "../../../director";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import {teamDeleted, teamUpdated} from "../../../store/actions/directorActions";
+import {teamDeleted} from "../../../store/actions/directorActions";
 import TeamShiftForm from "../../../components/Director/TeamDetails/TeamShiftForm";
 
 const Page = () => {
@@ -146,7 +146,6 @@ const Page = () => {
   const updateTeamSuccess = (data) => {
     setLoading(false);
     setTeam(data);
-    dispatch(teamUpdated(data));
     setSuccessMessage('Changes applied.');
   }
 

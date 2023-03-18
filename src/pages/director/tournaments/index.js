@@ -6,26 +6,21 @@ import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLa
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import TournamentListing from '../../../components/Director/TournamentListing/TournamentListing';
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {
-  newTournamentInitiated,
-  tournamentListReset,
-  tournamentListRetrieved
-} from "../../../store/actions/directorActions";
+import {newTournamentInitiated} from "../../../store/actions/directorActions";
 import {devConsoleLog} from "../../../utils";
 import {directorApiRequest, useLoggedIn} from "../../../director";
 
 const Page = () => {
   const router = useRouter();
   const context = useDirectorContext();
-  const directorState = context.directorState;
   const dispatch = context.dispatch;
 
-  const [loading, setLoading] = useState(false);
+  const [tournaments, setTournaments] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState();
 
   const fetchTournamentsSuccess = (data) => {
-    const tournaments = data;
-    dispatch(tournamentListRetrieved(data));
+    setTournaments(data);
     setLoading(false);
   }
 
@@ -35,15 +30,6 @@ const Page = () => {
   }
 
   useEffect(() => {
-    if (!directorState) {
-      return;
-    }
-
-    // Don't fetch the list again if we already have it.
-    if (directorState.tournaments) {
-      devConsoleLog("Already have a list of tournaments, not re-fetching it");
-      return;
-    }
     const uri = '/director/tournaments';
     const requestConfig = {
       method: 'get',
@@ -56,7 +42,7 @@ const Page = () => {
       onSuccess: fetchTournamentsSuccess,
       onFailure: fetchTournamentsFailure,
     });
-  }, [directorState.tournaments]);
+  }, []);
 
   const loggedInState = useLoggedIn();
   const ready = loggedInState >= 0;
@@ -66,11 +52,6 @@ const Page = () => {
 
   if (!ready || loading) {
     return <LoadingMessage message={'Retrieving data...'} />;
-  }
-
-  const refreshList = (e) => {
-    e.preventDefault();
-    dispatch(tournamentListReset());
   }
 
   const newTournamentClicked = (e) => {
@@ -92,7 +73,7 @@ const Page = () => {
       )}
       <Row>
         <Col>
-          <TournamentListing />
+          <TournamentListing tournaments={tournaments}/>
         </Col>
       </Row>
       <Row>
@@ -101,12 +82,6 @@ const Page = () => {
              className={"btn btn-sm btn-outline-success mx-2"}
              onClick={newTournamentClicked}>
             Create a Tournament
-          </a>
-          <a href={'#'}
-             className={'btn btn-sm btn-outline-primary mx-2'}
-             onClick={refreshList}
-             >
-            Refresh List
           </a>
         </Col>
       </Row>

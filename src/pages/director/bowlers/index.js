@@ -9,17 +9,17 @@ import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLa
 import BowlerListing from "../../../components/Director/BowlerListing/BowlerListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import {bowlerListReset, bowlerListRetrieved} from "../../../store/actions/directorActions";
 import {useLoggedIn} from "../../../director";
 
 const Page = () => {
   const router = useRouter();
   const context = useDirectorContext();
-  const dispatch = context.dispatch;
   const directorState = context.directorState;
+
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [bowlers, setBowlers] = useState();
 
   // This effect ensures we're logged in with appropriate permissions
   useEffect(() => {
@@ -34,25 +34,21 @@ const Page = () => {
   }, [directorState.user]);
 
   const onFetchBowlersSuccess = (data) => {
-    dispatch(bowlerListRetrieved(data));
+    setBowlers(data);
     setLoading(false);
   }
 
   const onFetchBowlersFailure = (data) => {
     setErrorMessage(data.error);
     setLoading(false);
+    setBowlers([]);
   }
 
   // Fetch the bowlers from the backend
   useEffect(() => {
-    // Don't fetch the list again if we already have it.
-    const needToFetch = directorState.bowlers && directorState.tournament &&
-      directorState.bowlers.length === 0 && directorState.tournament.bowler_count > 0;
-    if (!needToFetch) {
-      devConsoleLog("Not re-fetching the list of bowlers.");
+    if (!directorState.tournament) {
       return;
     }
-
     const uri = `/director/tournaments/${directorState.tournament.identifier}/bowlers`;
     const requestConfig = {
       method: 'get',
@@ -65,7 +61,7 @@ const Page = () => {
       onSuccess: onFetchBowlersSuccess,
       onFailure: onFetchBowlersFailure,
     })
-  });
+  }, [directorState.tournament]);
 
   // Do we have a success query parameter?
   useEffect(() => {
@@ -128,11 +124,6 @@ const Page = () => {
     return <LoadingMessage message={'Retrieving bowler data...'} />
   }
 
-  const refreshList = (e) => {
-    e.preventDefault();
-    dispatch(bowlerListReset());
-  }
-
   return (
     <>
       <Breadcrumbs ladder={ladder} activeText={'Bowlers'}/>
@@ -140,17 +131,7 @@ const Page = () => {
         <Col>
           {success}
           {error}
-          <BowlerListing bowlers={directorState.bowlers} />
-        </Col>
-      </Row>
-      <Row>
-        <Col className={'text-center'}>
-          <a href={'#'}
-             className={'btn btn-sm btn-outline-primary'}
-             onClick={refreshList}
-          >
-            Refresh List
-          </a>
+          <BowlerListing bowlers={bowlers} />
         </Col>
       </Row>
     </>

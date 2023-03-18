@@ -109,21 +109,21 @@ const BowlerListing = ({bowlers}) => {
     },
     {
       id: 'email',
-      Header: 'Email',
+      Header: ({column}) => <SortableTableHeader text={'Email'} column={column}/>,
       accessor: 'email',
     },
     {
       Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
       accessor: 'team_name',
-      Cell: ({row, cell}) => {
-        return (!row.original.team) ? 'n/a' : (
+      Cell: ({row, value}) => {
+        return (!value) ? 'n/a' : (
           <a
-            href={`/director/teams/${row.original.team.identifier}`}>
-            {row.original.team.name}
+            href={`/director/teams/${row.original.team_identifier}`}>
+            {value}
           </a>
           )
       },
-      disableSortBy: true,
+      disableSortBy: false,
       filter: equals,
     },
     {

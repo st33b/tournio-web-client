@@ -13,9 +13,8 @@ import ManualPayment from "../../../components/Director/BowlerDetails/ManualPaym
 import OfficeUseOnly from "../../../components/Director/BowlerDetails/OfficeUseOnly";
 import ResendEmailButtons from "../../../components/Director/BowlerDetails/ResendEmailButtons";
 import {
-  bowlerDeleted, bowlerListReset,
-  bowlerUpdated,
-  freeEntryUpdated, teamListReset,
+  bowlerDeleted,
+  bowlerUpdated
 } from "../../../store/actions/directorActions";
 
 const Page = () => {
@@ -90,49 +89,63 @@ const Page = () => {
 
   // This effect sets the list of teams available to join
   useEffect(() => {
-    if (!directorState.teams || !directorState.tournament) {
+    if (!directorState.tournament) {
       return;
     }
 
-    const teamSize = directorState.tournament.team_size;
-    const joinableTeams = directorState.teams.filter(t => t.size < teamSize);
-    setAvailableTeams(joinableTeams);
-  }, [directorState.teams, directorState.tournament]);
-
-  const fetchBowlersSuccess = (data) => {
-    setLoading(false);
-    setUnpartneredBowlers(data);
-  }
-  const fetchBowlersFailure = (data) => {
-    setLoading(false);
-    setErrorMessage(data.error);
-  }
+    const uri = `/director/tournaments/${directorState.tournament.identifier}/teams?partial=true`;
+    const requestConfig = {
+      method: 'get',
+    }
+    setLoading(true);
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      onSuccess: (data) => setAvailableTeams(data),
+      onFailure: (data) => devConsoleLog("Failed to retrieve joinable teams", data),
+    });
+  }, [directorState.tournament]);
 
   // This effect sets the list of bowlers without doubles partners
   useEffect(() => {
-    if (!context || !directorState.bowlers) {
+    if (!directorState.tournament) {
       return;
     }
 
-    const unpartnered = directorState.bowlers.filter(b => b.doubles_partner === null)
-    setUnpartneredBowlers(unpartnered);
-  }, [context, directorState.bowlers]);
-
-  const fetchFreeEntriesSuccess = (data) => {
-    setAvailableFreeEntries(data);
-  }
-  const fetchFreeEntriesFailure = (data) => {
-    setErrorMessage(data.error);
-  }
+    const uri = `/director/tournaments/${directorState.tournament.identifier}/bowlers?unpartnered=true`;
+    const requestConfig = {
+      method: 'get',
+    }
+    setLoading(true);
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      onSuccess: (data) => setUnpartneredBowlers(data),
+      onFailure: (data) => devConsoleLog("Failed to retrieve unpartnered bowlers", data),
+    })
+  }, [directorState.tournament]);
 
   // Limit the list of available free entries to those with no bowler attached
   useEffect(() => {
-    if (!directorState.freeEntries) {
+    if (!directorState.tournament) {
       return;
     }
-    const availableFEs = directorState.freeEntries.filter(({bowler}) => bowler === null);
-    setAvailableFreeEntries(availableFEs);
-  }, [directorState.freeEntries]);
+
+    const uri = `/director/tournaments/${directorState.tournament.identifier}/free_entries?unassigned=true`;
+    const requestConfig = {
+      method: 'get',
+    }
+    setLoading(true);
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      onSuccess: (data) => setAvailableFreeEntries(data),
+      onFailure: (data) => devConsoleLog("Failed to retrieve unassigned free entries", data),
+    });
+  }, [directorState.tournament]);
 
   const loggedInState = useLoggedIn();
   const ready = loggedInState >= 0;
@@ -272,8 +285,6 @@ const Page = () => {
   const moveBowlerSuccess = (data) => {
     setLoading(false);
     setBowler(data);
-    dispatch(bowlerUpdated(data));
-    dispatch(teamListReset());
   }
   const moveBowlerFailure = (data) => {
     setLoading(false);
@@ -347,7 +358,6 @@ const Page = () => {
   const newPartnerSuccess = (data) => {
     setLoading(false);
     setBowler(data);
-    dispatch(bowlerUpdated(data));
   }
   const newPartnerFailure = (data) => {
     setLoading(false);
@@ -428,8 +438,6 @@ const Page = () => {
   }
 
   const linkFreeEntrySuccess = (data) => {
-    dispatch(freeEntryUpdated(data));
-    dispatch(bowlerListReset());
     router.reload();
   }
   const linkFreeEntryFailure = (data) => {
@@ -599,7 +607,6 @@ const Page = () => {
   const bowlerUpdateSuccess = (data) => {
     setLoading(false);
     setBowler(data);
-    dispatch(bowlerUpdated(data));
   }
   const bowlerUpdateFailure = (data) => {
     setLoading(false);

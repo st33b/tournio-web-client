@@ -4,19 +4,16 @@ import {useDirectorContext} from '../../../store/DirectorContext';
 
 import classes from './TournamentListing.module.scss';
 
-const TournamentListing = () => {
-  const {directorState} = useDirectorContext();
-
-  if (!directorState || !directorState.tournaments) {
+const TournamentListing = ({tournaments}) => {
+  if (!tournaments) {
     return '';
   }
-
   return (
     <div className={classes.TournamentListing}>
       <Row>
         <Col>
-          {directorState.tournaments.length === 0 && <h3 className={'display-6 text-center pt-2'}>No tournaments to display.</h3>}
-          {directorState.tournaments.length > 0 && (
+          {tournaments.length === 0 && <h3 className={'display-6 text-center pt-2'}>No tournaments to display.</h3>}
+          {tournaments.length > 0 && (
             <div className={'table-responsive'}>
               <table className={'table'}>
                 <thead>
@@ -36,7 +33,7 @@ const TournamentListing = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {directorState.tournaments.map((row) => {
+                {tournaments.map((row) => {
                   return (
                     <tr key={row.identifier}>
                       <td>

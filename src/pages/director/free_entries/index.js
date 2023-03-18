@@ -13,8 +13,6 @@ import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage
 import {
   freeEntryAdded,
   freeEntryDeleted,
-  freeEntryListRetrieved,
-  freeEntryUpdated
 } from "../../../store/actions/directorActions";
 
 const Page = () => {
@@ -25,6 +23,7 @@ const Page = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [freeEntries, setFreeEntries] = useState();
 
   // Make sure we're logged in with appropriate permissions
   useEffect(() => {
@@ -40,22 +39,19 @@ const Page = () => {
   });
 
   const freeEntriesFetched = (data) => {
-    dispatch(freeEntryListRetrieved(data));
+    setFreeEntries(data);
     setLoading(false);
   }
 
   const freeEntriesFetchFailed = (data) => {
+    setFreeEntries([]);
     setErrorMessage(data.error);
     setLoading(false);
   }
 
   // Fetch the free entries from the backend
   useEffect(() => {
-    // Don't fetch the list again if we already have it.
-    const needToFetch = directorState.freeEntries && directorState.tournament &&
-      directorState.freeEntries.length === 0 && directorState.tournament.free_entry_count > 0;
-    if (!needToFetch) {
-      devConsoleLog("Not re-fetching the list of free entries.");
+    if (!directorState.tournament) {
       return;
     }
 
@@ -71,7 +67,7 @@ const Page = () => {
       onSuccess: freeEntriesFetched,
       onFailure: freeEntriesFetchFailed,
     });
-  });
+  }, [directorState.tournament]);
 
   // Do we have a success query parameter?
   useEffect(() => {
@@ -148,7 +144,11 @@ const Page = () => {
 
   const confirmFreeEntrySuccess = (data) => {
     setSuccessMessage('Free entry confirmed!');
-    dispatch(freeEntryUpdated(data));
+    const index = freeEntries.findIndex(t => t.identifier === data.identifier);
+    const newFreeEntries = [...freeEntries];
+    newFreeEntries[index] = {...freeEntries[index]};
+    newFreeEntries[index].confirmed = true;
+    setFreeEntries(newFreeEntries);
   }
 
   const onConfirm = (freeEntry) => {
@@ -168,6 +168,8 @@ const Page = () => {
   const newFreeEntrySuccess = (data) => {
     setSuccessMessage('Free entry created!');
     dispatch(freeEntryAdded(data));
+    const newFreeEntries = freeEntries.concat(data);
+    setFreeEntries(newFreeEntries);
   }
 
   const newFreeEntrySubmitted = (freeEntryCode) => {
@@ -219,7 +221,7 @@ const Page = () => {
         <Col md={8}>
           {success}
           {error}
-          <FreeEntryListing freeEntries={directorState.freeEntries}
+          <FreeEntryListing freeEntries={freeEntries}
                             confirmClicked={onConfirm}
                             deleteClicked={onDelete}
           />
