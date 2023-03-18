@@ -20,6 +20,7 @@ const Page = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [teams, setTeams] = useState();
 
   // This effect ensures we're logged in with appropriate permissions
   useEffect(() => {
@@ -35,22 +36,18 @@ const Page = () => {
   });
 
   const onFetchTeamsSuccess = (data) => {
-    dispatch(teamListRetrieved(data));
+    setTeams(data);
     setLoading(false);
   }
 
   const onFetchTeamsFailure = (data) => {
-    setErrorMessage(data.error);
+    setTeams([]);
     setLoading(false);
   }
 
-  // This effect fetches the teams from the backend, if needed
+  // This effect fetches the teams from the backend
   useEffect(() => {
-    // Don't fetch the list again if we already have it.
-    const needToFetch = directorState.teams && directorState.tournament &&
-      directorState.teams.length === 0 && directorState.tournament.team_count > 0;
-    if (!needToFetch) {
-      devConsoleLog("Not re-fetching the list of teams.");
+    if (!directorState.tournament) {
       return;
     }
 
@@ -66,7 +63,7 @@ const Page = () => {
       onSuccess: onFetchTeamsSuccess,
       onFailure: onFetchTeamsFailure,
     });
-  });
+  }, [directorState.tournament]);
 
   // Do we have a success query parameter?
   useEffect(() => {
@@ -91,7 +88,8 @@ const Page = () => {
 
   const newTeamSubmitSuccess = (data) => {
     setSuccessMessage('New team created!');
-    dispatch(teamAdded(data));
+    const newTeams = teams.concat(data);
+    setTeams(newTeams);
   }
 
   const newTeamSubmitFailure = (data) => {
@@ -178,7 +176,7 @@ const Page = () => {
         <div className={'order-2 order-md-1 col'}>
           {success}
           {error}
-          <TeamListing teams={directorState.teams} shiftCount={directorState.tournament.shifts.length}/>
+          <TeamListing teams={teams} shiftCount={directorState.tournament.shifts.length}/>
         </div>
         <div className={'order-1 order-md-2 col-12 col-md-4'}>
           {newTeam}

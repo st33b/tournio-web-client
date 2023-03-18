@@ -9,13 +9,11 @@ import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLa
 import BowlerListing from "../../../components/Director/BowlerListing/BowlerListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import {bowlerListReset, bowlerListRetrieved} from "../../../store/actions/directorActions";
 import {useLoggedIn} from "../../../director";
 
 const Page = () => {
   const router = useRouter();
   const context = useDirectorContext();
-  const dispatch = context.dispatch;
   const directorState = context.directorState;
 
   const [successMessage, setSuccessMessage] = useState(null);

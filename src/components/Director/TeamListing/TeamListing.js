@@ -39,7 +39,7 @@ const TeamListing = ({teams, shiftCount = 1}) => {
         accessor: 'shift',
         Cell: ({row, value}) => {
           if (value === null) {
-            return '';
+            return 'n/a';
           }
           const confClass = `text-${confClasses[row.original.who_has_paid]}`;
           let tooltip = '';
@@ -55,8 +55,7 @@ const TeamListing = ({teams, shiftCount = 1}) => {
           }
           return (
             <span>
-              {shiftCount > 1 && value.name}
-              <i className={`bi-circle-fill ms-1 ${confClass}`} aria-hidden={true} title={tooltip}/>
+              {shiftCount > 1 && (<i className={`bi-circle-fill ms-1 ${confClass}`} aria-hidden={true} title={tooltip}/>)}
               <span className={'visually-hidden'}>{tooltip}</span>
             </span>
           )
