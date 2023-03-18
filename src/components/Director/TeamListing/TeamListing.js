@@ -53,9 +53,11 @@ const TeamListing = ({teams, shiftCount = 1}) => {
             default:
               tooltip = 'All team members paid';
           }
+          const shiftName = shiftCount > 1 ? value.name : '';
           return (
-            <span>
-              {shiftCount > 1 && (<i className={`bi-circle-fill ms-1 ${confClass}`} aria-hidden={true} title={tooltip}/>)}
+            <span className={'text-nowrap'}>
+              {shiftName}
+              <i className={`bi-circle-fill ms-1 ${confClass}`} aria-hidden={true} title={tooltip}/>
               <span className={'visually-hidden'}>{tooltip}</span>
             </span>
           )
