@@ -114,9 +114,9 @@ const FreeEntryListing = ({freeEntries, confirmClicked, deleteClicked}) => {
 
   if (data.length === 0) {
     return (
-      <div className={'display-6 text-center'}>
+      <h6 className={'text-center'}>
         No free entries to display.
-      </div>
+      </h6>
     );
   }
 
