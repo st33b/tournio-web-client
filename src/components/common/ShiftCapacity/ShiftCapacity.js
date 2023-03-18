@@ -14,7 +14,7 @@ const ShiftCapacity = ({shift, includeName}) => {
 
   return (
     <div className={`${classes.ProgressBar} d-flex align-items-center my-2`}>
-      {includeName && <h6 className={'fw-light'}>{shift.name}</h6> }
+      {includeName && <h6 className={'fw-light pe-2'}>{shift.name}</h6> }
       <div className={'flex-grow-1'}>
         <div className={`d-flex justify-content-between`}>
           <div className={classes.EndLabel}>0%</div>
