@@ -10,7 +10,6 @@ import NewTeamForm from "../../../components/Director/NewTeamForm/NewTeamForm";
 import {devConsoleLog} from "../../../utils";
 import {directorApiRequest, useLoggedIn} from "../../../director";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import {teamAdded, teamListRetrieved} from "../../../store/actions/directorActions";
 
 const Page = () => {
   const router = useRouter();

@@ -8,7 +8,6 @@ import {devConsoleLog} from "../../../utils";
 import {directorApiRequest, useLoggedIn} from "../../../director";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import {
-  bowlerListReset, bowlerListRetrieved, freeEntryListRetrieved, teamListRetrieved,
   tournamentDetailsRetrieved,
   tournamentStateChanged
 } from "../../../store/actions/directorActions";

@@ -20,8 +20,9 @@ const initialState = {
 export const directorReducerInit = (initial = initialState) => initial;
 
 export const directorReducer = (state, action) => {
+  devConsoleLog("Director reducer action type:", action.type);
   devConsoleLog("Director reducer existing state:", state);
-  devConsoleLog("Director reducer action:", action);
+  // devConsoleLog("Director reducer action:", action);
 
   let index, identifier;
   switch (action.type) {
@@ -35,6 +36,7 @@ export const directorReducer = (state, action) => {
     case actionTypes.LOGGED_OUT:
       return directorReducerInit();
     case actionTypes.TOURNAMENT_DETAILS_RESET:
+      devConsoleLog("DEPRECATED");
       return updateObject(state, {
         tournament: null,
         bowlers: [],
@@ -42,12 +44,12 @@ export const directorReducer = (state, action) => {
         freeEntries: [],
       });
     case actionTypes.TOURNAMENT_LIST_RESET:
-      devConsoleLog("do we need to reset the tournament list?");
+      devConsoleLog("DEPRECATED");
       return updateObject(state, {
         tournaments: null,
       });
     case actionTypes.TOURNAMENT_LIST_RETRIEVED:
-      devConsoleLog("do we need to fetch the tournament list?");
+      devConsoleLog("DEPRECATED");
       return updateObject(state, {
         tournaments: [...action.tournaments],
       });
@@ -56,6 +58,7 @@ export const directorReducer = (state, action) => {
         tournament: {...action.tournament},
       });
     case actionTypes.TOURNAMENT_DELETED:
+      devConsoleLog("DEPRECATED");
       const tournament = action.tournament.identifier === state.tournament.identifier ? null : state.tournament;
       return updateObject(state, {
         tournament: tournament,
@@ -218,6 +221,7 @@ export const directorReducer = (state, action) => {
         users: state.users.filter(u => u.identifier !== identifier),
       });
     case actionTypes.BOWLER_LIST_RETRIEVED:
+      devConsoleLog("DEPRECATED");
       return updateObject(state, {
         bowlers: [...action.bowlers],
       });
@@ -228,9 +232,9 @@ export const directorReducer = (state, action) => {
           ...state.tournament,
           bowler_count: state.tournament.bowler_count - 1,
         },
-        bowlers: state.bowlers.filter(b => b.identifier !== identifier),
       });
     case actionTypes.BOWLER_UPDATED:
+      devConsoleLog("DEPRECATED");
       identifier = action.bowler.identifier;
       index = state.bowlers.findIndex(b => b.identifier === identifier);
       const newBowlers = [...state.bowlers];
@@ -239,10 +243,12 @@ export const directorReducer = (state, action) => {
         bowlers: newBowlers,
       });
     case actionTypes.BOWLER_LIST_RESET:
+      devConsoleLog("DEPRECATED");
       return updateObject(state, {
         bowlers: [],
       });
     case actionTypes.TEAM_LIST_RETRIEVED:
+      devConsoleLog("DEPRECATED");
       return updateObject(state, {
         teams: [...action.teams],
       });
@@ -252,9 +258,9 @@ export const directorReducer = (state, action) => {
           ...state.tournament,
           team_count: state.tournament.team_count + 1,
         },
-        teams: state.teams.concat({...action.team}),
       });
     case actionTypes.TEAM_UPDATED:
+      devConsoleLog("DEPRECATED");
       identifier = action.team.identifier;
       index = state.teams.findIndex(t => t.identifier === identifier);
       const newTeams = [...state.teams];
@@ -269,13 +275,14 @@ export const directorReducer = (state, action) => {
           ...state.tournament,
           team_count: state.tournament.team_count - 1,
         },
-        teams: state.teams.filter(u => u.identifier !== identifier),
       });
     case actionTypes.TEAM_LIST_RESET:
+      devConsoleLog("DEPRECATED");
       return updateObject(state, {
         teams: [],
       });
     case actionTypes.FREE_ENTRY_LIST_RETRIEVED:
+      devConsoleLog("DEPRECATED");
       return updateObject(state, {
         freeEntries: [...action.freeEntries],
       });
@@ -285,9 +292,9 @@ export const directorReducer = (state, action) => {
           ...state.tournament,
           free_entry_count: state.tournament.free_entry_count + 1,
         },
-        freeEntries: state.freeEntries.concat({...action.freeEntry}),
       });
     case actionTypes.FREE_ENTRY_UPDATED:
+      devConsoleLog("DEPRECATED");
       identifier = action.freeEntry.identifier;
       index = state.freeEntries.findIndex(t => t.identifier === identifier);
       const newFreeEntries = [...state.freeEntries];
@@ -302,7 +309,6 @@ export const directorReducer = (state, action) => {
           ...state.tournament,
           free_entry_count: state.tournament.free_entry_count - 1,
         },
-        freeEntries: state.freeEntries.filter(u => u.identifier !== identifier),
       });
     case actionTypes.NEW_TOURNAMENT_INITIATED:
       return updateObject(state, {
