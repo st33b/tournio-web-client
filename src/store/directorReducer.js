@@ -42,10 +42,12 @@ export const directorReducer = (state, action) => {
         freeEntries: [],
       });
     case actionTypes.TOURNAMENT_LIST_RESET:
+      devConsoleLog("do we need to reset the tournament list?");
       return updateObject(state, {
         tournaments: null,
       });
     case actionTypes.TOURNAMENT_LIST_RETRIEVED:
+      devConsoleLog("do we need to fetch the tournament list?");
       return updateObject(state, {
         tournaments: [...action.tournaments],
       });
