@@ -16,7 +16,7 @@ const BowlerSummary = ({bowler, editClicked}) => {
     last_name: 'Last Name',
     nickname: 'Preferred Name',
     usbc_id: 'USBC ID',
-    igbo_id: 'IGBO ID',
+    // igbo_id: 'IGBO ID',
     birth_month: 'Birth Month',
     birth_day: 'Birth Day',
     email: 'Email',

@@ -47,7 +47,7 @@ const TeamListing = ({teams, caption, includeShift, context}) => {
                   <td>
                     {t.date_registered}
                   </td>
-                  {includeShift && <td>{t.shift.name}</td>}
+                  {includeShift && <td>{t.shift ? t.shift.name : 'n/a'}</td>}
                   <td>
                     {t.size}
                   </td>

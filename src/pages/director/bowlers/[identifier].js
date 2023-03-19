@@ -575,7 +575,7 @@ const Page = () => {
         first_name: bowlerData.first_name,
         last_name: bowlerData.last_name,
         usbc_id: bowlerData.usbc_id,
-        igbo_id: bowlerData.igbo_id,
+        // igbo_id: bowlerData.igbo_id,
         birth_month: bowlerData.birth_month,
         birth_day: bowlerData.birth_day,
         nickname: bowlerData.nickname,
