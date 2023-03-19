@@ -56,7 +56,7 @@ const UserForm = ({user, tournaments}) => {
     setUserFormData(newUserFormData);
   }, [user, directorState.user]);
 
-  if (!directorState.user) {
+  if (!directorState.user || !tournaments) {
     return '';
   }
 
