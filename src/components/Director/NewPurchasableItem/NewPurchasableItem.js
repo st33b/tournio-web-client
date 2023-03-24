@@ -40,15 +40,15 @@ const NewPurchasableItem = ({tournament}) => {
 
     setAvailableLedgerTypes(typesAvailable);
 
-    const allSanctionTypes = ['igbo'];
-    usedTypes = tournament.purchasable_items.filter(item => item.category === 'sanction').map(item => item.determination);
-    typesAvailable = [];
-    allSanctionTypes.forEach(type => {
-      if (eventSelectionEnabled || !usedTypes.includes(type)) {
-        typesAvailable.push(type);
-      }
-    });
-    setAvailableSanctionTypes(typesAvailable);
+    // const allSanctionTypes = ['igbo'];
+    // usedTypes = tournament.purchasable_items.filter(item => item.category === 'sanction').map(item => item.determination);
+    // typesAvailable = [];
+    // allSanctionTypes.forEach(type => {
+    //   if (eventSelectionEnabled || !usedTypes.includes(type)) {
+    //     typesAvailable.push(type);
+    //   }
+    // });
+    // setAvailableSanctionTypes(typesAvailable);
   }, [tournament]);
 
   if (!tournament) {
@@ -103,17 +103,17 @@ const NewPurchasableItem = ({tournament}) => {
                       disabled={availableLedgerTypes.length === 0}
                       onClick={(event) => addClicked(event, 'ledger')}>
                 <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                New Ledger Item
+                Ledger Item
               </button>
             </div>
             <div className={'text-center my-3'}>
               <button type={'button'}
                       className={`btn btn-outline-primary`}
                       role={'button'}
-                      disabled={availableSanctionTypes.length === 0}
+                      // disabled={availableSanctionTypes.length === 0}
                       onClick={(event) => addClicked(event, 'sanction')}>
                 <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                New Sanction Item
+                IGBO Sanction Item
               </button>
             </div>
             {eventSelection && (<div className={'text-center my-3'}>
@@ -122,7 +122,7 @@ const NewPurchasableItem = ({tournament}) => {
                       role={'button'}
                       onClick={(event) => addClicked(event, 'event')}>
                 <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                New Event
+                Event
               </button>
             </div>)}
             <div className={'text-center my-3'}>
@@ -131,7 +131,7 @@ const NewPurchasableItem = ({tournament}) => {
                       role={'button'}
                       onClick={(event) => addClicked(event, 'division')}>
                 <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                New Division Item
+                Division Item
               </button>
             </div>
             <div className={'text-center my-3'}>
@@ -140,7 +140,7 @@ const NewPurchasableItem = ({tournament}) => {
                       role={'button'}
                       onClick={(event) => addClicked(event, 'single_use')}>
                 <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                New Single-use Item
+                Single-use Item
               </button>
             </div>
             <div className={'text-center my-3'}>
@@ -149,7 +149,7 @@ const NewPurchasableItem = ({tournament}) => {
                       role={'button'}
                       onClick={(event) => addClicked(event, 'multi_use')}>
                 <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                New Multi-use Item
+                Multi-use Item
               </button>
             </div>
           </>
