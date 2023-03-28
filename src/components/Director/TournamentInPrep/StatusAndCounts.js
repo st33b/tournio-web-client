@@ -9,6 +9,7 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import {testDataCleared, tournamentTestEnvironmentUpdated} from "../../../store/actions/directorActions";
 
 import classes from './TournamentInPrep.module.scss';
+import statusClasses from '../TournamentListing/TournamentListing.module.scss';
 
 const StatusAndCounts = ({tournament}) => {
   const context = useDirectorContext();
@@ -215,10 +216,7 @@ const StatusAndCounts = ({tournament}) => {
 
   let clearTestData = '';
   let testingStatusContent = '';
-  let bgColor = 'info';
-  let textColor = 'dark';
   if (tournament.state === 'testing' || tournament.state === 'demo') {
-    bgColor = tournament.state === 'demo' ? 'primary' : 'warning';
     let success = '';
     if (clearTestDataSuccessMessage) {
       success = (
@@ -325,8 +323,8 @@ const StatusAndCounts = ({tournament}) => {
   );
 
   return (
-    <Card className={classes.Card + ' text-center'} border={bgColor}>
-      <Card.Header as={'h5'} className={`bg-${bgColor} text-${textColor}`}>
+    <Card className={[classes.Card, 'text-center', statusClasses.TournamentState].join(' ')}>
+      <Card.Header as={'h5'} className={statusClasses[tournament.state]}>
         {tournament.status}
       </Card.Header>
       {tournament.state !== 'setup' && counts}

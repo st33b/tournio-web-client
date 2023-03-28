@@ -1,6 +1,10 @@
-.TournamentListing {
+.TournamentState {
   .setup {
     background-color: var(--tournio-info);
+
+    @media (prefers-color-scheme: dark) {
+      color: var(--tournio-body-bg);
+    }
   }
   .testing {
     background-color: var(--tournio-warning);
@@ -24,5 +28,6 @@
   }
   .demo {
     background-color: var(--tournio-primary);
+    color: var(--tournio-body-bg);
   }
 }
