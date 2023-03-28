@@ -9,7 +9,7 @@ const TournamentListing = ({tournaments}) => {
     return '';
   }
   return (
-    <div className={classes.TournamentListing}>
+    <div>
       <Row>
         <Col>
           {tournaments.length === 0 && <h3 className={'display-6 text-center pt-2'}>No tournaments to display.</h3>}
@@ -35,7 +35,7 @@ const TournamentListing = ({tournaments}) => {
                 <tbody>
                 {tournaments.map((row) => {
                   return (
-                    <tr key={row.identifier}>
+                    <tr key={row.identifier} className={classes.TournamentState}>
                       <td>
                         <a href={'/director/tournaments/' + row.identifier}>
                           {row.name}
