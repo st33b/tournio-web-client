@@ -1,9 +1,11 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 
 import SignInSheet from "../../../../components/Director/SignInSheet/SignInSheet";
 import {useDirectorContext} from "../../../../store/DirectorContext";
-import {useLoggedIn} from "../../../../director";
+import {directorApiRequest, useLoggedIn} from "../../../../director";
+import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
+import ErrorBoundary from "../../../../components/common/ErrorBoundary";
 
 const Page = () => {
   const router = useRouter();
@@ -11,6 +13,9 @@ const Page = () => {
   const directorState = context.directorState;
 
   const {identifier} = router.query;
+
+  const [loading, setLoading] = useState(false);
+  const [bowlers, setBowlers] = useState();
 
   // Make sure we're logged in
   const loggedInState = useLoggedIn();
@@ -38,17 +43,52 @@ const Page = () => {
     }
   }, [identifier, directorState.tournament]);
 
+  const onFetchBowlersSuccess = (data) => {
+    setBowlers(data);
+    setLoading(false);
+  }
+
+  const onFetchBowlersFailure = (data) => {
+    setLoading(false);
+    setBowlers([]);
+  }
+
+  // Fetch the bowlers from the backend
+  useEffect(() => {
+    if (!identifier) {
+      return;
+    }
+    const uri = `/director/tournaments/${identifier}/bowlers?include_details`;
+    const requestConfig = {
+      method: 'get',
+    }
+    setLoading(true);
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      onSuccess: onFetchBowlersSuccess,
+      onFailure: onFetchBowlersFailure,
+    })
+  }, [identifier]);
+
   // Are we ready?
   const ready = loggedInState >= 0;
   if (!ready || !directorState.bowlers) {
     return '';
   }
 
+  if (loading || !bowlers) {
+    return <LoadingMessage message={'Retrieving bowler data...'} />
+  }
+
   return (
     <div className={'container-md'}>
-      {
-        directorState.bowlers.map((bowler, i) => <SignInSheet tournament={directorState.tournament} bowler={bowler} key={bowler.identifier} showPrintButton={i === 0}/>)
-      }
+      <ErrorBoundary>
+        {
+          bowlers.map((bowler, i) => <SignInSheet tournament={directorState.tournament} bowler={bowler} key={bowler.identifier} showPrintButton={i === 0}/>)
+        }
+      </ErrorBoundary>
     </div>
   );
 }
