@@ -14,6 +14,10 @@
       font-weight: 200;
       font-size: 95%;
     }
+
+    .Upload {
+      margin-top: 0.5rem;
+    }
   }
 
   .PreviewItem {
@@ -26,7 +30,6 @@
     border-bottom: 1px solid var(--tournio-border-color);
 
     background-color: var(--tournio-white);
-    //background-color: var(--tournio-blue-200);
     @media (prefers-color-scheme: dark) {
       background-color: var(--tournio-gray-800);
     }

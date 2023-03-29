@@ -10,7 +10,7 @@ const ProductForm = ({tournamentIdentifier, onCancel, onComplete}) => {
     value: '',
     order: '',
     productHasImage: false,
-    image: '',
+    localImageFile: '',
 
     valid: false,
   }
@@ -22,17 +22,22 @@ const ProductForm = ({tournamentIdentifier, onCancel, onComplete}) => {
   }
 
   const inputChanged = (event) => {
-    let newValue = event.target.value;
     const inputName = event.target.name;
+
+    let newValue;
     if (['value', 'order'].includes(inputName)) {
-      newValue = parseInt(newValue);
+      newValue = parseInt(event.target.value);
       if (isNaN(newValue)) {
         newValue = 0;
       }
-    }
-    if (inputName === 'productHasImage') {
+    } else if (inputName === 'productHasImage') {
       newValue = event.target.checked;
+    } else if (inputName === 'imageFileLocation') {
+      newValue = event.target.files[0];
+    } else {
+      newValue = event.target.value;
     }
+
     const newFormData = {...formData};
     newFormData[inputName] = newValue;
     newFormData.valid = isValid(newFormData);
@@ -43,7 +48,10 @@ const ProductForm = ({tournamentIdentifier, onCancel, onComplete}) => {
     event.preventDefault();
   }
 
-  let itemPreview = '';
+  const uploadThatFile = () => {
+
+  }
+
   const itemPreviewProps = {
     category: 'product',
     determination: 'general',
@@ -142,6 +150,31 @@ const ProductForm = ({tournamentIdentifier, onCancel, onComplete}) => {
             </div>
           </div>
 
+          {formData.productHasImage && (
+            <div className={`${classes.LineItem}`}>
+              <div className={'row'}>
+                <label htmlFor={'imageFileLocation'}
+                       className={`form-label`}>
+                  Image file upload
+                </label>
+                <input className={`form-control form-control-sm`}
+                       type="file"
+                       name={'imageFileLocation'}
+                       id={'imageFileLocation'}/>
+              </div>
+
+              <div className={`d-flex justify-content-center ${classes.Upload}`}>
+                <button type={"button"}
+                        className={"btn btn-sm btn-primary"}
+                        onClick={uploadThatFile}
+                        disabled={!formData.localImageFile}
+                >
+                  Upload
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Apply any special styling here? */}
           <div className={`row ${classes.PreviewItem}`}>
             <p className={`${classes.PreviewText}`}>
@@ -150,7 +183,7 @@ const ProductForm = ({tournamentIdentifier, onCancel, onComplete}) => {
             <Item item={itemPreviewProps} preview={true}/>
           </div>
 
-          {/* Canccel & Save buttons */}
+          {/* Cancel & Save buttons */}
           <div className={'row'}>
             <div className={'d-flex justify-content-end pe-0'}>
               <button type={'button'}
