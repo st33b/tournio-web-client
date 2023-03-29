@@ -2,7 +2,6 @@ import {useEffect, useState} from 'react';
 import {Card, ListGroup} from "react-bootstrap";
 import {Map} from 'immutable';
 
-import classes from '../TournamentInPrep/TournamentInPrep.module.scss';
 import {directorApiRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {tournamentDetailsRetrieved} from "../../../store/actions/directorActions";

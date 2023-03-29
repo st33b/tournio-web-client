@@ -1,3 +1,41 @@
 .ProductForm {
+  .HeaderRow {
+    text-align: center;
+    h6 {
+      font-size: 1.2rem;
+      font-weight: 300;
+      color: hotpink;
+    }
+  }
+  .LineItem {
+    margin-bottom: 0.75rem;
 
+    label {
+      font-weight: 200;
+      font-size: 95%;
+    }
+  }
+
+  .PreviewItem {
+    margin: 0 -1.25rem 0.75rem;
+
+    padding-top: 0.25rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border-top: 1px solid var(--tournio-border-color);
+    border-bottom: 1px solid var(--tournio-border-color);
+
+    background-color: var(--tournio-white);
+    //background-color: var(--tournio-blue-200);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-800);
+    }
+
+    .PreviewText {
+      margin-bottom: 0.25rem;
+      padding-left: 0;
+      font-size: 90%;
+      font-style: italic;
+    }
+  }
 }
