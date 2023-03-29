@@ -171,7 +171,7 @@ const NewPurchasableItem = ({tournament}) => {
         {formDisplayed === 'single_use' && <SingleUseForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
         {formDisplayed === 'multi_use' && <MultiUseForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
         {formDisplayed === 'sanction' && <SanctionForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
-        {formDisplayed === 'product' && <ProductForm tournamentIdentifier={tournament.identifier} onCancel={cancelClicked} onComplete={itemSaved} />}
+        {formDisplayed === 'product' && <ProductForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
 
       </div>
     </ErrorBoundary>

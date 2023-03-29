@@ -2,15 +2,16 @@ import classes from './ProductForm.module.scss';
 import {useState} from "react";
 import ErrorBoundary from "../../common/ErrorBoundary";
 import Item from "../../Commerce/AvailableItems/Item/Item";
+import AssetUpload from "../../common/AssetUpload/AssetUpload";
 
-const ProductForm = ({tournamentIdentifier, onCancel, onComplete}) => {
+const ProductForm = ({tournament, onCancel, onComplete}) => {
   const initialState = {
     name: '',
     note: '',
     value: '',
     order: '',
     productHasImage: false,
-    localImageFile: '',
+    image: '',
 
     valid: false,
   }
@@ -23,6 +24,7 @@ const ProductForm = ({tournamentIdentifier, onCancel, onComplete}) => {
 
   const inputChanged = (event) => {
     const inputName = event.target.name;
+    const newFormData = {...formData};
 
     let newValue;
     if (['value', 'order'].includes(inputName)) {
@@ -32,24 +34,26 @@ const ProductForm = ({tournamentIdentifier, onCancel, onComplete}) => {
       }
     } else if (inputName === 'productHasImage') {
       newValue = event.target.checked;
-    } else if (inputName === 'imageFileLocation') {
+      if (!newValue) {
+        newFormData.localImageFile = null;
+      }
+    } else if (inputName === 'localImageFile') {
       newValue = event.target.files[0];
     } else {
       newValue = event.target.value;
     }
 
-    const newFormData = {...formData};
     newFormData[inputName] = newValue;
     newFormData.valid = isValid(newFormData);
     setFormData(newFormData);
   }
 
-  const formSubmitted = (event) => {
-    event.preventDefault();
+  const directUploadCompleted = (fileBlob) => {
+
   }
 
-  const uploadThatFile = () => {
-
+  const formSubmitted = (event) => {
+    event.preventDefault();
   }
 
   const itemPreviewProps = {
@@ -152,26 +156,10 @@ const ProductForm = ({tournamentIdentifier, onCancel, onComplete}) => {
 
           {formData.productHasImage && (
             <div className={`${classes.LineItem}`}>
-              <div className={'row'}>
-                <label htmlFor={'imageFileLocation'}
-                       className={`form-label`}>
-                  Image file upload
-                </label>
-                <input className={`form-control form-control-sm`}
-                       type="file"
-                       name={'imageFileLocation'}
-                       id={'imageFileLocation'}/>
-              </div>
-
-              <div className={`d-flex justify-content-center ${classes.Upload}`}>
-                <button type={"button"}
-                        className={"btn btn-sm btn-primary"}
-                        onClick={uploadThatFile}
-                        disabled={!formData.localImageFile}
-                >
-                  Upload
-                </button>
-              </div>
+              <AssetUpload formLabel={"Image file upload"}
+                           uploadPath={tournament.direct_upload_url}
+                           onUploadComplete={() => {}}
+              />
             </div>
           )}
 
