@@ -237,19 +237,6 @@ const PurchasableItemEditForm = ({tournament, item}) => {
           )
         }
         break;
-      case 'product':
-        if (item.refinement === 'denomination') {
-          note = <span className={classes.Note}>{formData.denomination}</span>;
-        }
-        if (formData.note) {
-          note = (
-            <span className={classes.Note}>
-              {note}
-              <span className={classes.Subnote}>{formData.note}</span>
-            </span>
-          );
-        }
-        break;
       default:
         break;
     }
@@ -343,28 +330,6 @@ const PurchasableItemEditForm = ({tournament, item}) => {
             name: 'division',
             id: 'division',
             value: formData.division,
-            classes: '',
-            others: {},
-          });
-        }
-        inputElements.push({
-          label: 'Note',
-          type: 'text',
-          name: 'note',
-          id: 'note',
-          value: formData.note,
-          classes: '',
-          others: {},
-        });
-        break;
-      case 'product':
-        if (item.refinement === 'denomination') {
-          inputElements.push({
-            label: 'Denomination / Quantity',
-            type: 'text',
-            name: 'denomination',
-            id: 'denomination',
-            value: formData.denomination,
             classes: '',
             others: {},
           });

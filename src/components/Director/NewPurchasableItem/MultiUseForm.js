@@ -13,7 +13,7 @@ const MultiUseForm = ({tournament, onCancel, onComplete}) => {
   const dispatch = context.dispatch;
 
   const initialState = {
-    category: '', // banquet, product
+    category: '', // banquet
     determination: 'multi_use',
     refinement: '', // denomination (for quantity-based products, like raffle ticket bundles
     name: '',
@@ -140,7 +140,6 @@ const MultiUseForm = ({tournament, onCancel, onComplete}) => {
               <option value={''}>--</option>
               <option value={'bowling'}>Bowling</option>
               <option value={'banquet'}>Banquet (non-bowler)</option>
-              <option value={'product'}>Product</option>
             </select>
           </div>
           <div className={'row mb-3'}>
