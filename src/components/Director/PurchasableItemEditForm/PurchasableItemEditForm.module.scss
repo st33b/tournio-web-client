@@ -1,19 +1,4 @@
 .PurchasableItemEditForm {
-  .Form {
-    background-color: var(--tournio-gray-200);
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--tournio-gray-800);
-    }
-    legend {
-      text-align: center;
-        font-size: 1.2rem;
-        font-weight: 300;
-    }
-    label {
-      font-weight: 200;
-      font-size: 95%;
-    }
-  }
   .Item {
     padding: 0.75rem;
 
@@ -45,9 +30,47 @@
       background-color: var(--tournio-gray-800);
     }
   }
-  .PreviewText {
-    font-size: 90%;
-    font-style: italic;
-    display: block;
+
+  .Form {
+    background-color: var(--tournio-gray-100);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-800);
+    }
+    legend {
+      text-align: center;
+        font-size: 1.2rem;
+        font-weight: 300;
+    }
+    label {
+      font-weight: 200;
+      font-size: 95%;
+    }
   }
+
+  .PreviewItem {
+    margin: 0 -0.5rem 0.75rem;
+
+    padding-top: 0.25rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border-top: 1px solid var(--tournio-border-color);
+    border-bottom: 1px solid var(--tournio-border-color);
+
+    background-color: var(--tournio-white);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-800);
+    }
+
+    .PreviewText {
+      margin-bottom: 0.25rem;
+      padding-left: 0;
+      font-size: 90%;
+      font-style: italic;
+    }
+  }
+  //.PreviewText {
+  //  font-size: 90%;
+  //  font-style: italic;
+  //  display: block;
+  //}
 }

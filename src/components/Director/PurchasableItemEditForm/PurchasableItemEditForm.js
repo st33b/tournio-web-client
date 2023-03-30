@@ -336,6 +336,15 @@ const PurchasableItemEditForm = ({tournament, item}) => {
       case 'product':
       case 'banquet':
         inputElements.push({
+          label: 'Display Order',
+          type: 'number',
+          name: 'order',
+          id: 'order',
+          value: formData.order,
+          classes: '',
+          others: {min: 0},
+        });
+        inputElements.push({
           label: 'Note',
           type: 'text',
           name: 'note',
@@ -347,7 +356,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
         break;
       case 'bowling':
         // single-use, non-division items can specify their display order (within single-use, non-division items)
-        if (item.determination === 'single_use' && item.refinement !== 'division') {
+        if (item.refinement !== 'division') {
           inputElements.push({
             label: 'Display Order',
             type: 'number',
@@ -395,12 +404,19 @@ const PurchasableItemEditForm = ({tournament, item}) => {
       itemPreviewProps.configuration.denomination = formData.denomination;
 
       itemPreview = (
-        <div className={'row mx-0 pt-3'}>
-        <span className={classes.PreviewText}>
+        // <div className={'row mx-0'}>
+        //   <span className={classes.PreviewText}>
+        //     How it will look to bowlers:
+        //   </span>
+        //   <Item item={itemPreviewProps} preview={true}/>
+        // </div>
+        //
+      <div className={`row ${classes.PreviewItem}`}>
+        <p className={`${classes.PreviewText}`}>
           How it will look to bowlers:
-        </span>
-          <Item item={itemPreviewProps} preview={true}/>
-        </div>
+        </p>
+        <Item item={itemPreviewProps} preview={true}/>
+      </div>
       );
     }
 
@@ -408,10 +424,11 @@ const PurchasableItemEditForm = ({tournament, item}) => {
       <form onSubmit={onFormSubmit} className={`${classes.Form} px-2 pt-2 pb-3`}>
         <fieldset>
           {inputElements.map((elemProps, i) => (
-            <div key={i} className={'row mx-0'}>
+            <div key={i} className={'row mx-0 mb-3'}>
               {elemProps.type === 'datepicker' && <DateTimePicker {...elemProps.props} />}
               {elemProps.type !== 'datepicker' && (
-                <div className={'px-0'}>
+                // <div className={'px-0'}>
+                <>
                   <label htmlFor={elemProps.id} className={'form-label ps-0 mb-1'}>
                     {elemProps.label}
                   </label>
@@ -423,14 +440,15 @@ const PurchasableItemEditForm = ({tournament, item}) => {
                          value={elemProps.value}
                          {...elemProps.others}
                   />
-                </div>
+                  {/*</div>*/}
+                </>
               )}
             </div>
           ))
           }
         </fieldset>
         {itemPreview}
-        <div className={`d-flex justify-content-end ${!itemPreview && 'pt-3'}`}>
+        <div className={`d-flex justify-content-end`}>
           <button type={'button'}
                   title={'Delete'}
                   onClick={onDelete}
