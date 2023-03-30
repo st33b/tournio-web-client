@@ -2,10 +2,11 @@ import Card from 'react-bootstrap/Card';
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 
-import classes from './TournamentInPrep.module.scss';
 import PurchasableItemEditForm from "../PurchasableItemEditForm/PurchasableItemEditForm";
 import NewPurchasableItem from "../NewPurchasableItem/NewPurchasableItem";
 import ErrorBoundary from "../../common/ErrorBoundary";
+
+import classes from './TournamentInPrep.module.scss';
 
 const PurchasableItems = ({tournament}) => {
   if (!tournament) {
@@ -64,6 +65,11 @@ const PurchasableItems = ({tournament}) => {
     return item.determination === 'multi_use';
   }).sort(sortByOrder);
 
+  // sort the product items by their order
+  const products = tournament.purchasable_items.filter(item => {
+    return item.category === 'product';
+  }).sort(sortByOrder);
+
   const groupValues = [...divisionGroups.values()];
 
   return (
@@ -119,14 +125,17 @@ const PurchasableItems = ({tournament}) => {
               </Card.Body>
             }
 
+            {products.length > 0 &&
+              <Card.Body className={classes.Category}>
+                {products.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/>)}
+              </Card.Body>
+            }
+
             <Card.Body className={'p-0'}>
               <NewPurchasableItem tournament={tournament}/>
             </Card.Body>
           </LocalizationProvider>
         )}
-        {/*<Card.Body className={'p-0'}>*/}
-        {/*  <NewPurchasableItem tournament={tournament}/>*/}
-        {/*</Card.Body>*/}
       </Card>
     </ErrorBoundary>
   );

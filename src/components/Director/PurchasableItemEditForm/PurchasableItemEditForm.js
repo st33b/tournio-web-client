@@ -20,8 +20,9 @@ const PurchasableItemEditForm = ({tournament, item}) => {
   const initialState = {
     applies_at: '', // for ledger -> late fee
     valid_until: '', // for ledger -> early discount
-    denomination: '', // for product category, denomination refinement only
+    denomination: '', // for raffle category, denomination refinement only
     division: '', // for division refinement
+    name: '',
     note: '', // division, product (optional)
     value: '',
     order: '',
@@ -52,6 +53,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
       valid_until: item.configuration.valid_until || '',
       denomination: item.configuration.denomination || '',
       division: item.configuration.division || '',
+      name: item.name || '',
       note: item.configuration.note || '',
       value: item.value,
       order: item.configuration.order || '',
@@ -65,7 +67,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     return '';
   }
 
-  const allowEdit = tournament.state !== 'active' && tournament.state !== 'demo';
+  const allowEdit = !['active', 'closed'].includes(tournament.state);
 
   const toggleEdit = (event, enable) => {
     if (event) {
@@ -250,7 +252,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
       );
     }
     const itemContent = (
-      <div className={`${classes.Item} d-flex px-2`}>
+      <div className={`${classes.Item} d-flex`}>
         {orderText}
         <Card.Text className={`me-auto`}>
           {item.name}
@@ -275,9 +277,30 @@ const PurchasableItemEditForm = ({tournament, item}) => {
       content = itemContent;
     }
   } else {
-    const inputElements = [];
-
     const otherValueProps = {min: 0}
+
+    // Everything has a name and a value
+    const inputElements = [
+      {
+        label: 'Name',
+        type: 'text',
+        name: 'name',
+        id: 'name',
+        value: formData.name,
+        classes: '',
+        others: {},
+      },
+      {
+        label: 'Value (in USD)',
+        type: 'number',
+        name: 'value',
+        id: 'value',
+        value: formData.value,
+        classes: '',
+        others: otherValueProps,
+      }
+    ];
+
     switch (item.category) {
       case 'ledger':
         if (item.determination === 'early_discount') {
@@ -309,6 +332,18 @@ const PurchasableItemEditForm = ({tournament, item}) => {
         } else if (item.determination === 'bundle_discount') {
           otherValueProps.min = 1;
         }
+        break;
+      case 'product':
+      case 'banquet':
+        inputElements.push({
+          label: 'Note',
+          type: 'text',
+          name: 'note',
+          id: 'note',
+          value: formData.note,
+          classes: '',
+          others: {},
+        });
         break;
       case 'bowling':
         // single-use, non-division items can specify their display order (within single-use, non-division items)
@@ -344,35 +379,13 @@ const PurchasableItemEditForm = ({tournament, item}) => {
           others: {},
         });
         break;
-      case 'banquet':
-        inputElements.push({
-          label: 'Note',
-          type: 'text',
-          name: 'note',
-          id: 'note',
-          value: formData.note,
-          classes: '',
-          others: {},
-        });
-        break;
       default:
         break;
     }
 
-    // every type has a value element
-    inputElements.push({
-      label: 'Value (in USD)',
-      type: 'number',
-      name: 'value',
-      id: 'value',
-      value: formData.value,
-      classes: classes.ValueInput,
-      others: otherValueProps,
-    });
-
     let itemPreview = '';
     if (item.category !== 'ledger') {
-      const itemPreviewProps = {...item}
+      const itemPreviewProps = {...item};
       itemPreviewProps.value = formData.value;
       itemPreviewProps.configuration.order = formData.order;
       itemPreviewProps.configuration.applies_at = formData.applies_at;
@@ -394,7 +407,6 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     content = (
       <form onSubmit={onFormSubmit} className={`${classes.Form} px-2 pt-2 pb-3`}>
         <fieldset>
-          <legend>{item.name}</legend>
           {inputElements.map((elemProps, i) => (
             <div key={i} className={'row mx-0'}>
               {elemProps.type === 'datepicker' && <DateTimePicker {...elemProps.props} />}
@@ -423,7 +435,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
                   title={'Delete'}
                   onClick={onDelete}
                   className={'btn btn-sm btn-danger me-auto'}>
-            <i className={'bi-slash-circle pe-2'} aria-hidden={true} />
+            <i className={'bi-slash-circle pe-2'} aria-hidden={true}/>
             Delete
           </button>
           <button type={'button'}

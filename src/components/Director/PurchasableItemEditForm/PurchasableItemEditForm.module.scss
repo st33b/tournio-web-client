@@ -13,11 +13,14 @@
       font-weight: 200;
       font-size: 95%;
     }
-    .ValueInput {
-      //width: 100%;
-    }
   }
   .Item {
+    padding: 0.75rem;
+
+    p {
+      margin-bottom: 0;
+    }
+
     .Order {
       font-weight: bold;
       padding-right: 0.5rem;
@@ -28,7 +31,8 @@
     .Note {
       display: block;
       font-size: 85%;
-      text-indent: 0.5rem;
+      font-style: italic;
+      //text-indent: 0.5rem;
     }
     .Subnote {
       display: block;

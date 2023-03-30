@@ -1,11 +1,20 @@
-import classes from './ProductForm.module.scss';
 import {useState} from "react";
+
 import ErrorBoundary from "../../common/ErrorBoundary";
 import Item from "../../Commerce/AvailableItems/Item/Item";
-import AssetUpload from "../../common/AssetUpload/AssetUpload";
+// import AssetUpload from "../../common/AssetUpload/AssetUpload";
+import classes from './ProductForm.module.scss';
+import {directorApiRequest} from "../../../director";
+import {useDirectorContext} from "../../../store/DirectorContext";
+import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
 const ProductForm = ({tournament, onCancel, onComplete}) => {
+  const context = useDirectorContext();
+  const dispatch = context.dispatch;
+
   const initialState = {
+    determination: 'general',
+    refinement: null,
     name: '',
     note: '',
     value: '',
@@ -49,11 +58,45 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
   }
 
   const directUploadCompleted = (fileBlob) => {
+    const newData = {...formData};
+    newData.image = fileBlob.id;
+    setFormData(newData);
+  }
 
+  const submissionSuccess = (data) => {
+    dispatch(purchasableItemsAdded(data));
+    setFormData({...initialState});
+    onComplete(`Item ${data[0].name} created.`);
   }
 
   const formSubmitted = (event) => {
     event.preventDefault();
+    const uri = `/director/tournaments/${tournament.identifier}/purchasable_items`;
+    const requestConfig = {
+      method: 'post',
+      data: {
+        purchasable_items: [
+          {
+            category: 'product',
+            determination: formData.determination,
+            refinement: formData.refinement,
+            name: formData.name,
+            value: formData.value,
+            configuration: {
+              order: formData.order,
+              note: formData.note,
+            },
+          },
+        ],
+      },
+    };
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      onSuccess: submissionSuccess,
+      onFailure: (_) => console.log("Failed to save new item."),
+    });
   }
 
   const itemPreviewProps = {
@@ -138,30 +181,38 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
             />
           </div>
 
-          <div className={`row ${classes.LineItem}`}>
-            <div className={'form-check form-switch'}>
-              <input type={'checkbox'}
-                     className={'form-check-input'}
-                     role={'switch'}
-                     id={'productHasImage'}
-                     name={'productHasImage'}
-                     checked={formData.productHasImage}
-                     onChange={inputChanged}/>
-              <label htmlFor={'productHasImage'}
-                     className={'form-check-label'}>
-                Include an image
-              </label>
-            </div>
-          </div>
+          {/* We haven't gotten direct uploads working yet. We're stuck because the library
+            * uses a browser API (File) that is not available server-side. But it does not
+            * seem possible (so far) to lazily import the DirectUpload constructor from the
+            * ActiveStorage JavaScript library, so we're giving up on it for now. If a
+            * director wants to include an image on a product, they'll have to do it after
+            * the product gets created. (Is that true?)
+            */}
 
-          {formData.productHasImage && (
-            <div className={`${classes.LineItem}`}>
-              <AssetUpload formLabel={"Image file upload"}
-                           uploadPath={tournament.direct_upload_url}
-                           onUploadComplete={() => {}}
-              />
-            </div>
-          )}
+          {/*<div className={`row ${classes.LineItem}`}>*/}
+          {/*  <div className={'form-check form-switch'}>*/}
+          {/*    <input type={'checkbox'}*/}
+          {/*           className={'form-check-input'}*/}
+          {/*           role={'switch'}*/}
+          {/*           id={'productHasImage'}*/}
+          {/*           name={'productHasImage'}*/}
+          {/*           checked={formData.productHasImage}*/}
+          {/*           onChange={inputChanged}/>*/}
+          {/*    <label htmlFor={'productHasImage'}*/}
+          {/*           className={'form-check-label'}>*/}
+          {/*      Include an image*/}
+          {/*    </label>*/}
+          {/*  </div>*/}
+          {/*</div>*/}
+
+          {/*{formData.productHasImage && (*/}
+          {/*  <div className={`${classes.LineItem}`}>*/}
+          {/*    <AssetUpload formLabel={"Image file upload"}*/}
+          {/*                 uploadPath={tournament.direct_upload_url}*/}
+          {/*                 onUploadComplete={directUploadCompleted}*/}
+          {/*    />*/}
+          {/*  </div>*/}
+          {/*)}*/}
 
           {/* Apply any special styling here? */}
           <div className={`row ${classes.PreviewItem}`}>

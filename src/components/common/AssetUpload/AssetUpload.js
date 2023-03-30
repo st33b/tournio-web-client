@@ -1,5 +1,7 @@
-import classes from './AssetUpload.module.scss';
 import {useState} from "react";
+import {DirectUpload} from "@rails/activestorage";
+import {devConsoleLog} from "../../../utils";
+import classes from './AssetUpload.module.scss';
 
 const AssetUpload = ({formLabel, uploadPath, onUploadComplete}) => {
   const initialState = {
@@ -15,8 +17,22 @@ const AssetUpload = ({formLabel, uploadPath, onUploadComplete}) => {
     setFormData(newData);
   }
 
-  const uploadThatFile = () => {
+  const uploadFinished = (error, blob) => {
+    if (error) {
+      devConsoleLog("Damn.", error);
+    } else {
+      devConsoleLog("Upload complete, now we can clear the input and indicate success however we like.");
+      onUploadComplete(blob);
+    }
+  }
 
+  const uploadThatFile = () => {
+    if (!DirectUpload) {
+      devConsoleLog("Not gonna do it");
+      return;
+    }
+    const uploader = new DirectUpload(formData.localFile, uploadPath);
+    uploader.create(uploadFinished);
   }
 
   return (
