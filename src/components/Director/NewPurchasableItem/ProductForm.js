@@ -7,6 +7,7 @@ import classes from './ProductForm.module.scss';
 import {directorApiRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
+import {devConsoleLog} from "../../../utils";
 
 const ProductForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();
@@ -41,6 +42,10 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
       if (isNaN(newValue)) {
         newValue = 0;
       }
+    } else if (inputName === 'determination') {
+      devConsoleLog(event.target.id);
+      const parts = event.target.id.split('_');
+      newValue = parts[1];
     } else if (inputName === 'productHasImage') {
       newValue = event.target.checked;
       if (!newValue) {
@@ -122,9 +127,44 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
             </h6>
           </div>
 
+          {/*<div className={`${classes.LineItem} ${classes.RadioSet} d-flex`}>*/}
+          <div className={`${classes.LineItem} row justify-content-start`}>
+            <div className={classes.RadioSetLabel}>
+              <label>
+                Type
+              </label>
+            </div>
+            <div className={classes.RadioSet}>
+              <div className={'form-check'}>
+                <input type={'radio'}
+                       onChange={inputChanged}
+                       className={'form-check-input'}
+                       name={'determination'}
+                       checked={formData.determination === 'apparel'}
+                       id={'determination_apparel'} />
+                <label className={`form-check-label`}
+                       htmlFor={'determination_apparel'}>
+                  Apparel
+                </label>
+              </div>
+              <div className={'form-check'}>
+                <input type={'radio'}
+                       onChange={inputChanged}
+                       className={'form-check-input'}
+                       name={'determination'}
+                       checked={formData.determination === 'general'}
+                       id={'determination_general'} />
+                <label className={`form-check-label`}
+                       htmlFor={'determination_general'}>
+                  Other
+                </label>
+              </div>
+            </div>
+          </div>
+
           {/* This is duplicated and a good candidate for re-use */}
           <div className={`row ${classes.LineItem}`}>
-            <label htmlFor={'name'} className={'form-label ps-0 mb-1'}>
+            <label htmlFor={'name'} className={'form-label mb-1'}>
               Display Name
             </label>
             <input type={'text'}
@@ -139,9 +179,23 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
 
           {/* This is duplicated and a good candidate for re-use */}
           <div className={`row ${classes.LineItem}`}>
+            <label htmlFor={'note'} className={'form-label ps-0 mb-1'}>
+              Note (optional)
+            </label>
+            <input type={'text'}
+                   className={`form-control`}
+                   name={'note'}
+                   id={'note'}
+                   onChange={inputChanged}
+                   value={formData.note}
+            />
+          </div>
+
+          {/* This is duplicated and a good candidate for re-use */}
+          <div className={`row ${classes.LineItem}`}>
             <div className={'col-6 ps-0'}>
               <label htmlFor={'value'} className={'form-label ps-0 mb-1'}>
-                Price
+                Price (in USD)
               </label>
               <input type={'number'}
                      className={`form-control`}
@@ -165,20 +219,6 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
                      value={formData.order}
               />
             </div>
-          </div>
-
-          {/* This is duplicated and a good candidate for re-use */}
-          <div className={`row ${classes.LineItem}`}>
-            <label htmlFor={'note'} className={'form-label ps-0 mb-1'}>
-              Note (optional)
-            </label>
-            <input type={'text'}
-                   className={`form-control`}
-                   name={'note'}
-                   id={'note'}
-                   onChange={inputChanged}
-                   value={formData.note}
-            />
           </div>
 
           {/* We haven't gotten direct uploads working yet. We're stuck because the library
@@ -228,7 +268,7 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
               <button type={'button'}
                       title={'Cancel'}
                       onClick={onCancel}
-                      className={'btn btn-outline-danger me-2'}>
+                      className={'btn btn-outline-secondary me-2'}>
                 <i className={'bi-x-lg'} aria-hidden={true}/>
                 <span className={'visually-hidden'}>
                   Cancel

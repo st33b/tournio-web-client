@@ -10,8 +10,24 @@
     margin-bottom: 0.75rem;
 
     label {
+      padding-left: 0;
       font-weight: 200;
       font-size: 95%;
+    }
+
+    .RadioSetLabel, .RadioSet {
+      padding-left: 0;
+      width: auto;
+    }
+
+    .RadioSet > div {
+      padding: 0.25rem 0.25rem 0.25rem 2rem;
+    }
+    .RadioSet > div:hover {
+      background-color: #ddf5f7;
+      @media (prefers-color-scheme: dark) {
+        background-color: #313c57;
+      }
     }
   }
 

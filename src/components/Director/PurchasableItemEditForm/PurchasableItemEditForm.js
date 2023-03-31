@@ -231,6 +231,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
         }
         break;
       case 'banquet':
+      case 'product':
         if (formData.note) {
           note = (
             <span className={classes.Note}>
@@ -459,7 +460,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
           <button type={'button'}
                   title={'Cancel'}
                   onClick={onCancel}
-                  className={'btn btn-sm btn-outline-dark me-2'}>
+                  className={'btn btn-sm btn-outline-secondary me-2'}>
             <span className={'visually-hidden'}>Cancel</span>
             <i className={'bi-x-lg'} aria-hidden={true}/>
           </button>
