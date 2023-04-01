@@ -1,8 +1,6 @@
-
-
 import classes from "./Item.module.scss";
 
-const item = ({item, added, preview}) => {
+const Item = ({item, added, preview}) => {
   const addClickedHandler = (event) => {
     event.preventDefault();
     added(item);
@@ -83,4 +81,4 @@ const item = ({item, added, preview}) => {
   );
 }
 
-export default item;
+export default Item;

@@ -1,5 +1,6 @@
 import classes from './AvailableSizes.module.scss';
 import SizesForm from "./SizesForm";
+import {devConsoleLog} from "../../../utils";
 
 // TODO: figure out how we're storing sizes on a purchasable item, and pass them into here
 const AvailableSizes = ({selectedSizes, onSizeChanged, onAllInGroupSet}) => {
@@ -28,18 +29,27 @@ const AvailableSizes = ({selectedSizes, onSizeChanged, onAllInGroupSet}) => {
     m24: '24 months',
   };
 
+  const anySizesChosen = [selectedSizes.one_size_fits_all].concat(
+    ['unisex', 'women', 'men', 'infant'].map(setKey => Object.values(selectedSizes[setKey]))
+  ).flat().some(v => v);
+
   return (
     <div className={`${classes.AvailableSizes} d-flex justify-content-left`}>
       <div className={`${classes.Label} flex-grow-1`}>
-        Available Sizes:
+        Available Sizes
       </div>
       <div className={`w-100`}>
-        {selectedSizes.one_size_fits_all &&  (
+        {!anySizesChosen && (
+          <div className={classes.SizeHeader}>
+            None selected.
+          </div>
+        )}
+        {anySizesChosen && selectedSizes.one_size_fits_all &&  (
           <div className={classes.SizeHeader}>
             {displaySizes.one_size_fits_all}
           </div>
         )}
-        {['unisex', 'women', 'men', 'infant'].map(sizeSet => {
+        {anySizesChosen && ['unisex', 'women', 'men', 'infant'].map(sizeSet => {
           const chosenSizesInSet = Object.keys(selectedSizes[sizeSet]).filter(key => selectedSizes[sizeSet][key]);
           const anySizesChosen = chosenSizesInSet.length > 0;
           if (!anySizesChosen) {
