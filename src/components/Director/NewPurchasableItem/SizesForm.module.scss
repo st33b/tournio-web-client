@@ -1,0 +1,19 @@
+.SizesForm {
+  .SizeSetKey {
+    margin: 1rem 0 0.25rem 0;
+
+    .Title {
+      font-size: 105%;
+      font-weight: bold;
+    }
+    .MultiLink {
+      padding-left: 0.5rem;
+      font-size: 95%;
+    }
+  }
+  .SizeSet {
+    .Size {
+      background-color: #f8f8f8;
+    }
+  }
+}

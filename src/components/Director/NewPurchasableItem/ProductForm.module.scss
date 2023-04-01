@@ -9,7 +9,7 @@
   .LineItem {
     margin-bottom: 0.75rem;
 
-    label {
+    > label {
       padding-left: 0;
       font-weight: 200;
       font-size: 95%;
@@ -21,7 +21,7 @@
     }
 
     .RadioSet > div {
-      padding: 0.25rem 0.25rem 0.25rem 2rem;
+      padding: 0.1rem 0.25rem 0.1rem 2rem;
     }
     .RadioSet > div:hover {
       background-color: #ddf5f7;

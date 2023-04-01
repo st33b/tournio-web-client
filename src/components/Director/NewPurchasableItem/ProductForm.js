@@ -8,6 +8,7 @@ import {directorApiRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 import {devConsoleLog} from "../../../utils";
+import AvailableSizes from "./AvailableSizes";
 
 const ProductForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();
@@ -20,16 +21,57 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
     note: '',
     value: '',
     order: '',
-    productHasImage: false,
-    image: '',
+    sizes: {
+      oneSizeFitsAll: false,
+      unisex: {
+        xxs: false,
+        xs: false,
+        s: false,
+        m: false,
+        l: false,
+        xl: false,
+        xxl: false,
+        xxxl: false,
+      },
+      women: {
+        xxs: false,
+        xs: false,
+        s: false,
+        m: false,
+        l: false,
+        xl: false,
+        xxl: false,
+        xxxl: false,
+      },
+      men: {
+        xxs: false,
+        xs: false,
+        s: false,
+        m: false,
+        l: false,
+        xl: false,
+        xxl: false,
+        xxxl: false,
+      },
+      infant: {
+        newborn: false,
+        m6: false,
+        m12: false,
+        m18: false,
+        m24: false,
+      },
+    },
+    // productHasImage: false,
+    // image: '',
 
     valid: false,
   }
 
   const [formData, setFormData] = useState(initialState);
 
-  const isValid = ({name, value, order}) => {
-    return name.length > 0 && value > 0 && order > 0;
+  const isValid = ({name, value, order, determination, sizes}) => {
+    const sizesAreGood = determination === 'general' || determination === 'apparel' && sizesAreValid(sizes);
+    return sizesAreGood && name.length > 0 && value > 0 && order > 0;
   }
 
   const inputChanged = (event) => {
@@ -46,13 +88,13 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
       devConsoleLog(event.target.id);
       const parts = event.target.id.split('_');
       newValue = parts[1];
-    } else if (inputName === 'productHasImage') {
-      newValue = event.target.checked;
-      if (!newValue) {
-        newFormData.localImageFile = null;
-      }
-    } else if (inputName === 'localImageFile') {
-      newValue = event.target.files[0];
+    // } else if (inputName === 'productHasImage') {
+    //   newValue = event.target.checked;
+    //   if (!newValue) {
+    //     newFormData.localImageFile = null;
+    //   }
+    // } else if (inputName === 'localImageFile') {
+    //   newValue = event.target.files[0];
     } else {
       newValue = event.target.value;
     }
@@ -62,11 +104,53 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
     setFormData(newFormData);
   }
 
-  const directUploadCompleted = (fileBlob) => {
-    const newData = {...formData};
-    newData.image = fileBlob.id;
-    setFormData(newData);
+  const sizesAreValid = (sizes) => {
+    if (sizes.oneSizeFitsAll) {
+      return true;
+    }
+    const keys = ['unisex', 'women', 'men', 'infant'];
+    return keys.map(k => {
+      const sizeMap = sizes[k];
+      return Object.values(sizeMap).some(sizePresent => true)
+    }).some(val => true);
   }
+
+  /**
+   * sizeIdentifier is a path through the size map:
+   * oneSizeFitsAll
+   * unisex.xs
+   * infant.m12
+   */
+  const sizeChanged = (sizeIdentifier, isChosen) => {
+    const data = {...formData};
+
+    if (sizeIdentifier === 'oneSizeFitsAll') {
+      data.sizes.oneSizeFitsAll = !!isChosen
+    } else {
+      const pathParts = sizeIdentifier.split('.');
+      data.sizes[pathParts[0]][pathParts[1]] = !!isChosen;
+    }
+    data.valid = isValid(data);
+    setFormData(data);
+  }
+
+  /**
+   * Sets all the sizes in a set to true or false
+   * @param setIdentifier The identifier of the set to modify
+   * @param newValue true or false
+   */
+  const setAllSizesInSet = (setIdentifier, newValue) => {
+    const data = {...formData};
+    Object.keys(data.sizes[setIdentifier]).forEach(size => data.sizes[setIdentifier][size] = !!newValue);
+    data.valid = isValid(data);
+    setFormData(data);
+  }
+
+  // const directUploadCompleted = (fileBlob) => {
+  //   const newData = {...formData};
+  //   newData.image = fileBlob.id;
+  //   setFormData(newData);
+  // }
 
   const submissionSuccess = (data) => {
     dispatch(purchasableItemsAdded(data));
@@ -90,6 +174,7 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
             configuration: {
               order: formData.order,
               note: formData.note,
+              // TODO: sizes!
             },
           },
         ],
@@ -179,7 +264,7 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
 
           {/* This is duplicated and a good candidate for re-use */}
           <div className={`row ${classes.LineItem}`}>
-            <label htmlFor={'note'} className={'form-label ps-0 mb-1'}>
+            <label htmlFor={'note'} className={'form-label mb-1'}>
               Note (optional)
             </label>
             <input type={'text'}
@@ -191,10 +276,19 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
             />
           </div>
 
+          {formData.determination === 'apparel' && (
+            <div className={`row ${classes.LineItem}`}>
+              <AvailableSizes selectedSizes={formData.sizes}
+                              onSizeChanged={sizeChanged}
+                              onAllInGroupSet={setAllSizesInSet}
+              />
+            </div>
+          )}
+
           {/* This is duplicated and a good candidate for re-use */}
           <div className={`row ${classes.LineItem}`}>
             <div className={'col-6 ps-0'}>
-              <label htmlFor={'value'} className={'form-label ps-0 mb-1'}>
+              <label htmlFor={'value'} className={'form-label mb-1'}>
                 Price (in USD)
               </label>
               <input type={'number'}
@@ -207,7 +301,7 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
               />
             </div>
             <div className={'col-6 pe-0'}>
-              <label htmlFor={'order'} className={'form-label ps-0 mb-1'}>
+              <label htmlFor={'order'} className={'form-label mb-1'}>
                 Display order
               </label>
               <input type={'number'}

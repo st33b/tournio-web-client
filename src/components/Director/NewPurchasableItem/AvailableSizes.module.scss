@@ -1,0 +1,24 @@
+.AvailableSizes {
+  background-color: lavenderblush;
+  padding: 0;
+
+  .Label {
+    font-size: 95%;
+  }
+
+  .SizeHeader {
+    font-weight: bold;
+    padding-bottom: 0.5rem;
+    background-color: #d1f9d3;
+  }
+
+  .SetOfSizes {
+    font-size: 95%;
+    margin-bottom: 0.75rem;
+
+    .Size {
+      padding: 0 0.5rem 0.5rem 0;
+      background-color: #d1f9d3;
+    }
+  }
+}
