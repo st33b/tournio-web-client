@@ -53,23 +53,34 @@ const SizesForm = ({displaySizes, sizeMap, onSizeChanged, onAllInGroupSet}) => {
     onSizeChanged(sizePath, isChosen);
   }
 
+  const allOrNoneClicked = (event, setKey, value) => {
+    event.preventDefault();
+    if (sizeMap.oneSizeFitsAll) {
+      return;
+    }
+    onAllInGroupSet(setKey, value);
+  }
+
   return (
     <div className={`${classes.SizesForm}`}>
-      <div className={`row`}>
-        <div className={'col'}>
-          <div className="form-check">
-            {/* Maybe with switches instead? */}
-            <input className="form-check-input"
-                   type="checkbox"
-                   id="oneSizeFitsAll"
-                   name={"oneSizeFitsAll"}
-                   checked={sizeMap.oneSizeFitsAll}
-                   onChange={aBoxWasChecked}
-            />
-            <label className="form-check-label"
-                   htmlFor="oneSizeFitsAll">
-              {displaySizes.oneSizeFitsAll}
-            </label>
+      <div className={`row ${classes.SizeSet}`}>
+        <div className={`col`}>
+          <div className={classes.Size}>
+
+            <div className="form-check">
+              <input className="form-check-input"
+                     type="checkbox"
+                     id="oneSizeFitsAll"
+                     name={"oneSizeFitsAll"}
+                     checked={sizeMap.oneSizeFitsAll}
+                     onChange={aBoxWasChecked}
+              />
+              <label className="form-check-label"
+                     htmlFor="oneSizeFitsAll">
+                {displaySizes.oneSizeFitsAll}
+              </label>
+            </div>
+
           </div>
         </div>
       </div>
@@ -83,28 +94,43 @@ const SizesForm = ({displaySizes, sizeMap, onSizeChanged, onAllInGroupSet}) => {
                   {displaySizes[setKey]}
                 </div>
                 <div className={classes.MultiLink}>
-                  <a href={'#'}
-                     onClick={() => {onAllInGroupSet(setKey, true)}}>
-                    all
-                  </a>
+                  {sizeMap.oneSizeFitsAll && (
+                    <span className={'text-muted'}>
+                      all
+                    </span>
+                  )}
+                  {!sizeMap.oneSizeFitsAll && (
+                    <a href={'#'}
+                       onClick={(event) => allOrNoneClicked(event, setKey, true)}>
+                      all
+                    </a>
+                  )}
                 </div>
                 <div className={classes.MultiLink}>
-                  <a href={'#'}
-                     onClick={() => {onAllInGroupSet(setKey, false)}}>
-                    none
-                  </a>
+                  {sizeMap.oneSizeFitsAll && (
+                    <span className={'text-muted'}>
+                      none
+                    </span>
+                  )}
+                  {!sizeMap.oneSizeFitsAll && (
+                    <a href={'#'}
+                       onClick={(event) => allOrNoneClicked(event, setKey, false)}>
+                      none
+                    </a>
+                  )}
                 </div>
               </div>
-              <div className={`${classes.SizeSet} d-flex justify-content-between`}>
+              <div className={`${classes.SizeSet} d-flex`}>
                 {sizeKeys.map(key => (
-                  <div className={`${classes.Size}`} key={`${setKey}-${key}-checkbox`}>
-                    <div className="form-check">
+                  <div className={`${classes.Size} ${!sizeMap.oneSizeFitsAll ? classes.Enabled : ''} flex-fill`} key={`${setKey}-${key}-checkbox`}>
 
+                    <div className="form-check">
                       <input className="form-check-input"
                              type="checkbox"
                              id={`${setKey}-${key}`}
                              name={`${setKey}.${key}`}
                              checked={sizeMap[setKey][key]}
+                             disabled={sizeMap.oneSizeFitsAll}
                              onChange={aBoxWasChecked}
                       />
                       <label className="form-check-label"
