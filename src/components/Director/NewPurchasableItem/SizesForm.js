@@ -1,12 +1,11 @@
-import {useState, useEffect} from "react";
-import {Map} from 'immutable';
+import {useEffect} from "react";
 
 import {devConsoleLog} from "../../../utils";
 import classes from './SizesForm.module.scss';
 
 /*
  * {
- *   oneSizeFitsAll: true/false,
+ *   one_size_fits_all: true/false,
  *   unisex: {
  *     xxs: true/false,
  *     ...
@@ -30,7 +29,7 @@ import classes from './SizesForm.module.scss';
  *   },
  * }
  *
- * When oneSizeFitsAll is true, the rest get disabled, but hold on to their values
+ * When one_size_fits_all is true, the rest get disabled, but hold on to their values
  * so we don't force the user to re-check the ones they wanted.
  *
  * onComplete is what we call when the user is done, passing it the form data
@@ -55,7 +54,7 @@ const SizesForm = ({displaySizes, sizeMap, onSizeChanged, onAllInGroupSet}) => {
 
   const allOrNoneClicked = (event, setKey, value) => {
     event.preventDefault();
-    if (sizeMap.oneSizeFitsAll) {
+    if (sizeMap.one_size_fits_all) {
       return;
     }
     onAllInGroupSet(setKey, value);
@@ -70,14 +69,14 @@ const SizesForm = ({displaySizes, sizeMap, onSizeChanged, onAllInGroupSet}) => {
             <div className="form-check">
               <input className="form-check-input"
                      type="checkbox"
-                     id="oneSizeFitsAll"
-                     name={"oneSizeFitsAll"}
-                     checked={sizeMap.oneSizeFitsAll}
+                     id="one_size_fits_all"
+                     name={"one_size_fits_all"}
+                     checked={sizeMap.one_size_fits_all}
                      onChange={aBoxWasChecked}
               />
               <label className="form-check-label"
-                     htmlFor="oneSizeFitsAll">
-                {displaySizes.oneSizeFitsAll}
+                     htmlFor="one_size_fits_all">
+                {displaySizes.one_size_fits_all}
               </label>
             </div>
 
@@ -94,12 +93,12 @@ const SizesForm = ({displaySizes, sizeMap, onSizeChanged, onAllInGroupSet}) => {
                   {displaySizes[setKey]}
                 </div>
                 <div className={classes.MultiLink}>
-                  {sizeMap.oneSizeFitsAll && (
+                  {sizeMap.one_size_fits_all && (
                     <span className={'text-muted'}>
                       all
                     </span>
                   )}
-                  {!sizeMap.oneSizeFitsAll && (
+                  {!sizeMap.one_size_fits_all && (
                     <a href={'#'}
                        onClick={(event) => allOrNoneClicked(event, setKey, true)}>
                       all
@@ -107,12 +106,12 @@ const SizesForm = ({displaySizes, sizeMap, onSizeChanged, onAllInGroupSet}) => {
                   )}
                 </div>
                 <div className={classes.MultiLink}>
-                  {sizeMap.oneSizeFitsAll && (
+                  {sizeMap.one_size_fits_all && (
                     <span className={'text-muted'}>
                       none
                     </span>
                   )}
-                  {!sizeMap.oneSizeFitsAll && (
+                  {!sizeMap.one_size_fits_all && (
                     <a href={'#'}
                        onClick={(event) => allOrNoneClicked(event, setKey, false)}>
                       none
@@ -122,7 +121,7 @@ const SizesForm = ({displaySizes, sizeMap, onSizeChanged, onAllInGroupSet}) => {
               </div>
               <div className={`${classes.SizeSet} d-flex`}>
                 {sizeKeys.map(key => (
-                  <div className={`${classes.Size} ${!sizeMap.oneSizeFitsAll ? classes.Enabled : ''} flex-fill`} key={`${setKey}-${key}-checkbox`}>
+                  <div className={`${classes.Size} ${!sizeMap.one_size_fits_all ? classes.Enabled : ''} flex-fill`} key={`${setKey}-${key}-checkbox`}>
 
                     <div className="form-check">
                       <input className="form-check-input"
@@ -130,7 +129,7 @@ const SizesForm = ({displaySizes, sizeMap, onSizeChanged, onAllInGroupSet}) => {
                              id={`${setKey}-${key}`}
                              name={`${setKey}.${key}`}
                              checked={sizeMap[setKey][key]}
-                             disabled={sizeMap.oneSizeFitsAll}
+                             disabled={sizeMap.one_size_fits_all}
                              onChange={aBoxWasChecked}
                       />
                       <label className="form-check-label"

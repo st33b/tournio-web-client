@@ -8,7 +8,7 @@ const AvailableSizes = ({selectedSizes, onSizeChanged, onAllInGroupSet}) => {
   }
 
   const displaySizes = {
-    oneSizeFitsAll: 'One size fits all',
+    one_size_fits_all: 'One size fits all',
     xxs: '2XS',
     xs: 'XS',
     s: 'S',
@@ -34,9 +34,9 @@ const AvailableSizes = ({selectedSizes, onSizeChanged, onAllInGroupSet}) => {
         Available Sizes:
       </div>
       <div className={`w-100`}>
-        {selectedSizes.oneSizeFitsAll &&  (
+        {selectedSizes.one_size_fits_all &&  (
           <div className={classes.SizeHeader}>
-            {displaySizes.oneSizeFitsAll}
+            {displaySizes.one_size_fits_all}
           </div>
         )}
         {['unisex', 'women', 'men', 'infant'].map(sizeSet => {

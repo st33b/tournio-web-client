@@ -22,7 +22,7 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
     value: '',
     order: '',
     sizes: {
-      oneSizeFitsAll: false,
+      one_size_fits_all: false,
       unisex: {
         xxs: false,
         xs: false,
@@ -105,7 +105,7 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
   }
 
   const sizesAreValid = (sizes) => {
-    if (sizes.oneSizeFitsAll) {
+    if (sizes.one_size_fits_all) {
       return true;
     }
     const keys = ['unisex', 'women', 'men', 'infant'];
@@ -116,16 +116,16 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
   }
 
   /**
-   * sizeIdentifier is a path through the size map:
-   * oneSizeFitsAll
-   * unisex.xs
-   * infant.m12
+   * sizeIdentifier is a path through the size map, e.g.,
+   *   one_size_fits_all
+   *   unisex.xs
+   *   infant.m12
    */
   const sizeChanged = (sizeIdentifier, isChosen) => {
     const data = {...formData};
 
-    if (sizeIdentifier === 'oneSizeFitsAll') {
-      data.sizes.oneSizeFitsAll = !!isChosen
+    if (sizeIdentifier === 'one_size_fits_all') {
+      data.sizes.one_size_fits_all = !!isChosen
     } else {
       const pathParts = sizeIdentifier.split('.');
       data.sizes[pathParts[0]][pathParts[1]] = !!isChosen;
@@ -174,12 +174,14 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
             configuration: {
               order: formData.order,
               note: formData.note,
-              // TODO: sizes!
             },
           },
         ],
       },
     };
+    if (formData.determination === 'apparel') {
+      requestConfig.data.purchasable_items[0].configuration.sizes = formData.sizes;
+    }
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
