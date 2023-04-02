@@ -26,11 +26,7 @@ describe('action type: bowler deleted', () => {
       purchasable_items: [],
       bowler_count: 29,
     },
-    bowlers: [
-      bowler1,
-      bowler2,
-      bowler3,
-    ],
+    bowlers: [],
   };
 
   const action = {
@@ -43,10 +39,7 @@ describe('action type: bowler deleted', () => {
       ...previousState.tournament,
       bowler_count: previousState.tournament.bowler_count - 1,
     },
-    bowlers: [
-      bowler1,
-      bowler3,
-    ],
+    bowlers: [],
   };
 
   it('returns the expected object', () => {

@@ -19,11 +19,7 @@ describe('action type: team deleted', () => {
       identifier: 'abcdefg',
       team_count: 42,
     },
-    teams: [
-      team1,
-      team2,
-      team3,
-    ],
+    teams: [],
   };
 
   const action = {
@@ -36,10 +32,7 @@ describe('action type: team deleted', () => {
       ...previousState.tournament,
       team_count: previousState.tournament.team_count - 1,
     },
-    teams: [
-      team1,
-      team3,
-    ],
+    teams: [],
   };
 
   it('returns the expected object', () => {

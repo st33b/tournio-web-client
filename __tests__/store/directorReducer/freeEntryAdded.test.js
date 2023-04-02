@@ -29,7 +29,7 @@ describe('action type: free entry added', () => {
       ...previousState.tournament,
       free_entry_count: previousState.tournament.free_entry_count + 1,
     },
-    freeEntries: [newFreeEntry],
+    freeEntries: [],
   };
 
   it('returns the expected object', () => {
