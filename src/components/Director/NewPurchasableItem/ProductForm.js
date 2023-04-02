@@ -85,7 +85,6 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
         newValue = 0;
       }
     } else if (inputName === 'determination') {
-      devConsoleLog(event.target.id);
       const parts = event.target.id.split('_');
       newValue = parts[1];
     // } else if (inputName === 'productHasImage') {
@@ -111,8 +110,8 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
     const keys = ['unisex', 'women', 'men', 'infant'];
     return keys.map(k => {
       const sizeMap = sizes[k];
-      return Object.values(sizeMap).some(sizePresent => true)
-    }).some(val => true);
+      return Object.values(sizeMap).some(sizePresent => !!sizePresent)
+    }).some(val => !!val);
   }
 
   /**
@@ -193,7 +192,7 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
 
   const itemPreviewProps = {
     category: 'product',
-    determination: 'general',
+    determination: formData.determination,
     name: formData.name,
     value: formData.value,
     // refinement: formData.refinement,
@@ -202,6 +201,9 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
       // denomination: formData.denomination,
       order: formData.order,
     }
+  }
+  if (formData.determination === 'apparel') {
+    itemPreviewProps.configuration.sizes = formData.sizes;
   }
 
   return (

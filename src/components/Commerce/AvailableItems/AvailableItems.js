@@ -62,6 +62,9 @@ const AvailableItems = ({itemAddedToCart}) => {
   // Sanction items
   const sanctionItems = allItems.filter(({category}) => category === 'sanction');
 
+  // Products
+  const productItems = allItems.filter(({category}) => category === 'product').sort(sortByOrder);
+
   const groupValues = [...divisionGroups.values()];
 
   return (
@@ -100,11 +103,21 @@ const AvailableItems = ({itemAddedToCart}) => {
           ))}
         </Col>
 
-        <Col xs={12} className={'pt-3 border-top'}>
-          {multiUseItems.map((item) => (
+        {multiUseItems.length > 0 && (
+          <Col xs={12} className={'pt-3 border-top'}>
+            {multiUseItems.map((item) => (
+              <Item key={item.identifier}
+                    item={item}
+                    added={itemAddedToCart} />
+            ))}
+          </Col>
+        )}
+
+        <Col xs={12} className={`pt-3 mb-3 border-top border-bottom`}>
+          {productItems.map((item) => (
             <Item key={item.identifier}
-                  item={item}
-                  added={itemAddedToCart} />
+            item={item}
+            added={itemAddedToCart} />
           ))}
         </Col>
 

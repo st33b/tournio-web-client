@@ -1,23 +1,17 @@
+import {apparelSizeMapping} from '../../../../utils';
 import classes from "./Item.module.scss";
+import {useState} from "react";
 
 const Item = ({item, added, preview}) => {
+  const initialSizeForm = {
+    size: '',
+  }
+
+  const [sizeForm, setSizeForm] = useState(initialSizeForm);
+
   const addClickedHandler = (event) => {
     event.preventDefault();
     added(item);
-  }
-
-  let addLink = '';
-  if (!preview && !item.addedToCart) {
-    addLink = (
-      <div className={'ms-auto align-self-center'}>
-        <a href={'#'}
-           onClick={addClickedHandler}
-           className={`${classes.AddLink} pe-3 text-success`}>
-          <i className={`bi-plus-square-fill`} />
-          <span className={'visually-hidden'}>Add</span>
-        </a>
-      </div>
-    )
   }
 
   let secondaryText = '';
@@ -53,6 +47,50 @@ const Item = ({item, added, preview}) => {
     );
   }
 
+  const sizeChosen = (event) => {
+    const newValue = event.target.value;
+    const form = {...sizeForm};
+    form.size = newValue;
+    setSizeForm(form);
+  }
+
+  let sizeText = '';
+  if (item.configuration.sizes) {
+    const sizeKeys = [];
+    const sizeNames = [];
+    Object.keys(item.configuration.sizes).forEach(groupKey => {
+      if (typeof item.configuration.sizes[groupKey] === 'boolean' && item.configuration.sizes[groupKey]) {
+        sizeKeys.push(groupKey);
+        sizeNames.push(apparelSizeMapping[groupKey]);
+      } else {
+        Object.keys(item.configuration.sizes[groupKey]).forEach(sizeKey => {
+          if (item.configuration.sizes[groupKey][sizeKey]) {
+            sizeKeys.push(`${groupKey}.${sizeKey}`);
+            sizeNames.push(`${apparelSizeMapping[groupKey]} ${apparelSizeMapping[sizeKey]}`);
+          }
+        });
+      }
+    });
+    // Yay, we have some sizes!
+    if (sizeKeys.length > 0) {
+      sizeText = (
+        <select className={'form-select'} name={'size'} onChange={sizeChosen}>
+          <option value={''}>-- Size:</option>
+          {sizeKeys.map((key, i) => (
+            <option key={key}
+                    value={key}
+                    selected={sizeForm.size === key}>
+              {sizeNames[i]}
+            </option>
+          ))}
+        </select>
+      );
+    }
+  }
+
+  const sizeRequired = item.category === 'product' && item.determination && 'apparel';
+  const sizeValid = !sizeRequired || sizeRequired && sizeForm.size.length > 0;
+
   let attachedClasses = [classes.Item, 'rounded', 'border', 'mb-3', 'mx-0', 'd-flex'];
   if (item.determination === 'event') {
     attachedClasses.push('border-primary', 'border-3');
@@ -65,6 +103,23 @@ const Item = ({item, added, preview}) => {
     attachedClasses.push(classes.NotSelected);
   }
 
+  let addLink = '';
+  if (!sizeValid) {
+    tooltipText = 'Select a size to add';
+  }
+  if (!preview && !item.addedToCart) {
+    addLink = (
+      <div className={'ms-auto align-self-center'}>
+        <a href={sizeValid ? '#' : null}
+           onClick={sizeValid ? addClickedHandler : () => {}}
+           className={`${classes.AddLink} ${!sizeValid ? classes.AddDisabled : ''} pe-3`}>
+          <i className={`bi-plus-square-fill`} />
+          <span className={'visually-hidden'}>Add</span>
+        </a>
+      </div>
+    )
+  }
+
   return (
     <div className={attachedClasses.join(' ')} title={tooltipText}>
       <div className={'ps-2'}>
@@ -72,6 +127,7 @@ const Item = ({item, added, preview}) => {
           {item.name}
         </p>
         {secondaryText}
+        {sizeText}
         <p>
           ${item.value}
         </p>

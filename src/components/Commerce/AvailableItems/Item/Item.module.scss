@@ -5,6 +5,11 @@
 
   .AddLink {
     font-size: 1.75rem;
+    color: var(--tournio-success);
+  }
+
+  .AddDisabled {
+    opacity: .6;
   }
 
   .Name {

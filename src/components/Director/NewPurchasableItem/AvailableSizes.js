@@ -1,33 +1,13 @@
 import classes from './AvailableSizes.module.scss';
 import SizesForm from "./SizesForm";
-import {devConsoleLog} from "../../../utils";
+import {apparelSizeMapping} from "../../../utils";
+import React from "react";
 
 // TODO: figure out how we're storing sizes on a purchasable item, and pass them into here
 const AvailableSizes = ({selectedSizes, onSizeChanged, onAllInGroupSet}) => {
   if (!selectedSizes) {
     return '';
   }
-
-  const displaySizes = {
-    one_size_fits_all: 'One size fits all',
-    xxs: '2XS',
-    xs: 'XS',
-    s: 'S',
-    m: 'M',
-    l: 'L',
-    xl: 'XL',
-    xxl: '2XL',
-    xxxl: '3XL',
-    unisex: 'Unisex',
-    women: "Women's",
-    men: "Men's",
-    infant: "Infant",
-    newborn: "Newborn",
-    m6: '6 months',
-    m12: '12 months',
-    m18: '18 months',
-    m24: '24 months',
-  };
 
   const anySizesChosen = [selectedSizes.one_size_fits_all].concat(
     ['unisex', 'women', 'men', 'infant'].map(setKey => Object.values(selectedSizes[setKey]))
@@ -37,6 +17,10 @@ const AvailableSizes = ({selectedSizes, onSizeChanged, onAllInGroupSet}) => {
     <div className={`${classes.AvailableSizes} d-flex justify-content-left`}>
       <div className={`${classes.Label} flex-grow-1`}>
         Available Sizes
+        <i className={`${classes.RequiredLabel} align-top bi-asterisk`}/>
+        <span className="visually-hidden">
+          Need at least one size, even if it&apos;s One Size Fits All.
+        </span>
       </div>
       <div className={`w-100`}>
         {!anySizesChosen && (
@@ -46,7 +30,7 @@ const AvailableSizes = ({selectedSizes, onSizeChanged, onAllInGroupSet}) => {
         )}
         {anySizesChosen && selectedSizes.one_size_fits_all &&  (
           <div className={classes.SizeHeader}>
-            {displaySizes.one_size_fits_all}
+            {apparelSizeMapping.one_size_fits_all}
           </div>
         )}
         {anySizesChosen && ['unisex', 'women', 'men', 'infant'].map(sizeSet => {
@@ -58,13 +42,13 @@ const AvailableSizes = ({selectedSizes, onSizeChanged, onAllInGroupSet}) => {
           return (
             <div key={`available-for-${sizeSet}`}>
               <div className={classes.SizeHeader}>
-                {displaySizes[sizeSet]}
+                {apparelSizeMapping[sizeSet]}
               </div>
               <div className={`${classes.SetOfSizes} d-flex flex-wrap`}>
                 {
                   chosenSizesInSet.map(sizeKey => (
                     <div className={classes.Size} key={`${sizeSet}-${sizeKey}-availability`}>
-                      {displaySizes[sizeKey]}
+                      {apparelSizeMapping[sizeKey]}
                     </div>
                   ))
                 }
@@ -101,8 +85,7 @@ const AvailableSizes = ({selectedSizes, onSizeChanged, onAllInGroupSet}) => {
                         aria-label="Close"></button>
               </div>
               <div className="modal-body">
-                <SizesForm displaySizes={displaySizes}
-                           sizeMap={selectedSizes}
+                <SizesForm sizeMap={selectedSizes}
                            onSizeChanged={onSizeChanged}
                            onAllInGroupSet={onAllInGroupSet}
                 />

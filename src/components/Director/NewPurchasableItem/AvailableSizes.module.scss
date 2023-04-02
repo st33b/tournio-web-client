@@ -3,6 +3,12 @@
 
   .Label {
     font-size: 95%;
+
+    .RequiredLabel {
+      margin-left: 5px;
+      color: darkred;
+      font-size: 60%;
+    }
   }
 
   .SizeHeader {

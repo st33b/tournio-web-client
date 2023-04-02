@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 
-import {devConsoleLog} from "../../../utils";
+import {apparelSizeMapping} from "../../../utils";
 import classes from './SizesForm.module.scss';
 
 /*
@@ -34,12 +34,11 @@ import classes from './SizesForm.module.scss';
  *
  * onComplete is what we call when the user is done, passing it the form data
  */
-const SizesForm = ({displaySizes, sizeMap, onSizeChanged, onAllInGroupSet}) => {
+const SizesForm = ({sizeMap, onSizeChanged, onAllInGroupSet}) => {
   useEffect(() => {
     if (typeof sizeMap === undefined) {
       return;
     }
-    devConsoleLog('Awaiting definition of selected sizes');
   }, [sizeMap]);
 
   if (!sizeMap) {
@@ -76,7 +75,7 @@ const SizesForm = ({displaySizes, sizeMap, onSizeChanged, onAllInGroupSet}) => {
               />
               <label className="form-check-label"
                      htmlFor="one_size_fits_all">
-                {displaySizes.one_size_fits_all}
+                {apparelSizeMapping.one_size_fits_all}
               </label>
             </div>
 
@@ -90,7 +89,7 @@ const SizesForm = ({displaySizes, sizeMap, onSizeChanged, onAllInGroupSet}) => {
             <div className={`col`}>
               <div className={`${classes.SizeSetKey} d-flex align-items-end`}>
                 <div className={classes.Title}>
-                  {displaySizes[setKey]}
+                  {apparelSizeMapping[setKey]}
                 </div>
                 <div className={classes.MultiLink}>
                   {sizeMap.one_size_fits_all && (
@@ -134,7 +133,7 @@ const SizesForm = ({displaySizes, sizeMap, onSizeChanged, onAllInGroupSet}) => {
                       />
                       <label className="form-check-label"
                              htmlFor={`${setKey}-${key}`}>
-                        {displaySizes[key]}
+                        {apparelSizeMapping[key]}
                       </label>
                     </div>
 
