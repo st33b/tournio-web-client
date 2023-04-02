@@ -31,7 +31,7 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
     cartItems = (
       <div className={classes.ItemList}>
         {commerce.cart.map((item, index) => {
-          if (item.determination === 'multi_use') {
+          if (['product', 'raffle', 'banquet', 'bracket'].includes(item.category) || item.determination === 'multi_use') {
             return (
               <MultiUseItem key={index}
                             item={item}
