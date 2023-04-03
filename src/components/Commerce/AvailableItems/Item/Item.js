@@ -58,18 +58,11 @@ const Item = ({item, added, preview}) => {
   if (item.configuration.sizes) {
     const sizeKeys = [];
     const sizeNames = [];
-    Object.keys(item.configuration.sizes).forEach(groupKey => {
-      if (typeof item.configuration.sizes[groupKey] === 'boolean' && item.configuration.sizes[groupKey]) {
-        sizeKeys.push(groupKey);
-        sizeNames.push(apparelSizeMapping[groupKey]);
-      } else {
-        Object.keys(item.configuration.sizes[groupKey]).forEach(sizeKey => {
-          if (item.configuration.sizes[groupKey][sizeKey]) {
-            sizeKeys.push(`${groupKey}.${sizeKey}`);
-            sizeNames.push(`${apparelSizeMapping[groupKey]} ${apparelSizeMapping[sizeKey]}`);
-          }
-        });
-      }
+    item.configuration.sizes.forEach(({size, identifier}) => {
+      const [groupKey, sizeKey] = size.split('.');
+      sizeKeys.push(`${groupKey}.${sizeKey}`);
+      sizeNames.push(`${apparelSizeMapping[groupKey]} ${apparelSizeMapping[sizeKey]}`);
+
     });
     // Yay, we have some sizes!
     if (sizeKeys.length > 0) {
@@ -86,6 +79,12 @@ const Item = ({item, added, preview}) => {
         </select>
       );
     }
+  } else if (item.configuration.size) {
+    sizeText = (
+      <p>
+        {apparelSizeMapping[item.configuration.size]}
+      </p>
+    );
   }
 
   const sizeRequired = item.category === 'product' && item.determination && 'apparel';

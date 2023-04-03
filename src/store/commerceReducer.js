@@ -36,11 +36,12 @@ export const commerceReducer = (state, action) => {
       }
 
       // Separate apparel items from the rest (ooh, maybe separate out by categories/determinations entirely...)
-      // ...
+      const separated = extractApparelFromItems(action.availableItems);
 
       return updateObject(state, {
         bowler: action.bowler,
-        availableItems: action.availableItems,
+        availableItems: separated.items,
+        availableApparelItems: separated.apparelItems,
         cart: unpaidItems,
         purchasedItems: action.bowler.paid_purchases,
         freeEntry: null,

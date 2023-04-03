@@ -66,15 +66,9 @@ const AvailableItems = ({itemAddedToCart}) => {
   const sanctionItems = allItems.filter(({category}) => category === 'sanction');
 
   // Non-apparel Products
-  const productItems = allItems.filter(({category, determination}) => category === 'product' && determination !== 'apparel').sort(sortByOrder);
+  const productItems = allItems.filter(({category}) => category === 'product').sort(sortByOrder);
 
-  const apparelItems = allItems.filter(({category, determination}) => category === 'product' && determination === 'apparel');
-
-  // Go through apparel items.
-  // If it has a size but no parent, then treat it like anything else
-  // If it has a "sized" refinement, then it's the one we should use for details
-  // If it has a "parent_identifier" configuration property, then add its size to the canonical one (including its identifier)
-
+  const apparelItems = Object.values(commerce.availableApparelItems);
 
   const groupValues = [...divisionGroups.values()];
 
@@ -115,7 +109,7 @@ const AvailableItems = ({itemAddedToCart}) => {
         </Col>
 
         {multiUseItems.length > 0 && (
-          <Col xs={12} className={'pt-3 border-top'}>
+          <Col xs={12} className={``}>
             {multiUseItems.map((item) => (
               <Item key={item.identifier}
                     item={item}
@@ -124,7 +118,15 @@ const AvailableItems = ({itemAddedToCart}) => {
           </Col>
         )}
 
-        <Col xs={12} className={`pt-3 mb-3 border-top border-bottom`}>
+        <Col xs={12} className={``}>
+          {apparelItems.map((item) => (
+            <Item key={item.identifier}
+                  item={item}
+                  added={itemAddedToCart} />
+          ))}
+        </Col>
+
+        <Col xs={12} className={``}>
           {productItems.map((item) => (
             <Item key={item.identifier}
             item={item}
