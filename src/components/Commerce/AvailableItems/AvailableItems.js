@@ -1,4 +1,5 @@
 import {Col, Row} from "react-bootstrap";
+import {apparelSizes} from '../../../utils';
 import {useCommerceContext} from "../../../store/CommerceContext";
 import Item from "./Item/Item";
 
@@ -21,6 +22,8 @@ const AvailableItems = ({itemAddedToCart}) => {
   // determination: event
   // determination: single_use refinement:division (one group for each name, e.g., Scratch Masters and Optional Scratch)
   // determination: single_use (no refinement)
+  // category: product (non-apparel)
+  // category: product (apparel)
   // determination: multi_use
 
   const allItems = Object.values(commerce.availableItems);
@@ -62,8 +65,16 @@ const AvailableItems = ({itemAddedToCart}) => {
   // Sanction items
   const sanctionItems = allItems.filter(({category}) => category === 'sanction');
 
-  // Products
-  const productItems = allItems.filter(({category}) => category === 'product').sort(sortByOrder);
+  // Non-apparel Products
+  const productItems = allItems.filter(({category, determination}) => category === 'product' && determination !== 'apparel').sort(sortByOrder);
+
+  const apparelItems = allItems.filter(({category, determination}) => category === 'product' && determination === 'apparel');
+
+  // Go through apparel items.
+  // If it has a size but no parent, then treat it like anything else
+  // If it has a "sized" refinement, then it's the one we should use for details
+  // If it has a "parent_identifier" configuration property, then add its size to the canonical one (including its identifier)
+
 
   const groupValues = [...divisionGroups.values()];
 

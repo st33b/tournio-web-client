@@ -7,6 +7,7 @@ const initialState = {
   bowler: null,
   cart: [],
   availableItems: {},
+  availableApparelItems: {}, // map the "parent" one's identifier to details. How to store sizes?
   purchasedItems: [],
   freeEntry: null,
   checkoutSessionId: null,
@@ -33,6 +34,10 @@ export const commerceReducer = (state, action) => {
       if (action.bowler.has_free_entry) {
         unpaidItems = unpaidItems.filter((element) => element.category !== 'ledger');
       }
+
+      // Separate apparel items from the rest (ooh, maybe separate out by categories/determinations entirely...)
+      // ...
+
       return updateObject(state, {
         bowler: action.bowler,
         availableItems: action.availableItems,
@@ -225,6 +230,47 @@ const itemRemoved = (state, item) => {
     cart: newCart,
     availableItems: newAvailableItems,
   });
+}
+
+export const extractApparelFromItems = (allItems) => {
+  const nonApparelItems = {};
+  const apparelItems = {};
+
+  const itemArray = Object.values(allItems);
+  const otherItems = itemArray.filter(({category, determination}) => {
+    return category !== 'product' && determination !== 'apparel'
+  });
+  otherItems.forEach(i => nonApparelItems[i.identifier] = i);
+
+  // Pull out the one-size-fits-all and size-parent items
+  itemArray.filter(item => {
+    return item.category === 'product' &&
+      item.determination === 'apparel' &&
+      !item.configuration.parent_identifier
+  }).forEach(item => {
+    // A place to put the child items' info
+    if (item.refinement === 'sized') {
+      item.configuration.sizes = [];
+    }
+    apparelItems[item.identifier] = item
+  });
+
+  // Now go through the items with a size-parent and add the size info to the parent.
+  itemArray.filter(item => {
+    return item.category === 'product' &&
+      item.determination === 'apparel' &&
+      !!item.configuration.parent_identifier
+  }).forEach(item => {
+    apparelItems[item.configuration.parent_identifier].configuration.sizes.push({
+      identifier: item.identifier,
+      size: item.configuration.size,
+    });
+  });
+
+  return {
+    items: nonApparelItems,
+    apparelItems: apparelItems,
+  };
 }
 
 const markOtherItemsInDivisionUnavailable = (items, addedItem) => {

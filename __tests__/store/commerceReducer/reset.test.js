@@ -10,6 +10,7 @@ describe ('action type: reset', () => {
     bowler: null,
     cart: [],
     availableItems: {},
+    availableApparelItems: {},
     purchasedItems: [],
     freeEntry: null,
     checkoutSessionId: null,

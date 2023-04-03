@@ -120,6 +120,46 @@ export const timezones = {
   },
 }
 
+export const apparelSizes = {
+  unisex: {
+    xxs: false,
+    xs: false,
+    s: false,
+    m: false,
+    l: false,
+    xl: false,
+    xxl: false,
+    xxxl: false,
+  },
+  women: {
+    xxs: false,
+    xs: false,
+    s: false,
+    m: false,
+    l: false,
+    xl: false,
+    xxl: false,
+    xxxl: false,
+  },
+  men: {
+    xxs: false,
+    xs: false,
+    s: false,
+    m: false,
+    l: false,
+    xl: false,
+    xxl: false,
+    xxxl: false,
+  },
+  infant: {
+    newborn: false,
+    m6: false,
+    m12: false,
+    m18: false,
+    m24: false,
+  },
+};
+
 export const apparelSizeMapping = {
   one_size_fits_all: 'One size fits all',
   xxs: '2XS',
