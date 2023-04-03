@@ -47,6 +47,7 @@ describe('item added to cart', () => {
       ];
       myAction.item = {
         identifier: 'woof',
+        determination: 'multi_use',
       }
       const result = commerceReducer(myPreviousState, myAction);
 
@@ -59,6 +60,57 @@ describe('item added to cart', () => {
         expect(result.cart.length).toEqual(myPreviousState.cart.length);
       });
     });
+    describe('product - general', () => {
+      const myAction = {...action};
+      const myPreviousState = {...previousState};
+      myPreviousState.cart = [
+        {
+          identifier: 'a-good-thing',
+          quantity: 3,
+        }
+      ];
+      myAction.item = {
+        identifier: 'a-good-thing',
+        category: 'product',
+        determination: 'general;'
+      }
+      const result = commerceReducer(myPreviousState, myAction);
+
+      it ('increments the existing quantity', () => {
+        const resultItem = result.cart[0];
+        expect(resultItem.quantity).toStrictEqual(4);
+      });
+
+      it ('does not change the number of distinct items in the cart', () => {
+        expect(result.cart.length).toEqual(myPreviousState.cart.length);
+      });
+    });
+    describe('product - apparel - adding another', () => {
+      const myAction = {...action};
+      const myPreviousState = {...previousState};
+      myPreviousState.cart = [
+        {
+          identifier: 'a-large-shirt',
+          quantity: 3,
+        }
+      ];
+      myAction.item = {
+        identifier: 'a-large-shirt',
+        category: 'product',
+        determination: 'apparel',
+      }
+      const result = commerceReducer(myPreviousState, myAction);
+
+      it ('increments the existing quantity', () => {
+        const resultItem = result.cart[0];
+        expect(resultItem.quantity).toStrictEqual(4);
+      });
+
+      it ('does not change the number of distinct items in the cart', () => {
+        expect(result.cart.length).toEqual(myPreviousState.cart.length);
+      });
+    });
+
     describe('single-use', () => {
       const myAction = {...action};
       const myPreviousState = {...previousState};
@@ -220,6 +272,41 @@ describe('item added to cart', () => {
         identifier: 'quack',
         determination: 'multi_use',
       };
+
+      it ('adds it to the cart', () => {
+        const result = commerceReducer(previousState, myAction);
+        expect(result.cart.length).toBe(1);
+        const item = result.cart[0];
+        expect(item.quantity).toBe(1);
+      });
+    });
+
+    describe ('a general product', () => {
+      const myAction = {...action};
+      myAction.item = {
+        identifier: 'something-to-buy',
+        category: 'product',
+        determination: 'general',
+      };
+
+      it ('adds it to the cart', () => {
+        const result = commerceReducer(previousState, myAction);
+        expect(result.cart.length).toBe(1);
+        const item = result.cart[0];
+        expect(item.quantity).toBe(1);
+      });
+    });
+
+    describe ('a product with a size', () => {
+      const myAction = {...action};
+      myAction.item = {
+        identifier: 'something-to-wear',
+        category: 'product',
+        determination: 'apparel',
+      };
+      myAction.variant = {
+        size: 'aliens.tiny',
+      }
 
       it ('adds it to the cart', () => {
         const result = commerceReducer(previousState, myAction);

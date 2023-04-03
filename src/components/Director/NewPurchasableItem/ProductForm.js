@@ -167,7 +167,6 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
           {
             category: 'product',
             determination: formData.determination,
-            refinement: formData.refinement,
             name: formData.name,
             value: formData.value,
             configuration: {
@@ -179,7 +178,15 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
       },
     };
     if (formData.determination === 'apparel') {
-      requestConfig.data.purchasable_items[0].configuration.sizes = formData.sizes;
+      if (formData.sizes.one_size_fits_all) {
+        requestConfig.data.purchasable_items[0].configuration.size = 'one_size_fits_all';
+      } else {
+        requestConfig.data.purchasable_items[0].refinement = 'sized';
+        requestConfig.data.purchasable_items[0].configuration.sizes = {};
+        ['unisex', 'women', 'men', 'infant'].forEach(sizeGroup => {
+          requestConfig.data.purchasable_items[0].configuration.sizes[sizeGroup] = formData.sizes[sizeGroup];
+        });
+      }
     }
     directorApiRequest({
       uri: uri,

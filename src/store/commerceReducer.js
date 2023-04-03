@@ -43,7 +43,7 @@ export const commerceReducer = (state, action) => {
         tournament: {...action.bowler.tournament},
       });
     case actionTypes.ITEM_ADDED_TO_CART:
-      return itemAdded(state, action.item);
+      return itemAdded(state, action.item, action.variant);
     case actionTypes.ITEM_REMOVED_FROM_CART:
       return itemRemoved(state, action.item);
     case actionTypes.PURCHASE_COMPLETED:
