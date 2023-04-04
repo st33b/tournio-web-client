@@ -1,4 +1,10 @@
 .Item {
+  border: 1px solid var(--tournio-gray-500);
+  border-radius: 8px;
+  @media (prefers-color-scheme: dark) {
+    border-color: var(--tournio-gray-700);
+  }
+
   p {
     margin: 0.5rem auto;
   }

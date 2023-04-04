@@ -90,7 +90,8 @@ const Item = ({item, added, preview}) => {
   const sizeRequired = item.category === 'product' && item.determination && 'apparel';
   const sizeValid = !sizeRequired || sizeRequired && sizeForm.size.length > 0;
 
-  let attachedClasses = [classes.Item, 'rounded', 'border', 'mb-3', 'mx-0', 'd-flex'];
+  let attachedClasses = [classes.Item, 'mb-3', 'mx-0', 'd-flex'];
+  // let attachedClasses = [classes.Item, 'rounded', 'border', 'mb-3', 'mx-0', 'd-flex'];
   if (item.determination === 'event') {
     attachedClasses.push('border-primary', 'border-3');
   }
