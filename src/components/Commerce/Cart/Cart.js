@@ -53,9 +53,9 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
 
   return (
     <div className={classes.Cart}>
-      <h4 className={'py-2 py-md-0'}>
+      <h5 className={``}>
         Cart
-      </h4>
+      </h5>
       {cartItems}
       <p className={classes.TotalFees}>
         Total: ${totalFees}

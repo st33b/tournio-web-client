@@ -19,12 +19,17 @@
   .Note {
     font-size: 90%;
   }
+
+  .Price {
+    font-weight: bold;
+  }
 }
 
 .Selected {
+  color: var(--tournio-gray-600);
   background-color: var(--tournio-gray-200);
   @media (prefers-color-scheme: dark) {
-    color: var(--tournio-gray-500);
+    color: var(--tournio-gray-600);
     background-color: var(--tournio-gray-900);
   }
 }

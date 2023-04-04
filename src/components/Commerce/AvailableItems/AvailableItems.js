@@ -74,72 +74,100 @@ const AvailableItems = ({itemAddedToCart}) => {
 
   return (
     <div className={classes.AvailableItems}>
-      <h4 className={'py-2 py-md-0'}>
-        Available Events/Items
-      </h4>
+      <Row className={``}>
+        <Col xs={12} md={6}>
+          {eventItems.length > 0 && (
+            <div className={``}>
+              <h5 className={'py-2 py-md-0'}>
+                Bowling Events
+              </h5>
+              <Col xs={12}>
+                {eventItems.map((item) => (
+                  <Item key={item.identifier}
+                        item={item}
+                        added={itemAddedToCart} />
+                ))}
+              </Col>
+            </div>
+          )}
 
-      <Row>
-        {eventItems.length > 0 && (
-          <Col xs={12}>
-            {eventItems.map((item) => (
-              <Item key={item.identifier}
-                    item={item}
-                    added={itemAddedToCart} />
+          <div className={``}>
+            <h5 className={``}>
+              Bowling Extras
+            </h5>
+            {groupValues.map((group, index) => (
+              <Col key={index} xs={12}>
+                {group.map((item) => (
+                  <Item key={item.identifier}
+                        item={item}
+                        added={itemAddedToCart} />
+                ))}
+              </Col>
             ))}
-          </Col>
 
-        )}
+            <Col xs={12}>
+              {singleUseItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+            </Col>
+          </div>
 
-        {groupValues.map((group, index) => (
-          <Col key={index} xs={12}>
-            {group.map((item) => (
-              <Item key={item.identifier}
-                    item={item}
-                    added={itemAddedToCart} />
-            ))}
-          </Col>
-        ))}
-
-        <Col xs={12}>
-          {singleUseItems.map((item) => (
-            <Item key={item.identifier}
-                  item={item}
-                  added={itemAddedToCart} />
-          ))}
+          {multiUseItems.length > 0 && (
+            <Col xs={12} className={``}>
+              {multiUseItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+            </Col>
+          )}
         </Col>
 
-        {multiUseItems.length > 0 && (
-          <Col xs={12} className={``}>
-            {multiUseItems.map((item) => (
-              <Item key={item.identifier}
-                    item={item}
-                    added={itemAddedToCart} />
-            ))}
-          </Col>
-        )}
 
-        <Col xs={12} className={``}>
-          {apparelItems.map((item) => (
-            <Item key={item.identifier}
-                  item={item}
-                  added={itemAddedToCart} />
-          ))}
-        </Col>
+        <Col xs={12} md={6} className={``}>
+          {/* Raffle Items */}
 
-        <Col xs={12} className={``}>
-          {productItems.map((item) => (
-            <Item key={item.identifier}
-            item={item}
-            added={itemAddedToCart} />
-          ))}
-        </Col>
+          {apparelItems.length > 0 && (
+            <div className={``}>
+              <h5 className={``}>
+                Apparel
+              </h5>
+              {apparelItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+            </div>
+          )}
 
-        <Col xs={12}>
-          {sanctionItems.map((item) => (
-            <Item key={item.identifier}
-                  item={item}
-                  added={itemAddedToCart} />
-          ))}
+          {productItems.length > 0 && (
+            <div className={``}>
+              <h5 className={``}>
+                Memorabilia
+              </h5>
+              {productItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+            </div>
+          )}
+
+          {sanctionItems.length > 0 && (
+            <div className={``}>
+              <h5 className={``}>
+                Membership Fees
+              </h5>
+              {sanctionItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+
+            </div>
+          )}
         </Col>
       </Row>
     </div>

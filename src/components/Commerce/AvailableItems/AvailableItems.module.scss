@@ -1,13 +1,11 @@
 .AvailableItems {
-  @media (max-width: 767px) {
-    h4 {
-      background-color: var(--tournio-gray-200);
-      @media (prefers-color-scheme: dark) {
-        background-color: var(--tournio-gray-800);
-      }
-      padding-left: 0.5rem;
-      margin-bottom: 1rem;
+  h5 {
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+
+    background-color: var(--tournio-gray-200);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--tournio-gray-800);
     }
   }
-
 }

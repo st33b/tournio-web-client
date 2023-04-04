@@ -1,3 +1,7 @@
 .Menu {
-
+  .CartContainer {
+    @media (min-width: 768px) {
+      border-left: 1px solid var(--tournio-gray-700);
+    }
+  }
 }

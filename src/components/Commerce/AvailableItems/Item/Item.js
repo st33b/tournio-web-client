@@ -127,7 +127,7 @@ const Item = ({item, added, preview}) => {
         </p>
         {secondaryText}
         {sizeText}
-        <p>
+        <p className={classes.Price}>
           ${item.value}
         </p>
       </div>
