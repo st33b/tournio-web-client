@@ -303,16 +303,84 @@ describe('item added to cart', () => {
         identifier: 'something-to-wear',
         category: 'product',
         determination: 'apparel',
+        size: 'unisex.m,',
       };
-      myAction.variant = {
-        size: 'aliens.tiny',
-      }
 
       it ('adds it to the cart', () => {
         const result = commerceReducer(previousState, myAction);
         expect(result.cart.length).toBe(1);
         const item = result.cart[0];
         expect(item.quantity).toBe(1);
+      });
+    });
+
+    describe('a product with a separate size identifier', () => {
+      const availableItem = {
+        identifier: 'something-to-wear',
+        category: 'product',
+        determination: 'apparel',
+        refinement: 'sized',
+        sizes: [
+          {
+            identifier: 'in-a-small',
+            size: 'men.s',
+            displaySize: 'Small!',
+          },
+          {
+            identifier: 'in-a-medium',
+            size: 'men.m',
+            displaySize: 'Medium!',
+          },
+          {
+            identifier: 'in-a-large',
+            size: 'men.l',
+            displaySize: 'Large!',
+          },
+        ],
+        value: 39,
+      }
+      const myAction = {
+        ...action,
+        item: availableItem,
+        sizeIdentifier: 'in-a-medium',
+      };
+
+      const resultingItem = {
+        ...availableItem,
+        identifier: 'in-a-medium',
+        parent: availableItem.identifier,
+        quantity: 1,
+      }
+
+      it ('adds 1 to the cart', () => {
+        const result = commerceReducer(previousState, myAction);
+        expect(result.cart.length).toBe(1);
+        const item = result.cart[0];
+        expect(item.quantity).toBe(1);
+      });
+
+      it ('swaps out the parent identifier for the size identifier', () => {
+        const result = commerceReducer(previousState, myAction);
+        const item = result.cart[0];
+        expect(item.identifier).toStrictEqual('in-a-medium');
+      });
+
+      it ('sets the parent identifier property', () => {
+        const result = commerceReducer(previousState, myAction);
+        const item = result.cart[0];
+        expect(item.parent).toStrictEqual(availableItem.identifier);
+      });
+
+      it ('sets the size in the item configuraiton', () => {
+        const result = commerceReducer(previousState, myAction);
+        const item = result.cart[0];
+        expect(item.configuration.size).toStrictEqual('men.m');
+      });
+
+      it ('sets the display size in the item configuration', () => {
+        const result = commerceReducer(previousState, myAction);
+        const item = result.cart[0];
+        expect(item.configuration.displaySize).toStrictEqual("Medium!");
       });
     });
 

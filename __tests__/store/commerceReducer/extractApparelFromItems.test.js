@@ -457,30 +457,37 @@ describe ('function: extractApparelFromItems', () => {
             {
               identifier: "16fc9409-7260-410d-9813-cdbc8633a88d",
               size: "women.xs",
+              displaySize: "Women's XS",
             },
             {
               identifier: "1278d2ef-352d-4f8e-b228-53038293a91b",
               size: "women.s",
+              displaySize: "Women's S",
             },
             {
               identifier: "fc14f9e7-d5e2-4306-9e8d-7c2984a96cee",
               size: "women.m",
+              displaySize: "Women's M",
             },
             {
               identifier: "1206fd9b-7804-44f9-8efc-36298b3ae189",
               size: "men.m",
+              displaySize: "Men's M",
             },
             {
               identifier: "8513db5c-799f-4e4a-b490-ae3a540603bf",
               size: "men.l",
+              displaySize: "Men's L",
             },
             {
               identifier: "c74fc573-7594-4918-867a-5bb06eadb87b",
               size: "men.xl",
+              displaySize: "Men's XL",
             },
             {
               identifier: "c1f97895-007e-41ff-83ee-9b8d0a62abbb",
               size: "infant.m24",
+              displaySize: "Infant 24 months",
             },
           ]
         },
@@ -499,38 +506,47 @@ describe ('function: extractApparelFromItems', () => {
             {
               identifier: "d3854db0-c9ca-4742-addc-965d0cafc84f",
               size: "women.l",
+              displaySize: "Women's L",
             },
             {
               identifier: "3017e7b2-ff92-4dda-bd2a-d43fd01a1e64",
               size: "women.xl",
+              displaySize: "Women's XL",
             },
             {
               identifier: "23387cef-f33a-420f-aae4-a0056705f0a5",
               size: "women.xxl",
+              displaySize: "Women's 2XL",
             },
             {
               identifier: "76c198f6-a85f-4dd5-9d47-e623b181d702",
               size: "men.xs",
+              displaySize: "Men's XS",
             },
             {
               identifier: "18fb1e46-5438-4cab-8500-79603896f399",
               size: "men.s",
+              displaySize: "Men's S",
             },
             {
               identifier: "0934f69b-d2c8-4b76-ad14-6be52acac0e0",
               size: "men.m",
+              displaySize: "Men's M",
             },
             {
               identifier: "dee27cf8-bcd8-463a-b881-7f8b3e9ebe72",
               size: "infant.m12",
+              displaySize: "Infant 12 months",
             },
             {
               identifier: "6a83cb55-3172-4a58-b67f-4969e3ec89ec",
               size: "infant.m18",
+              displaySize: "Infant 18 months",
             },
             {
               identifier: "c0df731c-d22d-4a74-aa43-c83c1a1ee5e2",
               size: "infant.m24",
+              displaySize: "Infant 24 months",
             },
           ],
         },

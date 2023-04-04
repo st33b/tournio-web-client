@@ -127,7 +127,7 @@ const AvailableItems = ({itemAddedToCart}) => {
 
 
         <Col xs={12} md={6} className={``}>
-          {/* Raffle Items */}
+          {/* Raffle Items here */}
 
           {apparelItems.length > 0 && (
             <div className={``}>

@@ -4,7 +4,7 @@ import {useState} from "react";
 
 const Item = ({item, added, preview}) => {
   const initialSizeForm = {
-    size: '',
+    identifier: '',
   }
 
   const [sizeForm, setSizeForm] = useState(initialSizeForm);
@@ -50,35 +50,29 @@ const Item = ({item, added, preview}) => {
   const sizeChosen = (event) => {
     const newValue = event.target.value;
     const form = {...sizeForm};
-    form.size = newValue;
+    form.identifier = newValue;
     setSizeForm(form);
   }
 
   let sizeText = '';
-  if (item.configuration.sizes) {
-    const sizeKeys = [];
-    const sizeNames = [];
-    item.configuration.sizes.forEach(({size, identifier}) => {
-      const [groupKey, sizeKey] = size.split('.');
-      sizeKeys.push(`${groupKey}.${sizeKey}`);
-      sizeNames.push(`${apparelSizeMapping[groupKey]} ${apparelSizeMapping[sizeKey]}`);
-
-    });
+  if (item.configuration.sizes && item.configuration.sizes.length > 0) {
     // Yay, we have some sizes!
-    if (sizeKeys.length > 0) {
-      sizeText = (
-        <select className={'form-select'} name={'size'} onChange={sizeChosen}>
-          <option value={''}>-- Size:</option>
-          {sizeKeys.map((key, i) => (
-            <option key={key}
-                    value={key}
-                    selected={sizeForm.size === key}>
-              {sizeNames[i]}
+    sizeText = (
+      <select className={'form-select'}
+              name={'identifier'}
+              value={sizeForm.identifier}
+              onChange={sizeChosen}>
+        <option value={''}>-- Size:</option>
+        {item.configuration.sizes.map(({identifier, displaySize}) => {
+          return (
+            <option key={identifier}
+                    value={identifier}>
+              {displaySize}
             </option>
-          ))}
-        </select>
-      );
-    }
+          )
+        })}
+      </select>
+    );
   } else if (item.configuration.size) {
     sizeText = (
       <p>
@@ -88,7 +82,7 @@ const Item = ({item, added, preview}) => {
   }
 
   const sizeRequired = item.category === 'product' && item.determination && 'apparel';
-  const sizeValid = !sizeRequired || sizeRequired && sizeForm.size.length > 0;
+  const sizeValid = !sizeRequired || sizeRequired && sizeForm.identifier.length > 0;
 
   let attachedClasses = [classes.Item, 'mb-3', 'mx-0', 'd-flex'];
   // let attachedClasses = [classes.Item, 'rounded', 'border', 'mb-3', 'mx-0', 'd-flex'];

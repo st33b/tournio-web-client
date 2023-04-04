@@ -1,6 +1,6 @@
 import {compareAsc} from "date-fns";
 import * as actionTypes from './actions/actionTypes';
-import {updateObject} from "../utils";
+import {apparelSizeMapping, devConsoleLog, updateObject} from "../utils";
 
 const initialState = {
   tournament: null,
@@ -49,7 +49,7 @@ export const commerceReducer = (state, action) => {
         tournament: {...action.bowler.tournament},
       });
     case actionTypes.ITEM_ADDED_TO_CART:
-      return itemAdded(state, action.item, action.variant);
+      return itemAdded(state, action.item);
     case actionTypes.ITEM_REMOVED_FROM_CART:
       return itemRemoved(state, action.item);
     case actionTypes.PURCHASE_COMPLETED:
@@ -109,10 +109,12 @@ export const commerceReducer = (state, action) => {
   return state;
 }
 
-const itemAdded = (state, item) => {
+const itemAdded = (state, item, sizeIdentifier) => {
+  devConsoleLog("Item added:", item);
   const identifier = item.identifier;
   const cartItemIndex = state.cart.findIndex(i => i.identifier === identifier);
 
+  // What does the resulting quantity need to be?
   let newQuantity = 1;
   if (cartItemIndex >= 0) {
     newQuantity = state.cart[cartItemIndex].quantity + 1;
@@ -122,6 +124,7 @@ const itemAdded = (state, item) => {
 
   let newAvailableItems = {...state.availableItems}
 
+  // Prevent multiple instances of things that can be bought only once
   if (item.determination === 'single_use' || item.determination === 'event' || item.category === 'sanction') {
     if (cartItemIndex >= 0) {
       // We've already got this in our cart, so we shouldn't be allowed to add it again. Bail out with no changes.
@@ -133,18 +136,22 @@ const itemAdded = (state, item) => {
     newAvailableItems[identifier] = addedItem;
     markOtherItemsInDivisionUnavailable(newAvailableItems, addedItem);
   } else if (newQuantity === 1) {
+    // Is it the first instance of something that can have multiples?
     newCart = state.cart.concat(addedItem);
     newAvailableItems[identifier] = addedItem;
   } else {
+    // Nope, it's already in the cart, so just update it.
     // instead of adding the newly chosen item to the cart, replace it with addedItem
     newCart = state.cart.slice(0);
     newCart[cartItemIndex] = addedItem;
   }
 
+  // Are we adding an event? Like, is this DAMIT?
   if (item.determination === 'event') {
+    // Does this qualify us for a bundle discount?
     const discountItem = eligibleBundleDiscount(newAvailableItems, newCart, state.purchasedItems);
     if (discountItem) {
-      // add it to the cart
+      // If so, add it to the cart, too.
       const intermediateState = updateObject(state, {
         cart: newCart,
         availableItems: newAvailableItems,
@@ -154,9 +161,10 @@ const itemAdded = (state, item) => {
       newAvailableItems = stateAfterAddingDiscount.availableItems;
     }
 
+    // Do we need to add a late-registration fee for the event?
     const lateFeeItem = applicableLateFee(newAvailableItems, addedItem, state.tournament);
     if (lateFeeItem) {
-      // add it to the cart
+      // If so, add it to the cart
       const intermediateState = updateObject(state, {
         cart: newCart,
         availableItems: newAvailableItems,
@@ -167,6 +175,7 @@ const itemAdded = (state, item) => {
     }
   }
 
+  // Phew, ok, that's it.
   return updateObject(state, {
     cart: newCart,
     availableItems: newAvailableItems,
@@ -262,9 +271,11 @@ export const extractApparelFromItems = (allItems) => {
       item.determination === 'apparel' &&
       !!item.configuration.parent_identifier
   }).forEach(item => {
+    const [groupKey, sizeKey] = item.configuration.size.split('.');
     apparelItems[item.configuration.parent_identifier].configuration.sizes.push({
       identifier: item.identifier,
       size: item.configuration.size,
+      displaySize: `${apparelSizeMapping[groupKey]} ${apparelSizeMapping[sizeKey]}`,
     });
   });
 
