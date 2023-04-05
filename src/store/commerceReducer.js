@@ -276,6 +276,8 @@ export const extractApparelFromItems = (allItems) => {
       identifier: item.identifier,
       size: item.configuration.size,
       displaySize: `${apparelSizeMapping[groupKey]} ${apparelSizeMapping[sizeKey]}`,
+      parentIdentifier: item.configuration.parent_identifier,
+      quantity: 0,
     });
   });
 

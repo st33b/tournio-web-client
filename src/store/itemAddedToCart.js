@@ -38,7 +38,7 @@
 
 // TODO: Planned
 // raffle
-//   -> denominatin
+//   -> denomination
 
 // TODO: Planned
 // bracket
@@ -53,15 +53,36 @@
 //        -> trio
 //        -> team
 
-import {updateObject} from "../utils";
+import {devConsoleLog, updateObject} from "../utils";
+
+export const itemAddedToCart = (currentState, itemToAdd, sizeIdentifier = null) => {
+  switch(itemToAdd.category) {
+    case 'ledger':
+      return handleAsLedgerItem(currentState, itemToAdd);
+    case 'bowling':
+      return handleAsBowlingItem(currentState, itemToAdd);
+    case 'sanction':
+      return handleAsSanctionItem(currentState, itemToAdd);
+    case 'banquet':
+      return handleAsBanquet(currentState, itemToAdd);
+    case 'product':
+      return handleAsProduct(currentState, itemToAdd, sizeIdentifier);
+    default:
+      devConsoleLog("Tried to add an unrecognized item to the cart.", itemToAdd);
+      break;
+  }
+  return currentState;
+}
 
 const handleAsLedgerItem = (prevState, itemToAdd) => {
-
+  devConsoleLog("handleAsLedgerItem :: We don't do this!");
 }
 
 const handleAsBowlingItem = (prevState, itemToAdd) => {
-  if (['single_use', 'event'].includes(item.determination)) {
+  if (['single_use', 'event'].includes(itemToAdd.determination)) {
     return handleSingleton(prevState, itemToAdd);
+
+    // TODO: bundle discount and late fees related to events.
   }
   return handlePossiblyMany(prevState, itemToAdd);
 }
@@ -71,10 +92,74 @@ const handleAsSanctionItem = (prevState, itemToAdd) => {
 }
 
 const handleAsProduct = (prevState, itemToAdd, sizeIdentifier) => {
-  if (itemToAdd.determination !== 'sized') {
+  console.log("Yeah it's a product");
+  if (itemToAdd.refinement !== 'sized') {
     return handlePossiblyMany(prevState, itemToAdd);
   }
-  // Now we get to the heart of it.
+  console.log("... and it's sized.");
+  // Now we get to the heart of it. itemToAdd looks something like this:
+  // {
+  //   identifier: 'something-to-wear',
+  //   category: 'product',
+  //   determination: 'apparel',
+  //   refinement: 'sized',
+  //   name: 'Name of the thing',
+  //   sizes: [
+  //   {
+  //     identifier: 'in-a-small',
+  //     size: 'men.s',
+  //     displaySize: 'Small!',
+  //     parentIdentifier: 'something-to-wear',
+  //     quantity: 0,
+  //   },
+  //   {
+  //     identifier: 'in-a-medium',
+  //     size: 'men.m',
+  //     displaySize: 'Medium!',
+  //     parentIdentifier: 'something-to-wear',
+  //     quantity: 2,
+  //   },
+  //   {
+  //     identifier: 'in-a-large',
+  //     size: 'men.l',
+  //     displaySize: 'Large!',
+  //     parentIdentifier: 'something-to-wear',
+  //     quantity: 1,
+  //   },
+  // ],
+  //   value: 39,
+  // }
+
+  // In the cart, treat it as a top-level item, so that we have a different quantity
+  // for each distinct size. The presence of parentIdentifier may come in handy for
+  // removing it later.
+
+  // this is similar to handlePossiblyMany, in terms of algorithm, but the
+  // resulting collection doesn't affect availableItems, and it looks through
+  // itemToAdd.sizes for a match.
+
+  const cartItemIndex = prevState.cart.findIndex(({identifier}) => identifier === sizeIdentifier);
+  console.log("I found one already there?", cartItemIndex >= 0);
+  const newQuantity = cartItemIndex >= 0 ? prevState.cart[cartItemIndex].quantity + 1 : 1;
+
+  const prevApparelItem = cartItemIndex >= 0 ? prevState.cart[cartItemIndex] : itemToAdd.sizes.find(({identifier}) => identifier === sizeIdentifier);
+
+  const addedApparelItem = updateObject(prevApparelItem, {
+    quantity: newQuantity,
+  });
+  let updatedCart;
+  if (cartItemIndex >= 0) {
+    // Just replace the apparel item in the cart with the updated version
+    updatedCart = [...prevState.cart];
+    updatedCart[cartItemIndex] = addedApparelItem;
+  } else {
+    // Add the apparel item to the cart
+    updatedCart = prevState.cart.concat(addedApparelItem);
+  }
+
+  return updateObject(prevState, {
+    cart: updatedCart,
+  });
 }
 
 const handleAsBanquet = (prevState, itemToAdd) => {
@@ -108,8 +193,8 @@ const handlePossiblyMany = (prevState, itemToAdd) => {
 }
 
 const handleSingleton = (prevState, itemToAdd) => {
-  const identifier = itemToAdd.identifier;
-  const cartItemIndex = prevState.cart.findIndex(i => i.identifier === identifier);
+  const newItemIdentifier = itemToAdd.identifier;
+  const cartItemIndex = prevState.cart.findIndex(({identifier}) => identifier === newItemIdentifier);
 
   // There is one already, so we do nothing.
   if (cartItemIndex >= 0) {
@@ -122,7 +207,7 @@ const handleSingleton = (prevState, itemToAdd) => {
   });
 
   const updatedAvailableItems = {...prevState.availableItems};
-  updatedAvailableItems[identifier] = addedItem;
+  updatedAvailableItems[newItemIdentifier] = addedItem;
 
   const updatedCart = prevState.cart.concat(addedItem);
   const availableItemsWithUpdatedDivisions = handleDivisionItem(updatedAvailableItems, addedItem);
@@ -134,8 +219,12 @@ const handleSingleton = (prevState, itemToAdd) => {
 }
 
 const handleDivisionItem = (previousItems, itemToAdd) => {
-  const itemsInCart = {...previousItems};
-  for (const identifier in {...itemsInCart}) {
+  if (itemToAdd.refinement !== 'division') {
+    return previousItems;
+  }
+
+  const availableItems = {...previousItems};
+  for (const identifier in availableItems) {
     // skip it if we're looking in the mirror
     if (identifier === itemToAdd.identifier) {
       continue;
@@ -144,17 +233,16 @@ const handleDivisionItem = (previousItems, itemToAdd) => {
     // We're only interested in division things.
     // Technically, single-use as well, but we don't currently support multi-use division items.
     // (Would there be two different kinds of Scratch Masters?)
-    if (itemsInCart[identifier].refinement !== 'division') {
+    if (availableItems[identifier].refinement !== 'division') {
       continue;
     }
 
     // Every item with the same name is now considered added-to-cart.
     // Because we differentiate between Division things based on the name.
     // Seems kinda fragile, but it works for now.
-    if (itemsInCart[identifier].name === itemToAdd.name) {
-      itemsInCart[identifier].addedToCart = true;
+    if (availableItems[identifier].name === itemToAdd.name) {
+      availableItems[identifier].addedToCart = true;
     }
-
-    return itemsInCart;
   }
+  return availableItems;
 }
