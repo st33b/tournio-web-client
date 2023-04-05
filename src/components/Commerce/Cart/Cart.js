@@ -13,7 +13,8 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
   }
 
   const sum = (runningTotal, currentValue) => {
-    if (currentValue.category === 'ledger' && (currentValue.determination === 'early_discount' || currentValue.determination === 'bundle_discount')) {
+    if (currentValue.category === 'ledger' && (currentValue.determination === 'early_discount'
+      || currentValue.determination === 'bundle_discount')) {
       return runningTotal - currentValue.value * (currentValue.quantity || 1);
     }
     return runningTotal + currentValue.value * (currentValue.quantity || 1);

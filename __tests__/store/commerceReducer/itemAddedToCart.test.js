@@ -189,6 +189,7 @@ describe('itemAddedToCart -- dedicated function', () => {
         size: 'men.m',
         displaySize: 'Medium!',
         parentIdentifier: 'something-to-wear',
+        value: 19,
         quantity: 0,
       };
       const itemToAdd = {
@@ -202,6 +203,7 @@ describe('itemAddedToCart -- dedicated function', () => {
             size: 'men.s',
             displaySize: 'Small!',
             parentIdentifier: 'something-to-wear',
+            value: 17,
             quantity: 0,
           },
           chosenSize,
@@ -210,6 +212,7 @@ describe('itemAddedToCart -- dedicated function', () => {
             size: 'men.l',
             displaySize: 'Large!',
             parentIdentifier: 'something-to-wear',
+            value: 21,
             quantity: 0,
           },
         ],
@@ -247,6 +250,12 @@ describe('itemAddedToCart -- dedicated function', () => {
         const item = result.cart[0];
         expect(item.displaySize).toBeDefined();
       });
+
+      it ('has the value as a top-level property', () => {
+        const item = result.cart[0];
+        expect(item.value).toStrictEqual(chosenSize.value);
+      });
+
     });
 
     describe ('an event', () => {

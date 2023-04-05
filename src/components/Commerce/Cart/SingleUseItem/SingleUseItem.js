@@ -1,6 +1,7 @@
 import {useCommerceContext} from "../../../../store/CommerceContext";
 
 import classes from './SingleUseItem.module.scss';
+import ErrorBoundary from "../../../common/ErrorBoundary";
 
 const SingleUseItem = ({item, removed}) => {
   const {commerce} = useCommerceContext();
@@ -10,7 +11,7 @@ const SingleUseItem = ({item, removed}) => {
     removed(item);
   }
 
-  if (!commerce) {
+  if (!commerce || !item) {
     return '';
   }
 
@@ -28,13 +29,10 @@ const SingleUseItem = ({item, removed}) => {
     );
   }
 
-  let note = '';
-  if (item.configuration.division) {
-    note = (
-      <p className={classes.Note}>
-        Division: {item.configuration.division}
-      </p>
-    );
+  let {name, note, value} = item;
+
+  if (item.refinement === 'division') {
+    note = `Division: ${item.configuration.division}`;
   }
 
   const outerClasses = [
@@ -48,12 +46,8 @@ const SingleUseItem = ({item, removed}) => {
 
   if (item.category === 'ledger') {
     outerClasses.push(classes.Sticky);
-    if (item.configuration.event) {
-      note = (
-        <p className={classes.Note}>
-          Event: {commerce.availableItems[item.configuration.event].name}
-        </p>
-      );
+    if (item.refinement === 'event') {
+      note = `Event: ${commerce.availableItems[item.configuration.event].name}`;
     }
     if (item.configuration.events) {
       // We need to check purchased items as well as available items for the label to apply.
@@ -68,27 +62,29 @@ const SingleUseItem = ({item, removed}) => {
           matchingEvents.push(i);
         }
       });
-      note = (
-        <p className={classes.Note}>
-          Events: {matchingEvents.map(event => event.name).join(', ')}
-        </p>
-      );
+      note = `Events: ${matchingEvents.map(event => event.name).join(', ')}`;
     }
   }
 
   return (
-    <div className={outerClasses.join(' ')}>
-      <div className={'ps-2'}>
-        <p>
-          {item.name}
-        </p>
-        {note}
-        <p>
-          ${item.value}
-        </p>
+    <ErrorBoundary>
+      <div className={outerClasses.join(' ')}>
+        <div className={'ps-2'}>
+          <p>
+            {name}
+          </p>
+          {note && (
+            <p className={classes.Note}>
+              {note}
+            </p>
+          )}
+          <p>
+            ${value}
+          </p>
+        </div>
+        {removeLink}
       </div>
-      {removeLink}
-    </div>
+    </ErrorBoundary>
   );
 }
 

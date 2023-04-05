@@ -143,7 +143,7 @@ const handleAsProduct = (previousState, itemToAdd, sizeIdentifier) => {
   const cartItemIndex = previousState.cart.findIndex(({identifier}) => identifier === sizeIdentifier);
   const newQuantity = cartItemIndex >= 0 ? previousState.cart[cartItemIndex].quantity + 1 : 1;
 
-  const prevApparelItem = cartItemIndex >= 0 ? previousState.cart[cartItemIndex] : itemToAdd.sizes.find(({identifier}) => identifier === sizeIdentifier);
+  const prevApparelItem = cartItemIndex >= 0 ? previousState.cart[cartItemIndex] : itemToAdd.configuration.sizes.find(({identifier}) => identifier === sizeIdentifier);
 
   const addedApparelItem = updateObject(prevApparelItem, {
     quantity: newQuantity,

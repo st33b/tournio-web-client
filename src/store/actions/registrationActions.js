@@ -122,10 +122,11 @@ export const bowlerCommerceDetailsRetrieved = (bowler, availableItems) => {
   }
 }
 
-export const itemAddedToCart = (item) => {
+export const itemAddedToCart = (item, sizeIdentifier = null) => {
   return {
     type: actionTypes.ITEM_ADDED_TO_CART,
     item: item,
+    sizeIdentifier: sizeIdentifier,
   }
 }
 

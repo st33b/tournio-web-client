@@ -16,8 +16,8 @@ const Menu = () => {
     return '';
   }
 
-  const itemAdded = (item) => {
-    dispatch(itemAddedToCart(item));
+  const itemAdded = (item, sizeIdentifier = null) => {
+    dispatch(itemAddedToCart(item, sizeIdentifier));
   }
 
   const itemRemoved = (item) => {

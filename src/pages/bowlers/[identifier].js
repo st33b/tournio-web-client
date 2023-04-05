@@ -83,7 +83,7 @@ const Page = () => {
 
   return (
     <div>
-      {commerce.tournament && (
+      {commerce.tournament && commerce.bowler && (
         <Row className={``}>
           <Col className={'col-3 col-md-1'}>
             <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>

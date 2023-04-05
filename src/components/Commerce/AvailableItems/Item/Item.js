@@ -1,6 +1,7 @@
 import {apparelSizeMapping} from '../../../../utils';
 import classes from "./Item.module.scss";
 import {useState} from "react";
+import ErrorBoundary from "../../../common/ErrorBoundary";
 
 const Item = ({item, added, preview}) => {
   const initialSizeForm = {
@@ -11,7 +12,7 @@ const Item = ({item, added, preview}) => {
 
   const addClickedHandler = (event) => {
     event.preventDefault();
-    added(item);
+    added(item, sizeForm.identifier);
   }
 
   let secondaryText = '';
@@ -81,7 +82,7 @@ const Item = ({item, added, preview}) => {
     );
   }
 
-  const sizeRequired = item.category === 'product' && item.determination && 'apparel';
+  const sizeRequired = item.determination && 'apparel' && item.refinement === 'sized';
   const sizeValid = !sizeRequired || sizeRequired && sizeForm.identifier.length > 0;
 
   let attachedClasses = [classes.Item, 'mb-3', 'mx-0', 'd-flex'];
@@ -115,19 +116,21 @@ const Item = ({item, added, preview}) => {
   }
 
   return (
-    <div className={attachedClasses.join(' ')} title={tooltipText}>
-      <div className={'ps-2'}>
-        <p className={classes.Name}>
-          {item.name}
-        </p>
-        {secondaryText}
-        {sizeText}
-        <p className={classes.Price}>
-          ${item.value}
-        </p>
+    <ErrorBoundary>
+      <div className={attachedClasses.join(' ')} title={tooltipText}>
+        <div className={'ps-2'}>
+          <p className={classes.Name}>
+            {item.name}
+          </p>
+          {secondaryText}
+          {sizeText}
+          <p className={classes.Price}>
+            ${item.value}
+          </p>
+        </div>
+        {addLink}
       </div>
-      {addLink}
-    </div>
+    </ErrorBoundary>
   );
 }
 
