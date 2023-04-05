@@ -301,10 +301,9 @@ describe('itemAddedToCart -- dedicated function', () => {
 
           const result = itemAddedToCart(myPreviousState, itemToAdd);
 
-          // TODO
           it ('adds the bundle discount to the cart as well', () => {
-    //         const bundleItemIndex = result.cart.findIndex(item => item.identifier === discountItem.identifier);
-    //         expect(bundleItemIndex).toBeGreaterThanOrEqual(0);
+            const bundleItemIndex = result.cart.findIndex(item => item.identifier === discountItem.identifier);
+            expect(bundleItemIndex).toBeGreaterThanOrEqual(0);
           });
         });
 
@@ -323,10 +322,9 @@ describe('itemAddedToCart -- dedicated function', () => {
 
           const result = itemAddedToCart(myPreviousState, itemToAdd);
 
-          // TODO
           it ('adds the bundle discount to the cart as well', () => {
-            // const bundleItemIndex = result.cart.findIndex(item => item.identifier === discountItem.identifier);
-            // expect(bundleItemIndex).toBeGreaterThanOrEqual(0);
+            const bundleItemIndex = result.cart.findIndex(item => item.identifier === discountItem.identifier);
+            expect(bundleItemIndex).toBeGreaterThanOrEqual(0);
           });
         });
       });
@@ -359,10 +357,9 @@ describe('itemAddedToCart -- dedicated function', () => {
 
           const result = itemAddedToCart(myPreviousState, itemToAdd);
 
-          // TODO
           it ('adds the late-fee item to the cart', () => {
-            // const lateFeeItemIndex = result.cart.findIndex(item => item.identifier === lateFeeItem.identifier);
-            // expect(lateFeeItemIndex).toBeGreaterThanOrEqual(0);
+            const lateFeeItemIndex = result.cart.findIndex(item => item.identifier === lateFeeItem.identifier);
+            expect(lateFeeItemIndex).toBeGreaterThanOrEqual(0);
           });
         });
 
@@ -374,10 +371,9 @@ describe('itemAddedToCart -- dedicated function', () => {
 
           const result = itemAddedToCart(myPreviousState, itemToAdd);
 
-          // TODO
           it ('adds the late-fee item to the cart', () => {
-    //         const lateFeeItemIndex = result.cart.findIndex(item => item.identifier === lateFeeItem.identifier);
-    //         expect(lateFeeItemIndex).toBeGreaterThanOrEqual(0);
+            const lateFeeItemIndex = result.cart.findIndex(item => item.identifier === lateFeeItem.identifier);
+            expect(lateFeeItemIndex).toBeGreaterThanOrEqual(0);
           });
         });
       });
@@ -445,6 +441,32 @@ describe('itemAddedToCart -- dedicated function', () => {
       const myPreviousState = {...previousState};
       myPreviousState.cart = [
         { ...itemToAdd },
+      ];
+
+      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+
+      const result = itemAddedToCart(myPreviousState, itemToAdd);
+
+      it ('makes no changes', () => {
+        expect(result.cart.length).toStrictEqual(myPreviousState.cart.length);
+        const item = result.cart[0];
+        expect(item.quantity).toStrictEqual(1);
+      });
+    });
+
+    describe('an event', () => {
+      const itemToAdd = {
+        identifier: 'some-core-event',
+        category: 'bowling',
+        determination: 'event',
+      }
+      const myPreviousState = {...previousState};
+      myPreviousState.cart = [
+        {
+          ...itemToAdd,
+          addedToCart: true,
+          quantity: 1,
+        },
       ];
 
       myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
