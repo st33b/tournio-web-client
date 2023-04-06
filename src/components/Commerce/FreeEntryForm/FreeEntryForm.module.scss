@@ -1,10 +1,20 @@
 .FreeEntryForm {
-  .Form {
+  padding-top: 0.5rem;
+  margin: 0;
 
+  .CodeForm {
+    border-top: 1px solid var(--tournio-gray-500);
+    .FormLabel {
+
+    }
+    .ActionRow {
+      text-align: right;
+      padding-top: 1rem;
+    }
   }
-  margin-top: 1rem;
-  border-top: 1px solid var(--tournio-gray-500);
-
   .AppliedCode {
+  }
+  .Alert {
+    margin-bottom: 0;
   }
 }

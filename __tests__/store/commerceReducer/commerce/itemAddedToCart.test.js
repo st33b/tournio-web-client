@@ -21,6 +21,20 @@ describe('itemAddedToCart -- dedicated function', () => {
   }
 
   describe ('the item is not yet in the cart', () => {
+    describe('an unknown kind of item', () => {
+      const itemToAdd = {
+        identifier: 'what-is-this',
+        category: 'unfamiliar',
+      }
+      const myPreviousState = {...previousState};
+
+      const result = itemAddedToCart(myPreviousState, itemToAdd);
+
+      it ('makes no changes to anything', () => {
+        expect(result).toStrictEqual(myPreviousState);
+      });
+    })
+
     describe ('a bowling item', () => {
       const itemToAdd = {
         identifier: 'bowling-special',
@@ -131,6 +145,23 @@ describe('itemAddedToCart -- dedicated function', () => {
         identifier: 'make-me-official',
         category: 'sanction',
         determination: 'igbo',
+      }
+      const myPreviousState = {...previousState};
+      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+
+      const result = itemAddedToCart(myPreviousState, itemToAdd);
+
+      it ('adds it to the cart', () => {
+        expect(result.cart.length).toStrictEqual(1);
+        const item = result.cart[0];
+        expect(item.quantity).toStrictEqual(1);
+      });
+    });
+
+    describe ('a banquet item', () => {
+      const itemToAdd = {
+        identifier: 'tasty-noms',
+        category: 'banquet',
       }
       const myPreviousState = {...previousState};
       myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
@@ -500,6 +531,32 @@ describe('itemAddedToCart -- dedicated function', () => {
         expect(result.cart.length).toStrictEqual(myPreviousState.cart.length);
         const item = result.cart[0];
         expect(item.quantity).toStrictEqual(1);
+      });
+    });
+
+    describe('banquet', () => {
+      const itemToAdd = {
+        identifier: 'food-and-beverage',
+        category: 'banquet',
+      }
+      const myPreviousState = {...previousState};
+      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+      myPreviousState.cart = [...previousState.cart];
+      myPreviousState.cart.push({
+        ...itemToAdd,
+        addedToCart: true,
+        quantity: 12,
+      });
+
+      const result = itemAddedToCart(myPreviousState, itemToAdd);
+
+      it ('increments the existing quantity', () => {
+        const resultItem = result.cart[0];
+        expect(resultItem.quantity).toStrictEqual(13);
+      });
+
+      it ('does not change the number of distinct items in the cart', () => {
+        expect(result.cart.length).toEqual(myPreviousState.cart.length);
       });
     });
 

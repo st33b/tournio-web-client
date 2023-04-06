@@ -3,9 +3,10 @@
     padding: 0.5rem;
     margin-bottom: 1rem;
 
-    background-color: var(--tournio-gray-200);
+    background-color: var(--tournio-gray-800);
+    color: white;
     @media (prefers-color-scheme: dark) {
-      background-color: var(--tournio-gray-800);
+      color: var(--tournio-body-color);
     }
   }
 }

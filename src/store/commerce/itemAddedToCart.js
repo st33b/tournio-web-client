@@ -76,28 +76,29 @@ export const itemAddedToCart = (currentState, itemToAdd, sizeIdentifier = null) 
 }
 
 const handleAsLedgerItem = (previousState, itemToAdd) => {
-  return handleSingleton(previousState, itemToAdd);
+  return handleAsSingleton(previousState, itemToAdd);
 }
 
 const handleAsBowlingItem = (previousState, itemToAdd) => {
   if (['single_use', 'event'].includes(itemToAdd.determination)) {
-    const stateAfterSingletonHandling = handleSingleton(previousState, itemToAdd);
+    const stateAfterSingletonHandling = handleAsSingleton(previousState, itemToAdd);
+    const stateAfterDivisionHandling = handleAsDivisionItem(stateAfterSingletonHandling, itemToAdd);
 
-    const stateWithApplicableDiscounts = tryAddingBundleDiscount(stateAfterSingletonHandling, itemToAdd);
+    const stateWithApplicableDiscounts = tryAddingBundleDiscount(stateAfterDivisionHandling, itemToAdd);
     const stateWithApplicableLateFees = tryAddingLateFee(stateWithApplicableDiscounts, itemToAdd);
 
     return stateWithApplicableLateFees;
   }
-  return handlePossiblyMany(previousState, itemToAdd);
+  return handleAsPossiblyMany(previousState, itemToAdd);
 }
 
 const handleAsSanctionItem = (previousState, itemToAdd) => {
-  return handleSingleton(previousState, itemToAdd);
+  return handleAsSingleton(previousState, itemToAdd);
 }
 
 const handleAsProduct = (previousState, itemToAdd, sizeIdentifier) => {
   if (itemToAdd.refinement !== 'sized') {
-    return handlePossiblyMany(previousState, itemToAdd);
+    return handleAsPossiblyMany(previousState, itemToAdd);
   }
   // Now we get to the heart of it. itemToAdd looks something like this (with a few other
   // properties in the elements of sizes):
@@ -137,10 +138,9 @@ const handleAsProduct = (previousState, itemToAdd, sizeIdentifier) => {
   // for each distinct size. The presence of parentIdentifier may come in handy for
   // removing it later.
 
-  // this is similar to handlePossiblyMany, in terms of algorithm, but the
+  // this is similar to handleAsPossiblyMany, in terms of algorithm, but the
   // resulting collection doesn't affect availableItems, and it looks through
   // itemToAdd.sizes for a match.
-  console.log("Item to add:", itemToAdd);
 
   const cartItemIndex = previousState.cart.findIndex(({identifier}) => identifier === sizeIdentifier);
 
@@ -172,10 +172,10 @@ const handleAsProduct = (previousState, itemToAdd, sizeIdentifier) => {
 }
 
 const handleAsBanquet = (previousState, itemToAdd) => {
-  return handlePossiblyMany(previousState, itemToAdd);
+  return handleAsPossiblyMany(previousState, itemToAdd);
 }
 
-const handlePossiblyMany = (previousState, itemToAdd) => {
+const handleAsPossiblyMany = (previousState, itemToAdd) => {
   const newItemIdentifier = itemToAdd.identifier;
   const cartItemIndex = previousState.cart.findIndex(({identifier}) => identifier === newItemIdentifier);
   const prevQuantity = cartItemIndex >= 0 ? previousState.cart[cartItemIndex].quantity : 0;
@@ -201,7 +201,7 @@ const handlePossiblyMany = (previousState, itemToAdd) => {
   })
 }
 
-const handleSingleton = (previousState, itemToAdd) => {
+const handleAsSingleton = (previousState, itemToAdd) => {
   const newItemIdentifier = itemToAdd.identifier;
   const cartItemIndex = previousState.cart.findIndex(({identifier}) => identifier === newItemIdentifier);
 
@@ -219,15 +219,14 @@ const handleSingleton = (previousState, itemToAdd) => {
   updatedAvailableItems[newItemIdentifier] = addedItem;
 
   const updatedCart = previousState.cart.concat(addedItem);
-  const updatedState = updateObject(previousState, {
+
+  return updateObject(previousState, {
     cart: updatedCart,
     availableItems: updatedAvailableItems,
   });
-
-  return handleDivisionItem(updatedState, addedItem);
 }
 
-const handleDivisionItem = (previousState, itemToAdd) => {
+const handleAsDivisionItem = (previousState, itemToAdd) => {
   const availableItems = {...previousState.availableItems};
   if (itemToAdd.refinement !== 'division') {
     return previousState;

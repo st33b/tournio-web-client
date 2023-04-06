@@ -97,7 +97,7 @@ const FreeEntryForm = () => {
   let serverMessage = '';
   if (commerce.freeEntry && commerce.freeEntry.message) {
     serverMessage = (
-      <div className={'alert alert-success alert-dismissible fade show mt-3'} role={'alert'}>
+      <div className={`alert alert-success alert-dismissible fade show ${classes.Alert}`} role={'alert'}>
         {commerce.freeEntry.message}
         <button type={'button'} className={'btn-close'} data-bs-dismiss={'alert'} aria-label={'Close'} />
       </div>
@@ -109,7 +109,7 @@ const FreeEntryForm = () => {
   let errorMessage = '';
   if (commerce.freeEntry && commerce.freeEntry.error) {
     errorMessage = (
-      <div className={'alert alert-danger alert-dismissible fade show mt-3'} role={'alert'}>
+      <div className={`alert alert-danger alert-dismissible fade show ${classes.Alert}`} role={'alert'}>
         {commerce.freeEntry.error}
         <button type={'button'} className={'btn-close'} data-bs-dismiss={'alert'} aria-label={'Close'} />
       </div>
@@ -129,7 +129,7 @@ const FreeEntryForm = () => {
   }
 
   let declareLink = (
-    <div className={`${textClass} mt-3 text-center`}>
+    <div className={`${textClass}`}>
       <a href={'#'}
          className={`btn btn-primary`}
          onClick={linkClicked}>
@@ -149,9 +149,10 @@ const FreeEntryForm = () => {
       {declareLink}
       {serverMessage}
       {errorMessage}
-      <form onSubmit={formHandler} className={formClass}>
+      <form onSubmit={formHandler} className={`${formClass} ${classes.CodeForm}`}>
         <div className={'row mb-0'}>
-          <label className={'col-12 col-form-label col-form-label pb-1'} htmlFor={'free_entry_code'}>
+          <label className={`${classes.FormLabel} col-12 col-form-label col-form-label`}
+                 htmlFor={'free_entry_code'}>
             Free Entry Code
           </label>
           <div className={'col-12'}>
@@ -165,7 +166,7 @@ const FreeEntryForm = () => {
           </div>
         </div>
 
-        <div className={'text-end pt-2'}>
+        <div className={classes.ActionRow}>
           <button className={'btn btn-outline-dark btn-sm me-3'} type={'button'} onClick={cancelClicked}>
             Cancel
           </button>
