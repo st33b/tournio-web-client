@@ -53,7 +53,7 @@
 //        -> trio
 //        -> team
 
-import {devConsoleLog, updateObject} from "../utils";
+import {devConsoleLog, updateObject} from "../../utils";
 import {compareAsc} from "date-fns";
 
 export const itemAddedToCart = (currentState, itemToAdd, sizeIdentifier = null) => {
@@ -99,7 +99,8 @@ const handleAsProduct = (previousState, itemToAdd, sizeIdentifier) => {
   if (itemToAdd.refinement !== 'sized') {
     return handlePossiblyMany(previousState, itemToAdd);
   }
-  // Now we get to the heart of it. itemToAdd looks something like this:
+  // Now we get to the heart of it. itemToAdd looks something like this (with a few other
+  // properties in the elements of sizes):
   // {
   //   identifier: 'something-to-wear',
   //   category: 'product',
@@ -139,11 +140,18 @@ const handleAsProduct = (previousState, itemToAdd, sizeIdentifier) => {
   // this is similar to handlePossiblyMany, in terms of algorithm, but the
   // resulting collection doesn't affect availableItems, and it looks through
   // itemToAdd.sizes for a match.
+  console.log("Item to add:", itemToAdd);
 
   const cartItemIndex = previousState.cart.findIndex(({identifier}) => identifier === sizeIdentifier);
-  const newQuantity = cartItemIndex >= 0 ? previousState.cart[cartItemIndex].quantity + 1 : 1;
 
-  const prevApparelItem = cartItemIndex >= 0 ? previousState.cart[cartItemIndex] : itemToAdd.configuration.sizes.find(({identifier}) => identifier === sizeIdentifier);
+  let prevApparelItem, newQuantity;
+  if (cartItemIndex >= 0) {
+    prevApparelItem = previousState.cart[cartItemIndex];
+    newQuantity = previousState.cart[cartItemIndex].quantity + 1
+  } else {
+    prevApparelItem = itemToAdd.configuration.sizes.find(({identifier}) => identifier === sizeIdentifier);
+    newQuantity = 1;
+  }
 
   const addedApparelItem = updateObject(prevApparelItem, {
     quantity: newQuantity,

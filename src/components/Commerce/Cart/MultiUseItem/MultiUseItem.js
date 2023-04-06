@@ -34,15 +34,6 @@ const multiUseItem = ({item, increase, decrease}) => {
 
   let {name, note, value, displaySize, quantity} = item;
 
-  // let infoText = '';
-  // if (item.configuration.denomination) {
-  //   infoText = (
-  //     <p className={classes.Note}>
-  //       {item.configuration.denomination}
-  //     </p>
-  //   );
-  // }
-
   return (
     <div className={`${classes.MultiUseItem} rounded border mb-3 mx-0 d-flex`}>
       <div className={'ps-2'}>

@@ -1,5 +1,4 @@
-import * as actionTypes from '../../../src/store/actions/actionTypes';
-import {itemAddedToCart} from "../../../src/store/itemAddedToCart";
+import {itemAddedToCart} from "../../../../src/store/commerce/itemAddedToCart";
 
 describe('itemAddedToCart -- dedicated function', () => {
   // Prerequisites:
@@ -16,7 +15,7 @@ describe('itemAddedToCart -- dedicated function', () => {
   const previousState = {
     cart: [],
     availableItems: {},
-    apparelItems: {},
+    availableApparelItems: {},
     purchasedItems: [],
     tournament: {},
   }
@@ -184,45 +183,61 @@ describe('itemAddedToCart -- dedicated function', () => {
     });
 
     describe('a product with a separate size identifier', () => {
-      const chosenSize = {
-        identifier: 'in-a-medium',
-        size: 'men.m',
-        displaySize: 'Medium!',
-        parentIdentifier: 'something-to-wear',
-        value: 19,
-        quantity: 0,
-      };
       const itemToAdd = {
         identifier: 'something-to-wear',
         category: 'product',
         determination: 'apparel',
         refinement: 'sized',
-        sizes: [
-          {
-            identifier: 'in-a-small',
-            size: 'men.s',
-            displaySize: 'Small!',
-            parentIdentifier: 'something-to-wear',
-            value: 17,
-            quantity: 0,
-          },
-          chosenSize,
-          {
-            identifier: 'in-a-large',
-            size: 'men.l',
-            displaySize: 'Large!',
-            parentIdentifier: 'something-to-wear',
-            value: 21,
-            quantity: 0,
-          },
-        ],
+        name: 'A turtleneck',
+        configuration: {
+          sizes: [
+            {
+              identifier: 'in-a-small',
+              size: 'men.s',
+              displaySize: 'Small!',
+              parentIdentifier: 'something-to-wear',
+              category: 'product',
+              name: 'A turtleneck',
+              note: '',
+              value: 17,
+              quantity: 0,
+            },
+            {
+              identifier: 'in-a-medium',
+              size: 'men.m',
+              displaySize: 'Medium!',
+              parentIdentifier: 'something-to-wear',
+              category: 'product',
+              name: 'A turtleneck',
+              note: '',
+              value: 19,
+              quantity: 0,
+            },
+            {
+              identifier: 'in-a-large',
+              size: 'men.l',
+              displaySize: 'Large!',
+              parentIdentifier: 'something-to-wear',
+              category: 'product',
+              name: 'A turtleneck',
+              note: '',
+              value: 21,
+              quantity: 0,
+            },
+          ],
+        },
         value: 39,
       }
 
-      const myPreviousState = {...previousState};
-      const sizeIdentifier = chosenSize.identifier;
+      const myPreviousState = {
+        ...previousState,
+        availableApparelItems: {
+          'something-to-wear': itemToAdd,
+        }
+      };
 
-      const result = itemAddedToCart(myPreviousState, itemToAdd, sizeIdentifier);
+      const chosenSize = {...itemToAdd.configuration.sizes[1]};
+      const result = itemAddedToCart(myPreviousState, itemToAdd, chosenSize.identifier);
 
       it ('adds it to the cart', () => {
         expect(result.cart.length).toStrictEqual(1);
@@ -238,7 +253,7 @@ describe('itemAddedToCart -- dedicated function', () => {
 
       it ('uses the size identifier in cart', () => {
         const item = result.cart[0];
-        expect(item.identifier).toStrictEqual(sizeIdentifier);
+        expect(item.identifier).toStrictEqual(chosenSize.identifier);
       });
 
       it ('has the size as a top-level property', () => {
@@ -255,7 +270,6 @@ describe('itemAddedToCart -- dedicated function', () => {
         const item = result.cart[0];
         expect(item.value).toStrictEqual(chosenSize.value);
       });
-
     });
 
     describe ('an event', () => {
