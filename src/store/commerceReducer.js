@@ -150,6 +150,7 @@ export const extractApparelFromItems = (allItems) => {
       displaySize: `${apparelSizeMapping[groupKey]} ${apparelSizeMapping[sizeKey]}`,
       parentIdentifier: item.configuration.parent_identifier,
       category: item.category,
+      determination: item.determination,
       name: item.name,
       note: item.configuration.note,
       value: item.value,

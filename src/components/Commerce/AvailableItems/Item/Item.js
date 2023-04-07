@@ -16,36 +16,37 @@ const Item = ({item, added, preview}) => {
   }
 
   let secondaryText = '';
-  let note = '';
-  if (item.configuration.note) {
-    note = `(${item.configuration.note})`;
-    secondaryText = (
-      <p className={classes.Note}>
-        {note}
-      </p>
-    );
-  }
-  if (item.configuration.division) {
-    secondaryText = (
-      <p className={classes.Note}>
-        Division: {item.configuration.division} {note}
-      </p>
-    );
-  } else if (item.configuration.input_label) {
-    secondaryText = (
-      <form>
-        <label>
-          {item.configuration.input_label}
-        </label>
-        <input type={'text'} />
-      </form>
-    );
-  } else if (item.configuration.denomination) {
-    secondaryText = (
-      <p className={classes.Note}>
-        {item.configuration.denomination} {note}
-      </p>
-    );
+  if (item.configuration) {
+    if (item.configuration.note) {
+      secondaryText = (
+        <p className={classes.Note}>
+          ({item.configuration.note})
+        </p>
+      );
+    }
+    if (item.configuration.division) {
+      secondaryText = (
+        <p className={classes.Note}>
+          Division: {item.configuration.division}
+          {item.configuration.note && <span>({item.configuration.note})</span>}
+        </p>
+      );
+    } else if (item.configuration.input_label) {
+      secondaryText = (
+        <form>
+          <label>
+            {item.configuration.input_label}
+          </label>
+          <input type={'text'} />
+        </form>
+      );
+    } else if (item.configuration.denomination) {
+      secondaryText = (
+        <p className={classes.Note}>
+          {item.configuration.denomination} {note}
+        </p>
+      );
+    }
   }
 
   const sizeChosen = (event) => {
@@ -56,30 +57,32 @@ const Item = ({item, added, preview}) => {
   }
 
   let sizeText = '';
-  if (item.configuration.sizes && item.configuration.sizes.length > 0) {
-    // Yay, we have some sizes!
-    sizeText = (
-      <select className={'form-select'}
-              name={'identifier'}
-              value={sizeForm.identifier}
-              onChange={sizeChosen}>
-        <option value={''}>-- Size:</option>
-        {item.configuration.sizes.map(({identifier, displaySize}) => {
-          return (
-            <option key={identifier}
-                    value={identifier}>
-              {displaySize}
-            </option>
-          )
-        })}
-      </select>
-    );
-  } else if (item.configuration.size) {
-    sizeText = (
-      <p>
-        {apparelSizeMapping[item.configuration.size]}
-      </p>
-    );
+  if (item.configuration) {
+    if (item.configuration.sizes && item.configuration.sizes.length > 0) {
+      // Yay, we have some sizes!
+      sizeText = (
+        <select className={'form-select'}
+                name={'identifier'}
+                value={sizeForm.identifier}
+                onChange={sizeChosen}>
+          <option value={''}>-- Size:</option>
+          {item.configuration.sizes.map(({identifier, displaySize}) => {
+            return (
+              <option key={identifier}
+                      value={identifier}>
+                {displaySize}
+              </option>
+            )
+          })}
+        </select>
+      );
+    } else if (item.configuration.size) {
+      sizeText = (
+        <p>
+          {apparelSizeMapping[item.configuration.size]}
+        </p>
+      );
+    }
   }
 
   const sizeRequired = item.determination && 'apparel' && item.refinement === 'sized';

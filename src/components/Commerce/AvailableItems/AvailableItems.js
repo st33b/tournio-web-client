@@ -35,22 +35,22 @@ const AvailableItems = ({itemAddedToCart}) => {
 
   // sort the division items by name and note
   const divisionItems = allItems.filter(item => {
-    return item.determination === 'single_use' && item.refinement === 'division';
+    return item.refinement === 'division';
   }).sort((left, right) => {
-    const leftText = left.name + left.configuration.note;
-    const rightText = right.name + right.configuration.note;
-    return rightText.localeCompare(leftText);
+    const leftText = left.name + left.configuration.division;
+    const rightText = right.name + right.configuration.division;
+    return leftText.localeCompare(rightText);
   });
 
-  const divisionGroups = new Map();
-  divisionItems.forEach((item) => {
-    const name = item.name;
-    if (!divisionGroups.has(name)) {
-      divisionGroups.set(name, []);
-    }
-    const currentSet = divisionGroups.get(name);
-    divisionGroups.set(name, currentSet.concat(item));
-  });
+  // const divisionGroups = new Map();
+  // divisionItems.forEach((item) => {
+  //   const name = item.name;
+  //   if (!divisionGroups.has(name)) {
+  //     divisionGroups.set(name, []);
+  //   }
+  //   const currentSet = divisionGroups.get(name);
+  //   divisionGroups.set(name, currentSet.concat(item));
+  // });
 
   // sort the single_use items by their order
   const singleUseItems = allItems.filter(item => {
@@ -66,11 +66,11 @@ const AvailableItems = ({itemAddedToCart}) => {
   const sanctionItems = allItems.filter(({category}) => category === 'sanction');
 
   // Non-apparel Products
-  const productItems = allItems.filter(({category}) => category === 'product').sort(sortByOrder);
+  const productItems = allItems.filter(({category, determination}) => category === 'product' && determination !== 'apparel').sort(sortByOrder);
 
   const apparelItems = Object.values(commerce.availableApparelItems);
 
-  const groupValues = [...divisionGroups.values()];
+  // const groupValues = [...divisionGroups.values()];
 
   return (
     <div className={classes.AvailableItems}>
@@ -95,15 +95,22 @@ const AvailableItems = ({itemAddedToCart}) => {
             <h5 className={``}>
               Bowling Extras
             </h5>
-            {groupValues.map((group, index) => (
-              <Col key={index} xs={12}>
-                {group.map((item) => (
-                  <Item key={item.identifier}
-                        item={item}
-                        added={itemAddedToCart} />
-                ))}
-              </Col>
-            ))}
+            {/*{groupValues.map((group, index) => (*/}
+            {/*  <Col key={index} xs={12}>*/}
+            {/*    {group.map((item) => (*/}
+            {/*      <Item key={item.identifier}*/}
+            {/*            item={item}*/}
+            {/*            added={itemAddedToCart} />*/}
+            {/*    ))}*/}
+            {/*  </Col>*/}
+            {/*))}*/}
+            <Col xs={12}>
+              {divisionItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+            </Col>
 
             <Col xs={12}>
               {singleUseItems.map((item) => (
