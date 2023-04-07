@@ -55,7 +55,7 @@
 
 import {updateObject} from "../../utils";
 
-export const itemRemovedFromCart = (currentState, itemToRemove, sizeIdentifier = null) => {
+export const itemRemovedFromCart = (currentState, itemToRemove) => {
   switch(itemToRemove.category) {
     case 'ledger':
       // It should be something event-linked: bundle discount or late fee.
@@ -69,7 +69,7 @@ export const itemRemovedFromCart = (currentState, itemToRemove, sizeIdentifier =
     case 'banquet':
       return handleAsBanquetItem(currentState, itemToRemove);
     case 'product':
-      return handleAsProductItem(currentState, itemToRemove, sizeIdentifier);
+      return handleAsProductItem(currentState, itemToRemove);
     default:
       break;
   }
@@ -115,7 +115,23 @@ const handleAsProductItem = (previousState, itemToRemove) => {
   if (itemToRemove.refinement !== 'sized') {
     return handleAsPossiblyMany(previousState, itemToRemove);
   }
-  // TODO: non-sized products
+
+  const cartItemIndex = previousState.cart.findIndex(({identifier}) => identifier === itemToRemove.identifier);
+  const newQuantity = itemToRemove.quantity - 1;
+
+  let updatedCart;
+  if (newQuantity === 0) {
+    updatedCart = previousState.cart.filter(({identifier}) => identifier !== itemToRemove.identifier);
+  } else {
+    updatedCart = [...previousState.cart];
+    updatedCart[cartItemIndex] = updateObject(itemToRemove, {
+      quantity: newQuantity,
+    });
+  }
+
+  return updateObject(previousState, {
+    cart: updatedCart,
+  });
 }
 
 const handleAsSingleton = (previousState, itemToRemove) => {

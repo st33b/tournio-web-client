@@ -550,6 +550,104 @@ describe('itemRemovedFromCart -- dedicated function', () => {
   });
 
   describe('a product - apparel - a specific size', () => {
+    const parentItem = {
+      ...basicItem,
+      identifier: 'something-to-wear',
+      category: 'product',
+      determination: 'apparel',
+      refinement: 'sized',
+      name: 'A turtleneck',
+      configuration: {
+        sizes: [
+          {
+            identifier: 'in-a-small',
+            size: 'men.s',
+            displaySize: 'Small!',
+            parentIdentifier: 'something-to-wear',
+            category: 'product',
+            name: 'A turtleneck',
+            note: '',
+            value: 17,
+            quantity: 0,
+          },
+          {
+            identifier: 'in-a-medium',
+            size: 'men.m',
+            displaySize: 'Medium!',
+            parentIdentifier: 'something-to-wear',
+            category: 'product',
+            name: 'A turtleneck',
+            note: '',
+            value: 19,
+            quantity: 0,
+          },
+          {
+            identifier: 'in-a-large',
+            size: 'men.l',
+            displaySize: 'Large!',
+            parentIdentifier: 'something-to-wear',
+            category: 'product',
+            name: 'A turtleneck',
+            note: '',
+            value: 21,
+            quantity: 0,
+          },
+        ],
+      },
+      value: 39,
+    }
 
+    describe("when there's just one left in the cart", () => {
+      const chosenItem = parentItem.configuration.sizes[1];
+
+      const myPreviousState = {
+        ...previousState,
+        availableApparelItems: {
+          'something-to-wear': parentItem,
+        },
+        cart: [
+          {
+            ...chosenItem,
+            quantity: 1,
+            addedToCart: true,
+          }
+        ],
+      };
+
+      const result = itemRemovedFromCart(myPreviousState, myPreviousState.cart[0]);
+
+      it('removes the item from the cart', () => {
+        expect(result.cart.length).toStrictEqual(0);
+      });
+    });
+
+    describe("when there's more than one in the cart", () => {
+      const chosenItem = parentItem.configuration.sizes[2];
+
+      const myPreviousState = {
+        ...previousState,
+        availableApparelItems: {
+          'something-to-wear': parentItem,
+        },
+        cart: [
+          {
+            ...chosenItem,
+            quantity: 6,
+            addedToCart: true,
+          }
+        ],
+      };
+
+      const result = itemRemovedFromCart(myPreviousState, myPreviousState.cart[0]);
+
+      it('leaves the item in the cart', () => {
+        expect(result.cart.length).toStrictEqual(1);
+      });
+
+      it('drops the quantity on the item with that size by 1', () => {
+        const itemWithSize = result.cart.find(({identifier}) => identifier === chosenItem.identifier);
+        expect(itemWithSize.quantity).toStrictEqual(myPreviousState.cart[0].quantity - 1);
+      });
+    });
   });
 });

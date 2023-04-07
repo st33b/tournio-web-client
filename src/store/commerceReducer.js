@@ -1,6 +1,7 @@
 import * as actionTypes from './actions/actionTypes';
 import {apparelSizeMapping, devConsoleLog, updateObject} from "../utils";
 import {itemAddedToCart} from "./commerce/itemAddedToCart";
+import {itemRemovedFromCart} from "./commerce/itemRemovedFromCart";
 
 const initialState = {
   tournament: null,
@@ -55,7 +56,8 @@ export const commerceReducer = (state, action) => {
       // return itemAdded(state, action.item);
       return itemAddedToCart(state, action.item, action.sizeIdentifier);
     case actionTypes.ITEM_REMOVED_FROM_CART:
-      return itemRemoved(state, action.item);
+      // return itemRemoved(state, action.item);
+      return itemRemovedFromCart(state, action.item);
     case actionTypes.PURCHASE_COMPLETED:
       return updateObject(state, {
           cart: [],

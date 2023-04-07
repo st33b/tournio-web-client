@@ -272,12 +272,9 @@ describe('itemAddedToCart -- dedicated function', () => {
 
       it ('adds it to the cart', () => {
         expect(result.cart.length).toStrictEqual(1);
-        const item = result.cart[0];
-        expect(item.quantity).toStrictEqual(1);
       });
 
-      it ('adds 1 to the cart', () => {
-        expect(result.cart.length).toStrictEqual(1);
+      it('has quantity as a property', () => {
         const item = result.cart[0];
         expect(item.quantity).toStrictEqual(1);
       });
