@@ -53,10 +53,8 @@ export const commerceReducer = (state, action) => {
         tournament: {...action.bowler.tournament},
       });
     case actionTypes.ITEM_ADDED_TO_CART:
-      // return itemAdded(state, action.item);
       return itemAddedToCart(state, action.item, action.sizeIdentifier);
     case actionTypes.ITEM_REMOVED_FROM_CART:
-      // return itemRemoved(state, action.item);
       return itemRemovedFromCart(state, action.item);
     case actionTypes.PURCHASE_COMPLETED:
       return updateObject(state, {
@@ -115,66 +113,6 @@ export const commerceReducer = (state, action) => {
   return state;
 }
 
-const itemRemoved = (state, item) => {
-  const newQuantity = item.quantity - 1;
-  const removedItem = updateObject(item, {quantity: newQuantity});
-  const identifier = item.identifier;
-  let newCart;
-
-  if (newQuantity === 0) {
-    newCart = state.cart.filter(i => i.identifier !== removedItem.identifier);
-  } else {
-    newCart = state.cart.slice(0);
-    const index = newCart.findIndex(i => i.identifier === removedItem.identifier);
-    newCart[index] = removedItem;
-  }
-
-  const newAvailableItems = {...state.availableItems}
-  newAvailableItems[identifier] = removedItem;
-
-  if (removedItem.determination === 'single_use' || removedItem.determination === 'event' || removedItem.category === 'sanction') {
-    removedItem.addedToCart = false;
-    markOtherItemsInDivisionAsAvailable(newAvailableItems, removedItem);
-  }
-
-  if (removedItem.determination === 'event') {
-    // do we need to remove a bundle discount as a result?
-    const discountItemIndex = newCart.findIndex(item => {
-      if (item.category !== 'ledger' || item.determination !== 'bundle_discount') {
-        return false;
-      }
-      return item.configuration.events.includes(removedItem.identifier);
-    });
-
-    if (discountItemIndex >= 0) {
-      const newDiscountItem = {...newCart[discountItemIndex]};
-      newDiscountItem.addedToCart = false;
-      newAvailableItems[newDiscountItem.identifier] = newDiscountItem;
-      newCart = newCart.filter(i => i.identifier !== newDiscountItem.identifier);
-    }
-
-    // how about an associated late fee item?
-    const lateFeeItemIndex = newCart.findIndex(item => {
-      if (item.category !== 'ledger' || item.determination !== 'late_fee' || item.refinement !== 'event_linked') {
-        return false;
-      }
-      return item.configuration.event === removedItem.identifier;
-    });
-
-    if (lateFeeItemIndex >= 0) {
-      const newLateFeeItem = {...newCart[lateFeeItemIndex]};
-      newLateFeeItem.addedToCart = false;
-      newAvailableItems[newLateFeeItem.identifier] = newLateFeeItem;
-      newCart = newCart.filter(i => i.identifier !== newLateFeeItem.identifier);
-    }
-  }
-
-  return updateObject(state, {
-    cart: newCart,
-    availableItems: newAvailableItems,
-  });
-}
-
 export const extractApparelFromItems = (allItems) => {
   const nonApparelItems = {};
   const apparelItems = {};
@@ -223,21 +161,4 @@ export const extractApparelFromItems = (allItems) => {
     items: nonApparelItems,
     apparelItems: apparelItems,
   };
-}
-
-const markOtherItemsInDivisionAsAvailable = (items, removedItem) => {
-  for (const identifier in items) {
-    // skip if it's the removed item, since we already marked it as available
-    if (identifier === removedItem.identifier) {
-      continue;
-    }
-    // skip if we aren't looking at a single-use, division-based item
-    if (items[identifier].determination !== 'single_use' || items[identifier].refinement !== 'division') {
-      continue;
-    }
-    // mark other items with the same name as available
-    if (items[identifier].name === removedItem.name) {
-      items[identifier].addedToCart = false;
-    }
-  }
 }
