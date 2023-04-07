@@ -413,6 +413,71 @@ describe('itemRemovedFromCart -- dedicated function', () => {
     });
   });
 
+  describe('a banquet item', () => {
+    const myBasicItem = {
+      ...basicItem,
+      category: 'banquet',
+      name: 'Tasty Noms',
+    };
+
+    describe("when there's just one left in the cart", () => {
+      const banquetItem = {
+        ...myBasicItem,
+        quantity: 1,
+      }
+      const myPreviousState = {
+        ...previousState,
+        cart: [banquetItem],
+        availableItems: {
+          [banquetItem.identifier]: banquetItem,
+        }
+      }
+
+      const result = itemRemovedFromCart(myPreviousState, banquetItem);
+
+      it('removes the banquet item', () => {
+        expect(result.cart.length).toStrictEqual(0);
+      });
+
+      it('drops the quantity to zero', () => {
+        expect(result.availableItems[banquetItem.identifier].quantity).toStrictEqual(0);
+      });
+
+      it('marks addedToCart as false', () => {
+        expect(result.availableItems[banquetItem.identifier].addedToCart).toBeFalsy();
+      });
+    });
+
+    describe("when there's more than one in the cart", () => {
+      const banquetItem = {
+        ...myBasicItem,
+        quantity: 12,
+      }
+      const myPreviousState = {
+        ...previousState,
+        cart: [banquetItem],
+        availableItems: {
+          [banquetItem.identifier]: banquetItem,
+        }
+      }
+
+      const result = itemRemovedFromCart(myPreviousState, banquetItem);
+
+      it('leaves the item in the cart', () => {
+        expect(result.cart.length).toStrictEqual(myPreviousState.cart.length);
+      });
+
+      it('drops the quantity by 1', () => {
+        expect(result.availableItems[banquetItem.identifier].quantity).toStrictEqual(banquetItem.quantity - 1);
+      });
+
+      it('leaves addedToCart as true', () => {
+        expect(result.availableItems[banquetItem.identifier].addedToCart).toBeTruthy();
+      });
+    });
+
+  });
+
   describe('a product - general', () => {
     describe("when there's just one left in the cart", () => {
       const myBasicItem = {

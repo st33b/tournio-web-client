@@ -81,13 +81,19 @@ const handleAsLedgerItem = (previousState, itemToAdd) => {
 
 const handleAsBowlingItem = (previousState, itemToAdd) => {
   if (['single_use', 'event'].includes(itemToAdd.determination)) {
-    const stateAfterSingletonHandling = handleAsSingleton(previousState, itemToAdd);
-    const stateAfterDivisionHandling = handleAsDivisionItem(stateAfterSingletonHandling, itemToAdd);
-
-    const stateWithApplicableDiscounts = tryAddingBundleDiscount(stateAfterDivisionHandling, itemToAdd);
-    const stateWithApplicableLateFees = tryAddingLateFee(stateWithApplicableDiscounts, itemToAdd);
-
-    return stateWithApplicableLateFees;
+    return tryAddingLateFee(
+      tryAddingBundleDiscount(
+        handleAsDivisionItem(
+          handleAsSingleton(
+            previousState,
+            itemToAdd
+          ),
+          itemToAdd
+        ),
+        itemToAdd
+      ),
+      itemToAdd
+    );
   }
   return handleAsPossiblyMany(previousState, itemToAdd);
 }

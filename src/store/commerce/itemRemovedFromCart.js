@@ -107,8 +107,7 @@ const handleAsSanctionItem = (previousState, itemToRemove) => {
 }
 
 const handleAsBanquetItem = (previousState, itemToRemove) => {
-  // TODO
-  return previousState;
+  return handleAsPossiblyMany(previousState, itemToRemove);
 }
 
 const handleAsProductItem = (previousState, itemToRemove) => {
