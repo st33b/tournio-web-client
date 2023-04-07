@@ -85,14 +85,19 @@ const handleAsLedgerItem = (previousState, itemToRemove) => {
 
 const handleAsBowlingItem = (previousState, itemToRemove) => {
   if (['single_use', 'event'].includes(itemToRemove.determination)) {
-    const stateAfterSingletonHandling = handleAsSingleton(previousState, itemToRemove);
-    const stateAfterDivisionHandling = handleAsDivisionItem(stateAfterSingletonHandling, itemToRemove);
-
-    const stateWithoutApplicableDiscount = tryRemovingBundleDiscount(stateAfterDivisionHandling, itemToRemove);
-    return stateWithoutApplicableDiscount;
-  //   const stateWithApplicableLateFees = tryRemovingLateFee(stateWithApplicableDiscounts, itemToRemove);
-  //
-  //   return stateWithApplicableLateFees;
+    return tryRemovingLateFee(
+      tryRemovingBundleDiscount(
+        handleAsDivisionItem(
+          handleAsSingleton(
+            previousState,
+            itemToRemove
+          ),
+          itemToRemove
+        ),
+        itemToRemove
+      ),
+      itemToRemove
+    );
   }
   return handleAsPossiblyMany(previousState, itemToRemove);
 }
@@ -209,6 +214,18 @@ const tryRemovingBundleDiscount = (previousState, removedItem) => {
   return handleAsLedgerItem(previousState, discountItem);
 }
 
-const tryRemovingLateFee = (previousState, itemToRemove) => {
-  return previousState;
+const tryRemovingLateFee = (previousState, removedItem) => {
+  const lateFeeItem = previousState.cart.find(({determination, configuration}) => {
+    if (determination !== 'late_fee') {
+      return false;
+    }
+    return configuration.event === removedItem.identifier;
+  });
+
+  if (typeof lateFeeItem === 'undefined') {
+    return previousState;
+  }
+
+  return handleAsLedgerItem(previousState, lateFeeItem);
+
 }

@@ -165,8 +165,8 @@ describe('itemRemovedFromCart -- dedicated function', () => {
         it ('marks the other items in the division as available', () => {
           const availableDivisionItems = Object.values(result.availableItems).filter(({name}) => name === myDivisionItem.name);
           expect(availableDivisionItems.length).toBe(Object.keys(divisionItems).length);
-          const allRemovedToCart = availableDivisionItems.every(item => !item.addedToCart);
-          expect(allRemovedToCart).toBeTruthy();
+          const allRemovedFromCart = availableDivisionItems.every(item => !item.addedToCart);
+          expect(allRemovedFromCart).toBeTruthy();
         });
       });
     });
@@ -365,6 +365,50 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       it("leaves the other item in the cart", () => {
         const matchingItems = result.cart.filter(({identifier}) => identifier === otherItem.identifier);
         expect(matchingItems.length).toStrictEqual(1);
+      });
+    });
+
+    describe('with a linked late fee in the cart', () => {
+      const lateFeeItem = {
+        ...basicItem,
+        identifier: 'you_are_late',
+        category: 'ledger',
+        determination: 'late_fee',
+        configuration: {
+          event: myBasicItem.identifier,
+        },
+        quantity: 1,
+      };
+
+      const latePreviousState = {
+        ...myPreviousState,
+        cart: [...myPreviousState.cart, lateFeeItem],
+        availableItems: {
+          ...myPreviousState.availableItems,
+          [lateFeeItem.identifier]: lateFeeItem,
+        }
+      };
+
+      const result = itemRemovedFromCart(latePreviousState, myBasicItem);
+
+      it('removes the item and the late fee', () => {
+        expect(result.cart.length).toStrictEqual(latePreviousState.cart.length - 2);
+      });
+
+      it('drops the quantity to zero on the event item', () => {
+        expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(0);
+      });
+
+      it('drops the quantity to zero on the late fee item', () => {
+        expect(result.availableItems[lateFeeItem.identifier].quantity).toStrictEqual(0);
+      });
+
+      it('marks addedToCart as false on the event item', () => {
+        expect(result.availableItems[myBasicItem.identifier].addedToCart).toBeFalsy();
+      });
+
+      it('marks addedToCart as false on the late fee item', () => {
+        expect(result.availableItems[lateFeeItem.identifier].addedToCart).toBeFalsy();
       });
     });
   });
