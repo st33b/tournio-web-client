@@ -178,6 +178,26 @@ describe('itemAddedToCart -- dedicated function', () => {
       });
     });
 
+    describe ('a raffle item', () => {
+      const itemToAdd = {
+        category: 'raffle',
+        identifier: 'pack-of-100',
+      }
+      const myPreviousState = {...previousState};
+      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+
+      const result = itemAddedToCart(myPreviousState, itemToAdd);
+
+      it ('adds it to the cart', () => {
+        expect(result.cart.length).toStrictEqual(1);
+      });
+
+      it ('sets the quantity to 1', () => {
+        const item = result.cart[0];
+        expect(item.quantity).toStrictEqual(1);
+      });
+    });
+
     describe ('a general product', () => {
       const itemToAdd = {
         identifier: 'something-to-buy',
@@ -553,6 +573,30 @@ describe('itemAddedToCart -- dedicated function', () => {
       it ('increments the existing quantity', () => {
         const resultItem = result.cart[0];
         expect(resultItem.quantity).toStrictEqual(13);
+      });
+
+      it ('does not change the number of distinct items in the cart', () => {
+        expect(result.cart.length).toEqual(myPreviousState.cart.length);
+      });
+    });
+
+    describe('raffle', () => {
+      const itemToAdd = {
+        category: 'raffle',
+        identifier: 'the-house-always-wins',
+        addedToCart: true,
+        quantity: 3,
+      }
+      const myPreviousState = {...previousState};
+      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+      myPreviousState.cart = [...previousState.cart];
+      myPreviousState.cart.push(itemToAdd);
+
+      const result = itemAddedToCart(myPreviousState, itemToAdd);
+
+      it ('increments the existing quantity', () => {
+        const resultItem = result.cart[0];
+        expect(resultItem.quantity).toStrictEqual(itemToAdd.quantity + 1);
       });
 
       it ('does not change the number of distinct items in the cart', () => {

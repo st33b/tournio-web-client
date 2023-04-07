@@ -33,12 +33,9 @@
 //   -> igbo
 //   -> usbc (TODO: not currently defined in API code; should it be?)
 
-// TODO: migrate banquet away from multi_use in favor of being its own category
-// banquet (currently it's treated like a multi_use item, but it should not be
+// banquet
 
-// TODO: Planned
 // raffle
-//   -> denomination
 
 // TODO: Planned
 // bracket
@@ -68,6 +65,8 @@ export const itemRemovedFromCart = (currentState, itemToRemove) => {
       return handleAsSanctionItem(currentState, itemToRemove);
     case 'banquet':
       return handleAsBanquetItem(currentState, itemToRemove);
+    case 'raffle':
+      return handleAsRaffleItem(currentState, itemtoRemove);
     case 'product':
       return handleAsProductItem(currentState, itemToRemove);
     default:
@@ -107,6 +106,10 @@ const handleAsSanctionItem = (previousState, itemToRemove) => {
 }
 
 const handleAsBanquetItem = (previousState, itemToRemove) => {
+  return handleAsPossiblyMany(previousState, itemToRemove);
+}
+
+const handleAsRaffleItem = (previousState, itemToRemove) => {
   return handleAsPossiblyMany(previousState, itemToRemove);
 }
 
