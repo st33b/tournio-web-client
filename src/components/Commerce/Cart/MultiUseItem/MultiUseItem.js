@@ -40,11 +40,6 @@ const multiUseItem = ({item, increase, decrease}) => {
         <p>
           {name}
         </p>
-        {/*{note && (*/}
-        {/*  <p className={classes.Note}>*/}
-        {/*    {note}*/}
-        {/*  </p>*/}
-        {/*)}*/}
         {displaySize && (
           <p className={classes.Size}>
             {displaySize}

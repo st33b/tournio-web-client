@@ -28,7 +28,7 @@ const Item = ({item, added, preview}) => {
       secondaryText = (
         <p className={classes.Note}>
           Division: {item.configuration.division}
-          {item.configuration.note && <span>({item.configuration.note})</span>}
+          {item.configuration.note && <span>&nbsp;({item.configuration.note})</span>}
         </p>
       );
     } else if (item.configuration.input_label) {
