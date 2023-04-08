@@ -97,82 +97,77 @@ const NewPurchasableItem = ({tournament}) => {
         )}
 
         {!formDisplayed && allowCreate &&
-          <>
-            <div className={'text-center my-3'}>
-              <button type={'button'}
-                      className={`btn ${availableLedgerTypes.length === 0 ? 'btn-outline-secondary' : 'btn-outline-primary'}`}
-                      role={'button'}
-                      disabled={availableLedgerTypes.length === 0}
-                      onClick={(event) => addClicked(event, 'ledger')}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                Ledger Item
-              </button>
+          <div className={`d-flex flex-wrap`}>
+            {availableLedgerTypes.length > 0 &&
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   onClick={(event) => addClicked(event, 'ledger')}>
+                  Fee/Discount
+                </a>
+                {/*<button type={'button'}*/}
+                {/*        className={`btn ${availableLedgerTypes.length === 0 ? 'btn-outline-secondary' : 'btn-outline-primary'}`}*/}
+                {/*        role={'button'}*/}
+                {/*        disabled={availableLedgerTypes.length === 0}*/}
+                {/*        onClick={(event) => addClicked(event, 'ledger')}>*/}
+                {/*  <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>*/}
+                {/*  Fee/Discount*/}
+                {/*</button>*/}
+              </div>
+            }
+            <div className={`${classes.NewItemLink} flex-fill`}>
+              <a href={'#'}
+                 className={``}
+                 onClick={(event) => addClicked(event, 'sanction')}>
+                Membership
+              </a>
             </div>
-            <div className={'text-center my-3'}>
-              <button type={'button'}
-                      className={`btn btn-outline-primary`}
-                      role={'button'}
-                      // disabled={availableSanctionTypes.length === 0}
-                      onClick={(event) => addClicked(event, 'sanction')}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                IGBO Sanction Item
-              </button>
+            {eventSelection &&
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   onClick={(event) => addClicked(event, 'event')}>
+                Core Event
+                </a>
+              </div>
+            }
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   title={`Something like Scratch Masters`}
+                   onClick={(event) => addClicked(event, 'division')}>
+                Division Extra
+              </a>
             </div>
-            {eventSelection && (<div className={'text-center my-3'}>
-              <button type={'button'}
-                      className={'btn btn-outline-primary'}
-                      role={'button'}
-                      onClick={(event) => addClicked(event, 'event')}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                Event
-              </button>
-            </div>)}
-            <div className={'text-center my-3'}>
-              <button type={'button'}
-                      className={'btn btn-outline-primary'}
-                      role={'button'}
-                      onClick={(event) => addClicked(event, 'division')}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                Division Item
-              </button>
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   onClick={(event) => addClicked(event, 'single_use')}>
+                Bowling Extra
+              </a>
             </div>
-            <div className={'text-center my-3'}>
-              <button type={'button'}
-                      className={'btn btn-outline-primary'}
-                      role={'button'}
-                      onClick={(event) => addClicked(event, 'single_use')}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                Single-use Item
-              </button>
-            </div>
-            <div className={'text-center my-3'}>
-              <button type={'button'}
-                      className={'btn btn-outline-primary'}
-                      role={'button'}
-                      onClick={(event) => addClicked(event, 'multi_use')}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                Multi-use Item
-              </button>
-            </div>
-            <div className={'text-center my-3'}>
-              <button type={'button'}
-                      className={'btn btn-outline-primary'}
-                      role={'button'}
-                      onClick={(event) => addClicked(event, 'product')}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   onClick={(event) => addClicked(event, 'product')}>
                 Product
-              </button>
+              </a>
             </div>
-            <div className={'text-center my-3'}>
-              <button type={'button'}
-                      className={'btn btn-outline-primary'}
-                      role={'button'}
-                      onClick={(event) => addClicked(event, 'apparel')}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   onClick={(event) => addClicked(event, 'apparel')}>
                 Apparel
-              </button>
+              </a>
             </div>
-          </>
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   onClick={(event) => addClicked(event, 'multi_use')}>
+                Other
+              </a>
+            </div>
+          </div>
         }
 
         {formDisplayed === 'ledger' && <LedgerForm tournament={tournament} availableTypes={availableLedgerTypes} onCancel={cancelClicked} onComplete={itemSaved} />}

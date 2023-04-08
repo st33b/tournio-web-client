@@ -204,7 +204,10 @@ const PurchasableItems = ({tournament}) => {
               </Card.Body>
             }
 
-            <Card.Body className={'p-0'}>
+            <Card.Body className={classes.Category}>
+              <h6 className={`fw-light`}>
+                Create a new thing:
+              </h6>
               <NewPurchasableItem tournament={tournament}/>
             </Card.Body>
           </LocalizationProvider>

@@ -176,6 +176,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
   }
 
   const onFormSubmit = (event) => {
+    // TODO: figure out how to handle this part with apparel...
     event.preventDefault();
     const uri = `/director/purchasable_items/${item.identifier}`;
     const configuration = {};
