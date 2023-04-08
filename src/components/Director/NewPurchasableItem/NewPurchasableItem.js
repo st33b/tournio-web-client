@@ -10,6 +10,7 @@ import SanctionForm from "./SanctionForm";
 import classes from './NewPurchasableItem.module.scss';
 import EventForm from "./EventForm";
 import ProductForm from "./ProductForm";
+import ApparelItemForm from "../ApparelItemForm/ApparelItemForm";
 
 const NewPurchasableItem = ({tournament}) => {
   const [formDisplayed, setFormDisplayed] = useState(null);
@@ -162,6 +163,15 @@ const NewPurchasableItem = ({tournament}) => {
                 Product
               </button>
             </div>
+            <div className={'text-center my-3'}>
+              <button type={'button'}
+                      className={'btn btn-outline-primary'}
+                      role={'button'}
+                      onClick={(event) => addClicked(event, 'apparel')}>
+                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
+                Apparel
+              </button>
+            </div>
           </>
         }
 
@@ -172,6 +182,7 @@ const NewPurchasableItem = ({tournament}) => {
         {formDisplayed === 'multi_use' && <MultiUseForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
         {formDisplayed === 'sanction' && <SanctionForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
         {formDisplayed === 'product' && <ProductForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
+        {formDisplayed === 'apparel' && <ApparelItemForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
 
       </div>
     </ErrorBoundary>

@@ -145,7 +145,7 @@ export const directorReducer = (state, action) => {
           shifts: shiftChanges,
         }),
       });
-    case actionTypes.PURCHASABLE_ITEM_ADDED:
+    case actionTypes.PURCHASABLE_ITEMS_ADDED:
       const updatedItems = state.tournament.purchasable_items.concat(action.items);
       return updateObject(state, {
         tournament: updateObject(state.tournament, {

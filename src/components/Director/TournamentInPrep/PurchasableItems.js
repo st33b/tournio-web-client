@@ -5,8 +5,10 @@ import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import PurchasableItemEditForm from "../PurchasableItemEditForm/PurchasableItemEditForm";
 import NewPurchasableItem from "../NewPurchasableItem/NewPurchasableItem";
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {apparelSizes, devConsoleLog} from "../../../utils";
 
 import classes from './TournamentInPrep.module.scss';
+import ApparelItemForm from "../ApparelItemForm/ApparelItemForm";
 
 const PurchasableItems = ({tournament}) => {
   if (!tournament) {
@@ -57,7 +59,7 @@ const PurchasableItems = ({tournament}) => {
 
   // sort the single_use items by their order
   const singleUseItems = tournament.purchasable_items.filter(item => {
-    return item.determination === 'single_use' && !item.refinement;
+    return item.determination === 'single_use' && item.refinement !== 'division';
   }).sort(sortByOrder);
 
   // sort the multi-use items by their order
@@ -65,9 +67,74 @@ const PurchasableItems = ({tournament}) => {
     return item.determination === 'multi_use';
   }).sort(sortByOrder);
 
-  // sort the product items by their order
+  // Gather apparel products by their parent, with sizes as a list
+  const keyedApparelProducts = {};
+  // apart from the full PI details, mapped by identifier, we add:
+  //   configuration: { sizes: { sizeGroup: { size: true } } }
+  for (const pi of tournament.purchasable_items) {
+    if (pi.category !== 'product' || pi.determination !== 'apparel') {
+      continue;
+    }
+
+    // a parent of potentially many sizes
+    if (pi.refinement === 'sized') {
+      const itemConfig = {
+        ...pi.configuration,
+        ...keyedApparelProducts[pi.identifier].configuration,
+      }
+      keyedApparelProducts[pi.identifier] = {
+        ...pi, // to the existing PI, we add...
+        ...keyedApparelProducts[pi.identifier], // what we've gathered here so far (just availableSizes for now)
+        configuration: itemConfig,
+      }
+    } else if (pi.configuration.parent_identifier) {
+      // it's one of the sizes
+      const parentIdentifier = pi.configuration.parent_identifier;
+
+      // If we're seeing a child size but haven't gotten to the parent yet...
+      if (typeof keyedApparelProducts[parentIdentifier] == 'undefined') {
+        keyedApparelProducts[parentIdentifier] = {
+          configuration: {
+            sizes: {
+              one_size_fits_all: false,
+            },
+          },
+        };
+        // To ensure we get a deep copy of the initial size map
+        for (const group in apparelSizes) {
+          keyedApparelProducts[parentIdentifier].configuration.sizes[group] = {
+            ...apparelSizes[group]
+          };
+        }
+      }
+      const sizeParts = pi.configuration.size.split('.');
+      keyedApparelProducts[parentIdentifier].configuration.sizes[sizeParts[0]][sizeParts[1]] = true;
+    } else {
+      // an apparel item in one size
+      const sizes = { one_size_fits_all: true };
+      for (const group in apparelSizes) {
+        if (group === 'one_size_fits_all') {
+          continue;
+        }
+        sizes[group] = {
+          ...apparelSizes[group]
+        };
+      }
+
+      keyedApparelProducts[pi.identifier] = {
+        ...pi, // to the existing PI, we add...
+        configuration: {
+          ...pi.configuration,
+          sizes: sizes,
+        },
+      }
+    }
+  }
+  const apparelItems = Object.values(keyedApparelProducts);
+
+  // sort the non-apparel product items by their order
   const products = tournament.purchasable_items.filter(item => {
-    return item.category === 'product';
+    return item.category === 'product' && item.determination !== 'apparel';
   }).sort(sortByOrder);
 
   const groupValues = [...divisionGroups.values()];
@@ -128,6 +195,12 @@ const PurchasableItems = ({tournament}) => {
             {products.length > 0 &&
               <Card.Body className={classes.Category}>
                 {products.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/>)}
+              </Card.Body>
+            }
+
+            {apparelItems.length > 0 &&
+              <Card.Body className={classes.Category}>
+                {apparelItems.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/> )}
               </Card.Body>
             }
 

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {format, formatISO} from "date-fns";
 import Card from "react-bootstrap/Card";
 
@@ -12,22 +12,26 @@ import Item from "../../Commerce/AvailableItems/Item/Item";
 
 import classes from './PurchasableItemEditForm.module.scss';
 import {purchasableItemDeleted, purchasableItemUpdated} from "../../../store/actions/directorActions";
+import AvailableSizes from "../ApparelItemForm/AvailableSizes";
 
 const PurchasableItemEditForm = ({tournament, item}) => {
   const context = useDirectorContext();
   const dispatch = context.dispatch;
 
   const initialState = {
-    applies_at: '', // for ledger -> late fee
-    valid_until: '', // for ledger -> early discount
-    denomination: '', // for raffle category, denomination refinement only
-    division: '', // for division refinement
-    name: '',
-    note: '', // division, product (optional)
-    value: '',
-    order: '',
-    eventIdentifiers: {}, // map of identifier to true/false
-    linkedEvent: '',
+    fields: {
+      applies_at: '', // for ledger -> late fee
+      valid_until: '', // for ledger -> early discount
+      denomination: '', // for raffle category, denomination refinement only
+      division: '', // for division refinement
+      name: '',
+      note: '', // division, product (optional)
+      value: '',
+      order: '',
+      eventIdentifiers: {}, // map of identifier to true/false
+      linkedEvent: '',
+      sizes: {},
+    },
 
     valid: true,
   }
@@ -49,17 +53,21 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     }
 
     const newFormData = {
-      applies_at: item.configuration.applies_at || '',
-      valid_until: item.configuration.valid_until || '',
-      denomination: item.configuration.denomination || '',
-      division: item.configuration.division || '',
-      name: item.name || '',
-      note: item.configuration.note || '',
-      value: item.value,
-      order: item.configuration.order || '',
-      linkedEvent: item.configuration.event || '',
-      eventIdentifiers: eventIdentifiers, // map of identifier to true/false
-    }
+      fields: {
+        applies_at: item.configuration.applies_at || '',
+        valid_until: item.configuration.valid_until || '',
+        denomination: item.configuration.denomination || '',
+        division: item.configuration.division || '',
+        name: item.name || '',
+        note: item.configuration.note || '',
+        value: item.value,
+        order: item.configuration.order || '',
+        linkedEvent: item.configuration.event || '',
+        eventIdentifiers: eventIdentifiers, // map of identifier to true/false
+        sizes: item.configuration.sizes || {},
+      },
+    };
+    newFormData.valid = isValid(newFormData.fields);
     setFormData(newFormData);
   }, [item]);
 
@@ -76,6 +84,22 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     setEditing(enable);
   }
 
+  const isValid = (fields) => {
+    const sizesAreGood = fields.determination !== 'apparel' ? true : sizesAreValid(fields.sizes);
+    return sizesAreGood && fields.name.length > 0 && fields.value > 0 && fields.order > 0;
+  }
+
+  const sizesAreValid = (sizes) => {
+    if (sizes.one_size_fits_all) {
+      return true;
+    }
+    const keys = ['unisex', 'women', 'men', 'infant'];
+    return keys.map(k => {
+      const sizeMap = sizes[k];
+      return Object.values(sizeMap).some(sizePresent => !!sizePresent)
+    }).some(val => !!val);
+  }
+
   const inputChanged = (id, event) => {
     let newValue = '';
     if (event.target) {
@@ -86,50 +110,103 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     }
     if (id === 'value' || id === 'order') {
       newValue = parseInt(newValue);
+      if (isNaN(newValue)) {
+        newValue = 0;
+      }
     }
-    const newFormData = {...formData};
-    newFormData[id] = newValue;
+    const newFormData = {
+      fields: {
+        ...formData.fields,
+      },
+    };
+    newFormData.fields[id] = newValue;
+    newFormData.valid = isValid(newFormData.fields);
     setFormData(newFormData);
   }
 
+  /**
+   * sizeIdentifier is a path through the size map, e.g.,
+   *   one_size_fits_all
+   *   unisex.xs
+   *   infant.m12
+   */
+  const sizeChanged = (sizeIdentifier, isChosen) => {
+    const newFormData = {
+      fields: {
+        ...formData.fields,
+        sizes: {
+          ...formData.fields.sizes,
+        },
+      },
+    };
+
+    if (sizeIdentifier === 'one_size_fits_all') {
+      newFormData.fields.sizes.one_size_fits_all = !!isChosen
+    } else {
+      const pathParts = sizeIdentifier.split('.');
+      newFormData.fields.sizes[pathParts[0]][pathParts[1]] = !!isChosen;
+    }
+    newFormData.valid = isValid(newFormData.fields);
+    setFormData(newFormData);
+  }
+
+  /**
+   * Sets all the sizes in a set to true or false
+   * @param setIdentifier The identifier of the set to modify
+   * @param newValue true or false
+   */
+  const setAllSizesInSet = (setIdentifier, newValue) => {
+    const newFormData = {
+      fields: {
+        ...formData.fields,
+        sizes: {
+          ...formData.fields.sizes,
+        },
+      },
+    };
+    Object.keys(newFormData.fields.sizes[setIdentifier]).forEach(size => newFormData.fields.sizes[setIdentifier][size] = !!newValue);
+    newFormData.valid = isValid(newFormData.fields);
+    setFormData(newFormData);
+  }
+
+
   const onCancel = (event) => {
     event.preventDefault();
-    const newFormData = {...formData}
-    setFormData(newFormData);
     toggleEdit(null, false);
   }
+
   const onFormSubmit = (event) => {
     event.preventDefault();
     const uri = `/director/purchasable_items/${item.identifier}`;
     const configuration = {};
     switch (item.determination) {
       case 'early_discount':
-        configuration.valid_until = formData.valid_until;
+        configuration.valid_until = formData.fields.valid_until;
         break;
       case 'late_fee':
-        configuration.applies_at = formData.applies_at;
+        configuration.applies_at = formData.fields.applies_at;
         break;
       case 'bundle_discount':
-        configuration.events = Object.keys(formData.eventIdentifiers).filter(id => formData.eventIdentifiers[id]);
+        configuration.events = Object.keys(formData.fields.eventIdentifiers).filter(id => formData.fields.eventIdentifiers[id]);
         break;
     }
-    if (formData.order) {
-      configuration.order = formData.order;
+    if (formData.fields.order) {
+      configuration.order = formData.fields.order;
     }
-    if (formData.division) {
-      configuration.division = formData.division;
+    if (formData.fields.division) {
+      configuration.division = formData.fields.division;
     }
-    if (formData.note) {
-      configuration.note = formData.note;
+    if (formData.fields.note) {
+      configuration.note = formData.fields.note;
     }
-    if (formData.denomination) {
-      configuration.denomination = formData.denomination;
+    if (formData.fields.denomination) {
+      configuration.denomination = formData.fields.denomination;
     }
     const requestConfig = {
       method: 'patch',
       data: {
         purchasable_item: {
-          value: formData.value,
+          value: formData.fields.value,
           configuration: configuration,
         }
       }
@@ -177,10 +254,10 @@ const PurchasableItemEditForm = ({tournament, item}) => {
       case 'ledger':
         switch (item.determination) {
           case 'early_discount':
-            if (!!formData.valid_until) {
+            if (!!formData.fields.valid_until) {
               note = (
                 <span className={classes.Note}>
-                  Valid until {format(new Date(formData.valid_until), datetimeFormat)}
+                  Valid until {format(new Date(formData.fields.valid_until), datetimeFormat)}
                 </span>
               );
             }
@@ -193,12 +270,12 @@ const PurchasableItemEditForm = ({tournament, item}) => {
               );
               part1 = <span className={classes.Note}>{event.name}</span>;
             }
-            if (!!formData.applies_at) {
+            if (!!formData.fields.applies_at) {
               note = (
                 <>
                   {part1}
                   <span className={classes.Note}>
-                    Applies at {format(new Date(formData.applies_at), datetimeFormat)}
+                    Applies at {format(new Date(formData.fields.applies_at), datetimeFormat)}
                   </span>
                 </>
               );
@@ -209,7 +286,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
               <>
                 {tournament.purchasable_items.filter(({determination}) => determination === 'event').map(event => {
                   const eventIdentifier = event.identifier;
-                  if (formData.eventIdentifiers[eventIdentifier]) {
+                  if (formData.fields.eventIdentifiers[eventIdentifier]) {
                     return (
                       <span className={classes.Note} key={eventIdentifier}>
                         <i className={'bi-dash pe-1'} aria-hidden={true}/>
@@ -225,17 +302,17 @@ const PurchasableItemEditForm = ({tournament, item}) => {
         break;
       case 'bowling':
         if (item.refinement === 'division') {
-          note = <span className={classes.Note}>{formData.division} ({formData.note})</span>
+          note = <span className={classes.Note}>{formData.fields.division} ({formData.fields.note})</span>
         } else {
-          note = <span className={classes.Note}>{formData.note}</span>;
+          note = <span className={classes.Note}>{formData.fields.note}</span>;
         }
         break;
       case 'banquet':
       case 'product':
-        if (formData.note) {
+        if (formData.fields.note) {
           note = (
             <span className={classes.Note}>
-              {formData.note}
+              {formData.fields.note}
             </span>
           )
         }
@@ -245,10 +322,10 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     }
 
     let orderText = '';
-    if (formData.order) {
+    if (formData.fields.order) {
       orderText = (
         <Card.Text className={classes.Order}>
-          {formData.order}.
+          {formData.fields.order}.
         </Card.Text>
       );
     }
@@ -260,7 +337,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
           {note}
         </Card.Text>
         <Card.Text className={'fw-bold'}>
-          ${formData.value}
+          ${formData.fields.value}
         </Card.Text>
       </div>
     );
@@ -287,7 +364,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
         type: 'text',
         name: 'name',
         id: 'name',
-        value: formData.name,
+        value: formData.fields.name,
         classes: '',
         others: {},
       },
@@ -296,7 +373,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
         type: 'number',
         name: 'value',
         id: 'value',
-        value: formData.value,
+        value: formData.fields.value,
         classes: '',
         others: otherValueProps,
       }
@@ -310,7 +387,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
             type: 'datepicker',
             props: {
               onChange: (newDateTime) => inputChanged('valid_until', newDateTime),
-              value: formData.valid_until,
+              value: formData.fields.valid_until,
               label: 'Valid until',
               renderInput: (params) => <TextField {...params} />,
             }
@@ -325,7 +402,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
             type: 'datepicker',
             props: {
               onChange: (newDateTime) => inputChanged('applies_at', newDateTime),
-              value: formData.applies_at,
+              value: formData.fields.applies_at,
               label: 'Applies at',
               renderInput: (params) => <TextField {...params} />,
             }
@@ -335,13 +412,23 @@ const PurchasableItemEditForm = ({tournament, item}) => {
         }
         break;
       case 'product':
-      case 'banquet':
+        if (formData.fields.refinement === 'apparel') {
+          inputElements.push({
+            type: 'component',
+            component: AvailableSizes,
+            args: {
+              selectedSizes: formData.fields.sizes,
+              onSizeChanged: () => {},
+              onAllInGroupSet: () => {},
+            }
+          });
+        }
         inputElements.push({
           label: 'Display Order',
           type: 'number',
           name: 'order',
           id: 'order',
-          value: formData.order,
+          value: formData.fields.order,
           classes: '',
           others: {min: 0},
         });
@@ -350,7 +437,28 @@ const PurchasableItemEditForm = ({tournament, item}) => {
           type: 'text',
           name: 'note',
           id: 'note',
-          value: formData.note,
+          value: formData.fields.note,
+          classes: '',
+          others: {},
+        });
+        break;
+      case 'banquet':
+      case 'raffle':
+        inputElements.push({
+          label: 'Display Order',
+          type: 'number',
+          name: 'order',
+          id: 'order',
+          value: formData.fields.order,
+          classes: '',
+          others: {min: 0},
+        });
+        inputElements.push({
+          label: 'Note',
+          type: 'text',
+          name: 'note',
+          id: 'note',
+          value: formData.fields.note,
           classes: '',
           others: {},
         });
@@ -363,7 +471,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
             type: 'number',
             name: 'order',
             id: 'order',
-            value: formData.order,
+            value: formData.fields.order,
             classes: '',
             others: {min: 0},
           });
@@ -374,7 +482,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
             type: 'text',
             name: 'division',
             id: 'division',
-            value: formData.division,
+            value: formData.fields.division,
             classes: '',
             others: {},
           });
@@ -384,7 +492,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
           type: 'text',
           name: 'note',
           id: 'note',
-          value: formData.note,
+          value: formData.fields.note,
           classes: '',
           others: {},
         });
@@ -396,22 +504,15 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     let itemPreview = '';
     if (item.category !== 'ledger') {
       const itemPreviewProps = {...item};
-      itemPreviewProps.value = formData.value;
-      itemPreviewProps.configuration.order = formData.order;
-      itemPreviewProps.configuration.applies_at = formData.applies_at;
-      itemPreviewProps.configuration.valid_until = formData.valid_until;
-      itemPreviewProps.configuration.division = formData.division;
-      itemPreviewProps.configuration.note = formData.note;
-      itemPreviewProps.configuration.denomination = formData.denomination;
+      itemPreviewProps.value = formData.fields.value;
+      itemPreviewProps.configuration.order = formData.fields.order;
+      itemPreviewProps.configuration.applies_at = formData.fields.applies_at;
+      itemPreviewProps.configuration.valid_until = formData.fields.valid_until;
+      itemPreviewProps.configuration.division = formData.fields.division;
+      itemPreviewProps.configuration.note = formData.fields.note;
+      itemPreviewProps.configuration.denomination = formData.fields.denomination;
 
       itemPreview = (
-        // <div className={'row mx-0'}>
-        //   <span className={classes.PreviewText}>
-        //     How it will look to bowlers:
-        //   </span>
-        //   <Item item={itemPreviewProps} preview={true}/>
-        // </div>
-        //
       <div className={`row ${classes.PreviewItem}`}>
         <p className={`${classes.PreviewText}`}>
           How it will look to bowlers:
@@ -427,7 +528,10 @@ const PurchasableItemEditForm = ({tournament, item}) => {
           {inputElements.map((elemProps, i) => (
             <div key={i} className={'row mx-0 mb-3'}>
               {elemProps.type === 'datepicker' && <DateTimePicker {...elemProps.props} />}
-              {elemProps.type !== 'datepicker' && (
+              {elemProps.type === 'component' && React.createElement(elemProps.component, {
+                ...elemProps.args,
+              })}
+              {!['datepicker', 'component'].includes(elemProps.type) && (
                 // <div className={'px-0'}>
                 <>
                   <label htmlFor={elemProps.id} className={'form-label ps-0 mb-1'}>
@@ -445,8 +549,15 @@ const PurchasableItemEditForm = ({tournament, item}) => {
                 </>
               )}
             </div>
-          ))
-          }
+          ))}
+          {item.determination === 'apparel' && (
+            <div className={`row mx-0 mb-3`}>
+              <AvailableSizes selectedSizes={formData.fields.sizes}
+                              onSizeChanged={sizeChanged}
+                              onAllInGroupSet={setAllSizesInSet}
+                              />
+            </div>
+          )}
         </fieldset>
         {itemPreview}
         <div className={`d-flex justify-content-end`}>

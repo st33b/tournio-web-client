@@ -99,7 +99,7 @@ export const testDataCleared = () => {
 
 export const purchasableItemsAdded = (items) => {
   return {
-    type: actionTypes.PURCHASABLE_ITEM_ADDED,
+    type: actionTypes.PURCHASABLE_ITEMS_ADDED,
     items: items,
   }
 }

@@ -1,35 +1,116 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {format, formatISO} from "date-fns";
+import Card from "react-bootstrap/Card";
 
+import {useDirectorContext} from "../../../store/DirectorContext";
+import {directorApiRequest} from "../../../director";
 import ErrorBoundary from "../../common/ErrorBoundary";
 import Item from "../../Commerce/AvailableItems/Item/Item";
-// import AssetUpload from "../../common/AssetUpload/AssetUpload";
-import classes from './ProductForm.module.scss';
-import {directorApiRequest} from "../../../director";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {purchasableItemsAdded} from "../../../store/actions/directorActions";
-import {devConsoleLog} from "../../../utils";
+import {
+  purchasableItemsAdded,
+  purchasableItemUpdated
+} from "../../../store/actions/directorActions";
+import {apparelSizes} from "../../../utils";
 
-const ProductForm = ({tournament, onCancel, onComplete}) => {
+import classes from './ApparelItemForm.module.scss';
+import productClasses from '../NewPurchasableItem/ProductForm.module.scss';
+
+import AvailableSizes from "./AvailableSizes";
+
+
+const ApparelItemForm = ({tournament, onCancel, onComplete, item}) => {
   const context = useDirectorContext();
   const dispatch = context.dispatch;
 
   const initialState = {
-    refinement: null,
-    name: '',
-    note: '',
-    value: '',
-    order: '',
-
-    // productHasImage: false,
-    // image: '',
+    fields: {
+      refinement: null, // It'll be null unless it comes in many sizes
+      name: '',
+      note: '',
+      value: '',
+      order: '',
+      sizes: {
+        one_size_fits_all: false,
+        unisex: {
+          xxs: false,
+          xs: false,
+          s: false,
+          m: false,
+          l: false,
+          xl: false,
+          xxl: false,
+          xxxl: false,
+        },
+        women: {
+          xxs: false,
+          xs: false,
+          s: false,
+          m: false,
+          l: false,
+          xl: false,
+          xxl: false,
+          xxxl: false,
+        },
+        men: {
+          xxs: false,
+          xs: false,
+          s: false,
+          m: false,
+          l: false,
+          xl: false,
+          xxl: false,
+          xxxl: false,
+        },
+        infant: {
+          newborn: false,
+          m6: false,
+          m12: false,
+          m18: false,
+          m24: false,
+        },
+      },
+    },
 
     valid: false,
   }
 
   const [formData, setFormData] = useState(initialState);
+  const [editing, setEditing] = useState(false);
 
-  const isValid = ({name, value, order}) => {
-    return name.length > 0 && value > 0 && order > 0;
+  // Populate form data
+  useEffect(() => {
+    if (!item) {
+      return;
+    }
+    const newFormFields = {
+      name: item.name || '',
+      note: item.configuration.note || '',
+      value: item.value,
+      order: item.configuration.order || '',
+      // sizes: item.configuration.sizes || {},
+    }
+    for (const group in apparelSizes) {
+      if (group === 'one_size_fits_all') {
+        newFormFields.sizes[group] = 'one_size_fits_all';
+      } else {
+        newFormFields.sizes[group] = {...apparelSizes[group]};
+      }
+    }
+    const newFormData = {
+      fields: newFormFields,
+      valid: isValid(newFormFields),
+    }
+    setFormData(newFormData);
+  }, [item]);
+
+  if (!tournament) {
+    return '';
+  }
+
+  const allowEdit = !['active', 'closed'].includes(tournament.state);
+
+  const isValid = ({name, value, order, sizes}) => {
+    return sizesAreValid(sizes) && name.length > 0 && value > 0 && order > 0;
   }
 
   const inputChanged = (event) => {
@@ -42,27 +123,56 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
       if (isNaN(newValue)) {
         newValue = 0;
       }
-    // } else if (inputName === 'productHasImage') {
-    //   newValue = event.target.checked;
-    //   if (!newValue) {
-    //     newFormData.localImageFile = null;
-    //   }
-    // } else if (inputName === 'localImageFile') {
-    //   newValue = event.target.files[0];
     } else {
       newValue = event.target.value;
     }
 
-    newFormData[inputName] = newValue;
-    newFormData.valid = isValid(newFormData);
+    newFormData.fields[inputName] = newValue;
+    newFormData.valid = isValid(newFormData.fields);
     setFormData(newFormData);
   }
 
-  // const directUploadCompleted = (fileBlob) => {
-  //   const newData = {...formData};
-  //   newData.image = fileBlob.id;
-  //   setFormData(newData);
-  // }
+  const sizesAreValid = (sizes) => {
+    if (sizes.one_size_fits_all) {
+      return true;
+    }
+    const keys = ['unisex', 'women', 'men', 'infant'];
+    return keys.map(k => {
+      const sizeMap = sizes[k];
+      return Object.values(sizeMap).some(sizePresent => !!sizePresent)
+    }).some(val => !!val);
+  }
+
+  /**
+   * sizeIdentifier is a path through the size map, e.g.,
+   *   one_size_fits_all
+   *   unisex.xs
+   *   infant.m12
+   */
+  const sizeChanged = (sizeIdentifier, isChosen) => {
+    const newFormData = {...formData};
+
+    if (sizeIdentifier === 'one_size_fits_all') {
+      newFormData.fields.sizes.one_size_fits_all = !!isChosen
+    } else {
+      const pathParts = sizeIdentifier.split('.');
+      newFormData.fields.sizes[pathParts[0]][pathParts[1]] = !!isChosen;
+    }
+    newFormData.valid = isValid(newFormData.fields);
+    setFormData(newFormData);
+  }
+
+  /**
+   * Sets all the sizes in a set to true or false
+   * @param setIdentifier The identifier of the set to modify
+   * @param newValue true or false
+   */
+  const setAllSizesInSet = (setIdentifier, newValue) => {
+    const newFormData = {...formData};
+    Object.keys(newFormData.fields.sizes[setIdentifier]).forEach(size => newFormData.fields.sizes[setIdentifier][size] = !!newValue);
+    newFormData.valid = isValid(newFormData.fields);
+    setFormData(newFormData);
+  }
 
   const submissionSuccess = (data) => {
     dispatch(purchasableItemsAdded(data));
@@ -79,44 +189,56 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
         purchasable_items: [
           {
             category: 'product',
-            determination: 'general',
-            name: formData.name,
-            value: formData.value,
+            determination: 'apparel',
+            name: formData.fields.name,
+            value: formData.fields.value,
             configuration: {
-              order: formData.order,
-              note: formData.note,
+              order: formData.fields.order,
+              note: formData.fields.note,
             },
           },
         ],
       },
     };
+    if (formData.fields.sizes.one_size_fits_all) {
+      requestConfig.data.purchasable_items[0].configuration.size = 'one_size_fits_all';
+    } else {
+      requestConfig.data.purchasable_items[0].refinement = 'sized';
+      requestConfig.data.purchasable_items[0].configuration.sizes = {};
+      ['unisex', 'women', 'men', 'infant'].forEach(sizeGroup => {
+        requestConfig.data.purchasable_items[0].configuration.sizes[sizeGroup] = formData.fields.sizes[sizeGroup];
+      });
+    }
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
       context: context,
       onSuccess: submissionSuccess,
-      onFailure: (_) => console.log("Failed to save new item."),
+      onFailure: (_) => console.log("Failed to save item."),
     });
   }
 
   const itemPreviewProps = {
     category: 'product',
-    determination: 'general',
-    name: formData.name,
-    value: formData.value,
+    determination: 'apparel',
+    name: formData.fields.name,
+    value: formData.fields.value,
     configuration: {
-      note: formData.note,
-      order: formData.order,
+      note: formData.fields.note,
+      // denomination: formData.denomination,
+      order: formData.fields.order,
+      sizes: formData.fields.sizes,
     }
   }
 
+
   return (
     <ErrorBoundary>
-      <div className={classes.ProductForm}>
+      <div className={classes.ApparelItem}>
         <form onSubmit={formSubmitted} className={`py-2`}>
-          <div className={`${classes.HeaderRow} row mb-2`}>
+          <div className={`${productClasses.HeaderRow} row mb-2`}>
             <h6>
-              New Product
+              New Apparel Product
             </h6>
           </div>
 
@@ -131,7 +253,7 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
                    id={'name'}
                    required={true}
                    onChange={inputChanged}
-                   value={formData.name}
+                   value={formData.fields.name}
             />
           </div>
 
@@ -145,7 +267,14 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
                    name={'note'}
                    id={'note'}
                    onChange={inputChanged}
-                   value={formData.note}
+                   value={formData.fields.note}
+            />
+          </div>
+
+          <div className={`row ${classes.LineItem}`}>
+            <AvailableSizes selectedSizes={formData.fields.sizes}
+                            onSizeChanged={sizeChanged}
+                            onAllInGroupSet={setAllSizesInSet}
             />
           </div>
 
@@ -161,7 +290,7 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
                      id={'value'}
                      required={true}
                      onChange={inputChanged}
-                     value={formData.value}
+                     value={formData.fields.value}
               />
             </div>
             <div className={'col-6 pe-0'}>
@@ -174,7 +303,7 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
                      id={'order'}
                      required={true}
                      onChange={inputChanged}
-                     value={formData.order}
+                     value={formData.fields.order}
               />
             </div>
           </div>
@@ -213,8 +342,8 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
           {/*)}*/}
 
           {/* Apply any special styling here? */}
-          <div className={`row ${classes.PreviewItem}`}>
-            <p className={`${classes.PreviewText}`}>
+          <div className={`row ${productClasses.PreviewItem}`}>
+            <p className={`${productClasses.PreviewText}`}>
               How it will look to bowlers:
             </p>
             <Item item={itemPreviewProps} preview={true}/>
@@ -250,4 +379,4 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
   )
 }
 
-export default ProductForm;
+export default ApparelItemForm;
