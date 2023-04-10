@@ -119,7 +119,7 @@ export const extractApparelFromItems = (allItems) => {
 
   const itemArray = Object.values(allItems);
   const otherItems = itemArray.filter(({category, determination}) => {
-    return category !== 'product' && determination !== 'apparel'
+    return category !== 'product' || determination !== 'apparel'
   });
   otherItems.forEach(i => nonApparelItems[i.identifier] = i);
 

@@ -349,7 +349,29 @@ describe ('function: extractApparelFromItems', () => {
         "name": "Vest",
         "refinement": "sized",
         "value": 29
-      }
+      },
+      "9ee069e7tt-7570tt-48a8tt-tt85b6-8e41ee3c3fd6": {
+        "identifier": "9ee069e7tt-7570tt-48a8tt-tt85b6-8e41ee3c3fd6",
+        "category": "product",
+        "configuration": {
+          "note": "To dry things",
+          "order": 1
+        },
+        "determination": "general",
+        "name": "Logo towel",
+        "refinement": null,
+        "value": 20
+      },
+      "a-raffle-ticket-bundle": {
+        "identifier": "a-raffle-ticket-bundle",
+        "category": "raffle",
+        "configuration": {
+          "order": 1,
+          "quantity": "One meeellion teeckets!",
+        },
+        "name": "Ticket Bundle",
+        "value": 80
+      },
     }
 
   const expectedOutput = {
@@ -431,6 +453,28 @@ describe ('function: extractApparelFromItems', () => {
         "name": "noms",
         "refinement": null,
         "value": 45
+      },
+      "9ee069e7tt-7570tt-48a8tt-tt85b6-8e41ee3c3fd6": {
+        "identifier": "9ee069e7tt-7570tt-48a8tt-tt85b6-8e41ee3c3fd6",
+        "category": "product",
+        "configuration": {
+          "note": "To dry things",
+          "order": 1
+        },
+        "determination": "general",
+        "name": "Logo towel",
+        "refinement": null,
+        "value": 20
+      },
+      "a-raffle-ticket-bundle": {
+        "identifier": "a-raffle-ticket-bundle",
+        "category": "raffle",
+        "configuration": {
+          "order": 1,
+          "quantity": "One meeellion teeckets!",
+        },
+        "name": "Ticket Bundle",
+        "value": 80
       },
     },
     apparelItems: {
