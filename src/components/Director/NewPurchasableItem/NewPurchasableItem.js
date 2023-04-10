@@ -105,14 +105,6 @@ const NewPurchasableItem = ({tournament}) => {
                    onClick={(event) => addClicked(event, 'ledger')}>
                   Fee/Discount
                 </a>
-                {/*<button type={'button'}*/}
-                {/*        className={`btn ${availableLedgerTypes.length === 0 ? 'btn-outline-secondary' : 'btn-outline-primary'}`}*/}
-                {/*        role={'button'}*/}
-                {/*        disabled={availableLedgerTypes.length === 0}*/}
-                {/*        onClick={(event) => addClicked(event, 'ledger')}>*/}
-                {/*  <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>*/}
-                {/*  Fee/Discount*/}
-                {/*</button>*/}
               </div>
             }
             <div className={`${classes.NewItemLink} flex-fill`}>

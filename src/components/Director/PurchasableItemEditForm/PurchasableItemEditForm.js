@@ -11,8 +11,9 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 import Item from "../../Commerce/AvailableItems/Item/Item";
 
 import classes from './PurchasableItemEditForm.module.scss';
-import {purchasableItemDeleted, purchasableItemUpdated} from "../../../store/actions/directorActions";
+import {purchasableItemDeleted, purchasableItemUpdated, sizedItemUpdated} from "../../../store/actions/directorActions";
 import AvailableSizes from "../ApparelItemForm/AvailableSizes";
+import {devConsoleLog, apparelSizes} from "../../../utils";
 
 const PurchasableItemEditForm = ({tournament, item}) => {
   const context = useDirectorContext();
@@ -38,6 +39,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
 
   const [formData, setFormData] = useState(initialState);
   const [editing, setEditing] = useState(false);
+  const [successMessage, setSuccessMessage] = useState();
 
   // Populate form data
   useEffect(() => {
@@ -93,8 +95,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     if (sizes.one_size_fits_all) {
       return true;
     }
-    const keys = ['unisex', 'women', 'men', 'infant'];
-    return keys.map(k => {
+    return Object.keys(apparelSizes).map(k => {
       const sizeMap = sizes[k];
       return Object.values(sizeMap).some(sizePresent => !!sizePresent)
     }).some(val => !!val);
@@ -176,10 +177,19 @@ const PurchasableItemEditForm = ({tournament, item}) => {
   }
 
   const onFormSubmit = (event) => {
-    // TODO: figure out how to handle this part with apparel...
     event.preventDefault();
     const uri = `/director/purchasable_items/${item.identifier}`;
     const configuration = {};
+    const requestConfig = {
+      method: 'patch',
+      data: {
+        purchasable_item: {
+          name: formData.fields.name,
+          value: formData.fields.value,
+        },
+      },
+    };
+    let updatingSizedApparel = false;
     switch (item.determination) {
       case 'early_discount':
         configuration.valid_until = formData.fields.valid_until;
@@ -189,6 +199,18 @@ const PurchasableItemEditForm = ({tournament, item}) => {
         break;
       case 'bundle_discount':
         configuration.events = Object.keys(formData.fields.eventIdentifiers).filter(id => formData.fields.eventIdentifiers[id]);
+        break;
+      case 'apparel':
+        if (formData.fields.sizes.one_size_fits_all) {
+          configuration.size = 'one_size_fits_all';
+        } else {
+          requestConfig.data.purchasable_item.refinement = 'sized';
+          configuration.sizes = {};
+          for (const sizeGroup in apparelSizes) {
+            configuration.sizes[sizeGroup] = formData.fields.sizes[sizeGroup];
+          };
+          updatingSizedApparel = true;
+        }
         break;
     }
     if (formData.fields.order) {
@@ -203,22 +225,21 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     if (formData.fields.denomination) {
       configuration.denomination = formData.fields.denomination;
     }
-    const requestConfig = {
-      method: 'patch',
-      data: {
-        purchasable_item: {
-          value: formData.fields.value,
-          configuration: configuration,
-        }
-      }
-    };
+
+    requestConfig.data.purchasable_item.configuration = configuration;
+    // return;
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
       context: context,
       onSuccess: (data) => {
         toggleEdit(null, false);
-        dispatch(purchasableItemUpdated(data));
+        setSuccessMessage("Item details updated.");
+        if (updatingSizedApparel) {
+          dispatch(sizedItemUpdated(data));
+        } else {
+          dispatch(purchasableItemUpdated(data));
+        }
       },
       onFailure: (_) => console.log("Failed to save item."),
     });
@@ -591,6 +612,21 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     <ErrorBoundary>
       <div className={classes.PurchasableItemEditForm}>
         {content}
+        {successMessage && (
+          <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center m-3'}
+               role={'alert'}>
+            <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
+            <div className={'me-auto'}>
+              {successMessage}
+              <button type="button"
+                      className={"btn-close"}
+                      data-bs-dismiss="alert"
+                      onClick={() => setSuccessMessage(null)}
+                      aria-label="Close"/>
+            </div>
+          </div>
+        )}
+
       </div>
     </ErrorBoundary>
   );

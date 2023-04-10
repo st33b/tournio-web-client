@@ -25,7 +25,7 @@
     }
   }
   .Item:hover {
-    background-color: var(--tournio-gray-200);
+    background-color: var(--tournio-gray-100);
     @media (prefers-color-scheme: dark) {
       background-color: var(--tournio-gray-800);
     }

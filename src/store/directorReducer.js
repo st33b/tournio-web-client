@@ -165,9 +165,17 @@ export const directorReducer = (state, action) => {
           purchasable_items: items,
         }),
       });
+    case actionTypes.SIZED_ITEM_UPDATED:
+      return updateObject(state, {
+        tournament: updateObject(state.tournament, {
+          purchasable_items: replaceSizedItems(state.tournament.purchasable_items, action.sizedItem),
+        })
+      });
     case actionTypes.PURCHASABLE_ITEM_DELETED:
       identifier = action.item.identifier;
-      const newItems = state.tournament.purchasable_items.filter(i => i.identifier !== identifier)
+      const newItems = state.tournament.purchasable_items.filter(i => {
+        return i.identifier !== identifier && i.configuration.parent_identifier !== identifier;
+      })
       return updateObject(state, {
         tournament: updateObject(state.tournament, {
           purchasable_items: newItems,
@@ -352,4 +360,20 @@ export const directorReducer = (state, action) => {
     default:
       return state;
   }
+}
+
+const replaceSizedItems = (allPurchasableItems, newSizedItems) => {
+  const newParentItemIndex = newSizedItems.findIndex(({refinement}) => refinement === 'sized');
+  const newParentItem = newSizedItems[newParentItemIndex];
+  const parentIdentifier = newParentItem.identifier;
+
+  const purchasableItemsSansOldChildren = allPurchasableItems.filter(({configuration}) => {
+    return !configuration.parent_identifier || configuration.parent_identifier !== parentIdentifier
+  });
+
+  const oldParentItemIndex = purchasableItemsSansOldChildren.findIndex(({identifier}) => identifier === parentIdentifier);
+  purchasableItemsSansOldChildren[oldParentItemIndex] = newParentItem;
+
+  const newChildItems = newSizedItems.filter(({identifier}) => identifier !== parentIdentifier);
+  return purchasableItemsSansOldChildren.concat(newChildItems);
 }

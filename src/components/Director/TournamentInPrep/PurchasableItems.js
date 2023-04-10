@@ -8,7 +8,6 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 import {apparelSizes, devConsoleLog} from "../../../utils";
 
 import classes from './TournamentInPrep.module.scss';
-import ApparelItemForm from "../ApparelItemForm/ApparelItemForm";
 
 const PurchasableItems = ({tournament}) => {
   if (!tournament) {
@@ -69,6 +68,23 @@ const PurchasableItems = ({tournament}) => {
 
   // Gather apparel products by their parent, with sizes as a list
   const keyedApparelProducts = {};
+
+  const keyedApparelItemStarter = () => {
+    const parentStarter = {
+      configuration: {
+        sizes: {
+          one_size_fits_all: false,
+        },
+      },
+    }
+    // To ensure we get a deep copy of the initial size map
+    for (const group in apparelSizes) {
+      parentStarter.configuration.sizes[group] = {
+        ...apparelSizes[group]
+      };
+    }
+    return parentStarter;
+  }
   // apart from the full PI details, mapped by identifier, we add:
   //   configuration: { sizes: { sizeGroup: { size: true } } }
   for (const pi of tournament.purchasable_items) {
@@ -76,8 +92,12 @@ const PurchasableItems = ({tournament}) => {
       continue;
     }
 
-    // a parent of potentially many sizes
+    // it's a parent of potentially many sizes
     if (pi.refinement === 'sized') {
+      // is this the first we're seeing of the parent or its kids?
+      if (typeof keyedApparelProducts[pi.identifier] === 'undefined') {
+        keyedApparelProducts[pi.identifier] = keyedApparelItemStarter();
+      }
       const itemConfig = {
         ...pi.configuration,
         ...keyedApparelProducts[pi.identifier].configuration,
@@ -93,19 +113,7 @@ const PurchasableItems = ({tournament}) => {
 
       // If we're seeing a child size but haven't gotten to the parent yet...
       if (typeof keyedApparelProducts[parentIdentifier] == 'undefined') {
-        keyedApparelProducts[parentIdentifier] = {
-          configuration: {
-            sizes: {
-              one_size_fits_all: false,
-            },
-          },
-        };
-        // To ensure we get a deep copy of the initial size map
-        for (const group in apparelSizes) {
-          keyedApparelProducts[parentIdentifier].configuration.sizes[group] = {
-            ...apparelSizes[group]
-          };
-        }
+        keyedApparelProducts[parentIdentifier] = keyedApparelItemStarter();
       }
       const sizeParts = pi.configuration.size.split('.');
       keyedApparelProducts[parentIdentifier].configuration.sizes[sizeParts[0]][sizeParts[1]] = true;

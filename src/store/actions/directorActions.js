@@ -111,6 +111,13 @@ export const purchasableItemUpdated = (item) => {
   }
 }
 
+export const sizedItemUpdated = (item) => {
+  return {
+    type: actionTypes.SIZED_ITEM_UPDATED,
+    sizedItem: item,
+  }
+}
+
 export const purchasableItemDeleted = (item) => {
   return {
     type: actionTypes.PURCHASABLE_ITEM_DELETED,
