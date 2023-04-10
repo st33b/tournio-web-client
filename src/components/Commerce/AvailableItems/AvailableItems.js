@@ -19,12 +19,18 @@ const AvailableItems = ({itemAddedToCart}) => {
   }
 
   // Let's separate these out into groups:
-  // determination: event
-  // determination: single_use refinement:division (one group for each name, e.g., Scratch Masters and Optional Scratch)
-  // determination: single_use (no refinement)
-  // category: product (non-apparel)
-  // category: product (apparel)
-  // determination: multi_use
+  // category: bowling
+  //   determination: event
+  //   determination: single_use refinement:division (one group for each name, e.g., Scratch Masters and Optional Scratch)
+  //   determination: single_use (no refinement)
+  //   determination: multi_use
+  // category: product
+  //   (non-apparel)
+  //   determination: apparel
+  //     (unsized)
+  //     refinement: sized
+  // category: banquet
+  // category: raffle
 
   const allItems = Object.values(commerce.availableItems);
 
@@ -42,16 +48,6 @@ const AvailableItems = ({itemAddedToCart}) => {
     return leftText.localeCompare(rightText);
   });
 
-  // const divisionGroups = new Map();
-  // divisionItems.forEach((item) => {
-  //   const name = item.name;
-  //   if (!divisionGroups.has(name)) {
-  //     divisionGroups.set(name, []);
-  //   }
-  //   const currentSet = divisionGroups.get(name);
-  //   divisionGroups.set(name, currentSet.concat(item));
-  // });
-
   // sort the single_use items by their order
   const singleUseItems = allItems.filter(item => {
     return item.determination === 'single_use' && !item.refinement;
@@ -66,11 +62,12 @@ const AvailableItems = ({itemAddedToCart}) => {
   const sanctionItems = allItems.filter(({category}) => category === 'sanction');
 
   // Non-apparel Products
-  const productItems = allItems.filter(({category, determination}) => category === 'product' && determination !== 'apparel').sort(sortByOrder);
+  const productItems = allItems.filter(({category, determination}) => category === 'product' && determination === 'general').sort(sortByOrder);
 
   const apparelItems = Object.values(commerce.availableApparelItems);
 
-  // const groupValues = [...divisionGroups.values()];
+  const banquetItems = allItems.filter(({category}) => category === 'banquet')
+  const raffleItems = allItems.filter(({category}) => category === 'raffle')
 
   return (
     <div className={classes.AvailableItems}>
@@ -95,15 +92,6 @@ const AvailableItems = ({itemAddedToCart}) => {
             <h5 className={``}>
               Bowling Extras
             </h5>
-            {/*{groupValues.map((group, index) => (*/}
-            {/*  <Col key={index} xs={12}>*/}
-            {/*    {group.map((item) => (*/}
-            {/*      <Item key={item.identifier}*/}
-            {/*            item={item}*/}
-            {/*            added={itemAddedToCart} />*/}
-            {/*    ))}*/}
-            {/*  </Col>*/}
-            {/*))}*/}
             <Col xs={12}>
               {divisionItems.map((item) => (
                 <Item key={item.identifier}
@@ -132,9 +120,19 @@ const AvailableItems = ({itemAddedToCart}) => {
           )}
         </Col>
 
-
         <Col xs={12} md={6} className={``}>
-          {/* Raffle Items here */}
+          {raffleItems.length > 0 && (
+            <div className={``}>
+              <h5 className={``}>
+                Raffle Tickets
+              </h5>
+              {raffleItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+            </div>
+          )}
 
           {apparelItems.length > 0 && (
             <div className={``}>
@@ -161,6 +159,20 @@ const AvailableItems = ({itemAddedToCart}) => {
               ))}
             </div>
           )}
+
+          {banquetItems.length > 0 && (
+            <div className={``}>
+              <h5 className={``}>
+                Banquet Tickets
+              </h5>
+              {banquetItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+            </div>
+          )}
+
 
           {sanctionItems.length > 0 && (
             <div className={``}>

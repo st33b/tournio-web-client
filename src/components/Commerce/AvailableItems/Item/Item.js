@@ -17,22 +17,32 @@ const Item = ({item, added, preview}) => {
 
   let secondaryText = '';
   if (item.configuration) {
-    if (item.configuration.note) {
+    if (item.configuration.quantity) {
       secondaryText = (
+        <p className={classes.Secondary}>
+          {item.configuration.quantity}
+        </p>
+      );
+    }
+  }
+  let tertiaryText = '';
+  if (item.configuration) {
+    if (item.configuration.note) {
+      tertiaryText = (
         <p className={classes.Note}>
           ({item.configuration.note})
         </p>
       );
     }
     if (item.configuration.division) {
-      secondaryText = (
+      tertiaryText = (
         <p className={classes.Note}>
           Division: {item.configuration.division}
           {item.configuration.note && <span>&nbsp;({item.configuration.note})</span>}
         </p>
       );
     } else if (item.configuration.input_label) {
-      secondaryText = (
+      tertiaryText = (
         <form>
           <label>
             {item.configuration.input_label}
@@ -40,14 +50,9 @@ const Item = ({item, added, preview}) => {
           <input type={'text'} />
         </form>
       );
-    } else if (item.configuration.denomination) {
-      secondaryText = (
-        <p className={classes.Note}>
-          {item.configuration.denomination} {note}
-        </p>
-      );
     }
   }
+
 
   const sizeChosen = (event) => {
     const newValue = event.target.value;
@@ -89,7 +94,6 @@ const Item = ({item, added, preview}) => {
   const sizeValid = !sizeRequired || sizeRequired && sizeForm.identifier.length > 0;
 
   let attachedClasses = [classes.Item, 'mb-3', 'mx-0', 'd-flex'];
-  // let attachedClasses = [classes.Item, 'rounded', 'border', 'mb-3', 'mx-0', 'd-flex'];
   if (item.determination === 'event') {
     attachedClasses.push('border-primary', 'border-3');
   }
@@ -126,6 +130,7 @@ const Item = ({item, added, preview}) => {
             {item.name}
           </p>
           {secondaryText}
+          {tertiaryText}
           {sizeText}
           <p className={classes.Price}>
             ${item.value}

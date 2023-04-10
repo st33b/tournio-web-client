@@ -564,7 +564,6 @@ describe('itemAddedToCart -- dedicated function', () => {
       myPreviousState.cart = [...previousState.cart];
       myPreviousState.cart.push({
         ...itemToAdd,
-        addedToCart: true,
         quantity: 12,
       });
 
@@ -584,7 +583,6 @@ describe('itemAddedToCart -- dedicated function', () => {
       const itemToAdd = {
         category: 'raffle',
         identifier: 'the-house-always-wins',
-        addedToCart: true,
         quantity: 3,
       }
       const myPreviousState = {...previousState};
@@ -615,7 +613,6 @@ describe('itemAddedToCart -- dedicated function', () => {
       myPreviousState.cart = [...previousState.cart];
       myPreviousState.cart.push({
         ...itemToAdd,
-        addedToCart: true,
         quantity: 12,
       });
 
@@ -645,7 +642,6 @@ describe('itemAddedToCart -- dedicated function', () => {
       myPreviousState.cart = [...previousState.cart];
       myPreviousState.cart.push({
         ...itemToAdd,
-        addedToCart: true,
         quantity: 7,
       });
 
@@ -699,12 +695,10 @@ describe('itemAddedToCart -- dedicated function', () => {
         {
           ...itemToAdd.sizes[0],
           quantity: 8,
-          addedToCart: true,
         },
         {
           ...chosenSize,
           quantity: 3,
-          addedToCart: true,
         },
       );
 

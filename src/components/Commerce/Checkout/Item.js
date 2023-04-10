@@ -9,15 +9,7 @@ const item = ({item}) => {
   let note = '';
   let value = '$' + item.value;
 
-  if (item.determination === 'multi_use') {
-    nameClasses.push('col-8');
-    const totalValue = item.value * item.quantity;
-    value = (
-      <span>
-        ${item.value} &times; {item.quantity} = ${totalValue}
-      </span>
-    );
-  } else {
+  if (item.category === 'bowling' && item.determination === 'single_use' || item.category === 'sanction') {
     nameClasses.push('col-9');
     if (item.configuration.division) {
       note = (
@@ -26,6 +18,14 @@ const item = ({item}) => {
         </p>
       );
     }
+  } else {
+    nameClasses.push('col-8');
+    const totalValue = item.value * item.quantity;
+    value = (
+      <span>
+        ${item.value} &times; {item.quantity} = ${totalValue}
+      </span>
+    );
   }
 
   return (

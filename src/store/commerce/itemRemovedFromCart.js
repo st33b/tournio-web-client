@@ -160,7 +160,7 @@ const handleAsPossiblyMany = (previousState, itemToRemove) => {
   const updatedItem = {
     ...itemToRemove,
     quantity: itemToRemove.quantity - 1,
-    addedToCart: !lastOneStanding,
+    // addedToCart: !lastOneStanding,
   }
 
   let updatedCart;

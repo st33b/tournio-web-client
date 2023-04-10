@@ -8,25 +8,23 @@ import Item from "../../Commerce/AvailableItems/Item/Item";
 import classes from './MultiUseForm.module.scss';
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
+/**
+ * Used only for multi-use bowling items.
+ */
 const MultiUseForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();
   const dispatch = context.dispatch;
 
   const initialState = {
-    category: '', // banquet
-    determination: 'multi_use',
-    refinement: '', // denomination (for quantity-based products, like raffle ticket bundles
     name: '',
     value: '',
     note: '',
-    denomination: '', // for quantity-based products, like raffle ticket bundles
     order: '',
 
     valid: false,
   }
 
   const [formData, setFormData] = useState(initialState);
-  const [denominationVisibility, setDenominationVisibility] = useState('visually-hidden');
 
   const inputChanged = (event) => {
     let newValue = event.target.value;
@@ -45,9 +43,7 @@ const MultiUseForm = ({tournament, onCancel, onComplete}) => {
   const isValid = (data) => {
     return data.name.length > 0
       && data.value > 0
-      && data.order > 0
-      && data.category !== ''
-      && (data.refinement !== 'denomination' || data.refinement === 'denomination' && data.denomination.length > 0);
+      && data.order > 0;
   }
 
   const submissionSuccess = (data) => {
@@ -64,15 +60,13 @@ const MultiUseForm = ({tournament, onCancel, onComplete}) => {
       data: {
         purchasable_items: [
           {
-            category: formData.category,
-            determination: formData.determination,
-            refinement: formData.refinement,
+            category: 'bowling',
+            determination: 'multi_use',
             name: formData.name,
             value: formData.value,
             configuration: {
               order: formData.order,
               note: formData.note,
-              denomination: formData.refinement === 'denomination' ? formData.denomination : '',
             },
           },
         ],
@@ -87,24 +81,14 @@ const MultiUseForm = ({tournament, onCancel, onComplete}) => {
     });
   }
 
-  const toggleDenominationVisibility = (event) => {
-    setDenominationVisibility(event.target.checked ? '' : 'visually-hidden');
-    const newFormData = {...formData};
-    newFormData.refinement = event.target.checked ? 'denomination' : '';
-    newFormData.valid = isValid(newFormData);
-    setFormData(newFormData);
-  }
-
   let itemPreview = '';
   const itemPreviewProps = {
-    category: formData.category,
+    category: 'bowling',
     determination: 'multi_use',
     name: formData.name,
     value: formData.value,
-    refinement: formData.refinement,
     configuration: {
       note: formData.note,
-      denomination: formData.denomination,
       order: formData.order,
     }
   }
@@ -121,26 +105,11 @@ const MultiUseForm = ({tournament, onCancel, onComplete}) => {
   return (
     <ErrorBoundary>
       <div className={classes.MultiUseForm}>
-        <form onSubmit={formSubmitted} className={`mx-4 py-2`}>
+        <form onSubmit={formSubmitted} className={`py-2`}>
           <div className={`${classes.HeaderRow} row mb-2`}>
             <h6>
-              New Multi-Use Item
+              New Bowling Extra (Multi)
             </h6>
-          </div>
-          <div className={'row mb-3'}>
-            <label htmlFor={'name'} className={'form-label ps-0 mb-1'}>
-              Item type
-            </label>
-            <select className={`form-select`}
-                    name={'category'}
-                    id={'category'}
-                    required={true}
-                    onChange={(event) => inputChanged(event)}
-                    value={formData.category}>
-              <option value={''}>--</option>
-              <option value={'bowling'}>Bowling</option>
-              <option value={'banquet'}>Banquet (non-bowler)</option>
-            </select>
           </div>
           <div className={'row mb-3'}>
             <label htmlFor={'name'} className={'form-label ps-0 mb-1'}>
@@ -153,33 +122,6 @@ const MultiUseForm = ({tournament, onCancel, onComplete}) => {
                    required={true}
                    onChange={(event) => inputChanged(event)}
                    value={formData.name}
-            />
-          </div>
-          <div className={'row mb-3'}>
-            <div className={'form-check form-switch'}>
-              <input type={'checkbox'}
-                     className={'form-check-input'}
-                     value={true}
-                     role={'switch'}
-                     name={'has_denomination'}
-                     onChange={toggleDenominationVisibility}
-                     id={'has_denomination'}/>
-              <label className={'form-check-label'}
-                     htmlFor={'has_denomination'}>
-                Item has a denomination/quantity
-              </label>
-            </div>
-          </div>
-          <div className={`row mb-3 ${denominationVisibility}`}>
-            <label htmlFor={'denomination'} className={'form-label ps-0 mb-1'}>
-              Denomination/quantity
-            </label>
-            <input type={'text'}
-                   className={`form-control`}
-                   name={'denomination'}
-                   id={'denomination'}
-                   onChange={(event) => inputChanged(event)}
-                   value={formData.denomination}
             />
           </div>
           <div className={'row mb-3'}>

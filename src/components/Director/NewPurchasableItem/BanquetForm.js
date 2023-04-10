@@ -1,20 +1,24 @@
 import {useState} from "react";
 
-import ErrorBoundary from "../../common/ErrorBoundary";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../director";
+import ErrorBoundary from "../../common/ErrorBoundary";
+import Item from "../../Commerce/AvailableItems/Item/Item";
+
+import classes from './MultiUseForm.module.scss';
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
-import classes from './SanctionForm.module.scss';
-
-const SanctionForm = ({tournament, onCancel, onComplete}) => {
+/**
+ * Used only for banquet items.
+ */
+const BanquetForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();
   const dispatch = context.dispatch;
 
   const initialState = {
-    determination: 'igbo', // This is the only kind of sanction we support at the moment.
-    name: 'IGBO Membership',
-    value: 25,
+    name: '',
+    value: '',
+    note: '',
     order: '',
 
     valid: false,
@@ -23,20 +27,23 @@ const SanctionForm = ({tournament, onCancel, onComplete}) => {
   const [formData, setFormData] = useState(initialState);
 
   const inputChanged = (event) => {
-    let newValue = '';
-    newValue = event.target.value;
+    let newValue = event.target.value;
     const inputName = event.target.name;
     if (inputName === 'value' || inputName === 'order') {
-      if (newValue.length > 0) {
-        newValue = parseInt(newValue);
-      }
+      newValue = parseInt(newValue);
     }
     const newFormData = {...formData};
     newFormData[inputName] = newValue;
 
-    newFormData.valid = newFormData.name.length > 0 && newFormData.value > 0 && newFormData.order > 0;
+    newFormData.valid = isValid(newFormData);
 
     setFormData(newFormData);
+  }
+
+  const isValid = (data) => {
+    return data.name.length > 0
+      && data.value > 0
+      && data.order > 0;
   }
 
   const submissionSuccess = (data) => {
@@ -53,12 +60,12 @@ const SanctionForm = ({tournament, onCancel, onComplete}) => {
       data: {
         purchasable_items: [
           {
-            category: 'sanction',
-            determination: formData.determination,
+            category: 'banquet',
             name: formData.name,
             value: formData.value,
             configuration: {
               order: formData.order,
+              note: formData.note,
             },
           },
         ],
@@ -69,22 +76,42 @@ const SanctionForm = ({tournament, onCancel, onComplete}) => {
       requestConfig: requestConfig,
       context: context,
       onSuccess: submissionSuccess,
-      onFailure: (_) => console.log("Failed to save new item."),
+      onFailure: (_) => console.log("Failed to save new banquet item."),
     });
   }
 
+  let itemPreview = '';
+  const itemPreviewProps = {
+    category: 'banquet',
+    name: formData.name,
+    value: formData.value,
+    configuration: {
+      note: formData.note,
+      order: formData.order,
+    }
+  }
+
+  itemPreview = (
+    <div className={'row mx-0 px-0'}>
+      <span className={`${classes.PreviewText} px-0 pb-1`}>
+        How it will look to bowlers:
+      </span>
+      <Item item={itemPreviewProps} preview={true}/>
+    </div>
+  );
+
   return (
     <ErrorBoundary>
-      <div className={classes.SanctionForm}>
+      <div className={classes.MultiUseForm}>
         <form onSubmit={formSubmitted} className={`py-2`}>
           <div className={`${classes.HeaderRow} row mb-2`}>
             <h6>
-              New Sanction Item
+              New Banquet Item
             </h6>
           </div>
           <div className={'row mb-3'}>
             <label htmlFor={'name'} className={'form-label ps-0 mb-1'}>
-              Name
+              Display Name
             </label>
             <input type={'text'}
                    className={`form-control`}
@@ -111,7 +138,7 @@ const SanctionForm = ({tournament, onCancel, onComplete}) => {
             </div>
             <div className={'col-6 pe-0'}>
               <label htmlFor={'order'} className={'form-label ps-0 mb-1'}>
-                Display order
+                Display Order
               </label>
               <input type={'number'}
                      className={`form-control`}
@@ -122,6 +149,21 @@ const SanctionForm = ({tournament, onCancel, onComplete}) => {
                      value={formData.order}
               />
             </div>
+          </div>
+          <div className={'row mb-3'}>
+            <label htmlFor={'note'} className={'form-label ps-0 mb-1'}>
+              Note (optional)
+            </label>
+            <input type={'text'}
+                   className={`form-control`}
+                   name={'note'}
+                   id={'note'}
+                   onChange={(event) => inputChanged(event)}
+                   value={formData.note}
+            />
+          </div>
+          <div className={'row'}>
+            {itemPreview}
           </div>
           <div className={'row'}>
             <div className={'d-flex justify-content-end pe-0'}>
@@ -151,4 +193,4 @@ const SanctionForm = ({tournament, onCancel, onComplete}) => {
   );
 }
 
-export default SanctionForm;
+export default BanquetForm;

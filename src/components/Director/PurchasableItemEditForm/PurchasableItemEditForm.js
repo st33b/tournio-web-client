@@ -32,6 +32,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
       eventIdentifiers: {}, // map of identifier to true/false
       linkedEvent: '',
       sizes: {},
+      quantity: '',
     },
 
     valid: true,
@@ -67,6 +68,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
         linkedEvent: item.configuration.event || '',
         eventIdentifiers: eventIdentifiers, // map of identifier to true/false
         sizes: item.configuration.sizes || {},
+        quantity: item.configuration.quantity || '',
       },
     };
     newFormData.valid = isValid(newFormData.fields);
@@ -190,6 +192,9 @@ const PurchasableItemEditForm = ({tournament, item}) => {
       },
     };
     let updatingSizedApparel = false;
+    if (item.category === 'raffle') {
+      configuration.quantity = formData.fields.quantity;
+    }
     switch (item.determination) {
       case 'early_discount':
         configuration.valid_until = formData.fields.valid_until;
@@ -271,6 +276,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
   let content = '';
   if (!editing) {
     const datetimeFormat = 'LLL d, yyyy h:mmaaa';
+    let secondary = '';
     let note = '';
     switch (item.category) {
       case 'ledger':
@@ -339,6 +345,22 @@ const PurchasableItemEditForm = ({tournament, item}) => {
           )
         }
         break;
+      case 'raffle':
+        if (formData.fields.note) {
+          note = (
+            <span className={classes.Note}>
+              {formData.fields.note}
+            </span>
+          )
+        }
+        if (formData.fields.quantity) {
+          secondary = (
+            <span className={classes.Secondary}>
+              {formData.fields.quantity}
+            </span>
+          )
+        }
+        break;
       default:
         break;
     }
@@ -356,6 +378,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
         {orderText}
         <Card.Text className={`me-auto`}>
           {item.name}
+          {secondary}
           {note}
         </Card.Text>
         <Card.Text className={'fw-bold'}>
@@ -465,6 +488,25 @@ const PurchasableItemEditForm = ({tournament, item}) => {
         });
         break;
       case 'banquet':
+        inputElements.push({
+          label: 'Display Order',
+          type: 'number',
+          name: 'order',
+          id: 'order',
+          value: formData.fields.order,
+          classes: '',
+          others: {min: 0},
+        });
+        inputElements.push({
+          label: 'Note',
+          type: 'text',
+          name: 'note',
+          id: 'note',
+          value: formData.fields.note,
+          classes: '',
+          others: {},
+        });
+        break;
       case 'raffle':
         inputElements.push({
           label: 'Display Order',
@@ -474,6 +516,15 @@ const PurchasableItemEditForm = ({tournament, item}) => {
           value: formData.fields.order,
           classes: '',
           others: {min: 0},
+        });
+        inputElements.push({
+          label: 'Quantity',
+          type: 'text',
+          name: 'quantity',
+          id: 'quantity',
+          value: formData.fields.quantity,
+          classes: '',
+          others: {},
         });
         inputElements.push({
           label: 'Note',
@@ -532,7 +583,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
       itemPreviewProps.configuration.valid_until = formData.fields.valid_until;
       itemPreviewProps.configuration.division = formData.fields.division;
       itemPreviewProps.configuration.note = formData.fields.note;
-      itemPreviewProps.configuration.denomination = formData.fields.denomination;
+      itemPreviewProps.configuration.quantity = formData.fields.quantity;
 
       itemPreview = (
       <div className={`row ${classes.PreviewItem}`}>

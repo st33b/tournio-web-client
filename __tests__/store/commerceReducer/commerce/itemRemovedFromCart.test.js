@@ -13,7 +13,6 @@ describe('itemRemovedFromCart -- dedicated function', () => {
   const basicItem = {
     identifier: 'basic',
     value: 15,
-    addedToCart: true,
   }
   const previousState = {
     cart: [basicItem],
@@ -42,6 +41,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
   describe('a ledger item', () => {
     const myBasicItem = {
       ...basicItem,
+      addedToCart: true,
       category: 'ledger',
       quantity: 1,
     };
@@ -73,6 +73,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
     describe('single-use', () => {
       const myItem = {
         ...basicItem,
+        addedToCart: true,
         category: 'bowling',
         determination: 'single_use',
         name: 'An optional bowling thing',
@@ -104,6 +105,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       describe('division', () => {
         const myDivisionItem = {
           ...basicItem,
+          addedToCart: true,
           category: 'bowling',
           determination: 'single_use',
           refinement: 'division',
@@ -198,10 +200,6 @@ describe('itemRemovedFromCart -- dedicated function', () => {
         it('drops the quantity to zero', () => {
           expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(0);
         });
-
-        it('marks addedToCart as false', () => {
-          expect(result.availableItems[myBasicItem.identifier].addedToCart).toBeFalsy();
-        });
       });
 
       describe("when there's more than one in the cart", () => {
@@ -230,10 +228,6 @@ describe('itemRemovedFromCart -- dedicated function', () => {
         it('drops the quantity by 1', () => {
           expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(myBasicItem.quantity - 1);
         });
-
-        it('leaves addedToCart as true', () => {
-          expect(result.availableItems[myBasicItem.identifier].addedToCart).toBeTruthy();
-        });
       });
     });
   });
@@ -241,6 +235,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
   describe('a sanction item', () => {
     const myBasicItem = {
       ...basicItem,
+      addedToCart: true,
       category: 'sanction',
       quantity: 1,
     };
@@ -271,6 +266,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
   describe('an event item', () => {
     const myBasicItem = {
       ...basicItem,
+      addedToCart: true,
       identifier: 'a_core_event',
       category: 'bowling',
       determination: 'event',
@@ -302,6 +298,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
     describe('with a linked bundle discount in the cart', () => {
       const otherItem = {
         ...basicItem,
+        addedToCart: true,
         identifier: 'another-core-event',
         category: 'bowling',
         determination: 'event',
@@ -310,6 +307,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
 
       const discountItem = {
         ...basicItem,
+        addedToCart: true,
         identifier: 'bundle_up',
         category: 'ledger',
         determination: 'bundle_discount',
@@ -371,6 +369,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
     describe('with a linked late fee in the cart', () => {
       const lateFeeItem = {
         ...basicItem,
+        addedToCart: true,
         identifier: 'you_are_late',
         category: 'ledger',
         determination: 'late_fee',
@@ -442,10 +441,6 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       it('drops the quantity to zero', () => {
         expect(result.availableItems[banquetItem.identifier].quantity).toStrictEqual(0);
       });
-
-      it('marks addedToCart as false', () => {
-        expect(result.availableItems[banquetItem.identifier].addedToCart).toBeFalsy();
-      });
     });
 
     describe("when there's more than one in the cart", () => {
@@ -469,10 +464,6 @@ describe('itemRemovedFromCart -- dedicated function', () => {
 
       it('drops the quantity by 1', () => {
         expect(result.availableItems[banquetItem.identifier].quantity).toStrictEqual(banquetItem.quantity - 1);
-      });
-
-      it('leaves addedToCart as true', () => {
-        expect(result.availableItems[banquetItem.identifier].addedToCart).toBeTruthy();
       });
     });
 
@@ -506,10 +497,6 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       it('drops the quantity to zero', () => {
         expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(0);
       });
-
-      it('marks addedToCart as false', () => {
-        expect(result.availableItems[myBasicItem.identifier].addedToCart).toBeFalsy();
-      });
     });
 
     describe("when there's more than one in the cart", () => {
@@ -538,10 +525,6 @@ describe('itemRemovedFromCart -- dedicated function', () => {
 
       it('drops the quantity by 1', () => {
         expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(myBasicItem.quantity - 1);
-      });
-
-      it('leaves addedToCart as true', () => {
-        expect(result.availableItems[myBasicItem.identifier].addedToCart).toBeTruthy();
       });
     });
   });
@@ -574,10 +557,6 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       it('drops the quantity to zero', () => {
         expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(0);
       });
-
-      it('marks addedToCart as false', () => {
-        expect(result.availableItems[myBasicItem.identifier].addedToCart).toBeFalsy();
-      });
     });
 
     describe("when there's more than one in the cart", () => {
@@ -606,10 +585,6 @@ describe('itemRemovedFromCart -- dedicated function', () => {
 
       it('drops the quantity by 1', () => {
         expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(myBasicItem.quantity - 1);
-      });
-
-      it('leaves addedToCart as true', () => {
-        expect(result.availableItems[myBasicItem.identifier].addedToCart).toBeTruthy();
       });
     });
   });
@@ -674,7 +649,6 @@ describe('itemRemovedFromCart -- dedicated function', () => {
           {
             ...chosenItem,
             quantity: 1,
-            addedToCart: true,
           }
         ],
       };
@@ -698,7 +672,6 @@ describe('itemRemovedFromCart -- dedicated function', () => {
           {
             ...chosenItem,
             quantity: 6,
-            addedToCart: true,
           }
         ],
       };

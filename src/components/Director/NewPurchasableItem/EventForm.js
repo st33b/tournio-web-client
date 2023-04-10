@@ -86,7 +86,7 @@ const EventForm = ({tournament, onCancel, onComplete}) => {
   return (
     <ErrorBoundary>
       <div className={classes.EventForm}>
-        <form onSubmit={formSubmitted} className={`mx-4 py-2`}>
+        <form onSubmit={formSubmitted} className={`py-2`}>
           <div className={`${classes.HeaderRow} row mb-2`}>
             <h6>
               New Event Item

@@ -66,6 +66,16 @@ const PurchasableItems = ({tournament}) => {
     return item.determination === 'multi_use';
   }).sort(sortByOrder);
 
+  // sort the raffle items by their order
+  const raffleItems = tournament.purchasable_items.filter(item => {
+    return item.category === 'raffle';
+  }).sort(sortByOrder);
+
+  // sort the banquet items by their order
+  const banquetItems = tournament.purchasable_items.filter(item => {
+    return item.category === 'banquet';
+  }).sort(sortByOrder);
+
   // Gather apparel products by their parent, with sizes as a list
   const keyedApparelProducts = {};
 
@@ -142,7 +152,7 @@ const PurchasableItems = ({tournament}) => {
 
   // sort the non-apparel product items by their order
   const products = tournament.purchasable_items.filter(item => {
-    return item.category === 'product' && item.determination !== 'apparel';
+    return item.category === 'product' && item.determination === 'general';
   }).sort(sortByOrder);
 
   const groupValues = [...divisionGroups.values()];
@@ -151,7 +161,7 @@ const PurchasableItems = ({tournament}) => {
     <ErrorBoundary>
       <Card className={[classes.Card, classes.PurchasableItems].join(' ')}>
         <Card.Header as={'h5'} className={'fw-light'}>
-          Fees and Events/Items
+          Fees and Optional Items
         </Card.Header>
 
         {(!tournament.stripe_account || !tournament.stripe_account.can_accept_payments) && (
@@ -167,12 +177,6 @@ const PurchasableItems = ({tournament}) => {
                 {ledgerItems.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/>)}
               </Card.Body>
             )}
-
-            {sanctionItems.length > 0 &&
-              <Card.Body className={classes.Category}>
-                {sanctionItems.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/>)}
-              </Card.Body>
-            }
 
             {eventItems.length > 0 && (
               <Card.Body className={classes.Category}>
@@ -200,9 +204,15 @@ const PurchasableItems = ({tournament}) => {
               </Card.Body>
             }
 
-            {products.length > 0 &&
+            {raffleItems.length > 0 &&
               <Card.Body className={classes.Category}>
-                {products.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/>)}
+                {raffleItems.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/> )}
+              </Card.Body>
+            }
+
+            {banquetItems.length > 0 &&
+              <Card.Body className={classes.Category}>
+                {banquetItems.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/> )}
               </Card.Body>
             }
 
@@ -212,10 +222,19 @@ const PurchasableItems = ({tournament}) => {
               </Card.Body>
             }
 
+            {products.length > 0 &&
+              <Card.Body className={classes.Category}>
+                {products.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/>)}
+              </Card.Body>
+            }
+
+            {sanctionItems.length > 0 &&
+              <Card.Body className={classes.Category}>
+                {sanctionItems.map((item) => <PurchasableItemEditForm key={item.identifier} tournament={tournament} item={item}/>)}
+              </Card.Body>
+            }
+
             <Card.Body className={classes.Category}>
-              <h6 className={`fw-light`}>
-                Create a new thing:
-              </h6>
               <NewPurchasableItem tournament={tournament}/>
             </Card.Body>
           </LocalizationProvider>
