@@ -24,7 +24,7 @@ const MaintenanceAnnouncement = () => {
         <span className={classes.TimeBoundary}>
           {theDate}
         </span>
-        , the registration system will be offline for planned maintenance from{' '}
+        , Tournio will be offline for planned maintenance from{' '}
         <span className={classes.TimeBoundary}>
           {startTime}
         </span>
