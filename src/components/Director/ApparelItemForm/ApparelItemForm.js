@@ -238,7 +238,7 @@ const ApparelItemForm = ({tournament, onCancel, onComplete, item}) => {
         <form onSubmit={formSubmitted} className={`py-2`}>
           <div className={`${productClasses.HeaderRow} row mb-2`}>
             <h6>
-              New Apparel Product
+              New Apparel Item
             </h6>
           </div>
 
