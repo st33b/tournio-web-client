@@ -3,8 +3,6 @@ import Card from "react-bootstrap/Card";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../director";
-import {tournamentDeleted, tournamentDetailsReset} from "../../../store/actions/directorActions";
-import {devConsoleLog} from "../../../utils";
 
 const DeleteTournament = ({tournament}) => {
   const context = useDirectorContext();
@@ -20,7 +18,6 @@ const DeleteTournament = ({tournament}) => {
   }
 
   const deleteSuccess = (_) => {
-    dispatch(tournamentDeleted(tournament));
     router.push('/director/tournaments');
   }
 

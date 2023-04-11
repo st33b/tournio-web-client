@@ -57,13 +57,6 @@ export const directorReducer = (state, action) => {
       return updateObject(state, {
         tournament: {...action.tournament},
       });
-    case actionTypes.TOURNAMENT_DELETED:
-      devConsoleLog("DEPRECATED");
-      const tournament = action.tournament.identifier === state.tournament.identifier ? null : state.tournament;
-      return updateObject(state, {
-        tournament: tournament,
-        tournaments: state.tournaments.filter(t => t.identifier !== action.tournament.identifier),
-      });
     case actionTypes.STRIPE_ACCOUNT_STATUS_CHANGED:
       return updateObject(state, {
         tournament: updateObject(state.tournament, {

@@ -20,22 +20,9 @@ export const tournamentListRetrieved = (tournaments) => {
   }
 }
 
-export const tournamentDetailsReset = () => {
-  return {
-    type: actionTypes.TOURNAMENT_DETAILS_RESET,
-  }
-}
-
 export const tournamentDetailsRetrieved = (tournament) => {
   return {
     type: actionTypes.TOURNAMENT_DETAILS_RETRIEVED,
-    tournament: tournament,
-  }
-}
-
-export const tournamentDeleted = (tournament) => {
-  return {
-    type: actionTypes.TOURNAMENT_DELETED,
     tournament: tournament,
   }
 }
