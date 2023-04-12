@@ -91,3 +91,16 @@ html {
     background-color: var(--tournio-gray-700);
   }
 }
+
+.btn-close {
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--tournio-body-color);
+  }
+}
+
+.modal-content {
+  color: var(--tournio-body-color);
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--tournio-gray-900);
+  }
+}

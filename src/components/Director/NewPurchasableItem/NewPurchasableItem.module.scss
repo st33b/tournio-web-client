@@ -1,6 +1,28 @@
 .NewPurchasableItem {
+
+  .NewItemLink {
+    text-align: center;
+    background-color: rgba(var(--tournio-primary-rgb), 0.2);
+
+    a {
+      display: block;
+      padding: 0.5rem 1rem;
+      color: var(--tournio-body-color);
+    }
+    a:focus, a:hover {
+    }
+    :hover, :focus {
+      background-color: rgba(var(--tournio-primary-rgb), 0.2);
+      @media (prefers-color-scheme: dark) {
+        background-color: rgba(var(--tournio-primary-rgb), 0.125);
+      }
+    }
+  }
 }
+
 .FormDisplayed {
+  padding: 0 1.25rem;
+
   background-color: var(--tournio-gray-100);
   @media (prefers-color-scheme: dark) {
     background-color: var(--tournio-gray-900);

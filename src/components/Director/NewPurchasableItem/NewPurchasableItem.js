@@ -9,6 +9,10 @@ import SanctionForm from "./SanctionForm";
 
 import classes from './NewPurchasableItem.module.scss';
 import EventForm from "./EventForm";
+import ProductForm from "./ProductForm";
+import ApparelItemForm from "../ApparelItemForm/ApparelItemForm";
+import BanquetForm from "./BanquetForm";
+import RaffleForm from "./RaffleForm";
 
 const NewPurchasableItem = ({tournament}) => {
   const [formDisplayed, setFormDisplayed] = useState(null);
@@ -95,72 +99,111 @@ const NewPurchasableItem = ({tournament}) => {
         )}
 
         {!formDisplayed && allowCreate &&
-          <>
-            <div className={'text-center my-3'}>
-              <button type={'button'}
-                      className={`btn ${availableLedgerTypes.length === 0 ? 'btn-outline-secondary' : 'btn-outline-primary'}`}
-                      role={'button'}
-                      disabled={availableLedgerTypes.length === 0}
-                      onClick={(event) => addClicked(event, 'ledger')}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                Ledger Item
-              </button>
+          <div>
+            <h6 className={`fw-light`}>
+              Create a new thing:
+            </h6>
+            <div className={`d-flex flex-wrap`}>
+              {availableLedgerTypes.length > 0 &&
+                <div className={`${classes.NewItemLink} flex-fill`}>
+                  <a href={'#'}
+                     className={``}
+                     onClick={(event) => addClicked(event, 'ledger')}>
+                    Fee/Discount
+                  </a>
+                </div>
+              }
+              {eventSelection &&
+                <div className={`${classes.NewItemLink} flex-fill`}>
+                  <a href={'#'}
+                     className={``}
+                     onClick={(event) => addClicked(event, 'event')}>
+                    Core Event
+                  </a>
+                </div>
+              }
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   title={`Something like Scratch Masters`}
+                   onClick={(event) => addClicked(event, 'division')}>
+                  Division Extra
+                </a>
+              </div>
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   onClick={(event) => addClicked(event, 'single_use')}>
+                  Bowling Extra (one-time)
+                </a>
+              </div>
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   onClick={(event) => addClicked(event, 'multi_use')}>
+                  Bowling Extra (multi)
+                </a>
+              </div>
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   onClick={(event) => addClicked(event, 'raffle')}>
+                  Raffle
+                </a>
+              </div>
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   onClick={(event) => addClicked(event, 'apparel')}>
+                  Apparel
+                </a>
+              </div>
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   onClick={(event) => addClicked(event, 'banquet')}>
+                  Banquet
+                </a>
+              </div>
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   onClick={(event) => addClicked(event, 'sanction')}>
+                  Membership
+                </a>
+              </div>
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   onClick={(event) => addClicked(event, 'product')}>
+                  Other
+                </a>
+              </div>
             </div>
-            <div className={'text-center my-3'}>
-              <button type={'button'}
-                      className={`btn btn-outline-primary`}
-                      role={'button'}
-                      // disabled={availableSanctionTypes.length === 0}
-                      onClick={(event) => addClicked(event, 'sanction')}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                IGBO Sanction Item
-              </button>
-            </div>
-            {eventSelection && (<div className={'text-center my-3'}>
-              <button type={'button'}
-                      className={'btn btn-outline-primary'}
-                      role={'button'}
-                      onClick={(event) => addClicked(event, 'event')}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                Event
-              </button>
-            </div>)}
-            <div className={'text-center my-3'}>
-              <button type={'button'}
-                      className={'btn btn-outline-primary'}
-                      role={'button'}
-                      onClick={(event) => addClicked(event, 'division')}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                Division Item
-              </button>
-            </div>
-            <div className={'text-center my-3'}>
-              <button type={'button'}
-                      className={'btn btn-outline-primary'}
-                      role={'button'}
-                      onClick={(event) => addClicked(event, 'single_use')}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                Single-use Item
-              </button>
-            </div>
-            <div className={'text-center my-3'}>
-              <button type={'button'}
-                      className={'btn btn-outline-primary'}
-                      role={'button'}
-                      onClick={(event) => addClicked(event, 'multi_use')}>
-                <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-                Multi-use Item
-              </button>
-            </div>
-          </>
+          </div>
         }
 
-        {formDisplayed === 'ledger' && <LedgerForm tournament={tournament} availableTypes={availableLedgerTypes} onCancel={cancelClicked} onComplete={itemSaved} />}
-        {formDisplayed === 'event' && <EventForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} /> }
-        {formDisplayed === 'division' && <DivisionForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
-        {formDisplayed === 'single_use' && <SingleUseForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
-        {formDisplayed === 'multi_use' && <MultiUseForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
-        {formDisplayed === 'sanction' && <SanctionForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved} />}
+        {formDisplayed === 'ledger' &&
+          <LedgerForm tournament={tournament} availableTypes={availableLedgerTypes} onCancel={cancelClicked}
+                      onComplete={itemSaved}/>}
+        {formDisplayed === 'event' &&
+          <EventForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+        {formDisplayed === 'division' &&
+          <DivisionForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+        {formDisplayed === 'single_use' &&
+          <SingleUseForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+        {formDisplayed === 'multi_use' &&
+          <MultiUseForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+        {formDisplayed === 'sanction' &&
+          <SanctionForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+        {formDisplayed === 'product' &&
+          <ProductForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+        {formDisplayed === 'apparel' &&
+          <ApparelItemForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+        {formDisplayed === 'banquet' &&
+          <BanquetForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+        {formDisplayed === 'raffle' &&
+          <RaffleForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
 
       </div>
     </ErrorBoundary>

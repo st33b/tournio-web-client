@@ -6,7 +6,6 @@ const error404 = () => (
     <div className={`${classes.error404} text-center`}>
       <div className={classes.message}>
         <Image src={notFoundImage}
-               layout={'fixed'}
                alt={'Overwhelmed bowling ball with pins'}
                className={classes.image}
                />

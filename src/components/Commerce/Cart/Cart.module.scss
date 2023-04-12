@@ -1,4 +1,14 @@
 .Cart {
+  h5 {
+    font-weight: bold;
+    background-color: var(--tournio-gray-800);
+    color: white;
+    @media (prefers-color-scheme: dark) {
+      color: var(--tournio-body-color);
+    }
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+  }
   .ItemList {
 
   }
@@ -12,14 +22,6 @@
       @media (prefers-color-scheme: dark) {
         background-color: var(--tournio-gray-900);
       }
-    }
-    h4 {
-      background-color: #e9e9e9;
-      @media (prefers-color-scheme: dark) {
-        background-color: var(--tournio-gray-800);
-      }
-      padding-left: 0.5rem;
-      margin-bottom: 1rem;
     }
   }
   @media (min-width: 768px) {

@@ -19,11 +19,7 @@ describe('action type: free entry deleted', () => {
       identifier: 'abcdefg',
       free_entry_count: 42,
     },
-    freeEntries: [
-      freeEntry1,
-      freeEntry2,
-      freeEntry3,
-    ],
+    freeEntries: [],
   };
 
   const action = {
@@ -36,10 +32,7 @@ describe('action type: free entry deleted', () => {
       ...previousState.tournament,
       free_entry_count: previousState.tournament.free_entry_count - 1,
     },
-    freeEntries: [
-      freeEntry1,
-      freeEntry3,
-    ],
+    freeEntries: [],
   };
 
   it('returns the expected object', () => {

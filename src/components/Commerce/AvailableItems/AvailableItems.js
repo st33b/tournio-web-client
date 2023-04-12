@@ -1,4 +1,5 @@
 import {Col, Row} from "react-bootstrap";
+import {apparelSizes} from '../../../utils';
 import {useCommerceContext} from "../../../store/CommerceContext";
 import Item from "./Item/Item";
 
@@ -18,10 +19,18 @@ const AvailableItems = ({itemAddedToCart}) => {
   }
 
   // Let's separate these out into groups:
-  // determination: event
-  // determination: single_use refinement:division (one group for each name, e.g., Scratch Masters and Optional Scratch)
-  // determination: single_use (no refinement)
-  // determination: multi_use
+  // category: bowling
+  //   determination: event
+  //   determination: single_use refinement:division (one group for each name, e.g., Scratch Masters and Optional Scratch)
+  //   determination: single_use (no refinement)
+  //   determination: multi_use
+  // category: product
+  //   (non-apparel)
+  //   determination: apparel
+  //     (unsized)
+  //     refinement: sized
+  // category: banquet
+  // category: raffle
 
   const allItems = Object.values(commerce.availableItems);
 
@@ -32,21 +41,11 @@ const AvailableItems = ({itemAddedToCart}) => {
 
   // sort the division items by name and note
   const divisionItems = allItems.filter(item => {
-    return item.determination === 'single_use' && item.refinement === 'division';
+    return item.refinement === 'division';
   }).sort((left, right) => {
-    const leftText = left.name + left.configuration.note;
-    const rightText = right.name + right.configuration.note;
-    return rightText.localeCompare(leftText);
-  });
-
-  const divisionGroups = new Map();
-  divisionItems.forEach((item) => {
-    const name = item.name;
-    if (!divisionGroups.has(name)) {
-      divisionGroups.set(name, []);
-    }
-    const currentSet = divisionGroups.get(name);
-    divisionGroups.set(name, currentSet.concat(item));
+    const leftText = left.name + left.configuration.division;
+    const rightText = right.name + right.configuration.division;
+    return leftText.localeCompare(rightText);
   });
 
   // sort the single_use items by their order
@@ -62,58 +61,132 @@ const AvailableItems = ({itemAddedToCart}) => {
   // Sanction items
   const sanctionItems = allItems.filter(({category}) => category === 'sanction');
 
-  const groupValues = [...divisionGroups.values()];
+  // Non-apparel Products
+  const productItems = allItems.filter(({category, determination}) => category === 'product' && determination === 'general').sort(sortByOrder);
+
+  const apparelItems = Object.values(commerce.availableApparelItems);
+
+  const banquetItems = allItems.filter(({category}) => category === 'banquet')
+  const raffleItems = allItems.filter(({category}) => category === 'raffle')
 
   return (
     <div className={classes.AvailableItems}>
-      <h4 className={'py-2 py-md-0'}>
-        Available Events/Items
-      </h4>
+      <Row className={``}>
+        <Col xs={12} md={6}>
+          {eventItems.length > 0 && (
+            <div className={``}>
+              <h5 className={'py-2 py-md-0'}>
+                Bowling Events
+              </h5>
+              <Col xs={12}>
+                {eventItems.map((item) => (
+                  <Item key={item.identifier}
+                        item={item}
+                        added={itemAddedToCart} />
+                ))}
+              </Col>
+            </div>
+          )}
 
-      <Row>
-        {eventItems.length > 0 && (
-          <Col xs={12}>
-            {eventItems.map((item) => (
-              <Item key={item.identifier}
-                    item={item}
-                    added={itemAddedToCart} />
-            ))}
-          </Col>
+          <div className={``}>
+            <h5 className={``}>
+              Bowling Extras
+            </h5>
+            <Col xs={12}>
+              {divisionItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+            </Col>
 
-        )}
+            <Col xs={12}>
+              {singleUseItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+            </Col>
+          </div>
 
-        {groupValues.map((group, index) => (
-          <Col key={index} xs={12}>
-            {group.map((item) => (
-              <Item key={item.identifier}
-                    item={item}
-                    added={itemAddedToCart} />
-            ))}
-          </Col>
-        ))}
-
-        <Col xs={12}>
-          {singleUseItems.map((item) => (
-            <Item key={item.identifier}
-                  item={item}
-                  added={itemAddedToCart} />
-          ))}
+          {multiUseItems.length > 0 && (
+            <Col xs={12} className={``}>
+              {multiUseItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+            </Col>
+          )}
         </Col>
 
-        <Col xs={12} className={'pt-3 border-top'}>
-          {multiUseItems.map((item) => (
-            <Item key={item.identifier}
-                  item={item}
-                  added={itemAddedToCart} />
-          ))}
-        </Col>
+        <Col xs={12} md={6} className={``}>
+          {raffleItems.length > 0 && (
+            <div className={``}>
+              <h5 className={``}>
+                Raffle Tickets
+              </h5>
+              {raffleItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+            </div>
+          )}
 
-        <Col xs={12}>
-          {sanctionItems.map((item) => (
-            <Item key={item.identifier}
-                  item={item}
-                  added={itemAddedToCart} />
-          ))}
+          {apparelItems.length > 0 && (
+            <div className={``}>
+              <h5 className={``}>
+                Apparel
+              </h5>
+              {apparelItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+            </div>
+          )}
+
+          {productItems.length > 0 && (
+            <div className={``}>
+              <h5 className={``}>
+                Memorabilia
+              </h5>
+              {productItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+            </div>
+          )}
+
+          {banquetItems.length > 0 && (
+            <div className={``}>
+              <h5 className={``}>
+                Banquet Tickets
+              </h5>
+              {banquetItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+            </div>
+          )}
+
+
+          {sanctionItems.length > 0 && (
+            <div className={``}>
+              <h5 className={``}>
+                Membership Fees
+              </h5>
+              {sanctionItems.map((item) => (
+                <Item key={item.identifier}
+                      item={item}
+                      added={itemAddedToCart} />
+              ))}
+
+            </div>
+          )}
         </Col>
       </Row>
     </div>

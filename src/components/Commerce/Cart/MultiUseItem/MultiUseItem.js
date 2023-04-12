@@ -32,24 +32,21 @@ const multiUseItem = ({item, increase, decrease}) => {
     </div>
   );
 
-  let infoText = '';
-  if (item.configuration.denomination) {
-    infoText = (
-      <p className={classes.Note}>
-        {item.configuration.denomination}
-      </p>
-    );
-  }
+  let {name, note, value, displaySize, quantity} = item;
 
   return (
     <div className={`${classes.MultiUseItem} rounded border mb-3 mx-0 d-flex`}>
       <div className={'ps-2'}>
         <p>
-          {item.name}
+          {name}
         </p>
-        {infoText}
+        {displaySize && (
+          <p className={classes.Size}>
+            {displaySize}
+          </p>
+        )}
         <p>
-          ${item.value} &times; {item.quantity}
+          ${value} &times; {quantity}
         </p>
       </div>
       {links}

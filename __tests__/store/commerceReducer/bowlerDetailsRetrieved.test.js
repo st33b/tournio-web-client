@@ -46,20 +46,26 @@ describe ('action type: bowler details retrieved', () => {
       "puts up with men's shit",
     ],
   };
-  const availableItems = [
-    {
+  const availableItems = {
+    foo: {
       id: 1,
+      identifier: 'foo',
       name: 'shirt',
     },
-    {
+    bar: {
       id: 2,
+      identifier: 'bar',
       name: 'shoes',
     },
-    {
+    bubba: {
       id: 3,
+      identifier: 'bubba',
       name: 'service',
     },
-  ];
+  };
+  const availableApparelItems = {
+
+  }
   const action = {
     type: actionTypes.BOWLER_DETAILS_RETRIEVED,
     bowler: actionBowler,

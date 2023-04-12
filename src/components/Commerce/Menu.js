@@ -16,8 +16,8 @@ const Menu = () => {
     return '';
   }
 
-  const itemAdded = (item) => {
-    dispatch(itemAddedToCart(item));
+  const itemAdded = (item, sizeIdentifier = null) => {
+    dispatch(itemAddedToCart(item, sizeIdentifier));
   }
 
   const itemRemoved = (item) => {
@@ -32,15 +32,11 @@ const Menu = () => {
           <Cart itemAddedToCart={itemAdded}
                 itemRemovedFromCart={itemRemoved} />
         </Col>
-        <Col md={4} className={'order-2 order-md-2'}>
-          <PreviousPurchases/>
-          {!commerce.bowler.has_free_entry && <FreeEntryForm/>}
-        </Col>
-        <Col md={4} className={'order-4 order-md-3'}>
+        <Col md={8} className={'order-4 order-md-3'}>
           <AvailableItems itemAddedToCart={itemAdded}/>
         </Col>
         <Col md={4}
-             className={'d-none d-md-block order-3 order-md-4'}
+             className={`d-none d-md-block order-3 order-md-4 ${classes.CartContainer}`}
              id={'cart'}>
           <Cart itemAddedToCart={itemAdded}
                 itemRemovedFromCart={itemRemoved} />

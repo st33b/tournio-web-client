@@ -20,22 +20,9 @@ export const tournamentListRetrieved = (tournaments) => {
   }
 }
 
-export const tournamentDetailsReset = () => {
-  return {
-    type: actionTypes.TOURNAMENT_DETAILS_RESET,
-  }
-}
-
 export const tournamentDetailsRetrieved = (tournament) => {
   return {
     type: actionTypes.TOURNAMENT_DETAILS_RETRIEVED,
-    tournament: tournament,
-  }
-}
-
-export const tournamentDeleted = (tournament) => {
-  return {
-    type: actionTypes.TOURNAMENT_DELETED,
     tournament: tournament,
   }
 }
@@ -99,7 +86,7 @@ export const testDataCleared = () => {
 
 export const purchasableItemsAdded = (items) => {
   return {
-    type: actionTypes.PURCHASABLE_ITEM_ADDED,
+    type: actionTypes.PURCHASABLE_ITEMS_ADDED,
     items: items,
   }
 }
@@ -108,6 +95,13 @@ export const purchasableItemUpdated = (item) => {
   return {
     type: actionTypes.PURCHASABLE_ITEM_UPDATED,
     item: item,
+  }
+}
+
+export const sizedItemUpdated = (item) => {
+  return {
+    type: actionTypes.SIZED_ITEM_UPDATED,
+    sizedItem: item,
   }
 }
 

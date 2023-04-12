@@ -40,8 +40,6 @@ const OptionalItemsWeek = ({tournament, title, dataKeys}) => {
   const datasets = [];
   const bgColors = chartColors();
   dataKeys.forEach(dataKey => {
-    devConsoleLog("Data key:", dataKey);
-    devConsoleLog("daily purchases for that key:", tournament.chart_data.last_week_purchases_by_day[dataKey]);
     if (tournament.chart_data.last_week_purchases_by_day[dataKey]) {
       Object.entries(tournament.chart_data.last_week_purchases_by_day[dataKey]).forEach(pair => {
         const itemIdentifier = pair[0];

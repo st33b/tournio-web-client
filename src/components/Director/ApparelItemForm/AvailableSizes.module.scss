@@ -1,0 +1,27 @@
+.AvailableSizes {
+  padding: 0;
+
+  .Label {
+    font-size: 95%;
+
+    .RequiredLabel {
+      margin-left: 5px;
+      color: darkred;
+      font-size: 60%;
+    }
+  }
+
+  .SizeHeader {
+    font-weight: bold;
+    padding-bottom: 0.5rem;
+  }
+
+  .SetOfSizes {
+    font-size: 95%;
+    margin-bottom: 0.75rem;
+
+    .Size {
+      padding: 0 0.5rem 0.5rem 0;
+    }
+  }
+}

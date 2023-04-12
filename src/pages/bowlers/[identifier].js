@@ -8,6 +8,8 @@ import RegistrationLayout from "../../components/Layout/RegistrationLayout/Regis
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import Menu from '../../components/Commerce/Menu';
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
+import PreviousPurchases from "../../components/Commerce/PreviousPurchases/PreviousPurchases";
+import FreeEntryForm from "../../components/Commerce/FreeEntryForm/FreeEntryForm";
 
 const Page = () => {
   const router = useRouter();
@@ -81,22 +83,35 @@ const Page = () => {
 
   return (
     <div>
-      {commerce.tournament && (
-        <Row className={'pt-2 g-0'}>
-          <Col xs={3} md={2} className={''}>
+      {commerce.tournament && commerce.bowler && (
+        <Row className={``}>
+          <Col className={'col-3 col-md-1'}>
             <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
               <TournamentLogo url={commerce.tournament.image_url}/>
             </a>
           </Col>
-          <Col xs={9} md={10} className={'d-flex flex-column justify-content-center text-md-start ps-2'}>
-            <h3 className={'p-0 m-0'}>
+          <Col className={'d-none d-md-block col-md-3'}>
+            <h4 className={``}>
               <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
                 {commerce.tournament.name}
               </a>
-            </h3>
-            <h4 className={'p-0 my-2 my-md-3'}>
-              Bowler: {name}
             </h4>
+          </Col>
+          <Col xs={9} md={4} className={'ps-2'}>
+            <h3 className={``}>
+              Bowler: {name}
+            </h3>
+            {commerce.bowler.team_identifier && (
+              <h4>
+                <a href={`/teams/${commerce.bowler.team_identifier}`}>
+                  Team: {commerce.bowler.team_name}
+                </a>
+              </h4>
+            )}
+            {!commerce.bowler.has_free_entry && <FreeEntryForm/>}
+          </Col>
+          <Col className={`d-none d-md-block col-md-4`}>
+            <PreviousPurchases/>
           </Col>
         </Row>
       )}

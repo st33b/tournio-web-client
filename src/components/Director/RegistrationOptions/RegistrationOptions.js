@@ -1,8 +1,7 @@
 import {useEffect, useState} from 'react';
-import {Card, ListGroup} from "react-bootstrap";
+import {Card} from "react-bootstrap";
 import {Map} from 'immutable';
 
-import classes from '../TournamentInPrep/TournamentInPrep.module.scss';
 import {directorApiRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {tournamentDetailsRetrieved} from "../../../store/actions/directorActions";
@@ -18,6 +17,22 @@ const RegistrationOptions = ({tournament}) => {
     {key: 'partner', label: 'Partner Up'},
     {key: 'new_pair', label: 'New Doubles Pair'},
   ];
+  const TYPE_OPTIONS = {
+    traditional: {
+      new_team: true,
+      solo: true,
+      join_team: true,
+      partner: false,
+      new_pair: false,
+    },
+    eventsSelectable: {
+      new_team: false,
+      solo: true,
+      join_team: false,
+      partner: true,
+      new_pair: true,
+    },
+  }
 
   const initialFormData = Map({
     new_team: false,
@@ -46,6 +61,9 @@ const RegistrationOptions = ({tournament}) => {
   if (!tournament) {
     return '';
   }
+
+  const tournamentType = tournament.events.length === 0 ? 'traditional' : 'eventsSelectable';
+  const allowedOptionSet = TYPE_OPTIONS[tournamentType];
 
   const optionToggled = (event) => {
     const inputName = event.target.name;
@@ -88,21 +106,22 @@ const RegistrationOptions = ({tournament}) => {
         Registration Options
       </Card.Header>
       <Card.Body>
-        {REGISTRATION_TYPE_LABELS.map(kind => (
-          <div className={'form-check form-switch'} key={kind.key}>
-            <input type={'checkbox'}
-                   className={'form-check-input'}
-                   role={'switch'}
-                   id={kind.key}
-                   name={kind.key}
-                   checked={formData.get(kind.key)}
-                   onChange={optionToggled}/>
-            <label htmlFor={kind.key}
-                   className={'form-check-label'}>
-              {kind.label}
-            </label>
-          </div>
-        ))}
+        {REGISTRATION_TYPE_LABELS.map(kind => {
+            return !allowedOptionSet[kind.key] ? '' :
+              <div className={'form-check form-switch'} key={kind.key}>
+                <input type={'checkbox'}
+                       className={'form-check-input'}
+                       role={'switch'}
+                       id={kind.key}
+                       name={kind.key}
+                       checked={formData.get(kind.key)}
+                       onChange={optionToggled}/>
+                <label htmlFor={kind.key}
+                       className={'form-check-label'}>
+                  {kind.label}
+                </label>
+              </div>
+          })}
 
       </Card.Body>
       {errorMessage && (

@@ -1,5 +1,4 @@
 import {useEffect} from "react";
-import {useRouter} from "next/router";
 
 import '../scss/tournio-bs.scss';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -22,7 +21,6 @@ function MyApp({Component, pageProps})  {
   }, []);
 
   const getLayout = Component.getLayout || ((page) => page);
-  const router = useRouter();
 
     return (
       <DirectorContextProvider>

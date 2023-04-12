@@ -18,7 +18,7 @@ describe('action type: purchasable item added', () => {
   }
 
   const action = {
-    type: actionTypes.PURCHASABLE_ITEM_ADDED,
+    type: actionTypes.PURCHASABLE_ITEMS_ADDED,
     items: [newItem],
   }
 

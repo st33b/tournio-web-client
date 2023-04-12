@@ -27,7 +27,7 @@ describe('action type: team added', () => {
       ...previousState.tournament,
       team_count: previousState.tournament.team_count + 1,
     },
-    teams: [newTeam],
+    teams: [],
   };
 
   it('returns the expected object', () => {

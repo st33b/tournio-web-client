@@ -40,13 +40,16 @@
 
   .PurchasableItems {
     .Category {
-      padding-bottom: 0;
-      padding-left: 0;
-      padding-right: 0;
+      padding: 0;
 
       border-bottom: 1px solid var(--tournio-gray-400);
       @media (prefers-color-scheme: dark) {
         border-bottom-color: var(--tournio-gray-700);
+      }
+
+      h6 {
+        text-align: center;
+        padding: 0.5rem 0;
       }
 
       .Item {

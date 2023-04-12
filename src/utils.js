@@ -120,6 +120,66 @@ export const timezones = {
   },
 }
 
+export const apparelSizes = {
+  unisex: {
+    xxs: false,
+    xs: false,
+    s: false,
+    m: false,
+    l: false,
+    xl: false,
+    xxl: false,
+    xxxl: false,
+  },
+  women: {
+    xxs: false,
+    xs: false,
+    s: false,
+    m: false,
+    l: false,
+    xl: false,
+    xxl: false,
+    xxxl: false,
+  },
+  men: {
+    xxs: false,
+    xs: false,
+    s: false,
+    m: false,
+    l: false,
+    xl: false,
+    xxl: false,
+    xxxl: false,
+  },
+  infant: {
+    newborn: false,
+    m6: false,
+    m12: false,
+    m18: false,
+    m24: false,
+  },
+};
+
+export const apparelSizeMapping = {
+  one_size_fits_all: 'One size fits all',
+  xxs: '2XS',
+  xs: 'XS',
+  s: 'S',
+  m: 'M',
+  l: 'L',
+  xl: 'XL',
+  xxl: '2XL',
+  xxxl: '3XL',
+  unisex: 'Unisex',
+  women: "Women's",
+  men: "Men's",
+  infant: "Infant",
+  newborn: "Newborn",
+  m6: '6 months',
+  m12: '12 months',
+  m18: '18 months',
+  m24: '24 months',
+};
 
 ///////////////////////////////////////////////////
 

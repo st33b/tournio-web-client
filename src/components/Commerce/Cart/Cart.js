@@ -13,7 +13,8 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
   }
 
   const sum = (runningTotal, currentValue) => {
-    if (currentValue.category === 'ledger' && (currentValue.determination === 'early_discount' || currentValue.determination === 'bundle_discount')) {
+    if (currentValue.category === 'ledger' && (currentValue.determination === 'early_discount'
+      || currentValue.determination === 'bundle_discount')) {
       return runningTotal - currentValue.value * (currentValue.quantity || 1);
     }
     return runningTotal + currentValue.value * (currentValue.quantity || 1);
@@ -31,7 +32,7 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
     cartItems = (
       <div className={classes.ItemList}>
         {commerce.cart.map((item, index) => {
-          if (item.determination === 'multi_use') {
+          if (['product', 'raffle', 'banquet', 'bracket'].includes(item.category) || item.determination === 'multi_use') {
             return (
               <MultiUseItem key={index}
                             item={item}
@@ -53,9 +54,9 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
 
   return (
     <div className={classes.Cart}>
-      <h4 className={'py-2 py-md-0'}>
+      <h5 className={``}>
         Cart
-      </h4>
+      </h5>
       {cartItems}
       <p className={classes.TotalFees}>
         Total: ${totalFees}
