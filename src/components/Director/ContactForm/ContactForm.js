@@ -60,7 +60,6 @@ const ContactForm = ({tournament, contact, newContact}) => {
   }
 
   const onFailure = (data) => {
-    console.log("FAIL", data);
   }
 
   const formSubmitted = (event) => {
