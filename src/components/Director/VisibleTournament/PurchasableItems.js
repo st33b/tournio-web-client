@@ -28,8 +28,10 @@ const PurchasableItems = ({eventKey, tournament}) => {
     'ledger',
     'division',
     'bowling',
-    'banquet',
+    'raffle',
     'product',
+    'banquet',
+    'sanction',
   ];
 
   return (

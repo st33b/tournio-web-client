@@ -12,6 +12,12 @@ const PurchasableItem = ({item}) => {
     );
   }
 
+  if (item.category === 'product' && item.determination === 'apparel') {
+    if (item.configuration.parent_identifier) {
+      return '';
+    }
+  }
+
   let additionalText = '';
   if (item.refinement === 'division') {
     additionalText = `Division: ${item.configuration['division']}`;
