@@ -66,7 +66,7 @@ export const itemRemovedFromCart = (currentState, itemToRemove) => {
     case 'banquet':
       return handleAsBanquetItem(currentState, itemToRemove);
     case 'raffle':
-      return handleAsRaffleItem(currentState, itemtoRemove);
+      return handleAsRaffleItem(currentState, itemToRemove);
     case 'product':
       return handleAsProductItem(currentState, itemToRemove);
     default:

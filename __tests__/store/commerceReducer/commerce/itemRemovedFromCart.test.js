@@ -688,4 +688,62 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       });
     });
   });
+
+  describe('a raffle item', () => {
+    const myBasicItem = {
+      ...basicItem,
+      category: 'raffle',
+      name: 'Prizes and stuff',
+    };
+
+    describe("when there's just one left in the cart", () => {
+      const raffleItem = {
+        ...myBasicItem,
+        quantity: 1,
+      }
+      const myPreviousState = {
+        ...previousState,
+        cart: [raffleItem],
+        availableItems: {
+          [raffleItem.identifier]: raffleItem,
+        }
+      }
+
+      const result = itemRemovedFromCart(myPreviousState, raffleItem);
+
+      it('removes the raffle item', () => {
+        expect(result.cart.length).toStrictEqual(0);
+      });
+
+      it('drops the quantity to zero', () => {
+        expect(result.availableItems[raffleItem.identifier].quantity).toStrictEqual(0);
+      });
+    });
+
+    describe("when there's more than one in the cart", () => {
+      const raffleItem = {
+        ...myBasicItem,
+        quantity: 12,
+      }
+      const myPreviousState = {
+        ...previousState,
+        cart: [raffleItem],
+        availableItems: {
+          [raffleItem.identifier]: raffleItem,
+        }
+      }
+
+      const result = itemRemovedFromCart(myPreviousState, raffleItem);
+
+      it('leaves the item in the cart', () => {
+        expect(result.cart.length).toStrictEqual(myPreviousState.cart.length);
+      });
+
+      it('drops the quantity by 1', () => {
+        expect(result.availableItems[raffleItem.identifier].quantity).toStrictEqual(raffleItem.quantity - 1);
+      });
+    });
+
+  });
+
 });
