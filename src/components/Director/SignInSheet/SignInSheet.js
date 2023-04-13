@@ -1,5 +1,5 @@
-import {useDirectorContext} from "../../../store/DirectorContext";
 import classes from './SignInSheet.module.scss';
+import TournamentLogo from "../../Registration/TournamentLogo/TournamentLogo";
 
 const SignInSheet = ({tournament, bowler, showPrintButton}) => {
   if (!bowler || !tournament) {
@@ -14,9 +14,7 @@ const SignInSheet = ({tournament, bowler, showPrintButton}) => {
   return (
     <div className={classes.SignInSheetHtml}>
       <div className={'d-flex align-items-center justify-content-center pb-3 pt-4'}>
-        <img className={`${classes.Logo} img-fluid`}
-             src={tournament.image_url}
-             alt={'Tournament logo'}/>
+        <TournamentLogo url={tournament.image_url} additionalClasses={classes.Logo} />
         <h2 className={'ps-2'}>
           {tournament.name} {tournament.year}
         </h2>
@@ -54,7 +52,7 @@ const SignInSheet = ({tournament, bowler, showPrintButton}) => {
             </span>
           </address>
 
-          {Object.values(bowler.additional_question_responses).map(r => (
+          {bowler.additional_question_responses && Object.values(bowler.additional_question_responses).map(r => (
             <div key={r.name}>
               {r.label}: {r.response}
             </div>
@@ -130,7 +128,7 @@ const SignInSheet = ({tournament, bowler, showPrintButton}) => {
           Events &amp; Purchases
         </p>
         <div className={'col-6'}>
-          {bowler.purchases.map(p => {
+          {bowler.purchases && bowler.purchases.map(p => {
             let note = false;
             if (p.configuration.division) {
               note = `Division ${p.configuration.division}`;

@@ -6,6 +6,8 @@ import {useDirectorContext} from "../../../../store/DirectorContext";
 import {directorApiRequest, useLoggedIn} from "../../../../director";
 import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorBoundary from "../../../../components/common/ErrorBoundary";
+import ReactPDF from "@react-pdf/renderer";
+import SignInSheetPdf from "../../../../components/Director/SignInSheetPdf";
 
 const Page = () => {
   const router = useRouter();
@@ -83,13 +85,7 @@ const Page = () => {
   }
 
   return (
-    <div className={'container-md'}>
-      <ErrorBoundary>
-        {
-          bowlers.map((bowler, i) => <SignInSheet tournament={directorState.tournament} bowler={bowler} key={bowler.identifier} showPrintButton={i === 0}/>)
-        }
-      </ErrorBoundary>
-    </div>
+    ReactPDF.render(<SignInSheetPdf tournament={t} />)
   );
 }
 

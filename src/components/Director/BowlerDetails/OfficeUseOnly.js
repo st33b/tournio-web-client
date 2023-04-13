@@ -195,6 +195,10 @@ const OfficeUseOnly = ({bowler}) => {
                          target={'_new'}>
                 Sign-in Sheet
               </Card.Link>
+              <Card.Link href={`/director/bowlers/${bowler.identifier}/sign-in-sheet-pdf`}
+                         target={'_new'}>
+                PDF
+              </Card.Link>
             </Card.Text>
           </Card.Body>
         </Card>

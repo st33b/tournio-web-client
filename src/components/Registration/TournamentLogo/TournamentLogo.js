@@ -1,7 +1,7 @@
 import Image from 'react-bootstrap/Image';
 import classes from './TournamentLogo.module.scss';
 
-const TournamentLogo = ({url}) => {
+const TournamentLogo = ({url, additionalClasses = ''}) => {
   if (!url) {
     return '';
   }
@@ -10,7 +10,7 @@ const TournamentLogo = ({url}) => {
     <Image src={url}
            alt={'Tournament logo'}
            fluid
-           className={classes.TournamentLogo}
+           className={`${classes.TournamentLogo} ${additionalClasses}`}
     />
   );
 }

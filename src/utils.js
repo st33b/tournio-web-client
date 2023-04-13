@@ -672,3 +672,24 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
       }
     });
 }
+
+/////////////////////////////////////////////////////
+
+export const apiDownloadRequest = ({uri, onSuccess = null, onFailure = null}) => {
+  const url = `${apiHost}${uri}`;
+  const config = {
+    method: 'get',
+    url: url,
+    headers: {
+      'Accept': 'application/json',
+    },
+    validateStatus: (status) => status < 500,
+  }
+  axios(config)
+    .then(response => {
+      onSuccess(response.data)
+    })
+    .catch(error => {
+      console.log('Failed to retrieve data for download', error);
+    });
+}

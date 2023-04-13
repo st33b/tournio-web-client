@@ -102,6 +102,12 @@ const Downloads = ({tournament}) => {
           >
             Sign-in Sheets (beta)
           </a>
+          <a className={'btn btn-sm btn-warning mt-3 mx-2'}
+             href={`/director/tournaments/${tournament.identifier}/sign-in-sheets-pdf`}
+             disabled={!directorState.bowlers || directorState.bowlers.length === 0}
+          >
+            PDFs
+          </a>
           {downloadMessage}
         </Card.Body>
       </Card>
