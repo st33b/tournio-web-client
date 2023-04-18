@@ -22,25 +22,28 @@ const YouWillNeed = ({tournament}) => {
           Names and contact information (email, phone, address)
         </li>
         <li>
-          Birth dates (required for IGBO)
+          Birthdates (mm/dd)
         </li>
         <li>
           {/*USBC and IGBO identifiers*/}
           USBC ID
           {' '}&ndash;{' '}
-          <a href={USBC_ID_LOOKUP_URL} target="_blank" rel={'noreferrer'}>
+          <a href={USBC_ID_LOOKUP_URL}
+             target="_blank"
+             rel={'noreferrer'}>
             look up a USBC identifier
             <i className={`${classes.ExternalLink} bi-box-arrow-up-right ps-2`} aria-hidden="true"/>
           </a>
         </li>
-        {/*<li>*/}
-        {/*  IGBO ID*/}
-        {/*  {' '}&ndash;{' '}*/}
-        {/*  <a href={IGBO_ID_LOOKUP_URL} target="_new">*/}
-        {/*    Find an IGBO identifier*/}
-        {/*    <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>*/}
-        {/*  </a>*/}
-        {/*</li>*/}
+        <li>
+          You may also need your{' '}
+          <a href={IGBO_ID_LOOKUP_URL}
+             target={'_blank'}
+             rel={'noreferrer'}>
+            IGBO TAD average
+            <i className={`${classes.ExternalLink} bi-box-arrow-up-right ps-2`} aria-hidden="true"/>
+          </a>
+        </li>
       </ul>
     </div>
   );
