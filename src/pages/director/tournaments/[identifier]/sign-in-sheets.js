@@ -58,7 +58,7 @@ const Page = () => {
     if (!identifier) {
       return;
     }
-    const uri = `/director/tournaments/${identifier}/bowlers?include_details`;
+    const uri = `/director/tournaments/${identifier}/bowlers?include_details=true`;
     const requestConfig = {
       method: 'get',
     }

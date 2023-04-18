@@ -1,4 +1,3 @@
-import {useDirectorContext} from "../../../store/DirectorContext";
 import classes from './SignInSheet.module.scss';
 
 const SignInSheet = ({tournament, bowler, showPrintButton}) => {
