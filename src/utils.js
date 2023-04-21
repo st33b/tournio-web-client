@@ -2,10 +2,8 @@ import axios from "axios";
 import {
   bowlerCommerceDetailsRetrieved,
   teamListRetrieved,
-  tournamentDetailsRetrieved,
 } from "./store/actions/registrationActions";
 import {useEffect, useState} from "react";
-import {useDirectorContext} from "./store/DirectorContext";
 
 export const useStorage = (key, initialValue) => {
   const [value, setValue] = useState(() => {
@@ -670,5 +668,26 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
         console.log('Exceptional error', error.message);
         onFailure({error: error.message});
       }
+    });
+}
+
+/////////////////////////////////////////////////////
+
+export const apiDownloadRequest = ({uri, onSuccess = null, onFailure = null}) => {
+  const url = `${apiHost}${uri}`;
+  const config = {
+    method: 'get',
+    url: url,
+    headers: {
+      'Accept': 'application/json',
+    },
+    validateStatus: (status) => status < 500,
+  }
+  axios(config)
+    .then(response => {
+      onSuccess(response.data)
+    })
+    .catch(error => {
+      console.log('Failed to retrieve data for download', error);
     });
 }

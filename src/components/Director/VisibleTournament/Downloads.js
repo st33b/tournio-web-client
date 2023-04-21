@@ -100,7 +100,7 @@ const Downloads = ({tournament}) => {
              href={`/director/tournaments/${tournament.identifier}/sign-in-sheets`}
              disabled={!directorState.bowlers || directorState.bowlers.length === 0}
           >
-            Sign-in Sheets (beta)
+            Sign-in Sheets
           </a>
           {downloadMessage}
         </Card.Body>
