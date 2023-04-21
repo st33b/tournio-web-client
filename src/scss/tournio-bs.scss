@@ -3,17 +3,18 @@
 
 // now we set some system-wide Sass variables of our own
 
-$font-family-sans-serif: "Plus Jakarta Sans",
--apple-system,
-BlinkMacSystemFont,
-"Segoe UI",
-Roboto,
-"Helvetica Neue",
-Arial,
-sans-serif,
-"Apple Color Emoji",
-"Segoe UI Emoji",
-"Segoe UI Symbol";
+$font-family-sans-serif:
+  "Nunito Sans",
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  Roboto,
+  "Helvetica Neue",
+  Arial,
+  sans-serif,
+  "Apple Color Emoji",
+  "Segoe UI Emoji",
+  "Segoe UI Symbol";
 
 $prefix: tournio-;
 

@@ -12,15 +12,15 @@ const SignInSheet = ({tournament, bowler, showPrintButton}) => {
   }
 
   return (
-    <div className={classes.SignInSheetHtml}>
-      <div className={'d-flex align-items-center justify-content-center pb-3 pt-4'}>
+    <div className={`${classes.SignInSheetHtml} d-flex flex-column vh-100`}>
+      <div className={'d-flex align-items-center justify-content-center'}>
         <TournamentLogo url={tournament.image_url} additionalClasses={classes.Logo} />
         <h2 className={'ps-2'}>
           {tournament.name} {tournament.year}
         </h2>
       </div>
 
-      <div className={'d-flex justify-content-end py-3 border-top border-bottom border-1'}>
+      <div className={'d-flex justify-content-end pt-3 pb-2 border-bottom border-1'}>
         <h3 className={'me-auto'}>
           {bowler.last_name}, {bowlerFirstName}
         </h3>
@@ -34,7 +34,7 @@ const SignInSheet = ({tournament, bowler, showPrintButton}) => {
         )}
       </div>
 
-      <div className={'row py-3 border-bottom border-1'}>
+      <div className={'row py-3'}>
         <div className={'col-6'}>
           <address className={classes.Address}>
             <span>
@@ -51,12 +51,6 @@ const SignInSheet = ({tournament, bowler, showPrintButton}) => {
               {bowler.country}
             </span>
           </address>
-
-          {bowler.additional_question_responses && Object.values(bowler.additional_question_responses).map(r => (
-            <div key={r.name}>
-              {r.label}: {r.response}
-            </div>
-          ))}
         </div>
 
         <div className={'col-6'}>
@@ -81,7 +75,17 @@ const SignInSheet = ({tournament, bowler, showPrintButton}) => {
         </div>
       </div>
 
-      <div className={`row py-3 border-bottom border-1`}>
+      <div className={`row g-0 pb-3 border-bottom border-1 ${classes.ExtraQuestions}`}>
+        <div className={'col-12'}>
+          {bowler.additional_question_responses && Object.values(bowler.additional_question_responses).map(r => (
+            <div key={r.name}>
+              {r.label}: <strong>{r.response}</strong>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className={`row g-0 py-3 border-bottom border-1`}>
         <div className={'col-5'}>
           <div className={'row'}>
             <div className={'col-8 text-end pe-2'}>
@@ -123,10 +127,10 @@ const SignInSheet = ({tournament, bowler, showPrintButton}) => {
         </div>
       </div>
 
-      <div className={`row py-3 border-bottom border-1`}>
-        <p className={'lead'}>
-          Events &amp; Purchases
-        </p>
+      <div className={`row g-0 py-3 border-bottom border-1`}>
+        <h4>
+          Fees &amp; Extras
+        </h4>
         <div className={'col-6'}>
           {bowler.purchases && bowler.purchases.map(p => {
             let note = false;
@@ -190,7 +194,7 @@ const SignInSheet = ({tournament, bowler, showPrintButton}) => {
         </div>
       </div>
 
-      <div className={`${classes.Agreement}`}>
+      <div className={`${classes.Agreement} mt-auto`}>
         <div className={'row'}>
           <div className={`col-7 offset-5`}>
             <div className={classes.Signature}>

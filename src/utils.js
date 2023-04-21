@@ -2,10 +2,8 @@ import axios from "axios";
 import {
   bowlerCommerceDetailsRetrieved,
   teamListRetrieved,
-  tournamentDetailsRetrieved,
 } from "./store/actions/registrationActions";
 import {useEffect, useState} from "react";
-import {useDirectorContext} from "./store/DirectorContext";
 
 export const useStorage = (key, initialValue) => {
   const [value, setValue] = useState(() => {

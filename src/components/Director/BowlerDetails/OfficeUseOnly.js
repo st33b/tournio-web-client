@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react";
 import {Map} from 'immutable';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {Button, Card} from "react-bootstrap";
-import {directorApiRequest} from "../../../director";
+import {directorApiDownloadRequest, directorApiRequest} from "../../../director";
 
 const OfficeUseOnly = ({bowler}) => {
   const context = useDirectorContext();
@@ -19,6 +19,7 @@ const OfficeUseOnly = ({bowler}) => {
 
   const [formData, setFormData] = useState(initialFormData);
   const [flashes, setFlashes] = useState({success: '', error: ''});
+  const [downloadMessage, setDownloadMessage] = useState(null);
 
   // If there's a valid bowler prop, put their data into the form data
   useEffect(() => {
@@ -195,11 +196,8 @@ const OfficeUseOnly = ({bowler}) => {
                          target={'_new'}>
                 Sign-in Sheet
               </Card.Link>
-              <Card.Link href={`/director/bowlers/${bowler.identifier}/sign-in-sheet-pdf`}
-                         target={'_new'}>
-                PDF
-              </Card.Link>
             </Card.Text>
+            {downloadMessage}
           </Card.Body>
         </Card>
       </div>

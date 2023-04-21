@@ -1,26 +1,25 @@
 @page {
   size: auto;
-  margin: 0;
+  margin: 0.5in;
 }
 
 .SignInSheetHtml {
-  margin-left: 2rem;
-  margin-right: 2rem;
   line-height: 1.5rem;
+
   .Logo {
-    max-width: 80px;
-    max-height: 80px;
-  }
-  @media print {
-    .PrintButton {
-      display: none;
-    }
+    max-width: 60px;
+    max-height: 60px;
   }
   .Address {
     span {
       display: block;
     }
   }
+
+  .ExtraQuestions {
+    //margin-left: -0.5rem;
+  }
+
   .PurchaseNote {
     display: block;
     font-style: italic;
@@ -28,16 +27,13 @@
     font-weight: 200;
   }
   .Agreement {
-    margin-top: 3rem;
-    margin-right: 2rem;
-    width: 100%;
-
     .Signature {
+      margin-top: 2rem;
       border-bottom: 1px solid #000;
     }
     .Acknowledgement {
       font-style: italic;
-      font-size: 90%;
+      font-size: 85%;
       font-weight: 200;
       word-wrap: normal;
     }
@@ -45,6 +41,30 @@
 }
 @media print {
   .SignInSheetHtml {
-    page-break-after: always;
+    font-family:
+      Lora,
+      serif;
+    font-size: 90%;
+    line-height: 1.3rem;
+
+    h2 {
+      font-size: 1.7rem;
+    }
+    h3 {
+      font-size: 1.3rem;
+    }
+    h4 {
+      font-size: 1.2rem;
+    }
+    page-break-after: auto;
+
+    .PrintButton {
+      display: none;
+    }
+    .Agreement {
+      .Signature {
+        margin-top: 1in;
+      }
+    }
   }
 }

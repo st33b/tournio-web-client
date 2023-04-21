@@ -4,7 +4,10 @@ const TournioDocument = () => (
   <Html>
     <Head>
       <link
-        href={'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans&display=swap'}
+        href={'https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap'}
+        rel={'stylesheet'}/>
+      <link
+        href={'https://fonts.googleapis.com/css2?family=Lora&display=swap'}
         rel={'stylesheet'}/>
     </Head>
     <body>
