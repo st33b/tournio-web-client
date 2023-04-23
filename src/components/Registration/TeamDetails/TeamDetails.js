@@ -46,28 +46,27 @@ const TeamDetails = ({tournament, team, successType, context, enablePayment = tr
   return (
     <div className={classes.TeamDetails}>
       {successBanner}
+      <h3>
+        Team: {team.name}
+      </h3>
+      {team.bowlers.length > 0 && (
       <div className={'table-responsive'}>
-        <h3>
-          Team: {team.name}
-        </h3>
         <table className={'table table-striped caption-top'}>
           <thead>
             <tr className={'align-middle'}>
               <th><span className={'d-none d-sm-block'}>Position</span></th>
               <th>Name</th>
-              {/* conditionally display this? */}
-              <th>Amount Due</th>
+              {context === 'join' && (
+                <th>Doubles Partner</th>
+              )}
+              {context !== 'join' && (
+                <th>Amount Due</th>
+              )}
               {enablePayment && <th></th>}
             </tr>
           </thead>
           <tbody>
           {team.bowlers.map((b, i) => {
-            let displayed_name = b.first_name;
-            if (b.preferred_name) {
-              displayed_name = b.preferred_name;
-            }
-            const name = displayed_name + ' ' + b.last_name;
-
             // We might've come here from the checkout page, in which case that amount_due
             // is more up-to-date than the one on the team object.
             let amountDue = b.amount_due;
@@ -77,8 +76,13 @@ const TeamDetails = ({tournament, team, successType, context, enablePayment = tr
             return (
               <tr key={i}>
                 <td>{b.position}</td>
-                <td>{name}</td>
-                <td>${amountDue}</td>
+                <td>{b.full_name}</td>
+                {context === 'join' && (
+                  <td>{b.doubles_partner_name}</td>
+                )}
+                {context !== 'join' && (
+                  <td>${amountDue}</td>
+                )}
                 {enablePayment && (
                   <td>
                     <a href={`/bowlers/${b.identifier}`}
@@ -93,6 +97,12 @@ const TeamDetails = ({tournament, team, successType, context, enablePayment = tr
           </tbody>
         </table>
       </div>
+      )}
+      {team.bowlers.length === 0 && context !== 'join' && (
+        <h5 className={'text-center'}>
+          No bowlers to display.
+        </h5>
+      )}
     </div>
   );
 }

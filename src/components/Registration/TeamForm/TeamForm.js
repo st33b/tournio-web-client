@@ -5,6 +5,7 @@ import {Map} from "immutable";
 import classes from './TeamForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {useClientReady} from "../../../utils";
+import ShiftForm from "../ShiftForm/ShiftForm";
 
 const TeamForm = ({tournament, teamFormCompleted}) => {
   const initialFormState = {
@@ -54,57 +55,6 @@ const TeamForm = ({tournament, teamFormCompleted}) => {
     return '';
   }
 
-  let shiftSelection = '';
-  if (tournament.available_shifts.length > 1) {
-    shiftSelection = (
-      <Form.Group as={Row}
-                  className={'my-3'}
-                  controlId={'shift'}>
-        <Form.Label column={true}
-                    className={classes.Label}
-                    md={4}>
-          Shift Preference
-          <i className={`${classes.NoteIndicator} align-top bi-asterisk ms-1`} aria-hidden={true} />
-        </Form.Label>
-        <Col>
-          {tournament.available_shifts.map((shift, i) => (
-            <Form.Check type={'radio'}
-                        key={i}
-                        required={true}
-                        onChange={inputChangedHandler}
-                        label={shift.name}
-                        value={shift.identifier}
-                        checked={teamForm.get('shift') === shift.identifier}
-                        id={`shift_${i}`}
-                        name={'shift'} />
-          ))}
-          <div className={classes.ConfirmationText}>
-            <i className={`${classes.NoteIndicator} align-top bi-asterisk me-1`} aria-hidden={true} />
-            A bowler&apos;s place in a shift cannot be confirmed until they have paid their registration fees.
-          </div>
-        </Col>
-      </Form.Group>
-    )
-  } else if (tournament.shifts.length > 1) {
-    const shiftName = tournament.available_shifts[0].name;
-    shiftSelection = (
-      <Form.Group as={Row}
-                  className={'mb-3'}
-                  controlId={'shift'}>
-        <Form.Label column={true}
-                    className={classes.Label}
-                    md={4}>
-          Shift Preference
-        </Form.Label>
-        <Col>
-          <span className={`${classes.OneShift} align-middle`}>
-            The only remaining available shift is <strong>{shiftName}</strong>.
-          </span>
-        </Col>
-      </Form.Group>
-    )
-  }
-
   return (
     <ErrorBoundary>
       <div className={classes.TeamForm}>
@@ -131,7 +81,11 @@ const TeamForm = ({tournament, teamFormCompleted}) => {
               </Form.Control.Feedback>
             </Col>
           </Form.Group>
-          {shiftSelection}
+
+          <ShiftForm tournament={tournament}
+                     onInputChanged={inputChangedHandler}
+                     currentSelection={teamForm.get('shift')} />
+
           <Row>
             <Col className={classes.Submit}>
               <Button type={'submit'}

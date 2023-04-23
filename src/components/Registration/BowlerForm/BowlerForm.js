@@ -7,6 +7,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import classes from './BowlerForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {devConsoleLog} from "../../../utils";
+import ShiftForm from "../ShiftForm/ShiftForm";
 
 const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => {
   const {registration} = useRegistrationContext();
@@ -509,19 +510,10 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     <form onSubmit={formHandler} noValidate>
       {showShiftSelection && (
         <div>
-          <Input
-            key={'preferred_shift'}
-            identifier={'preferred_shift'}
-            elementType={bowlerForm.soloBowlerFields.preferred_shift.elementType}
-            elementConfig={bowlerForm.soloBowlerFields.preferred_shift.elementConfig}
-            changed={(event) => inputChangedHandler(event, 'preferred_shift')}
-            label={bowlerForm.soloBowlerFields.preferred_shift.label}
-            shouldValidate={true}
-            touched={bowlerForm.soloBowlerFields.preferred_shift.touched}
-            invalid={!bowlerForm.soloBowlerFields.preferred_shift.valid}
-            validationRules={bowlerForm.soloBowlerFields.preferred_shift.validation}
-            helper={bowlerForm.soloBowlerFields.preferred_shift.helper}
-          />
+          <ShiftForm tournament={tournament}
+                     onInputChanged={(event) => inputChangedHandler(event, 'preferred_shift')}
+                     currentSelection={bowlerForm.soloBowlerFields.preferred_shift.elementConfig.value}
+                     name={'preferred_shift'} />
           <hr />
         </div>
       )}
