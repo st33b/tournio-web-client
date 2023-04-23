@@ -33,6 +33,7 @@ const Page = () => {
       <Col lg={8}>
         <BowlerForm tournament={registration.tournament}
                     bowlerInfoSaved={onNewBowlerAdded}
+                    includeShift={registration.team.bowlers.length === 0}
         />
       </Col>
     </Row>

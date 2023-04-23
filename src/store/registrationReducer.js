@@ -89,15 +89,25 @@ export const registrationReducer = (state, action) => {
       });
     case actionTypes.EXISTING_TEAM_BOWLER_INFO_ADDED:
       const modifiedTeam = {...state.team}
-      modifiedTeam.bowlers = state.team.bowlers.concat(action.bowler);
+      const bowler = {...action.bowler}
+      if (modifiedTeam.bowlers.length === 0 && action.bowler.shift) {
+        modifiedTeam.shift = state.tournament.shifts.find(s => s.identifier === action.bowler.shift);
+        bowler.shift = modifiedTeam.shift;
+      }
+      modifiedTeam.bowlers = state.team.bowlers.concat(bowler);
       return updateObject(state, {
         team: modifiedTeam,
       });
     case actionTypes.EXISTING_TEAM_BOWLER_EDITED:
-      const bowlers = [...state.team.bowlers];
-      bowlers.pop(); // remove the last bowler, which is the one who's been edited
-      bowlers.push(action.bowler);
       const team = {...state.team}
+      const bowlers = [...team.bowlers];
+      bowlers.pop(); // remove the last bowler, which is the one who's been edited
+      const updatedBowler = {...action.bowler}
+      if (bowlers.length === 0 && action.bowler.shift) {
+        team.shift = state.tournament.shifts.find(s => s.identifier === action.bowler.shift);
+        updatedBowler.shift = team.shift;
+      }
+      bowlers.push(updatedBowler);
       team.bowlers = bowlers;
       return updateObject(state, {
         team: team,

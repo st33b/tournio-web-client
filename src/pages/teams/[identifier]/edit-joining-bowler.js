@@ -40,6 +40,7 @@ const Page = () => {
         <BowlerForm tournament={registration.tournament}
                     bowlerData={registration.team.bowlers[bowlerNum - 1]}
                     bowlerInfoSaved={onBowlerInfoUpdated}
+                    includeShift={registration.team.bowlers.length === 1}
                     cancelHref={`/teams/${registration.team.identifier}/review-joining-bowler`}
         />
       </Col>

@@ -1,0 +1,27 @@
+.ShiftForm {
+  .Label {
+    text-align: left;
+    font-weight: normal;
+  }
+  .NoteIndicator {
+    font-size: 60%;
+  }
+  .ConfirmationText {
+    margin-top: 1rem;
+    font-size: 90%
+  }
+  @media (min-width: 768px) {
+    .Label {
+      text-align: right;
+      font-weight: bold;
+    }
+  }
+  .OneShift {
+    font-size: 90%;
+    font-weight: 300;
+    line-height: 2.5rem;
+    strong {
+      font-weight: bold;
+    }
+  }
+}
