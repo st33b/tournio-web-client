@@ -21,6 +21,8 @@ const ShiftCapacity = ({shift, includeName}) => {
           <div className={classes.EndLabel}>100%</div>
         </div>
         <div>
+          {/* TODO: migrate this markup so that role and aria-* attributes are properly announced. */}
+          {/* The hope is that ReactBootstrap will build that in so we don't have to. */}
           <ProgressBar style={{height: '2rem'}}>
             <ProgressBar now={percent(shift.paid_count, shift.capacity)}
                          label={`${percent(shift.paid_count, shift.capacity)}%`}

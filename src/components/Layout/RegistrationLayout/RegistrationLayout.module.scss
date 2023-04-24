@@ -1,14 +1,18 @@
 .RegistrationLayout {
+  background-color: var(--tournio-body-bg);
+  color: var(--tournio-body-color);
+
   header {
     background-color: var(--tournio-gray-100);
     color: var(--tournio-body-color);
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--tournio-gray-900);
-    }
     position: -webkit-sticky;
     position: sticky;
     top: 0;
   }
+  &[data-bs-theme="dark"] header {
+    background-color: var(--tournio-bookend-bg);
+  }
+
   main {
     margin-top: 0.5rem;
     margin-bottom: 2rem;
@@ -26,10 +30,11 @@
     padding-top: 2px;
     padding-bottom: 2px;
     background-color: var(--tournio-gray-200);
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--tournio-gray-800);
-    }
   }
+  &[data-bs-theme="dark"] footer {
+    background-color: var(--tournio-bookend-bg);
+  }
+
 
   @media (min-width: 576px) {
     h1 {

@@ -11,7 +11,7 @@ const Shifts = ({tournament}) => {
   const displayCapacity = tournament.display_capacity;
   if (tournament.shifts.length > 1) {
     shiftContent = (
-      <div className={`${classes.Shifts}`}>
+      <div className={`${classes.Shifts}`} data-bs-theme={'dark'}>
         <h4 className={'fw-light'}>
           Shifts
         </h4>
