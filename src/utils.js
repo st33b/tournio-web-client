@@ -23,6 +23,24 @@ export const useStorage = (key, initialValue) => {
   return [value, setValue];
 }
 
+export const useLocalStorage = (key, initialValue) => {
+  const [value, setValue] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedValue = localStorage.getItem(key);
+      if (savedValue !== null) {
+        return JSON.parse(savedValue);
+      }
+    }
+    return initialValue;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [value]);
+
+  return [value, setValue];
+}
+
 export const useClientReady = () => {
   const [ready, setReady] = useState(false);
   useEffect(() => {
