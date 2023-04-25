@@ -1,5 +1,7 @@
 import {useRouter} from "next/router";
 
+import ColorModeToggler from "../../common/ColorModeToggler/ColorModeToggler";
+
 import classes from './Footer.module.scss';
 
 const Footer = () => {
@@ -7,23 +9,22 @@ const Footer = () => {
 
   return (
     <div className={classes.Footer}>
-      <p className={'text-muted text-center py-2 my-2'}>
-        <a href={'/director'} className={`${classes.Element} ${classes.NotTheLast}`}>
-          Director Login
+      <a href={'/director'} className={`${classes.Element}`}>
+        Login
+      </a>
+      {router.pathname !== '/about' &&
+        <a href={'/about'} className={`${classes.Element}`}>
+          About
         </a>
-        {router.pathname !== '/about' &&
-          <a href={'/about'} className={`${classes.Element} ${classes.NotTheLast}`}>
-            About
-          </a>
-        }
-        <span className={classes.Element}>
-          &copy; 2015-2023
-          {' '}
-          <a href={'mailto:hello@tourn.io'}>
-            Tournio
-          </a>
-        </span>
-      </p>
+      }
+      <span className={`${classes.Element}`}>
+        &copy; 2015-2023
+        {' '}
+        <a href={'mailto:hello@tourn.io'}>
+          Tournio
+        </a>
+      </span>
+      <ColorModeToggler className={`d-inline-block mt-1 mb-0 py-1`} />
     </div>
   );
 }

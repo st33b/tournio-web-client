@@ -1,6 +1,8 @@
-import classes from './ColorModeTogger.module.scss';
+import classes from './ColorModeToggler.module.scss';
+import {useThemeContext} from "../../../store/ThemeContext";
+import {useEffect} from "react";
 
-const ColorModeToggler = ({activeTheme, preferredTheme, onThemeChosen, ...children}) => {
+const ColorModeToggler = (props) => {
   const themeLinkContents = {
     auto: {
       iconClass: 'bi-arrow-repeat',
@@ -16,33 +18,46 @@ const ColorModeToggler = ({activeTheme, preferredTheme, onThemeChosen, ...childr
     },
   };
 
+  const {theme, updatePreferredTheme} = useThemeContext();
+
   const themeClicked = (event) => {
     event.preventDefault();
-    onThemeChosen(event.target.name);
+    updatePreferredTheme(event.target.name);
   }
 
-  const preferredIconClass = themeLinkContents[preferredTheme].iconClass;
+  useEffect(() => {
+    if (!theme) {
+      return;
+    }
+  }, [theme]);
+
+  if (!theme) {
+    return '';
+  }
+
+  const preferredIconClass = themeLinkContents[theme.preferred].iconClass;
 
   return (
-    <div className={`${classes.ColorModeToggler} ${children.className} dropdown`}>
+    <div className={`${classes.ColorModeToggler} ${props.className} dropdown`}>
       <button className={'btn dropdown-toggle'}
               type={'button'}
+              title={'Set the color mode'}
               data-bs-toggle={'dropdown'}
               aria-expanded={false}>
         <i className={`${preferredIconClass}`} aria-hidden={true}/>
         <span className={'visually-hidden'}>
-          {preferredTheme}
+          {theme.preferred}
         </span>
       </button>
       <ul className={'dropdown-menu'}>
-        {Object.keys(themeLinkContents).map(theme => (
-          <li key={`theme_chooser_${theme} ${classes.ThemeItem}`}>
+        {Object.keys(themeLinkContents).map(t => (
+          <li key={`theme_chooser_${t} ${classes.ThemeItem}`}>
             <a href={'#'}
                className={'dropdown-item'}
-               name={theme}
+               name={t}
                onClick={themeClicked}>
-              <i className={`${themeLinkContents[theme].iconClass} pe-2`} aria-hidden={true}/>
-              {themeLinkContents[theme].ariaText}
+              <i className={`${themeLinkContents[t].iconClass} pe-2`} aria-hidden={true}/>
+              {themeLinkContents[t].ariaText}
             </a>
           </li>
         ))}

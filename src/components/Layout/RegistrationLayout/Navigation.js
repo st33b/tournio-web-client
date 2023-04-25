@@ -1,15 +1,19 @@
 import {Row} from "react-bootstrap";
-import {useCommerceContext} from "../../../store/CommerceContext";
+import Image from "next/image";
 
-import classes from './Navigation.module.scss';
+import {useCommerceContext} from "../../../store/CommerceContext";
+import {useThemeContext} from "../../../store/ThemeContext";
 import {useClientReady} from "../../../utils";
+
 import TournioLogoLight from '../../../images/tournio-logo.png';
 import TournioLogoDark from '../../../images/tournio-logo-inverted-gray.png';
-import Image from "next/image";
 import ColorModeToggler from "../../common/ColorModeToggler/ColorModeToggler";
 
-const Navigation = ({showCart, preferredTheme, activeTheme, onThemeChange}) => {
+import classes from './Navigation.module.scss';
+
+const Navigation = ({showCart}) => {
   const {commerce} = useCommerceContext();
+  const {theme} = useThemeContext();
 
   const ready = useClientReady();
   if (!ready) {
@@ -35,6 +39,9 @@ const Navigation = ({showCart, preferredTheme, activeTheme, onThemeChange}) => {
       </a>
     );
   }
+
+  const activeTheme = theme.active;
+
   return (
     <div className={`${classes.Navigation}`}>
       <Row className={process.env.NODE_ENV === 'development' && classes.Development}>
@@ -57,10 +64,7 @@ const Navigation = ({showCart, preferredTheme, activeTheme, onThemeChange}) => {
               Home
             </span>
           </a>
-          <ColorModeToggler activeTheme={activeTheme}
-                            preferredTheme={preferredTheme}
-                            onThemeChosen={onThemeChange}
-                            className={'ms-auto d-none d-md-inline-block'} />
+          <ColorModeToggler className={'ms-auto d-none d-md-inline-block'} />
         </div>
       </Row>
     </div>

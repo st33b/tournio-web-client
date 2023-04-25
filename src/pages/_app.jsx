@@ -22,15 +22,15 @@ function MyApp({Component, pageProps})  {
 
   const getLayout = Component.getLayout || ((page) => page);
 
-    return (
-      <DirectorContextProvider>
-        <CommerceContextProvider>
-          <RegistrationContextProvider>
-            {getLayout(<Component {...pageProps} />)}
-          </RegistrationContextProvider>
-        </CommerceContextProvider>
-      </DirectorContextProvider>
-    );
+  return (
+    <DirectorContextProvider>
+      <CommerceContextProvider>
+        <RegistrationContextProvider>
+          {getLayout(<Component {...pageProps} />)}
+        </RegistrationContextProvider>
+      </CommerceContextProvider>
+    </DirectorContextProvider>
+  );
 }
 
 export default MyApp;
