@@ -1,16 +1,10 @@
 .RegistrationLayout {
-  background-color: var(--tournio-body-bg);
-  color: var(--tournio-body-color);
-
   header {
-    background-color: var(--tournio-gray-100);
+    background-color: var(--tournio-bookend-bg);
     color: var(--tournio-body-color);
     position: -webkit-sticky;
     position: sticky;
     top: 0;
-  }
-  &[data-bs-theme="dark"] header {
-    background-color: var(--tournio-bookend-bg);
   }
 
   main {
@@ -29,12 +23,8 @@
   footer {
     padding-top: 2px;
     padding-bottom: 2px;
-    background-color: var(--tournio-gray-200);
-  }
-  &[data-bs-theme="dark"] footer {
     background-color: var(--tournio-bookend-bg);
   }
-
 
   @media (min-width: 576px) {
     h1 {

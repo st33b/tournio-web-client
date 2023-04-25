@@ -1,6 +1,6 @@
 :root {
   &[data-bs-theme="light"] {
-    --tournio-bookend-bg: var(--tournio-gray-200);
+    --tournio-bookend-bg: var(--tournio-gray-100);
   }
   &[data-bs-theme="dark"] {
     --tournio-bookend-bg: #1b1f22;
@@ -11,7 +11,7 @@ html {
   font-size: 1rem;
 
   &[data-bs-theme="dark"] {
-    background-color: var(--tournio-gray-900);
+    background-color: var(--tournio-body-bg);
   }
 }
 
