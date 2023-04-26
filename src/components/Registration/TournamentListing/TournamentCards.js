@@ -1,11 +1,12 @@
 import {useState, useEffect} from "react";
+import {Card, Col, Row} from "react-bootstrap";
+import titleCase from 'voca/title_case';
 
 import {fetchTournamentList} from "../../../utils";
+import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
+import TournamentLogo from "../TournamentLogo/TournamentLogo";
 
 import classes from './TournamentCards.module.scss';
-import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
-import {Card, Col, Image, Row} from "react-bootstrap";
-import TournamentLogo from "../TournamentLogo/TournamentLogo";
 
 const TournamentCards = () => {
   const [tournaments, setTournaments] = useState([]);
@@ -32,24 +33,28 @@ const TournamentCards = () => {
     <div className={classes.TournamentCards}>
       {tournaments.length === 0 && <h6 className={'display-6 fw-light mt-4'}>No upcoming tournaments at the moment.</h6>}
       {tournaments.length > 0 && (
-        <Row xs={1} sm={2} lg={3} xl={4}>
+        <Row xs={1} sm={2} lg={3}>
           {tournaments.map((t) => {
             let bgColor = '';
-            let textColor = 'text-white';
+            let textColor = '';
+            // let textColor = 'success-text-emphasis';
             switch (t.state) {
               case 'active':
-                bgColor = 'bg-success';
+                // bgColor = 'bg-success-subtle';
                 break;
               case 'closed':
-                bgColor = 'bg-secondary';
+                // textColor = 'secondary-text-emphasis';
+                // bgColor = 'bg-secondary-subtle';
                 break;
               default:
-                bgColor = 'bg-dark';
+                // textColor = 'danger-text-emphasis';
+                // bgColor = 'bg-danger';
             }
             return (
               <div className={`mb-3 ${classes.Tournament}`} key={t.identifier}>
                 <Card>
-                  <Card.Header className={`card-header ${bgColor} ${textColor}`}>
+                  <Card.Header className={`bg-gradient ${t.state === 'active' ? classes.Active : classes.Closed}`}>
+                  {/*<Card.Header className={`card-header ${bgColor} bg-gradient ${textColor}`}>*/}
                     {t.status}
                   </Card.Header>
                   <Card.Body>
@@ -70,7 +75,7 @@ const TournamentCards = () => {
                           {t.start_date}
                         </Card.Text>
                         <Card.Text className={'py-0 text-end'}>
-                          <Card.Link className={'btn btn-outline-primary'}
+                          <Card.Link className={'btn btn-outline-primary text-primary-emphasis'}
                                      href={`/tournaments/${t.identifier}`}>
                             Go
                             <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>

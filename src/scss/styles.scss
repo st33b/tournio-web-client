@@ -1,9 +1,14 @@
+@import 'tournio-bs.scss';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
 :root {
   &[data-bs-theme="light"] {
     --tournio-bookend-bg: var(--tournio-gray-100);
+    --tournio-success-bg: var(--tournio-green);
   }
   &[data-bs-theme="dark"] {
     --tournio-bookend-bg: #1b1f22;
+    --tournio-success-bg: var(--tournio-green);
   }
 }
 

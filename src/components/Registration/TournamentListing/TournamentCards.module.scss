@@ -1,3 +1,10 @@
 .TournamentCards {
+  .Active {
+    background-color: var(--tournio-success-bg);
+    color: var(--tournio-body-bg);
+  }
 
+  .Closed {
+    background-color: var(--tournio-bookend-bg);
+  }
 }

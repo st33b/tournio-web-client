@@ -2,45 +2,7 @@
 @import "../../node_modules/bootstrap/scss/functions";
 
 // Now come our default variable overrids.
-$primary: #1f60c2;
-$success: #40824c;
-$info: #68d3e8;
-$danger: #bf2e3c;
-
-$font-family-sans-serif:
-  "Nunito Sans",
-  system-ui,
-  -apple-system,
-  "Segoe UI",
-  Roboto,
-  "Helvetica Neue",
-  "Noto Sans",
-  "Liberation Sans",
-  Arial,
-  sans-serif,
-  "Apple Color Emoji",
-  "Segoe UI Emoji",
-  "Segoe UI Symbol",
-  "Noto Color Emoji";
-
-$alert-bg-scale: -60%;
-$alert-border-scale: -20%;
-$modal-lg: 650px;
-
-$prefix: tournio-;
-
-// my dark-mode colors
-//$lighter-blue: #5398ff;
-//$darker-red: #b52b2b;
-//$lighter-indigo: #af85f4;
-//$lighter-purple: #a77df4;
-//$darker-pink: #e08eb7;
-//$darker-orange: #fba155;
-//$darker-yellow: #9f971a;
-//$darker-green: #30733c;
-//$darker-cyan: #2fa3ba;
-//$darkest-gray: #121212;
-//$dim-white: #c6bca9;
+@import 'variables';
 
 // And now for the rest of Bootstrap.
 
@@ -61,6 +23,19 @@ $prefix: tournio-;
 //    )
 //  )
 //);
+
+//:root,
+//[data-bs-theme="light"] {
+//  --tournio-bookend-bg: var(--tournio-gray-300);
+//  --tournio-success-bg: tint-color(var(--tournio-green), 20%);
+//  //--tournio-bookend-bg: var(--tournio-gray-100);
+//  //--tournio-success-bg: tint-color(var(--tournio-success), 20%);
+//}
+//
+//[data-bs-theme="dark"] {
+//  --tournio-bookend-bg: #1b1f22;
+//  --tournio-success-bg: tint-color(var(--tournio-success), 60%);
+//}
 
 // Layout & components
 @import "../../node_modules/bootstrap/scss/root";
@@ -100,3 +75,16 @@ $prefix: tournio-;
 
 // Utilities
 @import "../../node_modules/bootstrap/scss/utilities/api";
+
+// My stuff
+
+//:root {
+//  &[data-bs-theme="light"] {
+//    --tournio-bookend-bg: var(--#{$prefix}gray-100);
+//    --tournio-success-bg: #{tint-color($success, 20%)};
+//  }
+//  &[data-bs-theme="dark"] {
+//    --tournio-bookend-bg: #1b1f22;
+//    --tournio-success-bg: #{tint-color($success, 60%)};
+//  }
+//}

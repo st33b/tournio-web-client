@@ -1,7 +1,5 @@
 import {useEffect} from "react";
 
-import '../scss/tournio-bs.scss';
-import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../scss/styles.scss';
 
 import {DirectorContextProvider} from "../store/DirectorContext";
