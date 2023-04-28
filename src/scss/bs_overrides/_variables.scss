@@ -1,0 +1,89 @@
+$font-family-sans-serif:
+  "Nunito Sans",
+  system-ui,
+  -apple-system,
+  "Segoe UI",
+  Roboto,
+  "Helvetica Neue",
+  "Noto Sans",
+  "Liberation Sans",
+  Arial,
+  sans-serif,
+  "Apple Color Emoji",
+  "Segoe UI Emoji",
+  "Segoe UI Symbol",
+  "Noto Color Emoji";
+
+$alert-bg-scale: -60%;
+$alert-border-scale: -20%;
+$modal-lg: 650px;
+
+$prefix: tournio-;
+
+// Our colors, some of which override Bootstrap's, some of which don't.
+$blue:      #3b71ca;
+$secondary: #9fa6b2;
+$green:     #40824c;
+$cyan:      #54b4d3;
+$yellow:    #e9dd45;
+$red:       #e03d48;
+$light:     #fbfbfb;
+$dark:      #212529;
+$indigo:    #3e0dd4;
+$purple:    #6f42c1;
+$pink:      #d63384;
+$orange:    #f07813;
+$teal:      #20c1c9;
+
+//////////////////////////////////////////////////////////////////
+// Taken from Bootstrap so we can use them in our own theme colors
+$white:    #fff;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
+$black:    #000;
+
+$primary:       $blue;
+$secondary:     $gray-600;
+$success:       $green;
+//$info:          $cyan; (We override this below)
+$warning:       $yellow;
+$danger:        $red;
+$light:         $gray-100;
+$dark:          $gray-900;
+// End of what's taken from Bootstrap
+/////////////////////////////////////////////////////////////////
+
+// Our customizations
+
+// Let's use orange for info, rather than cyan.
+$info: $orange;
+
+// Bootstrap doesn't set standard theme background colors, so let's set our own
+$primary-bg:       tint-color($primary, 50%);
+$secondary-bg:     tint-color($secondary, 50%);
+$success-bg:       tint-color($success, 50%);
+$info-bg:          tint-color($info, 50%);
+$warning-bg:       tint-color($warning, 50%);
+$danger-bg:        tint-color($danger, 50%);
+$light-bg:         mix($gray-100, $white);
+$dark-bg:          $gray-300;
+
+// Let's create a theme map for the background colors
+
+$theme-colors-bg: (
+  "primary": $primary-bg,
+  "secondary": $secondary-bg,
+  "success": $success-bg,
+  "info": $info-bg,
+  "warning": $warning-bg,
+  "danger": $danger-bg,
+  "light": $light-bg,
+  "dark": $dark-bg,
+);
