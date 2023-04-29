@@ -1,25 +1,45 @@
 import React from 'react';
 
 import classes from './Input.module.scss';
+import {devConsoleLog} from "../../../utils";
 
 const Input = (props) => {
   let inputElement = null;
 
-  let invalidClass = '';
-  if (props.invalid && props.shouldValidate && props.touched) {
-    invalidClass = 'is-invalid';
-  }
+  const required = props.validityErrors && props.validityErrors.includes('valueMissing');
+
+  const errorMessages = props.failedValidations.map(fv => {
+    switch(fv) {
+      case 'valueMissing':
+        return 'Missing value';
+      case 'patternMismatch':
+        return 'The USBC identifier is just digits and a hyphen.';
+      case 'typeMismatch':
+        return "That's not a valid email address";
+      case 'rangeUnderflow':
+        return 'Too low!';
+      case 'rangeOverflow':
+        return 'Too high!';
+      case 'tooLong':
+        return 'Too long';
+      case 'tooShort':
+        return 'Too short!';
+      default:
+        return 'Please enter a valid value';
+    }
+  });
 
   switch (props.elementType) {
     case('input'):
       inputElement = <input
         id={props.identifier}
         name={props.identifier}
-        className={`form-control ${invalidClass}`}
+        className={`form-control`}
         maxLength="100"
         {...props.elementConfig}
         onChange={props.changed}
-        required={props.validationRules.required}
+        onBlur={!!props.blurred ? props.blurred : () => {}}
+        required={required}
       />
       break;
     case('select'):
@@ -33,9 +53,9 @@ const Input = (props) => {
       inputElement = <select
         id={props.identifier}
         name={props.identifier}
-        className={`form-select ${invalidClass}`}
+        className={`form-select`}
         onChange={props.changed}
-        required={props.validationRules.required}
+        required={required}
         value={props.elementConfig.value}
       >
         {optionText}
@@ -43,17 +63,19 @@ const Input = (props) => {
       break;
     case('component'):
       const Component = props.elementConfig.component;
+      const componentClasses = props.elementConfig.classNames.concat(errorMessages.length > 0 ? 'is-invalid' : []);
       inputElement = React.createElement(Component, {
           id: props.identifier,
           value: props.elementConfig.value,
           onChange: props.changed,
+          classes: componentClasses.join(' '),
           ...props.elementConfig.props,
         }
       );
       break;
     case('checkbox'):
       inputElement = (
-        <div className={`form-check ${invalidClass}`}>
+        <div className={`form-check`}>
           <input
             type={'checkbox'}
             className={'form-check-input'}
@@ -71,10 +93,10 @@ const Input = (props) => {
       break;
     case('radio'):
       inputElement = props.elementConfig.choices.map((choice, i) => (
-        <div className={`form-check ${invalidClass}`} key={i}>
+        <div className={`form-check`} key={i}>
           <input type={'radio'}
                  className={'form-check-input'}
-                 required={true}
+                 required={required}
                  value={choice.value}
                  onChange={props.changed}
                  checked={props.elementConfig.value === choice.value}
@@ -100,10 +122,10 @@ const Input = (props) => {
   //   elementConfig={formElement.setup.elementConfig}
   //   changed={(event) => inputChangedHandler(event, formElement.id)}
   //   label={formElement.setup.label}
-  //   shouldValidate={true}
-  //   touched={formElement.setup.touched}
-  //   invalid={!formElement.setup.valid}
-  //   validationRules={formElement.setup.validation}
+  //   validityErrors={formElement.setup.validityErrors} (if any)
+  //   blurred={(event) => fieldBlurred(event, formElement.id)} or blurred={false}
+  //   failedValidations=[names of any validations that failed
+  //   wasValidated={true/false}
   //  + everything in elementConfig (value, type)
 
   let helperElement = '';
@@ -124,39 +146,34 @@ const Input = (props) => {
     );
   }
 
-  let requiredFeedback = '';
-  let requiredLabel = '';
-  if (props.validationRules.required) {
-    requiredFeedback = (
-      <div className="invalid-feedback">
-        <div>
-          <i className="bi-x" aria-hidden="true"/>
-          <span className={classes.InvalidFeedback}>
-            Please enter a valid value.
-          </span>
-        </div>
-      </div>
-    );
-    requiredLabel = (
-      <div className="d-inline">
-        <i className={`${classes.RequiredLabel} align-top bi-asterisk`} />
-        <span className="visually-hidden">
-          Please enter a valid value.
-        </span>
-      </div>
-    );
-  }
-
   return (
     <div className={`${classes.Input} row mb-1 mb-sm-2`}>
       <label className="col-12 col-sm-5 col-form-label text-sm-end pb-0" htmlFor={props.identifier}>
         {props.label}
-        {requiredLabel}
+        {required && (
+          <div className="d-inline">
+            <i className={`${classes.RequiredLabel} align-top bi-asterisk`} />
+            <span className="visually-hidden">
+              This field is required.
+            </span>
+          </div>
+        )}
       </label>
-      <div className="col">
+      <div className={`col ${props.wasValidated ? 'was-validated' : ''}`}>
         {inputElement}
         {helperElement}
-        {requiredFeedback}
+        {errorMessages.length > 0 && (
+          <div className="invalid-feedback">
+            {errorMessages.map((e, i) => (
+              <span className={"line"} key={`${props.identifier}_errorMsg_${i}`}>
+                <i className="bi-x" aria-hidden="true"/>
+                <span className={classes.InvalidFeedback}>
+                  {e}
+                </span>
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

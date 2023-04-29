@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {Form, Row, Col, Button} from "react-bootstrap";
 import {Map} from "immutable";
 
@@ -36,7 +36,8 @@ const TeamForm = ({tournament, teamFormCompleted}) => {
   }
 
   const isValid = (formData) => {
-    return formData.get('teamName').trim().length > 0;
+    const shiftSatisfied = tournament.available_shifts.length > 1 ? formData.get('shift').length > 0 : true;
+    return shiftSatisfied && formData.get('teamName').trim().length > 0;
   }
 
   const inputChangedHandler = (event) => {

@@ -13,7 +13,8 @@
 
   }
 
-  .InvalidFeedback {
+  .InvalidFeedback,
+  &:invalid {
     margin-left: 5px;
   }
 
