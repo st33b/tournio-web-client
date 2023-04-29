@@ -24,7 +24,13 @@ const ShiftForm = ({tournament, onInputChanged, currentSelection, name='shift'})
                       className={classes.Label}
                       md={4}>
             Shift Preference
-            <i className={`${classes.NoteIndicator} align-top bi-asterisk ms-1`} aria-hidden={true} />
+            <div className="d-inline">
+              <i className={`${classes.NoteIndicator} ${classes.RequiredLabel} align-top bi-asterisk`} />
+              <span className="visually-hidden">
+                This field is required.
+              </span>
+            </div>
+            {/*<i className={`${classes.NoteIndicator} align-top bi-asterisk ms-1`} aria-hidden={true} />*/}
           </Form.Label>
           <Col>
             {tournament.available_shifts.map((shift, i) => (
@@ -39,7 +45,7 @@ const ShiftForm = ({tournament, onInputChanged, currentSelection, name='shift'})
                           name={name} />
             ))}
             <div className={classes.ConfirmationText}>
-              <i className={`${classes.NoteIndicator} align-top bi-asterisk me-1`} aria-hidden={true} />
+              <strong>Note:</strong>{' '}
               A bowler&apos;s place in a shift cannot be confirmed until they have paid their registration fees.
             </div>
           </Col>
