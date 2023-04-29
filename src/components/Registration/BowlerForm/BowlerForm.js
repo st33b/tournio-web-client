@@ -7,6 +7,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import classes from './BowlerForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import ShiftForm from "../ShiftForm/ShiftForm";
+import {devConsoleLog} from "../../../utils";
 
 const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => {
   const {registration} = useRegistrationContext();
@@ -23,7 +24,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
       last_name: {
@@ -36,7 +37,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
       nickname: {
@@ -47,7 +48,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           placeholder: 'if different from first name',
         },
         label: 'Preferred Name',
-        valid: true,
         touched: false,
       },
       usbc_id: {
@@ -67,7 +67,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           url: 'https://webapps.bowl.com/USBCFindA/Home/Member',
           text: 'Look up your USBC ID',
         },
-        valid: true,
+        valid: false,
         touched: false,
       },
       birth_month: {
@@ -133,7 +133,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
       birth_day: {
@@ -150,7 +150,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           'rangeUnderflow',
           'rangeOverflow',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
       email: {
@@ -164,7 +164,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           'valueMissing',
           'typeMismatch',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
       phone: {
@@ -177,7 +177,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
       address1: {
@@ -190,7 +190,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
       address2: {
@@ -200,7 +200,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           value: '',
         },
         label: 'Address 2',
-        valid: true,
         touched: false,
       },
       city: {
@@ -213,7 +212,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
       state: {
@@ -226,6 +225,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
+        valid: false,
         touched: false,
       },
       country: {
@@ -245,6 +245,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
+        valid: false,
         touched: false,
       },
       postal_code: {
@@ -257,7 +258,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
     },
@@ -278,7 +279,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           url: null,
           text: `Note: A bowler's place in a shift cannot be confirmed until they have paid their registration fees.`,
         },
-        valid: true,
+        valid: false,
         touched: false,
       }
     }
@@ -339,16 +340,17 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       return;
     }
     const updatedBowlerForm = {...bowlerForm};
-    updatedBowlerForm.formFields = {...updatedBowlerForm.formFields, ...additionalFormFields(tournament)};
+    updatedBowlerForm.formFields = {
+      ...updatedBowlerForm.formFields,
+      ...additionalFormFields(tournament),
+    };
 
     // First, all the standard fields and additional questions
-    // for (const inputIdentifier in initialFormState.formFields) {
     for (const inputIdentifier in bowlerData) {
-      if (updatedBowlerForm.formFields[inputIdentifier] === undefined) {
+      if (!updatedBowlerForm.formFields[inputIdentifier]) {
         continue;
       }
       updatedBowlerForm.formFields[inputIdentifier].elementConfig.value = bowlerData[inputIdentifier];
-      fieldBlurred(null, inputIdentifier);
     }
 
     // Now, shift information, if there is any
@@ -356,6 +358,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       updatedBowlerForm.soloBowlerFields.preferred_shift.elementConfig.value = bowlerData.shift.identifier;
       updatedBowlerForm.soloBowlerFields.preferred_shift.valid = true;
     }
+
+    updatedBowlerForm.valid = true;
 
     setBowlerForm(updatedBowlerForm);
     setButtonText('Save Changes');
@@ -482,7 +486,13 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     const shiftFormIsValid = includeShift
       ? newFormData.soloBowlerFields.preferred_shift.elementConfig.value.length > 0
       : true;
-    newFormData.valid = shiftFormIsValid && Object.values(newFormData.formFields).every(formField => formField.valid);
+    newFormData.valid = shiftFormIsValid && Object.values(newFormData.formFields).every(
+      formField => typeof formField.valid === 'undefined' || formField.valid
+    );
+
+    devConsoleLog("What's invalid?", Object.values(newFormData.formFields).filter(
+      formField => typeof formField.valid !== 'undefined' && !formField.valid
+    ))
 
     setBowlerForm(newFormData);
   }
