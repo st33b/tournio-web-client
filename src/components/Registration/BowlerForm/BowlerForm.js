@@ -7,6 +7,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import classes from './BowlerForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import ShiftForm from "../ShiftForm/ShiftForm";
+import {devConsoleLog} from "../../../utils";
 
 const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => {
   const {registration} = useRegistrationContext();
@@ -47,7 +48,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           placeholder: 'if different from first name',
         },
         label: 'Preferred Name',
-        valid: true,
         touched: false,
       },
       usbc_id: {
@@ -200,7 +200,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           value: '',
         },
         label: 'Address 2',
-        valid: true,
         touched: false,
       },
       city: {
@@ -226,6 +225,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
+        valid: true,
         touched: false,
       },
       country: {
@@ -245,6 +245,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
+        valid: true,
         touched: false,
       },
       postal_code: {
@@ -261,7 +262,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         touched: false,
       },
     },
-    valid: false,
+    valid: true,
     touched: false,
     soloBowlerFields: {
       preferred_shift: {
@@ -339,16 +340,17 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       return;
     }
     const updatedBowlerForm = {...bowlerForm};
-    updatedBowlerForm.formFields = {...updatedBowlerForm.formFields, ...additionalFormFields(tournament)};
+    updatedBowlerForm.formFields = {
+      ...updatedBowlerForm.formFields,
+      ...additionalFormFields(tournament),
+    };
 
     // First, all the standard fields and additional questions
-    // for (const inputIdentifier in initialFormState.formFields) {
     for (const inputIdentifier in bowlerData) {
-      if (updatedBowlerForm.formFields[inputIdentifier] === undefined) {
+      if (!updatedBowlerForm.formFields[inputIdentifier]) {
         continue;
       }
       updatedBowlerForm.formFields[inputIdentifier].elementConfig.value = bowlerData[inputIdentifier];
-      fieldBlurred(null, inputIdentifier);
     }
 
     // Now, shift information, if there is any
@@ -356,6 +358,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       updatedBowlerForm.soloBowlerFields.preferred_shift.elementConfig.value = bowlerData.shift.identifier;
       updatedBowlerForm.soloBowlerFields.preferred_shift.valid = true;
     }
+
+    updatedBowlerForm.valid = true;
 
     setBowlerForm(updatedBowlerForm);
     setButtonText('Save Changes');
@@ -401,7 +405,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
   const inputChangedHandler = (event, inputIdentifier) => {
     // Create a copy of the bowler form; this is where we'll make updates
     const updatedBowlerForm = {
-      ...bowlerForm
+      ...bowlerForm,
     };
 
     if (inputIdentifier === 'preferred_shift') {
@@ -482,7 +486,13 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     const shiftFormIsValid = includeShift
       ? newFormData.soloBowlerFields.preferred_shift.elementConfig.value.length > 0
       : true;
-    newFormData.valid = shiftFormIsValid && Object.values(newFormData.formFields).every(formField => formField.valid);
+    newFormData.valid = shiftFormIsValid && Object.values(newFormData.formFields).every(
+      formField => typeof formField.valid === 'undefined' || formField.valid
+    );
+
+    devConsoleLog("What's invalid?", Object.values(newFormData.formFields).filter(
+      formField => typeof formField.valid !== 'undefined' && !formField.valid
+    ))
 
     setBowlerForm(newFormData);
   }
@@ -519,15 +529,12 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           validityErrors={formElement.setup.validityErrors}
           // For <select> elements, onBlur is redundant to onChange
           blurred={formElement.validateOnBlur ? (event) => fieldBlurred(event, formElement.id) : false}
-          failedValidations={!!formElement.setup.validityFailures ? formElement.setup.validityFailures : []}
+          failedValidations={typeof formElement.setup.validityFailures !== 'undefined' ? formElement.setup.validityFailures : []}
           wasValidated={formElement.setup.validated}
         />
       ))}
 
       <div className="d-flex flex-row-reverse justify-content-between pt-2">
-        {/*<div className="invalid-form-warning alert alert-warning" role="alert">*/}
-        {/*  There are some errors in your form. Please correct them and try again.*/}
-        {/*</div>*/}
         <button className="btn btn-primary btn-lg" type="submit" disabled={!bowlerForm.valid || !bowlerForm.touched}>
           {buttonText}{' '}
           <i className="bi-chevron-double-right ps-1" aria-hidden="true"/>

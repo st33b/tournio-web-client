@@ -15,9 +15,9 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
           value: '',
         },
         label: 'First name',
-        validation: {
-          required: true,
-        },
+        validityErrors: [
+          'valueMissing',
+        ],
         valid: true,
         touched: false,
       },
@@ -28,9 +28,9 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
           value: '',
         },
         label: 'Last name',
-        validation: {
-          required: true,
-        },
+        validityErrors: [
+          'valueMissing',
+        ],
         valid: true,
         touched: false,
       },
@@ -41,9 +41,6 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
           value: '',
         },
         label: 'Preferred Name',
-        validation: {
-          required: false,
-        },
         valid: true,
         touched: false,
       },
@@ -52,11 +49,14 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
         elementConfig: {
           type: 'text',
           value: '',
+          pattern: "\\d+-\\d+",
+          placeholder: 'including the hyphen',
         },
         label: 'USBC ID',
-        validation: {
-          required: true,
-        },
+        validityErrors: [
+          'valueMissing',
+          'patternMismatch',
+        ],
         helper: {
           url: 'https://webapps.bowl.com/USBCFindA/Home/Member',
           text: 'Look up a USBC ID',
@@ -64,35 +64,20 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
         valid: true,
         touched: false,
       },
-      // igbo_id: {
-      //   elementType: 'input',
-      //   elementConfig: {
-      //     type: 'text',
-      //     value: '',
-      //   },
-      //   label: 'IGBO ID',
-      //   validation: {
-      //     required: false,
-      //   },
-      //   helper: {
-      //     url: 'http://www.igbo.org/igbots-id-lookup/',
-      //     text: 'Look up an IGBO ID',
-      //   },
-      //   valid: true,
-      //   touched: false,
-      // },
       birth_month: {
         elementType: 'input',
         elementConfig: {
           type: 'number',
           value: '',
-        },
-        label: 'Birth month',
-        validation: {
-          required: true,
           min: 1,
           max: 12,
         },
+        label: 'Birth month',
+        validityErrors: [
+          'valueMissing',
+          'rangeUnderflow',
+          'rangeOverflow',
+        ],
         valid: true,
         touched: false,
       },
@@ -101,14 +86,15 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
         elementConfig: {
           type: 'number',
           value: '',
-        },
-        label: 'Birth day',
-        validation: {
-          required: true,
           min: 1,
           max: 31,
-          date: true,
         },
+        label: 'Birth day',
+        validityErrors: [
+          'valueMissing',
+          'rangeUnderflow',
+          'rangeOverflow',
+        ],
         valid: true,
         touched: false,
       },
@@ -119,9 +105,10 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
           value: '',
         },
         label: 'Email address',
-        validation: {
-          required: true,
-        },
+        validityErrors: [
+          'valueMissing',
+          'typeMismatch',
+        ],
         valid: true,
         touched: false,
       },
@@ -132,9 +119,9 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
           value: '',
         },
         label: 'Phone number',
-        validation: {
-          required: true,
-        },
+        validityErrors: [
+          'valueMissing',
+        ],
         valid: true,
         touched: false,
       },
@@ -145,9 +132,9 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
           value: '',
         },
         label: 'Address 1',
-        validation: {
-          required: true,
-        },
+        validityErrors: [
+          'valueMissing',
+        ],
         valid: true,
         touched: false,
       },
@@ -158,9 +145,6 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
           value: '',
         },
         label: 'Address 2',
-        validation: {
-          required: false,
-        },
         valid: true,
         touched: false,
       },
@@ -171,9 +155,9 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
           value: '',
         },
         label: 'City',
-        validation: {
-          required: true,
-        },
+        validityErrors: [
+          'valueMissing',
+        ],
         valid: true,
         touched: false,
       },
@@ -184,9 +168,9 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
           value: '',
         },
         label: 'State/Province',
-        validation: {
-          required: true,
-        },
+        validityErrors: [
+          'valueMissing',
+        ],
         valid: true,
         touched: false,
       },
@@ -195,18 +179,18 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
         elementConfig: {
           component: CountryDropdown,
           value: '',
+          classNames: ['form-select'],
           props: {
             name: 'country',
             valueType: 'short',
             priorityOptions: ['US', 'CA', 'NZ'],
             defaultOptionLabel: "-- Choose the bowler's country",
-            classes: 'form-control',
           },
         },
         label: 'Country',
-        validation: {
-          required: true,
-        },
+        validityErrors: [
+          'valueMissing',
+        ],
         valid: true,
         touched: false,
       },
@@ -217,9 +201,9 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
           value: '',
         },
         label: 'ZIP/Postal Code',
-        validation: {
-          required: true,
-        },
+        validityErrors: [
+          'valueMissing',
+        ],
         valid: true,
         touched: false,
       },
@@ -262,68 +246,93 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
     setBowlerForm(newFormData);
   }, [bowler, tournament]);
 
-  const checkValidity = (value, rules) => {
-    let isValid = true;
-
-    if (rules.required) {
-      isValid = isValid && value.trim().length > 0;
+  const validityForField = (fieldIdentifier, failedChecks = []) => {
+    return {
+      validated: true,
+      valid: failedChecks.length === 0,
+      validityFailures: failedChecks,
     }
-
-    // Add other validity handling here. Min/max length, formatting, etc.
-    if (rules.min) {
-      isValid = isValid && value >= rules.min;
-    }
-    if (rules.max) {
-      isValid = isValid && value <= rules.max;
-    }
-
-    return isValid;
   }
 
   const inputChangedHandler = (event, inputIdentifier) => {
     // This is the part of the form concerning the input that's changed
-    const updatedFormElement = {
+    let updatedFormElement = {
       ...bowlerForm.formFields[inputIdentifier]
     }
     // Deep-copy the element config, since that has the part that gets changed...
     updatedFormElement.elementConfig = { ...bowlerForm.formFields[inputIdentifier].elementConfig }
 
-    // The country is a special snowflake...
     let newValue = null;
     if (inputIdentifier === 'country')
       newValue = event;
-    else
+    else if (updatedFormElement.elementType === 'checkbox') {
+      newValue = event.target.checked ? 'yes' : 'no';
+    } else
       newValue = event.target.value;
+
+    // We need to go ahead and do validation for <select> elements, since their value isn't modified
+    // between a change event (what we're reacting to here) and a blur event (which is for fieldBlurred)
+    // To avoid confusion with extended form fields, we're hard-coding it to birth_month.
+    if (inputIdentifier === 'birth_month') {
+      const checksToRun = updatedFormElement.validityErrors;
+      const {validity} = event !== null ? event.target : {};
+      const failedChecks = checksToRun.filter(c => validity[c]);
+      updatedFormElement = {
+        ...updatedFormElement,
+        ...validityForField(inputIdentifier, failedChecks),
+      }
+    } else if (inputIdentifier === 'country') {
+      // special snowflake...
+      const failedChecks = event.length === 0 ? ['valueMissing'] : [];
+      updatedFormElement = {
+        ...updatedFormElement,
+        ...validityForField(inputIdentifier, failedChecks),
+      }
+    }
 
     // Update the relevant parts of the changed field (the new value, whether it's valid, and the fact that it was changed at all)
     updatedFormElement.elementConfig.value = newValue;
-    updatedFormElement.valid = checkValidity(newValue, updatedFormElement.validation);
     updatedFormElement.touched = true;
 
     // Create a copy of the bowler form; this is where we'll make updates
     const updatedBowlerForm = {
-      ...bowlerForm
+      ...bowlerForm,
     };
 
     // Deep-copy the formFields property, because it's complex
     updatedBowlerForm.formFields = {
-      ...bowlerForm.formFields
+      ...bowlerForm.formFields,
     }
-
     // Put the changed field in the copy of the bowler form structure
     updatedBowlerForm.formFields[inputIdentifier] = updatedFormElement;
-
-    // Now, determine whether the whole form is valid
-    let formIsValid = true;
-    for (let inputIdentifier in updatedBowlerForm.formFields) {
-      formIsValid = formIsValid && updatedBowlerForm.formFields[inputIdentifier].valid;
-    }
-    updatedBowlerForm.valid = formIsValid;
 
     updatedBowlerForm.touched = true;
 
     // Replace the form in state, to reflect changes based on the value that changed, and resulting validity
     setBowlerForm(updatedBowlerForm);
+  }
+
+  const fieldBlurred = (event, inputIdentifier) => {
+    const newFormData = {...bowlerForm}
+    const fieldIsChanged = newFormData.formFields[inputIdentifier].touched;
+
+    const checksToRun = bowlerForm.formFields[inputIdentifier].validityErrors;
+    if (!checksToRun || !fieldIsChanged) {
+      // Don't update validations if we've blurred but the input was never changed
+      return;
+    }
+
+    const {validity} = event !== null ? event.target : {};
+    const failedChecks = checksToRun.filter(c => validity[c]);
+
+    newFormData.formFields[inputIdentifier] = {
+      ...newFormData.formFields[inputIdentifier],
+      ...validityForField(inputIdentifier, failedChecks),
+    };
+
+    newFormData.valid = Object.values(newFormData.formFields).every(formField => formField.valid);
+
+    setBowlerForm(newFormData);
   }
 
   const updateSubmitHandler = (event) => {
@@ -351,6 +360,7 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
     formElements.push({
       id: key,
       setup: bowlerForm.formFields[key],
+      validateOnBlur: !!bowlerForm.formFields[key].validityErrors && !['birth_month', 'country'].includes(key),
     })
   }
 
@@ -365,11 +375,12 @@ const BowlerDetails = ({tournament, bowler, bowlerUpdateSubmitted}) => {
             elementConfig={formElement.setup.elementConfig}
             changed={(event) => inputChangedHandler(event, formElement.id)}
             label={formElement.setup.label}
-            shouldValidate={true}
-            touched={formElement.setup.touched}
-            invalid={!formElement.setup.valid}
             helper={formElement.setup.helper}
-            validationRules={formElement.setup.validation}
+            validityErrors={formElement.setup.validityErrors}
+            // For <select> elements, onBlur is redundant to onChange
+            blurred={formElement.validateOnBlur ? (event) => fieldBlurred(event, formElement.id) : false}
+            failedValidations={typeof formElement.setup.validityFailures !== 'undefined' ? formElement.setup.validityFailures : []}
+            wasValidated={formElement.setup.validated}
           />
         ))}
 

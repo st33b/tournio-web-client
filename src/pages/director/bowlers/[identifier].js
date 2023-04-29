@@ -47,12 +47,16 @@ const Page = () => {
 
   // This effect ensures we're logged in with appropriate permissions
   useEffect(() => {
+    if (!directorState.tournament) {
+      return;
+    }
+
     const currentTournamentIdentifier = directorState.tournament.identifier;
 
     if (directorState.user.role !== 'superuser' && !directorState.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
       router.push('/director');
     }
-  });
+  }, [directorState]);
 
   const fetchBowlerSuccess = (data) => {
     setLoading(false);
