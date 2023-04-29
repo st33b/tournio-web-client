@@ -24,7 +24,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: true,
         touched: false,
       },
       last_name: {
@@ -37,7 +37,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: true,
         touched: false,
       },
       nickname: {
@@ -67,7 +67,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           url: 'https://webapps.bowl.com/USBCFindA/Home/Member',
           text: 'Look up your USBC ID',
         },
-        valid: false,
+        valid: true,
         touched: false,
       },
       birth_month: {
@@ -133,7 +133,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: true,
         touched: false,
       },
       birth_day: {
@@ -150,7 +150,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           'rangeUnderflow',
           'rangeOverflow',
         ],
-        valid: false,
+        valid: true,
         touched: false,
       },
       email: {
@@ -164,7 +164,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           'valueMissing',
           'typeMismatch',
         ],
-        valid: false,
+        valid: true,
         touched: false,
       },
       phone: {
@@ -177,7 +177,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: true,
         touched: false,
       },
       address1: {
@@ -190,7 +190,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: true,
         touched: false,
       },
       address2: {
@@ -212,7 +212,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: true,
         touched: false,
       },
       state: {
@@ -225,7 +225,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: true,
         touched: false,
       },
       country: {
@@ -245,7 +245,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: true,
         touched: false,
       },
       postal_code: {
@@ -258,11 +258,11 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: true,
         touched: false,
       },
     },
-    valid: false,
+    valid: true,
     touched: false,
     soloBowlerFields: {
       preferred_shift: {
@@ -279,7 +279,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           url: null,
           text: `Note: A bowler's place in a shift cannot be confirmed until they have paid their registration fees.`,
         },
-        valid: false,
+        valid: true,
         touched: false,
       }
     }
@@ -405,7 +405,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
   const inputChangedHandler = (event, inputIdentifier) => {
     // Create a copy of the bowler form; this is where we'll make updates
     const updatedBowlerForm = {
-      ...bowlerForm
+      ...bowlerForm,
     };
 
     if (inputIdentifier === 'preferred_shift') {
@@ -529,15 +529,12 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           validityErrors={formElement.setup.validityErrors}
           // For <select> elements, onBlur is redundant to onChange
           blurred={formElement.validateOnBlur ? (event) => fieldBlurred(event, formElement.id) : false}
-          failedValidations={!!formElement.setup.validityFailures ? formElement.setup.validityFailures : []}
+          failedValidations={typeof formElement.setup.validityFailures !== 'undefined' ? formElement.setup.validityFailures : []}
           wasValidated={formElement.setup.validated}
         />
       ))}
 
       <div className="d-flex flex-row-reverse justify-content-between pt-2">
-        {/*<div className="invalid-form-warning alert alert-warning" role="alert">*/}
-        {/*  There are some errors in your form. Please correct them and try again.*/}
-        {/*</div>*/}
         <button className="btn btn-primary btn-lg" type="submit" disabled={!bowlerForm.valid || !bowlerForm.touched}>
           {buttonText}{' '}
           <i className="bi-chevron-double-right ps-1" aria-hidden="true"/>
