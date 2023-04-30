@@ -1,0 +1,10 @@
+// The default subtle backgrounds are too subtle.
+
+$primary-bg-subtle-dark:            shade-color($primary, 80%);
+$secondary-bg-subtle-dark:          shade-color($secondary, 80%);
+$success-bg-subtle-dark:            shade-color($success, 50%);
+$info-bg-subtle-dark:               shade-color($info, 80%);
+$warning-bg-subtle-dark:            shade-color($warning, 80%);
+$danger-bg-subtle-dark:             shade-color($danger, 80%);
+$light-bg-subtle-dark:              $gray-800;
+$dark-bg-subtle-dark:               mix($gray-800, $black);

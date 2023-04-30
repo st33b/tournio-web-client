@@ -53,7 +53,7 @@ const TournamentCards = () => {
             return (
               <div className={`mb-3 ${classes.Tournament}`} key={t.identifier}>
                 <Card>
-                  <Card.Header className={`bg-gradient ${t.state === 'active' ? classes.Active : classes.Closed}`}>
+                  <Card.Header className={`${t.state === 'active' ? classes.Active : classes.Closed}`}>
                   {/*<Card.Header className={`card-header ${bgColor} bg-gradient ${textColor}`}>*/}
                     {t.status}
                   </Card.Header>

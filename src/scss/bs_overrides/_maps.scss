@@ -1,1 +1,177 @@
+
 //$tournio-bg-colors
+
+//$theme-colors: (
+//  "primary":    $primary,
+//  "secondary":  $secondary,
+//  "success":    $success,
+//  "info":       $info,
+//  "warning":    $warning,
+//  "danger":     $danger,
+//  "light":      $light,
+//  "dark":       $dark
+//) !default;
+
+//call to map-loop:
+//  map: $theme-colors
+//  func: to-rgb
+//  $args: ["$value"]  (the string "$value", not a variable called $value
+
+//In map-loop:
+//$_map: ()
+
+//loop over $map as $key -> $value
+
+//  iter 1:
+//    $key: "primary"
+//    $value: "#3b71ca"
+
+//    loop over $args as $arg:
+//      iter A:
+//      $_args: []
+//        $arg: "$value"
+//        append something to $_args:
+//          if $arg == "$key", then $key;
+//          else if $arg == "$value", then $value
+//          else $arg
+//        $_args: ["#3b71ca"]
+//    -- end loop over $args
+//    merge a pair into $_map: $key -> $func($_args)
+//    $_map: (
+//      "primary": red(59), green(114), blue(202),
+//    )
+//
+//  iter 2:
+//    $key: "success"
+//    $value: "#40824c"
+//
+//    loop over $args as $arg:
+//      iter A:
+//        $_args: []
+//        $arg: "$value"
+//        append something to $_args:
+//          if $arg == "$key", then $key;
+//          else if $arg == "$value", then $value
+//          else $arg
+//        $_args: ["#40824c"]
+//    -- end loop over $args
+//    merge a pair into $_map: $key -> $func($_args)
+//    we merge into $_map:
+//      key: $key
+//      value: $func($_args...)
+//    which here is:
+//      key: "success"
+//      value: to-rgb("#40824c")
+//    which gives us
+//      ("success": red(64), green(130), blue(76))
+//    so now we have:
+//      $_map: (
+//        "primary": red(59), green(114), blue(202),
+//        "success": red(64), green(130), blue(76),
+//      )
+//
+//  ... and so on, until:
+//
+//  $_map: (
+//    "primary": red(59), green(114), blue(202),
+//    "success": red(64), green(130), blue(76),
+//    ...
+//    "dark": red(33), green(37), blue(41),
+//  )
+//
+// So this is now:
+//
+// $theme-colors-rgb: (
+//    "primary": red(59), green(114), blue(202),
+//    "success": red(64), green(130), blue(76),
+//    ...
+//    "dark": red(33), green(37), blue(41),
+// );
+
+// Next up, $utilities-colors gets created as a copy of $theme-colors-rgb
+// So:
+//
+//  $utilities-colors: (
+//    "primary": red(59), green(114), blue(202),
+//    "success": red(64), green(130), blue(76),
+//    ...
+//    "dark": red(33), green(37), blue(41),
+// );
+
+// Now we create a utilities map of background CSS variables.
+// But it's a merging of $utilities-colors with a mapping of black, white, and body to their RGB splits, giving us:
+//
+// $utilities-bg: (
+//    "primary": red(59), green(114), blue(202),
+//    "success": red(64), green(130), blue(76),
+//    ...
+//    "dark": red(33), green(37), blue(41),
+//    "black": red(0), green(0), blue(0),
+//    "white": red(255), green(255), blue(255),
+//    "body": red(33), green(37), blue(41),
+//);
+
+// Uses that map to generate RGBA CSS variables for them. Let's game that out:
+//
+//call to map-loop:
+//  map: $utilities-bg
+//  func: rgba-css-var
+//  $args: ["$key", "bg"]  (the string "$key", not a variable called $value
+
+//In map-loop:
+//$_map: ()
+//loop over $map as $key -> $value
+
+//  iter 1:
+//    $key: "primary"
+//    $value:  red(59), green(114), blue(202)
+
+//    loop over $args as $arg:
+//      iter A:
+//        $arg: "$key"
+//        $_args: []
+//        append something to $_args:
+//          if $arg == "$key", then $key;
+//          else if $arg == "$value", then $value
+//          else $arg
+//        $_args: ["primary"]
+//      iter B:
+//        $arg: "bg"
+//        $_args: ["primary"]
+//        append something to $_args:
+//          if $arg == "$key", then $key;
+//          else if $arg == "$value", then $value
+//          else $arg
+//        $_args: ["primary", "bg"]
+
+//    -- end loop over $args
+//    merge a pair into $_map: $key -> $func($_args...)
+//    here, that means our function call looks like:
+//      rgba-css-var("primary", "bg")
+//    that function returns one of three variations on rgba(var(--#{$prefix}#{$identifier}-XXX), var(--#{$prefix}#{YYY}-opacity)
+//      rgba-css-var("body", "bg")
+//        --> rgba(var(--bs-body-bg-rgb), var(--bs-body-opacity))
+//      rgba-css-var("body", "text")
+//        --> rgba(var(--bs-body-color-rgb), var(--bs-text-opacity))
+//      rgba-css-var("identifier", "target")
+//        --> rgba(var(--bs-identifier-rgb), var(--bs-identifier-target-opacity))
+//    (body/bg and body/text special treatment)
+//    (using "bs-" as prefix for brevity)
+//
+//    so now our map has:
+//    $_map: (
+//      "primary": rgba(var(--bs-primary-rgb), var(--bs-primary-bg-opacity))
+//    )
+//
+// So ultimately, we will have
+//
+// $utilities-bg-colors: (
+//    "primary": rgba(var(--bs-primary-rgb), var(--bs-primary-bg-opacity)),
+//    "success": rgba(var(--bs-success-rgb), var(--bs-success-bg-opacity)),
+//      ...
+//    "dark": rgba(var(--bs-dark-rgb), var(--bs-dark-bg-opacity)),
+//    "black": rgba(var(--bs-black-rgb), var(--bs-black-bg-opacity)),
+//    "white": rgba(var(--bs-white-rgb), var(--bs-white-bg-opacity)),
+//    "body": , rgba(var(--bs-body-bg-rgb), var(--bs-body-opacity))
+// )
+//

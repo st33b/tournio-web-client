@@ -28,7 +28,7 @@ $cyan:      #54b4d3;
 $yellow:    #e9dd45;
 $red:       #e03d48;
 $light:     #fbfbfb;
-$dark:      #212529;
+//$dark:      #212529; // does not override bootstrap
 $indigo:    #3e0dd4;
 $purple:    #6f42c1;
 $pink:      #d63384;
@@ -50,12 +50,9 @@ $gray-900: #212529;
 $black:    #000;
 
 $primary:       $blue;
-$secondary:     $gray-600;
 $success:       $green;
-//$info:          $cyan; (We override this below)
 $warning:       $yellow;
 $danger:        $red;
-$light:         $gray-100;
 $dark:          $gray-900;
 // End of what's taken from Bootstrap
 /////////////////////////////////////////////////////////////////
@@ -65,25 +62,12 @@ $dark:          $gray-900;
 // Let's use orange for info, rather than cyan.
 $info: $orange;
 
-// Bootstrap doesn't set standard theme background colors, so let's set our own
-$primary-bg:       tint-color($primary, 50%);
-$secondary-bg:     tint-color($secondary, 50%);
-$success-bg:       tint-color($success, 50%);
-$info-bg:          tint-color($info, 50%);
-$warning-bg:       tint-color($warning, 50%);
-$danger-bg:        tint-color($danger, 50%);
-$light-bg:         mix($gray-100, $white);
-$dark-bg:          $gray-300;
-
-// Let's create a theme map for the background colors
-
-$theme-colors-bg: (
-  "primary": $primary-bg,
-  "secondary": $secondary-bg,
-  "success": $success-bg,
-  "info": $info-bg,
-  "warning": $warning-bg,
-  "danger": $danger-bg,
-  "light": $light-bg,
-  "dark": $dark-bg,
-);
+// I like my subtle background colors just a hair darker than the defaults
+$primary-bg-subtle:       tint-color($primary, 75%);
+$secondary-bg-subtle:     tint-color($secondary, 75%);
+$success-bg-subtle:       tint-color($success, 75%);
+$info-bg-subtle:          tint-color($info, 75%);
+$warning-bg-subtle:       tint-color($warning, 75%);
+$danger-bg-subtle:        tint-color($danger, 75%);
+$light-bg-subtle:         mix($gray-100, $white);
+$dark-bg-subtle:          $gray-300;
