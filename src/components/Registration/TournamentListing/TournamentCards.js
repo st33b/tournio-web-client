@@ -75,7 +75,7 @@ const TournamentCards = () => {
                           {t.start_date}
                         </Card.Text>
                         <Card.Text className={'py-0 text-end'}>
-                          <Card.Link className={'btn btn-outline-primary text-primary-emphasis'}
+                          <Card.Link className={'btn btn-primary'}
                                      href={`/tournaments/${t.identifier}`}>
                             Go
                             <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>
@@ -90,6 +90,38 @@ const TournamentCards = () => {
           })}
         </Row>
       )}
+      <div className={'d-flex flex-wrap pb-4'}>
+        {[
+          'primary',
+          'secondary',
+          'success',
+          'info',
+          'warning',
+          'danger',
+        ].map(variant => (
+          <a className={`d-inline-block mx-2 btn btn-${variant}`}
+             key={variant}
+             href={'#'}>
+            {titleCase(variant)}
+          </a>
+        ))}
+      </div>
+      <div className={'d-flex flex-wrap'}>
+      {[
+        'primary',
+        'secondary',
+        'success',
+        'info',
+        'warning',
+        'danger',
+      ].map(variant => (
+        <a className={`d-inline-block mx-2 btn btn-outline-${variant}`}
+           key={variant}
+           href={'#'}>
+          {titleCase(variant)}
+        </a>
+      ))}
+      </div>
     </div>
   )
 }

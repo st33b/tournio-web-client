@@ -1,10 +1,32 @@
+// Color definitions for dark mode.
+$blue-dark:      shade-color($blue, 15%);
+$secondary-dark: shade-color($secondary, 30%);
+$green-dark:     shade-color($green, 30%);
+$cyan-dark:      shade-color($cyan, 30%);
+$yellow-dark:    shade-color($yellow, 30%);
+$red-dark:       shade-color($red, 50%);
+$indigo-dark:    shade-color($indigo, 30%);
+$purple-dark:    shade-color($purple, 30%);
+$pink-dark:      shade-color($pink, 30%);
+$orange-dark:    shade-color($orange, 30%);
+$teal-dark:      shade-color($teal, 30%);
+
+$theme-colors-dark: (
+  "primary": $blue-dark,
+  "secondary": $secondary-dark,
+  "success": $green-dark,
+  "info": $orange-dark,
+  "warning": $yellow-dark,
+  "danger": $red-dark,
+);
+
 // The default subtle backgrounds are too subtle.
 
-$primary-bg-subtle-dark:            shade-color($primary, 80%);
-$secondary-bg-subtle-dark:          shade-color($secondary, 80%);
-$success-bg-subtle-dark:            shade-color($success, 50%);
-$info-bg-subtle-dark:               shade-color($info, 80%);
-$warning-bg-subtle-dark:            shade-color($warning, 80%);
-$danger-bg-subtle-dark:             shade-color($danger, 80%);
+$primary-bg-subtle-dark:            shade-color($primary, 40%);
+$secondary-bg-subtle-dark:          shade-color($secondary, 40%);
+$success-bg-subtle-dark:            shade-color($success, 40%);
+$info-bg-subtle-dark:               shade-color($info, 40%);
+$warning-bg-subtle-dark:            shade-color($warning, 40%);
+$danger-bg-subtle-dark:             shade-color($danger, 40%);
 $light-bg-subtle-dark:              $gray-800;
 $dark-bg-subtle-dark:               mix($gray-800, $black);
