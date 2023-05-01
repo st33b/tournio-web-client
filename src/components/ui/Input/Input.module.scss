@@ -5,8 +5,9 @@
 
   .RequiredLabel {
     margin-left: 5px;
-    color: darkred;
     font-size: 60%;
+    color: var(--tournio-danger);
+    filter: brightness(80%);
   }
 
   .InputElement {

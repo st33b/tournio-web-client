@@ -12,32 +12,30 @@
 //  }
 //}
 
-@each $color, $value in $theme-colors-dark {
-  @include color-mode(dark, true) {
-    color-scheme: dark;
+@include color-mode(dark, true) {
+  color-scheme: dark;
+
+  @each $color, $value in $theme-colors-dark {
+    --#{$prefix}#{$color}-moody: #{$value};
 
     .btn-#{$color} {
       @include button-variant(
-        $value,
-        $value,
+          $value,
+          $value,
         $color: color-contrast($value, $gray-700),
       );
     }
 
     .btn-outline-#{$color} {
       @include button-outline-variant(
-        $value,
+          $value,
         $color-hover: color-contrast($value),
         $active-background: shade-color($value, 30%),
       );
     }
   }
-}
 
-@each $color, $value in $table-variants-dark {
-  @include color-mode(dark, true) {
-    color-scheme: dark;
-
+  @each $color, $value in $table-variants-dark {
     @include table-variant(
       $color,
       $value,

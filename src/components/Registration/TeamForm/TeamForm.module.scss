@@ -2,6 +2,13 @@
   .Label {
     text-align: left;
     font-weight: normal;
+
+    .Required {
+      margin-left: 5px;
+      font-size: 60%;
+      color: var(--tournio-danger);
+      filter: brightness(80%);
+    }
   }
   @media (min-width: 768px) {
     .Label {

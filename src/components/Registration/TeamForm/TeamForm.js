@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Form, Row, Col, Button} from "react-bootstrap";
 import {Map} from "immutable";
 
@@ -67,6 +67,12 @@ const TeamForm = ({tournament, teamFormCompleted}) => {
                         className={classes.Label}
                         md={4}>
               Team Name
+              <div className="d-inline">
+                <i className={`${classes.Required} align-top bi-asterisk`} />
+                <span className="visually-hidden">
+                  This field is required.
+                </span>
+              </div>
             </Form.Label>
             <Col md={8}>
               <Form.Control type={'text'}

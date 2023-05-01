@@ -34,63 +34,24 @@ html {
   --tournio-progress-bg: var(--tournio-secondary-bg-subtle);
 }
 
-//.form-control {
-//  @media (prefers-color-scheme: dark) {
-//    background-color: var(--tournio-gray-900);
-//    color: var(--tournio-body-color);
-//    border-color: var(--tournio-gray-700);
-//
-//    &:focus,
-//    &:hover {
-//      background-color: var(--tournio-gray-800);
-//      color: var(--tournio-body-color);
-//    }
-//  }
-//}
-
-//.form-control-plaintext {
-//  @media (prefers-color-scheme: dark) {
-//    color: var(--tournio-body-color);
-//  }
-//}
-
-//.form-select {
-//  @media (prefers-color-scheme: dark) {
-//    background-color: var(--tournio-gray-900);
-//    color: var(--tournio-body-color);
-//    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%236c757d' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>");
-//    border-color: var(--tournio-gray-700);
-//  }
-//}
-
 .form-check-input {
-  background-color: var(--tournio-gray-200);
-  border-color: var(--tournio-gray-500);
-  //@media (prefers-color-scheme: dark) {
-  //  background-color: var(--tournio-gray-700);
-  //}
+  background-color: var(--tournio-secondary-bg-subtle);
+  border-color: var(--tournio-secondary-border-subtle);
   &:checked {
     background-color: var(--tournio-primary);
   }
 }
 
-.input-group-text {
-  color: var(--tournio-body-color);
-  //@media (prefers-color-scheme: dark) {
-  //  border-color: var(--tournio-gray-600);
-  //  background-color: var(--tournio-gray-700);
-  //}
+[data-bs-theme="dark"] .form-check-input {
+  &:checked {
+    background-color: var(--tournio-primary-moody);
+    border-color: var(--tournio-primary);
+  }
 }
 
-//.btn-close {
-//  @media (prefers-color-scheme: dark) {
-//    background-color: var(--tournio-body-color);
-//  }
+//.modal-content {
+//  color: var(--tournio-body-color);
+//  //@media (prefers-color-scheme: dark) {
+//  //  background-color: var(--tournio-gray-900);
+//  //}
 //}
-
-.modal-content {
-  color: var(--tournio-body-color);
-  //@media (prefers-color-scheme: dark) {
-  //  background-color: var(--tournio-gray-900);
-  //}
-}
