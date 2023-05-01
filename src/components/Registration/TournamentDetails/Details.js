@@ -1,18 +1,8 @@
-import classes from './TournamentDetails.module.scss';
 import {formatInTimeZone} from 'date-fns-tz';
-import {Col, Row} from "react-bootstrap";
+
+import classes from './TournamentDetails.module.scss';
 
 const Details = ({tournament}) => {
-  // early_registration_discount
-  // early_registration_ends
-
-  // registration fee
-
-  // late_fee_applies_at
-  // late_registration_fee
-
-  // entry_deadline
-
   if (!tournament) {
     return '';
   }
@@ -51,7 +41,7 @@ const Details = ({tournament}) => {
             </thead>
             <tbody>
             {earlyRegEnds && (
-              <tr className={`${classes.Early} table-success`}>
+              <tr className={`${classes.Early}`}>
                 <td>
                   ${tournament.registration_fee - tournament.early_registration_discount}
                 </td>
@@ -97,7 +87,7 @@ const Details = ({tournament}) => {
               )}
             </tr>
             {lateRegStarts && (
-              <tr className={`${classes.Late} table-warning`}>
+              <tr className={`${classes.Late}`}>
                 <td>
                   ${tournament.registration_fee + tournament.late_registration_fee}
                 </td>

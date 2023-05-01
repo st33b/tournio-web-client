@@ -33,3 +33,27 @@
     }
   }
 }
+
+@each $color, $value in $table-variants-dark {
+  @include color-mode(dark, true) {
+    color-scheme: dark;
+
+    @include table-variant(
+      $color,
+      $value,
+    )
+  }
+}
+
+ // Miscellaneous mappings
+:root,
+[data-bs-theme="light"] {
+  --#{$prefix}purple-bg: #{$purple-bg-subtle};
+}
+
+@include color-mode(dark, true) {
+  color-scheme: dark;
+
+  --#{$prefix}purple-bg: #{$purple-bg-subtle-dark};
+
+}

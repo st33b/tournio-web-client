@@ -71,3 +71,17 @@ $warning-bg-subtle:       tint-color($warning, 75%);
 $danger-bg-subtle:        tint-color($danger, 75%);
 $light-bg-subtle:         $gray-600;
 $dark-bg-subtle:          $gray-700;
+
+// This is my own.
+$purple-bg-subtle:        tint-color($purple, 75%);
+
+$table-variants: (
+  "primary":    $primary-bg-subtle,
+  "secondary":  $secondary-bg-subtle,
+  "success":    $success-bg-subtle,
+  "info":       $info-bg-subtle,
+  "warning":    $warning-bg-subtle,
+  "danger":     $danger-bg-subtle,
+  "light":      $light-bg-subtle,
+  "dark":       $dark-bg-subtle,
+);

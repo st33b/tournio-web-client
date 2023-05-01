@@ -30,3 +30,18 @@ $warning-bg-subtle-dark:            shade-color($warning, 40%);
 $danger-bg-subtle-dark:             shade-color($danger, 40%);
 $light-bg-subtle-dark:              $gray-800;
 $dark-bg-subtle-dark:               mix($gray-800, $black);
+
+// This is my own.
+$purple-bg-subtle-dark:             shade-color($purple, 40%);
+
+$table-variants-dark: (
+  "primary":    $primary-bg-subtle-dark,
+  "secondary":  $secondary-bg-subtle-dark,
+  "success":    $success-bg-subtle-dark,
+  "info":       $info-bg-subtle-dark,
+  "warning":    $warning-bg-subtle-dark,
+  "danger":     $danger-bg-subtle-dark,
+  "light":      $light-bg-subtle-dark,
+  "dark":       $dark-bg-subtle-dark,
+);
+

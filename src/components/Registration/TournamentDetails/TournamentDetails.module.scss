@@ -1,3 +1,5 @@
+@use 'bootstrap/scss/functions';
+
 .TournamentDetails {
   .WebsiteLink {
     font-size: 90%;
@@ -18,18 +20,22 @@
 
   .TestingEnvironment {
     background-color: burlywood;
-    @media (prefers-color-scheme: dark) {
-      background-color: #deb88740;
-    }
   }
 
   .Details {
     .Date {
-      font-weight: 700;
+      font-weight: 600;
+
     }
     .FeeTable {
       th {
         padding-left: 0;
+      }
+      .Early {
+        background-color: var(--tournio-success-bg-subtle);
+      }
+      .Late {
+        background-color: var(--tournio-info-bg-subtle);
       }
     }
   }
@@ -43,9 +49,6 @@
       margin-bottom: 0.5rem;
 
       background-color: var(--tournio-gray-100);
-      @media (prefers-color-scheme: dark) {
-        background-color: var(--tournio-gray-900);
-      }
     }
     .ConfirmedNote {
       text-align: right;
@@ -69,6 +72,17 @@
         margin-top: 0.25rem;
         font-size: 80%;
       }
+    }
+  }
+}
+
+[data-bs-theme="dark"] .TournamentDetails {
+  .TestingEnvironment {
+    background-color: #deb88740;
+  }
+  .Shifts {
+    .ShiftInfo {
+      background-color: var(--tournio-bookend-bg);
     }
   }
 }
