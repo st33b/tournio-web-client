@@ -22,17 +22,17 @@ $theme-colors-dark: (
 
 // The default subtle backgrounds are too subtle.
 
-$primary-bg-subtle-dark:            shade-color($primary, 40%);
-$secondary-bg-subtle-dark:          shade-color($secondary, 40%);
-$success-bg-subtle-dark:            shade-color($success, 40%);
-$info-bg-subtle-dark:               shade-color($info, 40%);
-$warning-bg-subtle-dark:            shade-color($warning, 40%);
-$danger-bg-subtle-dark:             shade-color($danger, 40%);
+$primary-bg-subtle-dark:            shade-color($primary, 30%);
+$secondary-bg-subtle-dark:          shade-color($secondary, 30%);
+$success-bg-subtle-dark:            shade-color($success, 30%);
+$info-bg-subtle-dark:               shade-color($info, 30%);
+$warning-bg-subtle-dark:            shade-color($warning, 30%);
+$danger-bg-subtle-dark:             shade-color($danger, 30%);
 $light-bg-subtle-dark:              $gray-800;
 $dark-bg-subtle-dark:               mix($gray-800, $black);
 
 // This is my own.
-$purple-bg-subtle-dark:             shade-color($purple, 40%);
+$purple-bg-subtle-dark:             shade-color($purple, 30%);
 
 $table-variants-dark: (
   "primary":    $primary-bg-subtle-dark,

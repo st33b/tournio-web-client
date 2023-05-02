@@ -42,6 +42,20 @@ html {
   }
 }
 
+.btn {
+  .btn-check + &:hover {
+    color: var(--tournio-btn-hover-color);
+    background-color: var(--tournio-btn-hover-bg);
+    border-color: var(--tournio-btn-hover-border-color);
+  }
+
+  &.active {
+    color: var(--tournio-btn-hover-color);
+    background-color: var(--tournio-btn-hover-bg);
+    border-color: var(--tournio-btn-hover-border-color);
+  }
+}
+
 [data-bs-theme="dark"] .form-check-input {
   &:checked {
     background-color: var(--tournio-primary-moody);

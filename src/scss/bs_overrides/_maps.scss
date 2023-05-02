@@ -1,4 +1,4 @@
- //For the outline buttons,
+//For the outline buttons,
 //@each $color, $value in $theme-colors {
 //  @include color-mode(dark, true) {
 //    color-scheme: dark;
@@ -37,13 +37,13 @@
 
   @each $color, $value in $table-variants-dark {
     @include table-variant(
-      $color,
-      $value,
+        $color,
+        $value,
     )
   }
 }
 
- // Miscellaneous mappings
+// Miscellaneous mappings
 :root,
 [data-bs-theme="light"] {
   --#{$prefix}purple-bg: #{$purple-bg-subtle};
@@ -53,5 +53,4 @@
   color-scheme: dark;
 
   --#{$prefix}purple-bg: #{$purple-bg-subtle-dark};
-
 }

@@ -12,7 +12,7 @@ const DoublesPartners = ({team, partnersChosen}) => {
       <h3>
         Doubles Partner Assignment
       </h3>
-      <table className={'table table-hover caption-top align-middle'}>
+      <table className={'table foo-table-hover caption-top align-middle'}>
         <thead className={'table'}>
         <tr>
           <th scope={'col'}>
