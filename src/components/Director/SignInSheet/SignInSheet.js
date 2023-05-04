@@ -11,6 +11,17 @@ const SignInSheet = ({tournament, bowler, showPrintButton}) => {
     bowlerFirstName = bowler.preferred_name;
   }
 
+  const countsByItemID = {};
+  if (bowler.purchases) {
+    bowler.purchases.forEach(p => {
+      const piId = p.purchasable_item_identifier;
+      if (!countsByItemID[piId]) {
+        countsByItemID[piId] = 0;
+      }
+      countsByItemID[piId] += 1;
+    });
+  }
+
   return (
     <div className={`${classes.SignInSheetHtml} d-flex flex-column vh-100`}>
       <div className={'d-flex align-items-center justify-content-center'}>
@@ -133,6 +144,20 @@ const SignInSheet = ({tournament, bowler, showPrintButton}) => {
         </h4>
         <div className={'col-6'}>
           {bowler.purchases && bowler.purchases.map(p => {
+            const quantity = countsByItemID[p.purchasable_item_identifier];
+            if (quantity === 0) {
+              return '';
+            }
+            const multiplier = quantity === 1 ? '' : (
+              <span>
+                <i className={'bi-x px-1'}aria-hidden={true} />
+                {quantity}
+                <span className={'visually-hidden'}>
+                  purchased
+                </span>
+              </span>
+              );
+            countsByItemID[p.purchasable_item_identifier] = 0;
             let note = false;
             if (p.configuration.division) {
               note = `Division ${p.configuration.division}`;
@@ -147,6 +172,7 @@ const SignInSheet = ({tournament, bowler, showPrintButton}) => {
                 </div>
                 <div className={'col fw-bold'}>
                   ${p.value}
+                  {multiplier}
                 </div>
               </div>
             );
