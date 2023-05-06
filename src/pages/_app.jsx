@@ -1,4 +1,5 @@
 import {useEffect} from "react";
+import { Analytics } from "@vercel/analytics/react";
 
 import '../scss/tournio-bs.scss';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -26,7 +27,10 @@ function MyApp({Component, pageProps})  {
       <DirectorContextProvider>
         <CommerceContextProvider>
           <RegistrationContextProvider>
-            {getLayout(<Component {...pageProps} />)}
+            <>
+              {getLayout(<Component {...pageProps} />)}
+              <Analytics/>
+            </>
           </RegistrationContextProvider>
         </CommerceContextProvider>
       </DirectorContextProvider>
