@@ -43,9 +43,6 @@ const PreviousPurchases = () => {
 
   return (
     <div className={classes.PreviousPurchases}>
-      <h4 className={'py-2 py-md-0'}>
-        Paid Items
-      </h4>
       {purchaseList}
     </div>
   )

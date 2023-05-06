@@ -4,9 +4,13 @@
     margin-bottom: 1rem;
 
     background-color: var(--tournio-gray-800);
-    color: white;
-    @media (prefers-color-scheme: dark) {
-      color: var(--tournio-body-color);
-    }
+    color: var(--tournio-gray-300);
+  }
+}
+
+[data-bs-theme="dark"] .AvailableItems {
+  h5 {
+    background-color: var(--tournio-gray-800);
+    color: var(--tournio-gray-300);
   }
 }
