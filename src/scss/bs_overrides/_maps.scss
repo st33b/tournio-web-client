@@ -27,6 +27,8 @@
     }
 
     .btn-outline-#{$color} {
+      color: tint-color($value, 40%);
+      background-color: shade-color($value, 80%);
       @include button-outline-variant(
           $value,
         $color-hover: color-contrast($value),
