@@ -1,25 +1,3 @@
-$font-family-sans-serif:
-  "Nunito Sans",
-  system-ui,
-  -apple-system,
-  "Segoe UI",
-  Roboto,
-  "Helvetica Neue",
-  "Noto Sans",
-  "Liberation Sans",
-  Arial,
-  sans-serif,
-  "Apple Color Emoji",
-  "Segoe UI Emoji",
-  "Segoe UI Symbol",
-  "Noto Color Emoji";
-
-$alert-bg-scale: -60%;
-$alert-border-scale: -20%;
-$modal-lg: 650px;
-$btn-hover-bg-shade-amount: 50%;
-$btn-hover-bg-tint-amount: 50%;
-
 $prefix: tournio-;
 
 // Our colors, some of which override Bootstrap's, some of which don't.
@@ -56,12 +34,13 @@ $success:       $green;
 $warning:       $yellow;
 $danger:        $red;
 $dark:          $gray-900;
+
 // End of what's taken from Bootstrap
 /////////////////////////////////////////////////////////////////
 
-// Our customizations
+// Tournio customizations
 
-// Let's use orange for info, rather than cyan.
+// Using orange for info, rather than cyan.
 $info: $orange;
 
 // I like my subtle background colors just a hair darker than the defaults
@@ -74,7 +53,6 @@ $danger-bg-subtle:        tint-color($danger, 75%);
 $light-bg-subtle:         $gray-600;
 $dark-bg-subtle:          $gray-700;
 
-// This is my own.
 $purple-bg-subtle:        tint-color($purple, 75%);
 
 $table-variants: (
@@ -87,3 +65,27 @@ $table-variants: (
   "light":      $light-bg-subtle,
   "dark":       $dark-bg-subtle,
 );
+
+$font-family-sans-serif:
+  "Nunito Sans",
+  system-ui,
+  -apple-system,
+  "Segoe UI",
+  Roboto,
+  "Helvetica Neue",
+  "Noto Sans",
+  "Liberation Sans",
+  Arial,
+  sans-serif,
+  "Apple Color Emoji",
+  "Segoe UI Emoji",
+  "Segoe UI Symbol",
+  "Noto Color Emoji";
+
+$alert-bg-scale: -60%;
+$alert-border-scale: -20%;
+$modal-lg: 650px;
+$btn-hover-bg-shade-amount: 50%;
+$btn-hover-bg-tint-amount: 50%;
+$link-shade-percentage: 30%;
+

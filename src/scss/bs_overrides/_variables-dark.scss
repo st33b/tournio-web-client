@@ -1,5 +1,5 @@
 // Color definitions for dark mode.
-$blue-dark:      shade-color($blue, 15%);
+$blue-dark:      tint-color($blue, 30%);
 $secondary-dark: shade-color($secondary, 30%);
 $green-dark:     shade-color($green, 30%);
 $cyan-dark:      shade-color($cyan, 30%);
@@ -23,9 +23,9 @@ $theme-colors-dark: (
 // The default subtle backgrounds are too subtle.
 
 $primary-bg-subtle-dark:            shade-color($primary, 30%);
-$secondary-bg-subtle-dark:          shade-color($secondary, 30%);
-$success-bg-subtle-dark:            shade-color($success, 30%);
-$info-bg-subtle-dark:               shade-color($info, 30%);
+$secondary-bg-subtle-dark:          shade-color($secondary, 60%);
+$success-bg-subtle-dark:            shade-color($success, 75%);
+$info-bg-subtle-dark:               shade-color($info, 55%);
 $warning-bg-subtle-dark:            shade-color($warning, 30%);
 $danger-bg-subtle-dark:             shade-color($danger, 30%);
 $light-bg-subtle-dark:              $gray-800;
@@ -45,3 +45,6 @@ $table-variants-dark: (
   "dark":       $dark-bg-subtle-dark,
 );
 
+$link-color-dark:                   $blue-dark;
+//$link-hover-color-dark:             shift-color($link-color-dark, -$link-shade-percentage);
+//$code-color-dark:                   tint-color($code-color, 40%);
