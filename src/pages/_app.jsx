@@ -1,4 +1,5 @@
 import {useEffect} from "react";
+import { Analytics } from "@vercel/analytics/react";
 
 import '../scss/styles.scss';
 
@@ -20,15 +21,18 @@ function MyApp({Component, pageProps})  {
 
   const getLayout = Component.getLayout || ((page) => page);
 
-  return (
-    <DirectorContextProvider>
-      <CommerceContextProvider>
-        <RegistrationContextProvider>
-          {getLayout(<Component {...pageProps} />)}
-        </RegistrationContextProvider>
-      </CommerceContextProvider>
-    </DirectorContextProvider>
-  );
+    return (
+      <DirectorContextProvider>
+        <CommerceContextProvider>
+          <RegistrationContextProvider>
+            <>
+              {getLayout(<Component {...pageProps} />)}
+              <Analytics/>
+            </>
+          </RegistrationContextProvider>
+        </CommerceContextProvider>
+      </DirectorContextProvider>
+    );
 }
 
 export default MyApp;
