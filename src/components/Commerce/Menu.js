@@ -5,7 +5,6 @@ import {itemAddedToCart, itemRemovedFromCart} from "../../store/actions/registra
 import PreviousPurchases from "./PreviousPurchases/PreviousPurchases";
 import AvailableItems from "./AvailableItems/AvailableItems";
 import Cart from "./Cart/Cart";
-import FreeEntryForm from "./FreeEntryForm/FreeEntryForm";
 
 import classes from './Menu.module.scss';
 
