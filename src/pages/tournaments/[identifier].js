@@ -96,16 +96,16 @@ const Page = () => {
             <div className={'flex-fill w-100'}>
               <Details tournament={tournament}/>
             </div>
-            <div className={'d-none d-xl-block flex-shrink-1'}>
+            <div className={'d-none d-lg-block flex-shrink-1'}>
               <YouWillNeed tournament={tournament}/>
             </div>
           </div>
           <PayButton />
           <RegisterButtons tournament={tournament}/>
-          <div className={'d-xl-none mb-4'}>
+          <div className={'d-lg-none'}>
             <YouWillNeed tournament={tournament}/>
           </div>
-          <div className={''}>
+          <div className={'mt-4'}>
             <Shifts tournament={tournament}/>
           </div>
         </Col>
