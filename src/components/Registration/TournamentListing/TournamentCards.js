@@ -32,7 +32,7 @@ const TournamentCards = () => {
     <div className={classes.TournamentCards}>
       {tournaments.length === 0 && <h6 className={'display-6 fw-light mt-4'}>No upcoming tournaments at the moment.</h6>}
       {tournaments.length > 0 && (
-        <Row xs={1} sm={2} lg={3} xl={4}>
+        <Row xs={1} sm={2} lg={3}>
           {tournaments.map((t) => {
             let bgColor = '';
             let textColor = 'text-white';
