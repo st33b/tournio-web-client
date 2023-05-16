@@ -25,7 +25,7 @@ $theme-colors-dark: (
 $primary-bg-subtle-dark:            shade-color($primary, 30%);
 $secondary-bg-subtle-dark:          shade-color($secondary, 60%);
 $success-bg-subtle-dark:            shade-color($success, 75%);
-$info-bg-subtle-dark:               shade-color($info, 55%);
+$info-bg-subtle-dark:               shade-color($info, 65%);
 $warning-bg-subtle-dark:            shade-color($warning, 30%);
 $danger-bg-subtle-dark:             shade-color($danger, 30%);
 $light-bg-subtle-dark:              $gray-800;
@@ -48,3 +48,5 @@ $table-variants-dark: (
 $link-color-dark:                   $blue;
 //$link-hover-color-dark:             shift-color($link-color-dark, -$link-shade-percentage);
 //$code-color-dark:                   tint-color($code-color, 40%);
+
+$body-emphasis-color-dark: $gray-200;

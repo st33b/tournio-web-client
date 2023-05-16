@@ -5,11 +5,12 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './Navigation.module.scss';
 import {useClientReady} from "../../../utils";
+import ColorModeToggler from "../../common/ColorModeToggler/ColorModeToggler";
 
 const markup = (content = '') => {
   return (
     <div className={classes.Navigation}>
-      <Navbar variant={'dark'} bg={'dark'} collapseOnSelect expand={'md'}>
+      <Navbar collapseOnSelect expand={'md'} className={`${classes.DirectorLinks}`}>
         <div className={classes.BrandWrapper}>
           <Navbar.Brand href={'/'} className={classes.Brand}>
             {/* This is a bit of a hack to make the image clickable. It will resize to however long the text is. */}
@@ -72,6 +73,10 @@ const Navigation = () => {
           <Nav.Link href={'/director/logout'}>
             Log Out
           </Nav.Link>
+        </Nav>
+        <Nav className={'d-none d-md-block'}>
+          <ColorModeToggler className={''} />
+          {/*<ColorModeToggler className={'ms-auto d-none d-md-inline-block'} />*/}
         </Nav>
       </Navbar.Collapse>
     </>
