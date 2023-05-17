@@ -8,7 +8,7 @@ import {directorApiRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 import {devConsoleLog} from "../../../utils";
-import ButtonRow from "./ButtonRow";
+import ButtonRow from "../../common/ButtonRow";
 
 const ProductForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();

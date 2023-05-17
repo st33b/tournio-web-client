@@ -11,7 +11,7 @@ import classes from './ApparelItemForm.module.scss';
 import productClasses from '../NewPurchasableItem/ProductForm.module.scss';
 
 import AvailableSizes from "./AvailableSizes";
-import ButtonRow from "../NewPurchasableItem/ButtonRow";
+import ButtonRow from "../../common/ButtonRow";
 
 
 const ApparelItemForm = ({tournament, onCancel, onComplete, item}) => {

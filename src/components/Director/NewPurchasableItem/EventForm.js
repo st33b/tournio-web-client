@@ -6,7 +6,7 @@ import {directorApiRequest} from "../../../director";
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
 import classes from './EventForm.module.scss';
-import ButtonRow from "./ButtonRow";
+import ButtonRow from "../../common/ButtonRow";
 
 const EventForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();

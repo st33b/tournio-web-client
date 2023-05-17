@@ -7,7 +7,7 @@ import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
 import classes from './SanctionForm.module.scss';
 import {devConsoleLog} from "../../../utils";
-import ButtonRow from "./ButtonRow";
+import ButtonRow from "../../common/ButtonRow";
 
 const SanctionForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();

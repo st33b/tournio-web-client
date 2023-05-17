@@ -337,13 +337,13 @@ const ShiftForm = ({tournament, shift}) => {
                 <button type={'button'}
                         title={'Cancel'}
                         onClick={formCancelled}
-                        className={'btn btn-outline-danger me-2'}>
+                        className={'btn btn-secondary me-2'}>
                     Cancel
                 </button>
                 <button type={'submit'}
                         title={'Save'}
                         disabled={!formData.get('valid')}
-                        className={'btn btn-outline-success'}>
+                        className={'btn btn-primary'}>
                     Save
                 </button>
               </div>

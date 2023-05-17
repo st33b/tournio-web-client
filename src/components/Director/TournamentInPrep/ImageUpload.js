@@ -89,14 +89,14 @@ const ImageUpload = ({tournament}) => {
                 A square-ish image works best.
               </Form.Text>
             </Form.Group>
-            <Form.Group controlId={'uploadGo'}>
-              <Button variant={'outline-danger'}
+            <Form.Group controlId={'uploadGo'} className={`d-flex justify-content-end`}>
+              <Button variant={'secondary'}
                       className={'me-3'}
                       type={'button'}
                       onClick={() => setFormDisplayed(false)}>
                 Cancel
               </Button>
-              <Button variant={'outline-primary'}
+              <Button variant={'primary'}
                       type={'button'}
                       onClick={uploadTheFile}>
                 Upload

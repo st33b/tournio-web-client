@@ -10,7 +10,7 @@ import {directorApiRequest} from "../../../director";
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
 import classes from './LedgerForm.module.scss';
-import ButtonRow from "./ButtonRow";
+import ButtonRow from "../../common/ButtonRow";
 
 const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
   const context = useDirectorContext();

@@ -6,7 +6,7 @@ import {directorApiRequest} from "../../../director";
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
 import classes from './SingleUseForm.module.scss';
-import ButtonRow from "./ButtonRow";
+import ButtonRow from "../../common/ButtonRow";
 
 const SingleUseForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();

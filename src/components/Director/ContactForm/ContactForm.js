@@ -231,13 +231,13 @@ const ContactForm = ({tournament, contact, newContact}) => {
                 <button type={'button'}
                         title={'Cancel'}
                         onClick={() => setEditing(false)}
-                        className={'btn btn-outline-danger me-2'}>
+                        className={'btn btn-secondary me-2'}>
                     Cancel
                 </button>
                 <button type={'submit'}
                         title={'Save'}
                         disabled={!formData.valid}
-                        className={'btn btn-outline-success'}>
+                        className={'btn btn-primary'}>
                     Save
                 </button>
               </div>

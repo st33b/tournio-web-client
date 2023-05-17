@@ -7,7 +7,7 @@ import Item from "../../Commerce/AvailableItems/Item/Item";
 
 import classes from './MultiUseForm.module.scss';
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
-import ButtonRow from "./ButtonRow";
+import ButtonRow from "../../common/ButtonRow";
 
 /**
  * Used only for banquet items.

@@ -3,8 +3,5 @@
 }
 
 .FormDisplayed {
-  background-color: var(--tournio-gray-100);
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--tournio-gray-900);
-  }
+  background-color: var(--tournio-admin-form-bg);
 }

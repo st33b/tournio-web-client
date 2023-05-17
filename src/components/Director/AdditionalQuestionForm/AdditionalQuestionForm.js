@@ -145,13 +145,6 @@ const AdditionalQuestionForm = ({tournament}) => {
                 A response is required
               </label>
             </div>
-            {/*<div className={'text-center'}>*/}
-            {/*  <button type={'submit'}*/}
-            {/*          className={'btn btn-primary'}*/}
-            {/*          disabled={!formData.valid}>*/}
-            {/*    Save*/}
-            {/*  </button>*/}
-            {/*</div>*/}
 
             <div className={'d-flex justify-content-end'}>
               <button type={'button'}
