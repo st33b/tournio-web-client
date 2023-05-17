@@ -32,7 +32,7 @@ const ColorModeToggler = (props) => {
   }
 
   devConsoleLog("Theme.preferred:", theme.preferred);
-  const preferredIconClass = themeLinkContents[theme.preferred].iconClass;
+  const preferredIconClass = !!theme.preferred ? themeLinkContents[theme.preferred].iconClass : themeLinkContents.auto.iconClass;
 
   return (
     <div className={`${classes.ColorModeToggler} ${props.className} dropdown`}>
