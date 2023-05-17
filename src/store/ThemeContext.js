@@ -12,13 +12,17 @@ const initialValue = {
 const ThemeContext = createContext(initialValue);
 
 export const ThemeContextProvider = ({children}) => {
-  const [theme, setTheme] = useState(null);
+  const initialThemeState = {
+    preferred: 'auto',
+    active: 'dark',
+  }
+  const [theme, setTheme] = useState(initialThemeState);
   const [storedThemeState, storeThemeState] = useLocalStorage('tournio-color-theme', ThemeContext.theme);
 
   const updatePreferredTheme = (toTheme) => {
     let activeTheme = toTheme;
     if (toTheme === 'auto') {
-      activeTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark').matches ? 'dark' : 'light';
+      activeTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
     const newTheme = {
       preferred: toTheme,

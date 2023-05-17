@@ -1,7 +1,7 @@
 import classes from './ColorModeToggler.module.scss';
 import {useThemeContext} from "../../../store/ThemeContext";
 import {useEffect} from "react";
-import {useClientReady} from "../../../utils";
+import {devConsoleLog, useClientReady} from "../../../utils";
 
 const ColorModeToggler = (props) => {
   const themeLinkContents = {
@@ -31,6 +31,7 @@ const ColorModeToggler = (props) => {
     updatePreferredTheme(event.target.name);
   }
 
+  devConsoleLog("Theme.preferred:", theme.preferred);
   const preferredIconClass = themeLinkContents[theme.preferred].iconClass;
 
   return (
