@@ -54,3 +54,5 @@ $body-emphasis-color-dark: $gray-200;
 
 $dark-color-contrast-dark:      #1b1f22;
 $dark-color-contrast-light:     $gray-200;
+
+$admin-form-bg-dark: shade-color($admin-form-bg, 80%);

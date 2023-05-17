@@ -211,7 +211,7 @@ const ShiftForm = ({tournament, shift}) => {
            className={'text-body text-decoration-none'}
            title={'Edit details'}
            onClick={toggleEdit}>
-          <dl className={`${classes.ExistingShift} px-1 mt-1`}>
+          <dl className={`${classes.ExistingShift} p-1`}>
             <div className={'row'}>
               <dt className={dtClass}>
                 Name
@@ -338,19 +338,13 @@ const ShiftForm = ({tournament, shift}) => {
                         title={'Cancel'}
                         onClick={formCancelled}
                         className={'btn btn-outline-danger me-2'}>
-                  <i className={'bi-x-lg'} aria-hidden={true}/>
-                  <span className={'visually-hidden'}>
                     Cancel
-                  </span>
                 </button>
                 <button type={'submit'}
                         title={'Save'}
                         disabled={!formData.get('valid')}
                         className={'btn btn-outline-success'}>
-                  <i className={'bi-check-lg'} aria-hidden={true}/>
-                  <span className={'visually-hidden'}>
                     Save
-                  </span>
                 </button>
               </div>
             </div>

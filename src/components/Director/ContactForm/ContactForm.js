@@ -232,19 +232,13 @@ const ContactForm = ({tournament, contact, newContact}) => {
                         title={'Cancel'}
                         onClick={() => setEditing(false)}
                         className={'btn btn-outline-danger me-2'}>
-                  <i className={'bi-x-lg'} aria-hidden={true}/>
-                  <span className={'visually-hidden'}>
                     Cancel
-                  </span>
                 </button>
                 <button type={'submit'}
                         title={'Save'}
                         disabled={!formData.valid}
                         className={'btn btn-outline-success'}>
-                  <i className={'bi-check-lg'} aria-hidden={true}/>
-                  <span className={'visually-hidden'}>
                     Save
-                  </span>
                 </button>
               </div>
             </div>

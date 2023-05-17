@@ -100,7 +100,7 @@ const NewPurchasableItem = ({tournament}) => {
 
         {!formDisplayed && allowCreate &&
           <div>
-            <h6 className={`fw-light`}>
+            <h6 className={`fw-light mb-0`}>
               Create a new thing:
             </h6>
             <div className={`d-flex flex-wrap`}>

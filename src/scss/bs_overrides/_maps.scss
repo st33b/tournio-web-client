@@ -2,8 +2,10 @@
 @include color-mode(light, true) {
   color-scheme: light;
 
-    --#{$prefix}purple-bg-subtle: #{$purple-bg-subtle};
-    --#{$prefix}purple-border-subtle: #{$purple-border-subtle};
+  --#{$prefix}purple-bg-subtle: #{$purple-bg-subtle};
+  --#{$prefix}purple-border-subtle: #{$purple-border-subtle};
+
+  --#{$prefix}admin-form-bg: #{$admin-form-bg};
 }
 
 // CSS vars for color mode: dark
@@ -12,6 +14,8 @@
 
   --#{$prefix}purple-bg-subtle: #{$purple-bg-subtle-dark};
   --#{$prefix}purple-border-subtle: #{$purple-border-subtle-dark};
+
+  --#{$prefix}admin-form-bg: #{$admin-form-bg-dark};
 
   .progress,
   .progress-stacked {
