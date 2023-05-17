@@ -35,6 +35,8 @@ $warning:       $yellow;
 $danger:        $red;
 $dark:          $gray-900;
 
+$body-color: $gray-900;
+
 // End of what's taken from Bootstrap
 /////////////////////////////////////////////////////////////////
 
@@ -66,6 +68,14 @@ $table-variants: (
   "light":      $light-bg-subtle,
   "dark":       $dark-bg-subtle,
 );
+
+// I define a "moody" color set that, in dark mode, is between regular and bg-subtle.
+// It's intended to act as the "baseline" set of theme colors in dark mode, but is
+// currently applied only to buttons (regular and outline) and tables.
+
+// Do we want a corresponding "moody" set in light mode? Or is the regular set of
+// theme colors sufficient? For now, let's say the regular set is sufficient, since
+// the original intent of "moody" is as a baseline set of theme colors for dark mode.
 
 $font-family-sans-serif:
   "Nunito Sans",
