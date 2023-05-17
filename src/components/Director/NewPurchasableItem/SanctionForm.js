@@ -6,15 +6,17 @@ import {directorApiRequest} from "../../../director";
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
 import classes from './SanctionForm.module.scss';
+import {devConsoleLog} from "../../../utils";
+import ButtonRow from "./ButtonRow";
 
 const SanctionForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();
   const dispatch = context.dispatch;
 
   const initialState = {
-    determination: 'igbo', // This is the only kind of sanction we support at the moment.
-    name: 'IGBO Membership',
-    value: 25,
+    determination: '',
+    name: '',
+    value: '',
     order: '',
 
     valid: false,
@@ -22,18 +24,28 @@ const SanctionForm = ({tournament, onCancel, onComplete}) => {
 
   const [formData, setFormData] = useState(initialState);
 
+  const supportedSanctions = {
+    igbo: 'IGBO Membership',
+    usbc: 'USBC Membership',
+  }
+
   const inputChanged = (event) => {
     let newValue = '';
     newValue = event.target.value;
     const inputName = event.target.name;
+
+    const newFormData = {...formData};
+
     if (inputName === 'value' || inputName === 'order') {
       if (newValue.length > 0) {
         newValue = parseInt(newValue);
       }
+    } else {
+      // it's determination, because that's all that's left
+      newFormData.name = supportedSanctions[newValue];
     }
-    const newFormData = {...formData};
-    newFormData[inputName] = newValue;
 
+    newFormData[inputName] = newValue;
     newFormData.valid = newFormData.name.length > 0 && newFormData.value > 0 && newFormData.order > 0;
 
     setFormData(newFormData);
@@ -83,17 +95,25 @@ const SanctionForm = ({tournament, onCancel, onComplete}) => {
             </h6>
           </div>
           <div className={'row mb-3'}>
-            <label htmlFor={'name'} className={'form-label ps-0 mb-1'}>
-              Name
+            <label htmlFor={'name'} className={'form-label col-3 text-end'}>
+              Type
             </label>
-            <input type={'text'}
-                   className={`form-control`}
-                   name={'name'}
-                   id={'name'}
-                   required={true}
-                   onChange={(event) => inputChanged(event)}
-                   value={formData.name}
-            />
+            <div className={'col'}>
+              {Object.keys(supportedSanctions).map(det => (
+                <div className={'form-check'} key={det}>
+                  <input className={'form-check-input'}
+                         type={'radio'}
+                         name={'determination'}
+                         id={`determination_${det}`}
+                         value={det}
+                         onChange={inputChanged} />
+                  <label className={'form-check-label'}
+                         htmlFor={`determination_${det}`}>
+                    {supportedSanctions[det]}
+                  </label>
+                </div>
+              ))}
+            </div>
           </div>
           <div className={'row mb-3'}>
             <div className={'col-6 ps-0'}>
@@ -123,28 +143,8 @@ const SanctionForm = ({tournament, onCancel, onComplete}) => {
               />
             </div>
           </div>
-          <div className={'row'}>
-            <div className={'d-flex justify-content-end pe-0'}>
-              <button type={'button'}
-                      title={'Cancel'}
-                      onClick={onCancel}
-                      className={'btn btn-outline-danger me-2'}>
-                <i className={'bi-x-lg'} aria-hidden={true}/>
-                <span className={'visually-hidden'}>
-                  Cancel
-                </span>
-              </button>
-              <button type={'submit'}
-                      title={'Save'}
-                      disabled={!formData.valid}
-                      className={'btn btn-outline-success'}>
-                <i className={'bi-check-lg'} aria-hidden={true}/>
-                <span className={'visually-hidden'}>
-                  Save
-                </span>
-              </button>
-            </div>
-          </div>
+
+          <ButtonRow onCancel={onCancel} disableSave={!formData.valid} />
         </form>
       </div>
     </ErrorBoundary>

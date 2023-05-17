@@ -16,10 +16,8 @@
       padding: 0.25rem 0.5rem;
     }
     .Enabled:hover {
-      background-color: #ddf5f7;
-      @media (prefers-color-scheme: dark) {
-        background-color: #313c57;
-      }
+      background-color: var(--tournio-primary-bg-subtle);
+      border-color: var(--tournio-primary-border-subtle);
     }
   }
 }

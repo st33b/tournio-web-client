@@ -179,24 +179,22 @@ const ConfigItemForm = ({item, editable}) => {
       inputElement = createElement(elementName, elementProps, children);
     }
     content = (
-      <form onSubmit={onFormSubmit} className={`${classes.Form} p-2 my-2`}>
+      <form onSubmit={onFormSubmit} className={`${classes.Form} p-3`}>
           <label className={'form-label'} htmlFor={'config_item'}>
             {item.label}
           </label>
         {inputElement}
-        <div className={'text-end pt-2'}>
+        <div className={'text-end pt-3'}>
           <button type={'button'}
                   title={'Cancel'}
                   onClick={onCancel}
                   className={'btn btn-sm btn-outline-danger me-2'}>
-            <span className={'visually-hidden'}>Cancel</span>
-            <i className={'bi-x-lg'} aria-hidden={true} />
+            Cancel
           </button>
           <button type={'submit'}
                   title={'Save'}
                   className={'btn btn-sm btn-outline-success'}>
-            <span className={'visually-hidden'}>Save</span>
-            <i className={'bi-check-lg'} aria-hidden={true} />
+            Save
           </button>
         </div>
       </form>

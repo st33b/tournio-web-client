@@ -63,7 +63,7 @@ const SizesForm = ({sizeMap, onSizeChanged, onAllInGroupSet}) => {
     <div className={`${classes.SizesForm}`}>
       <div className={`row ${classes.SizeSet}`}>
         <div className={`col`}>
-          <div className={classes.Size}>
+          <div className={`${classes.Size} ${classes.Enabled}`}>
 
             <div className="form-check">
               <input className="form-check-input"

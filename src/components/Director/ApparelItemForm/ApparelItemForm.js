@@ -1,21 +1,17 @@
 import {useEffect, useState} from "react";
-import {format, formatISO} from "date-fns";
-import Card from "react-bootstrap/Card";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../director";
 import ErrorBoundary from "../../common/ErrorBoundary";
 import Item from "../../Commerce/AvailableItems/Item/Item";
-import {
-  purchasableItemsAdded,
-  purchasableItemUpdated
-} from "../../../store/actions/directorActions";
+import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 import {apparelSizes} from "../../../utils";
 
 import classes from './ApparelItemForm.module.scss';
 import productClasses from '../NewPurchasableItem/ProductForm.module.scss';
 
 import AvailableSizes from "./AvailableSizes";
+import ButtonRow from "../NewPurchasableItem/ButtonRow";
 
 
 const ApparelItemForm = ({tournament, onCancel, onComplete, item}) => {
@@ -236,7 +232,7 @@ const ApparelItemForm = ({tournament, onCancel, onComplete, item}) => {
     <ErrorBoundary>
       <div className={classes.ApparelItem}>
         <form onSubmit={formSubmitted} className={`py-2`}>
-          <div className={`${productClasses.HeaderRow} row mb-2`}>
+          <div className={`${classes.HeaderRow} row mb-2`}>
             <h6>
               New Apparel Item
             </h6>
@@ -341,7 +337,6 @@ const ApparelItemForm = ({tournament, onCancel, onComplete, item}) => {
           {/*  </div>*/}
           {/*)}*/}
 
-          {/* Apply any special styling here? */}
           <div className={`row ${productClasses.PreviewItem}`}>
             <p className={`${productClasses.PreviewText}`}>
               How it will look to bowlers:
@@ -349,29 +344,30 @@ const ApparelItemForm = ({tournament, onCancel, onComplete, item}) => {
             <Item item={itemPreviewProps} preview={true}/>
           </div>
 
+          <ButtonRow onCancel={onCancel} disableSave={!formData.valid} />
           {/* Cancel & Save buttons */}
-          <div className={'row'}>
-            <div className={'d-flex justify-content-end pe-0'}>
-              <button type={'button'}
-                      title={'Cancel'}
-                      onClick={onCancel}
-                      className={'btn btn-outline-secondary me-2'}>
-                <i className={'bi-x-lg'} aria-hidden={true}/>
-                <span className={'visually-hidden'}>
-                  Cancel
-                </span>
-              </button>
-              <button type={'submit'}
-                      title={'Save'}
-                      disabled={!formData.valid}
-                      className={'btn btn-outline-success'}>
-                <i className={'bi-check-lg'} aria-hidden={true}/>
-                <span className={'visually-hidden'}>
-                  Save
-                </span>
-              </button>
-            </div>
-          </div>
+          {/*<div className={'row'}>*/}
+          {/*  <div className={'d-flex justify-content-end pe-0'}>*/}
+          {/*    <button type={'button'}*/}
+          {/*            title={'Cancel'}*/}
+          {/*            onClick={onCancel}*/}
+          {/*            className={'btn btn-outline-secondary me-2'}>*/}
+          {/*      <i className={'bi-x-lg'} aria-hidden={true}/>*/}
+          {/*      <span className={'visually-hidden'}>*/}
+          {/*        Cancel*/}
+          {/*      </span>*/}
+          {/*    </button>*/}
+          {/*    <button type={'submit'}*/}
+          {/*            title={'Save'}*/}
+          {/*            disabled={!formData.valid}*/}
+          {/*            className={'btn btn-outline-success'}>*/}
+          {/*      <i className={'bi-check-lg'} aria-hidden={true}/>*/}
+          {/*      <span className={'visually-hidden'}>*/}
+          {/*        Save*/}
+          {/*      </span>*/}
+          {/*    </button>*/}
+          {/*  </div>*/}
+          {/*</div>*/}
 
         </form>
       </div>

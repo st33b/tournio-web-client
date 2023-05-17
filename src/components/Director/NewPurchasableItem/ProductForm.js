@@ -8,6 +8,7 @@ import {directorApiRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 import {devConsoleLog} from "../../../utils";
+import ButtonRow from "./ButtonRow";
 
 const ProductForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();
@@ -220,30 +221,7 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
             <Item item={itemPreviewProps} preview={true}/>
           </div>
 
-          {/* Cancel & Save buttons */}
-          <div className={'row'}>
-            <div className={'d-flex justify-content-end pe-0'}>
-              <button type={'button'}
-                      title={'Cancel'}
-                      onClick={onCancel}
-                      className={'btn btn-outline-secondary me-2'}>
-                <i className={'bi-x-lg'} aria-hidden={true}/>
-                <span className={'visually-hidden'}>
-                  Cancel
-                </span>
-              </button>
-              <button type={'submit'}
-                      title={'Save'}
-                      disabled={!formData.valid}
-                      className={'btn btn-outline-success'}>
-                <i className={'bi-check-lg'} aria-hidden={true}/>
-                <span className={'visually-hidden'}>
-                  Save
-                </span>
-              </button>
-            </div>
-          </div>
-
+          <ButtonRow onCancel={onCancel} disableSave={!formData.valid} />
         </form>
       </div>
     </ErrorBoundary>
