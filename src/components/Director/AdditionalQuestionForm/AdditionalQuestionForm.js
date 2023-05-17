@@ -6,6 +6,7 @@ import {directorApiRequest} from "../../../director";
 import {additionalQuestionsUpdated} from "../../../store/actions/directorActions";
 
 import classes from './AdditionalQuestionForm.module.scss';
+import ButtonRow from "../../common/ButtonRow";
 
 const AdditionalQuestionForm = ({tournament}) => {
   const context = useDirectorContext();
@@ -122,50 +123,39 @@ const AdditionalQuestionForm = ({tournament}) => {
 
   return (
     <div className={outerClasses.join(' ')}>
-      <Card.Body>
         {formDisplayed &&
-          <form onSubmit={formSubmitted}>
-            <select className={'form-select'}
-                    onChange={inputChanged}
-                    name={'extended_form_field_id'}>
-              <option value={''}>
-                -- Choose a question
-              </option>
-              {availableQuestions.map(q => <option key={q.id} value={q.id}>{q.label}</option>)}
-            </select>
-            <div className={'form-check form-switch my-3'}>
-              <input className={'form-check-input'}
-                     type={'checkbox'}
-                     role={'switch'}
-                     name={'required'}
-                     onChange={inputChanged}
-                     id={'response_required'}/>
-              <label className={'form-check-label'}
-                     htmlFor={'response_required'}>
-                A response is required
-              </label>
+          <form onSubmit={formSubmitted} className={`py-2`}>
+            <div className={`${classes.HeaderRow} row mb-2`}>
+              <h6>
+                New Form Question
+              </h6>
+            </div>
+            <div className={'row mb-3'}>
+              <select className={'form-select'}
+                      onChange={inputChanged}
+                      name={'extended_form_field_id'}>
+                <option value={''}>
+                  -- Choose a question
+                </option>
+                {availableQuestions.map(q => <option key={q.id} value={q.id}>{q.label}</option>)}
+              </select>
+            </div>
+            <div className={`row mb-3`}>
+              <div className={'form-check form-switch my-3'}>
+                <input className={'form-check-input'}
+                       type={'checkbox'}
+                       role={'switch'}
+                       name={'required'}
+                       onChange={inputChanged}
+                       id={'response_required'}/>
+                <label className={'form-check-label'}
+                       htmlFor={'response_required'}>
+                  A response is required
+                </label>
+              </div>
             </div>
 
-            <div className={'d-flex justify-content-end'}>
-              <button type={'button'}
-                      title={'Cancel'}
-                      onClick={() => setFormDisplayed(false)}
-                      className={'btn btn-outline-danger me-2'}>
-                <i className={'bi-x-lg'} aria-hidden={true}/>
-                <span className={'visually-hidden'}>
-                Cancel
-              </span>
-              </button>
-              <button type={'submit'}
-                      title={'Save'}
-                      disabled={!formData.valid}
-                      className={'btn btn-outline-success'}>
-                <i className={'bi-check-lg'} aria-hidden={true}/>
-                <span className={'visually-hidden'}>
-                Save
-              </span>
-              </button>
-            </div>
+            <ButtonRow onCancel={() => setFormDisplayed(false)} disableSave={!formData.valid} />
             {errorMessage}
           </form>
         }
@@ -204,7 +194,6 @@ const AdditionalQuestionForm = ({tournament}) => {
           </div>
         }
         {successMessage}
-      </Card.Body>
     </div>
   );
 }
