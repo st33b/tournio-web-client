@@ -4,13 +4,13 @@ const ButtonRow = ({onCancel, disableSave}) => (
       <button type={'button'}
               title={'Cancel'}
               onClick={onCancel}
-              className={'btn btn-outline-danger me-2'}>
+              className={'btn btn-secondary me-2'}>
         Cancel
       </button>
       <button type={'submit'}
               title={'Save'}
               disabled={disableSave}
-              className={'btn btn-outline-success'}>
+              className={'btn btn-primary'}>
         Save
       </button>
     </div>
