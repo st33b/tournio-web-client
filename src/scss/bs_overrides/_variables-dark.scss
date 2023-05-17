@@ -32,7 +32,8 @@ $light-bg-subtle-dark:              $gray-800;
 $dark-bg-subtle-dark:               mix($gray-800, $black);
 
 // This is my own.
-$purple-bg-subtle-dark:             shade-color($purple, 30%);
+$purple-bg-subtle-dark:             shade-color($purple, 75%);
+$purple-border-subtle-dark:         shade-color($purple, 30%);
 
 $table-variants-dark: (
   "primary":    $primary-bg-subtle-dark,

@@ -48,11 +48,13 @@
 // Miscellaneous mappings
 :root,
 [data-bs-theme="light"] {
-  --#{$prefix}purple-bg: #{$purple-bg-subtle};
+  --#{$prefix}purple-bg-subtle: #{$purple-bg-subtle};
+  --#{$prefix}purple-border-subtle: #{$purple-border-subtle};
 }
 
 @include color-mode(dark, true) {
   color-scheme: dark;
 
-  --#{$prefix}purple-bg: #{$purple-bg-subtle-dark};
+  --#{$prefix}purple-bg-subtle: #{$purple-bg-subtle-dark};
+  --#{$prefix}purple-border-subtle: #{$purple-border-subtle-dark};
 }

@@ -54,6 +54,7 @@ $light-bg-subtle:         $gray-600;
 $dark-bg-subtle:          $gray-700;
 
 $purple-bg-subtle:        tint-color($purple, 75%);
+$purple-border-subtle:    tint-color($purple, 45%);
 
 $table-variants: (
   "primary":    $primary-bg-subtle,
