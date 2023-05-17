@@ -1,2 +1,9 @@
 .ImageUpload {
+  .CurrentImage {
+    background-color: var(--tournio-admin-form-bg);
+  }
+  .UploadForm {
+    padding: 0 1rem 1rem 1rem;
+    background-color: var(--tournio-admin-form-bg);
+  }
 }

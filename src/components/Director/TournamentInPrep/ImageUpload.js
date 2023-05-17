@@ -59,25 +59,26 @@ const ImageUpload = ({tournament}) => {
   }
 
   return (
-    <Card className={'text-center mb-3'}>
+    <Card className={`text-center mb-3 ${classes.ImageUpload}`}>
       <Card.Header as={'h5'} className={'fw-light'}>
         Logo
       </Card.Header>
-      <Card.Body>
+      <Card.Body className={formDisplayed ? classes.CurrentImage : ''}>
         <LogoImage src={tournament.image_url}/>
+      </Card.Body>
         {!formDisplayed && (
           <Button variant={'outline-primary'}
                   type={'button'}
                   size={'sm'}
-                  className={'mt-3'}
+                  className={'mb-3 mx-auto'}
                   onClick={() => setFormDisplayed(true)}
           >
             Upload new file
           </Button>
         )}
         {formDisplayed && (
-          <>
-            <Form.Group controlId="imageFile" className="mb-3">
+          <div className={classes.UploadForm}>
+            <Form.Group controlId="imageFile" className="pb-3">
               <Form.Label>Logo File Upload</Form.Label>
               <Form.Control type="file"
                             size="sm"
@@ -101,7 +102,7 @@ const ImageUpload = ({tournament}) => {
                 Upload
               </Button>
             </Form.Group>
-          </>
+          </div>
         )}
         {success && (
           <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center my-2'}
@@ -131,7 +132,6 @@ const ImageUpload = ({tournament}) => {
             </div>
           </div>
         )}
-      </Card.Body>
     </Card>
   );
 }
