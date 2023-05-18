@@ -62,7 +62,8 @@ const RegistrationOptions = ({tournament}) => {
     return '';
   }
 
-  const tournamentType = tournament.events.length === 0 ? 'traditional' : 'eventsSelectable';
+  const tournamentType = tournament.purchasable_items.some(({category, determination}) =>
+    category === 'bowling' && determination === 'event') ? 'eventsSelectable' : 'traditional';
   const allowedOptionSet = TYPE_OPTIONS[tournamentType];
 
   const optionToggled = (event) => {
