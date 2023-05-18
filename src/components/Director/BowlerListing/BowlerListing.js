@@ -142,7 +142,7 @@ const BowlerListing = ({bowlers}) => {
       accessor: 'has_free_entry',
       disableSortBy: true,
       Cell: ({cell: {value}}) => {
-        const classes = value ? ['text-success', 'bi-check-lg'] : ['text-danger', 'bi-x-lg'];
+        const classes = value ? ['text-success', 'bi-check-lg', 'bi'] : ['text-danger', 'bi-dash-lg', 'bi'];
         const text = value ? 'Yes' : 'No';
         return (
           <div className={'text-center'}>
