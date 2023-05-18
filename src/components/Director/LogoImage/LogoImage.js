@@ -10,7 +10,11 @@ const LogoImage = ({src}) => {
   );
 
   if (src) {
-    content = <Card.Img src={src} className={classes.Image} />;
+    content = (
+      <div className={classes.LogoImage}>
+        <Card.Img src={src} />
+      </div>
+    );
   }
 
   return content;
