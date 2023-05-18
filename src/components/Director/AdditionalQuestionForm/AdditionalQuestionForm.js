@@ -100,6 +100,12 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
     setEditing(true);
   }
 
+  const onDeleteSuccess = () => {
+    context.dispatch(additionalQuestionDeleted(question));
+    setEditing(false);
+    setFormData(initialFormData);
+  }
+
   const deleteClicked = (event) => {
     event.preventDefault();
     const uri = `/director/additional_questions/${question.identifier}`
@@ -110,7 +116,7 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      onSuccess: () => context.dispatch(additionalQuestionDeleted(question)),
+      onSuccess: onDeleteSuccess,
       onFailure: (data) => console.log("D'oh!", data),
     });
   }
