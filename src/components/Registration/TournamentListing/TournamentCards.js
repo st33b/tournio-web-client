@@ -35,26 +35,10 @@ const TournamentCards = () => {
       {tournaments.length > 0 && (
         <Row xs={1} sm={2} lg={3}>
           {tournaments.map((t) => {
-            let bgColor = '';
-            let textColor = '';
-            // let textColor = 'success-text-emphasis';
-            switch (t.state) {
-              case 'active':
-                // bgColor = 'bg-success-subtle';
-                break;
-              case 'closed':
-                // textColor = 'secondary-text-emphasis';
-                // bgColor = 'bg-secondary-subtle';
-                break;
-              default:
-                // textColor = 'danger-text-emphasis';
-                // bgColor = 'bg-danger';
-            }
             return (
               <div className={`mb-3 ${classes.Tournament}`} key={t.identifier}>
                 <Card>
                   <Card.Header className={`${t.state === 'active' ? classes.Active : classes.Closed}`}>
-                  {/*<Card.Header className={`card-header ${bgColor} bg-gradient ${textColor}`}>*/}
                     {t.status}
                   </Card.Header>
                   <Card.Body>
@@ -90,38 +74,6 @@ const TournamentCards = () => {
           })}
         </Row>
       )}
-      <div className={'d-flex flex-wrap pb-4'}>
-        {[
-          'primary',
-          'secondary',
-          'success',
-          'info',
-          'warning',
-          'danger',
-        ].map(variant => (
-          <a className={`d-inline-block mx-2 btn btn-${variant}`}
-             key={variant}
-             href={'#'}>
-            {titleCase(variant)}
-          </a>
-        ))}
-      </div>
-      <div className={'d-flex flex-wrap'}>
-      {[
-        'primary',
-        'secondary',
-        'success',
-        'info',
-        'warning',
-        'danger',
-      ].map(variant => (
-        <a className={`d-inline-block mx-2 btn btn-outline-${variant}`}
-           key={variant}
-           href={'#'}>
-          {titleCase(variant)}
-        </a>
-      ))}
-      </div>
     </div>
   )
 }

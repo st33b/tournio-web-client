@@ -24,6 +24,9 @@ const markup = (content = '') => {
           </Navbar.Brand>
         </div>
         {content}
+        <Nav className={'d-none d-md-block ms-auto'}>
+          <ColorModeToggler className={''} />
+        </Nav>
       </Navbar>
     </div>
   );
@@ -74,10 +77,9 @@ const Navigation = () => {
             Log Out
           </Nav.Link>
         </Nav>
-        <Nav className={'d-none d-md-block'}>
-          <ColorModeToggler className={''} />
-          {/*<ColorModeToggler className={'ms-auto d-none d-md-inline-block'} />*/}
-        </Nav>
+        {/*<Nav className={'d-none d-md-block'}>*/}
+        {/*  <ColorModeToggler className={''} />*/}
+        {/*</Nav>*/}
       </Navbar.Collapse>
     </>
   );

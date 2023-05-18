@@ -15,7 +15,7 @@ const Configuration = ({tournament}) => {
         <Card.Header as={'h5'} className={'fw-light'}>
           Configuration
         </Card.Header>
-        <Card.Body className={'px-0'}>
+        <Card.Body className={'px-1'}>
           <dl>
             {tournament.config_items.map((item) => {
               return (

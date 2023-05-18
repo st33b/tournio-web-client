@@ -4,7 +4,8 @@ import {Card, Col, Row} from "react-bootstrap";
 
 import DirectorLayout from '../../components/Layout/DirectorLayout/DirectorLayout';
 import LoginForm from '../../components/Director/LoginForm/LoginForm';
-import {useClientReady} from "../../utils";
+import {devConsoleLog, useClientReady} from "../../utils";
+import {useLoggedIn} from "../../director";
 
 const Login = () => {
   const router = useRouter();
@@ -18,6 +19,11 @@ const Login = () => {
       router.replace(router.pathname, null, {shallow: true});
     }
   }, [router]);
+
+  const loggedIn = useLoggedIn();
+  if (loggedIn > 0) {
+    devConsoleLog("Login page says we're already logged in.");
+  }
 
   const ready = useClientReady();
   if (!ready) {

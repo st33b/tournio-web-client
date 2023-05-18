@@ -15,7 +15,7 @@ const PartnerSelectionRow = ({bowler, teammates, onPartnerSelected}) => {
       </td>
       {teammates.map((partner) => {
         const partnerPosition = partner.position;
-        const labelClasses = ['btn', 'btn-primary', 'btn-sm'];
+        const labelClasses = ['btn', 'btn-outline-primary', 'btn-sm'];
         if (bowler.doubles_partner_num === partnerPosition) {
           labelClasses.push('active');
         }

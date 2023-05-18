@@ -46,7 +46,7 @@ const ColorModeToggler = (props) => {
           {theme.preferred}
         </span>
       </button>
-      <ul className={'dropdown-menu'}>
+      <ul className={'dropdown-menu dropdown-menu-end'}>
         {Object.keys(themeLinkContents).map(t => (
           <li key={`theme_chooser_${t} ${classes.ThemeItem}`}>
             <a href={'#'}

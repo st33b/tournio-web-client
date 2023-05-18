@@ -7,23 +7,23 @@ const Input = (props) => {
   let inputElement = null;
 
   const required = props.validityErrors && props.validityErrors.includes('valueMissing');
-
+// devConsoleLog("failed validations", props.failedValidations);
   const errorMessages = props.failedValidations.map(fv => {
     switch(fv) {
       case 'valueMissing':
-        return 'Missing value';
+        return 'Need a value here';
       case 'patternMismatch':
-        return 'The USBC identifier is just digits and a hyphen.';
+        return "That doesn't look quite right";
       case 'typeMismatch':
-        return "That's not a valid email address";
+        return "That doesn't look quite right";
       case 'rangeUnderflow':
-        return 'Too low!';
+        return 'Too low';
       case 'rangeOverflow':
-        return 'Too high!';
+        return 'Too high';
       case 'tooLong':
         return 'Too long';
       case 'tooShort':
-        return 'Too short!';
+        return 'Too short';
       default:
         return 'Please enter a valid value';
     }

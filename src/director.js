@@ -8,6 +8,7 @@ export const useLoggedIn = () => {
   const {directorState} = useDirectorContext();
   const [loggedIn, setLoggedIn] = useState(-1);
 
+  const currentState = loggedIn;
   useEffect(() => {
     if (!directorState) {
       return;
@@ -19,7 +20,7 @@ export const useLoggedIn = () => {
 
     setLoggedIn(1);
   }, [directorState.user]);
-  return loggedIn;
+  return currentState;
 }
 
 const handleSuccess = (response, dispatch, onSuccess, onFailure) => {

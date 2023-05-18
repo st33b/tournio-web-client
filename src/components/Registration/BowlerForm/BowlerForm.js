@@ -149,6 +149,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           'valueMissing',
           'rangeUnderflow',
           'rangeOverflow',
+          'typeMismatch',
         ],
         valid: true,
         touched: false,
