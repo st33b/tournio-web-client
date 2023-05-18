@@ -127,6 +127,9 @@ export const directorReducer = (state, action) => {
       return updateObject(state, {
         tournament: updateObject(state.tournament, {
           additional_questions: state.tournament.additional_questions.concat(action.question),
+          available_questions: state.tournament.available_questions.filter(
+            ({id}) => id !== action.question.extended_form_field_id
+          ),
         }),
       });
     case actionTypes.ADDITIONAL_QUESTION_UPDATED:
@@ -136,7 +139,7 @@ export const directorReducer = (state, action) => {
         ...state.tournament.additional_questions[index],
         ...action.question,
       }
-      let newQuestions = [...state.tournament.additional_questions];
+      const newQuestions = [...state.tournament.additional_questions];
       newQuestions[index] = updatedQuestion;
       return updateObject(state, {
         tournament: updateObject(state.tournament, {
@@ -145,12 +148,19 @@ export const directorReducer = (state, action) => {
       });
     case actionTypes.ADDITIONAL_QUESTION_DELETED:
       identifier = action.question.identifier;
-      newQuestions = state.tournament.additional_questions.filter(i => {
-        return i.identifier !== identifier && i.configuration.parent_identifier !== identifier;
+      const newQuestionSet = state.tournament.additional_questions.filter(i => {
+        return i.identifier !== identifier;
       })
+      const restoredAvailableQuestion = {
+        id: action.question.extended_form_field_id,
+        label: action.question.label,
+        name: action.question.name,
+        validation_rules: action.question.validation,
+      }
       return updateObject(state, {
         tournament: updateObject(state.tournament, {
-          additional_questions: newQuestions,
+          additional_questions: newQuestionSet,
+          available_questions: state.tournament.available_questions.concat(restoredAvailableQuestion),
         }),
       });
     case actionTypes.TEST_DATA_CLEARED:

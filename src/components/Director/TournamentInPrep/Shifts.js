@@ -15,18 +15,18 @@ const Shifts = ({tournament}) => {
         Capacity &amp; Shift Options
       </Card.Header>
 
-      {tournament.shifts && tournament.shifts.length > 0 &&
-        <ListGroup variant={'flush'}>
-          {tournament.shifts.map((shift, i) => (
+      <ListGroup variant={'flush'}>
+        {tournament.shifts.map((shift, i) => (
             <ListGroup.Item key={i} className={'p-0'}>
               <ShiftForm tournament={tournament} shift={shift}/>
             </ListGroup.Item>
-          ))}
-        </ListGroup>
-      }
-      <ShiftForm tournament={tournament}/>
-
-      {tournament.shifts.length === 0 && <ShiftForm tournament={tournament} />}
+          ))
+        }
+        <ListGroup.Item className={'p-0'}>
+          <ShiftForm tournament={tournament}/>
+        </ListGroup.Item>
+      </ListGroup>
+      {/*{tournament.shifts.length === 0 && <ShiftForm tournament={tournament} />}*/}
     </Card>
   )
 }

@@ -252,12 +252,6 @@ const ContactForm = ({tournament, contact, newContact}) => {
                title={'Edit contact details'}>
               <p className={`fw-bold m-0 d-flex`}>
                 {formData.name}
-                {/*<a href={'#'}*/}
-                {/*   className={`${classes.EditLink} ms-auto`}*/}
-                {/*   onClick={editClicked}>*/}
-                {/*  <span className={'visually-hidden'}>Edit</span>*/}
-                {/*  <i className={'bi-pencil'} aria-hidden={true}/>*/}
-                {/*</a>*/}
               </p>
               <p className={'m-0'}>
                 {roles[formData.role]}

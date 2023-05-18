@@ -1,5 +1,14 @@
-const ButtonRow = ({onCancel, disableSave}) => (
+const ButtonRow = ({onCancel, disableSave, onDelete}) => (
   <div className={'d-flex justify-content-end'}>
+    {onDelete &&
+      <button type={'button'}
+              title={'Delete'}
+              onClick={onDelete}
+              className={'btn btn-danger me-auto'}>
+        <i className={'bi bi-slash-circle pe-2'} aria-hidden={true}/>
+        Delete
+      </button>
+    }
     <button type={'button'}
             title={'Cancel'}
             onClick={onCancel}

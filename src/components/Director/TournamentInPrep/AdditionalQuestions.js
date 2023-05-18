@@ -21,9 +21,10 @@ const AdditionalQuestions = ({tournament}) => {
             <AdditionalQuestionForm tournament={tournament} question={question} />
           </ListGroup.Item>
         ))}
+        <ListGroup.Item className={'p-0'}>
+          <AdditionalQuestionForm tournament={tournament} newQuestion={true}/>
+        </ListGroup.Item>
       </ListGroup>
-
-      <AdditionalQuestionForm tournament={tournament} newQuestion={true}/>
     </Card>
   );
 

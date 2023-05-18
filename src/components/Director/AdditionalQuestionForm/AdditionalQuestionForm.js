@@ -18,6 +18,7 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
 
   const initialFormData = {
     extended_form_field_id: '',
+    order: '',
     required: false,
     valid: false,
   }
@@ -26,13 +27,17 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
 
   useEffect(() => {
     if (question) {
-      setFormData({...question});
+      setFormData({
+        extended_form_field_id: question.extended_form_field_id,
+        order: question.order,
+        required: question.validation.required,
+        valid: true,
+      });
     }
   }, [question, newQuestion]);
 
   const availableQuestions = tournament.available_questions;
   const roomForMore = availableQuestions.length > 0;
-  const tooLate = tournament.state === 'active' || tournament.state === 'closed';
 
   const inputChanged = (event) => {
     const inputName = event.target.name;
@@ -71,14 +76,16 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
       method: newQuestion ? 'post' : 'patch',
       data: {
         additional_question: {
-          extended_form_field_id: formData.extended_form_field_id,
           validation_rules: {
             required: formData.required,
           },
-          order: tournament.additional_questions.length + 1,
+          order: formData.order,
         },
       },
     };
+    if (newQuestion) {
+      requestConfig.data.additional_question.extended_form_field_id = formData.extended_form_field_id;
+    }
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
@@ -93,6 +100,21 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
     setEditing(true);
   }
 
+  const deleteClicked = (event) => {
+    event.preventDefault();
+    const uri = `/director/additional_questions/${question.identifier}`
+    const requestConfig = {
+      method: 'delete',
+    }
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      context: context,
+      onSuccess: () => context.dispatch(additionalQuestionDeleted(question)),
+      onFailure: (data) => console.log("D'oh!", data),
+    });
+  }
+
   const outerClasses = [classes.AdditionalQuestionForm];
   if (editing) {
     outerClasses.push(classes.Editing);
@@ -101,21 +123,31 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
   return (
     <ErrorBoundary>
       <div className={outerClasses.join(' ')}>
+        {/* Form for creating/editing a question */}
         {editing &&
           <Card.Body>
             <form onSubmit={formSubmitted}>
               <div className={'row'}>
                 <div className={'col-12'}>
-                  <select className={'form-select'}
-                          onChange={inputChanged}
-                          name={'extended_form_field_id'}>
-                    <option value={''}>
-                      -- Choose a question
-                    </option>
-                    {availableQuestions.map(q => <option key={q.id} value={q.id}>{q.label}</option>)}
-                  </select>
+                  {newQuestion &&
+                    <select className={'form-select'}
+                            onChange={inputChanged}
+                            value={formData.extended_form_field_id}
+                            name={'extended_form_field_id'}>
+                      <option value={''}>
+                        -- Choose a question
+                      </option>
+                      {availableQuestions.map(q => <option key={q.id} value={q.id}>{q.label}</option>)}
+                    </select>
+                  }
+                  {!newQuestion &&
+                    <Card.Text className={'text-center fw-bold'}>
+                      {question.label}
+                    </Card.Text>
+                  }
                 </div>
               </div>
+
               <div className={`row`}>
                 <div className={'col-12'}>
                   <div className={'form-check form-switch my-3'}>
@@ -123,6 +155,7 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
                            type={'checkbox'}
                            role={'switch'}
                            name={'required'}
+                           checked={formData.required}
                            onChange={inputChanged}
                            id={'response_required'}/>
                     <label className={'form-check-label'}
@@ -133,25 +166,69 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
                 </div>
               </div>
 
-              <ButtonRow onCancel={() => setEditing(false)} disableSave={!formData.valid} />
+              <div className={`row mb-3`}>
+                <div className={'col-6'}>
+                  <label className={'form-label'}
+                         htmlFor={'order'}>
+                    Place in order
+                  </label>
+                </div>
+                <div className={'col-6'}>
+                  <input className={'form-control'}
+                         type={'number'}
+                         min={1}
+                         name={'order'}
+                         value={formData.order}
+                         onChange={inputChanged}
+                         id={'order'}/>
+                </div>
+              </div>
+
+              <ButtonRow onCancel={() => setEditing(false)}
+                         disableSave={!formData.valid}
+                         onDelete={question ? deleteClicked : false} />
             </form>
           </Card.Body>
         }
-        {!editing && roomForMore &&
-          <Card.Body>
-            <div className={'text-center'}>
-              <button type={'button'}
-                      className={'btn btn-outline-primary'}
-                      role={'button'}
-                      onClick={() => setEditing(true)}>
-                <i className={'bi-plus-lg'} aria-hidden={true}/>{' '}
-                Add
-              </button>
-            </div>
+
+        {/* Writing out the content of a question, but not editing it */}
+        {!editing && question && !newQuestion &&
+          <Card.Body className={classes.Detail}>
+            <Card.Text>
+              <a href={'#'}
+                 className={'text-body text-decoration-none stretched-link'}
+                 onClick={editClicked}
+                 title={'Update question details'}>
+                <strong>
+                  {question.order}{': '}
+                </strong>
+                {question.label}
+                {question.validation.required &&
+                  <span className={classes.Required}>
+                    {' '}(required)
+                  </span>
+                }
+              </a>
+            </Card.Text>
           </Card.Body>
         }
-        {!roomForMore && !tooLate &&
-          <div className={'text-center'}>
+
+        {/* Is this the button to add a new one? */}
+        {!editing && newQuestion && roomForMore &&
+          <Card.Body className={'text-center'}>
+            <button type={'button'}
+                    className={'btn btn-outline-primary'}
+                    role={'button'}
+                    onClick={() => setEditing(true)}>
+              <i className={'bi-plus-lg'} aria-hidden={true}/>{' '}
+              Add
+            </button>
+          </Card.Body>
+        }
+
+        {/* No more questions for you! */}
+        {!editing && newQuestion && !roomForMore &&
+          <Card.Body className={'text-center'}>
             <button type={'button'}
                     className={'btn btn-outline-secondary'}
                     disabled
@@ -159,20 +236,6 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
               <i className={'bi-slash-circle'} aria-hidden={true}/>{' '}
               No more questions available
             </button>
-          </div>
-        }
-        {tooLate &&
-          <Card.Body>
-            <div className={'text-center'}
-                 title={'Cannot add questions once registration is open'}>
-              <button type={'button'}
-                      className={'btn btn-outline-secondary'}
-                      disabled
-                      role={'button'}>
-                <i className={'bi-plus-lg'} aria-hidden={true}/>{' '}
-                Add
-              </button>
-            </div>
           </Card.Body>
         }
       </div>

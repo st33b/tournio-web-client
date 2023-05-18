@@ -1,4 +1,14 @@
 .AdditionalQuestionForm {
+  .Detail {
+    .Required {
+      color: var(--tournio-danger);
+      filter: brightness(80%);
+    }
+  }
+  .Detail:hover {
+    cursor: pointer;
+    background-color: var(--tournio-admin-form-bg);
+  }
 }
 
 .Editing {

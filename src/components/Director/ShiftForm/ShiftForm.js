@@ -11,6 +11,7 @@ import {
   tournamentShiftDeleted,
   tournamentShiftUpdated
 } from "../../../store/actions/directorActions";
+import ButtonRow from "../../common/ButtonRow";
 
 const ShiftForm = ({tournament, shift}) => {
   const context = useDirectorContext();
@@ -324,29 +325,9 @@ const ShiftForm = ({tournament, shift}) => {
             </div>
 
             <div className={'row'}>
-              <div className={'d-flex justify-content-end'}>
-                {allowDelete && (
-                  <button type={'button'}
-                          title={'Delete'}
-                          onClick={deleteShift}
-                          className={'btn btn-danger me-auto'}>
-                    <i className={'bi-slash-circle pe-2'} aria-hidden={true}/>
-                    Delete
-                  </button>
-                )}
-                <button type={'button'}
-                        title={'Cancel'}
-                        onClick={formCancelled}
-                        className={'btn btn-secondary me-2'}>
-                    Cancel
-                </button>
-                <button type={'submit'}
-                        title={'Save'}
-                        disabled={!formData.get('valid')}
-                        className={'btn btn-primary'}>
-                    Save
-                </button>
-              </div>
+              <ButtonRow onCancel={formCancelled}
+                         disableSave={!formData.get('valid')}
+                         onDelete={allowDelete ? deleteShift : false} />
             </div>
           </form>
         </Card.Body>
