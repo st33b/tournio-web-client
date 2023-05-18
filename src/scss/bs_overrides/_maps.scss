@@ -6,6 +6,14 @@
   --#{$prefix}purple-border-subtle: #{$purple-border-subtle};
 
   --#{$prefix}admin-form-bg: #{$admin-form-bg};
+
+  .accordion {
+    --#{$prefix}accordion-active-color: var(--#{$prefix}body-color);
+    --#{$prefix}accordion-active-bg: var(--#{$prefix}gray-200);
+    --#{$prefix}accordion-btn-color: var(--#{$prefix}body-color);
+    --#{$prefix}accordion-btn-focus-border-color: var(--#{$prefix}gray-500);
+    --#{$prefix}accordion-btn-focus-box-shadow: var(--#{$prefix}gray-500);
+  }
 }
 
 // CSS vars for color mode: dark
@@ -16,6 +24,14 @@
   --#{$prefix}purple-border-subtle: #{$purple-border-subtle-dark};
 
   --#{$prefix}admin-form-bg: #{$admin-form-bg-dark};
+
+  .accordion {
+    --#{$prefix}accordion-active-color: var(--#{$prefix}body-color);
+    --#{$prefix}accordion-active-bg: var(--#{$prefix}gray-700);
+    --#{$prefix}accordion-btn-color: var(--#{$prefix}body-color);
+    --#{$prefix}accordion-btn-focus-border-color: var(--#{$prefix}gray-700);
+    --#{$prefix}accordion-btn-focus-box-shadow: var(--#{$prefix}gray-700);
+  }
 
   .progress,
   .progress-stacked {

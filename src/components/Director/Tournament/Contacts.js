@@ -18,12 +18,12 @@ const Contacts = ({tournament}) => {
       <ListGroup variant={'flush'}>
         {tournament.contacts.map((contact, i) => {
           return (
-            <ListGroup.Item key={i} className={`${classes.ContactItem}`}>
+            <ListGroup.Item key={i} className={`${classes.ContactItem} p-0`}>
               <ContactForm tournament={tournament} contact={contact}/>
             </ListGroup.Item>
           );
         })}
-        <ListGroup.Item className={classes.ContactItem}>
+        <ListGroup.Item className={`${classes.ContactItem} p-0`}>
           <ContactForm tournament={tournament} newContact={true}/>
         </ListGroup.Item>
       </ListGroup>

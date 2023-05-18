@@ -22,14 +22,6 @@ html {
   display: block;
 }
 
-.accordion {
-  --tournio-accordion-active-color: var(--tournio-body-color);
-  --tournio-accordion-active-bg: var(--tournio-gray-200);
-  --tournio-accordion-btn-color: var(--tournio-body-color);
-  --tournio-accordion-btn-focus-border-color: var(--tournio-gray-500);
-  --tournio-accordion-btn-focus-box-shadow: var(--tournio-gray-500);
-}
-
 .progress {
   --tournio-progress-bg: var(--tournio-secondary-bg-subtle);
 }
@@ -62,10 +54,3 @@ html {
     border-color: var(--tournio-primary);
   }
 }
-
-//.modal-content {
-//  color: var(--tournio-body-color);
-//  //@media (prefers-color-scheme: dark) {
-//  //  background-color: var(--tournio-gray-900);
-//  //}
-//}
