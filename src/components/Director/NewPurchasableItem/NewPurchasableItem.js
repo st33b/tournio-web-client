@@ -18,41 +18,23 @@ const NewPurchasableItem = ({tournament}) => {
   const [formDisplayed, setFormDisplayed] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [availableLedgerTypes, setAvailableLedgerTypes] = useState([]);
-  const [availableSanctionTypes, setAvailableSanctionTypes] = useState([]);
-  const [eventSelection, setEventSelection] = useState(false);
 
   // Determine which types of ledger items can still be created
   useEffect(() => {
     if (!tournament) {
       return;
     }
-    const eventSelectionEnabled = tournament.purchasable_items.some(pi => pi.determination === 'event');
 
     const allLedgerTypes = ['entry_fee', 'late_fee', 'early_discount'];
     let usedTypes = tournament.purchasable_items.filter(item => item.category === 'ledger').map(item => item.determination);
-    let typesAvailable = [];
+    let typesAvailable = ['bundle_discount'];
     allLedgerTypes.forEach(type => {
-      if (eventSelectionEnabled || !usedTypes.includes(type)) {
+      if (!usedTypes.includes(type)) {
         typesAvailable.push(type);
       }
     });
 
-    if (eventSelectionEnabled) {
-      typesAvailable.push('bundle_discount');
-    }
-    setEventSelection(eventSelectionEnabled);
-
     setAvailableLedgerTypes(typesAvailable);
-
-    // const allSanctionTypes = ['igbo'];
-    // usedTypes = tournament.purchasable_items.filter(item => item.category === 'sanction').map(item => item.determination);
-    // typesAvailable = [];
-    // allSanctionTypes.forEach(type => {
-    //   if (eventSelectionEnabled || !usedTypes.includes(type)) {
-    //     typesAvailable.push(type);
-    //   }
-    // });
-    // setAvailableSanctionTypes(typesAvailable);
   }, [tournament]);
 
   if (!tournament) {
@@ -113,15 +95,13 @@ const NewPurchasableItem = ({tournament}) => {
                   </a>
                 </div>
               }
-              {eventSelection &&
-                <div className={`${classes.NewItemLink} flex-fill`}>
-                  <a href={'#'}
-                     className={``}
-                     onClick={(event) => addClicked(event, 'event')}>
-                    Core Event
-                  </a>
-                </div>
-              }
+              <div className={`${classes.NewItemLink} flex-fill`}>
+                <a href={'#'}
+                   className={``}
+                   onClick={(event) => addClicked(event, 'event')}>
+                  Core Event
+                </a>
+              </div>
               <div className={`${classes.NewItemLink} flex-fill`}>
                 <a href={'#'}
                    className={``}

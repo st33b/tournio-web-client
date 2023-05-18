@@ -15,7 +15,7 @@ const EventForm = ({tournament, onCancel, onComplete}) => {
   const initialState = {
     category: 'bowling',
     determination: 'event',
-    refinement: 'singles',
+    refinement: 'single',
     name: '',
     value: '',
     order: '',
@@ -24,8 +24,8 @@ const EventForm = ({tournament, onCancel, onComplete}) => {
   }
 
   const refinementLabels = [
-    ['singles', 'Singles'],
-    ['doubles', 'Doubles'],
+    ['single', 'Singles'],
+    ['double', 'Doubles'],
     ['team', 'Team'],
     ['trios', 'Trios'],
   ];
@@ -52,7 +52,7 @@ const EventForm = ({tournament, onCancel, onComplete}) => {
   const submissionSuccess = (data) => {
     dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
-    onComplete(`Item ${data[0].name} created.`);
+    onComplete(`${data[0].name} created.`);
   }
 
   const formSubmitted = (event) => {
@@ -88,10 +88,11 @@ const EventForm = ({tournament, onCancel, onComplete}) => {
     <ErrorBoundary>
       <div className={classes.EventForm}>
         <form onSubmit={formSubmitted} className={`py-2`}>
-          <div className={`${classes.HeaderRow} row mb-2`}>
+          <div className={`${classes.HeaderRow} row`}>
             <h6>
-              New Event Item
+              New Core Event
             </h6>
+            <small>For non-traditional tournaments</small>
           </div>
           <div className={'row mb-3'}>
             <label htmlFor={'name'} className={'form-label ps-0 mb-1'}>
@@ -114,12 +115,12 @@ const EventForm = ({tournament, onCancel, onComplete}) => {
                     name={'refinement'}
                     id={'refinement'}
                     required={true}
+                    value={formData.refinement}
                     onChange={inputChanged}>
               {refinementLabels.map(r => {
                 return (
                   <option value={r[0]}
-                          key={r[0]}
-                          selected={formData.refinement === r[0]}>
+                          key={r[0]}>
                     {r[1]}
                   </option>
                 )}
