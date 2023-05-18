@@ -288,7 +288,11 @@ const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
             />
           </div>
 
-          <ButtonRow onCancel={onCancel} disableSave={!formData.valid} />
+          <div className={'row'}>
+            <div className={'col-12 pe-0'}>
+              <ButtonRow onCancel={onCancel} disableSave={!formData.valid} />
+            </div>
+          </div>
         </form>
       </div>
     </ErrorBoundary>

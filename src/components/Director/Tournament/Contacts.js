@@ -18,7 +18,7 @@ const Contacts = ({tournament}) => {
       <ListGroup variant={'flush'}>
         {tournament.contacts.map((contact, i) => {
           return (
-            <ListGroup.Item key={i} className={`${classes.ContactItem} px-0`}>
+            <ListGroup.Item key={i} className={`${classes.ContactItem}`}>
               <ContactForm tournament={tournament} contact={contact}/>
             </ListGroup.Item>
           );

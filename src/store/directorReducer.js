@@ -115,11 +115,42 @@ export const directorReducer = (state, action) => {
           shifts: shifts,
         }),
       });
+      // deprecated
     case actionTypes.ADDITIONAL_QUESTIONS_UPDATED:
       return updateObject(state, {
         tournament: updateObject(state.tournament, {
           additional_questions: [...action.questions],
           available_questions: [...action.availableQuestions],
+        }),
+      });
+    case actionTypes.ADDITIONAL_QUESTION_ADDED:
+      return updateObject(state, {
+        tournament: updateObject(state.tournament, {
+          additional_questions: state.tournament.additional_questions.concat(action.question),
+        }),
+      });
+    case actionTypes.ADDITIONAL_QUESTION_UPDATED:
+      identifier = action.question.identifier;
+      index = state.tournament.additional_questions.findIndex(c => c.identifier === identifier);
+      const updatedQuestion = {
+        ...state.tournament.additional_questions[index],
+        ...action.question,
+      }
+      let newQuestions = [...state.tournament.additional_questions];
+      newQuestions[index] = updatedQuestion;
+      return updateObject(state, {
+        tournament: updateObject(state.tournament, {
+          additional_questions: newQuestions,
+        }),
+      });
+    case actionTypes.ADDITIONAL_QUESTION_DELETED:
+      identifier = action.question.identifier;
+      newQuestions = state.tournament.additional_questions.filter(i => {
+        return i.identifier !== identifier && i.configuration.parent_identifier !== identifier;
+      })
+      return updateObject(state, {
+        tournament: updateObject(state.tournament, {
+          additional_questions: newQuestions,
         }),
       });
     case actionTypes.TEST_DATA_CLEARED:

@@ -1,14 +1,19 @@
-import {useState} from "react";
-import {Card} from "react-bootstrap";
+import {useEffect, useState} from "react";
 
+import ErrorBoundary from "../../common/ErrorBoundary";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../director";
-import {additionalQuestionsUpdated} from "../../../store/actions/directorActions";
+import {
+  additionalQuestionAdded,
+  additionalQuestionUpdated,
+  additionalQuestionDeleted
+} from "../../../store/actions/directorActions";
 
 import classes from './AdditionalQuestionForm.module.scss';
 import ButtonRow from "../../common/ButtonRow";
+import Card from "react-bootstrap/Card";
 
-const AdditionalQuestionForm = ({tournament}) => {
+const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
   const context = useDirectorContext();
 
   const initialFormData = {
@@ -17,22 +22,17 @@ const AdditionalQuestionForm = ({tournament}) => {
     valid: false,
   }
   const [formData, setFormData] = useState(initialFormData);
-  const [formDisplayed, setFormDisplayed] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [editing, setEditing] = useState(false);
 
-  if (!context || !tournament) {
-    return '';
-  }
+  useEffect(() => {
+    if (question) {
+      setFormData({...question});
+    }
+  }, [question, newQuestion]);
 
   const availableQuestions = tournament.available_questions;
   const roomForMore = availableQuestions.length > 0;
   const tooLate = tournament.state === 'active' || tournament.state === 'closed';
-
-  const addClicked = (event) => {
-    event.preventDefault();
-    setFormDisplayed(true);
-  }
 
   const inputChanged = (event) => {
     const inputName = event.target.name;
@@ -45,39 +45,17 @@ const AdditionalQuestionForm = ({tournament}) => {
     setFormData(newFormData);
   }
 
-  const submissionSuccess = (data) => {
-    setSuccessMessage(
-      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'}
-           role={'alert'}>
-        <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
-        <div className={'me-auto'}>
-          Question saved.
-          <button type="button"
-                  className={"btn-close"}
-                  data-bs-dismiss="alert"
-                  onClick={() => setSuccessMessage(null)}
-                  aria-label="Close"/>
-        </div>
-      </div>
-    );
-    context.dispatch(additionalQuestionsUpdated(data));
+  const onSuccess = (data) => {
+    if (newQuestion) {
+      context.dispatch(additionalQuestionAdded(data));
+    } else {
+      context.dispatch(additionalQuestionUpdated(data));
+    }
+    setEditing(false);
   }
 
-  const submissionFailure = (data) => {
-    setErrorMessage(
-      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'}
-           role={'alert'}>
-        <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
-        <div className={'me-auto'}>
-          Failed to save the question: {data.error}
-          <button type="button"
-                  className={"btn-close"}
-                  data-bs-dismiss="alert"
-                  onClick={() => setErrorMessage(null)}
-                  aria-label="Close"/>
-        </div>
-      </div>
-    );
+  const onFailure = (data) => {
+    // We never fail! hahaha
   }
 
   const formSubmitted = (event) => {
@@ -88,20 +66,16 @@ const AdditionalQuestionForm = ({tournament}) => {
     }
 
     // send over the new question
-    const uri = `/director/tournaments/${tournament.identifier}`;
+    const uri = newQuestion ? `/director/tournaments/${tournament.identifier}/additional_questions` : `/director/additional_questions/${question.identifier}`;
     const requestConfig = {
-      method: 'patch',
+      method: newQuestion ? 'post' : 'patch',
       data: {
-        tournament: {
-          additional_questions_attributes: [
-            {
-              extended_form_field_id: formData.extended_form_field_id,
-              validation_rules: {
-                required: formData.required,
-              },
-              order: tournament.additional_questions.length + 1,
-            },
-          ],
+        additional_question: {
+          extended_form_field_id: formData.extended_form_field_id,
+          validation_rules: {
+            required: formData.required,
+          },
+          order: tournament.additional_questions.length + 1,
         },
       },
     };
@@ -109,66 +83,72 @@ const AdditionalQuestionForm = ({tournament}) => {
       uri: uri,
       requestConfig: requestConfig,
       context: context,
-      onSuccess: submissionSuccess,
-      onFailure: submissionFailure,
+      onSuccess: onSuccess,
+      onFailure: onFailure,
     });
+  }
 
-    setFormDisplayed(false);
+  const editClicked = (event) => {
+    event.preventDefault();
+    setEditing(true);
   }
 
   const outerClasses = [classes.AdditionalQuestionForm];
-  if (formDisplayed) {
-    outerClasses.push(classes.FormDisplayed);
+  if (editing) {
+    outerClasses.push(classes.Editing);
   }
 
   return (
-    <div className={outerClasses.join(' ')}>
-        {formDisplayed &&
-          <form onSubmit={formSubmitted} className={`py-2`}>
-            <div className={`${classes.HeaderRow} row mb-2`}>
-              <h6>
-                New Form Question
-              </h6>
-            </div>
-            <div className={'row mb-3'}>
-              <select className={'form-select'}
-                      onChange={inputChanged}
-                      name={'extended_form_field_id'}>
-                <option value={''}>
-                  -- Choose a question
-                </option>
-                {availableQuestions.map(q => <option key={q.id} value={q.id}>{q.label}</option>)}
-              </select>
-            </div>
-            <div className={`row mb-3`}>
-              <div className={'form-check form-switch my-3'}>
-                <input className={'form-check-input'}
-                       type={'checkbox'}
-                       role={'switch'}
-                       name={'required'}
-                       onChange={inputChanged}
-                       id={'response_required'}/>
-                <label className={'form-check-label'}
-                       htmlFor={'response_required'}>
-                  A response is required
-                </label>
+    <ErrorBoundary>
+      <div className={outerClasses.join(' ')}>
+        {editing &&
+          <Card.Body>
+            <form onSubmit={formSubmitted}>
+              <div className={'row'}>
+                <div className={'col-12'}>
+                  <select className={'form-select'}
+                          onChange={inputChanged}
+                          name={'extended_form_field_id'}>
+                    <option value={''}>
+                      -- Choose a question
+                    </option>
+                    {availableQuestions.map(q => <option key={q.id} value={q.id}>{q.label}</option>)}
+                  </select>
+                </div>
               </div>
-            </div>
+              <div className={`row`}>
+                <div className={'col-12'}>
+                  <div className={'form-check form-switch my-3'}>
+                    <input className={'form-check-input'}
+                           type={'checkbox'}
+                           role={'switch'}
+                           name={'required'}
+                           onChange={inputChanged}
+                           id={'response_required'}/>
+                    <label className={'form-check-label'}
+                           htmlFor={'response_required'}>
+                      Require a response
+                    </label>
+                  </div>
+                </div>
+              </div>
 
-            <ButtonRow onCancel={() => setFormDisplayed(false)} disableSave={!formData.valid} />
-            {errorMessage}
-          </form>
+              <ButtonRow onCancel={() => setEditing(false)} disableSave={!formData.valid} />
+            </form>
+          </Card.Body>
         }
-        {!formDisplayed && roomForMore &&
-          <div className={'text-center'}>
-            <button type={'button'}
-                    className={'btn btn-outline-primary'}
-                    role={'button'}
-                    onClick={addClicked}>
-              <i className={'bi-plus-lg'} aria-hidden={true}/>{' '}
-              Add
-            </button>
-          </div>
+        {!editing && roomForMore &&
+          <Card.Body>
+            <div className={'text-center'}>
+              <button type={'button'}
+                      className={'btn btn-outline-primary'}
+                      role={'button'}
+                      onClick={() => setEditing(true)}>
+                <i className={'bi-plus-lg'} aria-hidden={true}/>{' '}
+                Add
+              </button>
+            </div>
+          </Card.Body>
         }
         {!roomForMore && !tooLate &&
           <div className={'text-center'}>
@@ -182,19 +162,21 @@ const AdditionalQuestionForm = ({tournament}) => {
           </div>
         }
         {tooLate &&
-          <div className={'text-center'}
-               title={'Cannot add questions once registration is open'}>
-            <button type={'button'}
-                    className={'btn btn-outline-secondary'}
-                    disabled
-                    role={'button'}>
-              <i className={'bi-plus-lg'} aria-hidden={true}/>{' '}
-              Add
-            </button>
-          </div>
+          <Card.Body>
+            <div className={'text-center'}
+                 title={'Cannot add questions once registration is open'}>
+              <button type={'button'}
+                      className={'btn btn-outline-secondary'}
+                      disabled
+                      role={'button'}>
+                <i className={'bi-plus-lg'} aria-hidden={true}/>{' '}
+                Add
+              </button>
+            </div>
+          </Card.Body>
         }
-        {successMessage}
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 }
 
