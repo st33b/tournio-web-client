@@ -3,7 +3,6 @@ import {Container} from "react-bootstrap";
 import SiteHeader from './SiteHeader';
 import Footer from './Footer';
 import classes from './FrontLayout.module.scss';
-import MaintenanceAnnouncement from "../../common/MaintenanceAnnouncement/MaintenanceAnnouncement";
 
 const FrontLayout = ({children}) => {
   return (
@@ -11,7 +10,6 @@ const FrontLayout = ({children}) => {
       <SiteHeader/>
       <main>
         <Container fluid={'md'}>
-          <MaintenanceAnnouncement />
           {children}
         </Container>
       </main>
