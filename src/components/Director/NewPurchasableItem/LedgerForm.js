@@ -113,7 +113,7 @@ const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
   const submissionSuccess = (data) => {
     dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
-    onComplete(`Item ${data[0].name} created.`);
+    onComplete(`${data[0].name} created.`);
   }
 
   const formSubmitted = (event) => {
