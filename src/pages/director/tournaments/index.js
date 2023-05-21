@@ -45,7 +45,7 @@ const Page = () => {
   }, []);
 
   const loggedInState = useLoggedIn();
-  const ready = loggedInState >= 0;
+  const ready = loggedInState > 0;
   if (!loggedInState) {
     router.push('/director/login');
   }

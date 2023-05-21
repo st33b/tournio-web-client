@@ -115,11 +115,52 @@ export const directorReducer = (state, action) => {
           shifts: shifts,
         }),
       });
+      // deprecated
     case actionTypes.ADDITIONAL_QUESTIONS_UPDATED:
       return updateObject(state, {
         tournament: updateObject(state.tournament, {
           additional_questions: [...action.questions],
           available_questions: [...action.availableQuestions],
+        }),
+      });
+    case actionTypes.ADDITIONAL_QUESTION_ADDED:
+      return updateObject(state, {
+        tournament: updateObject(state.tournament, {
+          additional_questions: state.tournament.additional_questions.concat(action.question),
+          available_questions: state.tournament.available_questions.filter(
+            ({id}) => id !== action.question.extended_form_field_id
+          ),
+        }),
+      });
+    case actionTypes.ADDITIONAL_QUESTION_UPDATED:
+      identifier = action.question.identifier;
+      index = state.tournament.additional_questions.findIndex(c => c.identifier === identifier);
+      const updatedQuestion = {
+        ...state.tournament.additional_questions[index],
+        ...action.question,
+      }
+      const newQuestions = [...state.tournament.additional_questions];
+      newQuestions[index] = updatedQuestion;
+      return updateObject(state, {
+        tournament: updateObject(state.tournament, {
+          additional_questions: newQuestions,
+        }),
+      });
+    case actionTypes.ADDITIONAL_QUESTION_DELETED:
+      identifier = action.question.identifier;
+      const newQuestionSet = state.tournament.additional_questions.filter(i => {
+        return i.identifier !== identifier;
+      })
+      const restoredAvailableQuestion = {
+        id: action.question.extended_form_field_id,
+        label: action.question.label,
+        name: action.question.name,
+        validation_rules: action.question.validation,
+      }
+      return updateObject(state, {
+        tournament: updateObject(state.tournament, {
+          additional_questions: newQuestionSet,
+          available_questions: state.tournament.available_questions.concat(restoredAvailableQuestion),
         }),
       });
     case actionTypes.TEST_DATA_CLEARED:

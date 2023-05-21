@@ -3,7 +3,7 @@
   margin: 0;
 
   .CodeForm {
-    border-top: 1px solid var(--tournio-gray-500);
+    border-top: 1px solid var(--tournio-gray-400);
     .FormLabel {
 
     }
@@ -16,5 +16,11 @@
   }
   .Alert {
     margin-bottom: 0;
+  }
+}
+
+[data-bs-theme="dark"] .FreeEntryForm {
+  .CodeForm {
+    border-color: var(--tournio-gray-600);
   }
 }

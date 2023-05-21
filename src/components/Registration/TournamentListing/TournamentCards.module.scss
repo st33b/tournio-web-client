@@ -1,3 +1,15 @@
 .TournamentCards {
+  .Active {
+    background-color: var(--tournio-success-bg-subtle);
 
+  }
+
+  .Closed {
+    background-color: var(--tournio-secondary-bg-subtle);
+  }
+}
+[data-bs-theme="dark"] .TournamentCards {
+  .Closed {
+    background-color: var(--tournio-secondary-bg);
+  }
 }

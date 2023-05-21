@@ -10,6 +10,7 @@ import {directorApiRequest} from "../../../director";
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
 import classes from './LedgerForm.module.scss';
+import ButtonRow from "../../common/ButtonRow";
 
 const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
   const context = useDirectorContext();
@@ -179,7 +180,7 @@ const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
         <form onSubmit={formSubmitted} className={`py-2`}>
           <div className={`${classes.HeaderRow} row mb-2`}>
             <h6>
-              New Ledger Item
+              New Fee/Discount
             </h6>
           </div>
           <div className={'row mb-3'}>
@@ -286,26 +287,10 @@ const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
                    {...valueProperties}
             />
           </div>
+
           <div className={'row'}>
-            <div className={'d-flex justify-content-end pe-0'}>
-              <button type={'button'}
-                      title={'Cancel'}
-                      onClick={onCancel}
-                      className={'btn btn-outline-danger me-2'}>
-                <i className={'bi-x-lg'} aria-hidden={true}/>
-                <span className={'visually-hidden'}>
-                  Cancel
-                </span>
-              </button>
-              <button type={'submit'}
-                      title={'Save'}
-                      disabled={!formData.valid}
-                      className={'btn btn-outline-success'}>
-                <i className={'bi-check-lg'} aria-hidden={true}/>
-                <span className={'visually-hidden'}>
-                  Save
-                </span>
-              </button>
+            <div className={'col-12 pe-0'}>
+              <ButtonRow onCancel={onCancel} disableSave={!formData.valid} />
             </div>
           </div>
         </form>

@@ -1,14 +1,22 @@
 .Navigation {
   padding-bottom: 1rem;
+
+  .DirectorLinks {
+    border-bottom: 2px solid var(--tournio-secondary-text-emphasis);
+  }
   .BrandWrapper {
     margin-left: 0.5rem;
-    // Might make this the inverted IO on small devices...
-    background: url('../../../images/tournio-logo-inverted-gray.png') no-repeat left center;
-    background-size: contain;
+
     .Brand {
       margin: 0;
       padding: 0;
     }
+
+    background: url('../../../images/tournio-logo.png') no-repeat left center;
+    [data-bs-theme='dark'] & {
+      background-image: url('../../../images/tournio-logo-inverted-gray.png');
+    }
+    background-size: contain;
   }
 }
 @media (min-width: 576px) {

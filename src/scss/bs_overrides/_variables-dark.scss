@@ -1,0 +1,58 @@
+// Color definitions for dark mode.
+$blue-dark:      shade-color($blue, 50%);  // tint-color($blue, 20%);
+$secondary-dark: shade-color($secondary, 30%);
+$green-dark:     shade-color($green, 30%);
+$cyan-dark:      shade-color($cyan, 30%);
+$yellow-dark:    shade-color($yellow, 30%);
+$red-dark:       shade-color($red, 50%);
+$indigo-dark:    shade-color($indigo, 30%);
+$purple-dark:    shade-color($purple, 30%);
+$pink-dark:      shade-color($pink, 30%);
+$orange-dark:    shade-color($orange, 30%);
+$teal-dark:      shade-color($teal, 30%);
+
+$theme-colors-dark: (
+  "primary": $blue-dark,
+  "secondary": $secondary-dark,
+  "success": $green-dark,
+  "info": $orange-dark,
+  "warning": $yellow-dark,
+  "danger": $red-dark,
+);
+
+$body-color-dark: $gray-500;
+
+// The default subtle backgrounds are too subtle.
+
+$primary-bg-subtle-dark:            shade-color($primary, 30%);
+$secondary-bg-subtle-dark:          shade-color($secondary, 60%);
+$success-bg-subtle-dark:            shade-color($success, 50%);
+$info-bg-subtle-dark:               shade-color($info, 65%);
+$warning-bg-subtle-dark:            shade-color($warning, 50%);
+$danger-bg-subtle-dark:             shade-color($danger, 30%);
+$light-bg-subtle-dark:              $gray-800;
+$dark-bg-subtle-dark:               mix($gray-800, $black);
+
+// This is my own.
+$purple-bg-subtle-dark:             shade-color($purple, 75%);
+$purple-border-subtle-dark:         shade-color($purple, 30%);
+
+$table-variants-dark: (
+  "primary":    $primary-bg-subtle-dark,
+  "secondary":  $secondary-bg-subtle-dark,
+  "success":    $success-bg-subtle-dark,
+  "info":       $info-bg-subtle-dark,
+  "warning":    $warning-bg-subtle-dark,
+  "danger":     $danger-bg-subtle-dark,
+  "light":      $light-bg-subtle-dark,
+  "dark":       $dark-bg-subtle-dark,
+);
+
+$link-color-dark:                   $blue;
+
+$body-emphasis-color-dark: $gray-200;
+
+$dark-color-contrast-dark:      #1b1f22;
+$dark-color-contrast-light:     $gray-200;
+
+$admin-form-bg-dark: shade-color($admin-form-bg, 80%);

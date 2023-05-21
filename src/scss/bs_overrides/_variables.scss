@@ -1,0 +1,108 @@
+$prefix: tournio-;
+
+// Our colors, some of which override Bootstrap's, some of which don't.
+$blue:      #3b71ca;
+$secondary: #9fa6b2;
+$green:     #40824c;
+$cyan:      #54b4d3;
+$yellow:    #e9dd45;
+$red:       #ba2d36;
+$light:     #fbfbfb;
+//$dark:      #212529; // does not override bootstrap
+$indigo:    #3e0dd4;
+$purple:    #6f42c1;
+$pink:      #d63384;
+$orange:    #f07813;
+$teal:      #20c1c9;
+
+//////////////////////////////////////////////////////////////////
+// Taken from Bootstrap so we can use them in our own theme colors
+$white:    #fff;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
+$black:    #000;
+
+$primary:       $blue;
+$success:       $green;
+$warning:       $yellow;
+$danger:        $red;
+$dark:          $gray-900;
+
+$body-color: $gray-900;
+
+// End of what's taken from Bootstrap
+/////////////////////////////////////////////////////////////////
+
+// Tournio customizations
+
+// Using orange for info, rather than cyan.
+$info: $orange;
+
+// I like my subtle background colors just a hair darker than the defaults
+$primary-bg-subtle:       tint-color($primary, 75%);
+$secondary-bg-subtle:     tint-color($secondary, 75%);
+$success-bg-subtle:       tint-color($success, 75%);
+$info-bg-subtle:          tint-color($info, 75%);
+$warning-bg-subtle:       tint-color($warning, 75%);
+$danger-bg-subtle:        tint-color($danger, 75%);
+$light-bg-subtle:         $gray-600;
+$dark-bg-subtle:          $gray-700;
+
+$purple-bg-subtle:        tint-color($purple, 75%);
+$purple-border-subtle:    tint-color($purple, 45%);
+
+$table-variants: (
+  "primary":    $primary-bg-subtle,
+  "secondary":  $secondary-bg-subtle,
+  "success":    $success-bg-subtle,
+  "info":       $info-bg-subtle,
+  "warning":    $warning-bg-subtle,
+  "danger":     $danger-bg-subtle,
+  "light":      $light-bg-subtle,
+  "dark":       $dark-bg-subtle,
+);
+
+// I define a "moody" color set that, in dark mode, is between regular and bg-subtle.
+// It's intended to act as the "baseline" set of theme colors in dark mode, but is
+// currently applied only to buttons (regular and outline) and tables.
+
+// Do we want a corresponding "moody" set in light mode? Or is the regular set of
+// theme colors sufficient? For now, let's say the regular set is sufficient, since
+// the original intent of "moody" is as a baseline set of theme colors for dark mode.
+
+$font-family-sans-serif:
+  "Nunito Sans",
+  system-ui,
+  -apple-system,
+  "Segoe UI",
+  Roboto,
+  "Helvetica Neue",
+  "Noto Sans",
+  "Liberation Sans",
+  Arial,
+  sans-serif,
+  "Apple Color Emoji",
+  "Segoe UI Emoji",
+  "Segoe UI Symbol",
+  "Noto Color Emoji";
+
+$alert-bg-scale: -60%;
+$alert-border-scale: -20%;
+$modal-lg: 650px;
+$btn-hover-bg-shade-amount: 50%;
+$btn-hover-bg-tint-amount: 50%;
+$link-shade-percentage: 30%;
+
+$navbar-light-color:                rgba(var(--#{$prefix}emphasis-color-rgb), .8) !default;
+$navbar-light-hover-color:          rgba(var(--#{$prefix}emphasis-color-rgb), .5) !default;
+$navbar-light-active-color:         rgba(var(--#{$prefix}emphasis-color-rgb), .9) !default;
+$navbar-light-disabled-color:       rgba(var(--#{$prefix}emphasis-color-rgb), .4) !default;
+
+$admin-form-bg: #edf5ef;

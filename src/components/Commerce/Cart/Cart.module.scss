@@ -2,10 +2,7 @@
   h5 {
     font-weight: bold;
     background-color: var(--tournio-gray-800);
-    color: white;
-    @media (prefers-color-scheme: dark) {
-      color: var(--tournio-body-color);
-    }
+    color: var(--tournio-gray-300);
     padding: 0.5rem;
     margin-bottom: 1rem;
   }
@@ -16,17 +13,16 @@
     text-align: right;
     font-size: 120%;
   }
-  @media (max-width: 767px) {
-    .EmptyItemList {
-      background-color: var(--tournio-gray-100);
-      @media (prefers-color-scheme: dark) {
-        background-color: var(--tournio-gray-900);
-      }
-    }
-  }
   @media (min-width: 768px) {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
+  }
+}
+
+[data-bs-theme="dark"] .Cart {
+  h5 {
+    background-color: var(--tournio-gray-800);
+    color: var(--tournio-gray-300);
   }
 }

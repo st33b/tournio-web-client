@@ -30,7 +30,6 @@ const ShiftForm = ({tournament, onInputChanged, currentSelection, name='shift'})
                 This field is required.
               </span>
             </div>
-            {/*<i className={`${classes.NoteIndicator} align-top bi-asterisk ms-1`} aria-hidden={true} />*/}
           </Form.Label>
           <Col>
             {tournament.available_shifts.map((shift, i) => (

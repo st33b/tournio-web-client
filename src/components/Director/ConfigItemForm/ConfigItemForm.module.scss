@@ -1,21 +1,14 @@
 .ConfigItemForm {
   .Form {
-    border: 1px solid var(--tournio-gray-300);
-    background-color: var(--tournio-gray-100);
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--tournio-gray-900);
-      border-color: var(--tournio-gray-700);
-    }
+    border: 1px solid var(--tournio-secondary-border-subtle);
+    background-color: var(--tournio-admin-form-bg);
     label {
       font-weight: 600;
     }
   }
   .ItemWrapper .Item:hover {
     cursor: pointer;
-    background-color: var(--tournio-gray-100);
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--tournio-gray-900);
-    }
+    background-color: var(--tournio-admin-form-bg);
   }
   .Url {
     font-size: 75%;

@@ -6,6 +6,7 @@ import {directorApiRequest} from "../../../director";
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
 import classes from './EventForm.module.scss';
+import ButtonRow from "../../common/ButtonRow";
 
 const EventForm = ({tournament, onCancel, onComplete}) => {
   const context = useDirectorContext();
@@ -14,7 +15,7 @@ const EventForm = ({tournament, onCancel, onComplete}) => {
   const initialState = {
     category: 'bowling',
     determination: 'event',
-    refinement: 'singles',
+    refinement: 'single',
     name: '',
     value: '',
     order: '',
@@ -23,8 +24,8 @@ const EventForm = ({tournament, onCancel, onComplete}) => {
   }
 
   const refinementLabels = [
-    ['singles', 'Singles'],
-    ['doubles', 'Doubles'],
+    ['single', 'Singles'],
+    ['double', 'Doubles'],
     ['team', 'Team'],
     ['trios', 'Trios'],
   ];
@@ -51,7 +52,7 @@ const EventForm = ({tournament, onCancel, onComplete}) => {
   const submissionSuccess = (data) => {
     dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
-    onComplete(`Item ${data[0].name} created.`);
+    onComplete(`${data[0].name} created.`);
   }
 
   const formSubmitted = (event) => {
@@ -87,10 +88,11 @@ const EventForm = ({tournament, onCancel, onComplete}) => {
     <ErrorBoundary>
       <div className={classes.EventForm}>
         <form onSubmit={formSubmitted} className={`py-2`}>
-          <div className={`${classes.HeaderRow} row mb-2`}>
+          <div className={`${classes.HeaderRow} row`}>
             <h6>
-              New Event Item
+              New Core Event
             </h6>
+            <small>For non-traditional tournaments</small>
           </div>
           <div className={'row mb-3'}>
             <label htmlFor={'name'} className={'form-label ps-0 mb-1'}>
@@ -113,12 +115,12 @@ const EventForm = ({tournament, onCancel, onComplete}) => {
                     name={'refinement'}
                     id={'refinement'}
                     required={true}
+                    value={formData.refinement}
                     onChange={inputChanged}>
               {refinementLabels.map(r => {
                 return (
                   <option value={r[0]}
-                          key={r[0]}
-                          selected={formData.refinement === r[0]}>
+                          key={r[0]}>
                     {r[1]}
                   </option>
                 )}
@@ -153,28 +155,8 @@ const EventForm = ({tournament, onCancel, onComplete}) => {
               />
             </div>
           </div>
-          <div className={'row'}>
-            <div className={'d-flex justify-content-end pe-0'}>
-              <button type={'button'}
-                      title={'Cancel'}
-                      onClick={onCancel}
-                      className={'btn btn-outline-danger me-2'}>
-                <i className={'bi-x-lg'} aria-hidden={true}/>
-                <span className={'visually-hidden'}>
-                  Cancel
-                </span>
-              </button>
-              <button type={'submit'}
-                      title={'Save'}
-                      disabled={!formData.valid}
-                      className={'btn btn-outline-success'}>
-                <i className={'bi-check-lg'} aria-hidden={true}/>
-                <span className={'visually-hidden'}>
-                  Save
-                </span>
-              </button>
-            </div>
-          </div>
+
+          <ButtonRow onCancel={onCancel} disableSave={!formData.valid} />
         </form>
       </div>
     </ErrorBoundary>

@@ -167,7 +167,7 @@ const FreeEntryForm = () => {
         </div>
 
         <div className={classes.ActionRow}>
-          <button className={'btn btn-outline-dark btn-sm me-3'} type={'button'} onClick={cancelClicked}>
+          <button className={'btn btn-outline-secondary btn-sm me-3'} type={'button'} onClick={cancelClicked}>
             Cancel
           </button>
           <button className={'btn btn-primary btn-sm'} type={'submit'} disabled={!freeEntryForm.valid}>

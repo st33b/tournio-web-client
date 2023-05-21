@@ -70,11 +70,33 @@ export const tournamentShiftUpdated = (shift) => {
   }
 }
 
+// DEPRECATED
 export const additionalQuestionsUpdated = (tournament) => {
   return {
     type: actionTypes.ADDITIONAL_QUESTIONS_UPDATED,
     questions: tournament.additional_questions,
     availableQuestions: tournament.available_questions,
+  }
+}
+
+export const additionalQuestionAdded = (question) => {
+  return {
+    type: actionTypes.ADDITIONAL_QUESTION_ADDED,
+    question: question,
+  }
+}
+
+export const additionalQuestionUpdated = (question) => {
+  return {
+    type: actionTypes.ADDITIONAL_QUESTION_UPDATED,
+    question: question,
+  }
+}
+
+export const additionalQuestionDeleted = (question) => {
+  return {
+    type: actionTypes.ADDITIONAL_QUESTION_DELETED,
+    question: question,
   }
 }
 

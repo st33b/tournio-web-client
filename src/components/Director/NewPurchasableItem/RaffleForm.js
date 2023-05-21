@@ -7,6 +7,7 @@ import Item from "../../Commerce/AvailableItems/Item/Item";
 
 import classes from './MultiUseForm.module.scss';
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
+import ButtonRow from "../../common/ButtonRow";
 
 /**
  * Used only for banquet items.
@@ -181,28 +182,8 @@ const BanquetForm = ({tournament, onCancel, onComplete}) => {
           <div className={'row'}>
             {itemPreview}
           </div>
-          <div className={'row'}>
-            <div className={'d-flex justify-content-end pe-0'}>
-              <button type={'button'}
-                      title={'Cancel'}
-                      onClick={onCancel}
-                      className={'btn btn-outline-danger me-2'}>
-                <i className={'bi-x-lg'} aria-hidden={true}/>
-                <span className={'visually-hidden'}>
-                  Cancel
-                </span>
-              </button>
-              <button type={'submit'}
-                      title={'Save'}
-                      disabled={!formData.valid}
-                      className={'btn btn-outline-success'}>
-                <i className={'bi-check-lg'} aria-hidden={true}/>
-                <span className={'visually-hidden'}>
-                  Save
-                </span>
-              </button>
-            </div>
-          </div>
+
+          <ButtonRow onCancel={onCancel} disableSave={!formData.valid} />
         </form>
       </div>
     </ErrorBoundary>

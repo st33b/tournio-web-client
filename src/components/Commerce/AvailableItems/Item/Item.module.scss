@@ -1,9 +1,6 @@
 .Item {
   border: 1px solid var(--tournio-gray-500);
   border-radius: 8px;
-  @media (prefers-color-scheme: dark) {
-    border-color: var(--tournio-gray-700);
-  }
 
   p {
     margin: 0.5rem auto;
@@ -38,15 +35,21 @@
 .Selected {
   color: var(--tournio-gray-600);
   background-color: var(--tournio-gray-200);
-  @media (prefers-color-scheme: dark) {
-    color: var(--tournio-gray-600);
-    background-color: var(--tournio-gray-900);
-  }
 }
 
 .NotSelected:hover {
   background-color: var(--tournio-gray-200);
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--tournio-gray-900);
+}
+
+[data-bs-theme="dark"] {
+  .Item {
+    border-color: var(--tournio-gray-700)
+  }
+  .Selected {
+    color: var(--tournio-gray-500);
+    background-color: var(--tournio-gray-800);
+  }
+  .NotSelected:hover {
+    background-color: var(--tournio-bookend-bg);
   }
 }

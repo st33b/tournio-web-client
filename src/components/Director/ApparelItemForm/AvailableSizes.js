@@ -58,7 +58,7 @@ const AvailableSizes = ({selectedSizes, onSizeChanged, onAllInGroupSet}) => {
         })}
         <div className={classes.SetOfSizes}>
         </div>
-        <button className={'btn btn-sm btn-info'}
+        <button className={'btn btn-sm btn-secondary'}
                 type={'button'}
                 data-bs-toggle="modal"
                 data-bs-target="#sizeSelection">

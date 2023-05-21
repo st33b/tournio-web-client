@@ -231,20 +231,14 @@ const ContactForm = ({tournament, contact, newContact}) => {
                 <button type={'button'}
                         title={'Cancel'}
                         onClick={() => setEditing(false)}
-                        className={'btn btn-outline-danger me-2'}>
-                  <i className={'bi-x-lg'} aria-hidden={true}/>
-                  <span className={'visually-hidden'}>
+                        className={'btn btn-secondary me-2'}>
                     Cancel
-                  </span>
                 </button>
                 <button type={'submit'}
                         title={'Save'}
                         disabled={!formData.valid}
-                        className={'btn btn-outline-success'}>
-                  <i className={'bi-check-lg'} aria-hidden={true}/>
-                  <span className={'visually-hidden'}>
+                        className={'btn btn-primary'}>
                     Save
-                  </span>
                 </button>
               </div>
             </div>
@@ -258,12 +252,6 @@ const ContactForm = ({tournament, contact, newContact}) => {
                title={'Edit contact details'}>
               <p className={`fw-bold m-0 d-flex`}>
                 {formData.name}
-                {/*<a href={'#'}*/}
-                {/*   className={`${classes.EditLink} ms-auto`}*/}
-                {/*   onClick={editClicked}>*/}
-                {/*  <span className={'visually-hidden'}>Edit</span>*/}
-                {/*  <i className={'bi-pencil'} aria-hidden={true}/>*/}
-                {/*</a>*/}
               </p>
               <p className={'m-0'}>
                 {roles[formData.role]}

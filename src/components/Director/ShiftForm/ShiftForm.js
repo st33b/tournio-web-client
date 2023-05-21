@@ -11,6 +11,7 @@ import {
   tournamentShiftDeleted,
   tournamentShiftUpdated
 } from "../../../store/actions/directorActions";
+import ButtonRow from "../../common/ButtonRow";
 
 const ShiftForm = ({tournament, shift}) => {
   const context = useDirectorContext();
@@ -211,7 +212,7 @@ const ShiftForm = ({tournament, shift}) => {
            className={'text-body text-decoration-none'}
            title={'Edit details'}
            onClick={toggleEdit}>
-          <dl className={`${classes.ExistingShift} px-1 mt-1`}>
+          <dl className={`${classes.ExistingShift} p-1`}>
             <div className={'row'}>
               <dt className={dtClass}>
                 Name
@@ -324,35 +325,9 @@ const ShiftForm = ({tournament, shift}) => {
             </div>
 
             <div className={'row'}>
-              <div className={'d-flex justify-content-end'}>
-                {allowDelete && (
-                  <button type={'button'}
-                          title={'Delete'}
-                          onClick={deleteShift}
-                          className={'btn btn-danger me-auto'}>
-                    <i className={'bi-slash-circle pe-2'} aria-hidden={true}/>
-                    Delete
-                  </button>
-                )}
-                <button type={'button'}
-                        title={'Cancel'}
-                        onClick={formCancelled}
-                        className={'btn btn-outline-danger me-2'}>
-                  <i className={'bi-x-lg'} aria-hidden={true}/>
-                  <span className={'visually-hidden'}>
-                    Cancel
-                  </span>
-                </button>
-                <button type={'submit'}
-                        title={'Save'}
-                        disabled={!formData.get('valid')}
-                        className={'btn btn-outline-success'}>
-                  <i className={'bi-check-lg'} aria-hidden={true}/>
-                  <span className={'visually-hidden'}>
-                    Save
-                  </span>
-                </button>
-              </div>
+              <ButtonRow onCancel={formCancelled}
+                         disableSave={!formData.get('valid')}
+                         onDelete={allowDelete ? deleteShift : false} />
             </div>
           </form>
         </Card.Body>

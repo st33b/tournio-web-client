@@ -4,6 +4,7 @@
     h6 {
       font-size: 1.2rem;
       font-weight: 300;
+      margin-bottom: 0;
     }
   }
   .LineItem {
@@ -24,11 +25,6 @@
     padding-right: 0.5rem;
     border-top: 1px solid var(--tournio-border-color);
     border-bottom: 1px solid var(--tournio-border-color);
-
-    background-color: var(--tournio-white);
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--tournio-gray-800);
-    }
 
     .PreviewText {
       margin-bottom: 0.25rem;

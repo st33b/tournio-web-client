@@ -86,7 +86,7 @@ const TeamDetails = ({tournament, team, successType, context, enablePayment = tr
                 {enablePayment && (
                   <td>
                     <a href={`/bowlers/${b.identifier}`}
-                       className={'btn btn-sm btn-outline-success'}>
+                       className={'btn btn-sm btn-outline-primary'}>
                       Choose Events &amp; Pay
                     </a>
                   </td>

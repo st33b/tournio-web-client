@@ -10,17 +10,11 @@
       font-size: 120%
     }
 
-    background-color: var(--tournio-gray-200);
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--tournio-gray-800);
-    }
+    background-color: var(--tournio-secondary-bg);
+    color: var(--tournio-secondary-text-emphasis);
   }
   .Active {
-    background-color: var(--tournio-primary);
-    @media (prefers-color-scheme: dark) {
-      filter: brightness(80%);
-    }
-    color: var(--tournio-gray-300);
+    background-color: var(--tournio-primary-bg-subtle);
     p {
       font-weight: bold;
     }

@@ -4,8 +4,9 @@
     font-weight: normal;
   }
   .RequiredLabel {
-    color: darkred;
     margin-left: 5px;
+    color: var(--tournio-danger);
+    filter: brightness(80%);
   }
   .NoteIndicator {
     font-size: 60%;

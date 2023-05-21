@@ -29,17 +29,11 @@
     }
   }
   .Item:hover {
-    background-color: var(--tournio-gray-100);
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--tournio-gray-800);
-    }
+    background-color: var(--tournio-admin-form-bg);
   }
 
   .Form {
-    background-color: var(--tournio-gray-100);
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--tournio-gray-800);
-    }
+    background-color: var(--tournio-admin-form-bg);
     legend {
       text-align: center;
         font-size: 1.2rem;
@@ -60,11 +54,6 @@
     border-top: 1px solid var(--tournio-border-color);
     border-bottom: 1px solid var(--tournio-border-color);
 
-    background-color: var(--tournio-white);
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--tournio-gray-800);
-    }
-
     .PreviewText {
       margin-bottom: 0.25rem;
       padding-left: 0;
@@ -72,9 +61,4 @@
       font-style: italic;
     }
   }
-  //.PreviewText {
-  //  font-size: 90%;
-  //  font-style: italic;
-  //  display: block;
-  //}
 }

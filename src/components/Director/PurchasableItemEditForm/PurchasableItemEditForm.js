@@ -638,21 +638,18 @@ const PurchasableItemEditForm = ({tournament, item}) => {
                   title={'Delete'}
                   onClick={onDelete}
                   className={'btn btn-sm btn-danger me-auto'}>
-            <i className={'bi-slash-circle pe-2'} aria-hidden={true}/>
             Delete
           </button>
           <button type={'button'}
                   title={'Cancel'}
                   onClick={onCancel}
-                  className={'btn btn-sm btn-outline-secondary me-2'}>
-            <span className={'visually-hidden'}>Cancel</span>
-            <i className={'bi-x-lg'} aria-hidden={true}/>
+                  className={'btn btn-sm btn-secondary me-2'}>
+            Cancel
           </button>
           <button type={'submit'}
                   title={'Save'}
-                  className={'btn btn-sm btn-outline-success'}>
-            <span className={'visually-hidden'}>Save</span>
-            <i className={'bi-check-lg'} aria-hidden={true}/>
+                  className={'btn btn-sm btn-primary'}>
+            Save
           </button>
         </div>
       </form>

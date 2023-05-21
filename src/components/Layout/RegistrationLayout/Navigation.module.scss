@@ -1,28 +1,30 @@
 .Navigation {
   .Development {
-    background: url('../../../images/development.png') no-repeat right top;
+    background: url('../../../images/development.png') no-repeat center top;
     background-size: contain;
   }
-  .HomeLinks {
+  .NavLinks {
     font-size: 2rem;
-  }
-  .HomeLinkMd {
-    background: url('../../../images/tournio-logo.png') no-repeat left top;
-    @media (prefers-color-scheme: dark) {
-      background-image: url('../../../images/tournio-logo-inverted-gray.png');
-    }
-    background-size: contain;
-    //a { margin-left: 5rem; }
-    height: 2rem;
     a {
-      height: 2rem;
-      width: 100%;
+      color: var(--tournio-body-color);
     }
-  }
-  .Bag {
-    .Badge {
-      font-size: 0.4em;
-      font-style: normal;
+    .Bag {
+      .Badge {
+        font-size: 0.4em;
+        font-style: normal;
+      }
+    }
+
+    @media (min-device-width: 768px) {
+      font-size: 1.5rem;
+      .LogoLink {
+        max-height: 2rem;
+        .Image {
+          height: 100%;
+          width: auto;
+          vertical-align: top;
+        }
+      }
     }
   }
 }

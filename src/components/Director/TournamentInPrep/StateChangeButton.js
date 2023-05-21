@@ -64,7 +64,7 @@ const StateChangeButton = ({tournament, stateChangeInitiated}) => {
 
       if (directorState.user.role === 'superuser') {
         demoButton = (
-          <button className={'btn btn-outline-warning'}
+          <button className={'btn btn-primary'}
                   type={'button'}
                   onClick={() => demoStateChangeHandler('demonstrate')}
                   role={'button'}>

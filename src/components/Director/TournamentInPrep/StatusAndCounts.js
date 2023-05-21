@@ -103,27 +103,27 @@ const StatusAndCounts = ({tournament}) => {
 
   const counts = (
     <ListGroup variant={'flush'}>
-      <ListGroup.Item className={'d-flex'}
+      <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
                       action
                       href={`/director/bowlers`}>
         Bowlers
-        <Badge bg={'light'} text={'dark'} className={'ms-auto'}>
+        <Badge pill={true} className={classes.CountBadge}>
           {tournament.bowler_count}
         </Badge>
       </ListGroup.Item>
-      <ListGroup.Item className={'d-flex'}
+      <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
                       action
                       href={`/director/teams`}>
         Teams
-        <Badge bg={'light'} text={'dark'} className={'ms-auto'}>
+        <Badge pill={true} >
           {tournament.team_count}
         </Badge>
       </ListGroup.Item>
-      <ListGroup.Item className={'d-flex'}
+      <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
                       action
                       href={`/director/free_entries`}>
         Free Entries
-        <Badge bg={'light'} text={'dark'} className={'ms-auto'}>
+        <Badge pill={true} >
           {tournament.free_entry_count}
         </Badge>
       </ListGroup.Item>

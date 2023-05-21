@@ -1,0 +1,75 @@
+// CSS vars for color mode: light
+@include color-mode(light, true) {
+  color-scheme: light;
+
+  --#{$prefix}purple-bg-subtle: #{$purple-bg-subtle};
+  --#{$prefix}purple-border-subtle: #{$purple-border-subtle};
+
+  --#{$prefix}admin-form-bg: #{$admin-form-bg};
+
+  .accordion {
+    --#{$prefix}accordion-active-color: var(--#{$prefix}body-color);
+    --#{$prefix}accordion-active-bg: var(--#{$prefix}gray-200);
+    --#{$prefix}accordion-btn-color: var(--#{$prefix}body-color);
+    --#{$prefix}accordion-btn-focus-border-color: var(--#{$prefix}gray-500);
+    --#{$prefix}accordion-btn-focus-box-shadow: var(--#{$prefix}gray-500);
+  }
+}
+
+// CSS vars for color mode: dark
+@include color-mode(dark, true) {
+  color-scheme: dark;
+
+  --#{$prefix}purple-bg-subtle: #{$purple-bg-subtle-dark};
+  --#{$prefix}purple-border-subtle: #{$purple-border-subtle-dark};
+
+  --#{$prefix}admin-form-bg: #{$admin-form-bg-dark};
+
+  .accordion {
+    --#{$prefix}accordion-active-color: var(--#{$prefix}body-color);
+    --#{$prefix}accordion-active-bg: var(--#{$prefix}gray-700);
+    --#{$prefix}accordion-btn-color: var(--#{$prefix}body-color);
+    --#{$prefix}accordion-btn-focus-border-color: var(--#{$prefix}gray-700);
+    --#{$prefix}accordion-btn-focus-box-shadow: var(--#{$prefix}gray-700);
+  }
+
+  .progress,
+  .progress-stacked {
+    --#{$prefix}progress-bar-color: #{$gray-400}
+  }
+
+  @each $color, $value in $theme-colors-dark {
+    --#{$prefix}#{$color}-moody: #{$value};
+
+    .btn-#{$color} {
+      //color: $dark-color-contrast-light;
+      @include button-variant(
+          $value,
+          $value,
+        //$color: color-contrast($value, $gray-700),
+          $color: color-contrast($value,
+              $color-contrast-dark: $dark-color-contrast-dark,
+              $color-contrast-light: $dark-color-contrast-light,
+              //$min-contrast-ratio: 4.5,
+          ),
+      );
+    }
+
+    .btn-outline-#{$color} {
+      color: tint-color($value, 40%);
+      background-color: shade-color($value, 80%);
+      @include button-outline-variant(
+          $value,
+        $color-hover: color-contrast($value),
+        $active-background: shade-color($value, 30%),
+      );
+    }
+  }
+
+  @each $color, $value in $table-variants-dark {
+    @include table-variant(
+        $color,
+        $value,
+    )
+  }
+}

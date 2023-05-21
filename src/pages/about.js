@@ -1,6 +1,7 @@
+import {Card, Col, Row} from "react-bootstrap";
+
 import FrontLayout from '../components/Layout/FrontLayout/FrontLayout';
 import About from "../components/About/About";
-import {Card, Col, Row} from "react-bootstrap";
 
 const Page = () => (
   <div>

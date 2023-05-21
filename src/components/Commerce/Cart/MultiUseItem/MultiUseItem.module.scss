@@ -1,8 +1,5 @@
 .MultiUseItem {
-  background-color: var(--tournio-white);
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--tournio-body-bg);
-  }
+  background-color: var(--tournio-body-bg);
   p {
     margin: 0.5rem auto;
   }
@@ -13,10 +10,7 @@
     font-size: 1.75rem;
   }
   .Sticky {
-    background-color: var(--tournio-gray-100);
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--tournio-gray-900);
-    }
+    background-color: var(--tournio-bookend-bg);
   }
   .Note {
     font-size: 90%;

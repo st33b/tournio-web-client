@@ -111,6 +111,9 @@ const Page = () => {
             {!commerce.bowler.has_free_entry && <FreeEntryForm/>}
           </Col>
           <Col className={`d-none d-md-block col-md-4`}>
+            <h4>
+              Paid Items
+            </h4>
             <PreviousPurchases/>
           </Col>
         </Row>

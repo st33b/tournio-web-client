@@ -4,20 +4,20 @@ import classes from './LogoImage.module.scss';
 
 const LogoImage = ({src}) => {
   let content = (
-    <Card.Text className={'py-4 border border-1'}>
+    <Card.Text>
       No logo image present.
     </Card.Text>
   );
 
   if (src) {
-    content = <Card.Img variant={'top'} src={src} className={classes.Image} />;
+    content = (
+      <div className={classes.LogoImage}>
+        <Card.Img src={src} />
+      </div>
+    );
   }
 
-  return (
-    <Card border={'0'} className={`d-none d-md-block text-center ${classes.LogoImage}`}>
-      {content}
-    </Card>
-  );
+  return content;
 }
 
 export default LogoImage;

@@ -1,11 +1,12 @@
 import {useState, useEffect} from "react";
+import {Card, Col, Row} from "react-bootstrap";
+import titleCase from 'voca/title_case';
 
 import {fetchTournamentList} from "../../../utils";
+import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
+import TournamentLogo from "../TournamentLogo/TournamentLogo";
 
 import classes from './TournamentCards.module.scss';
-import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
-import {Card, Col, Image, Row} from "react-bootstrap";
-import TournamentLogo from "../TournamentLogo/TournamentLogo";
 
 const TournamentCards = () => {
   const [tournaments, setTournaments] = useState([]);
@@ -34,22 +35,10 @@ const TournamentCards = () => {
       {tournaments.length > 0 && (
         <Row xs={1} sm={2} lg={3}>
           {tournaments.map((t) => {
-            let bgColor = '';
-            let textColor = 'text-white';
-            switch (t.state) {
-              case 'active':
-                bgColor = 'bg-success';
-                break;
-              case 'closed':
-                bgColor = 'bg-secondary';
-                break;
-              default:
-                bgColor = 'bg-dark';
-            }
             return (
               <div className={`mb-3 ${classes.Tournament}`} key={t.identifier}>
                 <Card>
-                  <Card.Header className={`card-header ${bgColor} ${textColor}`}>
+                  <Card.Header className={`${t.state === 'active' ? classes.Active : classes.Closed}`}>
                     {t.status}
                   </Card.Header>
                   <Card.Body>
@@ -70,7 +59,7 @@ const TournamentCards = () => {
                           {t.start_date}
                         </Card.Text>
                         <Card.Text className={'py-0 text-end'}>
-                          <Card.Link className={'btn btn-outline-primary'}
+                          <Card.Link className={'btn btn-primary'}
                                      href={`/tournaments/${t.identifier}`}>
                             Go
                             <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>

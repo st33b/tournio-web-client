@@ -1,7 +1,9 @@
 .LogoImage {
-  .Image {
-    max-height: 300px;
-    width: auto;
-    max-width: 100%;
+    max-width: 150px;
+  margin: 0 auto;
+}
+@media (min-device-width: 768px) {
+  .LogoImage {
+    max-width: 300px;
   }
 }

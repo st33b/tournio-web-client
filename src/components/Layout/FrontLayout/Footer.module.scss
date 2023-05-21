@@ -1,11 +1,27 @@
 .Footer {
-  line-height: 1.5rem;
+  text-align: center;
 
   .Element {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    display: inline-block;
+    margin: 0.25rem 0;
+    padding: 0.25rem 0.3rem;
+    border-left: 1px solid var(--tournio-gray-500);
   }
-  .NotTheLast {
-    border-right: 1px solid #6c757d;
+
+  .Element:first-child {
+    border-left: none;
+  }
+
+  @media (min-width: 390px) {
+    .Element {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+  }
+}
+
+[data-bs-theme="dark"] .Footer {
+  .Element {
+    border-color: var(--tournio-gray-600);
   }
 }

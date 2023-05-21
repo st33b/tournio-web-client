@@ -165,7 +165,7 @@ const PurchasableItems = ({tournament}) => {
         </Card.Header>
 
         {(!tournament.stripe_account || !tournament.stripe_account.can_accept_payments) && (
-          <Card.Body className={'text-muted text-center small'}>
+          <Card.Body className={'text-secondary text-center small'}>
             Payment Integration must be set up before adding fees or events/items.
           </Card.Body>
         )}

@@ -1,11 +1,19 @@
 import {Row} from "react-bootstrap";
+import Image from "next/image";
+
 import {useCommerceContext} from "../../../store/CommerceContext";
+import {useThemeContext} from "../../../store/ThemeContext";
+import {useClientReady} from "../../../utils";
+
+import TournioLogoLight from '../../../images/tournio-logo.png';
+import TournioLogoDark from '../../../images/tournio-logo-inverted-gray.png';
+import ColorModeToggler from "../../common/ColorModeToggler/ColorModeToggler";
 
 import classes from './Navigation.module.scss';
-import {useClientReady} from "../../../utils";
 
 const Navigation = ({showCart}) => {
   const {commerce} = useCommerceContext();
+  const {theme} = useThemeContext();
 
   const ready = useClientReady();
   if (!ready) {
@@ -20,9 +28,9 @@ const Navigation = ({showCart}) => {
          data-bs-toggle={'collapse'}
          aria-controls={'mobile_cart'}
          aria-expanded={false}
-         className={`${classes.Bag} ms-auto`}>
+         className={`${classes.Bag} ms-auto d-md-none`}>
         <span className={'visually-hidden'}>Cart</span>
-        <i className={'bi-cart text-success position-relative'} aria-hidden={true}>
+        <i className={'bi-cart position-relative'} aria-hidden={true}>
           {/*Cart*/}
           <span className={`${classes.Badge} position-absolute top-0 start-50 badge rounded-pill bg-danger`}>
             {commerce.cart.length}
@@ -31,23 +39,33 @@ const Navigation = ({showCart}) => {
       </a>
     );
   }
+
+  const activeTheme = theme.active;
+
   return (
     <div className={`${classes.Navigation}`}>
       <Row className={process.env.NODE_ENV === 'development' && classes.Development}>
-        <div className={`${classes.HomeLinks} d-flex d-md-none`}>
-          <a href={'/tournaments'} title={'To tournament listing'} className={'link-dark'}>
+        <div className={`${classes.NavLinks} d-flex`}>
+          <a href={'/tournaments'}
+             title={'To tournament listing'}
+             className={'d-md-none'}>
             <span className={'visually-hidden'}>Home</span>
             <i className={'bi-house'} aria-hidden={true} />
           </a>
           {cartText}
-        </div>
-        <a href={'/tournaments'} className={'d-none d-md-block'}>
-          <div className={`${classes.HomeLinkMd} my-1`}>
+          <a href={'/tournaments'}
+             title={'To tournament listing'}
+             className={`d-none d-md-inline-block ${classes.LogoLink}`}>
+            <Image src={activeTheme === 'light' ? TournioLogoLight : TournioLogoDark}
+                   alt={'Tournio Logo'}
+                   className={`${classes.Image} img-fluid`}
+                   />
             <span className={'visually-hidden'}>
               Home
             </span>
+          </a>
+          <ColorModeToggler className={'ms-auto d-none d-md-inline-block'} />
         </div>
-        </a>
       </Row>
     </div>
   );
