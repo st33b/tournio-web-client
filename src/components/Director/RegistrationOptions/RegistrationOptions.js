@@ -5,6 +5,7 @@ import {Map} from 'immutable';
 import {directorApiRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {tournamentDetailsRetrieved} from "../../../store/actions/directorActions";
+import {devConsoleLog} from "../../../utils";
 
 const RegistrationOptions = ({tournament}) => {
   const context = useDirectorContext();
@@ -62,9 +63,7 @@ const RegistrationOptions = ({tournament}) => {
     return '';
   }
 
-  const tournamentType = tournament.purchasable_items.some(({category, determination}) =>
-    category === 'bowling' && determination === 'event') ? 'eventsSelectable' : 'traditional';
-  const allowedOptionSet = TYPE_OPTIONS[tournamentType];
+  const allowedOptionSet = tournament.event_items.event.length > 0 ? TYPE_OPTIONS.eventsSelectable : TYPE_OPTIONS.traditional;
 
   const optionToggled = (event) => {
     const inputName = event.target.name;
