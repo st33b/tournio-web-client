@@ -21,9 +21,6 @@ const Details = ({tournament}) => {
       </p>
       <TraditionalPriceBreakdown tournament={tournament}/>
       <EventPriceBreakdown tournament={tournament}/>
-      {/*<EventPriceBreakdown events={tournament.event_items.event}*/}
-      {/*                     ledgerItems={tournament.event_items.ledger}*/}
-      {/*                     timezone={tournament.timezone}/>*/}
     </div>
   )
 }

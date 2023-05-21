@@ -53,6 +53,13 @@ const EventPriceBreakdown = ({tournament}) => {
 
   devConsoleLog("breakdown:", eventsAndLedgers);
 
+  const discounts = ledgerItems.filter(({determination}) => determination === 'bundle_discount');
+  const discountDeets = discounts.map(({configuration, value}) => {
+    
+    return {};
+  })
+
+
   // Bundles
 
   return (
