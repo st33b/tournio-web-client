@@ -61,9 +61,7 @@ const Page = () => {
       }
     }
 
-    devConsoleLog("Need to fetch?", needToFetch);
     if (needToFetch) {
-      devConsoleLog("Fetching");
       fetchTournamentDetails(identifier, onFetchSuccess, onFetchFailure);
     }
   }, [identifier, tournament]);
@@ -91,7 +89,12 @@ const Page = () => {
           <Contacts tournament={tournament}/>
         </Col>
         <Col xs={{order: 1}} md={{span: 8, order: 2}}>
-          <Heading tournament={tournament}/>
+          <div className={'d-flex justify-content-start align-items-start'}>
+            <TournamentLogo url={tournament.image_url}
+                            additionalClasses={'col-4 pe-2 d-md-none'}/>
+            <Heading tournament={tournament}/>
+          </div>
+
           <div className={'d-flex'}>
             <div className={'flex-fill w-100'}>
               <Details tournament={tournament}/>

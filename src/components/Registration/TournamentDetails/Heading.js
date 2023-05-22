@@ -1,5 +1,6 @@
 import {format} from "date-fns";
 import classes from './TournamentDetails.module.scss';
+import {formatInTimeZone} from "date-fns-tz";
 
 const Heading = ({tournament}) => {
   if (!tournament) {
@@ -24,23 +25,33 @@ const Heading = ({tournament}) => {
   } else {
     datesString = `${startMonth} ${start.getDate()}${startDisplayYear}-${endMonth} ${end.getDate()}, ${endDisplayYear}`;
   }
+  const formattedDeadline = formatInTimeZone(new Date(tournament.entry_deadline), tournament.timezone,'PP p z');
+
 
   return (
     <div>
       <h2 className={'mb-3'}>
         {tournament.name}
       </h2>
-      <h5 className={'fst-italic'}>
+      <h4 className={'fst-italic'}>
         {datesString}
-      </h5>
+      </h4>
+
       {tournament.website && (
-        <p className={`d-none d-md-block mb-0 ${classes.WebsiteLink}`}>
+        <p className={`mb-0 ${classes.WebsiteLink}`}>
           <a href={tournament.website}>
             tournament website
             <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>
           </a>
         </p>
       )}
+
+      <p className={'my-3'}>
+        <strong>
+          Entry Deadline:{' '}
+        </strong>
+        {formattedDeadline}
+      </p>
     </div>
   );
 }

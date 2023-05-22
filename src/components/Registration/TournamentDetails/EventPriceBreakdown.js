@@ -8,7 +8,7 @@ const EventPriceBreakdown = ({tournament}) => {
     return;
   }
   const {timezone, event_items} = {...tournament};
-  if (!event_items) {
+  if (!event_items || event_items.event.length === 0) {
     return '';
   }
 
@@ -277,15 +277,15 @@ const EventPriceBreakdown = ({tournament}) => {
 
   return (
     <div className={classes.Details}>
-      <h6>
+      <h5>
         Entry Fees
-      </h6>
+      </h5>
       {priceBreakdown.map(({event, rows}) => (
         <div className={'table-responsive'} key={event.identifier}>
           <table className={`table table-borderless ${classes.FeeTable}`}>
             <thead>
             <tr>
-              <th colSpan={2}>
+              <th colSpan={2} className={'fst-italic border-bottom'}>
                 {event.name}
               </th>
             </tr>
@@ -312,7 +312,7 @@ const EventPriceBreakdown = ({tournament}) => {
           <table className={`table table-borderless ${classes.FeeTable}`}>
             <thead>
             <tr>
-              <th colSpan={2}>
+              <th colSpan={2} className={'fst-italic border-bottom'}>
                 {name}
               </th>
             </tr>

@@ -128,6 +128,10 @@ const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
     switch (formData.determination) {
       case 'early_discount':
         configuration.valid_until = formData.valid_until;
+        if (formData.linkedEvent) {
+          configuration.event = formData.linkedEvent;
+          itemData.refinement = 'event_linked';
+        }
         break;
       case 'late_fee':
         configuration.applies_at = formData.applies_at;
@@ -253,7 +257,7 @@ const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
               ))}
             </div>
           }
-          {eventSelectionAllowed && formData.determination === 'late_fee' &&
+          {eventSelectionAllowed && ['early_discount', 'late_fee'].includes(formData.determination) &&
             <div className={'row mb-3'}>
               <label htmlFor={'linkedEvent'} className={'form-label ps-0 mb-1'}>
                 Linked Event

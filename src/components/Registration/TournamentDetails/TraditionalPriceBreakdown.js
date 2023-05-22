@@ -22,78 +22,76 @@ const TraditionalPriceBreakdown = ({tournament}) => {
         </p>
       )}
       {!noFeeChanges && (
-        <div className={'table-responsive'}>
-          <table className={`table table-borderless ${classes.FeeTable}`}>
-            <thead>
-            <tr>
-              <th colSpan={2}>
-                Entry Fee
-              </th>
-            </tr>
-            </thead>
-            <tbody>
-            {earlyRegEnds && (
-              <tr className={`${classes.Early}`}>
-                <td>
-                  ${tournament.registration_fee - tournament.early_registration_discount}
-                </td>
-                <td>
-                  Until{' '}
-                  <span className={classes.Date}>
+        <>
+          <h5>
+            Entry Fee
+          </h5>
+          <div className={'table-responsive'}>
+            <table className={`table table-borderless ${classes.FeeTable}`}>
+              <tbody>
+              {earlyRegEnds && (
+                <tr className={`${classes.Early}`}>
+                  <td>
+                    ${tournament.registration_fee - tournament.early_registration_discount}
+                  </td>
+                  <td>
+                    Until{' '}
+                    <span className={classes.Date}>
                     {earlyRegEnds}
                   </span>
-                </td>
-              </tr>
-            )}
-            <tr className={`${classes.Regular}`}>
-              <td>
-                ${tournament.registration_fee}
-              </td>
-              {earlyRegEnds && lateRegStarts && (
+                  </td>
+                </tr>
+              )}
+              <tr className={`${classes.Regular}`}>
                 <td>
-                  Between{' '}
-                  <span className={classes.Date}>
+                  ${tournament.registration_fee}
+                </td>
+                {earlyRegEnds && lateRegStarts && (
+                  <td>
+                    Between{' '}
+                    <span className={classes.Date}>
                     {earlyRegEnds}
                     </span>
-                  {' '}and{' '}
-                  <span className={classes.Date}>
+                    {' '}and{' '}
+                    <span className={classes.Date}>
                     {lateRegStarts}
                   </span>
-                </td>
-              )}
-              {!earlyRegEnds && lateRegStarts && (
-                <td>
-                  Until{' '}
-                  <span className={classes.Date}>
+                  </td>
+                )}
+                {!earlyRegEnds && lateRegStarts && (
+                  <td>
+                    Until{' '}
+                    <span className={classes.Date}>
                     {lateRegStarts}
                   </span>
-                </td>
-              )}
-              {earlyRegEnds && !lateRegStarts && (
-                <td>
-                  After{' '}
-                  <span className={classes.Date}>
+                  </td>
+                )}
+                {earlyRegEnds && !lateRegStarts && (
+                  <td>
+                    After{' '}
+                    <span className={classes.Date}>
                     {earlyRegEnds}
                   </span>
-                </td>
-              )}
-            </tr>
-            {lateRegStarts && (
-              <tr className={`${classes.Late}`}>
-                <td>
-                  ${tournament.registration_fee + tournament.late_registration_fee}
-                </td>
-                <td>
-                  After{' '}
-                  <span className={classes.Date}>
+                  </td>
+                )}
+              </tr>
+              {lateRegStarts && (
+                <tr className={`${classes.Late}`}>
+                  <td>
+                    ${tournament.registration_fee + tournament.late_registration_fee}
+                  </td>
+                  <td>
+                    After{' '}
+                    <span className={classes.Date}>
                     {lateRegStarts}
                   </span>
-                </td>
-              </tr>
-            )}
-            </tbody>
-          </table>
-        </div>
+                  </td>
+                </tr>
+              )}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </div>
   )
