@@ -79,16 +79,16 @@ const Page = () => {
 
   return (
     <Row>
-      <Col xs={{ order: 2 }}>
+      <Col lg={8}>
+        {output}
+      </Col>
+      <Col>
         <Summary tournament={registration.tournament}
                  nextStepClicked={submitRegistration}
                  nextStepText={'Submit Registration'}
                  enableDoublesEdit={true}
                  finalStep={true}
         />
-      </Col>
-      <Col lg={8} sm={{ order: 2 }}>
-        {output}
       </Col>
     </Row>
   );

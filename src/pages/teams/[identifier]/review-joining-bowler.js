@@ -73,14 +73,14 @@ const Page = () => {
 
   return (
     <Row>
-      <Col sm={4} xs={{ order: 2 }}>
+      <Col lg={8}>
+        {output}
+      </Col>
+      <Col>
         <Summary tournament={registration.tournament}
                  nextStepClicked={submitRegistration}
                  nextStepText={'Submit Registration'}
         />
-      </Col>
-      <Col sm={{ span: 8, order: 2 }}>
-        {output}
       </Col>
     </Row>
   );
