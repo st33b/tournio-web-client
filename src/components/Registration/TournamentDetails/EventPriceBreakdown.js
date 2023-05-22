@@ -46,14 +46,14 @@ const EventPriceBreakdown = ({tournament}) => {
 
     const discountItem = event_items.ledger.find(({configuration, determination}) =>
       configuration.event === e.identifier && determination === 'early_discount');
-    let formattedExpirationDate, formattedLateFeeDate;
+    let formattedDiscountTime, formattedLateFeeTime;
     if (discountItem) {
-      formattedExpirationDate = formatInTimeZone(new Date(discountItem.configuration.valid_until), timezone, 'PP p z');
+      formattedDiscountTime = formatInTimeZone(new Date(discountItem.configuration.valid_until), timezone, 'PP p z');
     }
     const lateFeeItem = event_items.ledger.find(({configuration, determination}) =>
       configuration.event === e.identifier && determination === 'late_fee');
     if (lateFeeItem) {
-      formattedLateFeeDate = formatInTimeZone(new Date(lateFeeItem.configuration.applies_at), timezone, 'PP p z');
+      formattedLateFeeTime = formatInTimeZone(new Date(lateFeeItem.configuration.applies_at), timezone, 'PP p z');
     }
 
     const eventRows = [];
@@ -61,14 +61,14 @@ const EventPriceBreakdown = ({tournament}) => {
     // Early-discount row
     if (discountItem) {
       eventRows.push(
-        <tr className={`${classes.Early}`}>
+        <tr className={`${classes.Early}`} key={`${e.identifier}-early`}>
           <td>
             ${e.value - discountItem.value}
           </td>
           <td>
             Until{' '}
             <span className={classes.Date}>
-                    {formattedExpirationDate}
+                    {formattedDiscountTime}
                   </span>
           </td>
         </tr>
@@ -81,18 +81,18 @@ const EventPriceBreakdown = ({tournament}) => {
     let dateCell = '';
     // There is neither an early discount nor a late fee
     if (!discountItem && !lateFeeItem) {
-      // Do nothing; leave regularRow.rows empty
+      // Leave regularRow.rows empty
     } else if (discountItem && lateFeeItem) {
       // there's both an early discount and a late fee: Between X and Y
       dateCell = (
         <td>
           Between{' '}
           <span className={classes.Date}>
-             {formattedExpirationDate}
+             {formattedDiscountTime}
           </span>
           {' '}and{' '}
           <span className={classes.Date}>
-             {formattedLateFeeDate}
+             {formattedLateFeeTime}
           </span>
         </td>
       );
@@ -102,7 +102,7 @@ const EventPriceBreakdown = ({tournament}) => {
         <td>
           After{' '}
           <span className={classes.Date}>
-            {formattedExpirationDate}
+            {formattedDiscountTime}
           </span>
         </td>
       );
@@ -112,31 +112,33 @@ const EventPriceBreakdown = ({tournament}) => {
         <td>
           Until{' '}
           <span className={classes.Date}>
-            {formattedLateFeeDate}
+            {formattedLateFeeTime}
           </span>
         </td>
       );
     }
-    eventRows.push(
-      <tr className={`${classes.Regular}`}>
-        <td>
-          ${e.value}
-        </td>
-        {dateCell}
-      </tr>
-    );
+    if (dateCell) {
+      eventRows.push(
+        <tr className={`${classes.Regular}`} key={`${e.identifier}-regular`}>
+          <td>
+            ${e.value}
+          </td>
+          {dateCell}
+        </tr>
+      );
+    }
 
     // Now the late fee row
     if (lateFeeItem) {
       eventRows.push(
-        <tr className={`${classes.Late}`}>
+        <tr className={`${classes.Late}`} key={`${e.identifier}-late`}>
           <td>
             ${e.value + lateFeeItem.value}
           </td>
           <td>
             After{' '}
             <span className={classes.Date}>
-                    {formattedLateFeeDate}
+                    {formattedLateFeeTime}
                   </span>
           </td>
         </tr>
@@ -150,28 +152,180 @@ const EventPriceBreakdown = ({tournament}) => {
   } // end of building rows for individual events
 
   const bundleDiscounts = event_items.ledger.filter(({determination}) => determination === 'bundle_discount');
+  const bundleBreakdowns = bundleDiscounts.map((bundle, bundleIndex) => {
+    const bundleDiscount = bundle.value;
+    const name = bundle.configuration.events.map(eId => eventsByIdentifier[eId].name).join(' + ') + ' bundle';
+    let formattedDiscountTime, formattedLateFeeTime = '';
+    const bundleRegularPrice = bundle.configuration.events.map(eId => eventsByIdentifier[eId].value).reduce(
+      (acc, current) => acc + current,
+      0
+    ) - bundleDiscount;
+    const bundleEarlyDiscount = bundle.configuration.events.map(eId => {
+      const discountItem = event_items.ledger.find(item => (item.determination === 'early_discount' && item.configuration.event === eId));
+      if (discountItem) {
+        formattedDiscountTime = formatInTimeZone(new Date(discountItem.configuration.valid_until), timezone, 'PP p z');
+        return discountItem.value;
+      }
+      return 0;
+    }).reduce((acc, current) => acc + current);
+    const bundleLateFee = bundle.configuration.events.map(eId => {
+      const feeItem = event_items.ledger.find(item => (item.determination === 'late_fee' && item.configuration.event === eId));
+      if (feeItem) {
+        formattedLateFeeTime = formatInTimeZone(new Date(feeItem.configuration.applies_at), timezone, 'PP p z');
+        return feeItem.value;
+      }
+      return 0;
+    }).reduce((acc, current) => acc + current);
 
+    const bundleRows = [];
+
+    // Early-discount row
+    if (bundleEarlyDiscount) {
+      bundleRows.push(
+        <tr className={`${classes.Early}`} key={`${bundleIndex}-early`}>
+          <td>
+            ${bundleRegularPrice - bundleEarlyDiscount}
+          </td>
+          <td>
+            Until{' '}
+            <span className={classes.Date}>
+                    {formattedDiscountTime}
+                  </span>
+          </td>
+        </tr>
+      );
+    }
+
+    // Regular-price row
+    //
+    // The "regular" fee row has four possibilities:
+    //
+    let dateCell = '';
+    // There is neither an early discount nor a late fee
+    if (!bundleEarlyDiscount && !bundleLateFee) {
+      // Leave regularRow.rows empty
+    } else if (bundleEarlyDiscount && bundleLateFee) {
+      // there's both an early discount and a late fee: Between X and Y
+      dateCell = (
+        <td>
+          Between{' '}
+          <span className={classes.Date}>
+             {formattedDiscountTime}
+          </span>
+          {' '}and{' '}
+          <span className={classes.Date}>
+             {formattedLateFeeTime}
+          </span>
+        </td>
+      );
+    } else if (bundleEarlyDiscount && !bundleLateFee) {
+      // there's an early discount but no late fee: After X
+      dateCell = (
+        <td>
+          After{' '}
+          <span className={classes.Date}>
+            {formattedDiscountTime}
+          </span>
+        </td>
+      );
+    } else {
+      // there's a late fee but no early discount: After Y
+      dateCell = (
+        <td>
+          Until{' '}
+          <span className={classes.Date}>
+            {formattedLateFeeTime}
+          </span>
+        </td>
+      );
+    }
+    if (dateCell) {
+      bundleRows.push(
+        <tr className={`${classes.Regular}`} key={`${bundleIndex}-regular`}>
+          <td>
+            ${bundleRegularPrice}
+          </td>
+          {dateCell}
+        </tr>
+      );
+    }
+
+    // Late-fee row
+    if (bundleLateFee) {
+      bundleRows.push(
+        <tr className={`${classes.Late}`} key={`${bundleIndex}-late`}>
+          <td>
+            ${bundleRegularPrice + bundleLateFee}
+          </td>
+          <td>
+            After{' '}
+            <span className={classes.Date}>
+                    {formattedLateFeeTime}
+                  </span>
+          </td>
+        </tr>
+      );
+    }
+
+    return {
+      name: name,
+      regularPrice: bundleRegularPrice,
+      rows: bundleRows,
+    }
+  });
+  // End of building rows for bundle discounts
 
   return (
     <div className={classes.Details}>
       <h6>
-        Event Entry Fees
+        Entry Fees
       </h6>
       {priceBreakdown.map(({event, rows}) => (
         <div className={'table-responsive'} key={event.identifier}>
           <table className={`table table-borderless ${classes.FeeTable}`}>
             <thead>
             <tr>
-              <th>
+              <th colSpan={2}>
                 {event.name}
               </th>
-              {rows.length == 0 && (
-                <th>
-                  Entry fee: ${event.value}
-                </th>
-              )}
             </tr>
             </thead>
+            {rows.length === 0 && (
+              <tbody>
+                <tr>
+                  <td colSpan={2}>
+                    Entry fee: ${event.value}
+                  </td>
+                </tr>
+              </tbody>
+            )}
+            {rows.length > 0 && (
+              <tbody>
+                {rows}
+              </tbody>
+            )}
+          </table>
+        </div>
+      ))}
+      {bundleBreakdowns.map(({name, rows, regularPrice}, index) => (
+        <div className={'table-responsive'} key={`bundle-breakdown-${index}`}>
+          <table className={`table table-borderless ${classes.FeeTable}`}>
+            <thead>
+            <tr>
+              <th colSpan={2}>
+                {name}
+              </th>
+            </tr>
+            </thead>
+            {rows.length === 0 && (
+              <tbody>
+              <tr>
+                <td colSpan={2}>
+                  Bundle entry fee: ${regularPrice}
+                </td>
+              </tr>
+              </tbody>
+            )}
             {rows.length > 0 && (
               <tbody>
                 {rows}
