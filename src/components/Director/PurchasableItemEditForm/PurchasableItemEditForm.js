@@ -198,9 +198,15 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     switch (item.determination) {
       case 'early_discount':
         configuration.valid_until = formData.fields.valid_until;
+        if (item.refinement === 'event_linked') {
+          configuration.event = formData.fields.linkedEvent;
+        }
         break;
       case 'late_fee':
         configuration.applies_at = formData.fields.applies_at;
+        if (item.refinement === 'event_linked') {
+          configuration.event = formData.fields.linkedEvent;
+        }
         break;
       case 'bundle_discount':
         configuration.events = Object.keys(formData.fields.eventIdentifiers).filter(id => formData.fields.eventIdentifiers[id]);
@@ -598,6 +604,19 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     content = (
       <form onSubmit={onFormSubmit} className={`${classes.Form} px-2 pt-2 pb-3`}>
         <fieldset>
+          {formData.fields.linkedEvent && (
+            <div className={'row mx-0 mb-1'}>
+              <label className={'form-label ps-0 mb-0'}>
+                Linked event:
+              </label>
+              <input type={'text'}
+                     readOnly={true}
+                     className={'form-control-plaintext ps-2'}
+                     value={tournament.event_items.event.find(
+                       ({identifier}) => identifier === formData.fields.linkedEvent
+                     ).name} />
+            </div>
+          )}
           {inputElements.map((elemProps, i) => (
             <div key={i} className={'row mx-0 mb-3'}>
               {elemProps.type === 'datepicker' && <DateTimePicker {...elemProps.props} />}

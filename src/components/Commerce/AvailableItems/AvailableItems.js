@@ -75,7 +75,7 @@ const AvailableItems = ({itemAddedToCart}) => {
         <Col xs={12} md={6}>
           {eventItems.length > 0 && (
             <div className={``}>
-              <h5 className={'py-2 py-md-0'}>
+              <h5 className={''}>
                 Bowling Events
               </h5>
               <Col xs={12}>

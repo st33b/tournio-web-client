@@ -46,7 +46,7 @@ const SingleUseItem = ({item, removed}) => {
 
   if (item.category === 'ledger') {
     outerClasses.push(classes.Sticky);
-    if (item.refinement === 'event') {
+    if (item.refinement === 'event_linked') {
       note = `Event: ${commerce.availableItems[item.configuration.event].name}`;
     }
     if (item.configuration.events) {
