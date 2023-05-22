@@ -29,123 +29,154 @@ const EventPriceBreakdown = ({tournament}) => {
   //   $EEE after CCCC
 
   const events = event_items.event;
-  const ledgerItems = event_items.ledger;
 
-  const eventsAndLedgers = events.map(event => {
-    const eventDeets = {
-      event: event,
-      ledgers: {},
-      dates: {},
-    };
-    for (const item of ledgerItems) {
-      if (item.configuration.event !== event.identifier) {
-        continue;
-      }
-      eventDeets.ledgers[item.determination] = item.value;
-      if (item.determination === 'early_discount') {
-        eventDeets.dates.earlyEnds = formatInTimeZone(new Date(item.configuration.valid_until), timezone,'PP p z');
-      } else if (item.determination === 'late_fee') {
-        eventDeets.dates.lateStarts = formatInTimeZone(new Date(item.configuration.applies_at), timezone,'PP p z');
-      }
+  // Price breakdown:
+  // [
+  //   {
+  //     event,
+  //     rows, // each of these is a table row with two cells: price and date text
+  //   },
+  // ]
+  const priceBreakdown = [];
+  const eventsByIdentifier = {}; // For use when assembling the bundle discounts
+
+  // build the price/date rows for individual events
+  for (const e of events) {
+    eventsByIdentifier[e.identifier] = e;
+
+    const discountItem = event_items.ledger.find(({configuration, determination}) =>
+      configuration.event === e.identifier && determination === 'early_discount');
+    let formattedExpirationDate, formattedLateFeeDate;
+    if (discountItem) {
+      formattedExpirationDate = formatInTimeZone(new Date(discountItem.configuration.valid_until), timezone, 'PP p z');
     }
-    return eventDeets;
-  });
+    const lateFeeItem = event_items.ledger.find(({configuration, determination}) =>
+      configuration.event === e.identifier && determination === 'late_fee');
+    if (lateFeeItem) {
+      formattedLateFeeDate = formatInTimeZone(new Date(lateFeeItem.configuration.applies_at), timezone, 'PP p z');
+    }
 
-  devConsoleLog("breakdown:", eventsAndLedgers);
+    const eventRows = [];
 
-  const discounts = ledgerItems.filter(({determination}) => determination === 'bundle_discount');
-  const discountDeets = discounts.map(({configuration, value}) => {
-    
-    return {};
-  })
+    // Early-discount row
+    if (discountItem) {
+      eventRows.push(
+        <tr className={`${classes.Early}`}>
+          <td>
+            ${e.value - discountItem.value}
+          </td>
+          <td>
+            Until{' '}
+            <span className={classes.Date}>
+                    {formattedExpirationDate}
+                  </span>
+          </td>
+        </tr>
+      );
+    }
 
+    //
+    // The "regular" fee row has four possibilities:
+    //
+    let dateCell = '';
+    // There is neither an early discount nor a late fee
+    if (!discountItem && !lateFeeItem) {
+      // Do nothing; leave regularRow.rows empty
+    } else if (discountItem && lateFeeItem) {
+      // there's both an early discount and a late fee: Between X and Y
+      dateCell = (
+        <td>
+          Between{' '}
+          <span className={classes.Date}>
+             {formattedExpirationDate}
+          </span>
+          {' '}and{' '}
+          <span className={classes.Date}>
+             {formattedLateFeeDate}
+          </span>
+        </td>
+      );
+    } else if (discountItem && !lateFeeItem) {
+      // there's an early discount but no late fee: After X
+      dateCell = (
+        <td>
+          After{' '}
+          <span className={classes.Date}>
+            {formattedExpirationDate}
+          </span>
+        </td>
+      );
+    } else {
+      // there's a late fee but no early discount: After Y
+      dateCell = (
+        <td>
+          Until{' '}
+          <span className={classes.Date}>
+            {formattedLateFeeDate}
+          </span>
+        </td>
+      );
+    }
+    eventRows.push(
+      <tr className={`${classes.Regular}`}>
+        <td>
+          ${e.value}
+        </td>
+        {dateCell}
+      </tr>
+    );
 
-  // Bundles
+    // Now the late fee row
+    if (lateFeeItem) {
+      eventRows.push(
+        <tr className={`${classes.Late}`}>
+          <td>
+            ${e.value + lateFeeItem.value}
+          </td>
+          <td>
+            After{' '}
+            <span className={classes.Date}>
+                    {formattedLateFeeDate}
+                  </span>
+          </td>
+        </tr>
+      );
+    }
+
+    priceBreakdown.push({
+      event: e,
+      rows: eventRows,
+    });
+  } // end of building rows for individual events
+
+  const bundleDiscounts = event_items.ledger.filter(({determination}) => determination === 'bundle_discount');
+
 
   return (
     <div className={classes.Details}>
       <h6>
         Event Entry Fees
       </h6>
-      {eventsAndLedgers.map(({event, ledgers, dates}) => (
+      {priceBreakdown.map(({event, rows}) => (
         <div className={'table-responsive'} key={event.identifier}>
           <table className={`table table-borderless ${classes.FeeTable}`}>
             <thead>
-              <tr>
+            <tr>
+              <th>
+                {event.name}
+              </th>
+              {rows.length == 0 && (
                 <th>
-                  {event.name}
+                  Entry fee: ${event.value}
                 </th>
-                {!dates.earlyEnds && !dates.lateStarts && (
-                  <th>
-                    Entry fee: ${event.value}
-                  </th>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-            {dates.earlyEnds && (
-              <tr className={`${classes.Early}`}>
-                <td>
-                  ${event.value - ledgers.early_discount}
-                </td>
-                <td>
-                  Until{' '}
-                  <span className={classes.Date}>
-                    {dates.earlyEnds}
-                  </span>
-                </td>
-              </tr>
-            )}
-            <tr className={`${classes.Regular}`}>
-              <td>
-                ${event.value}
-              </td>
-              {/* If we have both early registration discount and and late fee */}
-              {dates.earlyEnds && dates.lateStarts && (
-                <td>
-                  Between{' '}
-                  <span className={classes.Date}>
-                    {dates.earlyEnds}
-                    </span>
-                  {' '}and{' '}
-                  <span className={classes.Date}>
-                    {dates.lateStarts}
-                  </span>
-                </td>
-              )}
-              {/* If we have no early discount but we do have a late fee */}
-              {!dates.esrlyEnds && dates.lateStarts && (
-                <td>
-                  Until{' '}
-                  <span className={classes.Date}>
-                    {dates.lateStarts}
-                  </span>
-                </td>
-              )}
-              {/* If we have an early discount but no late fee*/}
-              {dates.earlyEnds && !dates.lateStarts && (
-                <td>
-                  After{' '}
-                  <span className={classes.Date}>
-                    {dates.earlyEnds}
-                  </span>
-                </td>
               )}
             </tr>
-            {dates.lateStarts && (
-              <tr className={`${classes.Late}`}>
-                <td>
-                  ${event.value + ledgers.late_fee}
-                </td>
-                <td>
-                  After{' '}
-                  <span className={classes.Date}>
-                    {dates.lateStarts}
-                  </span>
-                </td>
-              </tr>
+            </thead>
+            {rows.length > 0 && (
+              <tbody>
+                {rows}
+              </tbody>
             )}
-            </tbody>
           </table>
         </div>
       ))}
