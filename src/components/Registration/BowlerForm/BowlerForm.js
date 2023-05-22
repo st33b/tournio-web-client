@@ -294,7 +294,12 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     const formFields = {};
     for (let key in tourn.additional_questions) {
       formFields[key] = { ...tourn.additional_questions[key] }
-      formFields[key].valid = !tourn.additional_questions[key].validation.required
+      if (tourn.additional_questions[key].validation.required) {
+        formFields[key].validityErrors = ['valueMissing'];
+        formFields[key].valid = false;
+      } else {
+        formFields[key].valid = true
+      }
       formFields[key].touched = false;
       formFields[key].elementConfig = { ...tourn.additional_questions[key].elementConfig }
     }
