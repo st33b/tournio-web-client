@@ -50,7 +50,6 @@ const Page = () => {
         <Summary tournament={registration.tournament} />
       </Col>
       <Col lg={8}>
-        <ProgressIndicator active={'bowlers'} />
         <BowlerForm tournament={registration.tournament}
                     bowlerInfoSaved={onCompletion}
                     includeShift={includeShift} />
