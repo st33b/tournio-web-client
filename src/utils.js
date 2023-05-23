@@ -553,8 +553,9 @@ export const purchaseDetailsPostData = (items) => {
     if (i.category === 'ledger') {
       // mandatory things like entry & late fees, early discount
 
-      // some things we want the server to add: bundle discount, event-linked late fees
-      if (i.determination === 'bundle_discount' || i.determination === 'late_fee' && i.refinement === 'event_linked') {
+      // some things we want the server to add: bundle discount, event-linked late fees & early discounts
+      if (i.determination === 'bundle_discount' || i.refinement === 'event_linked') {
+        devConsoleLog("Not adding to the checkout request:", i);
         continue;
       }
       purchaseIdentifiers.push(i.identifier);
