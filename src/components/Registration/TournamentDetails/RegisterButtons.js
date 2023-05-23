@@ -40,8 +40,8 @@ const RegisterButtons = ({tournament}) => {
         linkText: 'Register a Pair of Bowlers',
       },
     ]
-    const eventSelectionEnabled = !!tournament.purchasable_items && tournament.purchasable_items.some(item => item.determination === 'event');
-    // const eventSelectionEnabled = false;
+    const eventSelectionEnabled = tournament.event_items && tournament.event_items.event.length > 0;
+
     if (eventSelectionEnabled) {
       // only show what's enabled
       registrationOptions = optionTypes.map(({name, path, linkText}) => {
@@ -49,12 +49,12 @@ const RegisterButtons = ({tournament}) => {
           return '';
         }
         return (
-          <ListGroup.Item key={name}
-                          className={'text-primary'}
-                          href={`${router.asPath}/${path}`}
-                          action>
+          <Button key={name}
+                  className={`col-8 col-lg-auto mx-auto mx-lg-0 my-2 my-lg-0 ${classes.Action}`}
+                  variant={'primary'}
+                  href={`${router.asPath}/${path}`}>
             {linkText}
-          </ListGroup.Item>
+          </Button>
         );
       });
     } else {

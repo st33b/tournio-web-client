@@ -26,13 +26,18 @@ const NewPurchasableItem = ({tournament}) => {
     }
 
     const allLedgerTypes = ['entry_fee', 'late_fee', 'early_discount'];
-    let usedTypes = tournament.purchasable_items.filter(item => item.category === 'ledger').map(item => item.determination);
-    let typesAvailable = ['bundle_discount'];
-    allLedgerTypes.forEach(type => {
-      if (!usedTypes.includes(type)) {
-        typesAvailable.push(type);
-      }
-    });
+    let typesAvailable = ['bundle_discount'].concat(allLedgerTypes);
+
+    //
+    // Let's see if we can not impose rules here, to keep things simple.
+    //
+    // let usedTypes = tournament.purchasable_items.filter(item => item.category === 'ledger').map(item => item.determination);
+    // let typesAvailable = ['bundle_discount'];
+    // allLedgerTypes.forEach(type => {
+    //   if (!usedTypes.includes(type)) {
+    //     typesAvailable.push(type);
+    //   }
+    // });
 
     setAvailableLedgerTypes(typesAvailable);
   }, [tournament]);

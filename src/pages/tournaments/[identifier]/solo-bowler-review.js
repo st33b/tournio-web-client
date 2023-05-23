@@ -64,7 +64,6 @@ const Page = () => {
   } else {
     output = (
       <>
-        <ProgressIndicator active={'review'} />
         {errorMessage}
         <ReviewEntries editBowler={editBowlerClicked} context={'solo'} />
       </>
