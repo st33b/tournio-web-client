@@ -72,14 +72,14 @@ const Page = () => {
 
   return (
     <Row>
+      <Col lg={8}>
+        {output}
+      </Col>
       <Col>
         <Summary tournament={registration.tournament}
                  nextStepClicked={submitRegistration}
                  nextStepText={'Submit Registration'}
         />
-      </Col>
-      <Col lg={8}>
-        {output}
       </Col>
     </Row>
   );
