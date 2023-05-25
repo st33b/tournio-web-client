@@ -4,8 +4,7 @@ import {Card, Col, Row} from "react-bootstrap";
 
 import DirectorLayout from '../../components/Layout/DirectorLayout/DirectorLayout';
 import LoginForm from '../../components/Director/LoginForm/LoginForm';
-import {devConsoleLog, useClientReady} from "../../utils";
-import {useLoggedIn} from "../../director";
+import {useClientReady} from "../../utils";
 
 const Login = () => {
   const router = useRouter();
@@ -20,14 +19,13 @@ const Login = () => {
     }
   }, [router]);
 
-  const loggedIn = useLoggedIn();
-  if (loggedIn > 0) {
-    devConsoleLog("Login page says we're already logged in.");
-  }
-
   const ready = useClientReady();
   if (!ready) {
     return null;
+  }
+
+  const onLoginSuccess = () => {
+    router.replace('/director', null, {shallow: true});
   }
 
   let successAlert = '';
@@ -51,7 +49,7 @@ const Login = () => {
       <Row>
         <Col xs={12} sm={{span: 8, offset: 2}} md={{span: 6, offset: 3}}>
           {successAlert}
-          <LoginForm />
+          <LoginForm onLoginSuccess={onLoginSuccess} />
         </Col>
       </Row>
       <Row>

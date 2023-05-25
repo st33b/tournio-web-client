@@ -7,7 +7,6 @@ import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage
 import TournamentListing from '../../../components/Director/TournamentListing/TournamentListing';
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {newTournamentInitiated} from "../../../store/actions/directorActions";
-import {devConsoleLog} from "../../../utils";
 import {directorApiRequest, useLoggedIn} from "../../../director";
 
 const Page = () => {
