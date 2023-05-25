@@ -31,7 +31,6 @@ const ColorModeToggler = (props) => {
     updatePreferredTheme(event.target.name);
   }
 
-  devConsoleLog("Theme.preferred:", theme.preferred);
   const preferredIconClass = !!theme.preferred ? themeLinkContents[theme.preferred].iconClass : themeLinkContents.auto.iconClass;
 
   return (

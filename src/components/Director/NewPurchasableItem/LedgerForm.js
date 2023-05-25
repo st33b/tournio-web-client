@@ -124,6 +124,7 @@ const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
       determination: formData.determination,
       name: formData.name,
       value: formData.value,
+      user_selectable: false,
     }
     switch (formData.determination) {
       case 'early_discount':
