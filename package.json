@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev": "NEXT_PUBLIC_TOURNIO_CLIENT_VERSION=`git rev-parse --short HEAD` next",
+    "dev": "next",
     "build": "NEXT_PUBLIC_TOURNIO_CLIENT_VERSION=`git rev-parse --short HEAD` next build",
     "start": "NEXT_PUBLIC_TOURNIO_CLIENT_VERSION=`git rev-parse --short HEAD` next start",
     "lint": "next lint",
