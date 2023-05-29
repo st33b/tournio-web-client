@@ -9,7 +9,6 @@ import TournamentLogo from "../../components/Registration/TournamentLogo/Tournam
 import Contacts from "../../components/Registration/Contacts/Contacts";
 
 import classes from "../../components/Registration/TournamentDetails/TournamentDetails.module.scss";
-import {useCommerceContext} from "../../store/CommerceContext";
 import {tournamentDetailsRetrieved} from "../../store/actions/registrationActions";
 import Heading from "../../components/Registration/TournamentDetails/Heading";
 import Details from "../../components/Registration/TournamentDetails/Details";
@@ -23,14 +22,12 @@ const Page = () => {
   const router = useRouter();
   const { identifier } = router.query;
   const registrationContext = useRegistrationContext();
-  const commerceContext = useCommerceContext();
   const [tournament, setTournament] = useState();
 
   const onFetchSuccess = (data) => {
-    devConsoleLog("Success. Dispatching to contexts");
+    devConsoleLog("Success. Dispatching to context");
     setTournament(data);
     registrationContext.dispatch(tournamentDetailsRetrieved(data));
-    commerceContext.dispatch(tournamentDetailsRetrieved(data));
   }
 
   const onFetchFailure = (error) => {
@@ -41,27 +38,22 @@ const Page = () => {
 
   // fetch the tournament details and put the tournament into context
   useEffect(() => {
-    if (!identifier || !registrationContext || !commerceContext) {
+    if (!identifier || !registrationContext) {
       return;
     }
 
     const needToFetch = !tournament || tournament.identifier !== identifier;
-
     const registrationMismatch = registrationContext.registration.tournament && registrationContext.registration.tournament.identifier !== identifier;
-    const commerceMismatch = commerceContext.commerce.tournament && commerceContext.commerce.tournament.identifier !== identifier;
 
     if (!needToFetch) {
       if (registrationMismatch) {
         devConsoleLog("Registration context has the wrong tournament, updating it");
         registrationContext.dispatch(tournamentDetailsRetrieved(tournament));
       }
-      if (commerceMismatch) {
-        devConsoleLog("Commerce context has the wrong tournament, updating it");
-        commerceContext.dispatch(tournamentDetailsRetrieved(tournament));
-      }
     }
 
     if (needToFetch) {
+      devConsoleLog("Fetching tournament details");
       fetchTournamentDetails(identifier, onFetchSuccess, onFetchFailure);
     }
   }, [identifier, tournament]);

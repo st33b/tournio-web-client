@@ -3,14 +3,14 @@ import {Container} from "react-bootstrap";
 import SiteHeader from './SiteHeader';
 import Navigation from './Navigation';
 import Footer from './Footer';
-import classes from './RegistrationLayout.module.scss';
+import classes from './CommerceLayout.module.scss';
 import MaintenanceAnnouncement from "../../common/MaintenanceAnnouncement/MaintenanceAnnouncement";
-import {RegistrationContextProvider} from "../../../store/RegistrationContext";
+import {CommerceContextProvider} from "../../../store/CommerceContext";
 
-const RegistrationLayout = ({children}) => {
+const CommerceLayout = ({children}) => {
   return (
-    <RegistrationContextProvider>
-      <div className={classes.RegistrationLayout}>
+    <CommerceContextProvider>
+      <div className={classes.CommerceLayout}>
         <SiteHeader/>
         <header>
           <Container fluid={'md'}>
@@ -31,8 +31,8 @@ const RegistrationLayout = ({children}) => {
           </Container>
         </footer>
       </div>
-    </RegistrationContextProvider>
+    </CommerceContextProvider>
   )
 }
 
-export default RegistrationLayout;
+export default CommerceLayout;

@@ -4,13 +4,13 @@ import SiteHeader from './SiteHeader';
 import Navigation from './Navigation';
 import Footer from './Footer';
 import MaintenanceAnnouncement from "../../common/MaintenanceAnnouncement/MaintenanceAnnouncement";
-import {ThemeContextProvider} from "../../../store/ThemeContext";
+import {DirectorContextProvider} from "../../../store/DirectorContext";
 
 import classes from './DirectorLayout.module.scss';
 
 const DirectorLayout = ({children}) => {
   return (
-    <ThemeContextProvider>
+    <DirectorContextProvider>
       <div className={classes.DirectorLayout}>
         <SiteHeader/>
 
@@ -22,7 +22,7 @@ const DirectorLayout = ({children}) => {
 
         <main>
           <Container fluid={'lg'}>
-            <MaintenanceAnnouncement />
+            <MaintenanceAnnouncement/>
             {children}
           </Container>
         </main>
@@ -33,7 +33,7 @@ const DirectorLayout = ({children}) => {
           </Container>
         </footer>
       </div>
-    </ThemeContextProvider>
+    </DirectorContextProvider>
   )
 }
 

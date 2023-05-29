@@ -1,5 +1,5 @@
 import {useEffect} from "react";
-import { Analytics } from "@vercel/analytics/react";
+import {Analytics} from "@vercel/analytics/react";
 import Cookies from "js-cookie";
 
 import '../scss/styles.scss';
@@ -7,11 +7,12 @@ import '../scss/styles.scss';
 import {DirectorContextProvider} from "../store/DirectorContext";
 import {RegistrationContextProvider} from "../store/RegistrationContext";
 import {CommerceContextProvider} from "../store/CommerceContext";
+import {ThemeContextProvider} from "../store/ThemeContext";
 
 const APP_VERSION = 'app_version';
 const MAINTENANCE_COOKIE_NAME = 'tournio-maintenance-dismissed';
 
-function MyApp({Component, pageProps})  {
+function MyApp({Component, pageProps}) {
   useEffect(() => {
     import('bootstrap');
 
@@ -25,18 +26,12 @@ function MyApp({Component, pageProps})  {
 
   const getLayout = Component.getLayout || ((page) => page);
 
-    return (
-      <DirectorContextProvider>
-        <CommerceContextProvider>
-          <RegistrationContextProvider>
-            <>
-              {getLayout(<Component {...pageProps} />)}
-              <Analytics/>
-            </>
-          </RegistrationContextProvider>
-        </CommerceContextProvider>
-      </DirectorContextProvider>
-    );
+  return (
+    <ThemeContextProvider>
+      {getLayout(<Component {...pageProps} />)}
+      <Analytics/>
+    </ThemeContextProvider>
+  );
 }
 
 export default MyApp;

@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useCommerceContext} from "../../../store/CommerceContext";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import {devConsoleLog, getCheckoutSessionStatus, useClientReady} from '../../../utils';
 import {stripeCheckoutSessionCompleted} from '../../../store/actions/registrationActions';
+import CommerceLayout from "../../../components/Layout/CommerceLayout/CommerceLayout";
 
 const Page = () => {
   const router = useRouter();
@@ -95,7 +95,7 @@ const Page = () => {
               <i className={'bi-exclamation-circle pe-2'} aria-hidden={true}/>
               {errorMessage}
               <p className={'mt-3'}>
-                Please <a href={'mailto:info@igbo-reg.com?subject=Error%20report'}>report this</a> to us!
+                Please <a href={'mailto:info@tourn.io?subject=Error%20report'}>report this</a> to us!
               </p>
             </div>
           </div>
@@ -113,9 +113,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout>
+    <CommerceLayout>
       {page}
-    </RegistrationLayout>
+    </CommerceLayout>
   );
 }
 

@@ -4,12 +4,12 @@ import {Col, Row} from "react-bootstrap";
 
 import {fetchBowlerDetails, fetchTournamentDetails, useClientReady} from "../../utils";
 import {useCommerceContext} from "../../store/CommerceContext";
-import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import Menu from '../../components/Commerce/Menu';
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
 import PreviousPurchases from "../../components/Commerce/PreviousPurchases/PreviousPurchases";
 import FreeEntryForm from "../../components/Commerce/FreeEntryForm/FreeEntryForm";
+import CommerceLayout from "../../components/Layout/CommerceLayout/CommerceLayout";
 
 const Page = () => {
   const router = useRouter();
@@ -150,9 +150,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout showCart={true}>
+    <CommerceLayout>
       {page}
-    </RegistrationLayout>
+    </CommerceLayout>
   );
 }
 

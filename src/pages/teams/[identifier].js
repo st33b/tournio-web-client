@@ -6,7 +6,6 @@ import {fetchTeamDetails, fetchTournamentDetails, useClientReady} from "../../ut
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
-import Contacts from "../../components/Registration/Contacts/Contacts";
 import TeamDetails from "../../components/Registration/TeamDetails/TeamDetails";
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
 import {joinTeamRegistrationInitiated, tournamentDetailsRetrieved} from "../../store/actions/registrationActions";

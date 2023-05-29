@@ -16,6 +16,11 @@
 
   .StateBanner {
     padding: 0.5rem;
+    margin-bottom: 1rem;
+
+    h4 {
+      margin-bottom: 0;
+    }
   }
 
   .TestingEnvironment {

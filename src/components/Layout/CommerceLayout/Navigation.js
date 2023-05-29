@@ -20,6 +20,26 @@ const Navigation = () => {
     return null;
   }
 
+  let cartText = '';
+  if (commerce && commerce.cart) {
+    cartText = (
+      <a href={'#mobile_cart'}
+         title={'Cart'}
+         data-bs-toggle={'collapse'}
+         aria-controls={'mobile_cart'}
+         aria-expanded={false}
+         className={`${classes.Bag} ms-auto d-md-none`}>
+        <span className={'visually-hidden'}>Cart</span>
+        <i className={'bi-cart position-relative'} aria-hidden={true}>
+          {/*Cart*/}
+          <span className={`${classes.Badge} position-absolute top-0 start-50 badge rounded-pill bg-danger`}>
+            {commerce.cart.length}
+          </span>
+        </i>
+      </a>
+    );
+  }
+
   const activeTheme = theme.active;
 
   return (
@@ -32,6 +52,7 @@ const Navigation = () => {
             <span className={'visually-hidden'}>Home</span>
             <i className={'bi-house'} aria-hidden={true} />
           </a>
+          {cartText}
           <a href={'/tournaments'}
              title={'To tournament listing'}
              className={`d-none d-md-inline-block ${classes.LogoLink}`}>
