@@ -23,7 +23,7 @@ export const useStorage = (key, initialValue) => {
   return [value, setValue];
 }
 
-export const useLocalStorage = (key, initialValue) => {
+export const useLocalStorage = ({key, initialValue = null}) => {
   const [value, setValue] = useState(() => {
     if (typeof window !== 'undefined') {
       const savedValue = localStorage.getItem(key);

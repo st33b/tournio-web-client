@@ -1,22 +1,22 @@
 import {useState, useRef} from "react";
-import {useRouter} from "next/router";
-
+import axios from "axios";
 import {Button, Card, FloatingLabel, Form} from "react-bootstrap";
 
-import {useDirectorContext} from '../../../store/DirectorContext';
+import {useLoginContext} from "../../../store/LoginContext";
+import {apiHost, devConsoleLog} from "../../../utils";
 
 import classes from './LoginForm.module.scss';
-import {directorLogin} from "../../../director";
 
 const LoginForm = ({onLoginSuccess}) => {
-  const {dispatch} = useDirectorContext();
+  const {login} = useLoginContext();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const [loading, setLoading] = useState(false);
   const [loginFailed, setLoginFailed] = useState(false);
   const [validated, setValidated] = useState(false);
+  const [errorMessage, setErrorMessage] = useState();
 
-  const loginFailure = (data) => {
+  const loginFailure = () => {
     setLoading(false);
     setLoginFailed(true);
   }
@@ -38,12 +38,29 @@ const LoginForm = ({onLoginSuccess}) => {
         password: enteredPassword,
       }
     };
-    directorLogin({
-      userCreds: userCreds,
-      dispatch: dispatch,
-      onSuccess: onLoginSuccess,
-      onFailure: loginFailure,
-    });
+
+    const config = {
+      url: `${apiHost}/login`,
+      headers: {
+        'Accept': 'application/json',
+      },
+      method: 'post',
+      data: userCreds,
+      validateStatus: (status) => { return status < 500 },
+    };
+    axios(config)
+      .then(response => {
+        if (response.status >= 200 && response.status < 300) {
+          login(response.data, response.headers.authorization);
+          onLoginSuccess();
+        } else {
+          loginFailure();
+        }
+      })
+      .catch(error => {
+        loginFailure(error);
+        setErrorMessage(error);
+      });
   }
 
   return (

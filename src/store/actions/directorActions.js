@@ -1,11 +1,5 @@
 import * as actionTypes from './directorActionTypes';
 
-export const tournamentListReset = () => {
-  return {
-    type: actionTypes.TOURNAMENT_LIST_RESET,
-  }
-}
-
 export const stripeAccountStatusChanged = (account) => {
   return {
     type: actionTypes.STRIPE_ACCOUNT_STATUS_CHANGED,
@@ -67,15 +61,6 @@ export const tournamentShiftUpdated = (shift) => {
   return {
     type: actionTypes.TOURNAMENT_SHIFT_UPDATED,
     shift: shift,
-  }
-}
-
-// DEPRECATED
-export const additionalQuestionsUpdated = (tournament) => {
-  return {
-    type: actionTypes.ADDITIONAL_QUESTIONS_UPDATED,
-    questions: tournament.additional_questions,
-    availableQuestions: tournament.available_questions,
   }
 }
 
@@ -183,13 +168,6 @@ export const userDeleted = (user) => {
   }
 }
 
-export const bowlerListRetrieved = (bowlers) => {
-  return {
-    type: actionTypes.BOWLER_LIST_RETRIEVED,
-    bowlers: bowlers,
-  }
-}
-
 export const bowlerUpdated = (bowler) => {
   return {
     type: actionTypes.BOWLER_UPDATED,
@@ -204,57 +182,11 @@ export const bowlerDeleted = (bowler) => {
   }
 }
 
-export const bowlerListReset = () => {
-  return {
-    type: actionTypes.BOWLER_LIST_RESET,
-  }
-}
-
-export const teamListRetrieved = (teams) => {
-  return {
-    type: actionTypes.TEAM_LIST_RETRIEVED,
-    teams: teams,
-  }
-}
-
-export const teamUpdated = (team) => {
-  return {
-    type: actionTypes.TEAM_UPDATED,
-    team: team,
-  }
-}
 
 export const teamDeleted = (team) => {
   return {
     type: actionTypes.TEAM_DELETED,
     team: team,
-  }
-}
-
-export const teamListReset = () => {
-  return {
-    type: actionTypes.TEAM_LIST_RESET,
-  }
-}
-
-export const teamAdded = (team) => {
-  return {
-    type: actionTypes.TEAM_ADDED,
-    team: team,
-  }
-}
-
-export const freeEntryListRetrieved = (freeEntries) => {
-  return {
-    type: actionTypes.FREE_ENTRY_LIST_RETRIEVED,
-    freeEntries: freeEntries,
-  }
-}
-
-export const freeEntryUpdated = (freeEntry) => {
-  return {
-    type: actionTypes.FREE_ENTRY_UPDATED,
-    freeEntry: freeEntry,
   }
 }
 
@@ -269,20 +201,6 @@ export const freeEntryAdded = (freeEntry) => {
   return {
     type: actionTypes.FREE_ENTRY_ADDED,
     freeEntry: freeEntry,
-  }
-}
-
-export const loggedIn = (user, authToken) => {
-  return {
-    type: actionTypes.LOGGED_IN,
-    user: user,
-    authToken: authToken,
-  }
-}
-
-export const loggedOut = () => {
-  return {
-    type: actionTypes.LOGGED_OUT,
   }
 }
 

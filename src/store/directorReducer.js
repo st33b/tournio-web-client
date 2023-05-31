@@ -2,7 +2,6 @@ import * as actionTypes from './actions/directorActionTypes'
 import {devConsoleLog, updateObject} from '../utils';
 
 const initialState = {
-  user: null,
   tournaments: null,
   tournament: null,
   builder: null,
@@ -20,21 +19,8 @@ const initialState = {
 export const directorReducerInit = (initial = initialState) => initial;
 
 export const directorReducer = (state, action) => {
-  devConsoleLog("Director reducer action type:", action.type);
-  devConsoleLog("Director reducer existing state:", state);
-  // devConsoleLog("Director reducer action:", action);
-
   let index, identifier;
   switch (action.type) {
-    case actionTypes.LOGGED_IN:
-      return updateObject(state, {
-        user: {
-          ...action.user,
-          authToken: action.authToken,
-        },
-      });
-    case actionTypes.LOGGED_OUT:
-      return directorReducerInit();
     case actionTypes.TOURNAMENT_DETAILS_RESET:
       devConsoleLog("DEPRECATED");
       return updateObject(state, {

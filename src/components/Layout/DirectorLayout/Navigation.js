@@ -6,6 +6,7 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import classes from './Navigation.module.scss';
 import {useClientReady} from "../../../utils";
 import ColorModeToggler from "../../common/ColorModeToggler/ColorModeToggler";
+import {useLoginContext} from "../../../store/LoginContext";
 
 const markup = (content = '') => {
   return (
@@ -34,13 +35,14 @@ const markup = (content = '') => {
 
 const Navigation = () => {
   const {directorState} = useDirectorContext();
+  const {user, logout} = useLoginContext();
 
   const ready = useClientReady();
   if (!ready) {
     return markup();
   }
 
-  if (!directorState.user) {
+  if (!user) {
     return markup();
   }
 
@@ -51,7 +53,7 @@ const Navigation = () => {
     text: 'Tournaments',
   });
 
-  if (directorState.user.role === 'superuser') {
+  if (user.role === 'superuser') {
     links.push({
       href: '/director/users',
       text: 'User Accounts',
@@ -68,7 +70,7 @@ const Navigation = () => {
               {l.text}
             </Nav.Link>
           ))}
-          <Nav.Link href={'/director/users/' + directorState.user.identifier}>
+          <Nav.Link href={'/director/users/' + user.identifier}>
             My Profile
           </Nav.Link>
         </Nav>
@@ -77,9 +79,6 @@ const Navigation = () => {
             Log Out
           </Nav.Link>
         </Nav>
-        {/*<Nav className={'d-none d-md-block'}>*/}
-        {/*  <ColorModeToggler className={''} />*/}
-        {/*</Nav>*/}
       </Navbar.Collapse>
     </>
   );

@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
+import Link from "next/link";
 import {Card, Col, Row} from "react-bootstrap";
 
 import DirectorLayout from '../../components/Layout/DirectorLayout/DirectorLayout';
 import LoginForm from '../../components/Director/LoginForm/LoginForm';
-import {useClientReady} from "../../utils";
 
 const Login = () => {
   const router = useRouter();
@@ -18,11 +18,6 @@ const Login = () => {
       router.replace(router.pathname, null, {shallow: true});
     }
   }, [router]);
-
-  const ready = useClientReady();
-  if (!ready) {
-    return null;
-  }
 
   const onLoginSuccess = () => {
     router.replace('/director', null, {shallow: true});
@@ -56,12 +51,12 @@ const Login = () => {
         <Col xs={12} sm={{span: 8, offset: 2}} md={{span: 6, offset: 3}}>
           <Card className={'border-0 text-center'}>
             <Card.Body>
-              <Card.Link href={'/'}>
+              <Link href={'/'} className={'card-link'}>
                 Tournio Home
-              </Card.Link>
-              <Card.Link href={'/director/forgot-password'}>
+              </Link>
+              <Link href={'/director/forgot-password'} className={'card-link'}>
                 Password Reset
-              </Card.Link>
+              </Link>
             </Card.Body>
           </Card>
         </Col>

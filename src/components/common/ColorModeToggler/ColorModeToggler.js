@@ -1,6 +1,5 @@
 import classes from './ColorModeToggler.module.scss';
 import {useThemeContext} from "../../../store/ThemeContext";
-import {useEffect} from "react";
 import {devConsoleLog, useClientReady} from "../../../utils";
 
 const ColorModeToggler = (props) => {
