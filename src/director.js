@@ -80,16 +80,19 @@ export const useDirectorApi = ({uri, requestConfig}) => {
   const {authToken, ready, logout} = useLoginContext();
   const router = useRouter();
 
-  const authorizedFetcher = async (url, token, clientReady) => {
+  const authorizedFetcher = async (uri, token, clientReady) => {
     if (token) {
       const headers = new Headers();
       headers.append("Authorization", token);
       headers.append("Accept", "application/json");
       // Here's where we can add more
 
-      const response = await fetch(url, {
+      const fetchInit = {
+        method: 'GET',
         headers: headers,
-      });
+      }
+
+      const response = await fetch(`${apiHost}/director${uri}`, fetchInit);
 
       if (!response.ok) {
         const error = new Error('Received an error from the API');
@@ -108,6 +111,7 @@ export const useDirectorApi = ({uri, requestConfig}) => {
 
   const handleError = (error, key, config) => {
     if (error.status === 401) {
+      devConsoleLog("Unauthorized request. Logging out and going back to the login page.");
       logout();
       router.replace('/director/login');
     } else {
@@ -117,11 +121,11 @@ export const useDirectorApi = ({uri, requestConfig}) => {
 
   const { data, error, isLoading } = useSWR(
     [
-      `${apiHost}/director${uri}`,
+      uri,
       authToken,
       ready
     ],
-    ([url, token, clientReady]) => authorizedFetcher(url, token, clientReady),
+    ([uri, token, clientReady]) => authorizedFetcher(uri, token, clientReady),
     {
       fallbackData: [],
       revalidateOnFocus: false,
