@@ -95,24 +95,13 @@ const Downloads = ({tournament}) => {
           >
             IGBO-TS
           </a>
-
-          {/*<a className={'btn btn-sm btn-outline-primary mt-3 mx-2'}*/}
-          {/*   target={'_new'}*/}
-          {/*   href={`/director/tournaments/${tournament.identifier}/sign-in-sheets`}*/}
-          {/*   disabled={!directorState.bowlers || directorState.bowlers.length === 0}*/}
-          {/*>*/}
-          {/*  Sign-in Sheets*/}
-          {/*</a>*/}
-
-          <button className={'btn btn-sm btn-outline-primary mt-3 mx-2'}
-                  disabled={true}
-                  title={'Signin sheet download is temporarily disabled'}
+          <a className={'btn btn-sm btn-outline-primary mt-3 mx-2'}
+             target={'_new'}
+             href={`/director/tournaments/${tournament.identifier}/sign-in-sheets`}
+             disabled={!directorState.bowlers || directorState.bowlers.length === 0}
           >
             Sign-in Sheets
-          </button>
-          <Card.Text className={`${classes.DisabledText} mt-3`}>
-            Bulk signin sheet download is temporarily unavailable.
-          </Card.Text>
+          </a>
           {downloadMessage}
         </Card.Body>
       </Card>
