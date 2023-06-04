@@ -7,7 +7,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import classes from './BowlerForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import ShiftForm from "../ShiftForm/ShiftForm";
-import {devConsoleLog} from "../../../utils";
+import {devConsoleLog, validateEmail} from "../../../utils";
 
 const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => {
   const {registration} = useRegistrationContext();
@@ -290,6 +290,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
   const [buttonText, setButtonText] = useState('Save Bowler');
   const [showCancelButton, setShowCancelButton] = useState(false);
 
+  const [validationResult, setValidationResult] = useState(null);
+
   const additionalFormFields = (tourn) => {
     const formFields = {};
     for (let key in tourn.additional_questions) {
@@ -496,10 +498,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       formField => typeof formField.valid === 'undefined' || formField.valid
     );
 
-    devConsoleLog("What's invalid?", Object.values(newFormData.formFields).filter(
-      formField => typeof formField.valid !== 'undefined' && !formField.valid
-    ))
-
     setBowlerForm(newFormData);
   }
 
@@ -509,6 +507,20 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       id: key,
       setup: bowlerForm.formFields[key],
       validateOnBlur: !!bowlerForm.formFields[key].validityErrors && !['birth_month', 'country'].includes(key),
+    });
+  }
+
+  const validateEmailClicked = () => {
+    const address = bowlerForm.formFields.email.elementConfig.value;
+    validateEmail(address).then(result => {
+      devConsoleLog("Result of email validation:", result);
+
+      // result.rejected will be true if Verifalia's check bame back as Undeliverable.
+      // Let's indicate that state somehow.
+
+      setValidationResult(result.verdict || result.error);
+    }).catch(error => {
+      devConsoleLog("Got an error while validating email", error);
     });
   }
 
@@ -553,6 +565,19 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
             Cancel Changes
           </a>
         )}
+
+        <div>
+          <button className={'btn btn-info btn-lg'}
+                  type={'button'}
+                  disabled={!bowlerForm.formFields.email.valid}
+                  onClick={validateEmailClicked}>
+            Validate Email
+          </button>
+          <p className={`mt-3 lead text-center`}>
+            {validationResult}
+          </p>
+        </div>
+
       </div>
     </form>
   );

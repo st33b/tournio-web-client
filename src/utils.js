@@ -692,21 +692,17 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
 
 /////////////////////////////////////////////////////
 
-export const apiDownloadRequest = ({uri, onSuccess = null, onFailure = null}) => {
-  const url = `${apiHost}${uri}`;
-  const config = {
-    method: 'get',
-    url: url,
+export const validateEmail = async function (emailAddress) {
+  const response = await fetch('/api/yessir', {
+    method: 'POST',
+    mode: 'same-origin',
     headers: {
-      'Accept': 'application/json',
+      'Content-Type': 'application/json',
     },
-    validateStatus: (status) => status < 500,
-  }
-  axios(config)
-    .then(response => {
-      onSuccess(response.data)
-    })
-    .catch(error => {
-      console.log('Failed to retrieve data for download', error);
-    });
+    redirect: 'follow',
+    body: JSON.stringify({email: emailAddress}),
+  }).catch((error) => {
+    return { error: error };
+  });
+  return await response.json();
 }

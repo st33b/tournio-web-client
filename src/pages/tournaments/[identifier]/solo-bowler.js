@@ -4,11 +4,10 @@ import {Row, Col} from "react-bootstrap";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import Summary from "../../../components/Registration/Summary/Summary";
-import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newSoloRegistrationInitiated, soloBowlerInfoAdded} from "../../../store/actions/registrationActions";
-import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useClientReady} from "../../../utils";
+import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
