@@ -519,15 +519,28 @@ const Page = () => {
         {bowler.purchases && bowler.purchases.map(p => {
           return (
             <ListGroup.Item key={p.identifier}>
-              <span className={'float-end'}>
+              <span className={`float-end ${p.voided_at ? 'text-decoration-line-through' : ''}`}>
                 ${p.amount}
               </span>
               <span className={'d-block'}>
                 {p.name}
               </span>
-              <small className={'d-block fst-italic'}>
-                {p.paid_at}
-              </small>
+              {p.paid_at && (
+                <small className={'d-block fst-italic'}>
+                  <strong>
+                    Paid:{' '}
+                  </strong>
+                  {p.paid_at}
+                </small>
+              )}
+              {p.voided_at && (
+                <small className={'d-block fst-italic'}>
+                  <strong>
+                    Voided:{' '}
+                  </strong>
+                  {p.paid_at}
+                </small>
+              )}
             </ListGroup.Item>
           );
         })}
