@@ -535,9 +535,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     // If everything in the Validation API passed, then run any bonus checks
     if (failedChecks.length === 0) {
       bonusValidityCheck(inputIdentifier, event.target, newFormData.formFields[inputIdentifier].elementConfig.value);
-
-      // this is where the grief is coming from. We need to set it when validation fails, but not before.
-      // event.target.setCustomValidity("undeliverable");
     }
 
     newFormData.formFields[inputIdentifier] = {
