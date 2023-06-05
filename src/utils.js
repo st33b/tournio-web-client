@@ -693,16 +693,30 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
 /////////////////////////////////////////////////////
 
 export const validateEmail = async function (emailAddress) {
-  const response = await fetch('/api/yessir', {
-    method: 'POST',
-    mode: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    redirect: 'follow',
-    body: JSON.stringify({email: emailAddress}),
-  }).catch((error) => {
-    return { error: error };
-  });
-  return await response.json();
+  // const response = await fetch('/api/yessir', {
+  //   method: 'POST',
+  //   mode: 'same-origin',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  //   redirect: 'follow',
+  //   body: JSON.stringify({email: emailAddress}),
+  // }).catch((error) => {
+  //   return { error: error };
+  // });
+  // return await response.json();
+
+  // return await setTimeout(() => { rejected: false }, 2000);
+  function afterTwoSeconds(result) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(result);
+      }, 2000);
+    });
+  }
+  return await afterTwoSeconds(
+    // { rejected: true }
+    { rejected: false }
+    // { error: 'OMG WTF BBQ' }
+  );
 }

@@ -9,9 +9,14 @@ const Input = (props) => {
   const required = props.validityErrors && props.validityErrors.includes('valueMissing');
 // devConsoleLog("failed validations", props.failedValidations);
   const errorMessages = props.failedValidations.map(fv => {
+    // If there's a specified error message for the failed validation, return it.
+    if (props.errorMessages && props.errorMessages[fv]) {
+      return props.errorMessages[fv];
+    }
+    // Otherwise, go with a generic one using the switch.
     switch(fv) {
       case 'valueMissing':
-        return 'Need a value here';
+        return 'We need something here.';
       case 'patternMismatch':
         return "That doesn't look quite right";
       case 'typeMismatch':
@@ -140,7 +145,7 @@ const Input = (props) => {
       )
     }
     helperElement = (
-      <small className="form-text text-muted">
+      <small className="form-text text-secondary">
         {helper}
       </small>
     );
@@ -172,6 +177,12 @@ const Input = (props) => {
                 </span>
               </span>
             ))}
+          </div>
+        )}
+        {props.loading && (
+          <div className={`mt-1 ${classes.ValidationInProgress}`}>
+            <span className={'spinner-grow spinner-grow-sm me-2'} role={'status'} aria-hidden={true}></span>
+            Checking email address...
           </div>
         )}
       </div>

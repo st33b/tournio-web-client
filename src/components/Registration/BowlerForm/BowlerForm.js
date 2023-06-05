@@ -63,6 +63,9 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           'valueMissing',
           'patternMismatch',
         ],
+        errorMessages: {
+          patternMismatch: 'Just digits and a hyphen, e.g., 123-4567',
+        },
         helper: {
           url: 'https://webapps.bowl.com/USBCFindA/Home/Member',
           text: 'Look up your USBC ID',
@@ -165,6 +168,11 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           'valueMissing',
           'typeMismatch',
         ],
+        errorMessages: {
+          typeMismatch: "That's not a valid email address",
+          undeliverable: "This address is marked as Undeliverable. Are you sure you have it right?"
+        },
+        bonusCheckUnderway: false,
         valid: true,
         touched: false,
       },
@@ -289,8 +297,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
   const [showShiftSelection, setShowShiftSelection] = useState(false);
   const [buttonText, setButtonText] = useState('Save Bowler');
   const [showCancelButton, setShowCancelButton] = useState(false);
-
-  const [validationResult, setValidationResult] = useState(null);
 
   const additionalFormFields = (tourn) => {
     const formFields = {};
@@ -472,6 +478,47 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     setBowlerForm(updatedBowlerForm);
   }
 
+  const bonusValidityCheck = (inputIdentifier, inputElement, value) => {
+    // Doing this specifically for email addresses rather than opting for a generic
+    // approach, since emails are, so far, the only input field for which we want
+    // validation beyond the Validation API
+    if (inputIdentifier === 'email') {
+      const newFormData = {...bowlerForm};
+      newFormData.formFields[inputIdentifier].bonusCheckUnderway = true;
+
+      // Only do this on active tournaments in prod, or if the switch is on in dev
+      // ... But where should that check happen? Hmm...
+      devConsoleLog("Let's validate an email!");
+      validateEmail(value).then(result => {
+        if (result.error) {
+          // Right now, we don't care if it returns an error; this is an enhancement,
+          // not a requisite check.
+        } else {
+          const whoopsies = [];
+
+          // result.rejected will be true if Verifalia's check bame back as Undeliverable.
+          if (result.rejected) {
+            // This is for the Input component
+            whoopsies.push('undeliverable');
+
+            // This is for the Constraint Validation API (which sets the :invalid pseudo-class)
+            inputElement.setCustomValidity('undeliverable');
+          }
+
+          newFormData.formFields[inputIdentifier] = {
+            ...newFormData.formFields[inputIdentifier],
+            ...validityForField(inputIdentifier, whoopsies),
+          }
+        }
+      }).catch(error => {
+        devConsoleLog("Unexpected error: ", error);
+      }).then(() => {
+        newFormData.formFields[inputIdentifier].bonusCheckUnderway = false;
+        setBowlerForm(newFormData);
+      });
+    }
+  }
+
   const fieldBlurred = (event, inputIdentifier) => {
     const newFormData = {...bowlerForm}
     const fieldIsChanged = newFormData.formFields[inputIdentifier].touched;
@@ -484,6 +531,14 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
 
     const {validity} = event !== null ? event.target : {};
     const failedChecks = checksToRun.filter(c => validity[c]);
+
+    // If everything in the Validation API passed, then run any bonus checks
+    if (failedChecks.length === 0) {
+      bonusValidityCheck(inputIdentifier, event.target, newFormData.formFields[inputIdentifier].elementConfig.value);
+
+      // this is where the grief is coming from. We need to set it when validation fails, but not before.
+      // event.target.setCustomValidity("undeliverable");
+    }
 
     newFormData.formFields[inputIdentifier] = {
       ...newFormData.formFields[inputIdentifier],
@@ -506,21 +561,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     formElements.push({
       id: key,
       setup: bowlerForm.formFields[key],
+      // <select> elements get excluded, since onChange covers it
       validateOnBlur: !!bowlerForm.formFields[key].validityErrors && !['birth_month', 'country'].includes(key),
-    });
-  }
-
-  const validateEmailClicked = () => {
-    const address = bowlerForm.formFields.email.elementConfig.value;
-    validateEmail(address).then(result => {
-      devConsoleLog("Result of email validation:", result);
-
-      // result.rejected will be true if Verifalia's check bame back as Undeliverable.
-      // Let's indicate that state somehow.
-
-      setValidationResult(result.verdict || result.error);
-    }).catch(error => {
-      devConsoleLog("Got an error while validating email", error);
     });
   }
 
@@ -545,10 +587,12 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           label={formElement.setup.label}
           helper={formElement.setup.helper}
           validityErrors={formElement.setup.validityErrors}
+          errorMessages={formElement.setup.errorMessages}
           // For <select> elements, onBlur is redundant to onChange
           blurred={formElement.validateOnBlur ? (event) => fieldBlurred(event, formElement.id) : false}
           failedValidations={typeof formElement.setup.validityFailures !== 'undefined' ? formElement.setup.validityFailures : []}
           wasValidated={formElement.setup.validated}
+          loading={!!formElement.setup.bonusCheckUnderway}
         />
       ))}
 
@@ -565,19 +609,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
             Cancel Changes
           </a>
         )}
-
-        <div>
-          <button className={'btn btn-info btn-lg'}
-                  type={'button'}
-                  disabled={!bowlerForm.formFields.email.valid}
-                  onClick={validateEmailClicked}>
-            Validate Email
-          </button>
-          <p className={`mt-3 lead text-center`}>
-            {validationResult}
-          </p>
-        </div>
-
       </div>
     </form>
   );

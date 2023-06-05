@@ -9,9 +9,6 @@ export const config = {
 }
 
 export default async (req, res) => {
-  // We'll need to wait for the json() function to complete on request,
-  // since it's sending us an email address to check
-
   if (req.method === 'POST') {
     let entry;
     const body = await req.json();
@@ -30,8 +27,6 @@ export default async (req, res) => {
       const responseBody = {
         rejected: entry.classification === 'Undeliverable',
       };
-      // Might want to think about using HTTP status codes to convey validation results.
-      // e.g., bad request, etc. Maybe?
       return NextResponse.json(responseBody);
     }
     return new NextResponse(

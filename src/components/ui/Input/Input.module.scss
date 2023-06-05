@@ -22,4 +22,8 @@
   .ExternalLink {
     font-size: 80%;
   }
+
+  .ValidationInProgress {
+    color: var(--tournio-form-valid-color);
+  }
 }
