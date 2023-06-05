@@ -538,7 +538,7 @@ const Page = () => {
                   <strong>
                     Voided:{' '}
                   </strong>
-                  {p.paid_at}
+                  {p.voided_at}
                 </small>
               )}
             </ListGroup.Item>
