@@ -301,7 +301,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
   const additionalFormFields = (tourn) => {
     const formFields = {};
     for (let key in tourn.additional_questions) {
-      formFields[key] = { ...tourn.additional_questions[key] }
+      formFields[key] = {...tourn.additional_questions[key]}
       if (tourn.additional_questions[key].validation.required) {
         formFields[key].validityErrors = ['valueMissing'];
         formFields[key].valid = false;
@@ -309,7 +309,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         formFields[key].valid = true
       }
       formFields[key].touched = false;
-      formFields[key].elementConfig = { ...tourn.additional_questions[key].elementConfig }
+      formFields[key].elementConfig = {...tourn.additional_questions[key].elementConfig}
     }
     return formFields;
   }
@@ -326,7 +326,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         formData.soloBowlerFields.preferred_shift.elementConfig.choices = [];
         tourn.available_shifts.map(shift => {
           formData.soloBowlerFields.preferred_shift.elementConfig.choices.push(
-            { value: shift.identifier, label: shift.name }
+            {value: shift.identifier, label: shift.name}
           );
         });
         setShowShiftSelection(true);
@@ -429,7 +429,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         ...bowlerForm.formFields[inputIdentifier]
       }
       // Deep-copy the element config, since that has the part that gets changed...
-      updatedFormElement.elementConfig = { ...bowlerForm.formFields[inputIdentifier].elementConfig }
+      updatedFormElement.elementConfig = {...bowlerForm.formFields[inputIdentifier].elementConfig}
 
       // Our special snowflakes:
       let newValue = null;
@@ -482,12 +482,12 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     // Doing this specifically for email addresses rather than opting for a generic
     // approach, since emails are, so far, the only input field for which we want
     // validation beyond the Validation API
-    if (inputIdentifier === 'email') {
+
+    // Only do this on active tournaments
+    if (tournament.state === 'active' && inputIdentifier === 'email') {
       const newFormData = {...bowlerForm};
       newFormData.formFields[inputIdentifier].bonusCheckUnderway = true;
 
-      // Only do this on active tournaments in prod, or if the switch is on in dev
-      // ... But where should that check happen? Hmm...
       devConsoleLog("Let's validate an email!");
       validateEmail(value).then(result => {
         if (!result.checked) {
@@ -573,8 +573,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           <ShiftForm tournament={tournament}
                      onInputChanged={(event) => inputChangedHandler(event, 'preferred_shift')}
                      currentSelection={bowlerForm.soloBowlerFields.preferred_shift.elementConfig.value}
-                     name={'preferred_shift'} />
-          <hr />
+                     name={'preferred_shift'}/>
+          <hr/>
         </div>
       )}
       {formElements.map(formElement => (
@@ -605,7 +605,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         {showCancelButton && (
           <a className={'btn btn-secondary btn-lg'}
              href={cancelHref}>
-            <i className={'bi-chevron-double-left pe-1'} aria-hidden={true} />
+            <i className={'bi-chevron-double-left pe-1'} aria-hidden={true}/>
             Cancel Changes
           </a>
         )}
@@ -633,7 +633,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         </h3>
 
         <p>
-          <i className={`${classes.RequiredLabel} align-top bi-asterisk`} />
+          <i className={`${classes.RequiredLabel} align-top bi-asterisk`}/>
           {' '}indicates a required field
         </p>
 
