@@ -693,30 +693,34 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
 /////////////////////////////////////////////////////
 
 export const validateEmail = async function (emailAddress) {
-  // const response = await fetch('/api/yessir', {
-  //   method: 'POST',
-  //   mode: 'same-origin',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //   },
-  //   redirect: 'follow',
-  //   body: JSON.stringify({email: emailAddress}),
-  // }).catch((error) => {
-  //   return { error: error };
-  // });
-  // return await response.json();
+  if (!['production', 'preview'].includes(process.env.NODE_ENV)) {
+    devConsoleLog("Not prod or prev, not reaching out to API");
 
-  // return await setTimeout(() => { rejected: false }, 2000);
-  function afterTwoSeconds(result) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(result);
-      }, 2000);
-    });
+    function waitABit(result) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(result);
+        }, 2000);
+      });
+    }
+    return await waitABit(
+      {
+        checked: false,
+        rejected: false,
+        // error: 'Simulate some kind of error',
+      },
+    );
   }
-  return await afterTwoSeconds(
-    // { rejected: true }
-    { rejected: false }
-    // { error: 'OMG WTF BBQ' }
-  );
+  const response = await fetch('/api/email_check', {
+    method: 'POST',
+    mode: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    redirect: 'follow',
+    body: JSON.stringify({email: emailAddress}),
+  }).catch((error) => {
+    return { error: error };
+  });
+  return await response.json();
 }

@@ -490,6 +490,9 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       // ... But where should that check happen? Hmm...
       devConsoleLog("Let's validate an email!");
       validateEmail(value).then(result => {
+        if (!result.checked) {
+          devConsoleLog("I did not actually check it.");
+        }
         if (result.error) {
           // Right now, we don't care if it returns an error; this is an enhancement,
           // not a requisite check.
