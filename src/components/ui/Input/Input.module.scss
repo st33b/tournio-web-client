@@ -1,8 +1,4 @@
 .Input {
-  .Label {
-
-  }
-
   .RequiredLabel {
     margin-left: 5px;
     font-size: 60%;
@@ -10,13 +6,11 @@
     filter: brightness(80%);
   }
 
-  .InputElement {
-
-  }
-
   .InvalidFeedback,
   &:invalid {
-    margin-left: 5px;
+    color: var(--tournio-form-invalid-color);
+    font-size: 90%;
+    margin-top: 0.25rem;
   }
 
   .ExternalLink {
@@ -25,5 +19,7 @@
 
   .ValidationInProgress {
     color: var(--tournio-form-valid-color);
+    font-size: 90%;
+    margin-top: 0.25rem;
   }
 }

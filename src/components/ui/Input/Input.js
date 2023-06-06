@@ -2,6 +2,7 @@ import React from 'react';
 
 import classes from './Input.module.scss';
 import {devConsoleLog} from "../../../utils";
+import {Collapse} from "react-bootstrap";
 
 const Input = (props) => {
   let inputElement = null;
@@ -167,23 +168,25 @@ const Input = (props) => {
       <div className={`col ${props.wasValidated ? 'was-validated' : ''}`}>
         {inputElement}
         {helperElement}
-        {errorMessages.length > 0 && (
-          <div className="invalid-feedback">
+        <Collapse in={errorMessages.length > 0}>
+          <div className={`inv alid-feed back ${classes.InvalidFeedback}`}>
             {errorMessages.map((e, i) => (
               <span className={"line"} key={`${props.identifier}_errorMsg_${i}`}>
-                <i className="bi-x" aria-hidden="true"/>
-                <span className={classes.InvalidFeedback}>
-                  {e}
-                </span>
+              <i className="bi bi-x me-1" aria-hidden="true"/>
+              <span>
+                {e}
               </span>
+            </span>
             ))}
           </div>
-        )}
-        {props.loading && (
-          <div className={`mt-1 ${classes.ValidationInProgress}`}>
-            <span className={'spinner-grow spinner-grow-sm me-2'} role={'status'} aria-hidden={true}></span>
-            Checking email address...
-          </div>
+        </Collapse>
+        {props.identifier === 'email' && (
+          <Collapse in={props.loading}>
+            <div className={`mt-1 ${classes.ValidationInProgress}`}>
+              <span className={'spinner-grow spinner-grow-sm me-2'} role={'status'} aria-hidden={true}></span>
+              Checking email address...
+            </div>
+          </Collapse>
         )}
       </div>
     </div>
