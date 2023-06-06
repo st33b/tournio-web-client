@@ -512,6 +512,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
             ...newFormData.formFields[inputIdentifier],
             ...validityForField(inputIdentifier, whoopsies),
           }
+          inputElement.reportValidity();
         }
       }).catch(error => {
         devConsoleLog("Unexpected error: ", error);
