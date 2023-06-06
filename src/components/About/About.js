@@ -1,5 +1,6 @@
 import classes from './About.module.scss';
 import {Accordion} from "react-bootstrap";
+import Link from "next/link";
 
 const about = () => (
   <div className={classes.About}>
@@ -34,39 +35,46 @@ const about = () => (
           </p>
           <ul>
             <li>
-              <a href={'https://www.goldengateclassic.org/'}>San Francisco Golden Gate Classic</a>
+              <Link href={'https://www.goldengateclassic.org/'}>San Francisco Golden Gate Classic</Link>
             </li>
             <li>
-              <a href={'https://www.bigdclassic.com/'}>Big D Classic</a>
+              <Link href={'https://www.bigdclassic.com/'}>Big D Classic</Link>
             </li>
             <li>
-              <a href={'https://www.lvshowgirl.net/'}>Las Vegas Showgirl</a>
+              <Link href={'https://www.lvshowgirl.net/'}>Las Vegas Showgirl</Link>
             </li>
             <li>
-              <a href={'http://trotbowling.com/'}>Texas Roll-off Tournament (TROT)</a>
+              <Link href={'http://trotbowling.com/'}>Texas Roll-off Tournament (TROT)</Link>
             </li>
             <li>
-              <a href={'https://www.okclassic.com/'}>OKClassic</a>
+              <Link href={'https://www.okclassic.com/'}>OKClassic</Link>
             </li>
             <li>
-              <a href={'http://www.houstoninvite.com/'}>Houston Invitational Tournament (HIT)</a>
+              <Link href={'http://www.houstoninvite.com/'}>Houston Invitational Tournament (HIT)</Link>
             </li>
             <li>
-              <a href={'http://www.makitkc.org/'}>
+              <Link href={'http://www.makitkc.org/'}>
                 Missouri and Kansas Invitational Tournament (MAKIT)
-              </a>
+              </Link>
             </li>
             <li>
-              <a href={'https://www.txsuperslam.com/'}>Texas Super Slam</a>
+              <Link href={'https://www.txsuperslam.com/'}>Texas Super Slam</Link>
             </li>
             <li>
-              Dallas Area Masters Invitational Tournament (DAMIT)
+              <Link href={'https://www.damitbowling.org/'}>
+                Dallas Area Masters Invitational Tournament (DAMIT)
+              </Link>
             </li>
             <li>
-              <a href={'https://showmeclassic.com/'}>Show Me St. Louis Classic</a>
+              <Link href={'https://showmeclassic.com/'}>Show Me St. Louis Classic</Link>
             </li>
             <li>
-              <a href={'http://beepbeepbowl.org/'}>The Albuquerque Roadrunner Tournament</a>
+              <Link href={'http://beepbeepbowl.org/'}>The Albuquerque Roadrunner Tournament</Link>
+            </li>
+            <li>
+              <Link href={'https://bowldiglit.org/'}>
+                Denver International Gay and Lesbian Invitational Tournament (DIGLIT)
+              </Link>
             </li>
           </ul>
         </Accordion.Body>
@@ -81,9 +89,9 @@ const about = () => (
             While I do charge a fee for the use of this system, the fee is intended to cover the costs I incur in
             operating it, not to turn a profit. If the day should arrive when there are enough participating tournaments
             to turn a profit, then all proceeds beyond operating costs will be donated to{' '}
-            <a href={'https://www.aidslifecycle.org/'}>
+            <Link href={'https://www.aidslifecycle.org/'}>
               AIDS/LifeCycle
-            </a>
+            </Link>
             {' '}or another organization doing important work for the LGBTQIA+ community.
           </p>
           <ul>
@@ -174,9 +182,9 @@ const about = () => (
             </li>
           </ul>
           <p>Interested in using the system for your tournament?{' '}
-            <a href={'mailto:info@tourn.io?subject=Using%20Tournio'}>
+            <Link href={'mailto:hello@tourn.io?subject=Using%20Tournio'}>
               Drop me a line
-            </a>!
+            </Link>!
           </p>
         </Accordion.Body>
       </Accordion.Item>
@@ -251,23 +259,23 @@ const about = () => (
           <p>
             This website is designed to work with all modern browsers, regardless of device. On desktops, though, I
             recommend using{' '}
-            <a href={'https://www.mozilla.org/en-US/firefox/new/'}>
+            <Link href={'https://www.mozilla.org/en-US/firefox/new/'}>
               Mozilla Firefox
-            </a>.
+            </Link>.
           </p>
           <p>
             Interested in the source code? It&apos;s in two parts, available on <i className={'bi-github'}/> Github:
           </p>
           <ul>
             <li>
-              <a href={'https://github.com/st33b/igbo-registration-api'}>
+              <Link href={'https://github.com/st33b/igbo-registration-api'}>
                 Server back end
-              </a>
+              </Link>
             </li>
             <li>
-              <a href={'https://github.com/st33b/igbo-registration-client'}>
+              <Link href={'https://github.com/st33b/igbo-registration-client'}>
                 Client front end
-              </a>
+              </Link>
             </li>
           </ul>
         </Accordion.Body>
