@@ -692,21 +692,35 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
 
 /////////////////////////////////////////////////////
 
-export const apiDownloadRequest = ({uri, onSuccess = null, onFailure = null}) => {
-  const url = `${apiHost}${uri}`;
-  const config = {
-    method: 'get',
-    url: url,
-    headers: {
-      'Accept': 'application/json',
-    },
-    validateStatus: (status) => status < 500,
+export const validateEmail = async function (emailAddress) {
+  if (!['production', 'preview'].includes(process.env.NODE_ENV)) {
+    devConsoleLog("Not prod or prev, not reaching out to API");
+
+    function waitABit(result) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(result);
+        }, 2000);
+      });
+    }
+    return await waitABit(
+      {
+        checked: false,
+        rejected: false,
+        // error: 'Simulate some kind of error',
+      },
+    );
   }
-  axios(config)
-    .then(response => {
-      onSuccess(response.data)
-    })
-    .catch(error => {
-      console.log('Failed to retrieve data for download', error);
-    });
+  const response = await fetch('/api/email_check', {
+    method: 'POST',
+    mode: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    redirect: 'follow',
+    body: JSON.stringify({email: emailAddress}),
+  }).catch((error) => {
+    return { error: error };
+  });
+  return await response.json();
 }
