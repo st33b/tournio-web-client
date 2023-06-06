@@ -181,13 +181,13 @@ const Summary = ({tournament, nextStepClicked, nextStepText, buttonDisabled, ena
                     className={'d-none d-sm-block'}/>
           <Card.Body className={'d-sm-none px-0 py-0'}>
             <Row className={'mb-3'}>
-              <Col xs={3}>
+              <Col xs={5}>
                 <Image fluid
                        src={tournament.image_url}
                        alt={"tournament logo"}
                 />
               </Col>
-              <Col>
+              <Col className={`d-flex flex-column justify-content-center`}>
                 <Card.Title>
                   {tournament.name}
                 </Card.Title>

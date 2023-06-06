@@ -44,6 +44,9 @@ const Page = () => {
     if (bowlerInfo.position === registration.tournament.max_bowlers) {
       // Move on to doubles partner selection
       onFinishedWithBowlers();
+    } else {
+      // scroll to the top
+      window.scrollTo(0,0);
     }
   }
 

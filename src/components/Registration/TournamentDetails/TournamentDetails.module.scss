@@ -38,10 +38,14 @@
         padding-left: 0;
       }
       .Early {
-        background-color: var(--tournio-success-bg-subtle);
+        td {
+          background-color: var(--tournio-success-bg-subtle);
+        }
       }
       .Late {
-        background-color: var(--tournio-info-bg-subtle);
+        td {
+          background-color: var(--tournio-info-bg-subtle);
+        }
       }
     }
   }
