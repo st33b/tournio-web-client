@@ -74,6 +74,11 @@ const about = () => (
             <li>
               <Link href={'http://beepbeepbowl.org/'}>The Albuquerque Roadrunner Tournament</Link>
             </li>
+            <li>
+              <Link href={'https://bowldiglit.org/'}>
+                Denver International Gay and Lesbian Invitational Tournament (DIGLIT)
+              </Link>
+            </li>
           </ul>
         </Accordion.Body>
       </Accordion.Item>
@@ -180,7 +185,7 @@ const about = () => (
             </li>
           </ul>
           <p>Interested in using the system for your tournament?{' '}
-            <Link href={'mailto:info@tourn.io?subject=Using%20Tournio'}>
+            <Link href={'mailto:hello@tourn.io?subject=Using%20Tournio'}>
               Drop me a line
             </Link>!
           </p>

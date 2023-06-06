@@ -7,7 +7,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import classes from './BowlerForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import ShiftForm from "../ShiftForm/ShiftForm";
-import {devConsoleLog} from "../../../utils";
+import {devConsoleLog, validateEmail} from "../../../utils";
 
 const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => {
   const {registration} = useRegistrationContext();
@@ -63,6 +63,9 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           'valueMissing',
           'patternMismatch',
         ],
+        errorMessages: {
+          patternMismatch: 'Just digits and a hyphen, e.g., 123-4567',
+        },
         helper: {
           url: 'https://webapps.bowl.com/USBCFindA/Home/Member',
           text: 'Look up your USBC ID',
@@ -165,6 +168,11 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           'valueMissing',
           'typeMismatch',
         ],
+        errorMessages: {
+          typeMismatch: "That's not a valid email address",
+          undeliverable: "This address is marked as Undeliverable. Are you sure you have it right?"
+        },
+        bonusCheckUnderway: false,
         valid: true,
         touched: false,
       },
@@ -293,7 +301,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
   const additionalFormFields = (tourn) => {
     const formFields = {};
     for (let key in tourn.additional_questions) {
-      formFields[key] = { ...tourn.additional_questions[key] }
+      formFields[key] = {...tourn.additional_questions[key]}
       if (tourn.additional_questions[key].validation.required) {
         formFields[key].validityErrors = ['valueMissing'];
         formFields[key].valid = false;
@@ -301,7 +309,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         formFields[key].valid = true
       }
       formFields[key].touched = false;
-      formFields[key].elementConfig = { ...tourn.additional_questions[key].elementConfig }
+      formFields[key].elementConfig = {...tourn.additional_questions[key].elementConfig}
     }
     return formFields;
   }
@@ -318,7 +326,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         formData.soloBowlerFields.preferred_shift.elementConfig.choices = [];
         tourn.available_shifts.map(shift => {
           formData.soloBowlerFields.preferred_shift.elementConfig.choices.push(
-            { value: shift.identifier, label: shift.name }
+            {value: shift.identifier, label: shift.name}
           );
         });
         setShowShiftSelection(true);
@@ -421,7 +429,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         ...bowlerForm.formFields[inputIdentifier]
       }
       // Deep-copy the element config, since that has the part that gets changed...
-      updatedFormElement.elementConfig = { ...bowlerForm.formFields[inputIdentifier].elementConfig }
+      updatedFormElement.elementConfig = {...bowlerForm.formFields[inputIdentifier].elementConfig}
 
       // Our special snowflakes:
       let newValue = null;
@@ -470,6 +478,51 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     setBowlerForm(updatedBowlerForm);
   }
 
+  const bonusValidityCheck = (inputIdentifier, inputElement, value) => {
+    // Doing this specifically for email addresses rather than opting for a generic
+    // approach, since emails are, so far, the only input field for which we want
+    // validation beyond the Validation API
+
+    // Only do this on active tournaments
+    if (tournament.state === 'active' && inputIdentifier === 'email') {
+      const newFormData = {...bowlerForm};
+      newFormData.formFields[inputIdentifier].bonusCheckUnderway = true;
+
+      devConsoleLog("Let's validate an email!");
+      validateEmail(value).then(result => {
+        if (!result.checked) {
+          devConsoleLog("I did not actually check it.");
+        }
+        if (result.error) {
+          // Right now, we don't care if it returns an error; this is an enhancement,
+          // not a requisite check.
+        } else {
+          const whoopsies = [];
+
+          // result.rejected will be true if Verifalia's check bame back as Undeliverable.
+          if (result.rejected) {
+            // This is for the Input component
+            whoopsies.push('undeliverable');
+
+            // This is for the Constraint Validation API (which sets the :invalid pseudo-class)
+            inputElement.setCustomValidity('undeliverable');
+          }
+
+          newFormData.formFields[inputIdentifier] = {
+            ...newFormData.formFields[inputIdentifier],
+            ...validityForField(inputIdentifier, whoopsies),
+          }
+          inputElement.reportValidity();
+        }
+      }).catch(error => {
+        devConsoleLog("Unexpected error: ", error);
+      }).then(() => {
+        newFormData.formFields[inputIdentifier].bonusCheckUnderway = false;
+        setBowlerForm(newFormData);
+      });
+    }
+  }
+
   const fieldBlurred = (event, inputIdentifier) => {
     const newFormData = {...bowlerForm}
     const fieldIsChanged = newFormData.formFields[inputIdentifier].touched;
@@ -482,6 +535,11 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
 
     const {validity} = event !== null ? event.target : {};
     const failedChecks = checksToRun.filter(c => validity[c]);
+
+    // If everything in the Validation API passed, then run any bonus checks
+    if (failedChecks.length === 0) {
+      bonusValidityCheck(inputIdentifier, event.target, newFormData.formFields[inputIdentifier].elementConfig.value);
+    }
 
     newFormData.formFields[inputIdentifier] = {
       ...newFormData.formFields[inputIdentifier],
@@ -496,10 +554,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       formField => typeof formField.valid === 'undefined' || formField.valid
     );
 
-    devConsoleLog("What's invalid?", Object.values(newFormData.formFields).filter(
-      formField => typeof formField.valid !== 'undefined' && !formField.valid
-    ))
-
     setBowlerForm(newFormData);
   }
 
@@ -508,6 +562,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     formElements.push({
       id: key,
       setup: bowlerForm.formFields[key],
+      // <select> elements get excluded, since onChange covers it
       validateOnBlur: !!bowlerForm.formFields[key].validityErrors && !['birth_month', 'country'].includes(key),
     });
   }
@@ -519,8 +574,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           <ShiftForm tournament={tournament}
                      onInputChanged={(event) => inputChangedHandler(event, 'preferred_shift')}
                      currentSelection={bowlerForm.soloBowlerFields.preferred_shift.elementConfig.value}
-                     name={'preferred_shift'} />
-          <hr />
+                     name={'preferred_shift'}/>
+          <hr/>
         </div>
       )}
       {formElements.map(formElement => (
@@ -533,10 +588,12 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           label={formElement.setup.label}
           helper={formElement.setup.helper}
           validityErrors={formElement.setup.validityErrors}
+          errorMessages={formElement.setup.errorMessages}
           // For <select> elements, onBlur is redundant to onChange
           blurred={formElement.validateOnBlur ? (event) => fieldBlurred(event, formElement.id) : false}
           failedValidations={typeof formElement.setup.validityFailures !== 'undefined' ? formElement.setup.validityFailures : []}
           wasValidated={formElement.setup.validated}
+          loading={!!formElement.setup.bonusCheckUnderway}
         />
       ))}
 
@@ -549,7 +606,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         {showCancelButton && (
           <a className={'btn btn-secondary btn-lg'}
              href={cancelHref}>
-            <i className={'bi-chevron-double-left pe-1'} aria-hidden={true} />
+            <i className={'bi-chevron-double-left pe-1'} aria-hidden={true}/>
             Cancel Changes
           </a>
         )}
@@ -577,7 +634,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         </h3>
 
         <p>
-          <i className={`${classes.RequiredLabel} align-top bi-asterisk`} />
+          <i className={`${classes.RequiredLabel} align-top bi-asterisk`}/>
           {' '}indicates a required field
         </p>
 
