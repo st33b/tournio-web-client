@@ -18,7 +18,7 @@ const Page = () => {
     method: 'get',
   }
 
-  const {loading, data, error} = useDirectorApi({
+  const {loading, data: tournaments, error} = useDirectorApi({
     uri: '/tournaments',
     requestConfig: requestConfig,
   });
@@ -48,10 +48,10 @@ const Page = () => {
           </Col>
         </Row>
       )}
-      {data && (
+      {tournaments && (
         <Row>
           <Col>
-            <TournamentListing tournaments={data}/>
+            <TournamentListing tournaments={tournaments}/>
           </Col>
         </Row>
       )}

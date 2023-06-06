@@ -3,20 +3,20 @@ import {useStorage} from "../utils";
 import {directorReducer, directorReducerInit} from "./directorReducer";
 
 const DirectorContext = createContext({
-  directorState: null,
+  state: null,
   dispatch: null,
 });
 
 export const DirectorContextProvider = ({children}) => {
-  const [storedDirectorState, storeDirectorState] = useStorage('director', directorReducerInit());
-  const [directorState, dispatch] = useReducer(directorReducer, storedDirectorState, directorReducerInit);
+  const [storedState, storeState] = useStorage('director', directorReducerInit());
+  const [state, dispatch] = useReducer(directorReducer, storedState, directorReducerInit);
 
   useEffect(() => {
-    storeDirectorState(directorState);
-  }, [directorState]);
+    storeState(state);
+  }, [state]);
 
   const contextValue = {
-    directorState: directorState,
+    state: state,
     dispatch: dispatch,
   }
 

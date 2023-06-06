@@ -44,6 +44,10 @@ const handleSuccess = (response, onSuccess, onFailure) => {
   }
 }
 
+export const useAuth = ({user, tournamentIdentifier}) => {
+
+}
+
 const handleError = (error, callbackFn) => {
   if (error.request) {
     console.log('No response was received.');
@@ -76,17 +80,50 @@ export const directorApiRequest = ({uri, requestConfig, onSuccess = null, onFail
 
 }
 
-export const useDirectorApi = ({uri, requestConfig}) => {
+export const useDirectorApi = ({
+                                 uri,
+                                 requestConfig = {},
+                                 onSuccess = () => {},
+                                 onFailure = () => {}
+}) => {
   const {authToken, ready, logout} = useLoginContext();
   const router = useRouter();
 
-  const authorizedFetcher = async (uri, token, clientReady) => {
+  const handleSuccess = (data, key, config) => {
+    onSuccess(data);
+  }
+
+  const handleError = (error, key, config) => {
+    if (error.status === 401) {
+      devConsoleLog("Unauthorized request. Logging out and going back to the login page.");
+      logout();
+      router.replace('/director/login');
+    } else {
+      devConsoleLog("Unusual Error: ", error.message);
+      onFailure(error.message);
+    }
+  }
+
+  /////////////////
+  const swrKey = [
+    uri,
+    authToken,
+    ready
+  ];
+  const swrOptions = {
+    revalidateOnFocus: false,
+    shouldRetryOnError: false,
+    onSuccess: handleSuccess,
+    onError: handleError,
+  };
+  const swrFetcher = async (uri, token, clientReady) => {
     if (token) {
       const headers = new Headers();
       headers.append("Authorization", token);
       headers.append("Accept", "application/json");
       // Here's where we can add more
 
+      // @hooks_todo Merge requestConfig in here when we get to the point where we need to.
       const fetchInit = {
         method: 'GET',
         headers: headers,
@@ -108,30 +145,12 @@ export const useDirectorApi = ({uri, requestConfig}) => {
       throw error;
     }
   }
-
-  const handleError = (error, key, config) => {
-    if (error.status === 401) {
-      devConsoleLog("Unauthorized request. Logging out and going back to the login page.");
-      logout();
-      router.replace('/director/login');
-    } else {
-      devConsoleLog("Unusual Error: ", error.message);
-    }
-  }
+  /////////////////
 
   const { data, error, isLoading } = useSWR(
-    [
-      uri,
-      authToken,
-      ready
-    ],
-    ([uri, token, clientReady]) => authorizedFetcher(uri, token, clientReady),
-    {
-      fallbackData: [],
-      revalidateOnFocus: false,
-      shouldRetryOnError: false,
-      onError: handleError,
-    }
+    swrKey,
+    ([uri, token, clientReady]) => swrFetcher(uri, token, clientReady),
+    swrOptions
   );
 
   return {
