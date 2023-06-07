@@ -5,7 +5,7 @@ import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLa
 import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
 import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
 import {devConsoleLog} from "../../../utils";
-import {directorApiRequest, useDirectorApi, useLoggedIn} from "../../../director";
+import {directorApiRequest, makeAnApiCall, useDirectorApi, useLoggedIn} from "../../../director";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import {
   tournamentDetailsRetrieved,
@@ -18,18 +18,16 @@ import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage
 const Tournament = () => {
   const router = useRouter();
   const { identifier, stripe } = router.query;
-  const context = useDirectorContext();
-  const dispatch = context.dispatch;
-  const {ready, user} = useLoginContext();
+  const { dispatch } = useDirectorContext();
+  const {ready, user, authToken} = useLoginContext();
+  const [errorMessage, setErrorMessage] = useState();
 
   ///////////////
 
-  const { loading, data: tournament, error } = useDirectorApi({
+  const { loading, data: tournament } = useDirectorApi({
     uri: `/tournaments/${identifier}`,
-    requestConfig: {
-      method: 'get',
-    },
     onSuccess: (t) => dispatch(tournamentDetailsRetrieved(t)),
+    onFailure: (err) => setErrorMessage(err.message),
   });
 
   // -----------------
@@ -40,10 +38,11 @@ const Tournament = () => {
 
   // @hooks_todo Convert this to use useDirectorApi once it has support for POST requests
   const stateChangeInitiated = (stateChangeAction) => {
-    const uri = `/director/tournaments/${identifier}/state_change`;
+    const uri = `/tournaments/${identifier}/state_change`;
     const requestConfig = {
       method: 'post',
       headers: {
+        Authorization: `Bearer ${authToken}`,
         'Content-Type': 'application/json',
       },
       data: {
@@ -54,7 +53,6 @@ const Tournament = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
       onSuccess: (data) => dispatch(tournamentStateChanged(data)),
       onFailure: (data) => setErrorMessage(data.error),
     });
@@ -66,7 +64,7 @@ const Tournament = () => {
 
   return (
     <div>
-      <ErrorPage text={error}/>
+      <ErrorPage text={errorMessage}/>
 
       {tournament && (
         (tournament.state === 'active' || tournament.state === 'closed'

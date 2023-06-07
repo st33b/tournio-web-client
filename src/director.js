@@ -63,7 +63,7 @@ const handleError = (error, callbackFn) => {
 }
 
 export const directorApiRequest = ({uri, requestConfig, onSuccess = null, onFailure = null}) => {
-  const url = `${apiHost}${uri}`;
+  const url = `${apiHost}/director${uri}`;
   const config = {...requestConfig};
   config.url = url;
   config.headers = {...requestConfig.headers}
@@ -80,9 +80,12 @@ export const directorApiRequest = ({uri, requestConfig, onSuccess = null, onFail
 
 }
 
+
+// We can use this for fetching data from the API required by a component, but that's it.
+// It'll make the pages that need it smaller, since they won't have to worry about
+// handing over the user auth token, among other things.
 export const useDirectorApi = ({
                                  uri,
-                                 requestConfig = {},
                                  onSuccess = () => {},
                                  onFailure = () => {}
 }) => {

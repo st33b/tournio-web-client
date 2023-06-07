@@ -14,13 +14,8 @@ const Page = () => {
   const {dispatch} = useDirectorContext();
   const {ready, user} = useLoginContext();
 
-  const requestConfig = {
-    method: 'get',
-  }
-
   const {loading, data: tournaments, error} = useDirectorApi({
     uri: '/tournaments',
-    requestConfig: requestConfig,
   });
 
   if (!ready || !user) {
