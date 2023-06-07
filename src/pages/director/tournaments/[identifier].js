@@ -22,17 +22,17 @@ const Tournament = () => {
   const {ready, user, authToken} = useLoginContext();
   const [errorMessage, setErrorMessage] = useState();
 
-  ///////////////
-
+  //
+  // fetch tournament details
   const { loading, data: tournament } = useDirectorApi({
-    uri: `/tournaments/${identifier}`,
+    uri: identifier ? `/tournaments/${identifier}` : null,
     onSuccess: (t) => dispatch(tournamentDetailsRetrieved(t)),
     onFailure: (err) => setErrorMessage(err.message),
   });
 
   // -----------------
 
-  if (!ready || !user) {
+  if (!ready) {
     return '';
   }
 

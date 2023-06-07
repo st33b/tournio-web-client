@@ -108,18 +108,17 @@ export const useDirectorApi = ({
   }
 
   /////////////////
-  const swrKey = [
-    uri,
-    authToken,
-    ready
-  ];
+  // This prevents SWR from making the request if we don't have a URI yet (which may be
+  // the case when pulling URI details from, say, one or more query parameters
+  const swrKey = uri ? [`${apiHost}/director${uri}`, authToken, ready] : null;
+  devConsoleLog("SWR key:", swrKey);
   const swrOptions = {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
     onSuccess: handleSuccess,
     onError: handleError,
   };
-  const swrFetcher = async (uri, token, clientReady) => {
+  const swrFetcher = async (url, token, clientReady) => {
     if (token) {
       const headers = new Headers();
       headers.append("Authorization", token);
@@ -132,7 +131,7 @@ export const useDirectorApi = ({
         headers: headers,
       }
 
-      const response = await fetch(`${apiHost}/director${uri}`, fetchInit);
+      const response = await fetch(url, fetchInit);
 
       if (!response.ok) {
         const error = new Error('Received an error from the API');
@@ -152,7 +151,7 @@ export const useDirectorApi = ({
 
   const { data, error, isLoading } = useSWR(
     swrKey,
-    ([uri, token, clientReady]) => swrFetcher(uri, token, clientReady),
+    ([requestUrl, clientToken, clientReady]) => swrFetcher(requestUrl, clientToken, clientReady),
     swrOptions
   );
 
