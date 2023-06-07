@@ -5,9 +5,11 @@ import {directorApiRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './MassActions.module.scss';
+import {useLoginContext} from "../../../store/LoginContext";
 
 const MassActions = ({tournament}) => {
-  const context = useDirectorContext();
+  const { dispatch } = useDirectorContext();
+  const { authToken } = useLoginContext();
 
   const [paymentReminderMessage, setPaymentReminderMessage] = useState(null);
 
@@ -61,7 +63,7 @@ const MassActions = ({tournament}) => {
       return;
     }
 
-    const uri = `/director/tournaments/${tournament.identifier}/email_payment_reminders`;
+    const uri = `/tournaments/${tournament.identifier}/email_payment_reminders`;
     const requestConfig = {
       data: {},
       method: 'post',
@@ -69,7 +71,7 @@ const MassActions = ({tournament}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: paymentRemindersKickedOff,
       onFailure: paymentRemindersFailed,
     });

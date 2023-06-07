@@ -12,9 +12,11 @@ import {
   tournamentShiftUpdated
 } from "../../../store/actions/directorActions";
 import ButtonRow from "../../common/ButtonRow";
+import {useLoginContext} from "../../../store/LoginContext";
 
 const ShiftForm = ({tournament, shift}) => {
-  const context = useDirectorContext();
+  const { dispatch } = useDirectorContext();
+  const { authToken } = useLoginContext();
 
   const initialFormData = Map({
     name: '',
@@ -46,7 +48,7 @@ const ShiftForm = ({tournament, shift}) => {
     setFormData(Map(existingShift));
   }, [shift]);
 
-  if (!context || !tournament) {
+  if (!tournament) {
     return '';
   }
 
@@ -91,7 +93,7 @@ const ShiftForm = ({tournament, shift}) => {
   const addShiftFormSubmitted = (event) => {
     event.preventDefault();
 
-    const uri = `/director/tournaments/${tournament.identifier}/shifts`;
+    const uri = `/tournaments/${tournament.identifier}/shifts`;
     const requestConfig = {
       method: 'post',
       data: {
@@ -106,14 +108,14 @@ const ShiftForm = ({tournament, shift}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: addShiftSuccess,
       onFailure: (data) => console.log("D'oh!", data),
     });
   }
 
   const addShiftSuccess = (data) => {
-    context.dispatch(tournamentShiftAdded(data));
+    dispatch(tournamentShiftAdded(data));
     setSuccessMessage('Shift added.');
     setFormDisplayed(false);
   }
@@ -128,15 +130,15 @@ const ShiftForm = ({tournament, shift}) => {
     if (!allowDelete) {
       return;
     }
-    const uri = `/director/shifts/${shift.identifier}`;
+    const uri = `/shifts/${shift.identifier}`;
     const requestConfig = {
       method: 'delete',
     };
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
-      onSuccess: () => context.dispatch(tournamentShiftDeleted(shift)),
+      authToken: authToken,
+      onSuccess: () => dispatch(tournamentShiftDeleted(shift)),
       onFailure: (data) => console.log("D'oh!", data),
     });
   }
@@ -144,7 +146,7 @@ const ShiftForm = ({tournament, shift}) => {
   const updateShiftFormSubmitted = (event) => {
     event.preventDefault();
 
-    const uri = `/director/shifts/${shift.identifier}`;
+    const uri = `/shifts/${shift.identifier}`;
     const requestConfig = {
       method: 'patch',
       data: {
@@ -159,14 +161,14 @@ const ShiftForm = ({tournament, shift}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: updateShiftSuccess,
       onFailure: (data) => console.log("D'oh!", data),
     })
   }
 
   const updateShiftSuccess = (data) => {
-    context.dispatch(tournamentShiftUpdated(data));
+    dispatch(tournamentShiftUpdated(data));
     setSuccessMessage('Shift updated.');
     setFormDisplayed(false);
   }

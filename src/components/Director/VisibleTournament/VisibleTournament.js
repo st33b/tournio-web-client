@@ -1,4 +1,5 @@
 import {Accordion, Card} from "react-bootstrap";
+import Link from "next/link";
 
 import Basics from './Basics';
 import Configuration from "./Configuration";
@@ -6,7 +7,6 @@ import AdditionalQuestions from "./AdditionalQuestions";
 import Capacity from './Capacity';
 import CloseTournament from "./CloseTournament";
 import Counts from "./Counts";
-// import RegistrationOptions from "./RegistrationOptions";
 import RegistrationOptions from "../RegistrationOptions/RegistrationOptions";
 import EditableConfiguration from "./EditableConfiguration";
 import Contacts from "../Tournament/Contacts";
@@ -19,11 +19,12 @@ import OptionalItemsWeek from "./Charts/OptionalItemsWeek";
 import MassActions from "../MassActions/MassActions";
 import LogoImage from "../LogoImage/LogoImage";
 import DeleteTournament from "../Tournament/DeleteTournament";
+import Users from "../Tournament/Users";
+import Shifts from "../TournamentInPrep/Shifts";
+
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './VisibleTournament.module.scss';
-import Users from "../Tournament/Users";
-import Shifts from "../TournamentInPrep/Shifts";
 
 const VisibleTournament = ({closeTournament}) => {
   const {state} = useDirectorContext();
@@ -84,10 +85,10 @@ const VisibleTournament = ({closeTournament}) => {
               <Card.Title>
                 {tournament.name}
               </Card.Title>
-              <a href={`/tournaments/${tournament.identifier}`} target={'_new'}>
+              <Link href={`/tournaments/${tournament.identifier}`} target={'_new'}>
                 Front Page
                 <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
-              </a>
+              </Link>
             </Card.Body>
           </Card>
 

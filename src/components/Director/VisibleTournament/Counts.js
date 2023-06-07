@@ -25,6 +25,7 @@ const Counts = ({tournament}) => {
     content = (
       <ListGroup variant={'flush'}>
         <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
+                        variant={'primary'}
                         action
                         href={`/director/bowlers`}>
           Bowlers
@@ -33,6 +34,7 @@ const Counts = ({tournament}) => {
           </Badge>
         </ListGroup.Item>
         <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
+                        variant={'primary'}
                         action
                         href={`/director/teams`}>
           Teams
@@ -41,6 +43,7 @@ const Counts = ({tournament}) => {
           </Badge>
         </ListGroup.Item>
         <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
+                        variant={'primary'}
                         action
                         href={`/director/free_entries`}>
           Free Entries

@@ -6,9 +6,11 @@ import {directorApiRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {tournamentDetailsRetrieved} from "../../../store/actions/directorActions";
 import {devConsoleLog} from "../../../utils";
+import {useLoginContext} from "../../../store/LoginContext";
 
 const RegistrationOptions = ({tournament}) => {
-  const context = useDirectorContext();
+  const { dispatch } = useDirectorContext();
+  const { authToken } = useLoginContext();
 
   const REGISTRATION_TYPES = ['new_team', 'solo', 'join_team', 'partner', 'new_pair'];
   const REGISTRATION_TYPE_LABELS = [
@@ -74,7 +76,7 @@ const RegistrationOptions = ({tournament}) => {
   }
 
   const submitRegistrationOptions = (options) => {
-    const uri = `/director/tournaments/${tournament.identifier}`;
+    const uri = `/tournaments/${tournament.identifier}`;
     const enabledTypes = [];
     REGISTRATION_TYPES.forEach(rType => {
       if (options.get(rType)) {
@@ -94,8 +96,8 @@ const RegistrationOptions = ({tournament}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
-      onSuccess: (tournament) => { context.dispatch(tournamentDetailsRetrieved(tournament)) },
+      authToken: authToken,
+      onSuccess: (tournament) => { dispatch(tournamentDetailsRetrieved(tournament)) },
       onFailure: (data) => setErrorMessage(data.error),
     })
   }

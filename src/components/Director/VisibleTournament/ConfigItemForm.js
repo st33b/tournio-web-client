@@ -1,14 +1,16 @@
 import {useEffect, useState} from "react";
 import {ListGroupItem} from "react-bootstrap";
 
+import ErrorBoundary from "../../common/ErrorBoundary";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../director";
-import ErrorBoundary from "../../common/ErrorBoundary";
+import {useLoginContext} from "../../../store/LoginContext";
 
 import classes from './VisibleTournament.module.scss';
 
 const ConfigItemForm = ({item}) => {
-  const context = useDirectorContext();
+  const { dispatch } = useDirectorContext();
+  const { authToken } = useLoginContext();
 
   const initialState = {
     prevValue: '',
@@ -36,7 +38,7 @@ const ConfigItemForm = ({item}) => {
     newFormData.value = event.target.checked;
     setFormData(newFormData);
 
-    const uri = `/director/config_items/${item.id}`;
+    const uri = `/config_items/${item.id}`;
     const requestConfig = {
       method: 'patch',
       data: {
@@ -48,7 +50,7 @@ const ConfigItemForm = ({item}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: (_) => {},
       onFailure: (data) => { console.log("Failed to save config item.", data) },
     });

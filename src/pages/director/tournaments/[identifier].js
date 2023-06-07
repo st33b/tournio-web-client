@@ -37,13 +37,11 @@ const Tournament = () => {
     return '';
   }
 
-  // @hooks_todo Convert this to use useDirectorApi once it has support for POST requests
   const stateChangeInitiated = (stateChangeAction) => {
     const uri = `/tournaments/${identifier}/state_change`;
     const requestConfig = {
       method: 'post',
       headers: {
-        Authorization: `Bearer ${authToken}`,
         'Content-Type': 'application/json',
       },
       data: {
@@ -54,6 +52,7 @@ const Tournament = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
+      authToken: authToken,
       onSuccess: (data) => dispatch(tournamentStateChanged(data)),
       onFailure: (data) => setErrorMessage(data.error),
     });

@@ -11,7 +11,7 @@ const Users = ({users}) => {
   return (
     <Card className={classes.Card}>
       <Card.Header as={'h5'} className={'fw-light'}>
-        Users
+        Admin Users
       </Card.Header>
       <ListGroup variant={'flush'}>
         {users.length == 0 && (
