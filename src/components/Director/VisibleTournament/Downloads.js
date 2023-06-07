@@ -5,13 +5,15 @@ import {directorApiDownloadRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './VisibleTournament.module.scss';
+import {useLoginContext} from "../../../store/LoginContext";
+import {devConsoleLog} from "../../../utils";
 
 const Downloads = ({tournament}) => {
-  const context = useDirectorContext();
-  const directorState = context.directorState;
+  const { ready, authToken } = useLoginContext();
+  const { state } = useDirectorContext();
   const [downloadMessage, setDownloadMessage] = useState(null);
 
-  if (!tournament) {
+  if (!tournament || !ready) {
     return (
       <div className={classes.Downloads}>
         <Card>
@@ -26,6 +28,8 @@ const Downloads = ({tournament}) => {
   }
 
   const downloadSuccess = (data, name) => {
+    devConsoleLog("Download succeeded. Go team!");
+
     const url = URL.createObjectURL(data);
     const link = document.createElement('a');
     link.href = url;
@@ -34,27 +38,15 @@ const Downloads = ({tournament}) => {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-
-    setDownloadMessage(
-      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
-        <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
-        <div className={'me-auto'}>
-          Download completed.
-          <button type="button"
-                  className={"btn-close"}
-                  data-bs-dismiss="alert"
-                  onClick={() => setDownloadMessage(null)}
-                  aria-label="Close" />
-        </div>
-      </div>
-    );
   }
+
   const downloadFailure = (data) => {
+    devConsoleLog("Download failed. Why?", data);
     setDownloadMessage(
       <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
         <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
         <div className={'me-auto'}>
-          Download failed. {data.error}
+          Download failed.
           <button type="button"
                   className={"btn-close"}
                   data-bs-dismiss="alert"
@@ -64,11 +56,13 @@ const Downloads = ({tournament}) => {
       </div>
     );
   }
-  const downloadClicked = (event, uri, saveAsName) => {
+  const downloadClicked = (event, which, saveAsName) => {
+    const path = which === 'csv' ? 'csv_download' : 'igbots_download';
+    const uri = `/tournaments/${tournament.identifier}/${path}`;
     event.preventDefault();
     directorApiDownloadRequest({
       uri: uri,
-      context: context,
+      authToken: authToken,
       onSuccess: (data) => downloadSuccess(data, saveAsName),
       onFailure: (data) => downloadFailure(data),
     });
@@ -83,22 +77,22 @@ const Downloads = ({tournament}) => {
           </Card.Subtitle>
           <a className={'btn btn-sm btn-outline-primary mx-2'}
                      href={'#'}
-                     disabled={!directorState.bowlers || directorState.bowlers.length === 0}
-                     onClick ={(event) => downloadClicked(event, `/director/tournaments/${tournament.identifier}/csv_download`, 'bowlers.csv')}
+                     disabled={!state.bowlers || state.bowlers.length === 0}
+                     onClick ={(event) => downloadClicked(event, 'csv', 'bowlers.csv')}
           >
             CSV
           </a>
           <a className={'btn btn-sm btn-outline-primary mx-2'}
                      href={'#'}
-                     disabled={!directorState.bowlers || directorState.bowlers.length === 0}
-                     onClick ={(event) => downloadClicked(event, `/director/tournaments/${tournament.identifier}/igbots_download`, 'bowlers.xml')}
+                     disabled={!state.bowlers || state.bowlers.length === 0}
+                     onClick ={(event) => downloadClicked(event, 'igbots_download', 'bowlers.xml')}
           >
             IGBO-TS
           </a>
           <a className={'btn btn-sm btn-outline-primary mt-3 mx-2'}
              target={'_new'}
              href={`/director/tournaments/${tournament.identifier}/sign-in-sheets`}
-             disabled={!directorState.bowlers || directorState.bowlers.length === 0}
+             disabled={!state.bowlers || state.bowlers.length === 0}
           >
             Sign-in Sheets
           </a>

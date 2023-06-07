@@ -26,40 +26,42 @@ import Users from "../Tournament/Users";
 import Shifts from "../TournamentInPrep/Shifts";
 
 const VisibleTournament = ({closeTournament}) => {
-  const {directorState} = useDirectorContext();
+  const {state} = useDirectorContext();
 
-  if (!directorState || !directorState.tournament) {
+  if (!state || !state.tournament) {
     return <div className={classes.VisibleTournament}>
       <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
     </div>;
   }
 
+  const { tournament } = state;
+
   const divisionNameSet = new Set();
-  directorState.tournament.purchasable_items.division.forEach(({name}) => {
+  tournament.purchasable_items.division.forEach(({name}) => {
     divisionNameSet.add(name);
   });
   const divisionNames = Array.from(divisionNameSet);
 
   const lessImportantStuff = (
     <>
-      <Downloads tournament={directorState.tournament}/>
+      <Downloads tournament={tournament}/>
       <Accordion className={'mb-3'}>
-        <Basics eventKey={'0'} tournament={directorState.tournament}/>
-        <Configuration eventKey={'1'} tournament={directorState.tournament} />
-        <AdditionalQuestions eventKey={'2'} tournament={directorState.tournament}/>
-        <PurchasableItems eventKey={'3'} tournament={directorState.tournament}/>
+        <Basics eventKey={'0'} tournament={tournament}/>
+        <Configuration eventKey={'1'} tournament={tournament} />
+        <AdditionalQuestions eventKey={'2'} tournament={tournament}/>
+        <PurchasableItems eventKey={'3'} tournament={tournament}/>
       </Accordion>
 
-      <Contacts tournament={directorState.tournament}/>
-      <Users users={directorState.tournament.users}/>
+      <Contacts tournament={tournament}/>
+      <Users users={tournament.users}/>
 
-      {directorState.tournament.state === 'active' && (
+      {tournament.state === 'active' && (
         <>
           <hr />
-          <CloseTournament tournament={directorState.tournament} closeTournament={closeTournament} />
+          <CloseTournament tournament={tournament} closeTournament={closeTournament} />
         </>
       )}
-      {directorState.tournament.state === 'closed' && (<DeleteTournament tournament={directorState.tournament}/>)}
+      {tournament.state === 'closed' && (<DeleteTournament tournament={tournament}/>)}
     </>
   );
 
@@ -69,31 +71,31 @@ const VisibleTournament = ({closeTournament}) => {
 
         <div className={'col-12 col-md-4 col-xl-3'}>
 
-          {directorState.tournament.state === 'closed' && (
+          {tournament.state === 'closed' && (
             <div className={`${classes.Closed} p-3 mb-3`}>
               <h5 className={'fw-light m-0'}>
                 Registration is Closed
               </h5>
             </div>
           )}
-          <LogoImage src={directorState.tournament.image_url} />
+          <LogoImage src={tournament.image_url} />
           <Card className={'text-center'} border={'0'}>
             <Card.Body>
               <Card.Title>
-                {directorState.tournament.name}
+                {tournament.name}
               </Card.Title>
-              <a href={`/tournaments/${directorState.tournament.identifier}`} target={'_new'}>
+              <a href={`/tournaments/${tournament.identifier}`} target={'_new'}>
                 Front Page
                 <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
               </a>
             </Card.Body>
           </Card>
 
-          <Counts tournament={directorState.tournament} />
-          <RegistrationOptions tournament={directorState.tournament}/>
-          <EditableConfiguration tournament={directorState.tournament} />
-          <Shifts tournament={directorState.tournament} />
-          <MassActions tournament={directorState.tournament}/>
+          <Counts tournament={tournament} />
+          <RegistrationOptions tournament={tournament}/>
+          <EditableConfiguration tournament={tournament} />
+          <Shifts tournament={tournament} />
+          <MassActions tournament={tournament}/>
 
           <div className={'d-none d-md-block d-lg-none'}>
             <hr />
@@ -102,12 +104,12 @@ const VisibleTournament = ({closeTournament}) => {
         </div>
 
         <div className={'col-12 col-md-8 col-lg-5 col-xl-6'}>
-          <Capacity tournament={directorState.tournament} />
-          <RegistrationsWeek tournament={directorState.tournament}/>
-          <RegistrationTypesWeek tournament={directorState.tournament}/>
-          {divisionNames.map(name => <DivisionItemsWeek tournament={directorState.tournament} title={name} key={name}/> )}
-          <OptionalItemsWeek tournament={directorState.tournament} title={'Optional Events'} dataKeys={['bowling']}/>
-          <OptionalItemsWeek tournament={directorState.tournament} title={'Extras'} dataKeys={['banquet', 'product']}/>
+          <Capacity tournament={tournament} />
+          <RegistrationsWeek tournament={tournament}/>
+          <RegistrationTypesWeek tournament={tournament}/>
+          {divisionNames.map(name => <DivisionItemsWeek tournament={tournament} title={name} key={name}/> )}
+          <OptionalItemsWeek tournament={tournament} title={'Optional Events'} dataKeys={['bowling']}/>
+          <OptionalItemsWeek tournament={tournament} title={'Extras'} dataKeys={['banquet', 'product']}/>
         </div>
 
         <div className={'d-md-none d-lg-block col-12 col-md-4 col-lg-3'}>

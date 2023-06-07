@@ -14,6 +14,7 @@ import {
 import {useLoginContext} from "../../../store/LoginContext";
 import ErrorPage from "../../../components/ui/ErrorAlert";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import ErrorBoundary from "../../../components/common/ErrorBoundary";
 
 const Tournament = () => {
   const router = useRouter();
@@ -64,15 +65,17 @@ const Tournament = () => {
 
   return (
     <div>
-      <ErrorPage text={errorMessage}/>
+      <ErrorBoundary>
+        <ErrorPage text={errorMessage}/>
 
-      {tournament && (
-        (tournament.state === 'active' || tournament.state === 'closed'
-          ? <VisibleTournament closeTournament={stateChangeInitiated} />
-          : <TournamentInPrep stateChangeInitiated={stateChangeInitiated}
-                              requestStripeStatus={stripe} />
-        )
-      )}
+        {tournament && (
+          (tournament.state === 'active' || tournament.state === 'closed'
+              ? <VisibleTournament closeTournament={stateChangeInitiated} />
+              : <TournamentInPrep stateChangeInitiated={stateChangeInitiated}
+                                  requestStripeStatus={stripe} />
+          )
+        )}
+      </ErrorBoundary>
     </div>
   );
 }

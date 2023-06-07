@@ -32,10 +32,10 @@ const handleSuccess = (response, onSuccess, onFailure) => {
       onSuccess(response.data);
     }
   } else if (response.status === 401) {
-    onFailure({error: 'Unauthorized'});
+    onFailure('Unauthorized');
   } else if (response.status === 404) {
     if (onFailure) {
-      onFailure({error: 'Not found'});
+      onFailure('Not found');
     }
   } else {
     if (onFailure) {
@@ -44,42 +44,18 @@ const handleSuccess = (response, onSuccess, onFailure) => {
   }
 }
 
-export const useAuth = ({user, tournamentIdentifier}) => {
-
-}
-
 const handleError = (error, callbackFn) => {
   if (error.request) {
     console.log('No response was received.');
     if (callbackFn) {
-      callbackFn({error: 'The server did not respond'});
+      callbackFn('The server did not respond');
     }
   } else {
-    devConsoleLog('Exceptional error', error);
     if (callbackFn) {
       callbackFn(error);
     }
   }
 }
-
-export const directorApiRequest = ({uri, requestConfig, onSuccess = null, onFailure = null}) => {
-  const url = `${apiHost}/director${uri}`;
-  const config = {...requestConfig};
-  config.url = url;
-  config.headers = {...requestConfig.headers}
-  config.headers['Accept'] = 'application/json';
-  config.validateStatus = (status) => status < 500;
-  devConsoleLog("Config used for Axios:", config);
-  axios(config)
-    .then(response => {
-      handleSuccess(response, onSuccess, onFailure);
-    })
-    .catch(error => {
-      handleError(error, onFailure);
-    });
-
-}
-
 
 // We can use this for fetching data from the API required by a component, but that's it.
 // It'll make the pages that need it smaller, since they won't have to worry about
@@ -111,7 +87,6 @@ export const useDirectorApi = ({
   // This prevents SWR from making the request if we don't have a URI yet (which may be
   // the case when pulling URI details from, say, one or more query parameters
   const swrKey = uri ? [`${apiHost}/director${uri}`, authToken, ready] : null;
-  devConsoleLog("SWR key:", swrKey);
   const swrOptions = {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
@@ -162,20 +137,39 @@ export const useDirectorApi = ({
   }
 }
 
-export const directorApiDownloadRequest = ({uri, context, onSuccess = null, onFailure = null}) => {
-  const url = `${apiHost}${uri}`;
+// This is meant to be used for on-demand requests, such as writes and anything else that
+// happens outside the context of a page load
+export const directorApiRequest = ({uri, requestConfig, onSuccess = null, onFailure = null}) => {
+  const url = `${apiHost}/director${uri}`;
+  const config = {...requestConfig};
+  config.url = url;
+  config.headers = {...requestConfig.headers}
+  config.headers['Accept'] = 'application/json';
+  config.validateStatus = (status) => status < 500;
+  axios(config)
+    .then(response => {
+      handleSuccess(response, onSuccess, onFailure);
+    })
+    .catch(error => {
+      handleError(error, onFailure);
+    });
+
+}
+
+export const directorApiDownloadRequest = ({uri, authToken, onSuccess = null, onFailure = null}) => {
+  const url = `${apiHost}/director${uri}`;
   const config = {
     method: 'get',
     url: url,
     headers: {
-      'Authorization': context.directorState.user.authToken,
+      'Authorization': authToken,
     },
     responseType: 'blob',
     validateStatus: (status) => status < 500,
   }
   axios(config)
     .then(response => {
-      handleSuccess(response, context.dispatch, onSuccess, onFailure)
+      handleSuccess(response, onSuccess, onFailure)
     })
     .catch(error => {
       handleError(error, onFailure);
