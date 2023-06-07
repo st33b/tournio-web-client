@@ -139,12 +139,13 @@ export const useDirectorApi = ({
 
 // This is meant to be used for on-demand requests, such as writes and anything else that
 // happens outside the context of a page load
-export const directorApiRequest = ({uri, requestConfig, onSuccess = null, onFailure = null}) => {
+export const directorApiRequest = ({uri, requestConfig, authToken, onSuccess = null, onFailure = null}) => {
   const url = `${apiHost}/director${uri}`;
   const config = {...requestConfig};
   config.url = url;
   config.headers = {...requestConfig.headers}
   config.headers['Accept'] = 'application/json';
+  config.headers['Authorization'] = authToken;
   config.validateStatus = (status) => status < 500;
   axios(config)
     .then(response => {

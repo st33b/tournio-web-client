@@ -4,12 +4,13 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../director";
 import {tournamentContactAdded, tournamentContactUpdated} from "../../../store/actions/directorActions";
+import {useLoginContext} from "../../../store/LoginContext";
 
 import classes from './ContactForm.module.scss';
 
 const ContactForm = ({tournament, contact, newContact}) => {
-  const context = useDirectorContext();
-  const dispatch = context.dispatch;
+  const { authToken } = useLoginContext();
+  const { dispatch } = useDirectorContext();
 
   const initialState = {
     identifier: '',
@@ -64,7 +65,7 @@ const ContactForm = ({tournament, contact, newContact}) => {
 
   const formSubmitted = (event) => {
     event.preventDefault();
-    const uri = newContact ? `/director/tournaments/${tournament.identifier}/contacts` : `/director/contacts/${contact.identifier}`;
+    const uri = newContact ? `/tournaments/${tournament.identifier}/contacts` : `/contacts/${contact.identifier}`;
     const requestConfig = {
       method: newContact ? 'post' : 'patch',
       data: {
@@ -81,7 +82,7 @@ const ContactForm = ({tournament, contact, newContact}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: onSuccess,
       onFailure: onFailure,
     })
