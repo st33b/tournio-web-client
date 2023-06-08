@@ -99,6 +99,7 @@ const ContactForm = ({tournament, contact, newContact}) => {
     'igbo-representative': 'IGBO Representative',
     'technologist': 'Technologist',
     'member-at-large': 'Member At Large',
+    'operations': 'Director of Operations',
   };
 
   const preferenceLabels = {
