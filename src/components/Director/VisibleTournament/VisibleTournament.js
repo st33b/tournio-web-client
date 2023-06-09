@@ -6,7 +6,6 @@ import AdditionalQuestions from "./AdditionalQuestions";
 import Capacity from './Capacity';
 import CloseTournament from "./CloseTournament";
 import Counts from "./Counts";
-// import RegistrationOptions from "./RegistrationOptions";
 import RegistrationOptions from "../RegistrationOptions/RegistrationOptions";
 import EditableConfiguration from "./EditableConfiguration";
 import Contacts from "../Tournament/Contacts";
@@ -20,12 +19,19 @@ import MassActions from "../MassActions/MassActions";
 import LogoImage from "../LogoImage/LogoImage";
 import DeleteTournament from "../Tournament/DeleteTournament";
 import {useDirectorContext} from "../../../store/DirectorContext";
-
-import classes from './VisibleTournament.module.scss';
 import Users from "../Tournament/Users";
 import Shifts from "../TournamentInPrep/Shifts";
 
+import classes from './VisibleTournament.module.scss';
+
 const VisibleTournament = ({closeTournament}) => {
+  const EDITABLE_CONFIG_ITEMS = [
+    "display_capacity",
+    "publicly_listed",
+    "email_in_dev",
+    "skip_stripe",
+  ];
+
   const {directorState} = useDirectorContext();
 
   if (!directorState || !directorState.tournament) {
@@ -45,7 +51,7 @@ const VisibleTournament = ({closeTournament}) => {
       <Downloads tournament={directorState.tournament}/>
       <Accordion className={'mb-3'}>
         <Basics eventKey={'0'} tournament={directorState.tournament}/>
-        <Configuration eventKey={'1'} tournament={directorState.tournament} />
+        <Configuration eventKey={'1'} tournament={directorState.tournament} excludedKeys={EDITABLE_CONFIG_ITEMS} />
         <AdditionalQuestions eventKey={'2'} tournament={directorState.tournament}/>
         <PurchasableItems eventKey={'3'} tournament={directorState.tournament}/>
       </Accordion>
@@ -91,7 +97,7 @@ const VisibleTournament = ({closeTournament}) => {
 
           <Counts tournament={directorState.tournament} />
           <RegistrationOptions tournament={directorState.tournament}/>
-          <EditableConfiguration tournament={directorState.tournament} />
+          <EditableConfiguration tournament={directorState.tournament} editableKeys={EDITABLE_CONFIG_ITEMS} />
           <Shifts tournament={directorState.tournament} />
           <MassActions tournament={directorState.tournament}/>
 
