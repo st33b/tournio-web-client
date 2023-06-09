@@ -13,6 +13,7 @@ const EditableConfiguration = ({tournament}) => {
   )
   const EDITABLE_ITEMS = [
     "display_capacity",
+    "publicly_listed",
     "email_in_dev",
     "skip_stripe",
   ];

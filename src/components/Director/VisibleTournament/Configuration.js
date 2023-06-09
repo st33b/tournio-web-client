@@ -20,6 +20,7 @@ const Configuration = ({eventKey, tournament}) => {
   // These items should not appear in this list.
   const EDITABLE_ITEMS = [
     "display_capacity",
+    "publicly_listed",
     "email_in_dev",
     "skip_stripe",
   ];
