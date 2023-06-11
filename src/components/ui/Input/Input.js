@@ -169,7 +169,7 @@ const Input = (props) => {
         {inputElement}
         {helperElement}
         <Collapse in={errorMessages.length > 0}>
-          <div className={`inv alid-feed back ${classes.InvalidFeedback}`}>
+          <div className={`${classes.InvalidFeedback}`}>
             {errorMessages.map((e, i) => (
               <span className={"line"} key={`${props.identifier}_errorMsg_${i}`}>
               <i className="bi bi-x me-1" aria-hidden="true"/>

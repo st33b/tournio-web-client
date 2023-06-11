@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import {NextResponse} from "next/server";
+import {get} from "@vercel/edge-config";
 import {VerifaliaRestClient} from "verifalia";
 
 export const config = {
@@ -9,16 +10,36 @@ export const config = {
 }
 
 export default async (req, res) => {
-  if (!['production', 'preview'].includes(process.env.NODE_ENV)) {
+  if (process.env.NODE_ENV === 'development') {
+    const reject = await get ('verifalia-reject');
+    console.log("In DEV. Deliverability header says:", reject);
+
     return new NextResponse(
       JSON.stringify({
         checked: false,
+        rejected: reject,
       }),
       {
         status: 200,
       }
     )
   }
+
+  const shouldPerform = await get('verifalia-email-validation');
+
+  if (!shouldPerform) {
+    const reject = await get ('verifalia-reject').catch((error) => false);
+    return new NextResponse(
+      JSON.stringify({
+        checked: false,
+        rejected: reject,
+      }),
+      {
+        status: 200,
+      }
+    );
+  }
+
   if (req.method === 'POST') {
     let entry;
     const body = await req.json();
@@ -52,16 +73,15 @@ export default async (req, res) => {
         status: 500,
       }
     )
-  } else {
-    // Fall back to the Jokes API if we didn't get here via POST
-    const url = `https://v2.jokeapi.dev//joke/Any?safe-mode`;
-
-    const response = await fetch(url, {
-      headers: {
-        Accept: 'application/json',
-      },
-    });
-    const joke = await response.json();
-    return NextResponse.json(joke);
   }
+
+  console.error('API email check requested by something other than POST.');
+  return new NextResponse(
+    JSON.stringify({
+      error: 'Bad request.',
+    }),
+    {
+      status: 400,
+    }
+  )
 };

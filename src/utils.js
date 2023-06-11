@@ -693,24 +693,6 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
 /////////////////////////////////////////////////////
 
 export const validateEmail = async function (emailAddress) {
-  if (!['production', 'preview'].includes(process.env.NODE_ENV)) {
-    devConsoleLog("Not prod or prev, not reaching out to API");
-
-    function waitABit(result) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(result);
-        }, 2000);
-      });
-    }
-    return await waitABit(
-      {
-        checked: false,
-        rejected: false,
-        // error: 'Simulate some kind of error',
-      },
-    );
-  }
   const response = await fetch('/api/email_check', {
     method: 'POST',
     mode: 'same-origin',
