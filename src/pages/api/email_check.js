@@ -10,9 +10,13 @@ export const config = {
 
 export default async (req, res) => {
   if (!['production', 'preview'].includes(process.env.NODE_ENV)) {
+    const isDeliverable = req.headers.get('x-tournio-deliverable') === 'true';
+    console.log("Deliverability header says:", isDeliverable);
+
     return new NextResponse(
       JSON.stringify({
         checked: false,
+        rejected: !isDeliverable,
       }),
       {
         status: 200,

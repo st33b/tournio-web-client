@@ -8,6 +8,7 @@ import classes from './BowlerForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import ShiftForm from "../ShiftForm/ShiftForm";
 import {devConsoleLog, validateEmail} from "../../../utils";
+import {headers} from "next/headers";
 
 const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => {
   const {registration} = useRegistrationContext();
@@ -493,6 +494,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         if (!result.checked) {
           devConsoleLog("I did not actually check it.");
         }
+
         if (result.error) {
           // Right now, we don't care if it returns an error; this is an enhancement,
           // not a requisite check.
