@@ -16,6 +16,7 @@ async function devEmailValidation(request) {
     headers.set('x-tournio-deliverable', deliverable);
     headers.set('x-tournio-perform-validation', false);
   } else {
+    console.log("Middleware -- perform validation? --", performValidation);
     const performValidation = await get('verifalia-email-validation');
     headers.set('x-tournio-perform-validation', performValidation);
   }
