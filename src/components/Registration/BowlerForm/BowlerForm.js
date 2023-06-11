@@ -487,7 +487,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     // validation beyond the Validation API
 
     // Only do this on active tournaments
-    if (tournament.state === 'active' && inputIdentifier === 'email') {
+    if (['demo', 'testing', 'active'].includes(tournament.state) && inputIdentifier === 'email') {
       const newFormData = {...bowlerForm};
       newFormData.formFields[inputIdentifier].bonusCheckUnderway = true;
 
