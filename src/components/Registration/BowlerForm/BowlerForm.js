@@ -8,6 +8,7 @@ import classes from './BowlerForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import ShiftForm from "../ShiftForm/ShiftForm";
 import {devConsoleLog, validateEmail} from "../../../utils";
+import {headers} from "next/headers";
 
 const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => {
   const {registration} = useRegistrationContext();
@@ -458,6 +459,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           ...updatedFormElement,
           ...validityForField(inputIdentifier, failedChecks),
         }
+      } else {
+        updatedFormElement.validated = false;
       }
 
       // Update the relevant parts of the changed field (the new value, whether it's valid, and the fact that it was changed at all)
@@ -484,7 +487,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     // validation beyond the Validation API
 
     // Only do this on active tournaments
-    if (tournament.state === 'active' && inputIdentifier === 'email') {
+    if (['demo', 'testing', 'active'].includes(tournament.state) && inputIdentifier === 'email') {
       const newFormData = {...bowlerForm};
       newFormData.formFields[inputIdentifier].bonusCheckUnderway = true;
 
@@ -493,6 +496,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         if (!result.checked) {
           devConsoleLog("I did not actually check it.");
         }
+
         if (result.error) {
           // Right now, we don't care if it returns an error; this is an enhancement,
           // not a requisite check.
@@ -506,13 +510,14 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
 
             // This is for the Constraint Validation API (which sets the :invalid pseudo-class)
             inputElement.setCustomValidity('undeliverable');
+          } else {
+            inputElement.setCustomValidity('');
           }
 
           newFormData.formFields[inputIdentifier] = {
             ...newFormData.formFields[inputIdentifier],
             ...validityForField(inputIdentifier, whoopsies),
           }
-          inputElement.reportValidity();
         }
       }).catch(error => {
         devConsoleLog("Unexpected error: ", error);
