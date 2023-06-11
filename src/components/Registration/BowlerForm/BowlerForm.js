@@ -539,9 +539,9 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     const failedChecks = checksToRun.filter(c => validity[c]);
 
     // If everything in the Validation API passed, then run any bonus checks
-    if (failedChecks.length === 0) {
-      bonusValidityCheck(inputIdentifier, event.target, newFormData.formFields[inputIdentifier].elementConfig.value);
-    }
+    // if (failedChecks.length === 0) {
+    //   bonusValidityCheck(inputIdentifier, event.target, newFormData.formFields[inputIdentifier].elementConfig.value);
+    // }
 
     newFormData.formFields[inputIdentifier] = {
       ...newFormData.formFields[inputIdentifier],
