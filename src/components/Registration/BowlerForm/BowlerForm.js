@@ -459,6 +459,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           ...updatedFormElement,
           ...validityForField(inputIdentifier, failedChecks),
         }
+      } else {
+        updatedFormElement.validated = false;
       }
 
       // Update the relevant parts of the changed field (the new value, whether it's valid, and the fact that it was changed at all)
@@ -508,13 +510,14 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
 
             // This is for the Constraint Validation API (which sets the :invalid pseudo-class)
             inputElement.setCustomValidity('undeliverable');
+          } else {
+            inputElement.setCustomValidity('');
           }
 
           newFormData.formFields[inputIdentifier] = {
             ...newFormData.formFields[inputIdentifier],
             ...validityForField(inputIdentifier, whoopsies),
           }
-          inputElement.reportValidity();
         }
       }).catch(error => {
         devConsoleLog("Unexpected error: ", error);
@@ -539,9 +542,9 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     const failedChecks = checksToRun.filter(c => validity[c]);
 
     // If everything in the Validation API passed, then run any bonus checks
-    // if (failedChecks.length === 0) {
-    //   bonusValidityCheck(inputIdentifier, event.target, newFormData.formFields[inputIdentifier].elementConfig.value);
-    // }
+    if (failedChecks.length === 0) {
+      bonusValidityCheck(inputIdentifier, event.target, newFormData.formFields[inputIdentifier].elementConfig.value);
+    }
 
     newFormData.formFields[inputIdentifier] = {
       ...newFormData.formFields[inputIdentifier],

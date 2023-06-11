@@ -8,16 +8,17 @@ export const config = {
 };
 
 async function devEmailValidation(request) {
-  if (process.env.NODE_ENV !== 'development') {
-    return NextResponse.next();
-  }
-
-  const deliverable = await get('addressIsDeliverable');
-
   const headers = new Headers(request.headers);
-  headers.set('x-tournio-deliverable', deliverable);
 
-  console.log("x-tournio-deliverable:", deliverable);
+  if (process.env.NODE_ENV === 'development') {
+    const deliverable = await get('addressIsDeliverable');
+
+    headers.set('x-tournio-deliverable', deliverable);
+    headers.set('x-tournio-perform-validation', false);
+  } else {
+    const performValidation = await get('verifalia-email-validation');
+    headers.set('x-tournio-perform-validation', performValidation);
+  }
 
   return NextResponse.next({
     request: {

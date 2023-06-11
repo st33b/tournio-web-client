@@ -9,9 +9,16 @@ export const config = {
 }
 
 export default async (req, res) => {
-  if (!['production', 'preview'].includes(process.env.NODE_ENV)) {
+  const shouldPerform = req.headers.get('x-tournio-perform-validation') === 'true';
+
+  if (process.env.NODE_ENV === 'development') {
+    // The header tells us how to respond
     const isDeliverable = req.headers.get('x-tournio-deliverable') === 'true';
-    console.log("Deliverability header says:", isDeliverable);
+    console.log("In DEV. Deliverability header says:", isDeliverable);
+
+    // Just making sure.
+    const shouldPerform = req.headers.get('x-tournio-perform-validation') === 'true';
+    console.log("In DEV. I should check Verifalia? -- ", shouldPerform);
 
     return new NextResponse(
       JSON.stringify({
@@ -23,7 +30,9 @@ export default async (req, res) => {
       }
     )
   }
-  if (req.method === 'POST') {
+  if (req.method === 'POST' && shouldPerform) {
+    console.log("I should check Verifalia? -- ", shouldPerform);
+
     let entry;
     const body = await req.json();
     const addressToCheck = body.email;
@@ -56,16 +65,16 @@ export default async (req, res) => {
         status: 500,
       }
     )
-  } else {
-    // Fall back to the Jokes API if we didn't get here via POST
-    const url = `https://v2.jokeapi.dev//joke/Any?safe-mode`;
-
-    const response = await fetch(url, {
-      headers: {
-        Accept: 'application/json',
-      },
-    });
-    const joke = await response.json();
-    return NextResponse.json(joke);
   }
+  console.log("I should check Verifalia? -- ", shouldPerform);
+
+  return new NextResponse(
+    JSON.stringify({
+      checked: false,
+      error: 'Bad request. So bad.',
+    }),
+    {
+      status: 400,
+    }
+  )
 };
