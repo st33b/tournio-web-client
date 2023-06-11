@@ -26,7 +26,6 @@ export default async (req, res) => {
   }
 
   const shouldPerform = await get('verifalia-email-validation');
-  console.log("I should check Verifalia? -- ", shouldPerform);
 
   if (!shouldPerform) {
     const reject = await get ('verifalia-reject').catch((error) => false);
