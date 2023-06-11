@@ -30,9 +30,22 @@ export default async (req, res) => {
       }
     )
   }
-  if (req.method === 'POST' && shouldPerform) {
-    console.log("I should check Verifalia? -- ", shouldPerform);
 
+  console.log("I should check Verifalia? -- ", shouldPerform);
+
+  if (!shouldPerform) {
+    return new NextResponse(
+      JSON.stringify({
+        checked: false,
+        rejected: false,
+      }),
+      {
+        status: 200,
+      }
+    );
+  }
+
+  if (req.method === 'POST') {
     let entry;
     const body = await req.json();
     const addressToCheck = body.email;
@@ -66,12 +79,11 @@ export default async (req, res) => {
       }
     )
   }
-  console.log("I should check Verifalia? -- ", shouldPerform);
 
+  console.error('API email check requested by something other than POST.');
   return new NextResponse(
     JSON.stringify({
-      checked: false,
-      error: 'Bad request. So bad.',
+      error: 'Bad request.',
     }),
     {
       status: 400,
