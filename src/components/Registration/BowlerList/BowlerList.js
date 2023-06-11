@@ -1,9 +1,9 @@
 import classes from "./BowlerList.module.scss";
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {Link} from 'next';
-import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table";
+import {createColumnHelper, flexRender, getCoreRowModel, useReactTable} from "@tanstack/react-table";
 
-const BowlerList = ({bowlers, caption, includeMenuLink}) => {
+const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
   // identifier
   // name
   // team_name
@@ -16,23 +16,24 @@ const BowlerList = ({bowlers, caption, includeMenuLink}) => {
   const columns = [
     // We want the name to be linked, using the identifier
     columnHelper.accessor('name', {
-      cell: props => <Link href={`/bowlers/${props.row.original.identifier}`}>${props.getValue()}</Link>,
+      // cell: props => <a href={`/bowlers/${props.row.original.identifier}`}>{props.getValue()}</a>,
+      // cell: props => <Link href={`/bowlers/${props.row.original.identifier}`}>${props.getValue()}</Link>,
       header: 'Name',
     }),
-    // Do we want a link to the team page?
-    columnHelper.accessor('team', {
-      cell: info => info.getValue(),
-      header: 'Team Name',
-    }),
-    columnHelper.accessor('doubles_partner', {
-      cell: info => info.getValue(),
-      header: 'Doubles Partner',
-    }),
-    columnHelper.accessor('usbc_id', {
+    columnHelper.accessor('usbcId', {
       cell: info => info.getValue(),
       header: 'USBC ID',
     }),
-    columnHelper.accessor('registered_on', {
+    // Do we want a link to the team page?
+    columnHelper.accessor('teamName', {
+      cell: info => info.getValue(),
+      header: 'Team Name',
+    }),
+    columnHelper.accessor('doublesPartner', {
+      cell: info => info.getValue(),
+      header: 'Doubles Partner',
+    }),
+    columnHelper.accessor('registeredOn', {
       header: 'Date Registered',
     }),
     // This will give us a link/button to the bowler's menu page
@@ -44,15 +45,35 @@ const BowlerList = ({bowlers, caption, includeMenuLink}) => {
 
   const theTable = useReactTable({
     data: bowlers,
-    columns: columns,
+    columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
   return (
     <div className={classes.BowlerList}>
       <div className={`d-md-none`}>
-        <ul className={`list-group`}>
-          
+        <ul className={`list-group list-group-flush`}>
+          {theTable.getRowModel().rows.map(row => (
+            <li className={`list-group-item ${classes.Bowler}`} key={row.id}>
+              <p className={`${classes.Name}`}>
+                <a href={`/bowlers/${row.original.identifier}`}>
+                  {row.getValue('name')}
+                </a>
+              </p>
+              <dl>
+                {row.getVisibleCells().filter(({column}) => column.id !== 'name').map(cell => (
+                  <div className={`row`} key={cell.id}>
+                    <dt className={`col-5 text-end`}>
+                      {cell.column.columnDef.header}
+                    </dt>
+                    <dd className={`col-7`}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </dd>
+                  </div>
+                  ))}
+              </dl>
+            </li>
+          ))}
         </ul>
       </div>
     </div>

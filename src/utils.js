@@ -317,7 +317,7 @@ export const fetchTeamList = ({tournamentIdentifier, dispatch, onSuccess, onFail
       }
     })
     .catch(error => {
-      onFailure({error: 'Unexpected error from the server'});
+      onFailure({error: `Unexpected error from the server: ${error}`});
     });
 }
 
@@ -333,14 +333,14 @@ export const fetchBowlerList = ({tournamentIdentifier, onSuccess, onFailure, unp
   };
   axios(requestConfig)
     .then(response => {
-      if (response.status >= 200 && response.status < 300) {
+      if (response.status >= 200 && response.status < 400) {
         onSuccess(response.data);
       } else {
         onFailure(response.data);
       }
     })
     .catch(error => {
-      onFailure({error: 'Unexpected error from the server'});
+      onFailure({error: `Unexpected error from the server: ${error}`});
     });
 }
 

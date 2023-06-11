@@ -7,9 +7,9 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import BowlerListing from "../../../components/Registration/BowlerListing/BowlerListing";
-import Contacts from "../../../components/Registration/Contacts/Contacts";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import {tournamentDetailsRetrieved} from "../../../store/actions/registrationActions";
+import BowlerList from "../../../components/Registration/BowlerList/BowlerList";
 
 const Page = () => {
   const router = useRouter();
@@ -22,7 +22,7 @@ const Page = () => {
 
   const onBowlerListRetrieved = (data) => {
     const bowlerComparison = (left, right) => {
-      return left.last_name.toLocaleLowerCase().localeCompare(right.last_name.toLocaleLowerCase());
+      return left.name.toLocaleLowerCase().localeCompare(right.name.toLocaleLowerCase());
     }
     setBowlers(data.sort(bowlerComparison)); // sort this!
     setLoading(false);
@@ -97,11 +97,14 @@ const Page = () => {
         </Col>
         <Col>
           {error}
-          <BowlerListing caption={'Registered Bowlers'}
-                         bowlers={bowlers}
-                         enablePayment={true}
-                         successType={success}
-          />
+          {/*<BowlerListing caption={'Registered Bowlers'}*/}
+          {/*               bowlers={bowlers}*/}
+          {/*               enablePayment={true}*/}
+          {/*               successType={success}*/}
+          {/*/>*/}
+          <BowlerList bowlers={bowlers}
+                      caption={'Tournament Bowlers'}
+                      includeMenuLink={true} />
         </Col>
       </Row>
     </div>
