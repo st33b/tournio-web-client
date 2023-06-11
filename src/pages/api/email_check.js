@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import {NextResponse} from "next/server";
+import {get} from "@vercel/edge-config";
 import {VerifaliaRestClient} from "verifalia";
 
 export const config = {
@@ -9,21 +10,14 @@ export const config = {
 }
 
 export default async (req, res) => {
-  const shouldPerform = req.headers.get('x-tournio-perform-validation') === 'true';
-
   if (process.env.NODE_ENV === 'development') {
-    // The header tells us how to respond
-    const isDeliverable = req.headers.get('x-tournio-deliverable') === 'true';
-    console.log("In DEV. Deliverability header says:", isDeliverable);
-
-    // Just making sure.
-    const shouldPerform = req.headers.get('x-tournio-perform-validation') === 'true';
-    console.log("In DEV. I should check Verifalia? -- ", shouldPerform);
+    const reject = await get ('verifalia-reject');
+    console.log("In DEV. Deliverability header says:", reject);
 
     return new NextResponse(
       JSON.stringify({
         checked: false,
-        rejected: !isDeliverable,
+        rejected: reject,
       }),
       {
         status: 200,
@@ -31,13 +25,15 @@ export default async (req, res) => {
     )
   }
 
+  const shouldPerform = await get('verifalia-email-validation');
   console.log("I should check Verifalia? -- ", shouldPerform);
 
   if (!shouldPerform) {
+    const reject = await get ('verifalia-reject').catch((error) => false);
     return new NextResponse(
       JSON.stringify({
         checked: false,
-        rejected: false,
+        rejected: reject,
       }),
       {
         status: 200,
