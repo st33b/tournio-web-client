@@ -22,9 +22,12 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
 
   const columns = [
     // We want the name to be linked, using the identifier
+    columnHelper.accessor('identifier', {
+      header: 'ID',
+      enableGlobalFilter: false,
+      enableHiding: true,
+    }),
     columnHelper.accessor('name', {
-      // cell: props => <a href={`/bowlers/${props.row.original.identifier}`}>{props.getValue()}</a>,
-      // cell: props => <Link href={`/bowlers/${props.row.original.identifier}`}>${props.getValue()}</Link>,
       header: 'Name',
       enableGlobalFilter: true,
     }),
@@ -48,14 +51,10 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
       header: 'Date Registered',
       enableGlobalFilter: false,
     }),
-    // This will give us a link/button to the bowler's menu page
-    // columnHelper.display({
-    //   id: 'action',
-    //   cell: <RowAction row={props.row} />,
-    // }),
   ];
 
   const [globalFilter, setGlobalFilter] = useState('');
+  const [columnVisibility, setColumnVisibility] = useState({ identifier: false, name: false })
 
   const theTable = useReactTable({
     data: bowlers,
@@ -64,6 +63,7 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
     globalFilterFn: 'includesString',
     state: {
       globalFilter,
+      columnVisibility,
     },
     onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
@@ -105,15 +105,15 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
           <ul className={`list-group list-group-flush ${classes.Bowlers}`}>
             {theTable.getRowModel().rows.map(row => (
               <li className={`list-group-item ${classes.Bowler}`} key={row.id}>
-                <p className={`${classes.Name}`}>
-                  <a href={`/bowlers/${row.original.identifier}`}>
+                <p className={` ${classes.Name}`}>
+                  <a href={`/bowlers/${row.getValue('identifier')}`}>
                     {row.getValue('name')}
                   </a>
                 </p>
-                <dl>
-                  {row.getVisibleCells().filter(({column}) => column.id !== 'name').map(cell => (
+                <dl className={`mb-1`}>
+                  {row.getVisibleCells().map(cell => (
                     <div className={`row g-3`} key={cell.id}>
-                      <dt className={`col-5 col-md-4 text-end ps-0`}>
+                      <dt className={`col-5 col-sm-6 text-end ps-0`}>
                         {cell.column.columnDef.header}
                       </dt>
                       <dd className={`col pe-0`}>
@@ -122,6 +122,16 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
                     </div>
                   ))}
                 </dl>
+                <div className={`d-flex justify-content-end pb-2`}>
+                  <a href={`/bowlers/${row.getValue('identifier')}`}
+                     className={`btn btn-success`}
+                     role={'button'}
+                  >
+                    Fees &amp; Extras
+                    <i className={`bi bi-arrow-right ps-2`}
+                       aria-hidden={true} />
+                  </a>
+                </div>
               </li>
             ))}
           </ul>

@@ -13,17 +13,11 @@
 
       border-width: 0;
       &:nth-child(odd) {
-        background-color: #f8f8f8;
+        background-color: var(--tournio-tertiary-bg);
       }
       .Name {
         font-size: 120%;
       }
-    }
-  }
-
-  @media (min-device-width: 768px) {
-    form {
-
     }
   }
 }
