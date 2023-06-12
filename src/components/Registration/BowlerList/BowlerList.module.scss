@@ -1,4 +1,8 @@
 .BowlerList {
+  form {
+    margin-top: 1rem;
+  }
+
   .MatchCount {
     text-align: center;
     font-style: italic;
@@ -14,6 +18,12 @@
       .Name {
         font-size: 120%;
       }
+    }
+  }
+
+  @media (min-device-width: 768px) {
+    form {
+
     }
   }
 }

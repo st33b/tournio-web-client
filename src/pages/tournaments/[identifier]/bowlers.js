@@ -88,20 +88,36 @@ const Page = () => {
 
   return (
     <div>
-      <Row>
-        <Col md={4} className={'d-none d-md-block'}>
+      <div className={`row`}>
+        <div className={'col-4 d-md-none'}>
+          <TournamentLogo url={registration.tournament.image_url}/>
+        </div>
+        <div className={`col-8 d-md-none d-flex flex-column justify-content-around`}>
+          <h4 className={'text-start'}>
+            <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
+              {registration.tournament.name}
+            </a>
+          </h4>
+          <h5 className={`m-0`}>
+            Registered Bowlers
+          </h5>
+        </div>
+        <div className={'col-4 d-none d-md-block'}>
           <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
             <TournamentLogo url={registration.tournament.image_url}/>
             <h4 className={'text-center py-3'}>{registration.tournament.name}</h4>
           </a>
-        </Col>
-        <Col>
+        </div>
+        <div className={`col`}>
+          <h5 className={`d-none d-md-block`}>
+            Registered Bowlers
+          </h5>
           {error}
           <BowlerList bowlers={bowlers}
                       caption={'Tournament Bowlers'}
                       includeMenuLink={true} />
-        </Col>
-      </Row>
+        </div>
+      </div>
     </div>
   );
 }

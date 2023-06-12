@@ -35,12 +35,12 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
     }),
     // Do we want a link to the team page?
     columnHelper.accessor('teamName', {
-      cell: info => info.getValue(),
+      cell: info => info.getValue() ? info.getValue() : 'n/a',
       header: 'Team Name',
       enableGlobalFilter: true,
     }),
     columnHelper.accessor('doublesPartner', {
-      cell: info => info.getValue(),
+      cell: info => info.getValue() ? info.getValue() : 'n/a',
       header: 'Doubles Partner',
       enableGlobalFilter: false,
     }),
@@ -73,27 +73,22 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
   return (
     <div className={classes.BowlerList}>
       <form noValidate>
-        <fieldset>
-          <legend>
-            Registered Bowlers
-          </legend>
-          <div className={`mb-3 d-flex flex-wrap`}>
-            <label className={`col-form-label pe-2`} htmlFor={`searchField`}>
-              Find&nbsp;by:
-            </label>
-            <div className={`flex-grow-1`}>
-              <input type={'text'}
-                     className={`form-control`}
-                     id={`searchField`}
-                     onChange={(e) => setGlobalFilter(e.target.value)}
-                     value={globalFilter}
-              />
-              <div className={`form-text`}>
-                Name, USBC id, ...
-              </div>
+        <div className={`mb-3 d-flex flex-wrap`}>
+          <label className={`col-form-label pe-2`} htmlFor={`searchField`}>
+            Find&nbsp;by:
+          </label>
+          <div className={`flex-grow-1`}>
+            <input type={'text'}
+                   className={`form-control`}
+                   id={`searchField`}
+                   onChange={(e) => setGlobalFilter(e.target.value)}
+                   value={globalFilter}
+            />
+            <div className={`form-text`}>
+              Name, USBC id, team name, ...
             </div>
           </div>
-        </fieldset>
+        </div>
       </form>
 
       {matchingBowlerCount === bowlers.length && (
@@ -117,11 +112,11 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
                 </p>
                 <dl>
                   {row.getVisibleCells().filter(({column}) => column.id !== 'name').map(cell => (
-                    <div className={`row`} key={cell.id}>
-                      <dt className={`col-5 text-end`}>
+                    <div className={`row g-3`} key={cell.id}>
+                      <dt className={`col-5 col-md-4 text-end ps-0`}>
                         {cell.column.columnDef.header}
                       </dt>
-                      <dd className={`col-7`}>
+                      <dd className={`col pe-0`}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </dd>
                     </div>
