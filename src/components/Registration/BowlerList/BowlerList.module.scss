@@ -1,6 +1,10 @@
 .BowlerList {
   form {
     margin-top: 1rem;
+
+    input::placeholder {
+      color: var(--tournio-tertiary-color);
+    }
   }
 
   .MatchCount {

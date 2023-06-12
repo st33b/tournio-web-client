@@ -11,13 +11,6 @@ import {
 import {devConsoleLog} from "../../../utils";
 
 const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
-  // identifier
-  // name
-  // team_name
-  // doubles_partner (name)
-  // usbc_id
-  // registered_on
-
   const columnHelper = createColumnHelper();
 
   const columns = [
@@ -70,6 +63,7 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
   });
 
   const matchingBowlerCount = theTable.getRowModel().rows.length;
+
   return (
     <div className={classes.BowlerList}>
       <form noValidate>
@@ -82,24 +76,22 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
                    className={`form-control`}
                    id={`searchField`}
                    onChange={(e) => setGlobalFilter(e.target.value)}
+                   placeholder={'Name, USBC id, team name, ...'}
                    value={globalFilter}
             />
-            <div className={`form-text`}>
-              Name, USBC id, team name, ...
-            </div>
           </div>
         </div>
       </form>
 
       {matchingBowlerCount === bowlers.length && (
-        <p className={`${classes.MatchCount}`}>
-          Matching bowlers will appear here.
+        <p className={`mt-5 text-secondary ${classes.MatchCount}`}>
+          Search results will appear here.
         </p>
       )}
       {matchingBowlerCount < bowlers.length && (
         <>
           <p className={`${classes.MatchCount}`}>
-            {matchingBowlerCount} matching bowlers
+            {matchingBowlerCount} result{matchingBowlerCount !== 1 ? 's' : ''} found
           </p>
 
           <ul className={`list-group list-group-flush ${classes.Bowlers}`}>
