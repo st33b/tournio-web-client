@@ -8,6 +8,7 @@ import {
   getFilteredRowModel,
   useReactTable
 } from "@tanstack/react-table";
+import {devConsoleLog} from "../../../utils";
 
 const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
   // identifier
@@ -68,55 +69,69 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
     getFilteredRowModel: getFilteredRowModel(),
   });
 
+  const matchingBowlerCount = theTable.getRowModel().rows.length;
   return (
     <div className={classes.BowlerList}>
       <form noValidate>
         <fieldset>
           <legend>
-            Search!
+            Registered Bowlers
           </legend>
-          <div className={`row mb-3`}>
-            <label className={`col-form-label col-3`} htmlFor={`searchField`}>
-              Look for:
+          <div className={`mb-3 d-flex flex-wrap`}>
+            <label className={`col-form-label pe-2`} htmlFor={`searchField`}>
+              Find&nbsp;by:
             </label>
-            <div className={`col-9`}>
+            <div className={`flex-grow-1`}>
               <input type={'text'}
                      className={`form-control`}
                      id={`searchField`}
-                     placeholder={`name, USBC id, ...`}
                      onChange={(e) => setGlobalFilter(e.target.value)}
                      value={globalFilter}
               />
+              <div className={`form-text`}>
+                Name, USBC id, ...
+              </div>
             </div>
           </div>
         </fieldset>
       </form>
 
-      <div className={`d-md-none`}>
-        <ul className={`list-group list-group-flush`}>
-          {theTable.getRowModel().rows.map(row => (
-            <li className={`list-group-item ${classes.Bowler}`} key={row.id}>
-              <p className={`${classes.Name}`}>
-                <a href={`/bowlers/${row.original.identifier}`}>
-                  {row.getValue('name')}
-                </a>
-              </p>
-              <dl>
-                {row.getVisibleCells().filter(({column}) => column.id !== 'name').map(cell => (
-                  <div className={`row`} key={cell.id}>
-                    <dt className={`col-5 text-end`}>
-                      {cell.column.columnDef.header}
-                    </dt>
-                    <dd className={`col-7`}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </dd>
-                  </div>
+      {matchingBowlerCount === bowlers.length && (
+        <p className={`${classes.MatchCount}`}>
+          Matching bowlers will appear here.
+        </p>
+      )}
+      {matchingBowlerCount < bowlers.length && (
+        <>
+          <p className={`${classes.MatchCount}`}>
+            {matchingBowlerCount} matching bowlers
+          </p>
+
+          <ul className={`list-group list-group-flush ${classes.Bowlers}`}>
+            {theTable.getRowModel().rows.map(row => (
+              <li className={`list-group-item ${classes.Bowler}`} key={row.id}>
+                <p className={`${classes.Name}`}>
+                  <a href={`/bowlers/${row.original.identifier}`}>
+                    {row.getValue('name')}
+                  </a>
+                </p>
+                <dl>
+                  {row.getVisibleCells().filter(({column}) => column.id !== 'name').map(cell => (
+                    <div className={`row`} key={cell.id}>
+                      <dt className={`col-5 text-end`}>
+                        {cell.column.columnDef.header}
+                      </dt>
+                      <dd className={`col-7`}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </dd>
+                    </div>
                   ))}
-              </dl>
-            </li>
-          ))}
-        </ul>
-      </div>
+                </dl>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   )
 }

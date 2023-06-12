@@ -1,7 +1,19 @@
 .BowlerList {
-  .Bowler {
-    .Name {
-      font-size: 120%;
+  .MatchCount {
+    text-align: center;
+    font-style: italic;
+  }
+  .Bowlers {
+    .Bowler {
+      position: static;
+
+      border-width: 0;
+      &:nth-child(odd) {
+        background-color: #f8f8f8;
+      }
+      .Name {
+        font-size: 120%;
+      }
     }
   }
 }

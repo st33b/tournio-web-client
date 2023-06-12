@@ -97,11 +97,6 @@ const Page = () => {
         </Col>
         <Col>
           {error}
-          {/*<BowlerListing caption={'Registered Bowlers'}*/}
-          {/*               bowlers={bowlers}*/}
-          {/*               enablePayment={true}*/}
-          {/*               successType={success}*/}
-          {/*/>*/}
           <BowlerList bowlers={bowlers}
                       caption={'Tournament Bowlers'}
                       includeMenuLink={true} />
