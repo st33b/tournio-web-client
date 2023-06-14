@@ -25,9 +25,10 @@ const Navigation = ({showCart}) => {
     cartText = (
       <a href={'#mobile_cart'}
          title={'Cart'}
-         data-bs-toggle={'collapse'}
-         aria-controls={'mobile_cart'}
-         aria-expanded={false}
+         data-bs-toggle={'offcanvas'}
+         data-bs-target={'#offcanvasCart'}
+         aria-controls={'offcanvasCart'}
+         // aria-expanded={false}
          className={`${classes.Bag} ms-auto d-md-none`}>
         <span className={'visually-hidden'}>Cart</span>
         <i className={'bi-cart position-relative'} aria-hidden={true}>

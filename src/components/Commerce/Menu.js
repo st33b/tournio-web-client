@@ -26,16 +26,11 @@ const Menu = () => {
   return (
     <div className={classes.Menu}>
       <Row>
-        <Col className={'collapse d-md-none order-1'}
-             id={'mobile_cart'}>
-          <Cart itemAddedToCart={itemAdded}
-                itemRemovedFromCart={itemRemoved} />
-        </Col>
-        <Col md={8} className={'order-4 order-md-3'}>
+        <Col md={8}>
           <AvailableItems itemAddedToCart={itemAdded}/>
         </Col>
         <Col md={4}
-             className={`d-none d-md-block order-3 order-md-4 ${classes.CartContainer}`}
+             className={`${classes.CartContainer}`}
              id={'cart'}>
           <Cart itemAddedToCart={itemAdded}
                 itemRemovedFromCart={itemRemoved} />

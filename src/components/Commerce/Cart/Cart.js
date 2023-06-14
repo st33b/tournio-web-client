@@ -30,20 +30,20 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
 
   if (commerce.cart.length > 0) {
     cartItems = (
-      <div className={classes.ItemList}>
+      <div className={`${classes.ItemList}`}>
         {commerce.cart.map((item, index) => {
           if (['product', 'raffle', 'banquet', 'bracket'].includes(item.category) || item.determination === 'multi_use') {
             return (
               <MultiUseItem key={index}
                             item={item}
                             increase={itemAddedToCart}
-                            decrease={itemRemovedFromCart} />
+                            decrease={itemRemovedFromCart}/>
             );
           }
           return (
             <SingleUseItem key={index}
                            item={item}
-                           removed={itemRemovedFromCart} />
+                           removed={itemRemovedFromCart}/>
           );
         })}
       </div>
@@ -53,17 +53,34 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
   const enableFailure = commerce.tournament.state === 'testing';
 
   return (
-    <div className={classes.Cart}>
-      <h5 className={``}>
+    <div className={`offcanvas-md offcanvas-end ${classes.Cart}`}
+         aria-labelledby={`cartTitle`}
+         tabIndex={-1}
+         id={`offcanvasCart`}
+    >
+      <h5 className={`d-none d-md-block`}>
         Cart
       </h5>
-      {cartItems}
-      <p className={classes.TotalFees}>
-        Total: ${totalFees}
-      </p>
-      <div className={'d-flex flex-row-reverse pb-3 pb-md-0'}>
-        {/*<StripeCheckout />*/}
-        <StripeCheckout enableFailure={enableFailure}/>
+      <div className={`offcanvas-header ${classes.SmallCartHeader}`}>
+        <h4 className={`offcanvas-title flex-grow-1`}
+            id={`cartTitle`}>
+          Cart
+        </h4>
+        <button type={"button"}
+                className={`btn-close`}
+                data-bs-dismiss={`offcanvas`}
+                data-bs-target={`#offcanvasCart`}
+                aria-label="Close"></button>
+      </div>
+      <div className={`offcanvas-body flex-wrap`}>
+          {cartItems}
+          <p className={`${classes.TotalFees} w-100`}>
+            Total: ${totalFees}
+          </p>
+          <div className={'w-100'}>
+            {/*<StripeCheckout />*/}
+            <StripeCheckout enableFailure={enableFailure}/>
+          </div>
       </div>
     </div>
   );
