@@ -106,7 +106,7 @@ const Summary = ({tournament, nextStepClicked, nextStepText, buttonDisabled, ena
           Partner:{' '}
         </span>
         <span className={'fw-bold'}>
-          {partner.full_name}
+          {partner.fullName}
         </span>
       </p>
     );

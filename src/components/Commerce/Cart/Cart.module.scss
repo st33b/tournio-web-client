@@ -6,8 +6,12 @@
     padding: 0.5rem;
     margin-bottom: 1rem;
   }
-  .ItemList {
+  .SmallCartHeader {
+    border-bottom: var(--tournio-border-width) solid var(--tournio-border-color);
+  }
 
+  .ItemList {
+    width: 100%;
   }
   .TotalFees {
     text-align: right;

@@ -6,10 +6,9 @@ import {devConsoleLog, fetchBowlerList, fetchTournamentDetails, useClientReady} 
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
-import BowlerListing from "../../../components/Registration/BowlerListing/BowlerListing";
-import Contacts from "../../../components/Registration/Contacts/Contacts";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import {tournamentDetailsRetrieved} from "../../../store/actions/registrationActions";
+import BowlerList from "../../../components/Registration/BowlerList/BowlerList";
 
 const Page = () => {
   const router = useRouter();
@@ -22,7 +21,7 @@ const Page = () => {
 
   const onBowlerListRetrieved = (data) => {
     const bowlerComparison = (left, right) => {
-      return left.last_name.toLocaleLowerCase().localeCompare(right.last_name.toLocaleLowerCase());
+      return left.listName.toLocaleLowerCase().localeCompare(right.listName.toLocaleLowerCase());
     }
     setBowlers(data.sort(bowlerComparison)); // sort this!
     setLoading(false);
@@ -88,22 +87,37 @@ const Page = () => {
 
   return (
     <div>
-      <Row>
-        <Col md={4} className={'d-none d-md-block'}>
+      <div className={`row`}>
+        <div className={'col-4 d-md-none'}>
+          <TournamentLogo url={registration.tournament.image_url}/>
+        </div>
+        <div className={`col-8 d-md-none d-flex flex-column justify-content-around`}>
+          <h4 className={'text-start'}>
+            <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
+              {registration.tournament.name}
+            </a>
+          </h4>
+          <h5 className={`m-0`}>
+            Registered Bowlers
+          </h5>
+        </div>
+        <div className={'col-4 d-none d-md-block'}>
           <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
             <TournamentLogo url={registration.tournament.image_url}/>
             <h4 className={'text-center py-3'}>{registration.tournament.name}</h4>
           </a>
-        </Col>
-        <Col>
+        </div>
+        <div className={`col`}>
+          <h5 className={`d-none d-md-block`}>
+            Registered Bowlers
+          </h5>
           {error}
-          <BowlerListing caption={'Registered Bowlers'}
-                         bowlers={bowlers}
-                         enablePayment={true}
-                         successType={success}
+          <BowlerList tournament={registration.tournament}
+                      bowlers={bowlers}
+                      caption={'Tournament Bowlers'}
           />
-        </Col>
-      </Row>
+        </div>
+      </div>
     </div>
   );
 }

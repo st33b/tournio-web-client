@@ -1,0 +1,27 @@
+.BowlerList {
+  form {
+    margin-top: 1rem;
+
+    input::placeholder {
+      color: var(--tournio-tertiary-color);
+    }
+  }
+
+  .MatchCount {
+    text-align: center;
+    font-style: italic;
+  }
+  .Bowlers {
+    .Bowler {
+      position: static;
+
+      border-width: 0;
+      &:nth-child(odd) {
+        background-color: var(--tournio-tertiary-bg);
+      }
+      .Name {
+        font-size: 120%;
+      }
+    }
+  }
+}

@@ -317,7 +317,7 @@ export const fetchTeamList = ({tournamentIdentifier, dispatch, onSuccess, onFail
       }
     })
     .catch(error => {
-      onFailure({error: 'Unexpected error from the server'});
+      onFailure({error: `Unexpected error from the server: ${error}`});
     });
 }
 
@@ -333,14 +333,14 @@ export const fetchBowlerList = ({tournamentIdentifier, onSuccess, onFailure, unp
   };
   axios(requestConfig)
     .then(response => {
-      if (response.status >= 200 && response.status < 300) {
+      if (response.status >= 200 && response.status < 400) {
         onSuccess(response.data);
       } else {
         onFailure(response.data);
       }
     })
     .catch(error => {
-      onFailure({error: 'Unexpected error from the server'});
+      onFailure({error: `Unexpected error from the server: ${error}`});
     });
 }
 
@@ -693,24 +693,6 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
 /////////////////////////////////////////////////////
 
 export const validateEmail = async function (emailAddress) {
-  if (!['production', 'preview'].includes(process.env.NODE_ENV)) {
-    devConsoleLog("Not prod or prev, not reaching out to API");
-
-    function waitABit(result) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(result);
-        }, 2000);
-      });
-    }
-    return await waitABit(
-      {
-        checked: false,
-        rejected: false,
-        // error: 'Simulate some kind of error',
-      },
-    );
-  }
   const response = await fetch('/api/email_check', {
     method: 'POST',
     mode: 'same-origin',

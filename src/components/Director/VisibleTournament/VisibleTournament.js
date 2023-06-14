@@ -21,7 +21,6 @@ import LogoImage from "../LogoImage/LogoImage";
 import DeleteTournament from "../Tournament/DeleteTournament";
 import Users from "../Tournament/Users";
 import Shifts from "../TournamentInPrep/Shifts";
-
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './VisibleTournament.module.scss';

@@ -2,11 +2,17 @@ import {useEffect, useState, createElement} from "react";
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../director";
-
-import classes from './ConfigItemForm.module.scss';
 import {tournamentConfigItemChanged} from "../../../store/actions/directorActions";
 
-const BOOLEAN_CONFIG_ITEMS = ['display_capacity', 'email_in_dev', 'skip_stripe', 'event_selection'];
+import classes from './ConfigItemForm.module.scss';
+
+const BOOLEAN_CONFIG_ITEMS = [
+  'display_capacity',
+  'email_in_dev',
+  'publicly_listed',
+  'skip_stripe',
+  'event_selection',
+];
 
 const ConfigItemForm = ({item, editable}) => {
   const context = useDirectorContext();
@@ -97,41 +103,33 @@ const ConfigItemForm = ({item, editable}) => {
 
   let content = '';
   if (!editing) {
-    let displayedValue = '';
-    switch (item.key) {
-      case 'website':
-        let displayValue = formData.value;
-        let ellipsis = '';
-        if (displayValue.length > 15) {
-          displayValue = formData.value.substring(formData.value.length - 15);
-          ellipsis = '...';
-        }
-        displayedValue = (
-          <>
-            {ellipsis}
-            <span className={classes.Url}>
+    let displayedValue;
+    if (BOOLEAN_CONFIG_ITEMS.includes(item.key)) {
+      displayedValue = (
+        <div className={'form-check form-switch'}>
+          <input type={'checkbox'}
+                 className={'form-check-input'}
+                 role={'switch'}
+                 name={'config_item'}
+                 checked={formData.value}
+                 onChange={onInputChanged} />
+        </div>
+      );
+    } else {
+      let displayValue = formData.value;
+      let ellipsis = '';
+      if (displayValue.length > 15) {
+        displayValue = formData.value.substring(formData.value.length - 15);
+        ellipsis = '...';
+      }
+      displayedValue = (
+        <>
+          {ellipsis}
+          <span className={classes.Url}>
               {displayValue}
             </span>
-          </>
-        );
-        break;
-      case 'display_capacity':
-      case 'email_in_dev':
-      case 'skip_stripe':
-        displayedValue = (
-          <div className={'form-check form-switch'}>
-            <input type={'checkbox'}
-                   className={'form-check-input'}
-                   role={'switch'}
-                   name={'config_item'}
-                   checked={formData.value}
-                   onChange={onInputChanged} />
-          </div>
-        );
-        break;
-      default:
-        displayedValue = formData.value;
-        break;
+        </>
+      );
     }
     const itemContent = (
         <div className={`${classes.Item} d-flex`} key={item.key}>

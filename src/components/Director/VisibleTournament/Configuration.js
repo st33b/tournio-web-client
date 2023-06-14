@@ -4,7 +4,7 @@ import ConfigItem from "./ConfigItem";
 
 import classes from './VisibleTournament.module.scss';
 
-const Configuration = ({eventKey, tournament}) => {
+const Configuration = ({eventKey, tournament, excludedKeys}) => {
   let content = (
     <Placeholder animation={'glow'}>
       <Placeholder xs={3} />{' '}
@@ -17,18 +17,12 @@ const Configuration = ({eventKey, tournament}) => {
       <Placeholder xs={7} />
     </Placeholder>
   )
-  // These items should not appear in this list.
-  const EDITABLE_ITEMS = [
-    "display_capacity",
-    "email_in_dev",
-    "skip_stripe",
-  ];
 
-  if (tournament) {
+  if (tournament && excludedKeys) {
     content = (
       <dl>
         {tournament.config_items.map((item) => {
-          if (EDITABLE_ITEMS.includes(item.key)) {
+          if (excludedKeys.includes(item.key)) {
             return '';
           }
           return (
