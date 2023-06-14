@@ -18,6 +18,8 @@ const BowlerList = ({tournament, bowlers = [], caption, action = 'bowlerDetail'}
   const {dispatch} = useRegistrationContext();
   const columnHelper = createColumnHelper();
 
+  const LIST_HIDE_THRESHOLD = 5;
+
   const columns = [
     // We want the name to be linked, using the identifier
     columnHelper.accessor('identifier', {
@@ -77,7 +79,7 @@ const BowlerList = ({tournament, bowlers = [], caption, action = 'bowlerDetail'}
     }
   }
 
-  const displayBowlers = bowlers.length < 10 && bowlers.length > 0 || matchingBowlerCount < bowlers.length;
+  const displayBowlers = bowlers.length < LIST_HIDE_THRESHOLD && bowlers.length > 0 || matchingBowlerCount < bowlers.length;
 
   return (
     <div className={classes.BowlerList}>
