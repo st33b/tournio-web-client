@@ -6,7 +6,6 @@ import {devConsoleLog, fetchBowlerList, fetchTournamentDetails, useClientReady} 
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
-import BowlerListing from "../../../components/Registration/BowlerListing/BowlerListing";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import {tournamentDetailsRetrieved} from "../../../store/actions/registrationActions";
 import BowlerList from "../../../components/Registration/BowlerList/BowlerList";
@@ -22,7 +21,7 @@ const Page = () => {
 
   const onBowlerListRetrieved = (data) => {
     const bowlerComparison = (left, right) => {
-      return left.name.toLocaleLowerCase().localeCompare(right.name.toLocaleLowerCase());
+      return left.listName.toLocaleLowerCase().localeCompare(right.listName.toLocaleLowerCase());
     }
     setBowlers(data.sort(bowlerComparison)); // sort this!
     setLoading(false);
@@ -113,9 +112,10 @@ const Page = () => {
             Registered Bowlers
           </h5>
           {error}
-          <BowlerList bowlers={bowlers}
+          <BowlerList tournament={registration.tournament}
+                      bowlers={bowlers}
                       caption={'Tournament Bowlers'}
-                      includeMenuLink={true} />
+          />
         </div>
       </div>
     </div>

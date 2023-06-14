@@ -9,8 +9,13 @@ import {
   useReactTable
 } from "@tanstack/react-table";
 import {devConsoleLog} from "../../../utils";
+import {partnerUpRegistrationInitiated} from "../../../store/actions/registrationActions";
+import {useRouter} from "next/router";
+import {useRegistrationContext} from "../../../store/RegistrationContext";
 
-const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
+const BowlerList = ({tournament, bowlers = [], caption, action = 'bowlerDetail'}) => {
+  const router = useRouter();
+  const {dispatch} = useRegistrationContext();
   const columnHelper = createColumnHelper();
 
   const columns = [
@@ -20,7 +25,7 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
       enableGlobalFilter: false,
       enableHiding: true,
     }),
-    columnHelper.accessor('name', {
+    columnHelper.accessor('listName', {
       header: 'Name',
       enableGlobalFilter: true,
     }),
@@ -64,6 +69,16 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
 
   const matchingBowlerCount = theTable.getRowModel().rows.length;
 
+  const confirmPartnerUp = (event, targetPartner) => {
+    event.preventDefault();
+    if (confirm(`By proceeding, I affirm that ${targetPartner.fullName} knows that I am partnering up with them.`)) {
+      dispatch(partnerUpRegistrationInitiated(targetPartner));
+      router.push(`/tournaments/${tournament.identifier}/partner-up-bowler`);
+    }
+  }
+
+  const displayBowlers = bowlers.length < 10 && bowlers.length > 0 || matchingBowlerCount < bowlers.length;
+
   return (
     <div className={classes.BowlerList}>
       <form noValidate>
@@ -83,12 +98,12 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
         </div>
       </form>
 
-      {matchingBowlerCount === bowlers.length && (
+      {!displayBowlers && (
         <p className={`mt-5 text-secondary ${classes.MatchCount}`}>
           Search results will appear here.
         </p>
       )}
-      {matchingBowlerCount < bowlers.length && (
+      {displayBowlers && (
         <>
           <p className={`${classes.MatchCount}`}>
             {matchingBowlerCount} result{matchingBowlerCount !== 1 ? 's' : ''} found
@@ -98,9 +113,12 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
             {theTable.getRowModel().rows.map(row => (
               <li className={`list-group-item ${classes.Bowler}`} key={row.id}>
                 <p className={` ${classes.Name}`}>
-                  <a href={`/bowlers/${row.getValue('identifier')}`}>
-                    {row.getValue('name')}
-                  </a>
+                  {action === 'bowlerDetail' && (
+                    <a href={`/bowlers/${row.getValue('identifier')}`}>
+                      {row.getValue('listName')}
+                    </a>
+                  )}
+                  {action !== 'bowlerDetail' && row.getValue('listName')}
                 </p>
                 <dl className={`mb-1`}>
                   {row.getVisibleCells().map(cell => (
@@ -115,14 +133,27 @@ const BowlerList = ({bowlers = [], caption, includeMenuLink}) => {
                   ))}
                 </dl>
                 <div className={`d-flex justify-content-end pb-2`}>
-                  <a href={`/bowlers/${row.getValue('identifier')}`}
-                     className={`btn btn-success`}
-                     role={'button'}
-                  >
-                    Fees &amp; Extras
-                    <i className={`bi bi-arrow-right ps-2`}
-                       aria-hidden={true} />
-                  </a>
+                  {action === 'bowlerDetail' && (
+                    <a href={`/bowlers/${row.getValue('identifier')}`}
+                       className={`btn btn-success`}
+                       role={'button'}
+                    >
+                      Fees &amp; Extras
+                      <i className={`bi bi-arrow-right ps-2`}
+                         aria-hidden={true} />
+                    </a>
+                  )}
+                  {action === 'partnerUp' && (
+                    <a href={`/bowlers/${row.getValue('identifier')}`}
+                       onClick={(e) => confirmPartnerUp(e, row.original)}
+                       className={`btn btn-primary`}
+                       role={'button'}
+                    >
+                      Partner Up
+                      <i className={`bi bi-arrow-right ps-2`}
+                         aria-hidden={true} />
+                    </a>
+                  )}
                 </div>
               </li>
             ))}
