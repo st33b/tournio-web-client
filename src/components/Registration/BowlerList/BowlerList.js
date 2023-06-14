@@ -40,7 +40,7 @@ const BowlerList = ({tournament, bowlers = [], caption, action = 'bowlerDetail'}
       header: 'Team Name',
       enableGlobalFilter: true,
     }),
-    columnHelper.accessor('doublesPartner', {
+    columnHelper.accessor(row => row.doublesPartner ? row.doublesPartner.listName : null, {
       cell: info => info.getValue() ? info.getValue() : 'n/a',
       header: 'Doubles Partner',
       enableGlobalFilter: false,
