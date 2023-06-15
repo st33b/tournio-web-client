@@ -7,6 +7,7 @@ import {directorApiRequest} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 
 import classes from './VisibleTournament.module.scss';
+import {tournamentConfigItemChanged} from "../../../store/actions/directorActions";
 
 const ConfigItemForm = ({item}) => {
   const { dispatch } = useDirectorContext();
@@ -51,7 +52,7 @@ const ConfigItemForm = ({item}) => {
       uri: uri,
       requestConfig: requestConfig,
       authToken: authToken,
-      onSuccess: (_) => {},
+      onSuccess: (ci) => {dispatch(tournamentConfigItemChanged(ci))},
       onFailure: (data) => { console.log("Failed to save config item.", data) },
     });
   }

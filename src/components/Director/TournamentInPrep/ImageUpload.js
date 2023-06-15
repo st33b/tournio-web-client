@@ -9,10 +9,11 @@ import {directorApiRequest} from "../../../director";
 import FormData from 'form-data';
 import LogoImage from "../LogoImage/LogoImage";
 import {logoImageUploaded} from "../../../store/actions/directorActions";
+import {useLoginContext} from "../../../store/LoginContext";
 
 const ImageUpload = ({tournament}) => {
-  const context = useDirectorContext();
-  const dispatch = context.dispatch;
+  const {authToken} = useLoginContext();
+  const {dispatch} = useDirectorContext();
 
   const [formDisplayed, setFormDisplayed] = useState(false);
   const [fileInput, setFileInput] = useState({
@@ -52,7 +53,7 @@ const ImageUpload = ({tournament}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: onSuccess,
       onFailure: (_) => setError('File failed to upload'),
     });

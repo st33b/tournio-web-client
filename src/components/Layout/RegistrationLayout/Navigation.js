@@ -11,7 +11,7 @@ import ColorModeToggler from "../../common/ColorModeToggler/ColorModeToggler";
 
 import classes from './Navigation.module.scss';
 
-const Navigation = () => {
+const Navigation = ({showCart}) => {
   const {commerce} = useCommerceContext();
   const {theme} = useThemeContext();
 

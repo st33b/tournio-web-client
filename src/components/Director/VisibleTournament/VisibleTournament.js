@@ -21,11 +21,10 @@ import LogoImage from "../LogoImage/LogoImage";
 import DeleteTournament from "../Tournament/DeleteTournament";
 import Users from "../Tournament/Users";
 import Shifts from "../TournamentInPrep/Shifts";
-import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './VisibleTournament.module.scss';
 
-const VisibleTournament = ({closeTournament}) => {
+const VisibleTournament = ({tournament, closeTournament}) => {
   const EDITABLE_CONFIG_ITEMS = [
     "display_capacity",
     "publicly_listed",
@@ -33,15 +32,9 @@ const VisibleTournament = ({closeTournament}) => {
     "skip_stripe",
   ];
 
-  const {state} = useDirectorContext();
-
-  if (!state || !state.tournament) {
-    return <div className={classes.VisibleTournament}>
-      <h3 className={'display-6 text-center pt-2'}>Loading, sit tight...</h3>
-    </div>;
+  if (!tournament) {
+    return '';
   }
-
-  const { tournament } = state;
 
   const divisionNameSet = new Set();
   tournament.purchasable_items.division.forEach(({name}) => {

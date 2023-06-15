@@ -18,14 +18,14 @@ import ErrorBoundary from "../../../components/common/ErrorBoundary";
 
 const Tournament = () => {
   const router = useRouter();
-  const { identifier, stripe } = router.query;
-  const { dispatch } = useDirectorContext();
-  const {ready, user, authToken} = useLoginContext();
+  const {identifier, stripe} = router.query;
+  const {dispatch} = useDirectorContext();
+  const {ready, authToken} = useLoginContext();
   const [errorMessage, setErrorMessage] = useState();
 
   //
   // fetch tournament details
-  const { loading, data: tournament } = useDirectorApi({
+  const {loading, data: tournament} = useDirectorApi({
     uri: identifier ? `/tournaments/${identifier}` : null,
     onSuccess: (t) => dispatch(tournamentDetailsRetrieved(t)),
     onFailure: (err) => setErrorMessage(err.message),
@@ -59,7 +59,7 @@ const Tournament = () => {
   }
 
   if (loading) {
-    return <LoadingMessage message={'Retrieving tournament details'} />;
+    return <LoadingMessage message={'Retrieving tournament details...'}/>;
   }
 
   return (
@@ -69,9 +69,9 @@ const Tournament = () => {
 
         {tournament && (
           (tournament.state === 'active' || tournament.state === 'closed'
-              ? <VisibleTournament closeTournament={stateChangeInitiated} />
+              ? <VisibleTournament tournament={tournament} closeTournament={stateChangeInitiated} />
               : <TournamentInPrep stateChangeInitiated={stateChangeInitiated}
-                                  requestStripeStatus={stripe} />
+                                  requestStripeStatus={stripe}/>
           )
         )}
       </ErrorBoundary>

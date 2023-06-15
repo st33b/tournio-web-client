@@ -7,14 +7,14 @@ import classes from './RegistrationLayout.module.scss';
 import MaintenanceAnnouncement from "../../common/MaintenanceAnnouncement/MaintenanceAnnouncement";
 import {RegistrationContextProvider} from "../../../store/RegistrationContext";
 
-const RegistrationLayout = ({children}) => {
+const RegistrationLayout = ({children, showCart}) => {
   return (
     <RegistrationContextProvider>
       <div className={classes.RegistrationLayout}>
         <SiteHeader/>
         <header>
           <Container fluid={'md'}>
-            <Navigation/>
+            <Navigation showCart={showCart}/>
           </Container>
         </header>
 

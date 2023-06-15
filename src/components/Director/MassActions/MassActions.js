@@ -1,14 +1,12 @@
 import {useState} from "react";
 import Card from "react-bootstrap/Card";
 
+import {useLoginContext} from "../../../store/LoginContext";
 import {directorApiRequest} from "../../../director";
-import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './MassActions.module.scss';
-import {useLoginContext} from "../../../store/LoginContext";
 
 const MassActions = ({tournament}) => {
-  const { dispatch } = useDirectorContext();
   const { authToken } = useLoginContext();
 
   const [paymentReminderMessage, setPaymentReminderMessage] = useState(null);
@@ -78,7 +76,7 @@ const MassActions = ({tournament}) => {
   }
 
   return (
-    <Card className={'border-0 text-center'}>
+    <Card className={`border-0 text-center ${classes.MassActions}`}>
       <Card.Body>
         <Card.Link className={'btn btn-sm btn-outline-primary'}
                    href={'#'}

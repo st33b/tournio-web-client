@@ -29,7 +29,6 @@ const ShiftForm = ({tournament, shift}) => {
 
   const [formData, setFormData] = useState(initialFormData);
   const [formDisplayed, setFormDisplayed] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(null);
 
   // Populate form data with the shift prop
   useEffect(() => {
@@ -116,7 +115,6 @@ const ShiftForm = ({tournament, shift}) => {
 
   const addShiftSuccess = (data) => {
     dispatch(tournamentShiftAdded(data));
-    setSuccessMessage('Shift added.');
     setFormDisplayed(false);
   }
 
@@ -169,7 +167,6 @@ const ShiftForm = ({tournament, shift}) => {
 
   const updateShiftSuccess = (data) => {
     dispatch(tournamentShiftUpdated(data));
-    setSuccessMessage('Shift updated.');
     setFormDisplayed(false);
   }
 
