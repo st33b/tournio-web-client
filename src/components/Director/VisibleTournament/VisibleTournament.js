@@ -26,6 +26,13 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import classes from './VisibleTournament.module.scss';
 
 const VisibleTournament = ({closeTournament}) => {
+  const EDITABLE_CONFIG_ITEMS = [
+    "display_capacity",
+    "publicly_listed",
+    "email_in_dev",
+    "skip_stripe",
+  ];
+
   const {state} = useDirectorContext();
 
   if (!state || !state.tournament) {
@@ -47,7 +54,9 @@ const VisibleTournament = ({closeTournament}) => {
       <Downloads tournament={tournament}/>
       <Accordion className={'mb-3'}>
         <Basics eventKey={'0'} tournament={tournament}/>
-        <Configuration eventKey={'1'} tournament={tournament} />
+        <Configuration eventKey={'1'}
+                       tournament={tournament}
+                       excludedKeys={EDITABLE_CONFIG_ITEMS} />
         <AdditionalQuestions eventKey={'2'} tournament={tournament}/>
         <PurchasableItems eventKey={'3'} tournament={tournament}/>
       </Accordion>
@@ -93,7 +102,8 @@ const VisibleTournament = ({closeTournament}) => {
 
           <Counts tournament={tournament} />
           <RegistrationOptions tournament={tournament}/>
-          <EditableConfiguration tournament={tournament} />
+          <EditableConfiguration tournament={tournament}
+                                 editableKeys={EDITABLE_CONFIG_ITEMS} />
           <Shifts tournament={tournament} />
           <MassActions tournament={tournament}/>
 
@@ -108,8 +118,12 @@ const VisibleTournament = ({closeTournament}) => {
           <RegistrationsWeek tournament={tournament}/>
           <RegistrationTypesWeek tournament={tournament}/>
           {divisionNames.map(name => <DivisionItemsWeek tournament={tournament} title={name} key={name}/> )}
-          <OptionalItemsWeek tournament={tournament} title={'Optional Events'} dataKeys={['bowling']}/>
-          <OptionalItemsWeek tournament={tournament} title={'Extras'} dataKeys={['banquet', 'product']}/>
+          <OptionalItemsWeek tournament={tournament}
+                             title={'Optional Events'}
+                             dataKeys={['bowling']}/>
+          <OptionalItemsWeek tournament={tournament}
+                             title={'Extras'}
+                             dataKeys={['banquet', 'product']}/>
         </div>
 
         <div className={'d-md-none d-lg-block col-12 col-md-4 col-lg-3'}>
