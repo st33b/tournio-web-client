@@ -7,10 +7,11 @@ import {directorApiRequest} from "../../../director";
 import {stripeAccountStatusChanged} from "../../../store/actions/directorActions";
 
 import classes from './StripeStatus.module.scss';
+import {useLoginContext} from "../../../store/LoginContext";
 
 const StripeStatus = ({tournament, needStatus}) => {
-  const context = useDirectorContext();
-  const dispatch = context.dispatch;
+  const {authToken} = useLoginContext();
+  const {dispatch} = useDirectorContext();
 
   // If needStatus is set, then we need to request the Stripe status from the server
   // Otherwise, show a button that can trigger an on-demand status check
@@ -52,7 +53,7 @@ const StripeStatus = ({tournament, needStatus}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: onStatusFetchSuccess,
       onFailure: onStatusFetchFailure,
     });

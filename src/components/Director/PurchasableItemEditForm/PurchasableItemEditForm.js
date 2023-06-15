@@ -14,10 +14,11 @@ import classes from './PurchasableItemEditForm.module.scss';
 import {purchasableItemDeleted, purchasableItemUpdated, sizedItemUpdated} from "../../../store/actions/directorActions";
 import AvailableSizes from "../ApparelItemForm/AvailableSizes";
 import {devConsoleLog, apparelSizes} from "../../../utils";
+import {useLoginContext} from "../../../store/LoginContext";
 
 const PurchasableItemEditForm = ({tournament, item}) => {
-  const context = useDirectorContext();
-  const dispatch = context.dispatch;
+  const {authToken} = useLoginContext();
+  const {dispatch} = useDirectorContext();
 
   const initialState = {
     fields: {
@@ -242,7 +243,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: (data) => {
         toggleEdit(null, false);
         setSuccessMessage("Item details updated.");
@@ -273,7 +274,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: deleteSuccess,
       onFailure: (data) => console.log("Failed to delete item.", data),
     });

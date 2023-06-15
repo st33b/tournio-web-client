@@ -11,18 +11,13 @@ import Shifts from "./Shifts";
 import StripeStatus from "./StripeStatus";
 import ImageUpload from "./ImageUpload";
 import Users from '../Tournament/Users';
-
-import {useDirectorContext} from "../../../store/DirectorContext";
-
-import classes from './TournamentInPrep.module.scss';
 import RegistrationOptions from "../RegistrationOptions/RegistrationOptions";
 import ErrorBoundary from "../../common/ErrorBoundary";
-import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 
-const TournamentInPrep = ({stateChangeInitiated, requestStripeStatus}) => {
-  const {state} = useDirectorContext();
+import classes from './TournamentInPrep.module.scss';
 
-  if (!state || !state.tournament) {
+const TournamentInPrep = ({tournament, stateChangeInitiated, requestStripeStatus}) => {
+  if (!tournament) {
     return '';
   }
 
@@ -31,25 +26,25 @@ const TournamentInPrep = ({stateChangeInitiated, requestStripeStatus}) => {
       <div className={classes.TournamentInPrep}>
         <div className={'row'}>
           <div className={'col-12 col-md-6 col-lg-4'}>
-            <Basics tournament={state.tournament}/>
-            <ImageUpload tournament={state.tournament}/>
-            <Contacts tournament={state.tournament}/>
-            <Users users={state.tournament.users}/>
+            <Basics tournament={tournament}/>
+            <ImageUpload tournament={tournament}/>
+            <Contacts tournament={tournament}/>
+            <Users users={tournament.users}/>
           </div>
 
           <div className={'col-12 col-md-6 col-lg-4'}>
-            <StatusAndCounts tournament={state.tournament}/>
-            <StateChangeButton tournament={state.tournament} stateChangeInitiated={stateChangeInitiated} />
-            <AdditionalQuestions tournament={state.tournament}/>
-            <Shifts tournament={state.tournament}/>
+            <StatusAndCounts tournament={tournament}/>
+            <StateChangeButton tournament={tournament} stateChangeInitiated={stateChangeInitiated} />
+            <AdditionalQuestions tournament={tournament}/>
+            <Shifts tournament={tournament}/>
           </div>
 
           <div className={'col-12 col-md-6 col-lg-4'}>
-            <Configuration tournament={state.tournament}/>
-            <RegistrationOptions tournament={state.tournament}/>
-            <PurchasableItems tournament={state.tournament}/>
-            <StripeStatus tournament={state.tournament} needStatus={requestStripeStatus} />
-            <DeleteTournament tournament={state.tournament}/>
+            <Configuration tournament={tournament}/>
+            <RegistrationOptions tournament={tournament}/>
+            <PurchasableItems tournament={tournament}/>
+            <StripeStatus tournament={tournament} needStatus={requestStripeStatus} />
+            <DeleteTournament tournament={tournament}/>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import Card from "react-bootstrap/Card";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {useDirectorContext} from "../../../store/DirectorContext";
@@ -8,13 +9,13 @@ import {
   additionalQuestionUpdated,
   additionalQuestionDeleted
 } from "../../../store/actions/directorActions";
-
-import classes from './AdditionalQuestionForm.module.scss';
 import ButtonRow from "../../common/ButtonRow";
-import Card from "react-bootstrap/Card";
+import {useLoginContext} from "../../../store/LoginContext";
+import classes from './AdditionalQuestionForm.module.scss';
 
 const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
-  const context = useDirectorContext();
+  const {authToken} = useLoginContext();
+  const {dispatch} = useDirectorContext();
 
   const initialFormData = {
     extended_form_field_id: '',
@@ -52,9 +53,9 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
 
   const onSuccess = (data) => {
     if (newQuestion) {
-      context.dispatch(additionalQuestionAdded(data));
+      dispatch(additionalQuestionAdded(data));
     } else {
-      context.dispatch(additionalQuestionUpdated(data));
+      dispatch(additionalQuestionUpdated(data));
     }
     setEditing(false);
   }
@@ -89,7 +90,7 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: onSuccess,
       onFailure: onFailure,
     });
@@ -115,7 +116,7 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: onDeleteSuccess,
       onFailure: (data) => console.log("D'oh!", data),
     });

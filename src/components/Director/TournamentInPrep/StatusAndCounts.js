@@ -10,10 +10,11 @@ import {testDataCleared, tournamentTestEnvironmentUpdated} from "../../../store/
 
 import classes from './TournamentInPrep.module.scss';
 import statusClasses from '../TournamentListing/TournamentListing.module.scss';
+import {useLoginContext} from "../../../store/LoginContext";
 
 const StatusAndCounts = ({tournament}) => {
-  const context = useDirectorContext();
-  const dispatch = context.dispatch;
+  const {authToken} = useLoginContext();
+  const {dispatch} = useDirectorContext();
 
   const testEnvFormInitialData = {
     registration_period: 'regular',
@@ -25,9 +26,9 @@ const StatusAndCounts = ({tournament}) => {
   const [testEnvFormData, setTestEnvFormData] = useState(testEnvFormInitialData);
   const [testEnvSuccessMessage, setTestEnvSuccessMessage] = useState(null);
 
-  // Update the state of testEnvFormData with what's in context
+  // Update the state of testEnvFormData
   useEffect(() => {
-    if (!context || !tournament) {
+    if (!tournament) {
       return;
     }
 
@@ -40,9 +41,9 @@ const StatusAndCounts = ({tournament}) => {
 
       setTestEnvFormData(formData);
     }
-  }, [context, tournament]);
+  }, [tournament]);
 
-  if (!context || !tournament) {
+  if (!tournament) {
     return '';
   }
 
@@ -95,7 +96,7 @@ const StatusAndCounts = ({tournament}) => {
     }
     directorApiDownloadRequest({
       uri: uri,
-      context: context,
+      authToken: authToken,
       onSuccess: (data) => downloadSuccess(data, saveAsName),
       onFailure: (data) => downloadFailure(data),
     });
@@ -172,7 +173,7 @@ const StatusAndCounts = ({tournament}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: onClearTestDataSuccess,
       onFailure: onClearTestDataFailure,
     });
@@ -208,7 +209,7 @@ const StatusAndCounts = ({tournament}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: testEnvSaveSuccess,
       onFailure: (data) => console.log('Oops.', data),
     });

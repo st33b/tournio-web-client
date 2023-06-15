@@ -3,17 +3,18 @@ import Card from "react-bootstrap/Card";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../director";
+import {useLoginContext} from "../../../store/LoginContext";
 
 const DeleteTournament = ({tournament}) => {
-  const context = useDirectorContext();
-  const {directorState, dispatch} = context;
+  const {user, authToken} = useLoginContext();
+  const {dispatch} = useDirectorContext();
   const router = useRouter();
 
-  if (!context || !tournament || !directorState.user) {
+  if (!tournament || !user) {
     return '';
   }
 
-  if (directorState.user.role !== 'superuser') {
+  if (user.role !== 'superuser') {
     return '';
   }
 
@@ -37,7 +38,7 @@ const DeleteTournament = ({tournament}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: deleteSuccess,
       onFailure: deleteFailure,
     });
