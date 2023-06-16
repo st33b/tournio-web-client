@@ -12,13 +12,12 @@ const LoginForm = ({onLoginSuccess}) => {
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const [loading, setLoading] = useState(false);
-  const [loginFailed, setLoginFailed] = useState(false);
   const [validated, setValidated] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
 
-  const loginFailure = () => {
+  const loginFailure = (error) => {
     setLoading(false);
-    setLoginFailed(true);
+    setErrorMessage(error);
   }
 
   const submitHandler = (event) => {
@@ -54,12 +53,11 @@ const LoginForm = ({onLoginSuccess}) => {
           login(response.data, response.headers.authorization);
           onLoginSuccess();
         } else {
-          loginFailure();
+          loginFailure('Invalid email/password combination.');
         }
       })
       .catch(error => {
         loginFailure(error);
-        setErrorMessage(error);
       });
   }
 
@@ -105,9 +103,9 @@ const LoginForm = ({onLoginSuccess}) => {
             </div>
           </Form>
         </Card.Body>
-        {loginFailed && (
+        {errorMessage && (
           <Card.Body className={'pt-0 text-center text-danger'}>
-            Invalid username and/or password. Try again.
+            {errorMessage}
           </Card.Body>
         )}
       </Card>

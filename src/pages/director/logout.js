@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {useRouter} from "next/router";
 import axios from "axios";
 
-import {apiHost, devConsoleLog, useClientReady} from "../../utils";
+import {apiHost, devConsoleLog} from "../../utils";
 import DirectorLayout from '../../components/Layout/DirectorLayout/DirectorLayout';
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
 import {useLoginContext} from "../../store/LoginContext";
@@ -39,13 +39,8 @@ const Logout = () => {
     directorLogout();
   }, [router]);
 
-  const ready = useClientReady();
-  if (!ready) {
-    return '';
-  }
-
   return (
-    <LoadingMessage message={'Logging you out...'} />
+    <LoadingMessage message={'Logging out...'} />
   );
 }
 
