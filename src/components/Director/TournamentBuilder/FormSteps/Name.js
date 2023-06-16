@@ -7,10 +7,11 @@ import {directorApiRequest} from "../../../../director";
 
 import classes from '../TournamentBuilder.module.scss';
 import {newTournamentSaved, newTournamentStepCompleted} from "../../../../store/actions/directorActions";
+import {useLoginContext} from "../../../../store/LoginContext";
 
 const Name = () => {
-  const context = useDirectorContext();
-  const {directorState, dispatch} = context;
+  const {state, dispatch} = useDirectorContext();
+  const {authToken} = useLoginContext();
 
   const currentYear = (new Date()).getFullYear();
 
@@ -25,19 +26,19 @@ const Name = () => {
 
   const [formData, setFormData] = useState(initialState);
   useEffect(() => {
-    if (!directorState || !directorState.builder) {
+    if (!state || !state.builder) {
       return;
     }
-    if (directorState.builder.tournament) {
+    if (state.builder.tournament) {
       // We've returned to this page after advancing.
       const newFormData = {...formData};
-      newFormData.fields.name = directorState.builder.tournament.name;
-      newFormData.fields.abbreviation = directorState.builder.tournament.abbreviation;
-      newFormData.fields.year = directorState.builder.tournament.year;
+      newFormData.fields.name = state.builder.tournament.name;
+      newFormData.fields.abbreviation = state.builder.tournament.abbreviation;
+      newFormData.fields.year = state.builder.tournament.year;
       newFormData.valid = isValid(newFormData.fields);
       setFormData(newFormData);
     }
-  }, [directorState, directorState.builder])
+  }, [state, state.builder])
 
   const yearOptions = [];
   for (let i = 0; i < 3; i++) {
@@ -77,7 +78,7 @@ const Name = () => {
   }
 
   const nextClicked = () => {
-    const alreadyExists = directorState.builder.saved;
+    const alreadyExists = state.builder.saved;
     let uri = '/director/tournaments';
     const requestConfig = {
       data: {
@@ -91,7 +92,7 @@ const Name = () => {
     };
     if (alreadyExists) {
       devConsoleLog("Tournament already exists, PATCHing");
-      uri += `/${directorState.builder.tournament.identifier}`;
+      uri += `/${state.builder.tournament.identifier}`;
       requestConfig.method = 'patch';
     } else {
       devConsoleLog("Tournament is brand new, POSTing");
@@ -100,7 +101,7 @@ const Name = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: saveSuccess,
       onFailure: (err) => devConsoleLog("Failed to save tournament.", err),
     });

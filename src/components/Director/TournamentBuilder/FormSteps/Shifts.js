@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import {useRouter} from "next/router";
 
 import {devConsoleLog, updateObject} from "../../../../utils";
 import {directorApiRequest} from "../../../../director";
@@ -9,10 +8,11 @@ import Style from "./ShiftsSteps/Style";
 import ShiftForm from "./ShiftsSteps/ShiftForm";
 
 import classes from '../TournamentBuilder.module.scss';
+import {useLoginContext} from "../../../../store/LoginContext";
 
 const Shifts = ({substep}) => {
-  const context = useDirectorContext();
-  const {directorState, dispatch} = context;
+  const {state, dispatch} = useDirectorContext();
+  const {authToken} = useLoginContext();
 
   const INITIAL_SHIFT_STATE = {
     name: '',
@@ -137,7 +137,7 @@ const Shifts = ({substep}) => {
     }
 
     // send it up, with success/failure handlers
-    const identifier = directorState.builder.tournament.identifier;
+    const identifier = state.builder.tournament.identifier;
     const uri = `/director/tournaments/${identifier}`;
     const requestData = {
       tournament: {
@@ -159,7 +159,7 @@ const Shifts = ({substep}) => {
 
   return (
     <div>
-      <h2>{directorState.builder.tournament.name}: Shifts</h2>
+      <h2>{state.builder.tournament.name}: Shifts</h2>
 
       <Style style={chosenStyle} styleChosen={handleStyleSelection}/>
 

@@ -2,18 +2,17 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import {newTournamentPreviousStepChosen} from "../../../store/actions/directorActions";
 
 import classes from './TournamentBuilder.module.scss';
-import {devConsoleLog} from "../../../utils";
 import {useEffect, useState} from "react";
 
 const Progress = ({activeStep}) => {
-  const {directorState, dispatch} = useDirectorContext();
+  const {state, dispatch} = useDirectorContext();
   const [linkedSteps, setLinkedSteps] = useState([]);
   useEffect(() => {
-    if (!directorState || !directorState.builder) {
+    if (!state || !state.builder) {
       return;
     }
-    setLinkedSteps(directorState.builder.navigableSteps);
-  }, [directorState.builder]);
+    setLinkedSteps(state.builder.navigableSteps);
+  }, [state.builder]);
 
   if (!linkedSteps) {
     return '';
@@ -40,18 +39,18 @@ const Progress = ({activeStep}) => {
       key: 'shifts',
       display: 'Shifts',
     },
-    {
-      key: 'scoring',
-      display: 'Scoring',
-    },
+    // {
+    //   key: 'scoring',
+    //   display: 'Scoring',
+    // },
     // {
     //   key: 'required_events',
     //   display: 'Required Events',
     // },
-    {
-      key: 'additional_events',
-      display: 'Additional Events',
-    },
+    // {
+    //   key: 'additional_events',
+    //   display: 'Additional Events',
+    // },
     // {
     //   key: 'derived_events',
     //   display: 'Derived Events',
@@ -74,7 +73,7 @@ const Progress = ({activeStep}) => {
           {steps.map(({key, display}, i) => {
             const onActiveStep = i === activeIndex;
             const stepClass = !onActiveStep ? (i < linkedSteps.length ? classes.Done : classes.Upcoming) : classes.Active;
-            const iconClass = !onActiveStep ? (i < linkedSteps.length ? 'bi-check2-circle' : 'bi-dash-circle-dotted') : 'bi-arrow-down';
+            const iconClass = !onActiveStep ? (i < linkedSteps.length ? 'bi bi-check2-circle' : 'bi bi-dash-circle-dotted') : 'bi-arrow-down';
             if (onActiveStep) {
               activeStepText = display;
             }
