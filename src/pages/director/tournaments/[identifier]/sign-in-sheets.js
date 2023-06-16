@@ -5,7 +5,7 @@ import SignInSheet from "../../../../components/Director/SignInSheet/SignInSheet
 import {useDirectorApi} from "../../../../director";
 import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorBoundary from "../../../../components/common/ErrorBoundary";
-import DirectorLayout from "../../../../components/Layout/DirectorLayout/DirectorLayout";
+import {LoginContextProvider} from "../../../../store/LoginContext";
 
 const Page = () => {
   const router = useRouter();
@@ -32,9 +32,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <DirectorLayout>
+    <LoginContextProvider>
       {page}
-    </DirectorLayout>
+    </LoginContextProvider>
   );
 }
 
