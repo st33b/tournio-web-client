@@ -1,10 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {useRouter} from "next/router";
 
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
 import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
-import {devConsoleLog} from "../../../utils";
 import {directorApiRequest, makeAnApiCall, useDirectorApi, useLoggedIn} from "../../../director";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import {
