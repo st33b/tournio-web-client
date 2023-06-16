@@ -87,6 +87,7 @@ export const useDirectorApi = ({
   // This prevents SWR from making the request if we don't have a URI yet (which may be
   // the case when pulling URI details from, say, one or more query parameters
   const swrKey = uri ? [`${apiHost}/director${uri}`, authToken, ready] : null;
+  // devConsoleLog("SWR Key:", swrKey);
   const swrOptions = {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
@@ -98,7 +99,6 @@ export const useDirectorApi = ({
       const headers = new Headers();
       headers.append("Authorization", token);
       headers.append("Accept", "application/json");
-      // Here's where we can add more
 
       // @hooks_todo Merge requestConfig in here when we get to the point where we need to.
       const fetchInit = {

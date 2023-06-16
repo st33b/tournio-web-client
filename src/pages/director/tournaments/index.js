@@ -12,15 +12,11 @@ import {useLoginContext} from "../../../store/LoginContext";
 const Page = () => {
   const router = useRouter();
   const {dispatch} = useDirectorContext();
-  const {ready, user} = useLoginContext();
+  // const {user} = useLoginContext();
 
   const {loading, data: tournaments, error} = useDirectorApi({
     uri: '/tournaments',
   });
-
-  if (!ready || !user) {
-    return '';
-  }
 
   if (loading) {
     return <LoadingMessage message={'Retrieving tournaments...'} />;
@@ -51,7 +47,7 @@ const Page = () => {
         </Row>
       )}
 
-      {/* Gate this behind a superuser role check */}
+       {/*Gate this behind a superuser role check*/}
       {user.role === 'superuser' &&
         <Row>
           <Col className={'text-center'}>

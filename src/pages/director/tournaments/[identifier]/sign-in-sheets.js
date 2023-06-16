@@ -5,24 +5,15 @@ import SignInSheet from "../../../../components/Director/SignInSheet/SignInSheet
 import {useDirectorApi} from "../../../../director";
 import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorBoundary from "../../../../components/common/ErrorBoundary";
-import {useLoginContext} from "../../../../store/LoginContext";
+import DirectorLayout from "../../../../components/Layout/DirectorLayout/DirectorLayout";
 
 const Page = () => {
   const router = useRouter();
-  const {ready} = useLoginContext();
-
   const {identifier} = router.query;
 
-  const {loading, data: bowlers, error} = useDirectorApi({
+  const {loading, data: bowlers} = useDirectorApi( {
     uri: identifier ? `/tournaments/${identifier}/bowlers?include_details=true` : null,
-    onSuccess: (t) => {},
-    onFailure: (err) => {},
   });
-
-  // Are we ready?
-  if (!ready) {
-    return '';
-  }
 
   if (loading) {
     return <LoadingMessage message={'Retrieving bowler data...'} />
@@ -32,7 +23,7 @@ const Page = () => {
     <div className={'container-md'}>
       <ErrorBoundary>
         {
-          bowlers.map((bowler, i) => <SignInSheet bowler={bowler} key={bowler.identifier} showPrintButton={i === 0}/>)
+          bowlers && bowlers.map((bowler, i) => <SignInSheet bowler={bowler} key={bowler.identifier} showPrintButton={i === 0}/>)
         }
       </ErrorBoundary>
     </div>
@@ -40,7 +31,11 @@ const Page = () => {
 }
 
 Page.getLayout = function getLayout(page) {
-  return page;
+  return (
+    <DirectorLayout>
+      {page}
+    </DirectorLayout>
+  );
 }
 
 export default Page;

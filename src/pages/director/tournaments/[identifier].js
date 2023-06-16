@@ -1,10 +1,9 @@
 import React, {useState} from "react";
 import {useRouter} from "next/router";
-
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
 import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
-import {directorApiRequest, makeAnApiCall, useDirectorApi, useLoggedIn} from "../../../director";
+import {directorApiRequest, useDirectorApi} from "../../../director";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import {
   tournamentDetailsRetrieved,
@@ -18,8 +17,9 @@ import ErrorBoundary from "../../../components/common/ErrorBoundary";
 const Tournament = () => {
   const router = useRouter();
   const {identifier, stripe} = router.query;
+
   const {dispatch} = useDirectorContext();
-  const {ready, authToken} = useLoginContext();
+  const {authToken} = useLoginContext();
   const [errorMessage, setErrorMessage] = useState();
 
   //
@@ -31,10 +31,6 @@ const Tournament = () => {
   });
 
   // -----------------
-
-  if (!ready) {
-    return '';
-  }
 
   const stateChangeInitiated = (stateChangeAction) => {
     const uri = `/tournaments/${identifier}/state_change`;
@@ -62,21 +58,21 @@ const Tournament = () => {
   }
 
   return (
-    <div>
-      <ErrorBoundary>
+    <ErrorBoundary>
+      <div>
         <ErrorPage text={errorMessage}/>
 
         {tournament && (
           (tournament.state === 'active' || tournament.state === 'closed'
               ? <VisibleTournament tournament={tournament}
-                                   closeTournament={stateChangeInitiated} />
+                                   closeTournament={stateChangeInitiated}/>
               : <TournamentInPrep tournament={tournament}
                                   stateChangeInitiated={stateChangeInitiated}
                                   requestStripeStatus={stripe}/>
           )
         )}
-      </ErrorBoundary>
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 }
 
