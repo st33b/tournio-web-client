@@ -173,11 +173,6 @@ const BowlerListing = ({bowlers}) => {
     data = bowlers;
   }
 
-  //
-  // Pick up here.
-  //
-  // Move this over to the new tanstack table?
-
   const updateTheData = (rowIndex, columnId, isChecked) => {
     const oldRow = data[rowIndex];
     const newRow = {...oldRow, [columnId]: isChecked};

@@ -1,8 +1,8 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useRouter} from "next/router";
-import {Card, Button, Row, Col, ListGroup} from "react-bootstrap";
+import {Card, Button, Row, Col, ListGroup, Alert} from "react-bootstrap";
 
-import {useLoggedIn, directorApiRequest} from "../../../director";
+import {directorApiRequest, useDirectorApi} from "../../../director";
 import {devConsoleLog} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
@@ -16,11 +16,12 @@ import {
   bowlerDeleted,
   bowlerUpdated
 } from "../../../store/actions/directorActions";
+import {useLoginContext} from "../../../store/LoginContext";
 
 const Page = () => {
   const router = useRouter();
-  const context = useDirectorContext();
-  const {directorState, dispatch} = context;
+  const {state, dispatch} = useDirectorContext();
+  const {authToken} = useLoginContext();
 
   let {identifier} = router.query;
 
@@ -35,169 +36,84 @@ const Page = () => {
     confirm: false,
   }
 
-  const [bowler, setBowler] = useState(null);
-  const [availableTeams, setAvailableTeams] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState(null);
   const [newTeamFormData, setNewTeamFormData] = useState(newTeamFormInitialState);
   const [newPartnerFormData, setNewPartnerFormData] = useState(newPartnerFormInitialState);
   const [linkFreeEntryFormData, setLinkFreeEntryFormData] = useState(linkFreeEntryInitialState);
-  const [availableFreeEntries, setAvailableFreeEntries] = useState([]);
-  const [unpartneredBowlers, setUnpartneredBowlers] = useState([]);
 
-  // This effect ensures we're logged in with appropriate permissions
-  useEffect(() => {
-    if (!directorState.tournament) {
-      return;
-    }
+  const [deleteBowlerError, setDeleteBowlerError] = useState();
 
-    const currentTournamentIdentifier = directorState.tournament.identifier;
+  const {loading: bowlerLoading, data: bowler, error: bowlerError} = useDirectorApi({
+    uri: identifier ? `/bowlers/${identifier}` : null,
+  });
 
-    if (directorState.user.role !== 'superuser' && !directorState.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
-      router.push('/director');
-    }
-  }, [directorState]);
+  const {loading: teamsLoading, data: availableTeams, error: teamsError} = useDirectorApi({
+    uri: state.tournament ? `tournaments/${state.tournament.identifier}/teams/partial=true` : null,
+  });
 
-  const fetchBowlerSuccess = (data) => {
-    setLoading(false);
-    if (data.tournament.identifier !== directorState.tournament.identifier) {
-      // just in case
-      router.push('/director/logout');
-    }
-    setBowler(data);
-  }
-  const fetchBowlerFailure = (data) => {
-    setErrorMessage(data.error);
-    setLoading(false);
-  }
+  const {loading: unpartneredLoading, data: unpartneredBowlers, error: unpartneredError} = useDirectorApi({
+    uri: state.tournament ? `/tournaments/${state.tournament.identifier}/bowlers?unpartnered=true` : null,
+  });
 
-  // This effect pulls the bowler details from the backend
-  useEffect(() => {
-    if (!identifier) {
-      return;
-    }
+  const {loading: freeEntriesLoading, data: availableFreeEntries, error: freeEntriesError} = useDirectorApi({
+    uri: state.tournament ? `/tournaments/${state.tournament.identifier}/free_entries?unassigned=true` : null,
+  });
 
-    const uri = `/director/bowlers/${identifier}`;
-    const requestConfig = {
-      method: 'get',
-    }
-    devConsoleLog("Retrieving bowler details.");
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      onSuccess: fetchBowlerSuccess,
-      onFailure: fetchBowlerFailure,
-    });
-  }, [identifier, context]);
-
-  // This effect sets the list of teams available to join
-  useEffect(() => {
-    if (!directorState.tournament) {
-      return;
-    }
-
-    const uri = `/director/tournaments/${directorState.tournament.identifier}/teams?partial=true`;
-    const requestConfig = {
-      method: 'get',
-    }
-    setLoading(true);
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      onSuccess: (data) => setAvailableTeams(data),
-      onFailure: (data) => devConsoleLog("Failed to retrieve joinable teams", data),
-    });
-  }, [directorState.tournament]);
-
-  // This effect sets the list of bowlers without doubles partners
-  useEffect(() => {
-    if (!directorState.tournament) {
-      return;
-    }
-
-    const uri = `/director/tournaments/${directorState.tournament.identifier}/bowlers?unpartnered=true`;
-    const requestConfig = {
-      method: 'get',
-    }
-    setLoading(true);
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      onSuccess: (data) => setUnpartneredBowlers(data),
-      onFailure: (data) => devConsoleLog("Failed to retrieve unpartnered bowlers", data),
-    })
-  }, [directorState.tournament]);
-
-  // Limit the list of available free entries to those with no bowler attached
-  useEffect(() => {
-    if (!directorState.tournament) {
-      return;
-    }
-
-    const uri = `/director/tournaments/${directorState.tournament.identifier}/free_entries?unassigned=true`;
-    const requestConfig = {
-      method: 'get',
-    }
-    setLoading(true);
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      onSuccess: (data) => setAvailableFreeEntries(data),
-      onFailure: (data) => devConsoleLog("Failed to retrieve unassigned free entries", data),
-    });
-  }, [directorState.tournament]);
-
-  const loggedInState = useLoggedIn();
-  const ready = loggedInState >= 0;
-  if (!ready) {
-    return '';
-  }
-  if (!loggedInState) {
-    router.push('/director/login');
-  }
-  if (!directorState) {
-    return '';
-  }
-
-  if (loading || !bowler) {
+  if (!state.tournament || bowlerLoading) {
     return <LoadingMessage message={'Retrieving bowler details...'}/>
   }
 
-  let displayedError = '';
-  if (errorMessage) {
-    displayedError = (
-      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-0 mb-3'}
-           role={'alert'}>
-        <i className={'bi-exclamation-circle-fill pe-2'} aria-hidden={true}/>
-        <div className={'me-auto'}>
-          <strong>
-            Oh no!
-          </strong>
-          {' '}{errorMessage}
-        </div>
-      </div>
-    );
-  }
+  let displayedErrors = (
+    <>
+      {teamsError && (
+        <Alert variant={'danger'}
+               dismissible={true}
+               closeLabel={'Close'}>
+              <span>
+                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+                <strong>Error.</strong>{' '}
+                {teamsError.message}
+              </span>
+        </Alert>
+      )}
+      {unpartneredError && (
+        <Alert variant={'danger'}
+               dismissible={true}
+               closeLabel={'Close'}>
+              <span>
+                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+                <strong>Error.</strong>{' '}
+                {unpartneredError.message}
+              </span>
+        </Alert>
+      )}
+      {freeEntriesError && (
+        <Alert variant={'danger'}
+               dismissible={true}
+               closeLabel={'Close'}>
+              <span>
+                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+                <strong>Error.</strong>{' '}
+                {freeEntriesError.message}
+              </span>
+        </Alert>
+      )}
+    </>
+  );
 
   const deleteBowlerSuccess = (_) => {
-    setLoading(false);
     dispatch(bowlerDeleted(bowler))
     router.push('/director/bowlers?success=deleted');
   }
   const deleteBowlerFailure = (data) => {
-    setLoading(false);
-    setErrorMessage(data.error);
+    setDeleteBowlerError(data.error);
   }
 
   const deleteSubmitHandler = (event) => {
     event.preventDefault();
     if (confirm('This will remove the bowler and all their details. Are you sure?')) {
-      setLoading(true);
-      const uri = `/director/bowlers/${identifier}`;
+      // TODO
+      // setLoading(true);
+      const uri = `/bowlers/${identifier}`;
       const requestConfig = {
         method: 'delete',
         headers: {
@@ -208,7 +124,7 @@ const Page = () => {
       directorApiRequest({
         uri: uri,
         requestConfig: requestConfig,
-        context: context,
+        authToken: authToken,
         onSuccess: deleteBowlerSuccess,
         onFailure: deleteBowlerFailure,
       });
@@ -276,6 +192,17 @@ const Page = () => {
             Delete Bowler
           </Button>
         </form>
+        {deleteBowlerError && (
+          <Alert variant={'danger'}
+                 dismissible={true}
+                 closeLabel={'Close'}>
+              <span>
+                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+                <strong>Error.</strong>{' '}
+                {deleteBowlerError}
+              </span>
+          </Alert>
+        )}
       </Card.Body>
     </Card>
   );
@@ -287,17 +214,17 @@ const Page = () => {
   }
 
   const moveBowlerSuccess = (data) => {
-    setLoading(false);
-    setBowler(data);
+    // TODO: reload page
   }
+
   const moveBowlerFailure = (data) => {
-    setLoading(false);
-    setErrorMessage(data.error);
+    // TODO: specific error message
+    // setErrorMessage(data.error);
   }
 
   const bowlerMoveSubmitHandler = (event) => {
     event.preventDefault();
-    const uri = `/director/bowlers/${identifier}`;
+    const uri = `/bowlers/${identifier}`;
     const requestConfig = {
       method: 'patch',
       headers: {
@@ -315,7 +242,7 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: moveBowlerSuccess,
       onFailure: moveBowlerFailure,
     });
@@ -348,6 +275,7 @@ const Page = () => {
               Move Bowler
             </Button>
           </form>
+        {/* TODO: put error message here */}
         </Card.Body>
       </Card>
     );
@@ -360,17 +288,16 @@ const Page = () => {
   }
 
   const newPartnerSuccess = (data) => {
-    setLoading(false);
-    setBowler(data);
+    // TODO: reload page
   }
   const newPartnerFailure = (data) => {
-    setLoading(false);
-    setErrorMessage(data.error);
+    // TODO: specific error message
+    // setErrorMessage(data.error);
   }
 
   const newPartnerSubmitHandler = (event) => {
     event.preventDefault();
-    const uri = `/director/bowlers/${identifier}`;
+    const uri = `/bowlers/${identifier}`;
     const requestConfig = {
       method: 'patch',
       headers: {
@@ -388,14 +315,14 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: newPartnerSuccess,
       onFailure: newPartnerFailure,
     });
   }
 
   let assignPartnerCard = '';
-  const tournamentHasDoublesEvent = ['active', 'closed'].includes(directorState.tournament.state) && directorState.tournament.purchasable_items.bowling.some(pi => {
+  const tournamentHasDoublesEvent = ['active', 'closed'].includes(state.tournament.state) && state.tournament.purchasable_items.bowling.some(pi => {
     return pi.determination === 'event' && pi.refinement === 'doubles'
   });
   if (tournamentHasDoublesEvent && unpartneredBowlers.length > 0) {
@@ -424,6 +351,7 @@ const Page = () => {
               Assign Partner
             </Button>
           </form>
+        {/* TODO: put error message here */}
         </Card.Body>
       </Card>
     );
@@ -442,16 +370,18 @@ const Page = () => {
   }
 
   const linkFreeEntrySuccess = (data) => {
+    // TODO: can we trigger a re-render rather than a reload?
     router.reload();
   }
   const linkFreeEntryFailure = (data) => {
-    setErrorMessage('Failed to link the free entry.');
+    // TODO: specific error message
+    // setErrorMessage('Failed to link the free entry.');
   }
 
   const linkFreeEntrySubmitHandler = (event) => {
     event.preventDefault();
 
-    const uri = `/director/free_entries/${linkFreeEntryFormData.identifier}`;
+    const uri = `/free_entries/${linkFreeEntryFormData.identifier}`;
     const requestConfig = {
       method: 'patch',
       headers: {
@@ -465,7 +395,7 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: linkFreeEntrySuccess,
       onFailure: linkFreeEntryFailure,
     });
@@ -505,6 +435,7 @@ const Page = () => {
               </Button>
             </div>
           </form>
+        {/* TODO: error message here */}
         </Card.Body>
       </Card>
     );
@@ -552,7 +483,8 @@ const Page = () => {
     const newBowler = {...bowler};
     newBowler.ledger_entries = bowler.ledger_entries.concat(newEntry);
     newBowler.amount_due = 0;
-    setBowler(newBowler);
+    // TODO: reload? re-render? Looks like this wants to update the bowler in context...
+    // setBowler(newBowler);
     dispatch(bowlerUpdated(newBowler));
   }
 
@@ -580,6 +512,7 @@ const Page = () => {
           );
         })}
         <ListGroup.Item className={'p-0'}>
+          {/* TODO: update ManualPayment component not to use director context. (Maybe not to make an API call at all)*/}
           <ManualPayment bowler={bowler} added={ledgerEntryAdded}/>
         </ListGroup.Item>
       </ListGroup>
@@ -611,7 +544,7 @@ const Page = () => {
 
   const convertAdditionalQuestionResponsesForPatch = (bowlerData) => {
     const responses = [];
-    directorState.tournament.additional_questions.forEach(aq => {
+    state.tournament.additional_questions.forEach(aq => {
       const key = aq.name;
       responses.push({
         name: key,
@@ -631,7 +564,7 @@ const Page = () => {
   }
 
   const updateSubmitHandler = (bowlerData) => {
-    const uri = `/director/bowlers/${identifier}`;
+    const uri = `/bowlers/${identifier}`;
     const requestConfig = {
       method: 'patch',
       headers: {
@@ -645,7 +578,7 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: bowlerUpdateSuccess,
       onFailure: bowlerUpdateFailure,
     });
@@ -658,7 +591,7 @@ const Page = () => {
 
   const ladder = [
     {text: 'Tournaments', path: '/director/tournaments'},
-    {text: directorState.tournament.name, path: `/director/tournaments/${directorState.tournament.identifier}`},
+    {text: state.tournament.name, path: `/director/tournaments/${state.tournament.identifier}`},
     {text: 'Bowlers', path: `/director/bowlers`},
   ];
 
@@ -667,9 +600,19 @@ const Page = () => {
       <Breadcrumbs ladder={ladder} activeText={bowlerName}/>
       <Row>
         <Col md={8}>
-          {displayedError}
+          {bowlerError && (
+            <Alert variant={'danger'}
+                   dismissible={true}
+                   closeLabel={'Close'}>
+              <span>
+                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+                <strong>Error.</strong>{' '}
+                {bowlerError.message}
+              </span>
+            </Alert>
+          )}
           {bowlerSummary}
-          <BowlerDetails tournament={directorState.tournament}
+          <BowlerDetails tournament={state.tournament}
                          bowler={bowler}
                          bowlerUpdateSubmitted={updateSubmitHandler}
           />
