@@ -1,140 +1,65 @@
-import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import {Col, Row} from "react-bootstrap";
+import {Alert, Col, Row} from "react-bootstrap";
 
-import {devConsoleLog} from "../../../utils";
-import {directorApiRequest} from "../../../director";
+import {useDirectorApi} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import BowlerListing from "../../../components/Director/BowlerListing/BowlerListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import {useLoggedIn} from "../../../director";
+import ErrorBoundary from "../../../components/common/ErrorBoundary";
 
 const Page = () => {
   const router = useRouter();
-  const context = useDirectorContext();
-  const directorState = context.directorState;
-
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [bowlers, setBowlers] = useState();
-
-  // This effect ensures we're logged in with appropriate permissions
-  useEffect(() => {
-    if (!directorState.user) {
-      return;
-    }
-    const currentTournamentIdentifier = directorState.tournament.identifier;
-
-    if (directorState.user.role !== 'superuser' && !directorState.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
-      router.push('/director');
-    }
-  }, [directorState.user]);
-
-  const onFetchBowlersSuccess = (data) => {
-    setBowlers(data);
-    setLoading(false);
-  }
-
-  const onFetchBowlersFailure = (data) => {
-    setErrorMessage(data.error);
-    setLoading(false);
-    setBowlers([]);
-  }
+  const {state} = useDirectorContext();
+  const {deleteSuccess} = router.query;
 
   // Fetch the bowlers from the backend
-  useEffect(() => {
-    if (!directorState.tournament) {
-      return;
-    }
-    const uri = `/director/tournaments/${directorState.tournament.identifier}/bowlers`;
-    const requestConfig = {
-      method: 'get',
-    }
-    setLoading(true);
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      onSuccess: onFetchBowlersSuccess,
-      onFailure: onFetchBowlersFailure,
-    })
-  }, [directorState.tournament]);
+  const {loading, data: bowlers, error} = useDirectorApi({
+    uri: state.tournament ? `/tournaments/${state.tournament.identifier}/bowlers` : null,
+  });
 
-  // Do we have a success query parameter?
-  useEffect(() => {
-    const {success} = router.query;
-    if (success === 'deleted') {
-      setSuccessMessage('The bowler has been removed.');
-      router.replace(router.pathname, null, { shallow: true });
-    }
-  }, [router]);
-
-  const loggedInState = useLoggedIn();
-  const ready = loggedInState >= 0;
-  if (!ready) {
-    return '';
-  }
-  if (!loggedInState) {
-    router.push('/director/login');
-  }
-  if (!directorState) {
-    return '';
-  }
-
-  let success = '';
-  let error = '';
-  if (successMessage) {
-    success = (
-      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mb-0'} role={'alert'}>
-        <i className={'bi-check-circle-fill pe-2'} aria-hidden={true} />
-        <div className={'me-auto'}>
-          <strong>
-            Success!
-          </strong>
-          {' '}{successMessage}
-        </div>
-        <button type={"button"} className={"btn-close"} data-bs-dismiss={"alert"} aria-label={"Close"} />
-      </div>
-    );
-  }
-  if (errorMessage) {
-    error = (
-      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mb-0'} role={'alert'}>
-        <i className={'bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-        <div className={'me-auto'}>
-          <strong>
-            Oh no!
-          </strong>
-          {' '}{errorMessage}
-        </div>
-        <button type={"button"} className={"btn-close"} data-bs-dismiss={"alert"} aria-label={"Close"} />
-      </div>
-    );
-  }
-
-  const ladder = [{text: 'Tournaments', path: '/director'}];
-  if (directorState.tournament) {
-    ladder.push({text: directorState.tournament.name, path: `/director/tournaments/${directorState.tournament.identifier}`});
-  }
-
-  if (loading) {
+  if (!state.tournament || loading) {
     return <LoadingMessage message={'Retrieving bowler data...'} />
   }
 
+  ////////////////////
+
+  const ladder = [{text: 'Tournaments', path: '/director'}];
+  ladder.push({text: state.tournament.name, path: `/director/tournaments/${state.tournament.identifier}`});
+
   return (
-    <>
+    <ErrorBoundary>
       <Breadcrumbs ladder={ladder} activeText={'Bowlers'}/>
       <Row>
         <Col>
-          {success}
-          {error}
+          {deleteSuccess && (
+            <Alert variant={'success'}
+                   dismissible={true}
+                   closeLabel={'Close'}
+                   onClose={() => router.replace(router.pathname, null, {shallow: true})}>
+              <span>
+                <i className={'bi bi-check-circle-fill pe-2'} aria-hidden={true} />
+                <strong>Success!</strong>{' '}
+                The bowler has been removed.
+              </span>
+            </Alert>
+          )}
+          {error && (
+            <Alert variant={'danger'}
+                   dismissible={true}
+                   closeLabel={'Close'}>
+              <span>
+                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+                <strong>Error.</strong>{' '}
+                {error.message}
+              </span>
+            </Alert>
+          )}
           <BowlerListing bowlers={bowlers} />
         </Col>
       </Row>
-    </>
+    </ErrorBoundary>
   );
 }
 

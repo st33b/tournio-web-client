@@ -12,7 +12,7 @@ import {useLoginContext} from "../../../store/LoginContext";
 const Page = () => {
   const router = useRouter();
   const {dispatch} = useDirectorContext();
-  // const {user} = useLoginContext();
+  const {user} = useLoginContext();
 
   const {loading, data: tournaments, error} = useDirectorApi({
     uri: '/tournaments',
@@ -47,8 +47,7 @@ const Page = () => {
         </Row>
       )}
 
-       {/*Gate this behind a superuser role check*/}
-      {user.role === 'superuser' &&
+      {user && user.role === 'superuser' &&
         <Row>
           <Col className={'text-center'}>
             <a href={"/director/tournaments/new"}

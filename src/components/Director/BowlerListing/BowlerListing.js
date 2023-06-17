@@ -10,6 +10,7 @@ import {directorApiRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './BowlerListing.module.scss';
+import {useLoginContext} from "../../../store/LoginContext";
 
 const IgboMemberCell = ({
                           value: initialValue,
@@ -20,7 +21,7 @@ const IgboMemberCell = ({
   const [checked, setChecked] = useState(initialValue);
   const [showPopover, setShowPopover] = useState(false);
   const target = useRef(null);
-  const context = useDirectorContext();
+  const {authToken} = useLoginContext();
   const router = useRouter();
 
   const onChangeSuccess = (checked, data) => {
@@ -35,7 +36,7 @@ const IgboMemberCell = ({
   }
 
   const submitStatusChange = (newStatus) => {
-    const uri = `/director/bowlers/${original.identifier}`;
+    const uri = `/bowlers/${original.identifier}`;
     const requestConfig = {
       method: 'patch',
       headers: {
@@ -52,7 +53,7 @@ const IgboMemberCell = ({
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: (data) => onChangeSuccess(newStatus, data),
       onFailure: onChangeFailure,
     });
@@ -172,10 +173,16 @@ const BowlerListing = ({bowlers}) => {
     data = bowlers;
   }
 
+  //
+  // Pick up here.
+  //
+  // Move this over to the new tanstack table?
+
   const updateTheData = (rowIndex, columnId, isChecked) => {
-    const oldRow = data.get(rowIndex);
+    const oldRow = data[rowIndex];
     const newRow = {...oldRow, [columnId]: isChecked};
-    const newData = data.set(rowIndex, newRow);
+    const newData = [...data];
+    newData[rowIndex] = newRow;
     setData(newData);
   }
 

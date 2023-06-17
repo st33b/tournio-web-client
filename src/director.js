@@ -109,7 +109,7 @@ export const useDirectorApi = ({
       const response = await fetch(url, fetchInit);
 
       if (!response.ok) {
-        const error = new Error('Received an error from the API');
+        const error = new Error('Received an error from the server.');
         error.info = await response.text();
         error.status = response.status;
         throw error;
