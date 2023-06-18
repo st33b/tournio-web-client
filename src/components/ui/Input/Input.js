@@ -35,6 +35,8 @@ const Input = (props) => {
     }
   });
 
+  // Classes to put on div.col that contains the input element and its other stuff
+  const columnClasses = [];
   switch (props.elementType) {
     case('input'):
       inputElement = <input
@@ -80,6 +82,7 @@ const Input = (props) => {
       );
       break;
     case('checkbox'):
+      columnClasses.push('d-flex', 'align-items-center'); // vertically center the checkbox
       inputElement = (
         <div className={`form-check`}>
           <input
@@ -98,6 +101,7 @@ const Input = (props) => {
       );
       break;
     case('radio'):
+      columnClasses.push('d-flex', 'align-items-center'); // vertically center the radio button
       inputElement = props.elementConfig.choices.map((choice, i) => (
         <div className={`form-check`} key={i}>
           <input type={'radio'}
@@ -165,7 +169,7 @@ const Input = (props) => {
           </div>
         )}
       </label>
-      <div className={`col ${props.wasValidated ? 'was-validated' : ''}`}>
+      <div className={`col ${columnClasses.join(' ')} ${props.wasValidated ? 'was-validated' : ''}`}>
         {inputElement}
         {helperElement}
         <Collapse in={errorMessages.length > 0}>

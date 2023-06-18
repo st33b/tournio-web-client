@@ -6,6 +6,10 @@
     filter: brightness(80%);
   }
 
+  .AlignSelfCenter {
+    align-self: center;
+  }
+
   .InvalidFeedback,
   &:invalid {
     color: var(--tournio-form-invalid-color);
