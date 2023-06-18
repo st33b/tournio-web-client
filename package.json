@@ -13,6 +13,7 @@
     "@mui/material": "^5.10.2",
     "@mui/x-date-pickers": "^5.0.0",
     "@rails/activestorage": "^7.0.4-3",
+    "@tanstack/react-table": "^8.9.2",
     "@vercel/analytics": "^1.0.1",
     "@vercel/edge-config": "^0.2.1",
     "axios": "^0.27.2",

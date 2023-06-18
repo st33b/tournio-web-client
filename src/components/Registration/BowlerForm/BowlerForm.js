@@ -8,7 +8,6 @@ import classes from './BowlerForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import ShiftForm from "../ShiftForm/ShiftForm";
 import {devConsoleLog, validateEmail} from "../../../utils";
-import {headers} from "next/headers";
 
 const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => {
   const {registration} = useRegistrationContext();

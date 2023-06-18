@@ -7,11 +7,10 @@ import Summary from "../../../components/Registration/Summary/Summary";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {
-  newSoloRegistrationInitiated,
   partnerUpBowlerAdded,
-  soloBowlerInfoAdded
 } from "../../../store/actions/registrationActions";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
+import ErrorBoundary from "../../../components/common/ErrorBoundary";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
@@ -22,7 +21,7 @@ const Page = () => {
       return;
     }
     const shift = registration.tournament.shifts[0];
-    if (shift && !shift.registration_types.partner) {
+    if (shift && !registration.tournament.registration_options.partner) {
       router.push(`/tournaments/${registration.tournament.identifier}`);
     }
   }, [registration]);
@@ -37,16 +36,18 @@ const Page = () => {
   }
 
   return (
-    <Row>
-      <Col lg={8}>
-        <ProgressIndicator active={'bowlers'} />
-        <BowlerForm tournament={registration.tournament}
-                    bowlerInfoSaved={onCompletion} />
-      </Col>
-      <Col>
-        <Summary tournament={registration.tournament}/>
-      </Col>
-    </Row>
+    <ErrorBoundary>
+      <Row>
+        <Col lg={8}>
+          <ProgressIndicator active={'bowlers'}/>
+          <BowlerForm tournament={registration.tournament}
+                      bowlerInfoSaved={onCompletion}/>
+        </Col>
+        <Col>
+          <Summary tournament={registration.tournament}/>
+        </Col>
+      </Row>
+    </ErrorBoundary>
   );
 }
 
