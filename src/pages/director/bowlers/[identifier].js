@@ -14,9 +14,9 @@ import OfficeUseOnly from "../../../components/Director/BowlerDetails/OfficeUseO
 import ResendEmailButtons from "../../../components/Director/BowlerDetails/ResendEmailButtons";
 import {
   bowlerDeleted,
-  bowlerUpdated
 } from "../../../store/actions/directorActions";
 import {useLoginContext} from "../../../store/LoginContext";
+import ErrorBoundary from "../../../components/common/ErrorBoundary";
 
 const Page = () => {
   const router = useRouter();
@@ -40,87 +40,114 @@ const Page = () => {
   const [newPartnerFormData, setNewPartnerFormData] = useState(newPartnerFormInitialState);
   const [linkFreeEntryFormData, setLinkFreeEntryFormData] = useState(linkFreeEntryInitialState);
 
-  const [deleteBowlerError, setDeleteBowlerError] = useState();
+  const [errors, setErrors] = useState({
+    deleteBowler: null,
+    moveBowler: null,
+    unpartneredBowlers: null,
+    freeEntries: null,
+    updateBowler: null,
+  });
+  const [loadingParts, setLoadingParts] = useState({
+    deleteBowler: false,
+    moveBowler: false,
+    unpartneredBowlers: false,
+    freeEntries: false,
+    updateBowler: false,
+  });
 
   const {loading: bowlerLoading, data: bowler, error: bowlerError} = useDirectorApi({
     uri: identifier ? `/bowlers/${identifier}` : null,
   });
 
-  const {loading: teamsLoading, data: availableTeams, error: teamsError} = useDirectorApi({
-    uri: state.tournament ? `tournaments/${state.tournament.identifier}/teams/partial=true` : null,
+  const {data: availableTeams, error: teamsError} = useDirectorApi({
+    uri: state.tournament ? `/tournaments/${state.tournament.identifier}/teams?partial=true` : null,
+    initialData: [],
+    onSuccess: () => {
+      setLoadingParts({
+        ...loadingParts,
+        moveBowler: false,
+      });
+    },
+    onFailure: () => {
+      setLoadingParts({
+        ...loadingParts,
+        moveBowler: false,
+      });
+      setErrors({
+        ...errors,
+        moveBowler: 'Failed to load list',
+      });
+    },
   });
 
-  const {loading: unpartneredLoading, data: unpartneredBowlers, error: unpartneredError} = useDirectorApi({
+  const {data: unpartneredBowlers, error: unpartneredError} = useDirectorApi({
     uri: state.tournament ? `/tournaments/${state.tournament.identifier}/bowlers?unpartnered=true` : null,
+    initialData: [],
+    onSuccess: () => {
+      setLoadingParts({
+        ...loadingParts,
+        unpartneredBowlers: false,
+      });
+    },
+    onFailure: () => {
+    setLoadingParts({
+      ...loadingParts,
+      unpartneredBowlers: false,
+    });
+    setErrors({
+      ...errors,
+      unpartneredBowlers: 'Failed to load list',
+    });
+  },
   });
 
-  const {loading: freeEntriesLoading, data: availableFreeEntries, error: freeEntriesError} = useDirectorApi({
+  const {data: availableFreeEntries, error: freeEntriesError} = useDirectorApi({
     uri: state.tournament ? `/tournaments/${state.tournament.identifier}/free_entries?unassigned=true` : null,
+    initialData: [],
+    onSuccess: () => {
+      setLoadingParts({
+        ...loadingParts,
+        freeEntries: false,
+      });
+    },
+    onFailure: () => {
+      setLoadingParts({
+        ...loadingParts,
+        freeEntries: false,
+      });
+      setErrors({
+        ...errors,
+        freeEntries: 'Failed to load list',
+      });
+    },
   });
-
-  if (!state.tournament || bowlerLoading) {
-    return <LoadingMessage message={'Retrieving bowler details...'}/>
-  }
-
-  let displayedErrors = (
-    <>
-      {teamsError && (
-        <Alert variant={'danger'}
-               dismissible={true}
-               closeLabel={'Close'}>
-              <span>
-                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-                <strong>Error.</strong>{' '}
-                {teamsError.message}
-              </span>
-        </Alert>
-      )}
-      {unpartneredError && (
-        <Alert variant={'danger'}
-               dismissible={true}
-               closeLabel={'Close'}>
-              <span>
-                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-                <strong>Error.</strong>{' '}
-                {unpartneredError.message}
-              </span>
-        </Alert>
-      )}
-      {freeEntriesError && (
-        <Alert variant={'danger'}
-               dismissible={true}
-               closeLabel={'Close'}>
-              <span>
-                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-                <strong>Error.</strong>{' '}
-                {freeEntriesError.message}
-              </span>
-        </Alert>
-      )}
-    </>
-  );
 
   const deleteBowlerSuccess = (_) => {
     dispatch(bowlerDeleted(bowler))
     router.push('/director/bowlers?success=deleted');
   }
   const deleteBowlerFailure = (data) => {
-    setDeleteBowlerError(data.error);
+    setLoadingParts({
+      ...loadingParts,
+      deleteBowler: false,
+    });
+    setErrors({
+      ...errors,
+      deleteBowler: data.error,
+    });
   }
 
   const deleteSubmitHandler = (event) => {
     event.preventDefault();
     if (confirm('This will remove the bowler and all their details. Are you sure?')) {
-      // TODO
-      // setLoading(true);
+      setLoadingParts({
+        ...loadingParts,
+        deleteBowler: true,
+      });
       const uri = `/bowlers/${identifier}`;
       const requestConfig = {
         method: 'delete',
-        headers: {
-          'Content-Type': 'application/json',
-        },
       }
-      setLoading(true);
       directorApiRequest({
         uri: uri,
         requestConfig: requestConfig,
@@ -131,82 +158,6 @@ const Page = () => {
     }
   }
 
-  const bowlerSummary = (
-    <Card className={'mb-2'}>
-      <Card.Header as={'h3'}>
-        {bowler.display_name}
-      </Card.Header>
-      <Card.Body>
-        <dl className={'mb-0'}>
-          {!!bowler.team && (
-            <>
-              <div className={'row'}>
-                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
-                <dd className={'col'}>
-                  <a href={`/director/teams/${bowler.team.identifier}`}>
-                    {bowler.team.name}
-                  </a>
-                </dd>
-              </div>
-              <div className={'row'}>
-                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team position</dt>
-                <dd className={'col'}>{bowler.position}</dd>
-              </div>
-              <div className={'row'}>
-                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Doubles partner</dt>
-                {bowler.doubles_partner && <dd className={'col'}>{bowler.doubles_partner.full_name}</dd>}
-                {!bowler.doubles_partner && <dd className={'col'}>n/a</dd>}
-              </div>
-            </>
-          )}
-          {!bowler.team && (
-            <>
-              <div className={'row'}>
-                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
-                <dd className={'col'}>
-                  n/a
-                </dd>
-              </div>
-              <div className={'row'}>
-                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Preferred Shift</dt>
-                <dd className={'col'}>{bowler.shift.name}</dd>
-              </div>
-            </>
-          )}
-          <div className={'row'}>
-            <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Fees Paid?</dt>
-            <dd className={'col'}>{bowler.paid ? 'Yes' : 'No'}</dd>
-          </div>
-        </dl>
-      </Card.Body>
-    </Card>
-  );
-
-  const deleteBowlerCard = (
-    <Card className={'mb-3'}>
-      <Card.Body className={'text-center'}>
-        <form onSubmit={deleteSubmitHandler}>
-          <Button variant={'danger'}
-                  type={'submit'}
-          >
-            Delete Bowler
-          </Button>
-        </form>
-        {deleteBowlerError && (
-          <Alert variant={'danger'}
-                 dismissible={true}
-                 closeLabel={'Close'}>
-              <span>
-                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-                <strong>Error.</strong>{' '}
-                {deleteBowlerError}
-              </span>
-          </Alert>
-        )}
-      </Card.Body>
-    </Card>
-  );
-
   const moveBowlerOptionChanged = (event) => {
     const newFormData = {...newTeamFormData}
     newFormData.destinationTeam = event.target.value;
@@ -214,12 +165,23 @@ const Page = () => {
   }
 
   const moveBowlerSuccess = (data) => {
-    // TODO: reload page
+    // We don't have the bowler in state. Maybe we  should, so we can update it
+    // when this (and others) succeeds?
+    setLoadingParts({
+      ...loadingParts,
+      moveBowler: false,
+    });
   }
 
   const moveBowlerFailure = (data) => {
-    // TODO: specific error message
-    // setErrorMessage(data.error);
+    setLoadingParts({
+      ...loadingParts,
+      moveBowler: false,
+    });
+    setErrors({
+      ...errors,
+      moveBowler: data.error,
+    });
   }
 
   const bowlerMoveSubmitHandler = (event) => {
@@ -238,7 +200,10 @@ const Page = () => {
         }
       }
     }
-    setLoading(true);
+    setLoadingParts({
+      ...loadingParts,
+      moveBowler: true,
+    });
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
@@ -248,39 +213,6 @@ const Page = () => {
     });
   }
 
-  let moveToTeamCard = '';
-  if (availableTeams.length > 0) {
-    let bowlerTeamId = '';
-    if (bowler.team) {
-      bowlerTeamId = bowler.team.identifier;
-    }
-    const options = availableTeams.filter(t => t.identifier !== bowlerTeamId);
-
-    moveToTeamCard = (
-      <Card className={'mb-3'}>
-        <Card.Header as={'h6'} className={'fw-light'}>
-          Move to another team
-        </Card.Header>
-        <Card.Body>
-          <form className={'text-center'} onSubmit={bowlerMoveSubmitHandler}>
-            <select className={'form-select'} name={'destinationTeam'} onChange={moveBowlerOptionChanged}>
-              <option value={''}>Choose their new team</option>
-              {options.map(t => <option key={t.identifier} value={t.identifier}>{t.name}</option>)}
-            </select>
-            <Button variant={'primary'}
-                    size={'sm'}
-                    className={'mt-3'}
-                    disabled={newTeamFormData.destinationTeam === ''}
-                    type={'submit'}>
-              Move Bowler
-            </Button>
-          </form>
-        {/* TODO: put error message here */}
-        </Card.Body>
-      </Card>
-    );
-  }
-
   const partnerOptionChanged = (event) => {
     const newFormData = {...newPartnerFormData}
     newFormData.partnerIdentifier = event.target.value;
@@ -288,11 +220,22 @@ const Page = () => {
   }
 
   const newPartnerSuccess = (data) => {
-    // TODO: reload page
+    // We don't have the bowler in state. Maybe we  should, so we can update it
+    // when this (and others) succeeds?
+    setLoadingParts({
+      ...loadingParts,
+      unpartneredBowlers: false,
+    });
   }
   const newPartnerFailure = (data) => {
-    // TODO: specific error message
-    // setErrorMessage(data.error);
+    setLoadingParts({
+      ...loadingParts,
+      unpartneredBowlers: false,
+    });
+    setErrors({
+      ...errors,
+      unpartneredBowlers: data.error,
+    });
   }
 
   const newPartnerSubmitHandler = (event) => {
@@ -311,7 +254,10 @@ const Page = () => {
         }
       }
     }
-    setLoading(true);
+    setLoadingParts({
+      ...loadingParts,
+      unpartneredBowlers: true,
+    });
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
@@ -319,42 +265,6 @@ const Page = () => {
       onSuccess: newPartnerSuccess,
       onFailure: newPartnerFailure,
     });
-  }
-
-  let assignPartnerCard = '';
-  const tournamentHasDoublesEvent = ['active', 'closed'].includes(state.tournament.state) && state.tournament.purchasable_items.bowling.some(pi => {
-    return pi.determination === 'event' && pi.refinement === 'doubles'
-  });
-  if (tournamentHasDoublesEvent && unpartneredBowlers.length > 0) {
-    let bowlerPartnerId = '';
-    if (bowler.doubles_partner) {
-      bowlerPartnerId = bowler.doubles_partner.identifier;
-    }
-    const options = unpartneredBowlers.filter(t => t.identifier !== bowlerPartnerId);
-
-    assignPartnerCard = (
-      <Card className={'mb-3'}>
-        <Card.Header as={'h6'} className={'fw-light'}>
-          Assign Doubles Partner
-        </Card.Header>
-        <Card.Body>
-          <form className={'text-center'} onSubmit={newPartnerSubmitHandler}>
-            <select className={'form-select'} name={'partner'} onChange={partnerOptionChanged}>
-              <option value={''}>Choose their new partner</option>
-              {options.map(t => <option key={t.identifier} value={t.identifier}>{t.full_name}</option>)}
-            </select>
-            <Button variant={'primary'}
-                    size={'sm'}
-                    className={'mt-3'}
-                    disabled={newPartnerFormData.partner === ''}
-                    type={'submit'}>
-              Assign Partner
-            </Button>
-          </form>
-        {/* TODO: put error message here */}
-        </Card.Body>
-      </Card>
-    );
   }
 
   const linkFreeEntryOptionChanged = (event) => {
@@ -370,12 +280,24 @@ const Page = () => {
   }
 
   const linkFreeEntrySuccess = (data) => {
-    // TODO: can we trigger a re-render rather than a reload?
-    router.reload();
+    // We don't have the bowler in state. Maybe we  should, so we can update it
+    // when this (and others) succeeds?
+
+    setLoadingParts({
+      ...loadingParts,
+      freeEntries: false,
+    });
   }
   const linkFreeEntryFailure = (data) => {
     // TODO: specific error message
-    // setErrorMessage('Failed to link the free entry.');
+    setLoadingParts({
+      ...loadingParts,
+      freeEntries: false,
+    });
+    setErrors({
+      ...errors,
+      freeEntries: data.error,
+    });
   }
 
   const linkFreeEntrySubmitHandler = (event) => {
@@ -400,124 +322,6 @@ const Page = () => {
       onFailure: linkFreeEntryFailure,
     });
   }
-
-  let linkFreeEntryCard = '';
-  if (!bowler.free_entry && availableFreeEntries.length > 0) {
-    linkFreeEntryCard = (
-      <Card className={'mb-3'}>
-        <Card.Header as={'h6'} className={'fw-light'}>
-          Link a Free Entry
-        </Card.Header>
-        <Card.Body>
-          <form onSubmit={linkFreeEntrySubmitHandler}>
-            <select className={'form-select'} name={'destinationTeam'} onChange={linkFreeEntryOptionChanged}>
-              <option value={''}>Choose a free entry code</option>
-              {availableFreeEntries.map(fe => <option key={fe.identifier}
-                                                      value={fe.identifier}>{fe.unique_code}</option>)}
-            </select>
-            <div className={'form-check pt-3'}>
-              <input className={'form-check-input'}
-                     type={'checkbox'}
-                     value={'1'}
-                     onChange={confirmFreeEntryChanged}
-                     id={'confirm'}/>
-              <label className={'form-check-label'} htmlFor={'confirm'}>
-                Confirm it, too.
-              </label>
-            </div>
-            <div className={'text-center'}>
-              <Button variant={'primary'}
-                      size={'sm'}
-                      className={'mt-3'}
-                      disabled={linkFreeEntryFormData.identifier === null}
-                      type={'submit'}>
-                Link Free Entry
-              </Button>
-            </div>
-          </form>
-        {/* TODO: error message here */}
-        </Card.Body>
-      </Card>
-    );
-  }
-
-  const purchases = (
-    <Card className={'mb-3'}>
-      <Card.Header as={'h6'} className={'fw-light'}>
-        Purchases
-      </Card.Header>
-      <ListGroup variant={'flush'}>
-        {bowler.purchases && bowler.purchases.map(p => {
-          return (
-            <ListGroup.Item key={p.identifier}>
-              <span className={`float-end ${p.voided_at ? 'text-decoration-line-through' : ''}`}>
-                ${p.amount}
-              </span>
-              <span className={'d-block'}>
-                {p.name}
-              </span>
-              {p.paid_at && (
-                <small className={'d-block fst-italic'}>
-                  <strong>
-                    Paid:{' '}
-                  </strong>
-                  {p.paid_at}
-                </small>
-              )}
-              {p.voided_at && (
-                <small className={'d-block fst-italic'}>
-                  <strong>
-                    Voided:{' '}
-                  </strong>
-                  {p.voided_at}
-                </small>
-              )}
-            </ListGroup.Item>
-          );
-        })}
-      </ListGroup>
-    </Card>
-  );
-
-  const ledgerEntryAdded = (newEntry) => {
-    const newBowler = {...bowler};
-    newBowler.ledger_entries = bowler.ledger_entries.concat(newEntry);
-    newBowler.amount_due = 0;
-    // TODO: reload? re-render? Looks like this wants to update the bowler in context...
-    // setBowler(newBowler);
-    dispatch(bowlerUpdated(newBowler));
-  }
-
-  const ledgerEntries = (
-    <Card className={'mb-3'}>
-      <Card.Header as={'h6'} className={'fw-light'}>
-        Ledger Entries
-      </Card.Header>
-      <ListGroup variant={'flush'}>
-        {bowler.ledger_entries && bowler.ledger_entries.map((l, i) => {
-          const amountClass = l.credit > 0 ? 'text-success' : 'text-danger';
-          const amount = l.credit - l.debit;
-          return (
-            <ListGroup.Item key={`${l.identifier}-${i}`}>
-              <span className={`${amountClass} float-end`}>
-                ${amount}
-              </span>
-              <span className={'d-block'}>
-                {l.identifier}
-              </span>
-              <small className={'d-block fst-italic'}>
-                {l.created_at}
-              </small>
-            </ListGroup.Item>
-          );
-        })}
-        <ListGroup.Item className={'p-0'}>
-          {/* TODO: update ManualPayment component not to use director context. (Maybe not to make an API call at all)*/}
-          <ManualPayment bowler={bowler} added={ledgerEntryAdded}/>
-        </ListGroup.Item>
-      </ListGroup>
-    </Card>
-  );
 
   const convertBowlerDataForPatch = (bowlerData) => {
     return {
@@ -555,12 +359,20 @@ const Page = () => {
   }
 
   const bowlerUpdateSuccess = (data) => {
-    setLoading(false);
-    setBowler(data);
+    setLoadingParts({
+      ...loadingParts,
+      updateBowler: false,
+    });
   }
-  const bowlerUpdateFailure = (data) => {
-    setLoading(false);
-    setErrorMessage(data.error);
+  const bowlerUpdateFailure = (message) => {
+    setLoadingParts({
+      ...loadingParts,
+      updateBowler: false,
+    });
+    setErrors({
+      ...errors,
+      updateBowler: message,
+    });
   }
 
   const updateSubmitHandler = (bowlerData) => {
@@ -574,7 +386,10 @@ const Page = () => {
         bowler: convertBowlerDataForPatch(bowlerData),
       },
     }
-    setLoading(true);
+    setLoadingParts({
+      ...loadingParts,
+      updateBowler: true,
+    });
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
@@ -584,10 +399,309 @@ const Page = () => {
     });
   }
 
-  let bowlerName = '';
-  if (bowler) {
-    bowlerName = bowler.display_name;
+  const ledgerEntryAdded = (newEntry) => {
+    // We don't have the bowler in state. Maybe we  should, so we can update it
+    // when this (and others) succeeds?
+
+    // const newBowler = {...bowler};
+    // newBowler.ledger_entries = bowler.ledger_entries.concat(newEntry);
+    // newBowler.amount_due = 0;
+    // setBowler(newBowler);
+    // dispatch(bowlerUpdated(newBowler));
   }
+
+  //////////////////////////////////////////////////////////////////////
+
+  if (!state.tournament || bowlerLoading || !bowler) {
+    return <LoadingMessage message={'Retrieving bowler details...'}/>
+  }
+
+  // const bowlerSummary = (
+  //   <Card className={'mb-2'}>
+  //     <Card.Header as={'h3'}>
+  //       {bowler.display_name}
+  //     </Card.Header>
+  //     <Card.Body>
+  //       <dl className={'mb-0'}>
+  //         {!!bowler.team && (
+  //           <>
+  //             <div className={'row'}>
+  //               <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
+  //               <dd className={'col'}>
+  //                 <a href={`/director/teams/${bowler.team.identifier}`}>
+  //                   {bowler.team.name}
+  //                 </a>
+  //               </dd>
+  //             </div>
+  //             <div className={'row'}>
+  //               <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team position</dt>
+  //               <dd className={'col'}>{bowler.position}</dd>
+  //             </div>
+  //             <div className={'row'}>
+  //               <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Doubles partner</dt>
+  //               {bowler.doubles_partner && <dd className={'col'}>{bowler.doubles_partner.full_name}</dd>}
+  //               {!bowler.doubles_partner && <dd className={'col'}>n/a</dd>}
+  //             </div>
+  //           </>
+  //         )}
+  //         {!bowler.team && (
+  //           <>
+  //             <div className={'row'}>
+  //               <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
+  //               <dd className={'col'}>
+  //                 n/a
+  //               </dd>
+  //             </div>
+  //             <div className={'row'}>
+  //               <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Preferred Shift</dt>
+  //               <dd className={'col'}>{bowler.shift.name}</dd>
+  //             </div>
+  //           </>
+  //         )}
+  //         <div className={'row'}>
+  //           <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Fees Paid?</dt>
+  //           <dd className={'col'}>{bowler.paid ? 'Yes' : 'No'}</dd>
+  //         </div>
+  //       </dl>
+  //     </Card.Body>
+  //   </Card>
+  // );
+  //
+  // const deleteBowlerCard = (
+  //   <Card className={'mb-3'}>
+  //     <Card.Body className={'text-center'}>
+  //       <form onSubmit={deleteSubmitHandler}>
+  //         <Button variant={'danger'}
+  //                 type={'submit'}
+  //         >
+  //           Delete Bowler
+  //         </Button>
+  //       </form>
+  //       {errors.deleteBowler && (
+  //         <Alert variant={'danger'}
+  //                dismissible={true}
+  //                closeLabel={'Close'}>
+  //             <span>
+  //               <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+  //               <strong>Error.</strong>{' '}
+  //               {errors.deleteBowler}
+  //             </span>
+  //         </Alert>
+  //       )}
+  //     </Card.Body>
+  //   </Card>
+  // );
+
+  // let moveToTeamCard = '';
+  // if (availableTeams.length > 0) {
+  //   let bowlerTeamId = '';
+  //   if (bowler.team) {
+  //     bowlerTeamId = bowler.team.identifier;
+  //   }
+  //   const options = availableTeams.filter(t => t.identifier !== bowlerTeamId);
+  //
+  //   moveToTeamCard = (
+  //     <Card className={'mb-3'}>
+  //       <Card.Header as={'h6'} className={'fw-light'}>
+  //         Move to another team
+  //       </Card.Header>
+  //       <Card.Body>
+  //         <form className={'text-center'} onSubmit={bowlerMoveSubmitHandler}>
+  //           <select className={'form-select'} name={'destinationTeam'} onChange={moveBowlerOptionChanged}>
+  //             <option value={''}>Choose their new team</option>
+  //             {options.map(t => <option key={t.identifier} value={t.identifier}>{t.name}</option>)}
+  //           </select>
+  //           <Button variant={'primary'}
+  //                   size={'sm'}
+  //                   className={'mt-3'}
+  //                   disabled={newTeamFormData.destinationTeam === ''}
+  //                   type={'submit'}>
+  //             Move Bowler
+  //           </Button>
+  //         </form>
+  //         {errors.moveBowler || teamsError && (
+  //           <Alert variant={'danger'}
+  //                  dismissible={true}
+  //                  closeLabel={'Close'}>
+  //             <span>
+  //               <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+  //               <strong>Error.</strong>{' '}
+  //               {errors.moveBowler}
+  //               {teamsError.message}
+  //             </span>
+  //           </Alert>
+  //         )}
+  //       </Card.Body>
+  //     </Card>
+  //   );
+  // }
+
+  // let assignPartnerCard = '';
+  // const tournamentHasDoublesEvent = ['active', 'closed'].includes(state.tournament.state) && state.tournament.purchasable_items.bowling.some(pi => {
+  //   return pi.determination === 'event' && pi.refinement === 'doubles'
+  // });
+  // if (tournamentHasDoublesEvent && unpartneredBowlers.length > 0) {
+  //   let bowlerPartnerId = '';
+  //   if (bowler.doubles_partner) {
+  //     bowlerPartnerId = bowler.doubles_partner.identifier;
+  //   }
+  //   const options = unpartneredBowlers.filter(t => t.identifier !== bowlerPartnerId);
+  //
+  //   assignPartnerCard = (
+  //     <Card className={'mb-3'}>
+  //       <Card.Header as={'h6'} className={'fw-light'}>
+  //         Assign Doubles Partner
+  //       </Card.Header>
+  //       <Card.Body>
+  //         <form className={'text-center'} onSubmit={newPartnerSubmitHandler}>
+  //           <select className={'form-select'} name={'partner'} onChange={partnerOptionChanged}>
+  //             <option value={''}>Choose their new partner</option>
+  //             {options.map(t => <option key={t.identifier} value={t.identifier}>{t.full_name}</option>)}
+  //           </select>
+  //           <Button variant={'primary'}
+  //                   size={'sm'}
+  //                   className={'mt-3'}
+  //                   disabled={newPartnerFormData.partner === ''}
+  //                   type={'submit'}>
+  //             Assign Partner
+  //           </Button>
+  //         </form>
+  //         {errors.unpartneredBowlers || unpartneredError && (
+  //           <Alert variant={'danger'}
+  //                  dismissible={true}
+  //                  closeLabel={'Close'}>
+  //             <span>
+  //               <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+  //               <strong>Error.</strong>{' '}
+  //               {errors.unpartneredBowlers}
+  //               {unpartneredError.message}
+  //             </span>
+  //           </Alert>
+  //         )}
+  //       </Card.Body>
+  //     </Card>
+  //   );
+  // }
+
+  // let linkFreeEntryCard = '';
+  // if (!bowler.free_entry && availableFreeEntries.length > 0) {
+  //   linkFreeEntryCard = (
+  //     <Card className={'mb-3'}>
+  //       <Card.Header as={'h6'} className={'fw-light'}>
+  //         Link a Free Entry
+  //       </Card.Header>
+  //       <Card.Body>
+  //         <form onSubmit={linkFreeEntrySubmitHandler}>
+  //           <select className={'form-select'} name={'destinationTeam'} onChange={linkFreeEntryOptionChanged}>
+  //             <option value={''}>Choose a free entry code</option>
+  //             {availableFreeEntries.map(fe => <option key={fe.identifier}
+  //                                                     value={fe.identifier}>{fe.unique_code}</option>)}
+  //           </select>
+  //           <div className={'form-check pt-3'}>
+  //             <input className={'form-check-input'}
+  //                    type={'checkbox'}
+  //                    value={'1'}
+  //                    onChange={confirmFreeEntryChanged}
+  //                    id={'confirm'}/>
+  //             <label className={'form-check-label'} htmlFor={'confirm'}>
+  //               Confirm it, too.
+  //             </label>
+  //           </div>
+  //           <div className={'text-center'}>
+  //             <Button variant={'primary'}
+  //                     size={'sm'}
+  //                     className={'mt-3'}
+  //                     disabled={linkFreeEntryFormData.identifier === null}
+  //                     type={'submit'}>
+  //               Link Free Entry
+  //             </Button>
+  //           </div>
+  //         </form>
+  //         {errors.freeEntries || freeEntriesError && (
+  //           <Alert variant={'danger'}
+  //                  dismissible={true}
+  //                  closeLabel={'Close'}>
+  //             <span>
+  //               <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+  //               <strong>Error.</strong>{' '}
+  //               {errors.freeEntries}
+  //               {freeEntriesError.message}
+  //             </span>
+  //           </Alert>
+  //         )}
+  //       </Card.Body>
+  //     </Card>
+  //   );
+  // }
+
+  // const purchases = (
+  //   <Card className={'mb-3'}>
+  //     <Card.Header as={'h6'} className={'fw-light'}>
+  //       Purchases
+  //     </Card.Header>
+  //     <ListGroup variant={'flush'}>
+  //       {bowler.purchases && bowler.purchases.map(p => {
+  //         return (
+  //           <ListGroup.Item key={p.identifier}>
+  //             <span className={`float-end ${p.voided_at ? 'text-decoration-line-through' : ''}`}>
+  //               ${p.amount}
+  //             </span>
+  //             <span className={'d-block'}>
+  //               {p.name}
+  //             </span>
+  //             {p.paid_at && (
+  //               <small className={'d-block fst-italic'}>
+  //                 <strong>
+  //                   Paid:{' '}
+  //                 </strong>
+  //                 {p.paid_at}
+  //               </small>
+  //             )}
+  //             {p.voided_at && (
+  //               <small className={'d-block fst-italic'}>
+  //                 <strong>
+  //                   Voided:{' '}
+  //                 </strong>
+  //                 {p.voided_at}
+  //               </small>
+  //             )}
+  //           </ListGroup.Item>
+  //         );
+  //       })}
+  //     </ListGroup>
+  //   </Card>
+  // );
+
+  // const ledgerEntries = (
+  //   <Card className={'mb-3'}>
+  //     <Card.Header as={'h6'} className={'fw-light'}>
+  //       Ledger Entries
+  //     </Card.Header>
+  //     <ListGroup variant={'flush'}>
+  //       {bowler.ledger_entries && bowler.ledger_entries.map((l, i) => {
+  //         const amountClass = l.credit > 0 ? 'text-success' : 'text-danger';
+  //         const amount = l.credit - l.debit;
+  //         return (
+  //           <ListGroup.Item key={`${l.identifier}-${i}`}>
+  //             <span className={`${amountClass} float-end`}>
+  //               ${amount}
+  //             </span>
+  //             <span className={'d-block'}>
+  //               {l.identifier}
+  //             </span>
+  //             <small className={'d-block fst-italic'}>
+  //               {l.created_at}
+  //             </small>
+  //           </ListGroup.Item>
+  //         );
+  //       })}
+  //       <ListGroup.Item className={'p-0'}>
+  //         {/* TODO: update ManualPayment component not to use director context. (Maybe not to make an API call at all)*/}
+  //         <ManualPayment bowler={bowler} added={ledgerEntryAdded}/>
+  //       </ListGroup.Item>
+  //     </ListGroup>
+  //   </Card>
+  // );
 
   const ladder = [
     {text: 'Tournaments', path: '/director/tournaments'},
@@ -596,11 +710,11 @@ const Page = () => {
   ];
 
   return (
-    <div>
-      <Breadcrumbs ladder={ladder} activeText={bowlerName}/>
+    <ErrorBoundary>
+      <Breadcrumbs ladder={ladder} activeText={bowler.display_name}/>
       <Row>
         <Col md={8}>
-          {bowlerError && (
+          {bowlerError || errors.updateBowler && (
             <Alert variant={'danger'}
                    dismissible={true}
                    closeLabel={'Close'}>
@@ -608,28 +722,29 @@ const Page = () => {
                 <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
                 <strong>Error.</strong>{' '}
                 {bowlerError.message}
+                {errors.updateBowler}
               </span>
             </Alert>
           )}
-          {bowlerSummary}
-          <BowlerDetails tournament={state.tournament}
-                         bowler={bowler}
-                         bowlerUpdateSubmitted={updateSubmitHandler}
-          />
+          {/*{bowlerSummary}*/}
+          {/*<BowlerDetails tournament={state.tournament}*/}
+          {/*               bowler={bowler}*/}
+          {/*               bowlerUpdateSubmitted={updateSubmitHandler}*/}
+          {/*/>*/}
         </Col>
         <Col md={4}>
-          <OfficeUseOnly bowler={bowler}/>
-          <ResendEmailButtons bowler={bowler}/>
-          {linkFreeEntryCard}
-          {moveToTeamCard}
-          {assignPartnerCard}
-          {bowler.purchases && bowler.purchases.length > 0 && purchases}
-          {ledgerEntries}
+          {/*<OfficeUseOnly bowler={bowler}/>*/}
+          {/*<ResendEmailButtons bowler={bowler}/>*/}
+          {/*{linkFreeEntryCard}*/}
+          {/*{moveToTeamCard}*/}
+          {/*{assignPartnerCard}*/}
+          {/*{bowler.purchases && bowler.purchases.length > 0 && purchases}*/}
+          {/*{ledgerEntries}*/}
           <hr/>
-          {deleteBowlerCard}
+          {/*{deleteBowlerCard}*/}
         </Col>
       </Row>
-    </div>
+    </ErrorBoundary>
   );
 }
 

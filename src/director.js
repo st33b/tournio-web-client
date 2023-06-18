@@ -63,7 +63,8 @@ const handleError = (error, callbackFn) => {
 export const useDirectorApi = ({
                                  uri,
                                  onSuccess = () => {},
-                                 onFailure = () => {}
+                                 onFailure = () => {},
+                                 initialData = null
 }) => {
   const {authToken, ready, logout} = useLoginContext();
   const router = useRouter();
@@ -93,6 +94,7 @@ export const useDirectorApi = ({
     shouldRetryOnError: false,
     onSuccess: handleSuccess,
     onError: handleError,
+    fallbackData: initialData,
   };
   const swrFetcher = async (url, token, clientReady) => {
     if (token) {
