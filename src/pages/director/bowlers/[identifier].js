@@ -17,6 +17,7 @@ import {
 } from "../../../store/actions/directorActions";
 import {useLoginContext} from "../../../store/LoginContext";
 import ErrorBoundary from "../../../components/common/ErrorBoundary";
+import SuccessAlert from "../../../components/common/SuccessAlert";
 
 const Page = () => {
   const router = useRouter();
@@ -40,12 +41,21 @@ const Page = () => {
   const [newPartnerFormData, setNewPartnerFormData] = useState(newPartnerFormInitialState);
   const [linkFreeEntryFormData, setLinkFreeEntryFormData] = useState(linkFreeEntryInitialState);
 
+  const [success, setSuccess] = useState({
+    deleteBowler: null,
+    moveBowler: null,
+    unpartneredBowlers: null,
+    freeEntries: null,
+    updateBowler: null,
+    addLedgerEntry: null,
+  })
   const [errors, setErrors] = useState({
     deleteBowler: null,
     moveBowler: null,
     unpartneredBowlers: null,
     freeEntries: null,
     updateBowler: null,
+    addLedgerEntry: null,
   });
   const [loadingParts, setLoadingParts] = useState({
     deleteBowler: false,
@@ -53,6 +63,7 @@ const Page = () => {
     unpartneredBowlers: false,
     freeEntries: false,
     updateBowler: false,
+    addLedgerEntry: false,
   });
 
   const {loading: bowlerLoading, data: bowler, error: bowlerError} = useDirectorApi({
@@ -399,15 +410,58 @@ const Page = () => {
     });
   }
 
-  const ledgerEntryAdded = (newEntry) => {
-    // We don't have the bowler in state. Maybe we  should, so we can update it
-    // when this (and others) succeeds?
-
+  const addLedgerEntrySuccess = (newEntry) => {
+    setLoadingParts({
+      ...loadingParts,
+      addLedgerEntry: false,
+    });
+    setSuccess({
+      ...success,
+      addLedgerEntry: 'Manual payment added',
+    });
     // const newBowler = {...bowler};
     // newBowler.ledger_entries = bowler.ledger_entries.concat(newEntry);
     // newBowler.amount_due = 0;
     // setBowler(newBowler);
     // dispatch(bowlerUpdated(newBowler));
+  }
+
+  const addLedgerEntryFailure = (error) => {
+    setLoadingParts({
+      ...loadingParts,
+      addLedgerEntry: false,
+    });
+    setErrors({
+      ...errors,
+      addLedgerEntry: error,
+    });
+  }
+
+  const ledgerEntrySubmitted = (data, onSuccess=()=>{}, onFailure=()=>{}) => {
+    setLoadingParts({
+      ...loadingParts,
+      addLedgerEntry: true,
+    });
+    const uri = `/bowlers/${bowler.identifier}/ledger_entries`;
+    const requestConfig = {
+      method: 'post',
+      data: {
+        ledger_entry: data,
+      }
+    }
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      authToken: authToken,
+      onSuccess: (data) => {
+        addLedgerEntrySuccess(data);
+        onSuccess();
+      },
+      onFailure: (error) => {
+        addLedgerEntryFailure(error);
+        onFailure();
+      },
+    });
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -416,292 +470,294 @@ const Page = () => {
     return <LoadingMessage message={'Retrieving bowler details...'}/>
   }
 
-  // const bowlerSummary = (
-  //   <Card className={'mb-2'}>
-  //     <Card.Header as={'h3'}>
-  //       {bowler.display_name}
-  //     </Card.Header>
-  //     <Card.Body>
-  //       <dl className={'mb-0'}>
-  //         {!!bowler.team && (
-  //           <>
-  //             <div className={'row'}>
-  //               <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
-  //               <dd className={'col'}>
-  //                 <a href={`/director/teams/${bowler.team.identifier}`}>
-  //                   {bowler.team.name}
-  //                 </a>
-  //               </dd>
-  //             </div>
-  //             <div className={'row'}>
-  //               <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team position</dt>
-  //               <dd className={'col'}>{bowler.position}</dd>
-  //             </div>
-  //             <div className={'row'}>
-  //               <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Doubles partner</dt>
-  //               {bowler.doubles_partner && <dd className={'col'}>{bowler.doubles_partner.full_name}</dd>}
-  //               {!bowler.doubles_partner && <dd className={'col'}>n/a</dd>}
-  //             </div>
-  //           </>
-  //         )}
-  //         {!bowler.team && (
-  //           <>
-  //             <div className={'row'}>
-  //               <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
-  //               <dd className={'col'}>
-  //                 n/a
-  //               </dd>
-  //             </div>
-  //             <div className={'row'}>
-  //               <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Preferred Shift</dt>
-  //               <dd className={'col'}>{bowler.shift.name}</dd>
-  //             </div>
-  //           </>
-  //         )}
-  //         <div className={'row'}>
-  //           <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Fees Paid?</dt>
-  //           <dd className={'col'}>{bowler.paid ? 'Yes' : 'No'}</dd>
-  //         </div>
-  //       </dl>
-  //     </Card.Body>
-  //   </Card>
-  // );
-  //
-  // const deleteBowlerCard = (
-  //   <Card className={'mb-3'}>
-  //     <Card.Body className={'text-center'}>
-  //       <form onSubmit={deleteSubmitHandler}>
-  //         <Button variant={'danger'}
-  //                 type={'submit'}
-  //         >
-  //           Delete Bowler
-  //         </Button>
-  //       </form>
-  //       {errors.deleteBowler && (
-  //         <Alert variant={'danger'}
-  //                dismissible={true}
-  //                closeLabel={'Close'}>
-  //             <span>
-  //               <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-  //               <strong>Error.</strong>{' '}
-  //               {errors.deleteBowler}
-  //             </span>
-  //         </Alert>
-  //       )}
-  //     </Card.Body>
-  //   </Card>
-  // );
+  const bowlerSummary = (
+    <Card className={'mb-2'}>
+      <Card.Header as={'h3'}>
+        {bowler.display_name}
+      </Card.Header>
+      <Card.Body>
+        <dl className={'mb-0'}>
+          {!!bowler.team && (
+            <>
+              <div className={'row'}>
+                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
+                <dd className={'col'}>
+                  <a href={`/director/teams/${bowler.team.identifier}`}>
+                    {bowler.team.name}
+                  </a>
+                </dd>
+              </div>
+              <div className={'row'}>
+                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team position</dt>
+                <dd className={'col'}>{bowler.position}</dd>
+              </div>
+              <div className={'row'}>
+                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Doubles partner</dt>
+                {bowler.doubles_partner && <dd className={'col'}>{bowler.doubles_partner.full_name}</dd>}
+                {!bowler.doubles_partner && <dd className={'col'}>n/a</dd>}
+              </div>
+            </>
+          )}
+          {!bowler.team && (
+            <>
+              <div className={'row'}>
+                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
+                <dd className={'col'}>
+                  n/a
+                </dd>
+              </div>
+              <div className={'row'}>
+                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Preferred Shift</dt>
+                <dd className={'col'}>{bowler.shift.name}</dd>
+              </div>
+            </>
+          )}
+          <div className={'row'}>
+            <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Fees Paid?</dt>
+            <dd className={'col'}>{bowler.paid ? 'Yes' : 'No'}</dd>
+          </div>
+        </dl>
+      </Card.Body>
+    </Card>
+  );
 
-  // let moveToTeamCard = '';
-  // if (availableTeams.length > 0) {
-  //   let bowlerTeamId = '';
-  //   if (bowler.team) {
-  //     bowlerTeamId = bowler.team.identifier;
-  //   }
-  //   const options = availableTeams.filter(t => t.identifier !== bowlerTeamId);
-  //
-  //   moveToTeamCard = (
-  //     <Card className={'mb-3'}>
-  //       <Card.Header as={'h6'} className={'fw-light'}>
-  //         Move to another team
-  //       </Card.Header>
-  //       <Card.Body>
-  //         <form className={'text-center'} onSubmit={bowlerMoveSubmitHandler}>
-  //           <select className={'form-select'} name={'destinationTeam'} onChange={moveBowlerOptionChanged}>
-  //             <option value={''}>Choose their new team</option>
-  //             {options.map(t => <option key={t.identifier} value={t.identifier}>{t.name}</option>)}
-  //           </select>
-  //           <Button variant={'primary'}
-  //                   size={'sm'}
-  //                   className={'mt-3'}
-  //                   disabled={newTeamFormData.destinationTeam === ''}
-  //                   type={'submit'}>
-  //             Move Bowler
-  //           </Button>
-  //         </form>
-  //         {errors.moveBowler || teamsError && (
-  //           <Alert variant={'danger'}
-  //                  dismissible={true}
-  //                  closeLabel={'Close'}>
-  //             <span>
-  //               <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-  //               <strong>Error.</strong>{' '}
-  //               {errors.moveBowler}
-  //               {teamsError.message}
-  //             </span>
-  //           </Alert>
-  //         )}
-  //       </Card.Body>
-  //     </Card>
-  //   );
-  // }
+  const deleteBowlerCard = (
+    <Card className={'mb-3'}>
+      <Card.Body className={'text-center'}>
+        <form onSubmit={deleteSubmitHandler}>
+          <Button variant={'danger'}
+                  type={'submit'}
+          >
+            Delete Bowler
+          </Button>
+        </form>
+        {errors.deleteBowler && (
+          <Alert variant={'danger'}
+                 dismissible={true}
+                 closeLabel={'Close'}>
+              <span>
+                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+                <strong>Error.</strong>{' '}
+                {errors.deleteBowler}
+              </span>
+          </Alert>
+        )}
+      </Card.Body>
+    </Card>
+  );
 
-  // let assignPartnerCard = '';
-  // const tournamentHasDoublesEvent = ['active', 'closed'].includes(state.tournament.state) && state.tournament.purchasable_items.bowling.some(pi => {
-  //   return pi.determination === 'event' && pi.refinement === 'doubles'
-  // });
-  // if (tournamentHasDoublesEvent && unpartneredBowlers.length > 0) {
-  //   let bowlerPartnerId = '';
-  //   if (bowler.doubles_partner) {
-  //     bowlerPartnerId = bowler.doubles_partner.identifier;
-  //   }
-  //   const options = unpartneredBowlers.filter(t => t.identifier !== bowlerPartnerId);
-  //
-  //   assignPartnerCard = (
-  //     <Card className={'mb-3'}>
-  //       <Card.Header as={'h6'} className={'fw-light'}>
-  //         Assign Doubles Partner
-  //       </Card.Header>
-  //       <Card.Body>
-  //         <form className={'text-center'} onSubmit={newPartnerSubmitHandler}>
-  //           <select className={'form-select'} name={'partner'} onChange={partnerOptionChanged}>
-  //             <option value={''}>Choose their new partner</option>
-  //             {options.map(t => <option key={t.identifier} value={t.identifier}>{t.full_name}</option>)}
-  //           </select>
-  //           <Button variant={'primary'}
-  //                   size={'sm'}
-  //                   className={'mt-3'}
-  //                   disabled={newPartnerFormData.partner === ''}
-  //                   type={'submit'}>
-  //             Assign Partner
-  //           </Button>
-  //         </form>
-  //         {errors.unpartneredBowlers || unpartneredError && (
-  //           <Alert variant={'danger'}
-  //                  dismissible={true}
-  //                  closeLabel={'Close'}>
-  //             <span>
-  //               <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-  //               <strong>Error.</strong>{' '}
-  //               {errors.unpartneredBowlers}
-  //               {unpartneredError.message}
-  //             </span>
-  //           </Alert>
-  //         )}
-  //       </Card.Body>
-  //     </Card>
-  //   );
-  // }
+  let moveToTeamCard = '';
+  if (availableTeams.length > 0) {
+    let bowlerTeamId = '';
+    if (bowler.team) {
+      bowlerTeamId = bowler.team.identifier;
+    }
+    const options = availableTeams.filter(t => t.identifier !== bowlerTeamId);
 
-  // let linkFreeEntryCard = '';
-  // if (!bowler.free_entry && availableFreeEntries.length > 0) {
-  //   linkFreeEntryCard = (
-  //     <Card className={'mb-3'}>
-  //       <Card.Header as={'h6'} className={'fw-light'}>
-  //         Link a Free Entry
-  //       </Card.Header>
-  //       <Card.Body>
-  //         <form onSubmit={linkFreeEntrySubmitHandler}>
-  //           <select className={'form-select'} name={'destinationTeam'} onChange={linkFreeEntryOptionChanged}>
-  //             <option value={''}>Choose a free entry code</option>
-  //             {availableFreeEntries.map(fe => <option key={fe.identifier}
-  //                                                     value={fe.identifier}>{fe.unique_code}</option>)}
-  //           </select>
-  //           <div className={'form-check pt-3'}>
-  //             <input className={'form-check-input'}
-  //                    type={'checkbox'}
-  //                    value={'1'}
-  //                    onChange={confirmFreeEntryChanged}
-  //                    id={'confirm'}/>
-  //             <label className={'form-check-label'} htmlFor={'confirm'}>
-  //               Confirm it, too.
-  //             </label>
-  //           </div>
-  //           <div className={'text-center'}>
-  //             <Button variant={'primary'}
-  //                     size={'sm'}
-  //                     className={'mt-3'}
-  //                     disabled={linkFreeEntryFormData.identifier === null}
-  //                     type={'submit'}>
-  //               Link Free Entry
-  //             </Button>
-  //           </div>
-  //         </form>
-  //         {errors.freeEntries || freeEntriesError && (
-  //           <Alert variant={'danger'}
-  //                  dismissible={true}
-  //                  closeLabel={'Close'}>
-  //             <span>
-  //               <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-  //               <strong>Error.</strong>{' '}
-  //               {errors.freeEntries}
-  //               {freeEntriesError.message}
-  //             </span>
-  //           </Alert>
-  //         )}
-  //       </Card.Body>
-  //     </Card>
-  //   );
-  // }
+    moveToTeamCard = (
+      <Card className={'mb-3'}>
+        <Card.Header as={'h6'} className={'fw-light'}>
+          Move to another team
+        </Card.Header>
+        <Card.Body>
+          <form className={'text-center'} onSubmit={bowlerMoveSubmitHandler}>
+            <select className={'form-select'} name={'destinationTeam'} onChange={moveBowlerOptionChanged}>
+              <option value={''}>Choose their new team</option>
+              {options.map(t => <option key={t.identifier} value={t.identifier}>{t.name}</option>)}
+            </select>
+            <Button variant={'primary'}
+                    size={'sm'}
+                    className={'mt-3'}
+                    disabled={newTeamFormData.destinationTeam === ''}
+                    type={'submit'}>
+              Move Bowler
+            </Button>
+          </form>
+          {errors.moveBowler || teamsError && (
+            <Alert variant={'danger'}
+                   dismissible={true}
+                   closeLabel={'Close'}>
+              <span>
+                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+                <strong>Error.</strong>{' '}
+                {errors.moveBowler}
+                {teamsError.message}
+              </span>
+            </Alert>
+          )}
+        </Card.Body>
+      </Card>
+    );
+  }
 
-  // const purchases = (
-  //   <Card className={'mb-3'}>
-  //     <Card.Header as={'h6'} className={'fw-light'}>
-  //       Purchases
-  //     </Card.Header>
-  //     <ListGroup variant={'flush'}>
-  //       {bowler.purchases && bowler.purchases.map(p => {
-  //         return (
-  //           <ListGroup.Item key={p.identifier}>
-  //             <span className={`float-end ${p.voided_at ? 'text-decoration-line-through' : ''}`}>
-  //               ${p.amount}
-  //             </span>
-  //             <span className={'d-block'}>
-  //               {p.name}
-  //             </span>
-  //             {p.paid_at && (
-  //               <small className={'d-block fst-italic'}>
-  //                 <strong>
-  //                   Paid:{' '}
-  //                 </strong>
-  //                 {p.paid_at}
-  //               </small>
-  //             )}
-  //             {p.voided_at && (
-  //               <small className={'d-block fst-italic'}>
-  //                 <strong>
-  //                   Voided:{' '}
-  //                 </strong>
-  //                 {p.voided_at}
-  //               </small>
-  //             )}
-  //           </ListGroup.Item>
-  //         );
-  //       })}
-  //     </ListGroup>
-  //   </Card>
-  // );
+  let assignPartnerCard = '';
+  const tournamentHasDoublesEvent = ['active', 'closed'].includes(state.tournament.state) && state.tournament.purchasable_items.bowling.some(pi => {
+    return pi.determination === 'event' && pi.refinement === 'doubles'
+  });
+  if (tournamentHasDoublesEvent && unpartneredBowlers.length > 0) {
+    let bowlerPartnerId = '';
+    if (bowler.doubles_partner) {
+      bowlerPartnerId = bowler.doubles_partner.identifier;
+    }
+    const options = unpartneredBowlers.filter(t => t.identifier !== bowlerPartnerId);
 
-  // const ledgerEntries = (
-  //   <Card className={'mb-3'}>
-  //     <Card.Header as={'h6'} className={'fw-light'}>
-  //       Ledger Entries
-  //     </Card.Header>
-  //     <ListGroup variant={'flush'}>
-  //       {bowler.ledger_entries && bowler.ledger_entries.map((l, i) => {
-  //         const amountClass = l.credit > 0 ? 'text-success' : 'text-danger';
-  //         const amount = l.credit - l.debit;
-  //         return (
-  //           <ListGroup.Item key={`${l.identifier}-${i}`}>
-  //             <span className={`${amountClass} float-end`}>
-  //               ${amount}
-  //             </span>
-  //             <span className={'d-block'}>
-  //               {l.identifier}
-  //             </span>
-  //             <small className={'d-block fst-italic'}>
-  //               {l.created_at}
-  //             </small>
-  //           </ListGroup.Item>
-  //         );
-  //       })}
-  //       <ListGroup.Item className={'p-0'}>
-  //         {/* TODO: update ManualPayment component not to use director context. (Maybe not to make an API call at all)*/}
-  //         <ManualPayment bowler={bowler} added={ledgerEntryAdded}/>
-  //       </ListGroup.Item>
-  //     </ListGroup>
-  //   </Card>
-  // );
+    assignPartnerCard = (
+      <Card className={'mb-3'}>
+        <Card.Header as={'h6'} className={'fw-light'}>
+          Assign Doubles Partner
+        </Card.Header>
+        <Card.Body>
+          <form className={'text-center'} onSubmit={newPartnerSubmitHandler}>
+            <select className={'form-select'} name={'partner'} onChange={partnerOptionChanged}>
+              <option value={''}>Choose their new partner</option>
+              {options.map(t => <option key={t.identifier} value={t.identifier}>{t.full_name}</option>)}
+            </select>
+            <Button variant={'primary'}
+                    size={'sm'}
+                    className={'mt-3'}
+                    disabled={newPartnerFormData.partner === ''}
+                    type={'submit'}>
+              Assign Partner
+            </Button>
+          </form>
+          {errors.unpartneredBowlers || unpartneredError && (
+            <Alert variant={'danger'}
+                   dismissible={true}
+                   closeLabel={'Close'}>
+              <span>
+                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+                <strong>Error.</strong>{' '}
+                {errors.unpartneredBowlers}
+                {unpartneredError.message}
+              </span>
+            </Alert>
+          )}
+        </Card.Body>
+      </Card>
+    );
+  }
+
+  let linkFreeEntryCard = '';
+  if (!bowler.free_entry && availableFreeEntries.length > 0) {
+    linkFreeEntryCard = (
+      <Card className={'mb-3'}>
+        <Card.Header as={'h6'} className={'fw-light'}>
+          Link a Free Entry
+        </Card.Header>
+        <Card.Body>
+          <form onSubmit={linkFreeEntrySubmitHandler}>
+            <select className={'form-select'} name={'destinationTeam'} onChange={linkFreeEntryOptionChanged}>
+              <option value={''}>Choose a free entry code</option>
+              {availableFreeEntries.map(fe => <option key={fe.identifier}
+                                                      value={fe.identifier}>{fe.unique_code}</option>)}
+            </select>
+            <div className={'form-check pt-3'}>
+              <input className={'form-check-input'}
+                     type={'checkbox'}
+                     value={'1'}
+                     onChange={confirmFreeEntryChanged}
+                     id={'confirm'}/>
+              <label className={'form-check-label'} htmlFor={'confirm'}>
+                Confirm it, too.
+              </label>
+            </div>
+            <div className={'text-center'}>
+              <Button variant={'primary'}
+                      size={'sm'}
+                      className={'mt-3'}
+                      disabled={linkFreeEntryFormData.identifier === null}
+                      type={'submit'}>
+                Link Free Entry
+              </Button>
+            </div>
+          </form>
+          {errors.freeEntries || freeEntriesError && (
+            <Alert variant={'danger'}
+                   dismissible={true}
+                   closeLabel={'Close'}>
+              <span>
+                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+                <strong>Error.</strong>{' '}
+                {errors.freeEntries}
+                {freeEntriesError.message}
+              </span>
+            </Alert>
+          )}
+        </Card.Body>
+      </Card>
+    );
+  }
+
+  const purchases = (
+    <Card className={'mb-3'}>
+      <Card.Header as={'h6'} className={'fw-light'}>
+        Purchases
+      </Card.Header>
+      <ListGroup variant={'flush'}>
+        {bowler.purchases && bowler.purchases.map(p => {
+          return (
+            <ListGroup.Item key={p.identifier}>
+              <span className={`float-end ${p.voided_at ? 'text-decoration-line-through' : ''}`}>
+                ${p.amount}
+              </span>
+              <span className={'d-block'}>
+                {p.name}
+              </span>
+              {p.paid_at && (
+                <small className={'d-block fst-italic'}>
+                  <strong>
+                    Paid:{' '}
+                  </strong>
+                  {p.paid_at}
+                </small>
+              )}
+              {p.voided_at && (
+                <small className={'d-block fst-italic'}>
+                  <strong>
+                    Voided:{' '}
+                  </strong>
+                  {p.voided_at}
+                </small>
+              )}
+            </ListGroup.Item>
+          );
+        })}
+      </ListGroup>
+    </Card>
+  );
+
+  const ledgerEntries = (
+    <Card className={'mb-3'}>
+      <Card.Header as={'h6'} className={'fw-light'}>
+        Ledger Entries
+      </Card.Header>
+      <ListGroup variant={'flush'}>
+        {bowler.ledger_entries && bowler.ledger_entries.map((l, i) => {
+          const amountClass = l.credit > 0 ? 'text-success' : 'text-danger';
+          const amount = l.credit - l.debit;
+          return (
+            <ListGroup.Item key={`${l.identifier}-${i}`}>
+              <span className={`${amountClass} float-end`}>
+                ${amount}
+              </span>
+              <span className={'d-block'}>
+                {l.identifier}
+              </span>
+              <small className={'d-block fst-italic'}>
+                {l.created_at}
+              </small>
+            </ListGroup.Item>
+          );
+        })}
+        <ListGroup.Item className={'py-0'}>
+          <ManualPayment bowler={bowler}
+                         added={ledgerEntrySubmitted}
+                         loading={loadingParts.addLedgerEntry}/>
+          <SuccessAlert message={success.addLedgerEntry} className={'mx-3'} />
+        </ListGroup.Item>
+      </ListGroup>
+    </Card>
+  );
 
   const ladder = [
     {text: 'Tournaments', path: '/director/tournaments'},
@@ -726,22 +782,22 @@ const Page = () => {
               </span>
             </Alert>
           )}
-          {/*{bowlerSummary}*/}
-          {/*<BowlerDetails tournament={state.tournament}*/}
-          {/*               bowler={bowler}*/}
-          {/*               bowlerUpdateSubmitted={updateSubmitHandler}*/}
-          {/*/>*/}
+          {bowlerSummary}
+          <BowlerDetails tournament={state.tournament}
+                         bowler={bowler}
+                         bowlerUpdateSubmitted={updateSubmitHandler}
+          />
         </Col>
         <Col md={4}>
           {/*<OfficeUseOnly bowler={bowler}/>*/}
           {/*<ResendEmailButtons bowler={bowler}/>*/}
-          {/*{linkFreeEntryCard}*/}
-          {/*{moveToTeamCard}*/}
-          {/*{assignPartnerCard}*/}
-          {/*{bowler.purchases && bowler.purchases.length > 0 && purchases}*/}
-          {/*{ledgerEntries}*/}
+          {linkFreeEntryCard}
+          {moveToTeamCard}
+          {assignPartnerCard}
+          {bowler.purchases && bowler.purchases.length > 0 && purchases}
+          {ledgerEntries}
           <hr/>
-          {/*{deleteBowlerCard}*/}
+          {deleteBowlerCard}
         </Col>
       </Row>
     </ErrorBoundary>
