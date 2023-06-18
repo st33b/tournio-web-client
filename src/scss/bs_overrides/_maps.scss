@@ -14,6 +14,12 @@
     --#{$prefix}accordion-btn-focus-border-color: var(--#{$prefix}gray-500);
     --#{$prefix}accordion-btn-focus-box-shadow: var(--#{$prefix}gray-500);
   }
+
+  @each $color, $value in $theme-colors {
+    .btn-#{$color} {
+      --#{$prefix}btn-disabled-bg: #{tint-color($value, 20%)};
+    }
+  }
 }
 
 // CSS vars for color mode: dark
@@ -42,6 +48,7 @@
     --#{$prefix}#{$color}-moody: #{$value};
 
     .btn-#{$color} {
+
       //color: $dark-color-contrast-light;
       @include button-variant(
           $value,
