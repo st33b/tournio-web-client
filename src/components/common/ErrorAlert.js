@@ -1,13 +1,13 @@
-const SuccessAlert = ({message}) => {
+const ErrorAlert = ({message}) => {
   if (!message) {
     return '';
   }
 
   return (
-    <div className={`alert alert-success alert-dismissible fade show`}>
+    <div className={`alert alert-danger alert-dismissible fade show`}>
       <span>
-        <i className={'bi bi-check2-circle pe-2'} aria-hidden={true} />
-        <strong>Success!</strong>{' '}
+        <i className={'bi bi-exclamation-triangle pe-2'} aria-hidden={true} />
+        <strong>Error:</strong>{' '}
         {message}
       </span>
       <button type={`button`}
@@ -18,4 +18,4 @@ const SuccessAlert = ({message}) => {
   );
 }
 
-export default SuccessAlert;
+export default ErrorAlert;

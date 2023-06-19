@@ -18,6 +18,7 @@ import {
 import {useLoginContext} from "../../../store/LoginContext";
 import ErrorBoundary from "../../../components/common/ErrorBoundary";
 import SuccessAlert from "../../../components/common/SuccessAlert";
+import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Page = () => {
   const router = useRouter();
@@ -754,6 +755,7 @@ const Page = () => {
                          added={ledgerEntrySubmitted}
                          loading={loadingParts.addLedgerEntry}/>
           <SuccessAlert message={success.addLedgerEntry} className={'mx-3'} />
+          <ErrorAlert message={errors.addLedgerEntry} className={'mx-3'} />
         </ListGroup.Item>
       </ListGroup>
     </Card>
