@@ -154,9 +154,9 @@ export const directorApiRequest = ({uri, requestConfig, authToken, onSuccess = n
       handleSuccess(response, onSuccess, onFailure);
     })
     .catch(error => {
+      devConsoleLog("Nope.", error);
       handleError(error, onFailure);
     });
-
 }
 
 export const directorApiDownloadRequest = ({uri, authToken, onSuccess = null, onFailure = null}) => {
@@ -175,6 +175,7 @@ export const directorApiDownloadRequest = ({uri, authToken, onSuccess = null, on
       handleSuccess(response, onSuccess, onFailure)
     })
     .catch(error => {
+      devConsoleLog("Nope.", error);
       handleError(error, onFailure);
     });
 }

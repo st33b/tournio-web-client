@@ -11,7 +11,6 @@ import BowlerDetails from "../../../components/Director/BowlerDetails/BowlerDeta
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ManualPayment from "../../../components/Director/BowlerDetails/ManualPayment";
 import OfficeUseOnly from "../../../components/Director/BowlerDetails/OfficeUseOnly";
-import ResendEmailButtons from "../../../components/Director/BowlerDetails/ResendEmailButtons";
 import {
   bowlerDeleted,
 } from "../../../store/actions/directorActions";
@@ -19,6 +18,7 @@ import {useLoginContext} from "../../../store/LoginContext";
 import ErrorBoundary from "../../../components/common/ErrorBoundary";
 import SuccessAlert from "../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../components/common/ErrorAlert";
+import EmailButton from "../../../components/Director/BowlerDetails/EmailButton";
 
 const Page = () => {
   const router = useRouter();
@@ -527,6 +527,26 @@ const Page = () => {
     });
   }
 
+  const resendEmailButtonClicked = ({
+                                      data,
+                                      onSuccess=() => {},
+                                      onFailure=() => {},
+                                    }) => {
+    const uri = `/bowlers/${bowler.identifier}/resend_email`;
+    const requestConfig = {
+      method: 'post',
+      data: data
+    };
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      authToken: authToken,
+      onSuccess: onSuccess,
+      onFailure: onFailure,
+    })
+  }
+
+
   //////////////////////////////////////////////////////////////////////
 
   if (!state.tournament || bowlerLoading || !bowler) {
@@ -846,6 +866,31 @@ const Page = () => {
     </Card>
   );
 
+  const resendEmailsCard = (
+    <Card className={'mb-3'}>
+      <Card.Header as={'h6'} className={'fw-light'}>
+        Re-send Emails
+      </Card.Header>
+      <ListGroup variant={'flush'}>
+        <ListGroup.Item>
+          <EmailButton emailType={'registration'}
+                       bowlerIdentifier={bowler.identifier}
+                       onClick={resendEmailButtonClicked}
+          />
+        </ListGroup.Item>
+        {bowler.ledger_entries.filter(entry => entry.source === 'stripe').map((entry, i) => (
+          <ListGroup.Item key={i}>
+            <EmailButton emailType={'payment_receipt'}
+                         bowlerIdentifier={bowler.identifier}
+                         onClick={resendEmailButtonClicked}
+                         orderIdentifier={entry.identifier}
+                         orderCredit={entry.credit} />
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
+    </Card>
+  );
+
   const ladder = [
     {text: 'Tournaments', path: '/director/tournaments'},
     {text: state.tournament.name, path: `/director/tournaments/${state.tournament.identifier}`},
@@ -867,7 +912,7 @@ const Page = () => {
         </Col>
         <Col md={4}>
           {officeUseOnlyCard}
-          {/*<ResendEmailButtons bowler={bowler}/>*/}
+          {resendEmailsCard}
           {linkFreeEntryCard}
           {moveToTeamCard}
           {assignPartnerCard}

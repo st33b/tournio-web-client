@@ -1,42 +1,21 @@
 import classes from './EmailButton.module.scss';
-import {directorApiRequest} from "../../../director";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {useRouter} from "next/router";
 import {useRef, useState} from "react";
 import {Overlay, Popover} from "react-bootstrap";
+import {devConsoleLog} from "../../../utils";
 
-const EmailButton = ({bowlerIdentifier, emailType, orderIdentifier, orderCredit}) => {
-  const context = useDirectorContext();
-  const router = useRouter();
+const EmailButton = ({bowlerIdentifier, emailType, orderIdentifier, orderCredit, onClick}) => {
   const target = useRef(null);
 
   const [showPopover, setShowPopover] = useState(false);
 
-  const onSuccess = () => {
-    setShowPopover(true);
-  }
-
-  const onFailure = () => {
-    console.log("Failure", data);
-  }
-
   const sendClicked = () => {
-    const uri = `/director/bowlers/${bowlerIdentifier}/resend_email`;
-    const requestConfig = {
-      method: 'post',
+    onClick({
       data: {
         type: emailType,
         order_identifier: orderIdentifier,
-      }
-    };
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      router: router,
-      onSuccess: onSuccess,
-      onFailure: onFailure,
-    })
+      },
+      onSuccess: () => setShowPopover(true),
+    });
   }
 
   let buttonClass = '';
