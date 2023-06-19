@@ -1,9 +1,6 @@
 import {Button} from "react-bootstrap";
 
-import {useDirectorContext} from "../../../store/DirectorContext";
-import ErrorBoundary from "../../common/ErrorBoundary";
 import {useEffect, useState} from "react";
-import {directorApiRequest} from "../../../director";
 
 import classes from './ManualPayment.module.scss';
 
@@ -116,7 +113,7 @@ const ManualPayment = ({bowler, onSubmit, loading = false}) => {
                   </span>
                 )}
                 Save
-                <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>
+                <i className={'bi bi-chevron-right ps-2'} aria-hidden={true}/>
               </button>
             </div>
           </div>

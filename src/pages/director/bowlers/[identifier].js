@@ -1,4 +1,4 @@
-import {useState} from "react";
+import React, {useState} from "react";
 import {useRouter} from "next/router";
 import {Card, Button, Row, Col, ListGroup, Alert} from "react-bootstrap";
 
@@ -49,6 +49,7 @@ const Page = () => {
     freeEntries: null,
     updateBowler: null,
     addLedgerEntry: null,
+    setTournamentData: null,
   })
   const [errors, setErrors] = useState({
     deleteBowler: null,
@@ -57,6 +58,7 @@ const Page = () => {
     freeEntries: null,
     updateBowler: null,
     addLedgerEntry: null,
+    setTournamentData: null,
   });
   const [loadingParts, setLoadingParts] = useState({
     deleteBowler: false,
@@ -65,6 +67,7 @@ const Page = () => {
     freeEntries: false,
     updateBowler: false,
     addLedgerEntry: false,
+    setTournamentData: false,
   });
 
   const {loading: bowlerLoading, data: bowler, error: bowlerError} = useDirectorApi({
@@ -465,6 +468,65 @@ const Page = () => {
     });
   }
 
+  const submitTournamentDatsSuccess = (newEntry) => {
+    setLoadingParts({
+      ...loadingParts,
+      setTournamentData: false,
+    });
+    setSuccess({
+      ...success,
+      setTournamentData: 'Data saved.',
+    });
+    // const newBowler = {...bowler};
+    // newBowler.ledger_entries = bowler.ledger_entries.concat(newEntry);
+    // newBowler.amount_due = 0;
+    // setBowler(newBowler);
+    // dispatch(bowlerUpdated(newBowler));
+  }
+
+  const submitTournamentDatsFailure = (error) => {
+    setLoadingParts({
+      ...loadingParts,
+      setTournamentData: false,
+    });
+    setErrors({
+      ...errors,
+      setTournamentData: error,
+    });
+  }
+
+  const tournamentDataSubmitted = (data, onSuccess=()=>{}, onFailure=()=>{}) => {
+    setLoadingParts({
+      ...loadingParts,
+      setTournamentData: true,
+    });
+    const uri = `/bowlers/${bowler.identifier}`;
+    const requestConfig = {
+      method: 'patch',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        bowler: {
+          verified_data: data,
+        }
+      }
+    }
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      authToken: authToken,
+      onSuccess: (data) => {
+        submitTournamentDatsSuccess(data);
+        onSuccess();
+      },
+      onFailure: (error) => {
+        submitTournamentDatsFailure(error);
+        onFailure();
+      },
+    });
+  }
+
   //////////////////////////////////////////////////////////////////////
 
   if (!state.tournament || bowlerLoading || !bowler) {
@@ -754,10 +816,33 @@ const Page = () => {
           <ManualPayment bowler={bowler}
                          onSubmit={ledgerEntrySubmitted}
                          loading={loadingParts.addLedgerEntry}/>
-          <SuccessAlert message={success.addLedgerEntry} className={'mx-3'} />
-          <ErrorAlert message={errors.addLedgerEntry} className={'mx-3'} />
+          <SuccessAlert message={success.addLedgerEntry} className={'mt-3'} />
+          <ErrorAlert message={errors.addLedgerEntry} className={'mt-3'} />
         </ListGroup.Item>
       </ListGroup>
+    </Card>
+  );
+
+  const officeUseOnlyCard = (
+    <Card className={'mb-3'}>
+      <Card.Header as={'h6'}>
+        Tournament Data
+      </Card.Header>
+      <Card.Body className={'pb-0'}>
+        <OfficeUseOnly bowler={bowler}
+                       onSubmit={tournamentDataSubmitted}
+                       loading={loadingParts.setTournamentData}/>
+        <SuccessAlert message={success.setTournamentData} className={'mt-3 mb-0'} />
+        <ErrorAlert message={errors.setTournamentData} className={'mt-3 mb-0'} />
+      </Card.Body>
+      <Card.Body className={''}>
+        <Card.Text className={'text-center'}>
+          <Card.Link href={`/director/bowlers/${bowler.identifier}/sign-in-sheet`}
+                     target={'_new'}>
+            Sign-in Sheet
+          </Card.Link>
+        </Card.Text>
+      </Card.Body>
     </Card>
   );
 
@@ -781,7 +866,7 @@ const Page = () => {
           <ErrorAlert message={errors.updateBowler}/>
         </Col>
         <Col md={4}>
-          {/*<OfficeUseOnly bowler={bowler}/>*/}
+          {officeUseOnlyCard}
           {/*<ResendEmailButtons bowler={bowler}/>*/}
           {linkFreeEntryCard}
           {moveToTeamCard}

@@ -1,10 +1,10 @@
-const ErrorAlert = ({message}) => {
+const ErrorAlert = ({message, className=''}) => {
   if (!message) {
     return '';
   }
 
   return (
-    <div className={`alert alert-danger alert-dismissible fade show`}>
+    <div className={`alert alert-danger alert-dismissible fade show ${className}`}>
       <span>
         <i className={'bi bi-exclamation-triangle pe-2'} aria-hidden={true} />
         <strong>Error:</strong>{' '}
