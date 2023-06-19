@@ -7,7 +7,7 @@ import {directorApiRequest} from "../../../director";
 
 import classes from './ManualPayment.module.scss';
 
-const ManualPayment = ({bowler, added, loading = false}) => {
+const ManualPayment = ({bowler, onSubmit, loading = false}) => {
   const initialFormState = {
     amount: '',
     identifier: '',
@@ -17,8 +17,6 @@ const ManualPayment = ({bowler, added, loading = false}) => {
 
   const [formDisplayed, setFormDisplayed] = useState(false);
   const [formData, setFormData] = useState(initialFormState);
-  const [successMessage, setSuccessMessage] = useState();
-  const [errorMessage, setErrorMessage] = useState();
 
   // Pre-populate the form with the amount that the bowler owes.
   useEffect(() => {
@@ -62,7 +60,7 @@ const ManualPayment = ({bowler, added, loading = false}) => {
       credit: formData.amount,
       identifier: formData.identifier,
     }
-    added(ledgerEntry, success);
+    onSubmit(ledgerEntry, success);
   }
 
   return (
@@ -99,20 +97,6 @@ const ManualPayment = ({bowler, added, loading = false}) => {
                    value={formData.identifier}
                    onChange={inputChanged}/>
           </div>
-          {errorMessage && (
-            <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center m-3'}
-                 role={'alert'}>
-              <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
-              <div className={'me-auto'}>
-                {errorMessage}
-                <button type="button"
-                        className={"btn-close"}
-                        data-bs-dismiss="alert"
-                        onClick={() => setErrorMessage(null)}
-                        aria-label="Close"/>
-              </div>
-            </div>
-          )}
           <div className={'row mx-0'}>
             <div className={'d-flex justify-content-between p-0'}>
               <button type={'button'}
@@ -123,39 +107,20 @@ const ManualPayment = ({bowler, added, loading = false}) => {
                 <i className={'bi-x-lg pe-2'} aria-hidden={true}/>
                 Cancel
               </button>
-              {!loading && (
-                <button type={'submit'}
-                        className={'btn btn-success'}
-                        disabled={!formData.valid}>
-                  Save
-                  <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>
-                </button>
-              )}
-              {loading && (
-                <button type={'button'}
-                        disabled={true}>
-                  <span className={'spinner-birder spinner-border-sm'} role={'status'} aria-hidden={true}></span>
-                  {' '}
-                  Saving
-                </button>
-              )}
+              <button type={'submit'}
+                      className={'btn btn-primary'}
+                      disabled={!formData.valid || loading}>
+                {loading && (
+                  <span>
+                    <span className={'spinner-birder spinner-border-sm pe-2'} role={'status'} aria-hidden={true}></span>
+                  </span>
+                )}
+                Save
+                <i className={'bi-chevron-right ps-2'} aria-hidden={true}/>
+              </button>
             </div>
           </div>
         </form>
-      )}
-      {successMessage && (
-        <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center m-3'}
-             role={'alert'}>
-          <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
-          <div className={'me-auto'}>
-            {successMessage}
-            <button type="button"
-                    className={"btn-close"}
-                    data-bs-dismiss="alert"
-                    onClick={() => setSuccessMessage(null)}
-                    aria-label="Close"/>
-          </div>
-        </div>
       )}
       {!formDisplayed && (
         <div className={'row my-3'}>

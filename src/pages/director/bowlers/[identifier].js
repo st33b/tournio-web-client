@@ -750,9 +750,9 @@ const Page = () => {
             </ListGroup.Item>
           );
         })}
-        <ListGroup.Item className={'py-0'}>
+        <ListGroup.Item className={'p-0'}>
           <ManualPayment bowler={bowler}
-                         added={ledgerEntrySubmitted}
+                         onSubmit={ledgerEntrySubmitted}
                          loading={loadingParts.addLedgerEntry}/>
           <SuccessAlert message={success.addLedgerEntry} className={'mx-3'} />
           <ErrorAlert message={errors.addLedgerEntry} className={'mx-3'} />
@@ -772,23 +772,13 @@ const Page = () => {
       <Breadcrumbs ladder={ladder} activeText={bowler.display_name}/>
       <Row>
         <Col md={8}>
-          {bowlerError || errors.updateBowler && (
-            <Alert variant={'danger'}
-                   dismissible={true}
-                   closeLabel={'Close'}>
-              <span>
-                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-                <strong>Error.</strong>{' '}
-                {bowlerError.message}
-                {errors.updateBowler}
-              </span>
-            </Alert>
-          )}
           {bowlerSummary}
           <BowlerDetails tournament={state.tournament}
                          bowler={bowler}
                          bowlerUpdateSubmitted={updateSubmitHandler}
           />
+          <ErrorAlert message={bowlerError}/>
+          <ErrorAlert message={errors.updateBowler}/>
         </Col>
         <Col md={4}>
           {/*<OfficeUseOnly bowler={bowler}/>*/}
