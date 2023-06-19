@@ -93,7 +93,7 @@ const Page = () => {
     },
   });
 
-  const {data: unpartneredBowlers, error: unpartneredError} = useDirectorApi({
+  const {data: unpartneredBowlers, error: unpartneredError, onDataUpdate: onDoublesPartnerUpdate} = useDirectorApi({
     uri: state.tournament ? `/tournaments/${state.tournament.identifier}/bowlers?unpartnered=true` : null,
     initialData: [],
     onSuccess: () => {
@@ -114,7 +114,7 @@ const Page = () => {
     },
   });
 
-  const {data: availableFreeEntries, error: freeEntriesError} = useDirectorApi({
+  const {data: availableFreeEntries, error: freeEntriesError, onDataUpdate: onFreeEntryUpdate} = useDirectorApi({
     uri: state.tournament ? `/tournaments/${state.tournament.identifier}/free_entries?unassigned=true` : null,
     initialData: [],
     onSuccess: () => {
@@ -243,11 +243,21 @@ const Page = () => {
   }
 
   const newPartnerSuccess = (data) => {
-    // We don't have the bowler in state. Maybe we  should, so we can update it
-    // when this (and others) succeeds?
     setLoadingParts({
       ...loadingParts,
       unpartneredBowlers: false,
+    });
+
+    // This trigger a re-fetch of the bowler and then a re-render of the bowler summary,
+    // but not the other objects populated by calls to the useDirectorApi hook.
+    onBowlerUpdate(data);
+
+    // retrieve the new list of unpartnered bowlers
+    onDoublesPartnerUpdate(unpartneredBowlers);
+
+    setSuccess({
+      ...success,
+      unpartneredBowlers: 'Doubles partner updated.',
     });
   }
   const newPartnerFailure = (data) => {
@@ -303,12 +313,19 @@ const Page = () => {
   }
 
   const linkFreeEntrySuccess = (data) => {
-    // We don't have the bowler in state. Maybe we  should, so we can update it
-    // when this (and others) succeeds?
-
     setLoadingParts({
       ...loadingParts,
       freeEntries: false,
+    });
+
+    onFreeEntryUpdate(data);
+
+    // This updates the bowler's ledger entries, so we should also refresh the bowler
+    onBowlerUpdate(bowler);
+
+    setSuccess({
+      ...success,
+      freeEntries: 'Free entry linked.',
     });
   }
   const linkFreeEntryFailure = (data) => {
@@ -386,10 +403,11 @@ const Page = () => {
       ...loadingParts,
       updateBowler: false,
     });
+    onBowlerUpdate(data);
     setSuccess({
       ...success,
       updateBowler: 'Bowler details updated.',
-    })
+    });
   }
   const bowlerUpdateFailure = (message) => {
     setLoadingParts({
@@ -482,20 +500,16 @@ const Page = () => {
     });
   }
 
-  const submitTournamentDataSuccess = (newEntry) => {
+  const submitTournamentDataSuccess = (data) => {
     setLoadingParts({
       ...loadingParts,
       setTournamentData: false,
     });
+    onBowlerUpdate(data);
     setSuccess({
       ...success,
       setTournamentData: 'Data saved.',
     });
-    // const newBowler = {...bowler};
-    // newBowler.ledger_entries = bowler.ledger_entries.concat(newEntry);
-    // newBowler.amount_due = 0;
-    // setBowler(newBowler);
-    // dispatch(bowlerUpdated(newBowler));
   }
 
   const submitTournamentDataFailure = (error) => {
