@@ -109,7 +109,7 @@ const ManualPayment = ({bowler, onSubmit, loading = false}) => {
                       disabled={!formData.valid || loading}>
                 {loading && (
                   <span>
-                    <span className={'spinner-birder spinner-border-sm pe-2'} role={'status'} aria-hidden={true}></span>
+                    <span className={'spinner-border spinner-border-sm me-2'} role={'status'} aria-hidden={true}></span>
                   </span>
                 )}
                 Save

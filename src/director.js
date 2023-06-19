@@ -4,7 +4,7 @@ import {useDirectorContext} from "./store/DirectorContext";
 import {useEffect, useState} from "react";
 import {useLoginContext} from "./store/LoginContext";
 import {useRouter} from "next/router";
-import useSWR, {unstable_serialize} from "swr";
+import useSWR, {unstable_serialize, useSWRConfig} from "swr";
 
 export const useLoggedIn = () => {
   devConsoleLog("DEPRECATED: useLoggedIn hook. Prefer useLoginContext instead");
@@ -126,7 +126,7 @@ export const useDirectorApi = ({
   }
   /////////////////
 
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     swrKey,
     ([requestUrl, clientToken, clientReady]) => swrFetcher(requestUrl, clientToken, clientReady),
     swrOptions
@@ -136,6 +136,7 @@ export const useDirectorApi = ({
     loading: isLoading,
     data,
     error,
+    onDataUpdate: (newData) => mutate(newData),
   }
 }
 

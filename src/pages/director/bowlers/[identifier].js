@@ -11,9 +11,7 @@ import BowlerDetails from "../../../components/Director/BowlerDetails/BowlerDeta
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ManualPayment from "../../../components/Director/BowlerDetails/ManualPayment";
 import OfficeUseOnly from "../../../components/Director/BowlerDetails/OfficeUseOnly";
-import {
-  bowlerDeleted,
-} from "../../../store/actions/directorActions";
+import {bowlerDeleted} from "../../../store/actions/directorActions";
 import {useLoginContext} from "../../../store/LoginContext";
 import ErrorBoundary from "../../../components/common/ErrorBoundary";
 import SuccessAlert from "../../../components/common/SuccessAlert";
@@ -70,11 +68,11 @@ const Page = () => {
     setTournamentData: false,
   });
 
-  const {loading: bowlerLoading, data: bowler, error: bowlerError} = useDirectorApi({
+  const {loading: bowlerLoading, data: bowler, error: bowlerError, onDataUpdate: onBowlerUpdate} = useDirectorApi({
     uri: identifier ? `/bowlers/${identifier}` : null,
   });
 
-  const {data: availableTeams, error: teamsError} = useDirectorApi({
+  const {data: availableTeams, error: teamsError, onDataUpdate: onAvailableTeamsUpdate} = useDirectorApi({
     uri: state.tournament ? `/tournaments/${state.tournament.identifier}/teams?partial=true` : null,
     initialData: [],
     onSuccess: () => {
@@ -105,15 +103,15 @@ const Page = () => {
       });
     },
     onFailure: () => {
-    setLoadingParts({
-      ...loadingParts,
-      unpartneredBowlers: false,
-    });
-    setErrors({
-      ...errors,
-      unpartneredBowlers: 'Failed to load list',
-    });
-  },
+      setLoadingParts({
+        ...loadingParts,
+        unpartneredBowlers: false,
+      });
+      setErrors({
+        ...errors,
+        unpartneredBowlers: 'Failed to load list',
+      });
+    },
   });
 
   const {data: availableFreeEntries, error: freeEntriesError} = useDirectorApi({
@@ -180,11 +178,21 @@ const Page = () => {
   }
 
   const moveBowlerSuccess = (data) => {
-    // We don't have the bowler in state. Maybe we  should, so we can update it
-    // when this (and others) succeeds?
     setLoadingParts({
       ...loadingParts,
       moveBowler: false,
+    });
+
+    // This trigger a re-fetch of the bowler and then a re-render of the bowler summary,
+    // but not the other objects populated by calls to the useDirectorApi hook.
+    onBowlerUpdate(data);
+
+    // retrieve the new list of available teams
+    onAvailableTeamsUpdate(availableTeams);
+
+    setSuccess({
+      ...success,
+      moveBowler: 'Bowler moved to new team.',
     });
   }
 
@@ -378,6 +386,10 @@ const Page = () => {
       ...loadingParts,
       updateBowler: false,
     });
+    setSuccess({
+      ...success,
+      updateBowler: 'Bowler details updated.',
+    })
   }
   const bowlerUpdateFailure = (message) => {
     setLoadingParts({
@@ -441,7 +453,9 @@ const Page = () => {
     });
   }
 
-  const ledgerEntrySubmitted = (data, onSuccess=()=>{}, onFailure=()=>{}) => {
+  const ledgerEntrySubmitted = (data, onSuccess = () => {
+  }, onFailure = () => {
+  }) => {
     setLoadingParts({
       ...loadingParts,
       addLedgerEntry: true,
@@ -468,7 +482,7 @@ const Page = () => {
     });
   }
 
-  const submitTournamentDatsSuccess = (newEntry) => {
+  const submitTournamentDataSuccess = (newEntry) => {
     setLoadingParts({
       ...loadingParts,
       setTournamentData: false,
@@ -484,7 +498,7 @@ const Page = () => {
     // dispatch(bowlerUpdated(newBowler));
   }
 
-  const submitTournamentDatsFailure = (error) => {
+  const submitTournamentDataFailure = (error) => {
     setLoadingParts({
       ...loadingParts,
       setTournamentData: false,
@@ -495,7 +509,9 @@ const Page = () => {
     });
   }
 
-  const tournamentDataSubmitted = (data, onSuccess=()=>{}, onFailure=()=>{}) => {
+  const tournamentDataSubmitted = (data, onSuccess = () => {
+  }, onFailure = () => {
+  }) => {
     setLoadingParts({
       ...loadingParts,
       setTournamentData: true,
@@ -517,11 +533,11 @@ const Page = () => {
       requestConfig: requestConfig,
       authToken: authToken,
       onSuccess: (data) => {
-        submitTournamentDatsSuccess(data);
+        submitTournamentDataSuccess(data);
         onSuccess();
       },
       onFailure: (error) => {
-        submitTournamentDatsFailure(error);
+        submitTournamentDataFailure(error);
         onFailure();
       },
     });
@@ -529,8 +545,10 @@ const Page = () => {
 
   const resendEmailButtonClicked = ({
                                       data,
-                                      onSuccess=() => {},
-                                      onFailure=() => {},
+                                      onSuccess = () => {
+                                      },
+                                      onFailure = () => {
+                                      },
                                     }) => {
     const uri = `/bowlers/${bowler.identifier}/resend_email`;
     const requestConfig = {
@@ -546,7 +564,19 @@ const Page = () => {
     })
   }
 
+  const dismissSuccessAlert = (which) => {
+    setSuccess({
+      ...success,
+      [which]: null,
+    })
+  }
 
+  const dismissErrorAlert = (which) => {
+    setErrors({
+      ...errors,
+      [which]: null,
+    })
+  }
   //////////////////////////////////////////////////////////////////////
 
   if (!state.tournament || bowlerLoading || !bowler) {
@@ -619,7 +649,7 @@ const Page = () => {
                  dismissible={true}
                  closeLabel={'Close'}>
               <span>
-                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true}/>
                 <strong>Error.</strong>{' '}
                 {errors.deleteBowler}
               </span>
@@ -651,23 +681,28 @@ const Page = () => {
             <Button variant={'primary'}
                     size={'sm'}
                     className={'mt-3'}
-                    disabled={newTeamFormData.destinationTeam === ''}
+                    disabled={loadingParts.moveBowler || newTeamFormData.destinationTeam === ''}
                     type={'submit'}>
+              {loadingParts.moveBowler && (
+                <span>
+                  <span className={'spinner-border spinner-border-sm me-2'} role={'status'} aria-hidden={true}></span>
+                </span>
+              )}
               Move Bowler
             </Button>
           </form>
-          {errors.moveBowler || teamsError && (
-            <Alert variant={'danger'}
-                   dismissible={true}
-                   closeLabel={'Close'}>
-              <span>
-                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-                <strong>Error.</strong>{' '}
-                {errors.moveBowler}
-                {teamsError.message}
-              </span>
-            </Alert>
-          )}
+          <SuccessAlert message={success.moveBowler}
+                        className={'mt-3 mb-0'}
+                        onClose={() => dismissSuccessAlert('moveBowler')}
+          />
+          <ErrorAlert message={teamsError}
+                      className={'mt-3 mb-0'}
+                      onClose={() => dismissErrorAlert('moveBowler')}
+          />
+          <ErrorAlert message={errors.moveBowler}
+                      className={'mt-3 mb-0'}
+                      onClose={() => dismissErrorAlert('moveBowler')}
+          />
         </Card.Body>
       </Card>
     );
@@ -708,7 +743,7 @@ const Page = () => {
                    dismissible={true}
                    closeLabel={'Close'}>
               <span>
-                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true}/>
                 <strong>Error.</strong>{' '}
                 {errors.unpartneredBowlers}
                 {unpartneredError.message}
@@ -759,7 +794,7 @@ const Page = () => {
                    dismissible={true}
                    closeLabel={'Close'}>
               <span>
-                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
+                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true}/>
                 <strong>Error.</strong>{' '}
                 {errors.freeEntries}
                 {freeEntriesError.message}
@@ -836,8 +871,8 @@ const Page = () => {
           <ManualPayment bowler={bowler}
                          onSubmit={ledgerEntrySubmitted}
                          loading={loadingParts.addLedgerEntry}/>
-          <SuccessAlert message={success.addLedgerEntry} className={'mt-3'} />
-          <ErrorAlert message={errors.addLedgerEntry} className={'mt-3'} />
+          <SuccessAlert message={success.addLedgerEntry} className={'mx-3 mt-3'}/>
+          <ErrorAlert message={errors.addLedgerEntry} className={'mx-3 mt-3'}/>
         </ListGroup.Item>
       </ListGroup>
     </Card>
@@ -852,8 +887,8 @@ const Page = () => {
         <OfficeUseOnly bowler={bowler}
                        onSubmit={tournamentDataSubmitted}
                        loading={loadingParts.setTournamentData}/>
-        <SuccessAlert message={success.setTournamentData} className={'mt-3 mb-0'} />
-        <ErrorAlert message={errors.setTournamentData} className={'mt-3 mb-0'} />
+        <SuccessAlert message={success.setTournamentData} className={'mt-3 mb-0'}/>
+        <ErrorAlert message={errors.setTournamentData} className={'mt-3 mb-0'}/>
       </Card.Body>
       <Card.Body className={''}>
         <Card.Text className={'text-center'}>
@@ -884,7 +919,7 @@ const Page = () => {
                          bowlerIdentifier={bowler.identifier}
                          onClick={resendEmailButtonClicked}
                          orderIdentifier={entry.identifier}
-                         orderCredit={entry.credit} />
+                         orderCredit={entry.credit}/>
           </ListGroup.Item>
         ))}
       </ListGroup>
@@ -907,6 +942,7 @@ const Page = () => {
                          bowler={bowler}
                          bowlerUpdateSubmitted={updateSubmitHandler}
           />
+          <SuccessAlert message={success.updateBowler}/>
           <ErrorAlert message={bowlerError}/>
           <ErrorAlert message={errors.updateBowler}/>
         </Col>

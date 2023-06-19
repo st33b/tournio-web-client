@@ -1,4 +1,4 @@
-const SuccessAlert = ({message, className=''}) => {
+const SuccessAlert = ({message, className='', onClose=()=>{}}) => {
   if (!message) {
     return '';
   }
@@ -13,6 +13,7 @@ const SuccessAlert = ({message, className=''}) => {
       <button type={`button`}
               className={`btn-close`}
               data-bs-dismiss={`alert`}
+              onClick={onClose}
               aria-label={'Close'}></button>
     </div>
   );

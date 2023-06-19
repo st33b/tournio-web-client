@@ -1,4 +1,4 @@
-const ErrorAlert = ({message, className=''}) => {
+const ErrorAlert = ({message, className='', onClose=()=>{}}) => {
   if (!message) {
     return '';
   }
@@ -13,6 +13,7 @@ const ErrorAlert = ({message, className=''}) => {
       <button type={`button`}
               className={`btn-close`}
               data-bs-dismiss={`alert`}
+              onClick={onClose}
               aria-label={'Close'}></button>
     </div>
   );
