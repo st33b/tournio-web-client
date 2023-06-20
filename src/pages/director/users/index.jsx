@@ -46,17 +46,17 @@ const Page = () => {
     <div className={'mt-2'}>
       <Row>
         <Col lg={8}>
-          {success === 'delete' && (
+          {success === 'deleted' && (
             <SuccessAlert message={'The user has been removed.'}
-                          className={`mt-3`}
+                          className={``}
                           onClose={() => {
                             router.replace(router.pathname, null, {shallow: true})
                           }}/>
           )}
           <ErrorAlert message={usersError}
-                      className={`mt-3`}/>
+                      className={``}/>
           <ErrorAlert message={tournamnentsError}
-                      className={`mt-3`}/>
+                      className={``}/>
           <UserListing users={users} tournaments={tournaments}/>
         </Col>
         <Col>

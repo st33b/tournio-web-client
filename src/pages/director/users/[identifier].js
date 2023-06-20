@@ -3,78 +3,34 @@ import {useRouter} from "next/router";
 
 import {Col, Row} from "react-bootstrap";
 
-import {directorApiRequest, useLoggedIn} from "../../../director";
+import {directorApiRequest, useDirectorApi, useLoggedIn} from "../../../director";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import UserForm from '../../../components/Director/UserForm/UserForm';
+import {useLoginContext} from "../../../store/LoginContext";
+import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
-  const context = useDirectorContext();
-  const directorState = context.directorState;
+  const {user: loggedInUser} = useLoginContext();
   const router = useRouter();
   const { identifier } = router.query;
 
-  const isSuperuser = directorState.user && directorState.user.role === 'superuser';
-  const isEditingSelf = directorState.user && directorState.user.identifier === identifier;
-
-  const [user, setUser] = useState();
-  const [loading, setLoading] = useState(true);
-  const [tournaments, setTournaments] = useState();
-
-  useEffect(() => {
-    if (identifier === undefined) {
-      return;
-    }
-    if (!isSuperuser && !isEditingSelf) {
-      router.push('/director');
-    }
+  const {loading: userLoading, data: user, error: userError, onDataUpdate} = useDirectorApi({
+    uri: identifier ? `/users/${identifier}` : null,
   });
 
-  useEffect(() => {
-    if (!identifier || !directorState.users) {
-      return;
-    }
+  const {loading: tournamentsLoading, data: tournaments, error: tournamnentsError} = useDirectorApi({
+    uri: '/tournaments',
+  });
 
-    setUser(directorState.users.find(u => u.identifier === identifier));
-  }, [identifier]);
-
-  const fetchTournamentsSuccess = (data) => {
-    setTournaments(data);
-    setLoading(false);
+  const userUpdated = (user) => {
+    onDataUpdate(user);
   }
 
-  const fetchTournamentsFailure = (data) => {
-    setLoading(false);
-    setTournaments([]);
-  }
+  //////////////////////////////////////////////////////////////////////////
 
-  useEffect(() => {
-    const uri = '/director/tournaments';
-    const requestConfig = {
-      method: 'get',
-    }
-    setLoading(true);
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      onSuccess: fetchTournamentsSuccess,
-      onFailure: fetchTournamentsFailure,
-    });
-  }, []);
-
-
-  // Make sure we're logged in and ready to go
-  const loggedInState = useLoggedIn();
-  const ready = loggedInState >= 0;
-  if (!ready) {
-    return '';
-  }
-  if (!loggedInState) {
-    router.push('/director/login');
-  }
-  if (!directorState) {
-    return '';
+  if (userLoading || tournamentsLoading) {
+    return <LoadingMessage message={'Retrieving user details...'}/>
   }
 
   return (
@@ -83,6 +39,7 @@ const Page = () => {
         <Col sm={{span: 8, offset: 2}} md={{span: 6, offset: 3}}>
           <UserForm user={user}
                     tournaments={tournaments}
+                    onUserUpdated={userUpdated}
           />
         </Col>
       </Row>

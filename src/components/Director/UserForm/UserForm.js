@@ -41,8 +41,8 @@ const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
 
     newUserFormData.fields.email = user.email;
     newUserFormData.fields.role = user.role;
-    newUserFormData.fields.first_name = user.first_name;
-    newUserFormData.fields.last_name = user.last_name;
+    newUserFormData.fields.first_name = user.first_name || '';
+    newUserFormData.fields.last_name = user.last_name || '';
     newUserFormData.fields.tournamentIds = user.tournaments.map(t => t.id);
 
     const isSelf = user.identifier === loggedInUser.identifier;
