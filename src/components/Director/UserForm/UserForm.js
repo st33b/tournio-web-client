@@ -3,14 +3,14 @@ import {Alert, Button, Card, Form, FormGroup} from "react-bootstrap";
 import {useRouter} from "next/router";
 
 import {directorApiRequest} from "../../../director";
-import {useDirectorContext} from "../../../store/DirectorContext";
 
 import classes from './UserForm.module.scss';
-import {userAdded, userDeleted, userUpdated} from "../../../store/actions/directorActions";
+import {useLoginContext} from "../../../store/LoginContext";
+import SuccessAlert from "../../common/SuccessAlert";
+import ErrorAlert from "../../common/ErrorAlert";
 
-const UserForm = ({user, tournaments}) => {
-  const context = useDirectorContext();
-  const {dispatch, directorState} = context;
+const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
+  const {user: loggedInUser, authToken} = useLoginContext();
   const router = useRouter();
 
   const initialState = {
@@ -45,7 +45,7 @@ const UserForm = ({user, tournaments}) => {
     newUserFormData.fields.last_name = user.last_name;
     newUserFormData.fields.tournamentIds = user.tournaments.map(t => t.id);
 
-    const isSelf = user.identifier === directorState.user.identifier;
+    const isSelf = user.identifier === loggedInUser.identifier;
     if (isSelf) {
       delete newUserFormData.fields.role;
       delete newUserFormData.fields.tournamentIds;
@@ -54,9 +54,11 @@ const UserForm = ({user, tournaments}) => {
     newUserFormData.valid = true;
 
     setUserFormData(newUserFormData);
-  }, [user, directorState.user]);
+  }, [user]);
 
-  if (!directorState.user || !tournaments) {
+  ///////////////////////////////////////////////////////////////////////////
+
+  if (!tournaments) {
     return '';
   }
 
@@ -68,7 +70,6 @@ const UserForm = ({user, tournaments}) => {
   let submittingButtonText = 'Creating...';
 
   const onDeleteSuccess = (_) => {
-    dispatch(userDeleted(user));
     router.push('/director/users?success=deleted');
   }
 
@@ -79,14 +80,14 @@ const UserForm = ({user, tournaments}) => {
   const deleteInitiated = (e) => {
     e.preventDefault();
     if (confirm('This will remove the user and their ability to administer any tournaments. Are you sure?')) {
-      const uri = `/director/users/${user.identifier}`;
+      const uri = `/users/${user.identifier}`;
       const requestConfig = {
         method: 'delete',
       }
       directorApiRequest({
         uri: uri,
         requestConfig: requestConfig,
-        context: context,
+        authToken: authToken,
         onSuccess: onDeleteSuccess,
         onFailure: onDeleteFailure,
       });
@@ -95,7 +96,7 @@ const UserForm = ({user, tournaments}) => {
 
   if (user) {
     areWeCreating = false;
-    isSelf = user.identifier === directorState.user.identifier;
+    isSelf = user.identifier === loggedInUser.identifier;
 
     formTitle = 'User Details';
     submitButtonText = 'Update';
@@ -124,14 +125,12 @@ const UserForm = ({user, tournaments}) => {
                      onClose={() => setBanner(null)}
                      className={'mt-3 mb-0'}>{areWeCreating ? 'User has been created!' : 'User details updated.'}</Alert>);
 
-    // Call a passed-in "new user created" or "user updated" function
-    // so that our parent page can update accordingly, if desired.
     if (areWeCreating) {
-      dispatch(userAdded(data));
       setUserFormData(initialState);
+      onUserAdded(data);
       setSuccessMessage('User created.');
     } else {
-      dispatch(userUpdated(data));
+      onUserUpdated(data)
       setSuccessMessage('User details updated');
 
       // Update the touched attribute in the userDataForm back to false.
@@ -150,7 +149,7 @@ const UserForm = ({user, tournaments}) => {
   const submitHandler = (event) => {
     event.preventDefault();
 
-    let uri = `/director/users`;
+    let uri = `/users`;
     let method = 'post';
     const userData = {
       email: userFormData.fields.email,
@@ -186,7 +185,7 @@ const UserForm = ({user, tournaments}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: onSubmitSuccess,
       onFailure: onSubmitFailure,
     });
@@ -220,36 +219,6 @@ const UserForm = ({user, tournaments}) => {
     // Put the updates into state
     setUserFormData(updatedForm);
   }
-
-  const success = successMessage && (
-    <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
-      <i className={'bi-check-lg pe-2'} aria-hidden={true} />
-      <div className={'me-auto'}>
-        {successMessage}
-      </div>
-      <button type={"button"}
-              className={"btn-close"}
-              data-bs-dismiss={"alert"}
-              onClick={() => setSuccessMessage(null)}
-              aria-label={"Close"} />
-    </div>
-  );
-  const error = errorMessage && (
-    <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
-      <i className={'bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-      <div className={'me-auto'}>
-        <strong>
-          Oh no!
-        </strong>
-        {' '}{errorMessage}
-      </div>
-      <button type={"button"}
-              className={"btn-close"}
-              data-bs-dismiss={"alert"}
-              onClick={() => setErrorMessage(null)}
-              aria-label={"Close"} />
-    </div>
-  );
 
   return (
     <div className={classes.UserForm}>
@@ -341,8 +310,12 @@ const UserForm = ({user, tournaments}) => {
               )}
               {isSubmitting && <Button variant={'secondary'} disabled={true}>{submittingButtonText}</Button>}
             </div>
-            {success}
-            {error}
+            <SuccessAlert message={successMessage}
+                          className={`mt-3 mb-0`}
+                          onClose={() => setSuccessMessage(null) }/>
+            <ErrorAlert message={errorMessage}
+                        className={`mt-3 mb-0`}
+                        onClose={() => setErrorMessage(null) }/>
           </Form>
         </Card.Body>
       </Card>

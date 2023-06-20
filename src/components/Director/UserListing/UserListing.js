@@ -1,18 +1,15 @@
 import {useMemo} from "react";
 import {Col, Row} from "react-bootstrap";
+import Link from 'next/link';
 import {useTable, useSortBy, useFilters} from 'react-table';
 
-import LoadingMessage from "../../ui/LoadingMessage/LoadingMessage";
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
 import UserFilterForm from "../UserFilterForm/UserFilterForm";
 import {tournamentName} from '../../../utils';
 
 import classes from './UserListing.module.scss';
-import {useDirectorContext} from "../../../store/DirectorContext";
 
-const UserListing = ({tournaments}) => {
-  const {directorState} = useDirectorContext();
-
+const UserListing = ({users, tournaments}) => {
   const columns = useMemo(() => [
     {
       id: 'last_name',
@@ -30,9 +27,9 @@ const UserListing = ({tournaments}) => {
       Header: ({column}) => <SortableTableHeader text={'Email'} column={column}/>,
       accessor: 'email',
       Cell: ({row}) => (
-        <a href={'/director/users/' + row.original.identifier}>
+        <Link href={'/director/users/' + row.original.identifier}>
           {row.original.email}
-        </a>
+        </Link>
       )
     },
     {
@@ -44,7 +41,7 @@ const UserListing = ({tournaments}) => {
     {
       id: 'tournaments',
       accessor: 'tournaments',
-      Header: 'Tournaments',
+      Header: 'Tournament(s)',
       Cell: ({row}) => row.original.tournaments.map(t => (t.name)).join(', '),
       filter: tournamentName,
       disableSortBy: true,
@@ -54,7 +51,12 @@ const UserListing = ({tournaments}) => {
       accessor: 'last_sign_in_at',
       Header: ({column}) => <SortableTableHeader text={'Last Signed In'} column={column}/>,
     },
-  ], [directorState.users]);
+  ], [users]);
+
+  let data = [];
+  if (users) {
+    data = users;
+  }
 
   // tell react-table which things we want to use (sorting, filtering)
   // and retrieve properties/functions they let us hook into
@@ -67,49 +69,10 @@ const UserListing = ({tournaments}) => {
     setFilter,
     setAllFilters,
   } = useTable(
-    {columns, data: directorState.users},
+    {columns, data},
     useFilters,
     useSortBy,
   );
-
-  let list = '';
-  if (!directorState.users) {
-    list = <LoadingMessage message={'Retrieving users...'} />;
-  } else if (directorState.users.length === 0) {
-    list = <p>No users to display.</p>;
-  } else {
-    list = (
-      <div className={'table-responsive'}>
-        <table className={'table table-striped table-hover'} {...getTableProps}>
-          <thead>
-          {headerGroups.map((headerGroup, i) => (
-            <tr key={i} {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column, j) => (
-                <th key={j} {...column.getHeaderProps(column.getSortByToggleProps())}>
-                  {column.render('Header')}
-                </th>
-              ))}
-            </tr>
-          ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-          {rows.map((row, i) => {
-            prepareRow(row);
-            return (
-              <tr key={i} {...row.getRowProps()}>
-                {row.cells.map((cell, j) => (
-                  <td key={j} {...cell.getCellProps()}>
-                    {cell.render('Cell')}
-                  </td>
-                ))}
-              </tr>
-            )
-          })}
-          </tbody>
-        </table>
-      </div>
-    );
-  }
 
   const filterThatData = (criteria) => {
     if (criteria.tournament) {
@@ -133,12 +96,58 @@ const UserListing = ({tournaments}) => {
     setAllFilters([]);
   }
 
+  //////////////////////////////////////////////////////////////
+
+  if (!users || !tournaments) {
+    return '';
+  }
+
   return (
     <div className={classes.UserListing}>
       <Row>
         <Col>
-          {!!directorState.users.size && <UserFilterForm onFilterApplication={filterThatData} onFilterReset={resetThoseFilters} tournaments={tournaments}/>}
-          {list}
+          {users.length === 0 && (
+            <div className={'display-6 text-center'}>
+              No users to display.
+            </div>
+          )}
+          {users.length > 0 && (
+            <>
+              <UserFilterForm onFilterApplication={filterThatData}
+                              onFilterReset={resetThoseFilters}
+                              tournaments={tournaments}/>
+
+              <div className={'table-responsive'}>
+                <table className={'table table-striped table-hover'} {...getTableProps}>
+                  <thead>
+                  {headerGroups.map((headerGroup, i) => (
+                    <tr key={i} {...headerGroup.getHeaderGroupProps()}>
+                      {headerGroup.headers.map((column, j) => (
+                        <th key={j} {...column.getHeaderProps(column.getSortByToggleProps())}>
+                          {column.render('Header')}
+                        </th>
+                      ))}
+                    </tr>
+                  ))}
+                  </thead>
+                  <tbody {...getTableBodyProps()}>
+                  {rows.map((row, i) => {
+                    prepareRow(row);
+                    return (
+                      <tr key={i} {...row.getRowProps()}>
+                        {row.cells.map((cell, j) => (
+                          <td key={j} {...cell.getCellProps()}>
+                            {cell.render('Cell')}
+                          </td>
+                        ))}
+                      </tr>
+                    )
+                  })}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
         </Col>
       </Row>
     </div>
