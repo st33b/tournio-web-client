@@ -81,6 +81,7 @@ const PasswordResetForm = ({token}) => {
               <Form.Control type={'password'}
                             required
                             placeholder={'Password'}
+                            autoComplete={'new-password'}
                             ref={passwordInputRef}/>
               <Form.Control.Feedback type={'invalid'}>
                 Password&apos;s gotta be at least 8 characters long.
@@ -91,6 +92,7 @@ const PasswordResetForm = ({token}) => {
               <Form.Control type={'password'}
                             required
                             placeholder={'Confirm Password'}
+                            autoComplete={'new-password'}
                             ref={passwordConfirmInputRef}/>
               <Form.Control.Feedback type={'invalid'}>
                 Passwords gotta match.

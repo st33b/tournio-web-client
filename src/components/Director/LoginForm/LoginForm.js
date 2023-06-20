@@ -87,6 +87,7 @@ const LoginForm = ({onLoginSuccess}) => {
               <Form.Control type={'password'}
                             required
                             placeholder={'Password'}
+                            autoComplete={'current-password'}
                             ref={passwordInputRef}/>
               <Form.Control.Feedback type={'invalid'}>
                 Can&apos;t log in without a password.
