@@ -1,5 +1,6 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {useRouter} from "next/router";
+import Link from 'next/link';
 import {useTable, useSortBy, useFilters} from 'react-table';
 import {Overlay, Popover} from "react-bootstrap";
 
@@ -7,10 +8,9 @@ import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeade
 import BowlerFilterForm from "../BowlerFilterForm/BowlerFilterForm";
 import {doesNotEqual, isOrIsNot, equals} from "../../../utils";
 import {directorApiRequest} from "../../../director";
-import {useDirectorContext} from "../../../store/DirectorContext";
+import {useLoginContext} from "../../../store/LoginContext";
 
 import classes from './BowlerListing.module.scss';
-import {useLoginContext} from "../../../store/LoginContext";
 
 const IgboMemberCell = ({
                           value: initialValue,
@@ -102,9 +102,9 @@ const BowlerListing = ({bowlers}) => {
       accessor: 'full_name',
       Cell: ({row, cell}) => {
         return (
-          <a href={`/director/bowlers/${row.original.identifier}`}>
+          <Link href={`/director/bowlers/${row.original.identifier}`}>
             {cell.value}
-          </a>
+          </Link>
         )
       }
     },
@@ -118,10 +118,10 @@ const BowlerListing = ({bowlers}) => {
       accessor: 'team_name',
       Cell: ({row, value}) => {
         return (!value) ? 'n/a' : (
-          <a
+          <Link
             href={`/director/teams/${row.original.team_identifier}`}>
             {value}
-          </a>
+          </Link>
           )
       },
       disableSortBy: false,

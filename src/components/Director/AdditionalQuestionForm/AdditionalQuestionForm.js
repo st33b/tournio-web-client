@@ -72,7 +72,7 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
     }
 
     // send over the new question
-    const uri = newQuestion ? `/director/tournaments/${tournament.identifier}/additional_questions` : `/director/additional_questions/${question.identifier}`;
+    const uri = newQuestion ? `/tournaments/${tournament.identifier}/additional_questions` : `/additional_questions/${question.identifier}`;
     const requestConfig = {
       method: newQuestion ? 'post' : 'patch',
       data: {
@@ -109,7 +109,7 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
 
   const deleteClicked = (event) => {
     event.preventDefault();
-    const uri = `/director/additional_questions/${question.identifier}`
+    const uri = `/additional_questions/${question.identifier}`
     const requestConfig = {
       method: 'delete',
     }

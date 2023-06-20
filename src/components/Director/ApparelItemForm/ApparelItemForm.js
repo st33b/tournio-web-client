@@ -12,11 +12,11 @@ import productClasses from '../NewPurchasableItem/ProductForm.module.scss';
 
 import AvailableSizes from "./AvailableSizes";
 import ButtonRow from "../../common/ButtonRow";
-
+import {useLoginContext} from "../../../store/LoginContext";
 
 const ApparelItemForm = ({tournament, onCancel, onComplete, item}) => {
-  const context = useDirectorContext();
-  const dispatch = context.dispatch;
+  const {authToken} = useLoginContext();
+  const {dispatch} = useDirectorContext();
 
   const initialState = {
     fields: {
@@ -71,7 +71,6 @@ const ApparelItemForm = ({tournament, onCancel, onComplete, item}) => {
   }
 
   const [formData, setFormData] = useState(initialState);
-  const [editing, setEditing] = useState(false);
 
   // Populate form data
   useEffect(() => {
@@ -178,7 +177,7 @@ const ApparelItemForm = ({tournament, onCancel, onComplete, item}) => {
 
   const formSubmitted = (event) => {
     event.preventDefault();
-    const uri = `/director/tournaments/${tournament.identifier}/purchasable_items`;
+    const uri = `/tournaments/${tournament.identifier}/purchasable_items`;
     const requestConfig = {
       method: 'post',
       data: {
@@ -208,7 +207,7 @@ const ApparelItemForm = ({tournament, onCancel, onComplete, item}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: submissionSuccess,
       onFailure: (_) => console.log("Failed to save item."),
     });
@@ -221,7 +220,6 @@ const ApparelItemForm = ({tournament, onCancel, onComplete, item}) => {
     value: formData.fields.value,
     configuration: {
       note: formData.fields.note,
-      // denomination: formData.denomination,
       order: formData.fields.order,
       sizes: formData.fields.sizes,
     }

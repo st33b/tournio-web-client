@@ -9,10 +9,11 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 import {devConsoleLog} from "../../../utils";
 import ButtonRow from "../../common/ButtonRow";
+import {useLoginContext} from "../../../store/LoginContext";
 
 const ProductForm = ({tournament, onCancel, onComplete}) => {
-  const context = useDirectorContext();
-  const dispatch = context.dispatch;
+  const {authToken} = useLoginContext();
+  const {dispatch} = useDirectorContext();
 
   const initialState = {
     refinement: null,
@@ -73,7 +74,7 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
 
   const formSubmitted = (event) => {
     event.preventDefault();
-    const uri = `/director/tournaments/${tournament.identifier}/purchasable_items`;
+    const uri = `/tournaments/${tournament.identifier}/purchasable_items`;
     const requestConfig = {
       method: 'post',
       data: {
@@ -94,7 +95,7 @@ const ProductForm = ({tournament, onCancel, onComplete}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: submissionSuccess,
       onFailure: (_) => console.log("Failed to save new item."),
     });

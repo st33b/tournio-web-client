@@ -79,7 +79,7 @@ const Name = () => {
 
   const nextClicked = () => {
     const alreadyExists = state.builder.saved;
-    let uri = '/director/tournaments';
+    let uri = '/tournaments';
     const requestConfig = {
       data: {
         tournament: {

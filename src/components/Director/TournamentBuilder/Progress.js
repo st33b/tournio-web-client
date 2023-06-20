@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {newTournamentPreviousStepChosen} from "../../../store/actions/directorActions";
 
@@ -81,13 +82,13 @@ const Progress = ({activeStep}) => {
             return (
               <div className={`flex-fill ${classes.Step} ${stepClass}`} key={key}>
                 {linkTheStep && (
-                  <a href={`/director/tournaments/new?step=${key}`}
+                  <Link href={`/director/tournaments/new?step=${key}`}
                      onClick={(e) => previousStepClicked(e, key)}>
                     <i className={iconClass} aria-hidden={true}/>
                     <span className={'visually-hidden'}>
                     {display}
                   </span>
-                  </a>
+                  </Link>
                 )}
                 {!linkTheStep && (
                   <span>
@@ -114,11 +115,11 @@ const Progress = ({activeStep}) => {
             <div className={`${classes.Step} ${stepClass}`} key={key}>
               <h6>
                 {linkTheStep && (
-                  <a href={`/director/tournaments/new?step=${key}`}
+                  <Link href={`/director/tournaments/new?step=${key}`}
                      onClick={(e) => previousStepClicked(e, key)}
                      className={classes.StepText}>
                     {display}
-                  </a>
+                  </Link>
                 )}
                 {!linkTheStep && (
                   <span className={classes.StepText}>

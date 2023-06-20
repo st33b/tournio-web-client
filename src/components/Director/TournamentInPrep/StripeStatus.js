@@ -8,6 +8,7 @@ import {stripeAccountStatusChanged} from "../../../store/actions/directorActions
 
 import classes from './StripeStatus.module.scss';
 import {useLoginContext} from "../../../store/LoginContext";
+import Link from "next/link";
 
 const StripeStatus = ({tournament, needStatus}) => {
   const {authToken} = useLoginContext();
@@ -45,7 +46,7 @@ const StripeStatus = ({tournament, needStatus}) => {
     if (event) {
       event.preventDefault();
     }
-    const uri = `/director/tournaments/${tournament.identifier}/stripe_status`;
+    const uri = `/tournaments/${tournament.identifier}/stripe_status`;
     const requestConfig = {
       method: 'get',
     };
@@ -125,16 +126,16 @@ const StripeStatus = ({tournament, needStatus}) => {
           )}
           <div className={'d-flex justify-content-around'}>
             {stripeAccount && !stripeAccount.can_accept_payments && (
-              <a href={`/director/tournaments/${tournament.identifier}/stripe_account_setup`}
+              <Link href={`/director/tournaments/${tournament.identifier}/stripe_account_setup`}
                  className={`btn btn-success`}>
                 Resume Setup
-              </a>
+              </Link>
             )}
             {!stripeAccount && (
-              <a href={`/director/tournaments/${tournament.identifier}/stripe_account_setup`}
+              <Link href={`/director/tournaments/${tournament.identifier}/stripe_account_setup`}
                  className={`btn btn-success`}>
                 Begin Setup
-              </a>
+              </Link>
             )}
             {!statusRequested && (
               <button onClick={initiateStatusRequest}

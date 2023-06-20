@@ -87,7 +87,7 @@ const Dates = () => {
 
   const nextClicked = () => {
     const identifier = state.builder.tournament.identifier;
-    const uri = `/director/tournaments/${identifier}`;
+    const uri = `/tournaments/${identifier}`;
     const requestConfig = {
       method: 'patch',
       data: {

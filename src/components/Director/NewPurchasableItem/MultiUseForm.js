@@ -8,13 +8,14 @@ import Item from "../../Commerce/AvailableItems/Item/Item";
 import classes from './MultiUseForm.module.scss';
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 import ButtonRow from "../../common/ButtonRow";
+import {useLoginContext} from "../../../store/LoginContext";
 
 /**
  * Used only for multi-use bowling items.
  */
 const MultiUseForm = ({tournament, onCancel, onComplete}) => {
-  const context = useDirectorContext();
-  const dispatch = context.dispatch;
+  const {authToken} = useLoginContext();
+  const {dispatch} = useDirectorContext();
 
   const initialState = {
     name: '',
@@ -55,7 +56,7 @@ const MultiUseForm = ({tournament, onCancel, onComplete}) => {
 
   const formSubmitted = (event) => {
     event.preventDefault();
-    const uri = `/director/tournaments/${tournament.identifier}/purchasable_items`;
+    const uri = `/tournaments/${tournament.identifier}/purchasable_items`;
     const requestConfig = {
       method: 'post',
       data: {
@@ -76,7 +77,7 @@ const MultiUseForm = ({tournament, onCancel, onComplete}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: submissionSuccess,
       onFailure: (_) => console.log("Failed to save new item."),
     });

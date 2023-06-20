@@ -1,4 +1,5 @@
 import {Card, Col, Row} from "react-bootstrap";
+import Link from 'next/link';
 
 import DirectorLayout from "../../components/Layout/DirectorLayout/DirectorLayout";
 import ForgotPasswordForm from "../../components/Director/ForgotPasswordForm/ForgotPasswordForm";
@@ -15,10 +16,10 @@ const Page = () => {
         <Col xs={12} sm={{span: 8, offset: 2}} md={{span: 6, offset: 3}}>
           <Card className={'border-0 text-center'}>
             <Card.Body>
-              <Card.Link href={'/'}>
+              <Card.Link as={Link} href={'/'}>
                 Registration Home
               </Card.Link>
-              <Card.Link href={'/director/login'}>
+              <Card.Link as={Link} href={'/director/login'}>
                 Log In
               </Card.Link>
             </Card.Body>

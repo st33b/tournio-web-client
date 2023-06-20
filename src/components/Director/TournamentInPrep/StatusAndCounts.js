@@ -3,6 +3,7 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
+import Link from 'next/link';
 
 import {directorApiRequest, directorApiDownloadRequest} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
@@ -106,6 +107,7 @@ const StatusAndCounts = ({tournament}) => {
     <ListGroup variant={'flush'}>
       <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
                       action
+                      as={Link}
                       href={`/director/bowlers`}>
         Bowlers
         <Badge pill={true} className={classes.CountBadge}>
@@ -114,6 +116,7 @@ const StatusAndCounts = ({tournament}) => {
       </ListGroup.Item>
       <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
                       action
+                      as={Link}
                       href={`/director/teams`}>
         Teams
         <Badge pill={true} >
@@ -122,6 +125,7 @@ const StatusAndCounts = ({tournament}) => {
       </ListGroup.Item>
       <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
                       action
+                      as={Link}
                       href={`/director/free_entries`}>
         Free Entries
         <Badge pill={true} >
@@ -138,13 +142,13 @@ const StatusAndCounts = ({tournament}) => {
       </Card.Subtitle>
       <Card.Link className={'btn btn-sm btn-outline-primary'}
                  href={'#'}
-                 onClick={(event) => downloadClicked(event, `/director/tournaments/${tournament.identifier}/csv_download`, 'bowlers.csv')}
+                 onClick={(event) => downloadClicked(event, `/tournaments/${tournament.identifier}/csv_download`, 'bowlers.csv')}
       >
         CSV
       </Card.Link>
       <Card.Link className={'btn btn-sm btn-outline-primary'}
                  href={'#'}
-                 onClick={(event) => downloadClicked(event, `/director/tournaments/${tournament.identifier}/igbots_download`, 'bowlers.xml')}
+                 onClick={(event) => downloadClicked(event, `/tournaments/${tournament.identifier}/igbots_download`, 'bowlers.xml')}
       >
         IGBO-TS
       </Card.Link>
@@ -164,7 +168,7 @@ const StatusAndCounts = ({tournament}) => {
   }
 
   const clearTestDataClickHandler = () => {
-    const uri = `/director/tournaments/${tournament.identifier}/clear_test_data`;
+    const uri = `/tournaments/${tournament.identifier}/clear_test_data`;
     const requestConfig = {
       data: {},
       method: 'post',
@@ -194,7 +198,7 @@ const StatusAndCounts = ({tournament}) => {
 
   const testEnvSaved = (event) => {
     event.preventDefault();
-    const uri = `/director/tournaments/${tournament.identifier}/testing_environment`;
+    const uri = `/tournaments/${tournament.identifier}/testing_environment`;
     const requestConfig = {
       method: 'patch',
       headers: {

@@ -2,17 +2,23 @@ import React, {useEffect, useState} from "react";
 
 import {devConsoleLog, updateObject} from "../../../../utils";
 import {directorApiRequest} from "../../../../director";
-import {newTournamentSaved, newTournamentStepCompleted} from "../../../../store/actions/directorActions";
+import {
+  newTournamentCompleted,
+  newTournamentSaved,
+  newTournamentStepCompleted
+} from "../../../../store/actions/directorActions";
 import {useDirectorContext} from "../../../../store/DirectorContext";
 import Style from "./ShiftsSteps/Style";
 import ShiftForm from "./ShiftsSteps/ShiftForm";
 
 import classes from '../TournamentBuilder.module.scss';
 import {useLoginContext} from "../../../../store/LoginContext";
+import {useRouter} from "next/router";
 
 const Shifts = ({substep}) => {
   const {state, dispatch} = useDirectorContext();
   const {authToken} = useLoginContext();
+  const router = useRouter();
 
   const INITIAL_SHIFT_STATE = {
     name: '',
@@ -95,23 +101,6 @@ const Shifts = ({substep}) => {
     setValid(newShiftSet.every(isValid));
   }
 
-  let formContent = '';
-  if (displayedSubstep === 'shift_forms') {
-    if (chosenStyle === 'one') {
-      formContent = <ShiftForm withDetails={false}
-                               shift={singleShift}
-                               onShiftUpdated={shiftUpdated}/>;
-    }
-    if (chosenStyle === 'multi_inclusive') {
-      formContent = shiftSet.map((shift, i) => <ShiftForm key={i}
-                                                          index={i}
-                                                          withDetails={true}
-                                                          shift={shift}
-                                                          onShiftDeleted={i > 1 ? () => shiftDeleted(i) : undefined}
-                                                          onShiftUpdated={(newShift) => shiftUpdated(newShift, i)}/>);
-    }
-  }
-
   const addShiftClicked = () => {
     const newShiftSet = shiftSet.concat(INITIAL_SHIFT_STATE);
     setShiftSet(newShiftSet);
@@ -119,8 +108,11 @@ const Shifts = ({substep}) => {
   }
 
   const onSuccess = (data) => {
+    const newTournamentIdentifier = state.builder.tournament.identifier;
     dispatch(newTournamentSaved(data));
-    dispatch(newTournamentStepCompleted('shifts', 'scoring'));
+    // dispatch(newTournamentStepCompleted('shifts', 'scoring'));
+    dispatch(newTournamentCompleted());
+    router.push(`/director/tournaments/${newTournamentIdentifier}`);
   }
 
   const onFailure = (data) => {
@@ -138,7 +130,7 @@ const Shifts = ({substep}) => {
 
     // send it up, with success/failure handlers
     const identifier = state.builder.tournament.identifier;
-    const uri = `/director/tournaments/${identifier}`;
+    const uri = `/tournaments/${identifier}`;
     const requestData = {
       tournament: {
         shifts_attributes: shiftData,
@@ -151,10 +143,33 @@ const Shifts = ({substep}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: onSuccess,
       onFailure: onFailure,
     });
+  }
+
+  ////////////////////////////////////////////////////////////////
+
+  if (!state.builder) {
+    return '';
+  }
+
+  let formContent = '';
+  if (displayedSubstep === 'shift_forms') {
+    if (chosenStyle === 'one') {
+      formContent = <ShiftForm withDetails={false}
+                               shift={singleShift}
+                               onShiftUpdated={shiftUpdated}/>;
+    }
+    if (chosenStyle === 'multi_inclusive') {
+      formContent = shiftSet.map((shift, i) => <ShiftForm key={i}
+                                                          index={i}
+                                                          withDetails={true}
+                                                          shift={shift}
+                                                          onShiftDeleted={i > 1 ? () => shiftDeleted(i) : undefined}
+                                                          onShiftUpdated={(newShift) => shiftUpdated(newShift, i)}/>);
+    }
   }
 
   return (

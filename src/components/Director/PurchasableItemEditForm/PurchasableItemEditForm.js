@@ -181,7 +181,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
 
   const onFormSubmit = (event) => {
     event.preventDefault();
-    const uri = `/director/purchasable_items/${item.identifier}`;
+    const uri = `/purchasable_items/${item.identifier}`;
     const configuration = {};
     const requestConfig = {
       method: 'patch',
@@ -267,7 +267,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     if (!confirm('Are you sure you wish to delete this item?')) {
       return;
     }
-    const uri = `/director/purchasable_items/${item.identifier}`;
+    const uri = `/purchasable_items/${item.identifier}`;
     const requestConfig = {
       method: 'delete',
     };

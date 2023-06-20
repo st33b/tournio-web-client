@@ -1,10 +1,10 @@
 import {useEffect, useState, createElement} from "react";
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../director";
 import {tournamentConfigItemChanged} from "../../../store/actions/directorActions";
 
 import classes from './ConfigItemForm.module.scss';
+import {useLoginContext} from "../../../store/LoginContext";
 
 const BOOLEAN_CONFIG_ITEMS = [
   'display_capacity',
@@ -15,7 +15,7 @@ const BOOLEAN_CONFIG_ITEMS = [
 ];
 
 const ConfigItemForm = ({item, editable}) => {
-  const context = useDirectorContext();
+  const {authToken} = useLoginContext();
 
   const initialState = {
     prevValue: '',
@@ -83,7 +83,7 @@ const ConfigItemForm = ({item, editable}) => {
       event.preventDefault();
     }
     const valueToSend = value === null ? formData.value : value;
-    const uri = `/director/config_items/${item.id}`;
+    const uri = `/config_items/${item.id}`;
     const requestConfig = {
       method: 'patch',
       data: {
@@ -95,7 +95,7 @@ const ConfigItemForm = ({item, editable}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: onSuccessfulUpdate,
       onFailure: (data) => { console.log("Failed to save config item.", data) },
     });

@@ -6,6 +6,7 @@ import {directorApiDownloadRequest} from "../../../director";
 import classes from './VisibleTournament.module.scss';
 import {useLoginContext} from "../../../store/LoginContext";
 import {devConsoleLog} from "../../../utils";
+import Link from "next/link";
 
 const Downloads = ({tournament}) => {
   const { ready, authToken } = useLoginContext();
@@ -73,27 +74,27 @@ const Downloads = ({tournament}) => {
           <Card.Subtitle className={'mb-3'}>
             Downloads
           </Card.Subtitle>
-          <a className={'btn btn-sm btn-outline-primary mx-2'}
+          <Link className={'btn btn-sm btn-outline-primary mx-2'}
                      href={'#'}
                      disabled={tournament.bowler_count === 0}
                      onClick ={(event) => downloadClicked(event, 'csv', 'bowlers.csv')}
           >
             CSV
-          </a>
-          <a className={'btn btn-sm btn-outline-primary mx-2'}
+          </Link>
+          <Link className={'btn btn-sm btn-outline-primary mx-2'}
                      href={'#'}
                      disabled={tournament.bowler_count === 0}
                      onClick ={(event) => downloadClicked(event, 'igbots_download', 'bowlers.xml')}
           >
             IGBO-TS
-          </a>
-          <a className={'btn btn-sm btn-outline-primary mt-3 mx-2'}
+          </Link>
+          <Link className={'btn btn-sm btn-outline-primary mt-3 mx-2'}
              target={'_new'}
              href={`/director/tournaments/${tournament.identifier}/sign-in-sheets`}
              disabled={tournament.bowler_count === 0}
           >
             Sign-in Sheets
-          </a>
+          </Link>
           {downloadMessage}
         </Card.Body>
       </Card>

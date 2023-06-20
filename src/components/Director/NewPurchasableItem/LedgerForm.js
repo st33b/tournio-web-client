@@ -11,10 +11,11 @@ import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
 import classes from './LedgerForm.module.scss';
 import ButtonRow from "../../common/ButtonRow";
+import {useLoginContext} from "../../../store/LoginContext";
 
 const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
-  const context = useDirectorContext();
-  const dispatch = context.dispatch;
+  const {authToken} = useLoginContext();
+  const {dispatch} = useDirectorContext();
 
   const initialState = {
     category: 'ledger',
@@ -146,7 +147,7 @@ const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
         break;
     }
     itemData.configuration = configuration;
-    const uri = `/director/tournaments/${tournament.identifier}/purchasable_items`;
+    const uri = `/tournaments/${tournament.identifier}/purchasable_items`;
     const requestConfig = {
       method: 'post',
       data: {
@@ -158,7 +159,7 @@ const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: submissionSuccess,
       onFailure: (_) => console.log("Failed to save new item."),
     });

@@ -45,7 +45,7 @@ const ImageUpload = ({tournament}) => {
     const formData = new FormData();
     formData.append('file', fileInput.file);
 
-    const uri = `/director/tournaments/${tournament.identifier}/logo_upload`;
+    const uri = `/tournaments/${tournament.identifier}/logo_upload`;
     const requestConfig = {
       method: 'post',
       data: formData,

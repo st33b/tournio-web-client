@@ -5,11 +5,11 @@ import classes from '../TournamentBuilder.module.scss';
 import {newTournamentSaved, newTournamentStepCompleted} from "../../../../store/actions/directorActions";
 import {directorApiRequest} from "../../../../director";
 import {devConsoleLog} from "../../../../utils";
+import {useLoginContext} from "../../../../store/LoginContext";
 
 const Scoring = () => {
-  const context = useDirectorContext();
-  const directorState = context.directorState;
-  const dispatch = context.dispatch;
+  const {authToken} = useLoginContext();
+  const {state, dispatch} = useDirectorContext();
 
   const initialState = {
     fields: {
@@ -28,24 +28,24 @@ const Scoring = () => {
   const [permitAddingDivision, setPermitAddingDivision] = useState(true);
 
   useEffect(() => {
-    if (!directorState || !directorState.builder) {
+    if (!state || !state.builder) {
       return;
     }
-    if (directorState.builder.tournament.scratch_divisions.length > 0) {
+    if (state.builder.tournament.scratch_divisions.length > 0) {
       // We've returned to this page after advancing.
       const newFormData = {...formData};
 
       // skip handicap rule for now, since we aren't using that just yet...
 
-      newFormData.fields.divisions = [...directorState.builder.tournament.scratch_divisions];
+      newFormData.fields.divisions = [...state.builder.tournament.scratch_divisions];
 
       newFormData.valid = isValid(newFormData.fields);
       setFormData(newFormData);
       setUseScratchDivisions(true);
     }
-  }, [directorState, directorState.builder])
+  }, [state, state.builder])
 
-  if (!directorState || !directorState.builder) {
+  if (!state || !state.builder) {
     return '';
   }
 
@@ -128,8 +128,8 @@ const Scoring = () => {
     if (formData.fields.divisions.length === 0 ) {
       dispatch(newTournamentStepCompleted('scoring', 'additional_events'));
     } else {
-      const identifier = directorState.builder.tournament.identifier;
-      const uri = `/director/tournaments/${identifier}`;
+      const identifier = state.builder.tournament.identifier;
+      const uri = `/tournaments/${identifier}`;
       const requestData = {
         tournament: {
           scratch_divisions_attributes: formData.fields.divisions,
@@ -142,7 +142,7 @@ const Scoring = () => {
       directorApiRequest({
         uri: uri,
         requestConfig: requestConfig,
-        context: context,
+        authToken: authToken,
         onSuccess: onSaveSuccess,
         onFailure: (err) => devConsoleLog("Failed to update tournament.", err),
       });
@@ -161,7 +161,7 @@ const Scoring = () => {
 
   return (
     <div>
-      <h2>{directorState.builder.tournament.name}: Scoring</h2>
+      <h2>{state.builder.tournament.name}: Scoring</h2>
 
       {/* We don't need this yet */}
       {/*<div className={`row ${classes.FieldRow} g-2`}>*/}

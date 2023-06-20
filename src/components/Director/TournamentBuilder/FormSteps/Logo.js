@@ -45,7 +45,7 @@ const Logo = () => {
     const form = new FormData();
     form.append('file', formData.fields.file);
 
-    const uri = `/director/tournaments/${state.builder.tournament.identifier}/logo_upload`;
+    const uri = `/tournaments/${state.builder.tournament.identifier}/logo_upload`;
     const requestConfig = {
       method: 'post',
       data: form,
