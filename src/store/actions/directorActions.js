@@ -7,13 +7,6 @@ export const stripeAccountStatusChanged = (account) => {
   }
 }
 
-export const tournamentListRetrieved = (tournaments) => {
-  return {
-    type: actionTypes.TOURNAMENT_LIST_RETRIEVED,
-    tournaments: tournaments,
-  }
-}
-
 export const tournamentDetailsRetrieved = (tournament) => {
   return {
     type: actionTypes.TOURNAMENT_DETAILS_RETRIEVED,
@@ -137,70 +130,6 @@ export const tournamentContactUpdated = (contact) => {
   return {
     type: actionTypes.TOURNAMENT_CONTACT_UPDATED,
     contact: contact,
-  }
-}
-
-export const userListRetrieved = (users) => {
-  return {
-    type: actionTypes.USER_LIST_RETRIEVED,
-    users: users,
-  }
-}
-
-export const userAdded = (user) => {
-  return {
-    type: actionTypes.USER_ADDED,
-    user: user,
-  }
-}
-
-export const userUpdated = (user) => {
-  return {
-    type: actionTypes.USER_UPDATED,
-    user: user,
-  }
-}
-
-export const userDeleted = (user) => {
-  return {
-    type: actionTypes.USER_DELETED,
-    user: user,
-  }
-}
-
-export const bowlerUpdated = (bowler) => {
-  return {
-    type: actionTypes.BOWLER_UPDATED,
-    bowler: bowler,
-  }
-}
-
-export const bowlerDeleted = (bowler) => {
-  return {
-    type: actionTypes.BOWLER_DELETED,
-    bowler: bowler,
-  }
-}
-
-
-export const teamDeleted = (team) => {
-  return {
-    type: actionTypes.TEAM_DELETED,
-    team: team,
-  }
-}
-
-export const freeEntryDeleted = (freeEntry) => {
-  return {
-    type: actionTypes.FREE_ENTRY_DELETED,
-    freeEntry: freeEntry,
-  }
-}
-
-export const freeEntryAdded = (freeEntry) => {
-  return {
-    type: actionTypes.FREE_ENTRY_ADDED,
-    freeEntry: freeEntry,
   }
 }
 

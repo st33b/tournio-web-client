@@ -1,25 +1,22 @@
-import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 
 import {Col, Row} from "react-bootstrap";
 
-import {directorApiRequest, useDirectorApi, useLoggedIn} from "../../../director";
-import {useDirectorContext} from '../../../store/DirectorContext';
+import {useDirectorApi} from "../../../director";
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import UserForm from '../../../components/Director/UserForm/UserForm';
 import {useLoginContext} from "../../../store/LoginContext";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
-  const {user: loggedInUser} = useLoginContext();
   const router = useRouter();
   const { identifier } = router.query;
 
-  const {loading: userLoading, data: user, error: userError, onDataUpdate} = useDirectorApi({
+  const {loading: userLoading, data: user, onDataUpdate} = useDirectorApi({
     uri: identifier ? `/users/${identifier}` : null,
   });
 
-  const {loading: tournamentsLoading, data: tournaments, error: tournamnentsError} = useDirectorApi({
+  const {loading: tournamentsLoading, data: tournaments} = useDirectorApi({
     uri: '/tournaments',
   });
 

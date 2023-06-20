@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {useRouter} from "next/router";
 import Link from 'next/link';
 
@@ -8,9 +8,7 @@ import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLa
 import UserListing from '../../../components/Director/UserListing/UserListing';
 import UserForm from '../../../components/Director/UserForm/UserForm';
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import {directorApiRequest, useDirectorApi, useLoggedIn} from "../../../director";
-import {useDirectorContext} from '../../../store/DirectorContext';
-import {tournamentListRetrieved, userListRetrieved} from "../../../store/actions/directorActions";
+import {useDirectorApi} from "../../../director";
 import SuccessAlert from "../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 

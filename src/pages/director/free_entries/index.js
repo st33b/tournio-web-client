@@ -1,26 +1,21 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {useRouter} from "next/router";
 import {Row, Col, Card} from "react-bootstrap";
 
-import {devConsoleLog} from "../../../utils";
-import {directorApiRequest, useDirectorApi, useLoggedIn} from "../../../director";
+import {directorApiRequest, useDirectorApi} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import FreeEntryListing from "../../../components/Director/FreeEntryListing/FreeEntryListing";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import NewFreeEntryForm from "../../../components/Director/NewFreeEntryForm/NewFreeEntryForm";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import {
-  freeEntryAdded,
-  freeEntryDeleted,
-} from "../../../store/actions/directorActions";
 import SuccessAlert from "../../../components/common/SuccessAlert";
 import {useLoginContext} from "../../../store/LoginContext";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Page = () => {
   const router = useRouter();
-  const {state, dispatch} = useDirectorContext();
+  const {state} = useDirectorContext();
   const {authToken} = useLoginContext();
   const {success} = router.query;
 
@@ -31,7 +26,6 @@ const Page = () => {
   );
 
   const deleteFreeEntrySuccess = (data, freeEntry) => {
-    dispatch(freeEntryDeleted(freeEntry));
     onDataUpdate(freeEntries.filter(({identifier}) => freeEntry.identifier !== identifier));
     router.replace(`${router.pathname}?success=deleted`, null, { shallow: true });
   }
@@ -102,7 +96,6 @@ const Page = () => {
   }
 
   const newFreeEntrySuccess = (data) => {
-    dispatch(freeEntryAdded(data));
     const newFreeEntries = freeEntries.concat(data);
     router.replace(`${router.pathname}?success=create`, null, { shallow: true });
     onDataUpdate(newFreeEntries);

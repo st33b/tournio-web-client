@@ -11,7 +11,6 @@ import BowlerDetails from "../../../components/Director/BowlerDetails/BowlerDeta
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ManualPayment from "../../../components/Director/BowlerDetails/ManualPayment";
 import OfficeUseOnly from "../../../components/Director/BowlerDetails/OfficeUseOnly";
-import {bowlerDeleted} from "../../../store/actions/directorActions";
 import {useLoginContext} from "../../../store/LoginContext";
 import ErrorBoundary from "../../../components/common/ErrorBoundary";
 import SuccessAlert from "../../../components/common/SuccessAlert";
@@ -148,7 +147,6 @@ const Page = () => {
   });
 
   const deleteBowlerSuccess = (_) => {
-    dispatch(bowlerDeleted(bowler))
     router.push('/director/bowlers?deleteSuccess=true');
   }
   const deleteBowlerFailure = (data) => {

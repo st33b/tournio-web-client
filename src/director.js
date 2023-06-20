@@ -1,30 +1,8 @@
 import axios from "axios";
-import {apiHost, devConsoleLog, useLocalStorage} from "./utils";
-import {useDirectorContext} from "./store/DirectorContext";
-import {useEffect, useState} from "react";
-import {useLoginContext} from "./store/LoginContext";
 import {useRouter} from "next/router";
-import useSWR, {unstable_serialize, useSWRConfig} from "swr";
-
-export const useLoggedIn = () => {
-  devConsoleLog("DEPRECATED: useLoggedIn hook. Prefer useLoginContext instead");
-  const {directorState} = useDirectorContext();
-  const [loggedIn, setLoggedIn] = useState(-1);
-
-  const currentState = loggedIn;
-  useEffect(() => {
-    if (!directorState) {
-      return;
-    }
-    if (!directorState.user) {
-      setLoggedIn(0);
-      return;
-    }
-
-    setLoggedIn(1);
-  }, [directorState.user]);
-  return currentState;
-}
+import useSWR from "swr";
+import {apiHost, devConsoleLog, useLocalStorage} from "./utils";
+import {useLoginContext} from "./store/LoginContext";
 
 const handleSuccess = (response, onSuccess, onFailure) => {
   if (response.status >= 200 && response.status < 300) {

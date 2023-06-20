@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {useRouter} from "next/router";
 import {Card, Button, Row, Col} from "react-bootstrap";
 
@@ -6,9 +6,8 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import TeamDetails from "../../../components/Director/TeamDetails/TeamDetails";
-import {directorApiRequest, useDirectorApi, useLoggedIn} from "../../../director";
+import {directorApiRequest, useDirectorApi} from "../../../director";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import {teamDeleted} from "../../../store/actions/directorActions";
 import TeamShiftForm from "../../../components/Director/TeamDetails/TeamShiftForm";
 import {useLoginContext} from "../../../store/LoginContext";
 import SuccessAlert from "../../../components/common/SuccessAlert";
@@ -47,7 +46,6 @@ const Page = () => {
       ...operationInProgress,
       delete: false,
     });
-    dispatch(teamDeleted(team));
     router.push('/director/teams?success=deleted');
   }
 

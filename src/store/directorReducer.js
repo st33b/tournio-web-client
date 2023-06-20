@@ -2,18 +2,8 @@ import * as actionTypes from './actions/directorActionTypes'
 import {devConsoleLog, updateObject} from '../utils';
 
 const initialState = {
-  tournaments: null,
   tournament: null,
   builder: null,
-
-  // An argument could be made for nesting these under tournament, since they're all collection associations of
-  // the tournament currently in context. But they're potentially big collections (bowlers and teams, especially),
-  // and the server API doesn't actually include them in the tournament object sent back. For that reason, we
-  // treat them as top-level collections.
-  users: [],
-  bowlers: [],
-  teams: [],
-  freeEntries: [],
 }
 
 export const directorReducerInit = (initial = initialState) => initial;
@@ -21,24 +11,6 @@ export const directorReducerInit = (initial = initialState) => initial;
 export const directorReducer = (state, action) => {
   let index, identifier;
   switch (action.type) {
-    case actionTypes.TOURNAMENT_DETAILS_RESET:
-      devConsoleLog("DEPRECATED");
-      return updateObject(state, {
-        tournament: null,
-        bowlers: [],
-        teams: [],
-        freeEntries: [],
-      });
-    case actionTypes.TOURNAMENT_LIST_RESET:
-      devConsoleLog("DEPRECATED");
-      return updateObject(state, {
-        tournaments: null,
-      });
-    case actionTypes.TOURNAMENT_LIST_RETRIEVED:
-      devConsoleLog("DEPRECATED");
-      return updateObject(state, {
-        tournaments: [...action.tournaments],
-      });
     case actionTypes.TOURNAMENT_DETAILS_RETRIEVED:
       return updateObject(state, {
         tournament: {...action.tournament},
@@ -226,117 +198,6 @@ export const directorReducer = (state, action) => {
         tournament: updateObject(state.tournament, {
           contacts: newContacts,
         }),
-      });
-    case actionTypes.USER_LIST_RETRIEVED:
-      return updateObject(state, {
-        users: [...action.users],
-      });
-    case actionTypes.USER_ADDED:
-      return updateObject(state, {
-        users: state.users.concat({...action.user}),
-      });
-    case actionTypes.USER_UPDATED:
-      identifier = action.user.identifier;
-      index = state.users.findIndex(u => u.identifier === identifier);
-      const newUsers = [...state.users];
-      newUsers[index] = {...action.user};
-      return updateObject(state, {
-        users: newUsers,
-      });
-    case actionTypes.USER_DELETED:
-      identifier = action.user.identifier;
-      return updateObject(state, {
-        users: state.users.filter(u => u.identifier !== identifier),
-      });
-    case actionTypes.BOWLER_LIST_RETRIEVED:
-      devConsoleLog("DEPRECATED");
-      return updateObject(state, {
-        bowlers: [...action.bowlers],
-      });
-    case actionTypes.BOWLER_DELETED:
-      identifier = action.bowler.identifier;
-      return updateObject(state, {
-        tournament: {
-          ...state.tournament,
-          bowler_count: state.tournament.bowler_count - 1,
-        },
-      });
-    case actionTypes.BOWLER_UPDATED:
-      devConsoleLog("DEPRECATED");
-      identifier = action.bowler.identifier;
-      index = state.bowlers.findIndex(b => b.identifier === identifier);
-      const newBowlers = [...state.bowlers];
-      newBowlers[index] = {...action.bowler};
-      return updateObject(state, {
-        bowlers: newBowlers,
-      });
-    case actionTypes.BOWLER_LIST_RESET:
-      devConsoleLog("DEPRECATED");
-      return updateObject(state, {
-        bowlers: [],
-      });
-    case actionTypes.TEAM_LIST_RETRIEVED:
-      devConsoleLog("DEPRECATED");
-      return updateObject(state, {
-        teams: [...action.teams],
-      });
-    case actionTypes.TEAM_ADDED:
-      return updateObject(state, {
-        tournament: {
-          ...state.tournament,
-          team_count: state.tournament.team_count + 1,
-        },
-      });
-    case actionTypes.TEAM_UPDATED:
-      devConsoleLog("DEPRECATED");
-      identifier = action.team.identifier;
-      index = state.teams.findIndex(t => t.identifier === identifier);
-      const newTeams = [...state.teams];
-      newTeams[index] = {...action.team};
-      return updateObject(state, {
-        teams: newTeams,
-      });
-    case actionTypes.TEAM_DELETED:
-      identifier = action.team.identifier;
-      return updateObject(state, {
-        tournament: {
-          ...state.tournament,
-          team_count: state.tournament.team_count - 1,
-        },
-      });
-    case actionTypes.TEAM_LIST_RESET:
-      devConsoleLog("DEPRECATED");
-      return updateObject(state, {
-        teams: [],
-      });
-    case actionTypes.FREE_ENTRY_LIST_RETRIEVED:
-      devConsoleLog("DEPRECATED");
-      return updateObject(state, {
-        freeEntries: [...action.freeEntries],
-      });
-    case actionTypes.FREE_ENTRY_ADDED:
-      return updateObject(state, {
-        tournament: {
-          ...state.tournament,
-          free_entry_count: state.tournament.free_entry_count + 1,
-        },
-      });
-    case actionTypes.FREE_ENTRY_UPDATED:
-      devConsoleLog("DEPRECATED");
-      identifier = action.freeEntry.identifier;
-      index = state.freeEntries.findIndex(t => t.identifier === identifier);
-      const newFreeEntries = [...state.freeEntries];
-      newFreeEntries[index] = {...action.freeEntry};
-      return updateObject(state, {
-        freeEntries: newFreeEntries,
-      });
-    case actionTypes.FREE_ENTRY_DELETED:
-      identifier = action.freeEntry.identifier;
-      return updateObject(state, {
-        tournament: {
-          ...state.tournament,
-          free_entry_count: state.tournament.free_entry_count - 1,
-        },
       });
     case actionTypes.NEW_TOURNAMENT_INITIATED:
       return updateObject(state, {
