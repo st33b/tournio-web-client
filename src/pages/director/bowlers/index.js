@@ -1,5 +1,6 @@
+import React from "react";
 import {useRouter} from "next/router";
-import {Alert, Col, Row} from "react-bootstrap";
+import {Col, Row} from "react-bootstrap";
 
 import {useDirectorApi} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
@@ -8,7 +9,6 @@ import BowlerListing from "../../../components/Director/BowlerListing/BowlerList
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorBoundary from "../../../components/common/ErrorBoundary";
-import React, {useEffect} from "react";
 import SuccessAlert from "../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 

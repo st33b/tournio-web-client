@@ -35,7 +35,6 @@ const TeamFilterForm = (props) => {
 
   const resetFilterHandler = () => {
     setFilterForm(initialState);
-    // props.onFilterApplication(initialState);
     props.onFilterReset();
   }
 

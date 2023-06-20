@@ -2,7 +2,6 @@ import {useMemo} from "react";
 import {useFilters, useSortBy, useTable} from "react-table";
 
 import {lessThan, isOrIsNot} from "../../../utils";
-import {useDirectorContext} from "../../../store/DirectorContext";
 import TeamFilterForm from "../TeamFilterForm/TeamFilterForm";
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
 
@@ -148,7 +147,7 @@ const TeamListing = ({teams, shiftCount = 1}) => {
       setFilter('size', undefined);
     }
     if (criteria.place_with_others) {
-      setFilter('place_with_others', true);
+      setFilter('place_with_others', 'true');
     } else {
       setFilter('place_with_others', undefined);
     }
