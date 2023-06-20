@@ -62,9 +62,10 @@ const Page = () => {
   const onConfirm = (freeEntry) => {
     const uri = `/free_entries/${freeEntry.identifier}`;
     const requestConfig = {
-      method: 'post',
+      method: 'patch',
       data: {
         confirm: true,
+        bowler_identifier: freeEntry.bowler.identifier,
       }
     }
     directorApiRequest({
@@ -89,7 +90,6 @@ const Page = () => {
     const requestConfig = {
       method: 'patch',
       data: {
-        confirm: true,
         bowler_identifier: null,
       }
     }

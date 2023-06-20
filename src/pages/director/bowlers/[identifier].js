@@ -352,6 +352,11 @@ const Page = () => {
     });
   }
 
+  // Updating with true is a confirmation -- so include the bowler identifier
+  // (necessary if we're linking and confirming in one fell swoop)
+  //
+  // Updating with false is a denial -- so force the bowler_identifier to null
+  // (this will unlink an entry that's already linked but unconfirmed)
   const updateFreeEntry = (isConfirmed) => {
     const uri = `/free_entries/${linkFreeEntryFormData.identifier}`;
     const requestConfig = {
@@ -361,7 +366,7 @@ const Page = () => {
       },
       data: {
         confirm: !!isConfirmed,
-        bowler_identifier: !!isConfirmed ? identifier : null,
+        bowler_identifier: isConfirmed ? identifier : null,
       },
     }
     setLoadingParts({
