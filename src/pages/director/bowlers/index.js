@@ -8,6 +8,9 @@ import BowlerListing from "../../../components/Director/BowlerListing/BowlerList
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorBoundary from "../../../components/common/ErrorBoundary";
+import React, {useEffect} from "react";
+import SuccessAlert from "../../../components/common/SuccessAlert";
+import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Page = () => {
   const router = useRouter();
@@ -34,27 +37,11 @@ const Page = () => {
       <Row>
         <Col>
           {deleteSuccess && (
-            <Alert variant={'success'}
-                   dismissible={true}
-                   closeLabel={'Close'}
-                   onClose={() => router.replace(router.pathname, null, {shallow: true})}>
-              <span>
-                <i className={'bi bi-check-circle-fill pe-2'} aria-hidden={true} />
-                <strong>Success!</strong>{' '}
-                The bowler has been removed.
-              </span>
-            </Alert>
+            <SuccessAlert message={'The bowler has been removed.'}
+                          onClose={() => router.replace(router.pathname, null, {shallow: true})}/>
           )}
           {error && (
-            <Alert variant={'danger'}
-                   dismissible={true}
-                   closeLabel={'Close'}>
-              <span>
-                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-                <strong>Error.</strong>{' '}
-                {error.message}
-              </span>
-            </Alert>
+            <ErrorAlert message={error.message} className={'mx-3 mt-3'}/>
           )}
           <BowlerListing bowlers={bowlers} />
         </Col>

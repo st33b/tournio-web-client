@@ -7,7 +7,7 @@ const ErrorAlert = ({message, className='', onClose=()=>{}}) => {
     <div className={`alert alert-danger alert-dismissible fade show ${className}`}>
       <span>
         <i className={'bi bi-exclamation-triangle pe-2'} aria-hidden={true} />
-        <strong>Error:</strong>{' '}
+        <strong className={`me-2`}>Error:</strong>
         {message}
       </span>
       <button type={`button`}

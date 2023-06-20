@@ -1,9 +1,9 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Row, Col, Card} from "react-bootstrap";
 
 import {devConsoleLog} from "../../../utils";
-import {directorApiRequest, useLoggedIn} from "../../../director";
+import {directorApiRequest, useDirectorApi, useLoggedIn} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import FreeEntryListing from "../../../components/Director/FreeEntryListing/FreeEntryListing";
@@ -14,166 +14,102 @@ import {
   freeEntryAdded,
   freeEntryDeleted,
 } from "../../../store/actions/directorActions";
+import SuccessAlert from "../../../components/common/SuccessAlert";
+import {useLoginContext} from "../../../store/LoginContext";
+import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Page = () => {
   const router = useRouter();
-  const context = useDirectorContext();
-  const {directorState, dispatch} = context;
+  const {state, dispatch} = useDirectorContext();
+  const {authToken} = useLoginContext();
+  const {success} = router.query;
 
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [freeEntries, setFreeEntries] = useState();
-
-  // Make sure we're logged in with appropriate permissions
-  useEffect(() => {
-    if (directorState.tournament === null) {
-      router.push('/director');
-    }
-
-    const currentTournamentIdentifier = directorState.tournament.identifier;
-
-    if (directorState.user.role !== 'superuser' && !directorState.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
-      router.push('/director');
-    }
-  });
-
-  const freeEntriesFetched = (data) => {
-    setFreeEntries(data);
-    setLoading(false);
-  }
-
-  const freeEntriesFetchFailed = (data) => {
-    setFreeEntries([]);
-    setErrorMessage(data.error);
-    setLoading(false);
-  }
-
-  // Fetch the free entries from the backend
-  useEffect(() => {
-    if (!directorState.tournament) {
-      return;
-    }
-
-    const uri = `/director/tournaments/${directorState.tournament.identifier}/free_entries`;
-    const requestConfig = {
-      method: 'get',
-    }
-    setLoading(true);
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      onSuccess: freeEntriesFetched,
-      onFailure: freeEntriesFetchFailed,
-    });
-  }, [directorState.tournament]);
-
-  // Do we have a success query parameter?
-  useEffect(() => {
-    const {success} = router.query;
-    if (success === 'deleted') {
-      setSuccessMessage('The free entry has been deleted.');
-      router.replace(router.pathname, null, { shallow: true });
-    }
-  }, [router]);
-
-  const loggedInState = useLoggedIn();
-  const ready = loggedInState >= 0;
-  if (!ready) {
-    return '';
-  }
-  if (!loggedInState) {
-    router.push('/director/login');
-  }
-  if (!directorState) {
-    return '';
-  }
-
-  let success = '';
-  let error = '';
-  if (successMessage) {
-    success = (
-      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mb-3'}
-           role={'alert'}>
-        <i className={'bi-check-circle-fill pe-2'} aria-hidden={true}/>
-        <div className={'me-auto'}>
-          <strong>
-            Success!
-          </strong>
-          {' '}{successMessage}
-        </div>
-        <button type={"button"} className={"btn-close"} data-bs-dismiss={"alert"} aria-label={"Close"}/>
-      </div>
-    );
-  }
-  if (errorMessage) {
-    error = (
-      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mb-3'}
-           role={'alert'}>
-        <i className={'bi-exclamation-circle-fill pe-2'} aria-hidden={true}/>
-        <div className={'me-auto'}>
-          <strong>
-            Oh no!
-          </strong>
-          {' '}{errorMessage}
-        </div>
-        <button type={"button"} className={"btn-close"} data-bs-dismiss={"alert"} aria-label={"Close"}/>
-      </div>
-    );
-  }
+  const {loading, data: freeEntries, error, onDataUpdate} = useDirectorApi({
+    uri: state.tournament ? `/tournaments/${state.tournament.identifier}/free_entries` : null,
+    initialData: [],
+    },
+  );
 
   const deleteFreeEntrySuccess = (data, freeEntry) => {
-    setSuccessMessage('Free entry deleted!');
     dispatch(freeEntryDeleted(freeEntry));
+    onDataUpdate(freeEntries.filter(({identifier}) => freeEntry.identifier !== identifier));
+    router.replace(`${router.pathname}?success=deleted`, null, { shallow: true });
   }
 
   const onDelete = (freeEntry) => {
-    const uri = `/director/free_entries/${freeEntry.identifier}`;
+    const uri = `/free_entries/${freeEntry.identifier}`;
     const requestConfig = {
       method: 'delete',
     }
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: (data) => deleteFreeEntrySuccess(data, freeEntry),
-      onFailure: (data) => setErrorMessage(data.error),
     });
   }
 
   const confirmFreeEntrySuccess = (data) => {
-    setSuccessMessage('Free entry confirmed!');
     const index = freeEntries.findIndex(t => t.identifier === data.identifier);
     const newFreeEntries = [...freeEntries];
     newFreeEntries[index] = {...freeEntries[index]};
     newFreeEntries[index].confirmed = true;
-    setFreeEntries(newFreeEntries);
+
+    router.replace(`${router.pathname}?success=confirm`, null, { shallow: true });
+    onDataUpdate(newFreeEntries);
   }
 
   const onConfirm = (freeEntry) => {
-    const uri = `/director/free_entries/${freeEntry.identifier}/confirm`;
+    const uri = `/free_entries/${freeEntry.identifier}`;
     const requestConfig = {
       method: 'post',
+      data: {
+        confirm: true,
+      }
     }
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: (data) => confirmFreeEntrySuccess(data),
-      onFailure: (data) => setErrorMessage(data.error),
+    });
+  }
+
+  const denyFreeEntrySuccess = (freeEntry) => {
+    const index = freeEntries.findIndex(t => t.identifier === freeEntry.identifier);
+    const newFreeEntries = [...freeEntries];
+    newFreeEntries[index] = {...freeEntries[index]};
+    newFreeEntries[index].confirmed = true;
+
+    router.replace(`${router.pathname}?success=denied`, null, { shallow: true });
+    onDataUpdate(newFreeEntries);
+  }
+  const onDeny = (freeEntry) => {
+    const uri = `/free_entries/${freeEntry.identifier}`;
+    const requestConfig = {
+      method: 'patch',
+      data: {
+        confirm: true,
+        bowler_identifier: null,
+      }
+    }
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      authToken: authToken,
+      onSuccess: (data) => denyFreeEntrySuccess(data),
     });
   }
 
   const newFreeEntrySuccess = (data) => {
-    setSuccessMessage('Free entry created!');
     dispatch(freeEntryAdded(data));
     const newFreeEntries = freeEntries.concat(data);
-    setFreeEntries(newFreeEntries);
+    router.replace(`${router.pathname}?success=create`, null, { shallow: true });
+    onDataUpdate(newFreeEntries);
   }
 
   const newFreeEntrySubmitted = (freeEntryCode) => {
-    const uri = `/director/tournaments/${directorState.tournament.identifier}/free_entries`;
+    const uri = `/tournaments/${state.tournament.identifier}/free_entries`;
     const requestConfig = {
       method: 'post',
       headers: {
@@ -188,46 +124,54 @@ const Page = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: newFreeEntrySuccess,
-      onFailure: (data) => setErrorMessage(data.error),
     });
   }
 
-  const newFreeEntry = (
-    <Card className={'mb-3'}>
-      <Card.Header as={'h5'} className={'fw-light'}>
-        New Free Entry
-      </Card.Header>
-      <Card.Body>
-        <NewFreeEntryForm submitted={newFreeEntrySubmitted}/>
-      </Card.Body>
-    </Card>
-  );
+  if (!state.tournament || loading) {
+    return <LoadingMessage message={'Retrieving free entry data...'} />;
+  }
 
-  if (loading) {
-    return <LoadingMessage message={'Retrieving free entry data...'} />
+  const successMessages = {
+    create: 'Free entry created',
+    confirm: 'Free entry confirmed',
+    denied: 'Free entry denied',
+    deleted: 'Free entry deleted',
   }
 
   const ladder = [
     {text: 'Tournaments', path: '/director/tournaments'},
   ];
-  ladder.push({text: directorState.tournament.name, path: `/director/tournaments/${directorState.tournament.identifier}`});
+  ladder.push({text: state.tournament.name, path: `/director/tournaments/${state.tournament.identifier}`});
 
   return (
     <div>
       <Breadcrumbs ladder={ladder} activeText={'Free Entries'}/>
       <Row>
         <Col md={8}>
-          {success}
-          {error}
+          {success && successMessages[success] && (
+            <SuccessAlert message={successMessages[success]}
+                          onClose={() =>router.replace(router.pathname, null, {shallow: true})}/>
+          )}
+          {error &&
+            <ErrorAlert message={error.message} className={'mx-3 mt-3'}/>
+          }
           <FreeEntryListing freeEntries={freeEntries}
                             confirmClicked={onConfirm}
                             deleteClicked={onDelete}
+                            denyClicked={onDeny}
           />
         </Col>
         <Col md={4}>
-          {newFreeEntry}
+          <Card className={'mb-3'}>
+            <Card.Header as={'h5'} className={'fw-light'}>
+              New Free Entry Code
+            </Card.Header>
+            <Card.Body>
+              <NewFreeEntryForm submitted={newFreeEntrySubmitted}/>
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
     </div>

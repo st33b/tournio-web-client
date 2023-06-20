@@ -68,8 +68,20 @@ const Page = () => {
     setTournamentData: false,
   });
 
+  const updateStateForBowler = (data) => {
+    if (data.free_entry) {
+      const newFreeEntryForm = {...linkFreeEntryFormData};
+      newFreeEntryForm.identifier = data.free_entry.identifier;
+      newFreeEntryForm.confirm = data.free_entry.confirmed;
+      setLinkFreeEntryFormData(newFreeEntryForm);
+    }
+
+    // any other state data the bowler needs...
+  }
+
   const {loading: bowlerLoading, data: bowler, error: bowlerError, onDataUpdate: onBowlerUpdate} = useDirectorApi({
     uri: identifier ? `/bowlers/${identifier}` : null,
+    onSuccess: updateStateForBowler,
   });
 
   const {data: availableTeams, error: teamsError, onDataUpdate: onAvailableTeamsUpdate} = useDirectorApi({
@@ -137,7 +149,7 @@ const Page = () => {
 
   const deleteBowlerSuccess = (_) => {
     dispatch(bowlerDeleted(bowler))
-    router.push('/director/bowlers?success=deleted');
+    router.push('/director/bowlers?deleteSuccess=true');
   }
   const deleteBowlerFailure = (data) => {
     setLoadingParts({
@@ -318,6 +330,7 @@ const Page = () => {
       freeEntries: false,
     });
 
+    onBowlerUpdate(bowler);
     onFreeEntryUpdate(data);
 
     // This updates the bowler's ledger entries, so we should also refresh the bowler
@@ -325,24 +338,21 @@ const Page = () => {
 
     setSuccess({
       ...success,
-      freeEntries: 'Free entry linked.',
+      freeEntries: 'Free entry saved.',
     });
   }
-  const linkFreeEntryFailure = (data) => {
-    // TODO: specific error message
+  const linkFreeEntryFailure = (error) => {
     setLoadingParts({
       ...loadingParts,
       freeEntries: false,
     });
     setErrors({
       ...errors,
-      freeEntries: data.error,
+      freeEntries: error.message,
     });
   }
 
-  const linkFreeEntrySubmitHandler = (event) => {
-    event.preventDefault();
-
+  const updateFreeEntry = (isConfirmed) => {
     const uri = `/free_entries/${linkFreeEntryFormData.identifier}`;
     const requestConfig = {
       method: 'patch',
@@ -350,10 +360,14 @@ const Page = () => {
         'Content-Type': 'application/json',
       },
       data: {
-        bowler_identifier: identifier,
-        confirm: linkFreeEntryFormData.confirm,
-      }
+        confirm: !!isConfirmed,
+        bowler_identifier: !!isConfirmed ? identifier : null,
+      },
     }
+    setLoadingParts({
+      ...loadingParts,
+      freeEntries: true,
+    })
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
@@ -361,6 +375,21 @@ const Page = () => {
       onSuccess: linkFreeEntrySuccess,
       onFailure: linkFreeEntryFailure,
     });
+  }
+
+  const linkFreeEntrySubmitHandler = (event) => {
+    event.preventDefault();
+    updateFreeEntry(linkFreeEntryFormData.confirm);
+  }
+
+  const confirmFreeEntryClicked = (event) => {
+    event.preventDefault();
+    updateFreeEntry(true);
+  }
+
+  const denyFreeEntryClicked = (event) => {
+    event.preventDefault();
+    updateFreeEntry(false);
   }
 
   const convertBowlerDataForPatch = (bowlerData) => {
@@ -591,6 +620,7 @@ const Page = () => {
       [which]: null,
     })
   }
+
   //////////////////////////////////////////////////////////////////////
 
   if (!state.tournament || bowlerLoading || !bowler) {
@@ -769,51 +799,78 @@ const Page = () => {
     );
   }
 
-  let linkFreeEntryCard = '';
-  if (!bowler.free_entry && availableFreeEntries.length > 0) {
-    linkFreeEntryCard = (
+  let freeEntryCard = '';
+  if (bowler.free_entry || availableFreeEntries.length > 0) {
+    freeEntryCard = (
       <Card className={'mb-3'}>
         <Card.Header as={'h6'} className={'fw-light'}>
-          Link a Free Entry
+          Free Entry
         </Card.Header>
         <Card.Body>
-          <form onSubmit={linkFreeEntrySubmitHandler}>
-            <select className={'form-select'} name={'destinationTeam'} onChange={linkFreeEntryOptionChanged}>
-              <option value={''}>Choose a free entry code</option>
-              {availableFreeEntries.map(fe => <option key={fe.identifier}
-                                                      value={fe.identifier}>{fe.unique_code}</option>)}
-            </select>
-            <div className={'form-check pt-3'}>
-              <input className={'form-check-input'}
-                     type={'checkbox'}
-                     value={'1'}
-                     onChange={confirmFreeEntryChanged}
-                     id={'confirm'}/>
-              <label className={'form-check-label'} htmlFor={'confirm'}>
-                Confirm it, too.
-              </label>
+          {bowler.free_entry && bowler.free_entry.confirmed && (
+            <div className={`text-center`}>
+              <span className={`font-monospace me-2`}>
+                {bowler.free_entry.unique_code}
+              </span>
+              (confirmed)
             </div>
-            <div className={'text-center'}>
-              <Button variant={'primary'}
+          )}
+          {bowler.free_entry && !bowler.free_entry.confirmed && (
+            <div className={`d-flex justify-content-end align-items-center`}>
+              <span className={`font-monospace me-auto`}>
+                {bowler.free_entry.unique_code}
+              </span>
+              <Button variant={'outline-danger'}
                       size={'sm'}
-                      className={'mt-3'}
-                      disabled={linkFreeEntryFormData.identifier === null}
-                      type={'submit'}>
-                Link Free Entry
+                      className={'me-3'}
+                      onClick={denyFreeEntryClicked}>
+                Deny
+              </Button>
+              <Button variant={'outline-success'}
+                      size={'sm'}
+                      onClick={confirmFreeEntryClicked}>
+                Confirm
               </Button>
             </div>
-          </form>
-          {errors.freeEntries || freeEntriesError && (
-            <Alert variant={'danger'}
-                   dismissible={true}
-                   closeLabel={'Close'}>
-              <span>
-                <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true}/>
-                <strong>Error.</strong>{' '}
-                {errors.freeEntries}
-                {freeEntriesError.message}
-              </span>
-            </Alert>
+          )}
+          {!bowler.free_entry && (
+            <form onSubmit={linkFreeEntrySubmitHandler}>
+              <select className={'form-select'} name={'destinationTeam'} onChange={linkFreeEntryOptionChanged}>
+                <option value={''}>Choose a free entry code</option>
+                {availableFreeEntries.map(fe => <option key={fe.identifier}
+                                                        value={fe.identifier}>{fe.unique_code}</option>)}
+              </select>
+              <div className={'form-check pt-3'}>
+                <input className={'form-check-input'}
+                       type={'checkbox'}
+                       value={'1'}
+                       onChange={confirmFreeEntryChanged}
+                       id={'confirm'}/>
+                <label className={'form-check-label'} htmlFor={'confirm'}>
+                  Confirm it, too.
+                </label>
+              </div>
+              <div className={'text-center'}>
+                <Button variant={'primary'}
+                        size={'sm'}
+                        className={'mt-3'}
+                        disabled={linkFreeEntryFormData.identifier === null}
+                        type={'submit'}>
+                  Link Free Entry
+                </Button>
+              </div>
+            </form>
+          )}
+          <SuccessAlert message={success.freeEntries}
+                        className={'mt-3 mb-0'}
+                        onClose={() => dismissSuccessAlert('freeEntries')}/>
+          <ErrorAlert message={errors.freeEntries}
+                      className={`mt-3 mb-0`}
+                      onClose={() => dismissErrorAlert('freeEntries')}/>
+          {freeEntriesError && (
+            <ErrorAlert message={freeEntriesError.message}
+                        className={`mt-3 mb-0`}
+                        onClose={() => dismissErrorAlert('freeEntries')}/>
           )}
         </Card.Body>
       </Card>
@@ -963,7 +1020,7 @@ const Page = () => {
         <Col md={4}>
           {officeUseOnlyCard}
           {resendEmailsCard}
-          {linkFreeEntryCard}
+          {freeEntryCard}
           {moveToTeamCard}
           {assignPartnerCard}
           {bowler.purchases && bowler.purchases.length > 0 && purchases}

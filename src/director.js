@@ -152,7 +152,12 @@ export const directorApiRequest = ({uri, requestConfig, authToken, onSuccess = n
   config.validateStatus = (status) => status < 500;
   axios(config)
     .then(response => {
-      handleSuccess(response, onSuccess, onFailure);
+      if (response.status >= 200 && response.status < 400) {
+        handleSuccess(response, onSuccess, onFailure);
+      } else {
+        const err = new Error('Something went wrong with that request.');
+        throw err;
+      }
     })
     .catch(error => {
       devConsoleLog("Nope.", error);

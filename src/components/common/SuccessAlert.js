@@ -5,9 +5,9 @@ const SuccessAlert = ({message, className='', onClose=()=>{}}) => {
 
   return (
     <div className={`alert alert-success alert-dismissible fade show ${className}`}>
-      <span>
+      <span className={``}>
         <i className={'bi bi-check2-circle pe-2'} aria-hidden={true} />
-        <strong>Success!</strong>{' '}
+        <strong className={`me-2`}>Success</strong>
         {message}
       </span>
       <button type={`button`}
