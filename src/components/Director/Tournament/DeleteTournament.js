@@ -4,11 +4,12 @@ import Card from "react-bootstrap/Card";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
+import React, {useState} from "react";
 
 const DeleteTournament = ({tournament}) => {
   const {user, authToken} = useLoginContext();
-  const {dispatch} = useDirectorContext();
   const router = useRouter();
+  const [deleteInProgress, setDeleteInProgress] = useState(false);
 
   if (!tournament || !user) {
     return '';
@@ -31,10 +32,11 @@ const DeleteTournament = ({tournament}) => {
     if (!confirm("This cannot be undone. Are you sure?")) {
       return;
     }
-    const uri = `/director/tournaments/${tournament.identifier}`;
+    const uri = `/tournaments/${tournament.identifier}`;
     const requestConfig = {
       method: 'delete',
     }
+    setDeleteInProgress(true);
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
@@ -49,7 +51,13 @@ const DeleteTournament = ({tournament}) => {
       <Card.Body>
         <button type={'button'}
                 className={'btn btn-lg btn-danger'}
+                disabled={deleteInProgress}
                 onClick={deleteClicked}>
+          {deleteInProgress && (
+            <span>
+              <span className={'spinner-border spinner-border-sm me-2'} role={'status'} aria-hidden={true}></span>
+            </span>
+          )}
           Delete Tournament
         </button>
       </Card.Body>

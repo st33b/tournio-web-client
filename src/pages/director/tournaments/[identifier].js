@@ -10,9 +10,9 @@ import {
   tournamentStateChanged
 } from "../../../store/actions/directorActions";
 import {useLoginContext} from "../../../store/LoginContext";
-import ErrorPage from "../../../components/ui/ErrorAlert";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorBoundary from "../../../components/common/ErrorBoundary";
+import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Tournament = () => {
   const router = useRouter();
@@ -24,7 +24,7 @@ const Tournament = () => {
 
   //
   // fetch tournament details
-  const {loading, data: tournament} = useDirectorApi({
+  const {loading, data: tournament, onDataUpdate} = useDirectorApi({
     uri: identifier ? `/tournaments/${identifier}` : null,
     onSuccess: (t) => dispatch(tournamentDetailsRetrieved(t)),
     onFailure: (err) => setErrorMessage(err.message),
@@ -48,7 +48,10 @@ const Tournament = () => {
       uri: uri,
       requestConfig: requestConfig,
       authToken: authToken,
-      onSuccess: (data) => dispatch(tournamentStateChanged(data)),
+      onSuccess: (data) => {
+        dispatch(tournamentStateChanged(data));
+        onDataUpdate(data);
+      },
       onFailure: (data) => setErrorMessage(data.error),
     });
   }
@@ -60,7 +63,10 @@ const Tournament = () => {
   return (
     <ErrorBoundary>
       <div>
-        <ErrorPage text={errorMessage}/>
+        <ErrorAlert message={errorMessage}
+                    className={``}
+                    onClose={() => setErrorMessage(null)}
+        />
 
         {tournament && (
           (tournament.state === 'active' || tournament.state === 'closed'

@@ -10,6 +10,8 @@ import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
 import PreviousPurchases from "../../components/Commerce/PreviousPurchases/PreviousPurchases";
 import FreeEntryForm from "../../components/Commerce/FreeEntryForm/FreeEntryForm";
 import CommerceLayout from "../../components/Layout/CommerceLayout/CommerceLayout";
+import SuccessAlert from "../../components/common/SuccessAlert";
+import ErrorAlert from "../../components/common/ErrorAlert";
 
 const Page = () => {
   const router = useRouter();
@@ -54,7 +56,7 @@ const Page = () => {
   }
 
   if (!commerce) {
-    return <LoadingMessage message={'One moment, please...'} />;
+    return <LoadingMessage message={'One moment, please...'}/>;
   }
 
   if (commerce.bowler && commerce.bowler.shift_info.full && !commerce.bowler.shift_info.confirmed) {
@@ -121,26 +123,12 @@ const Page = () => {
 
       <hr/>
 
-      {successMessage && (
-        <div className={'col-12 alert alert-success alert-dismissible fade show d-flex align-items-center'} role={'alert'}>
-          <i className={'bi-cash-coin pe-2'} aria-hidden={true}/>
-          <div className={'me-auto'}>
-            <strong>
-              Success!
-            </strong>
-            {' '}{successMessage}
-          </div>
-          <button type={'button'} className={'btn-close'} data-bs-dismiss={'alert'} aria-label={'Close'}/>
-        </div>
-      )}
-      {errorMessage && (
-        <div className={'col-12 alert alert-warning fade show d-flex align-items-center'} role={'alert'}>
-          <i className={'bi-exclamation-triangle-fill pe-2'} aria-hidden={true}/>
-          <div className={'me-auto'}>
-            {errorMessage}
-          </div>
-        </div>
-      )}
+      <SuccessAlert className={``}
+                    message={successMessage}
+                    onClose={() => setSuccessMessage(null)}/>
+      <ErrorAlert className={``}
+                  message={errorMessage}
+                  onClose={() => setErrorMessage(null)}/>
 
       {commerce.bowler && enablePurchase && <Menu/>}
 

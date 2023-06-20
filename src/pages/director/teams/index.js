@@ -15,7 +15,7 @@ import {useLoginContext} from "../../../store/LoginContext";
 
 const Page = () => {
   const router = useRouter();
-  const {state, dispatch} = useDirectorContext();
+  const {state} = useDirectorContext();
   const {authToken} = useLoginContext();
   const {delete: deleteSuccess} = router.query;
 

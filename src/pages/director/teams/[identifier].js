@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Card, Button, Row, Col} from "react-bootstrap";
 
@@ -6,156 +6,111 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
 import TeamDetails from "../../../components/Director/TeamDetails/TeamDetails";
-import {directorApiRequest, useLoggedIn} from "../../../director";
+import {directorApiRequest, useDirectorApi, useLoggedIn} from "../../../director";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import {teamDeleted} from "../../../store/actions/directorActions";
 import TeamShiftForm from "../../../components/Director/TeamDetails/TeamShiftForm";
+import {useLoginContext} from "../../../store/LoginContext";
+import SuccessAlert from "../../../components/common/SuccessAlert";
+import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Page = () => {
   const router = useRouter();
-  const context = useDirectorContext();
-  const {directorState, dispatch} = context;
+  const {state, dispatch} = useDirectorContext();
+  const {authToken} = useLoginContext();
 
   let {identifier} = router.query;
 
-  const [team, setTeam] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-
-  // This effect ensures we're logged in with appropriate permissions
-  useEffect(() => {
-    const currentTournamentIdentifier = directorState.tournament.identifier;
-
-    if (directorState.user.role !== 'superuser' && !directorState.user.tournaments.some(t => t.identifier === currentTournamentIdentifier)) {
-      router.push('/director');
-    }
+  const [success, setSuccess] = useState({
+    update: null,
   });
-  
-  const onFetchTeamSuccess = (data) => {
-    setLoading(false);
-    setTeam(data);
+  const [errors, setErrors] = useState({
+    delete: null,
+    update: null,
+  });
+  const [operationInProgress, setOperationInProgress] = useState({
+    delete: false,
+    update: false,
+  });
+
+  const updateStateForTeam = (data) => {
+    // any state data the team needs...
   }
 
-  const onFetchTeamFailure = (data) => {
-    setLoading(false);
-    setErrorMessage(data.error);
-  }
-
-  // This effect pulls the team details from the backend
-  useEffect(() => {
-    if (!identifier) {
-      return;
-    }
-
-    const uri = `/director/teams/${identifier}`;
-    const requestConfig = {
-      method: 'get',
-    }
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      onSuccess: onFetchTeamSuccess,
-      onFailure: onFetchTeamFailure,
-    });
-  }, [identifier, router, context]);
-
-  const loggedInState = useLoggedIn();
-  const ready = loggedInState >= 0;
-  if (!ready) {
-    return '';
-  }
-  if (!loggedInState) {
-    router.push('/director/login');
-  }
-  if (!directorState) {
-    return '';
-  }
-
-  if (!context || loading) {
-    return <LoadingMessage message={'Retrieving team data...'} />;
-  }
-
-  if (errorMessage) {
-    return (
-      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-0 mb-3'} role={'alert'}>
-        <i className={'bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-        <div className={'me-auto'}>
-          <strong>
-            Oh no!
-          </strong>
-          {' '}{errorMessage}
-        </div>
-      </div>
-    );
-  }
-
-  if (!team) {
-    return (
-      <div className={'display-6 text-center'}>
-        Retrieving team details...
-      </div>
-    );
-  }
+  const {loading: teamLoading, data: team, error: teamError, onDataUpdate: onTeamUpdate} = useDirectorApi({
+    uri: identifier ? `/teams/${identifier}` : null,
+    onSuccess: updateStateForTeam,
+  });
 
   const onDeleteTeamSuccess = (_) => {
-    setLoading(false);
+    setOperationInProgress({
+      ...operationInProgress,
+      delete: false,
+    });
     dispatch(teamDeleted(team));
     router.push('/director/teams?success=deleted');
   }
 
   const onDeleteTeamFailure = (data) => {
-    setLoading(false);
-    setErrorMessage(data.error);
+    setOperationInProgress({
+      ...operationInProgress,
+      delete: false,
+    });
+    setErrors({
+      ...errors,
+      delete: data.getMessage,
+    });
   }
 
   const deleteSubmitHandler = (event) => {
     event.preventDefault();
     if (confirm('This will remove the team and all its bowlers. Are you sure?')) {
-      setLoading(true);
-      const uri = `/director/teams/${identifier}`;
+      const uri = `/teams/${identifier}`;
       const requestConfig = {
         method: 'delete',
         headers: {
           'Content-Type': 'application/json',
         },
       }
-      setLoading(true);
+      setOperationInProgress({
+        ...operationInProgress,
+        delete: true,
+      });
       directorApiRequest({
         uri: uri,
         requestConfig: requestConfig,
-        context: context,
+        authToken: authToken,
         onSuccess: onDeleteTeamSuccess,
         onFailure: onDeleteTeamFailure,
       });
     }
   }
 
-  const ladder = [
-    {text: 'Tournaments', path: '/director/tournaments'},
-    {text: directorState.tournament.name, path: `/director/tournaments/${directorState.tournament.identifier}`},
-    {text: 'Teams', path: `/director/teams`},
-  ];
-
-  let teamName;
-  if (team) {
-    teamName = team.name;
-  }
-
   const updateTeamSuccess = (data) => {
-    setLoading(false);
-    setTeam(data);
-    setSuccessMessage('Changes applied.');
+    setOperationInProgress({
+      ...operationInProgress,
+      update: false,
+    });
+    setSuccess({
+      ...success,
+      update: 'Changes applied',
+    });
+    onTeamUpdate(data);
   }
 
   const updateTeamFailure = (data) => {
-    setLoading(false);
-    setErrorMessage(data.error);
+    setOperationInProgress({
+      ...operationInProgress,
+      update: false,
+    });
+    setErrors({
+      ...errors,
+      update: data.message,
+    });
   }
 
   const updateSubmitHandler = (teamData) => {
-    const uri = `/director/teams/${identifier}`;
+    const uri = `/teams/${identifier}`;
     const requestConfig = {
       method: 'patch',
       headers: {
@@ -165,42 +120,41 @@ const Page = () => {
         team: teamData,
       },
     }
-    setLoading(true);
+    setOperationInProgress({
+      ...operationInProgress,
+      update: true,
+    });
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: updateTeamSuccess,
       onFailure: updateTeamFailure,
     });
   }
 
   const shiftChangeHandler = (newShiftIdentifier) => {
-    const uri = `/director/teams/${identifier}`;
-    const requestConfig = {
-      method: 'patch',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      data: {
-        team: {
-          shift_identifier: newShiftIdentifier,
-        },
-      },
-    }
-    setLoading(true);
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      onSuccess: updateTeamSuccess,
-      onFailure: updateTeamFailure,
+    updateSubmitHandler({
+      shift_identifier: newShiftIdentifier,
     });
   }
 
+  ////////////////////////////////////////////////////////////////////
+
+  if (!state.tournament || teamLoading || !team) {
+    return <LoadingMessage message={'Retrieving team details...'}/>
+  }
+
+  const ladder = [
+    {text: 'Tournaments', path: '/director/tournaments'},
+    {text: state.tournament.name, path: `/director/tournaments/${state.tournament.identifier}`},
+    {text: 'Teams', path: `/director/teams`},
+  ];
+
+
   return (
     <div>
-      <Breadcrumbs ladder={ladder} activeText={teamName} />
+      <Breadcrumbs ladder={ladder} activeText={team.name}/>
       <Row>
         <Col md={8}>
           <TeamDetails team={team}
@@ -209,26 +163,13 @@ const Page = () => {
         </Col>
 
         <Col md={4}>
-          {successMessage && (
-            <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mb-3'} role={'alert'}>
-              <i className={'bi-check-circle-fill pe-2'} aria-hidden={true} />
-              <div className={'me-auto'}>
-                <strong>
-                  Success!
-                </strong>
-                {' '}{successMessage}
-              </div>
-              <button type={"button"} className={"btn-close"} data-bs-dismiss={"alert"} aria-label={"Close"} />
-            </div>
-          )}
-
-          {directorState.tournament.shifts.length > 1 && (
+          {state.tournament.shifts.length > 1 && (
             <Card className={'mb-3'}>
               <Card.Header as={'h5'}>
                 Shift
               </Card.Header>
               <Card.Body>
-                <TeamShiftForm allShifts={directorState.tournament.shifts} team={team} onShiftChange={shiftChangeHandler}/>
+                <TeamShiftForm allShifts={state.tournament.shifts} team={team} onShiftChange={shiftChangeHandler}/>
               </Card.Body>
             </Card>
           )}
@@ -244,6 +185,21 @@ const Page = () => {
               </form>
             </Card.Body>
           </Card>
+
+          <SuccessAlert message={success.update}
+                        className={`mt-3`}
+                        onClose={() => setSuccess({
+                          ...success,
+                          update: null,
+                        })}
+          />
+          <ErrorAlert message={errors.update}
+                      className={`mt-3`}
+                      onClose={() => setErrors({
+                        ...errors,
+                        update: null,
+                      })}
+          />
 
         </Col>
       </Row>

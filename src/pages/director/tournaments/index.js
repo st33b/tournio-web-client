@@ -1,5 +1,6 @@
 import {Col, Row} from "react-bootstrap";
 import {useRouter} from "next/router";
+import Link from 'next/link';
 
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
@@ -50,11 +51,11 @@ const Page = () => {
       {user && user.role === 'superuser' &&
         <Row>
           <Col className={'text-center'}>
-            <a href={"/director/tournaments/new"}
+            <Link href={"/director/tournaments/new"}
                className={"btn btn-sm btn-outline-success mx-2"}
                onClick={newTournamentClicked}>
               Create a Tournament
-            </a>
+            </Link>
           </Col>
         </Row>
       }

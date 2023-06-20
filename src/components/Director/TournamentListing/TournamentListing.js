@@ -1,6 +1,5 @@
+import Link from 'next/link';
 import {Col, Row} from "react-bootstrap";
-
-import {useDirectorContext} from '../../../store/DirectorContext';
 
 import classes from './TournamentListing.module.scss';
 
@@ -37,9 +36,9 @@ const TournamentListing = ({tournaments}) => {
                   return (
                     <tr key={row.identifier} className={classes.TournamentState}>
                       <td>
-                        <a href={'/director/tournaments/' + row.identifier}>
+                        <Link href={'/director/tournaments/' + row.identifier}>
                           {row.name}
-                        </a>
+                        </Link>
                       </td>
                       <td>
                         {row.year}

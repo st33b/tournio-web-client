@@ -1,7 +1,8 @@
 import {useMemo} from "react";
 import {useFilters, useSortBy, useTable} from "react-table";
+import Link from 'next/link';
 
-import {lessThan, isOrIsNot} from "../../../utils";
+import {lessThan} from "../../../utils";
 import TeamFilterForm from "../TeamFilterForm/TeamFilterForm";
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
 
@@ -18,9 +19,9 @@ const TeamListing = ({teams, shiftCount = 1}) => {
         Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
         accessor: 'name',
         Cell: ({row, value}) => (
-          <a href={`/director/teams/${row.original.identifier}`}>
+          <Link href={`/director/teams/${row.original.identifier}`}>
             {value}
-          </a>
+          </Link>
         )
       },
       {

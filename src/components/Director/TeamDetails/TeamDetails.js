@@ -1,16 +1,16 @@
 import {useState, useEffect, useMemo} from "react";
 import {useTable} from "react-table";
 import {Button} from "react-bootstrap";
+import Link from 'next/link';
 
 import {useDirectorContext} from "../../../store/DirectorContext";
 import PartnerSelectionRow from "./PartnerSelectionRow";
 
 import classes from './TeamDetails.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {devConsoleLog} from "../../../utils";
 
 const TeamDetails = ({team, teamUpdateSubmitted}) => {
-  const {directorState} = useDirectorContext();
+  const {state} = useDirectorContext();
 
   let initialFormData = {
     valid: true,
@@ -27,7 +27,6 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     }
   }
 
-  const [data, setData] = useState([]);
   const [teamForm, setTeamForm] = useState(initialFormData);
 
   useEffect(() => {
@@ -43,10 +42,13 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
         doubles_partner_id: b.doubles_partner_id,
       }
     }, [team]);
-    setData(team.bowlers);
     setTeamForm(newFormData);
   }, [team]);
 
+  let data = [];
+  if (team) {
+    data = team.bowlers;
+  }
   // columns
   const columns = useMemo(() => [
     {
@@ -54,6 +56,9 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
       accessor: 'position',
       Cell: ({row}) => {
         const index = row.index;
+        if (!teamForm.fields.bowlers_attributes.value[index]) {
+          return '';
+        }
         return (
           <>
             <input type={'number'}
@@ -78,9 +83,9 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
       Header: 'Name',
       accessor: 'name',
       Cell: ({row, value}) => (
-        <a href={`/director/bowlers/${row.original.identifier}`}>
+        <Link href={`/director/bowlers/${row.original.identifier}`}>
           {value}
-        </a>
+        </Link>
       )
     },
     {
@@ -132,10 +137,6 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
   } = useTable(
     {columns, data},
   );
-
-  if (!directorState || !team) {
-    return '';
-  }
 
   const inputChangedHandler = (event, inputName, index = -1) => {
     const updatedTeamForm = {...teamForm};
@@ -239,7 +240,13 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     </div>
   );
 
-  const maxTeamSize = parseInt(directorState.tournament.team_size);
+  //////////////////////////////////////////////////////////////////
+
+  if (!state.tournament || !team) {
+    return '';
+  }
+
+  const maxTeamSize = parseInt(state.tournament.team_size);
 
   return (
     <ErrorBoundary>

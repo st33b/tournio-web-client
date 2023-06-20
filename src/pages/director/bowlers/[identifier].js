@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 import {useRouter} from "next/router";
+import Link from 'next/link';
 import {Card, Button, Row, Col, ListGroup, Alert} from "react-bootstrap";
 
 import {directorApiRequest, useDirectorApi} from "../../../director";
-import {devConsoleLog} from "../../../utils";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../components/Director/Breadcrumbs/Breadcrumbs";
@@ -644,9 +644,9 @@ const Page = () => {
               <div className={'row'}>
                 <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
                 <dd className={'col'}>
-                  <a href={`/director/teams/${bowler.team.identifier}`}>
+                  <Link href={`/director/teams/${bowler.team.identifier}`}>
                     {bowler.team.name}
-                  </a>
+                  </Link>
                 </dd>
               </div>
               <div className={'row'}>
@@ -969,6 +969,7 @@ const Page = () => {
       <Card.Body className={''}>
         <Card.Text className={'text-center'}>
           <Card.Link href={`/director/bowlers/${bowler.identifier}/sign-in-sheet`}
+                     as={Link}
                      target={'_new'}>
             Sign-in Sheet
           </Card.Link>

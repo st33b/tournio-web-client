@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Card from 'react-bootstrap/Card';
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
@@ -26,7 +27,8 @@ const Counts = ({tournament}) => {
       <ListGroup variant={'flush'}>
         <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
                         variant={'primary'}
-                        action
+                        action={true}
+                        as={Link}
                         href={`/director/bowlers`}>
           Bowlers
           <Badge pill={true}>
@@ -35,7 +37,8 @@ const Counts = ({tournament}) => {
         </ListGroup.Item>
         <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
                         variant={'primary'}
-                        action
+                        action={true}
+                        as={Link}
                         href={`/director/teams`}>
           Teams
           <Badge pill={true}>
@@ -44,7 +47,8 @@ const Counts = ({tournament}) => {
         </ListGroup.Item>
         <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
                         variant={'primary'}
-                        action
+                        action={true}
+                        as={Link}
                         href={`/director/free_entries`}>
           Free Entries
           <Badge pill={true}>
