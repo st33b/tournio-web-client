@@ -3,6 +3,7 @@ import {useRouter} from "next/router";
 import useSWR from "swr";
 import {apiHost, devConsoleLog, useLocalStorage} from "./utils";
 import {useLoginContext} from "./store/LoginContext";
+import {useDirectorContext} from "./store/DirectorContext";
 
 const handleSuccess = (response, onSuccess, onFailure) => {
   if (response.status >= 200 && response.status < 300) {
@@ -167,11 +168,15 @@ export const directorApiDownloadRequest = ({uri, authToken, onSuccess = null, on
 ////////////////////
 // Experimental hook
 ////////////////////
-export const useTournament = (identifier, onTournamentRetrieved=()=>{}) => {
+export const useTournament = (onSuccess = () => {}) => {
+  const router = useRouter();
+  const {identifier} = router.query;
+
   const {loading, data: tournament, error, onDataUpdate: tournamentUpdated} = useDirectorApi({
     uri: identifier ? `/tournaments/${identifier}` : null,
-    onSuccess: onTournamentRetrieved,
+    onSuccess: onSuccess,
   });
+
   return {
     loading,
     error,

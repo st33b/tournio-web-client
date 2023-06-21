@@ -94,6 +94,16 @@ const VisibleTournament = ({tournament, closeTournament}) => {
           </Card>
 
           <Counts tournament={tournament} />
+
+          <Card className={'mb-3'}>
+            <Card.Body className={'text-center'}>
+              <Link href={`/director/tournaments/${tournament.identifier}/bowlers`}
+                    className={'card-link'}>
+                Bowlers (SWR)
+              </Link>
+            </Card.Body>
+          </Card>
+
           <RegistrationOptions tournament={tournament}/>
           <EditableConfiguration tournament={tournament}
                                  editableKeys={EDITABLE_CONFIG_ITEMS} />

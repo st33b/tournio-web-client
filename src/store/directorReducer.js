@@ -21,14 +21,6 @@ export const directorReducer = (state, action) => {
           stripe_account: {...action.stripeAccount},
         }),
       });
-    case actionTypes.TOURNAMENT_STATE_CHANGED:
-      const newStatus = {
-        state: action.newState,
-        status: action.newStatus,
-      }
-      return updateObject(state, {
-        tournament: updateObject(state.tournament, newStatus),
-      });
     case actionTypes.TOURNAMENT_TEST_ENVIRONMENT_UPDATED:
       const changedProperties = {
         testing_environment: {

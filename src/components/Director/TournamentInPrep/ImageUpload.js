@@ -13,7 +13,7 @@ import {useLoginContext} from "../../../store/LoginContext";
 import SuccessAlert from "../../common/SuccessAlert";
 import ErrorAlert from "../../common/ErrorAlert";
 
-const ImageUpload = ({tournamentIdentifier}) => {
+const ImageUpload = () => {
   const {authToken} = useLoginContext();
   const {dispatch} = useDirectorContext();
 
@@ -25,7 +25,7 @@ const ImageUpload = ({tournamentIdentifier}) => {
   const [success, setSuccess] = useState();
   const [error, setError] = useState();
 
-  const {loading, tournament, tournamentUpdated} = useTournament(tournamentIdentifier);
+  const {loading, tournament, tournamentUpdated} = useTournament();
 
   const whereTheFileIsChanged = (event) => {
     const newValue = {...fileInput};

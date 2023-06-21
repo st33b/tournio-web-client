@@ -35,8 +35,6 @@ export const LoginContextProvider = ({children}) => {
     storeLoginState(loginState);
   }, [loginState]);
 
-  const router = useRouter();
-
   const login = (user, token) => {
     setLoginState({
       ready: true,
