@@ -2,16 +2,19 @@ import {useState} from "react";
 import Card from "react-bootstrap/Card";
 
 import {useLoginContext} from "../../../store/LoginContext";
-import {directorApiRequest} from "../../../director";
+import {directorApiRequest, useTournament} from "../../../director";
 
 import classes from './MassActions.module.scss';
+import SuccessAlert from "../../common/SuccessAlert";
+import ErrorAlert from "../../common/ErrorAlert";
 
-const MassActions = ({tournament}) => {
+const MassActions = () => {
   const { authToken } = useLoginContext();
+  const {loading, tournament} = useTournament();
 
   const [paymentReminderMessage, setPaymentReminderMessage] = useState(null);
 
-  if (!tournament) {
+  if (loading) {
     return '';
   }
   if (!['active', 'closed'].includes(tournament.state)) {
@@ -20,33 +23,19 @@ const MassActions = ({tournament}) => {
 
   const paymentRemindersKickedOff = (data) => {
     setPaymentReminderMessage(
-      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
-        <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
-        <div className={'me-auto'}>
-          Sending payment reminders to bowlers with outstanding balances.
-          <button type="button"
-                  className={"btn-close"}
-                  data-bs-dismiss="alert"
-                  onClick={() => setPaymentReminderMessage(null)}
-                  aria-label="Close" />
-        </div>
-      </div>
+      <SuccessAlert message={'Sending payment reminders to bowlers with outstanding balances.'}
+                    className={`mt-3 mb-0`}
+                    onClose={() => setPaymentReminderMessage(null)}
+                    />
     );
   }
 
   const paymentRemindersFailed = (data) => {
     setPaymentReminderMessage(
-      <div className={'alert alert-warning alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
-        <i className={'bi-exclamation-triangle pe-2'} aria-hidden={true} />
-        <div className={'me-auto'}>
-          Failed to send payment reminders to bowlers with outstanding balances. Please let Scott know.
-          <button type="button"
-                  className={"btn-close"}
-                  data-bs-dismiss="alert"
-                  onClick={() => setPaymentReminderMessage(null)}
-                  aria-label="Close" />
-        </div>
-      </div>
+      <ErrorAlert message={'Failed to send payment reminders to bowlers with outstanding balances. Please let Scott know.'}
+                    className={`mt-3 mb-0`}
+                    onClose={() => setPaymentReminderMessage(null)}
+      />
     );
   }
 

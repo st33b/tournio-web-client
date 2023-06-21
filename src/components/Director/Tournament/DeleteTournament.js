@@ -2,16 +2,17 @@ import {useRouter} from "next/router";
 import Card from "react-bootstrap/Card";
 
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
+import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 import React, {useState} from "react";
 
-const DeleteTournament = ({tournament}) => {
+const DeleteTournament = () => {
   const {user, authToken} = useLoginContext();
+  const {loading, tournament} = useTournament();
   const router = useRouter();
   const [deleteInProgress, setDeleteInProgress] = useState(false);
 
-  if (!tournament || !user) {
+  if (loading || !user) {
     return '';
   }
 

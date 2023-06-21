@@ -2,8 +2,11 @@ import {Accordion, Placeholder} from "react-bootstrap";
 import {timezones} from "../../../utils";
 
 import classes from './VisibleTournament.module.scss';
+import {useTournament} from "../../../director";
 
-const Basics = ({tournament, eventKey}) => {
+const Basics = ({eventKey}) => {
+  const {loading, tournament} = useTournament();
+
   let content = (
     <Placeholder as={Accordion.Body} animation={'glow'}>
       <Placeholder xs={12}/>
@@ -12,7 +15,7 @@ const Basics = ({tournament, eventKey}) => {
     </Placeholder>
   );
 
-  if (tournament) {
+  if (!loading) {
     content = (
       <Accordion.Body className={classes.AccordionBody}>
         <p>

@@ -3,9 +3,11 @@ import {Card, ListGroup} from "react-bootstrap";
 import ShiftForm from '../ShiftForm/ShiftForm';
 
 import classes from './TournamentInPrep.module.scss';
+import {useTournament} from "../../../director";
 
-const Shifts = ({tournament}) => {
-  if (!tournament) {
+const Shifts = () => {
+  const {loading, tournament} = useTournament();
+  if (loading) {
     return '';
   }
 

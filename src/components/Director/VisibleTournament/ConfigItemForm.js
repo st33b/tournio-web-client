@@ -2,16 +2,14 @@ import {useEffect, useState} from "react";
 import {ListGroupItem} from "react-bootstrap";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
+import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 
 import classes from './VisibleTournament.module.scss';
-import {tournamentConfigItemChanged} from "../../../store/actions/directorActions";
 
 const ConfigItemForm = ({item}) => {
-  const { dispatch } = useDirectorContext();
   const { authToken } = useLoginContext();
+  const {tournamentUpdated} = useTournament();
 
   const initialState = {
     prevValue: '',
@@ -52,7 +50,7 @@ const ConfigItemForm = ({item}) => {
       uri: uri,
       requestConfig: requestConfig,
       authToken: authToken,
-      onSuccess: (ci) => {dispatch(tournamentConfigItemChanged(ci))},
+      onSuccess: () => tournamentUpdated(),
       onFailure: (data) => { console.log("Failed to save config item.", data) },
     });
   }

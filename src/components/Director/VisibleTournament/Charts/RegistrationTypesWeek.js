@@ -4,9 +4,11 @@ import {eachDayOfInterval, format} from "date-fns";
 
 import classes from '../VisibleTournament.module.scss';
 import {chartColors} from "./common";
+import {useTournament} from "../../../../director";
 
-const RegistrationTypesWeek = ({tournament}) => {
-  if (!tournament) {
+const RegistrationTypesWeek = () => {
+  const {loading, tournament} = useTournament();
+  if (loading) {
     return '';
   }
 

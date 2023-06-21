@@ -2,15 +2,17 @@ import {useEffect, useState} from 'react';
 import {Card} from "react-bootstrap";
 import {Map} from 'immutable';
 
-import {directorApiRequest} from "../../../director";
+import {directorApiRequest, useTournament} from "../../../director";
 import {useDirectorContext} from "../../../store/DirectorContext";
 import {tournamentDetailsRetrieved} from "../../../store/actions/directorActions";
 import {devConsoleLog} from "../../../utils";
 import {useLoginContext} from "../../../store/LoginContext";
+import ErrorAlert from "../../common/ErrorAlert";
 
-const RegistrationOptions = ({tournament}) => {
+const RegistrationOptions = () => {
   const { dispatch } = useDirectorContext();
   const { authToken } = useLoginContext();
+  const {loading, tournament, tournamentUpdated} = useTournament();
 
   const REGISTRATION_TYPES = ['new_team', 'solo', 'join_team', 'partner', 'new_pair'];
   const REGISTRATION_TYPE_LABELS = [
@@ -97,7 +99,7 @@ const RegistrationOptions = ({tournament}) => {
       uri: uri,
       requestConfig: requestConfig,
       authToken: authToken,
-      onSuccess: (tournament) => { dispatch(tournamentDetailsRetrieved(tournament)) },
+      onSuccess: () => tournamentUpdated(),
       onFailure: (data) => setErrorMessage(data.error),
     })
   }
@@ -126,20 +128,10 @@ const RegistrationOptions = ({tournament}) => {
           })}
 
       </Card.Body>
-      {errorMessage && (
-        <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mx-3'}
-             role={'alert'}>
-          <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
-          <div className={'me-auto'}>
-            {errorMessage}
-            <button type="button"
-                    className={"btn-close"}
-                    data-bs-dismiss="alert"
-                    onClick={() => setErrorMessage(null)}
-                    aria-label="Close"/>
-          </div>
-        </div>
-      )}
+      <ErrorAlert message={errorMessage}
+                  className={`mx-3`}
+                  onClose={() => setErrorMessage(null)}
+                  />
     </Card>
   );
 }

@@ -21,16 +21,19 @@ import LogoImage from "../LogoImage/LogoImage";
 import DeleteTournament from "../Tournament/DeleteTournament";
 import Users from "../Tournament/Users";
 import Shifts from "../TournamentInPrep/Shifts";
+import {useTournament} from "../../../director";
 
 import classes from './VisibleTournament.module.scss';
 
-const VisibleTournament = ({tournament, closeTournament}) => {
+const VisibleTournament = ({closeTournament}) => {
   const EDITABLE_CONFIG_ITEMS = [
     "display_capacity",
     "publicly_listed",
     "email_in_dev",
     "skip_stripe",
   ];
+
+  const {loading, tournament} = useTournament();
 
   if (!tournament) {
     return '';
@@ -44,26 +47,30 @@ const VisibleTournament = ({tournament, closeTournament}) => {
 
   const lessImportantStuff = (
     <>
-      <Downloads tournament={tournament}/>
+      <Downloads/>
       <Accordion className={'mb-3'}>
-        <Basics eventKey={'0'} tournament={tournament}/>
+        <Basics eventKey={'0'}/>
         <Configuration eventKey={'1'}
-                       tournament={tournament}
                        excludedKeys={EDITABLE_CONFIG_ITEMS} />
-        <AdditionalQuestions eventKey={'2'} tournament={tournament}/>
-        <PurchasableItems eventKey={'3'} tournament={tournament}/>
+        <AdditionalQuestions eventKey={'2'}/>
+        <PurchasableItems eventKey={'3'}/>
       </Accordion>
 
-      <Contacts tournament={tournament}/>
-      <Users users={tournament.users}/>
+      <Contacts/>
+      <Users/>
 
       {tournament.state === 'active' && (
         <>
           <hr />
-          <CloseTournament tournament={tournament} closeTournament={closeTournament} />
+          <CloseTournament closeTournament={closeTournament} />
         </>
       )}
-      {tournament.state === 'closed' && (<DeleteTournament tournament={tournament}/>)}
+      {tournament.state === 'closed' && (
+        <>
+          <hr />
+          <DeleteTournament/>
+          </>
+        )}
     </>
   );
 
@@ -93,22 +100,12 @@ const VisibleTournament = ({tournament, closeTournament}) => {
             </Card.Body>
           </Card>
 
-          <Counts tournament={tournament} />
+          <Counts/>
 
-          <Card className={'mb-3'}>
-            <Card.Body className={'text-center'}>
-              <Link href={`/director/tournaments/${tournament.identifier}/bowlers`}
-                    className={'card-link'}>
-                Bowlers (SWR)
-              </Link>
-            </Card.Body>
-          </Card>
-
-          <RegistrationOptions tournament={tournament}/>
-          <EditableConfiguration tournament={tournament}
-                                 editableKeys={EDITABLE_CONFIG_ITEMS} />
-          <Shifts tournament={tournament} />
-          <MassActions tournament={tournament}/>
+          <RegistrationOptions/>
+          <EditableConfiguration editableKeys={EDITABLE_CONFIG_ITEMS} />
+          <Shifts/>
+          <MassActions/>
 
           <div className={'d-none d-md-block d-lg-none'}>
             <hr />
@@ -117,15 +114,13 @@ const VisibleTournament = ({tournament, closeTournament}) => {
         </div>
 
         <div className={'col-12 col-md-8 col-lg-5 col-xl-6'}>
-          <Capacity tournament={tournament} />
-          <RegistrationsWeek tournament={tournament}/>
-          <RegistrationTypesWeek tournament={tournament}/>
-          {divisionNames.map(name => <DivisionItemsWeek tournament={tournament} title={name} key={name}/> )}
-          <OptionalItemsWeek tournament={tournament}
-                             title={'Optional Events'}
+          <Capacity/>
+          <RegistrationsWeek/>
+          <RegistrationTypesWeek/>
+          {divisionNames.map(name => <DivisionItemsWeek title={name} key={name}/> )}
+          <OptionalItemsWeek title={'Optional Events'}
                              dataKeys={['bowling']}/>
-          <OptionalItemsWeek tournament={tournament}
-                             title={'Extras'}
+          <OptionalItemsWeek title={'Extras'}
                              dataKeys={['banquet', 'product']}/>
         </div>
 

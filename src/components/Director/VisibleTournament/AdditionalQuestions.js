@@ -2,8 +2,10 @@ import ListGroup from "react-bootstrap/ListGroup";
 import {Accordion, Placeholder} from "react-bootstrap";
 
 import classes from './VisibleTournament.module.scss';
+import {useTournament} from "../../../director";
 
-const AdditionalQuestions = ({eventKey, tournament}) => {
+const AdditionalQuestions = ({eventKey}) => {
+  const {loading, tournament} = useTournament();
   let content = (
     <Placeholder animation={'glow'}>
       <Placeholder xs={3} />{' '}
@@ -12,7 +14,7 @@ const AdditionalQuestions = ({eventKey, tournament}) => {
       <Placeholder xs={7} />
     </Placeholder>
   )
-  if (tournament) {
+  if (!loading) {
     const list = (
       tournament.additional_questions.map((q, i) => {
         return (

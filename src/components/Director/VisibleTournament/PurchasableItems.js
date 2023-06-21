@@ -3,9 +3,12 @@ import {Accordion, ListGroup, Placeholder} from "react-bootstrap";
 import PurchasableItem from "./PurchasableItem";
 
 import classes from './VisibleTournament.module.scss';
+import {useTournament} from "../../../director";
 
-const PurchasableItems = ({eventKey, tournament}) => {
-  if (!tournament) {
+const PurchasableItems = ({eventKey}) => {
+  const {loading, tournament} = useTournament();
+
+  if (loading) {
     return (
       <Accordion.Item eventKey={eventKey} className={classes.PurchasableItems}>
         <Accordion.Header as={'h5'} className={classes.AccordionHeader}>

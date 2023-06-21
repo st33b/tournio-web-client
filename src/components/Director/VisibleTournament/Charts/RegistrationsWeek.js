@@ -3,9 +3,11 @@ import { Line } from 'react-chartjs-2';
 import {eachDayOfInterval, format} from "date-fns";
 
 import classes from '../VisibleTournament.module.scss';
+import {useTournament} from "../../../../director";
 
-const RegistrationsWeek = ({tournament}) => {
-  if (!tournament) {
+const RegistrationsWeek = () => {
+  const {loading, tournament} = useTournament();
+  if (loading) {
     return '';
   }
 

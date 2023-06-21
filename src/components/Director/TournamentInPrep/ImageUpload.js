@@ -4,18 +4,15 @@ import React, {useState} from "react";
 import Card from 'react-bootstrap/Card';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest, useTournament} from "../../../director";
 import FormData from 'form-data';
 import LogoImage from "../LogoImage/LogoImage";
-import {logoImageUploaded} from "../../../store/actions/directorActions";
+import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 import SuccessAlert from "../../common/SuccessAlert";
 import ErrorAlert from "../../common/ErrorAlert";
 
 const ImageUpload = () => {
   const {authToken} = useLoginContext();
-  const {dispatch} = useDirectorContext();
 
   const [formDisplayed, setFormDisplayed] = useState(false);
   const [fileInput, setFileInput] = useState({
@@ -35,7 +32,6 @@ const ImageUpload = () => {
 
   const onSuccess = (data) => {
     const imageUrl = data.image_url;
-    dispatch(logoImageUploaded(imageUrl));
     setSuccess('File successfully uploaded.');
     setFormDisplayed(false);
     setInProgress(false);

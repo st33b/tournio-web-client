@@ -1,16 +1,19 @@
 import {useState} from "react";
 import {Card, Placeholder} from "react-bootstrap";
 
-import {directorApiDownloadRequest} from "../../../director";
+import {directorApiDownloadRequest, useTournament} from "../../../director";
 
 import classes from './VisibleTournament.module.scss';
 import {useLoginContext} from "../../../store/LoginContext";
 import {devConsoleLog} from "../../../utils";
 import Link from "next/link";
+import SuccessAlert from "../../common/SuccessAlert";
+import ErrorAlert from "../../common/ErrorAlert";
 
-const Downloads = ({tournament}) => {
+const Downloads = () => {
   const { ready, authToken } = useLoginContext();
   const [downloadMessage, setDownloadMessage] = useState(null);
+  const {tournament} = useTournament();
 
   if (!tournament || !ready) {
     return (
@@ -41,19 +44,7 @@ const Downloads = ({tournament}) => {
 
   const downloadFailure = (data) => {
     devConsoleLog("Download failed. Why?", data);
-    setDownloadMessage(
-      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
-        <i className={'bi-check2-circle pe-2'} aria-hidden={true} />
-        <div className={'me-auto'}>
-          Download failed.
-          <button type="button"
-                  className={"btn-close"}
-                  data-bs-dismiss="alert"
-                  onClick={() => setDownloadMessage(null)}
-                  aria-label="Close" />
-        </div>
-      </div>
-    );
+    setDownloadMessage('Download failed.');
   }
   const downloadClicked = (event, which, saveAsName) => {
     const path = which === 'csv' ? 'csv_download' : 'igbots_download';
@@ -95,7 +86,10 @@ const Downloads = ({tournament}) => {
           >
             Sign-in Sheets
           </Link>
-          {downloadMessage}
+          <ErrorAlert message={downloadMessage}
+                      className={`mt-3 mb-0`}
+                      onClose={() => setDownloadMessage(null)}
+                      />
         </Card.Body>
       </Card>
     </div>

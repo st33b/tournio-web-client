@@ -4,9 +4,11 @@ import ListGroup from "react-bootstrap/ListGroup";
 import ContactForm from "../ContactForm/ContactForm";
 
 import classes from '../TournamentInPrep/TournamentInPrep.module.scss';
+import {useTournament} from "../../../director";
 
-const Contacts = ({tournament}) => {
-  if (!tournament) {
+const Contacts = () => {
+  const {loading, tournament} = useTournament();
+  if (loading) {
     return '';
   }
 
@@ -19,12 +21,12 @@ const Contacts = ({tournament}) => {
         {tournament.contacts.map((contact, i) => {
           return (
             <ListGroup.Item key={i} className={`${classes.ContactItem} p-0`}>
-              <ContactForm tournament={tournament} contact={contact}/>
+              <ContactForm contact={contact}/>
             </ListGroup.Item>
           );
         })}
         <ListGroup.Item className={`${classes.ContactItem} p-0`}>
-          <ContactForm tournament={tournament} newContact={true}/>
+          <ContactForm newContact={true}/>
         </ListGroup.Item>
       </ListGroup>
     </Card>

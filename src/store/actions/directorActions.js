@@ -104,27 +104,6 @@ export const purchasableItemDeleted = (item) => {
   }
 }
 
-export const logoImageUploaded = (imageUrl) => {
-  return {
-    type: actionTypes.LOGO_IMAGE_UPLOADED,
-    imageUrl: imageUrl,
-  }
-}
-
-export const tournamentContactAdded = (contact) => {
-  return {
-    type: actionTypes.TOURNAMENT_CONTACT_ADDED,
-    contact: contact,
-  }
-}
-
-export const tournamentContactUpdated = (contact) => {
-  return {
-    type: actionTypes.TOURNAMENT_CONTACT_UPDATED,
-    contact: contact,
-  }
-}
-
 export const newTournamentInitiated = () => {
   return {
     type: actionTypes.NEW_TOURNAMENT_INITIATED,

@@ -3,7 +3,7 @@ import {Map} from "immutable";
 import Card from 'react-bootstrap/Card';
 
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
+import {directorApiRequest, useTournament} from "../../../director";
 
 import classes from './ShiftForm.module.scss';
 import {
@@ -14,8 +14,8 @@ import {
 import ButtonRow from "../../common/ButtonRow";
 import {useLoginContext} from "../../../store/LoginContext";
 
-const ShiftForm = ({tournament, shift}) => {
-  const { dispatch } = useDirectorContext();
+const ShiftForm = ({shift}) => {
+  const {loading, tournament, tournamentUpdated} = useTournament();
   const { authToken } = useLoginContext();
 
   const initialFormData = Map({
@@ -47,7 +47,7 @@ const ShiftForm = ({tournament, shift}) => {
     setFormData(Map(existingShift));
   }, [shift]);
 
-  if (!tournament) {
+  if (loading) {
     return '';
   }
 
@@ -114,8 +114,8 @@ const ShiftForm = ({tournament, shift}) => {
   }
 
   const addShiftSuccess = (data) => {
-    dispatch(tournamentShiftAdded(data));
     setFormDisplayed(false);
+    tournamentUpdated();
   }
 
   const toggleEdit = (event) => {
@@ -136,7 +136,7 @@ const ShiftForm = ({tournament, shift}) => {
       uri: uri,
       requestConfig: requestConfig,
       authToken: authToken,
-      onSuccess: () => dispatch(tournamentShiftDeleted(shift)),
+      onSuccess: () => tournamentUpdated(),
       onFailure: (data) => console.log("D'oh!", data),
     });
   }
@@ -166,7 +166,7 @@ const ShiftForm = ({tournament, shift}) => {
   }
 
   const updateShiftSuccess = (data) => {
-    dispatch(tournamentShiftUpdated(data));
+    tournamentUpdated();
     setFormDisplayed(false);
   }
 

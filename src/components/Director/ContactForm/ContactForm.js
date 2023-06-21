@@ -1,16 +1,14 @@
 import {useEffect, useState} from "react";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
-import {tournamentContactAdded, tournamentContactUpdated} from "../../../store/actions/directorActions";
+import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 
 import classes from './ContactForm.module.scss';
 
-const ContactForm = ({tournament, contact, newContact}) => {
+const ContactForm = ({contact, newContact}) => {
+  const {loading, tournament, tournamentUpdated} = useTournament();
   const { authToken } = useLoginContext();
-  const { dispatch } = useDirectorContext();
 
   const initialState = {
     identifier: '',
@@ -52,15 +50,10 @@ const ContactForm = ({tournament, contact, newContact}) => {
 
   const onSuccess = (data) => {
     if (newContact) {
-      dispatch(tournamentContactAdded(data));
       setFormData(initialState);
-    } else {
-      dispatch(tournamentContactUpdated(data));
+      tournamentUpdated();
     }
     setEditing(false);
-  }
-
-  const onFailure = (data) => {
   }
 
   const formSubmitted = (event) => {
@@ -84,8 +77,18 @@ const ContactForm = ({tournament, contact, newContact}) => {
       requestConfig: requestConfig,
       authToken: authToken,
       onSuccess: onSuccess,
-      onFailure: onFailure,
     })
+  }
+
+  const editClicked = (event) => {
+    event.preventDefault();
+    setEditing(true);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  if (loading) {
+    return '';
   }
 
   const roles = {
@@ -114,11 +117,6 @@ const ContactForm = ({tournament, contact, newContact}) => {
   }
   if (formData.notify_on_registration) {
     chosenNotifications.push('registrations');
-  }
-
-  const editClicked = (event) => {
-    event.preventDefault();
-    setEditing(true);
   }
 
   const outerClasses = [classes.ContactForm];

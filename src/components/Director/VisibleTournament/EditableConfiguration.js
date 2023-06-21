@@ -1,29 +1,22 @@
 import classes from './VisibleTournament.module.scss';
 import {Placeholder, Card, ListGroup} from "react-bootstrap";
 import ConfigItemForm from "./ConfigItemForm";
+import {useTournament} from "../../../director";
 
-const EditableConfiguration = ({tournament, editableKeys}) => {
-  let content = (
-    <Placeholder animation={'glow'}>
-      <Placeholder xs={2} />{' '}
-      <Placeholder xs={9} />
-      <Placeholder xs={2} />{' '}
-      <Placeholder xs={8} />
-    </Placeholder>
-  )
-  if (tournament && editableKeys) {
-    const items = tournament.config_items.filter(({key}) => editableKeys.includes(key));
+const EditableConfiguration = ({editableKeys}) => {
+  const {loading, tournament} = useTournament();
 
-    content = (
-      <ListGroup>
-        {items.map((item) => <ConfigItemForm item={item} key={item.key} editable={true}/>)}
-      </ListGroup>
-    );
+  if (loading) {
+    return '';
   }
+
+  const items = tournament.config_items.filter(({key}) => editableKeys.includes(key));
 
   return (
     <div className={classes.EditableConfiguration}>
-      {content}
+      <ListGroup>
+        {items.map((item) => <ConfigItemForm item={item} key={item.key} editable={true}/>)}
+      </ListGroup>
     </div>
   );
 }
