@@ -102,7 +102,7 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
   }
 
   const onDeleteSuccess = () => {
-    context.dispatch(additionalQuestionDeleted(question));
+    dispatch(additionalQuestionDeleted(question));
     setEditing(false);
     setFormData(initialFormData);
   }

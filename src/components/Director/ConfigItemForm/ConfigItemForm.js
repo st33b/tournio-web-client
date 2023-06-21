@@ -5,6 +5,7 @@ import {tournamentConfigItemChanged} from "../../../store/actions/directorAction
 
 import classes from './ConfigItemForm.module.scss';
 import {useLoginContext} from "../../../store/LoginContext";
+import {useDirectorContext} from "../../../store/DirectorContext";
 
 const BOOLEAN_CONFIG_ITEMS = [
   'display_capacity',
@@ -16,6 +17,7 @@ const BOOLEAN_CONFIG_ITEMS = [
 
 const ConfigItemForm = ({item, editable}) => {
   const {authToken} = useLoginContext();
+  const {dispatch} = useDirectorContext();
 
   const initialState = {
     prevValue: '',
@@ -75,7 +77,7 @@ const ConfigItemForm = ({item, editable}) => {
 
   const onSuccessfulUpdate = (data) => {
     toggleEdit(null, false);
-    context.dispatch(tournamentConfigItemChanged(data));
+    dispatch(tournamentConfigItemChanged(data));
   }
 
   const onFormSubmit = (event, value = null) => {
