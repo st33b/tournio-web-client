@@ -163,3 +163,19 @@ export const directorApiDownloadRequest = ({uri, authToken, onSuccess = null, on
       handleError(error, onFailure);
     });
 }
+
+////////////////////
+// Experimental hook
+////////////////////
+export const useTournament = (identifier, onTournamentRetrieved=()=>{}) => {
+  const {loading, data: tournament, error, onDataUpdate: tournamentUpdated} = useDirectorApi({
+    uri: identifier ? `/tournaments/${identifier}` : null,
+    onSuccess: onTournamentRetrieved,
+  });
+  return {
+    loading,
+    error,
+    tournament,
+    tournamentUpdated,
+  };
+}

@@ -3,10 +3,9 @@ import {useRouter} from "next/router";
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
 import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
-import {directorApiRequest, useDirectorApi} from "../../../director";
+import {directorApiRequest, useDirectorApi, useTournament} from "../../../director";
 import {useDirectorContext} from '../../../store/DirectorContext';
 import {
-  tournamentDetailsRetrieved,
   tournamentStateChanged
 } from "../../../store/actions/directorActions";
 import {useLoginContext} from "../../../store/LoginContext";
@@ -22,13 +21,7 @@ const Tournament = () => {
   const {authToken} = useLoginContext();
   const [errorMessage, setErrorMessage] = useState();
 
-  //
-  // fetch tournament details
-  const {loading, data: tournament, onDataUpdate} = useDirectorApi({
-    uri: identifier ? `/tournaments/${identifier}` : null,
-    onSuccess: (t) => dispatch(tournamentDetailsRetrieved(t)),
-    onFailure: (err) => setErrorMessage(err.message),
-  });
+  const {loading, tournament, error, tournamentUpdated} = useTournament(identifier);
 
   // -----------------
 
@@ -63,9 +56,8 @@ const Tournament = () => {
   return (
     <ErrorBoundary>
       <div>
-        <ErrorAlert message={errorMessage}
+        <ErrorAlert message={error}
                     className={``}
-                    onClose={() => setErrorMessage(null)}
         />
 
         {tournament && (
