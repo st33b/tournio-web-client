@@ -177,10 +177,20 @@ export const useTournament = (onSuccess = () => {}) => {
     onSuccess: onSuccess,
   });
 
+  const tournamentUpdatedQuietly = (updatedTournament) => {
+    const mutateOptions = {
+      optimisticData: updatedTournament,
+      rollbackOnError: true,
+      populateCache: true,
+    }
+    tournamentUpdated(updatedTournament, mutateOptions);
+  }
+
   return {
     loading,
     error,
     tournament,
     tournamentUpdated,
+    tournamentUpdatedQuietly,
   };
 }

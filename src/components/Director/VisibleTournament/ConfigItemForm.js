@@ -6,10 +6,11 @@ import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 
 import classes from './VisibleTournament.module.scss';
+import {updateObject} from "../../../utils";
 
 const ConfigItemForm = ({item}) => {
   const { authToken } = useLoginContext();
-  const {tournamentUpdated} = useTournament();
+  const {tournament, tournamentUpdatedQuietly} = useTournament();
 
   const initialState = {
     prevValue: '',
@@ -32,6 +33,16 @@ const ConfigItemForm = ({item}) => {
     return '';
   }
 
+  const itemUpdated = (configItem) => {
+    const newConfigItems = [...tournament.config_items];
+    newConfigItems.filter(({id}) => id === configItem.id).forEach(ci => ci.value = configItem.value);
+    const updatedTournament = updateObject(tournament, {
+      config_items: newConfigItems,
+    });
+
+    tournamentUpdatedQuietly(updatedTournament);
+  }
+
   const onInputChanged = (event) => {
     const newFormData = {...formData};
     newFormData.value = event.target.checked;
@@ -50,7 +61,7 @@ const ConfigItemForm = ({item}) => {
       uri: uri,
       requestConfig: requestConfig,
       authToken: authToken,
-      onSuccess: () => tournamentUpdated(),
+      onSuccess: (data) => itemUpdated(data),
       onFailure: (data) => { console.log("Failed to save config item.", data) },
     });
   }

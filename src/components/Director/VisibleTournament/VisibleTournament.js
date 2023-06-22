@@ -35,7 +35,7 @@ const VisibleTournament = ({closeTournament}) => {
 
   const {loading, tournament} = useTournament();
 
-  if (!tournament) {
+  if (loading) {
     return '';
   }
 
