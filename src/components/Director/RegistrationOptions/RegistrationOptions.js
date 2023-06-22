@@ -3,16 +3,13 @@ import {Card} from "react-bootstrap";
 import {Map} from 'immutable';
 
 import {directorApiRequest, useTournament} from "../../../director";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {tournamentDetailsRetrieved} from "../../../store/actions/directorActions";
-import {devConsoleLog} from "../../../utils";
 import {useLoginContext} from "../../../store/LoginContext";
 import ErrorAlert from "../../common/ErrorAlert";
+import {updateObject} from "../../../utils";
 
 const RegistrationOptions = () => {
-  const { dispatch } = useDirectorContext();
   const { authToken } = useLoginContext();
-  const {loading, tournament, tournamentUpdated} = useTournament();
+  const {loading, tournament, tournamentUpdatedQuietly} = useTournament();
 
   const REGISTRATION_TYPES = ['new_team', 'solo', 'join_team', 'partner', 'new_pair'];
   const REGISTRATION_TYPE_LABELS = [
@@ -99,9 +96,16 @@ const RegistrationOptions = () => {
       uri: uri,
       requestConfig: requestConfig,
       authToken: authToken,
-      onSuccess: () => tournamentUpdated(),
+      onSuccess: (data) => submissionCompleted(data),
       onFailure: (data) => setErrorMessage(data.error),
     })
+  }
+
+  const submissionCompleted = (data) => {
+    const updatedTournsment = updateObject(tournament, {
+      registration_options: {...data.registration_options},
+    });
+    tournamentUpdatedQuietly(updatedTournsment);
   }
 
   return (

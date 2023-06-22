@@ -13,9 +13,11 @@ import {
 } from "../../../store/actions/directorActions";
 import ButtonRow from "../../common/ButtonRow";
 import {useLoginContext} from "../../../store/LoginContext";
+import {devConsoleLog, updateObject} from "../../../utils";
+import ErrorAlert from "../../common/ErrorAlert";
 
 const ShiftForm = ({shift}) => {
-  const {loading, tournament, tournamentUpdated} = useTournament();
+  const {loading, tournament, tournamentUpdatedQuietly} = useTournament();
   const { authToken } = useLoginContext();
 
   const initialFormData = Map({
@@ -29,6 +31,7 @@ const ShiftForm = ({shift}) => {
 
   const [formData, setFormData] = useState(initialFormData);
   const [formDisplayed, setFormDisplayed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState();
 
   // Populate form data with the shift prop
   useEffect(() => {
@@ -115,12 +118,23 @@ const ShiftForm = ({shift}) => {
 
   const addShiftSuccess = (data) => {
     setFormDisplayed(false);
-    tournamentUpdated();
+    const updatedTournament = updateObject(tournament, {
+      shifts: tournament.shifts.concat(data),
+    });
+    setFormData(initialFormData);
+    tournamentUpdatedQuietly(updatedTournament);
   }
 
   const toggleEdit = (event) => {
     event.preventDefault();
     setFormDisplayed(!formDisplayed);
+  }
+
+  const shiftDeleteSuccess = () => {
+    const updatedTournament = updateObject(tournament, {
+      shifts: tournament.shifts.filter(({identifier}) => identifier !== shift.identifier),
+    });
+    tournamentUpdatedQuietly(updatedTournament);
   }
 
   const deleteShift = (event) => {
@@ -136,7 +150,7 @@ const ShiftForm = ({shift}) => {
       uri: uri,
       requestConfig: requestConfig,
       authToken: authToken,
-      onSuccess: () => tournamentUpdated(),
+      onSuccess: shiftDeleteSuccess,
       onFailure: (data) => console.log("D'oh!", data),
     });
   }
@@ -161,12 +175,21 @@ const ShiftForm = ({shift}) => {
       requestConfig: requestConfig,
       authToken: authToken,
       onSuccess: updateShiftSuccess,
-      onFailure: (data) => console.log("D'oh!", data),
-    })
+      onFailure: (err) => {
+        setErrorMessage(err.message)
+      },
+    });
   }
 
   const updateShiftSuccess = (data) => {
-    tournamentUpdated();
+    const shifts = [...tournament.shifts];
+    const index = shifts.findIndex(({identifier}) => identifier === shift.identifier);
+    shifts[index] = {...data};
+    const updatedTournament = updateObject(tournament, {
+      shifts: shifts,
+    });
+
+    tournamentUpdatedQuietly(updatedTournament);
     setFormDisplayed(false);
   }
 
@@ -328,6 +351,10 @@ const ShiftForm = ({shift}) => {
                          disableSave={!formData.get('valid')}
                          onDelete={allowDelete ? deleteShift : false} />
             </div>
+            <ErrorAlert message={errorMessage}
+                        className={`mt-3 mb-0`}
+                        onClose={() => setErrorMessage(null)}
+                        />
           </form>
         </Card.Body>
       }

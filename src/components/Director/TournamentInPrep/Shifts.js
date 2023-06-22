@@ -20,15 +20,14 @@ const Shifts = () => {
       <ListGroup variant={'flush'}>
         {tournament.shifts.map((shift, i) => (
             <ListGroup.Item key={i} className={'p-0'}>
-              <ShiftForm tournament={tournament} shift={shift}/>
+              <ShiftForm shift={shift}/>
             </ListGroup.Item>
           ))
         }
         <ListGroup.Item className={'p-0'}>
-          <ShiftForm tournament={tournament}/>
+          <ShiftForm/>
         </ListGroup.Item>
       </ListGroup>
-      {/*{tournament.shifts.length === 0 && <ShiftForm tournament={tournament} />}*/}
     </Card>
   )
 }
