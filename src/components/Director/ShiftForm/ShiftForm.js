@@ -112,7 +112,9 @@ const ShiftForm = ({shift}) => {
       requestConfig: requestConfig,
       authToken: authToken,
       onSuccess: addShiftSuccess,
-      onFailure: (data) => console.log("D'oh!", data),
+      onFailure: (err) => {
+        setErrorMessage(err.message)
+      },
     });
   }
 
@@ -151,7 +153,9 @@ const ShiftForm = ({shift}) => {
       requestConfig: requestConfig,
       authToken: authToken,
       onSuccess: shiftDeleteSuccess,
-      onFailure: (data) => console.log("D'oh!", data),
+      onFailure: (err) => {
+        setErrorMessage(err.message)
+      },
     });
   }
 

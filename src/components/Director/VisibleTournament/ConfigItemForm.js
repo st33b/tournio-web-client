@@ -62,7 +62,9 @@ const ConfigItemForm = ({item}) => {
       requestConfig: requestConfig,
       authToken: authToken,
       onSuccess: (data) => itemUpdated(data),
-      onFailure: (data) => { console.log("Failed to save config item.", data) },
+      onFailure: (err) => {
+        setErrorMessage(err.message)
+      },
     });
   }
 

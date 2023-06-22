@@ -145,7 +145,7 @@ const Page = () => {
         <Col md={8}>
           {success && successMessages[success] && (
             <SuccessAlert message={successMessages[success]}
-                          onClose={() =>router.replace(router.pathname, null, {shallow: true})}/>
+                          onClose={() => router.replace(router.pathname, null, {shallow: true})}/>
           )}
           {error &&
             <ErrorAlert message={error.message} className={'mx-3 mt-3'}/>
