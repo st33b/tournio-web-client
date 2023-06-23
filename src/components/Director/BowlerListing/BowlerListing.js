@@ -78,7 +78,9 @@ const IgboMemberCell = ({
       />
       <Overlay target={target.current}
                rootClose={true}
-               onHide={() => { setShowPopover(false)}}
+               onHide={() => {
+                 setShowPopover(false)
+               }}
                show={showPopover}
                placement={'right'}>
         {(props) => (
@@ -101,7 +103,14 @@ const BowlerListing = ({bowlers, onBowlerUpdate}) => {
       accessor: 'full_name',
       Cell: ({row, cell}) => {
         return (
-          <Link href={`/director/bowlers/${row.original.identifier}`}>
+          <Link href={{
+            pathname: `/director/tournaments/[identifier]/bowlers/[bowlerId]`,
+            query: {
+              identifier: row.original.tournament.identifier,
+              bowlerId: row.original.identifier,
+            }
+          }
+          }>
             {cell.value}
           </Link>
         )
@@ -117,11 +126,17 @@ const BowlerListing = ({bowlers, onBowlerUpdate}) => {
       accessor: 'team_name',
       Cell: ({row, value}) => {
         return (!value) ? 'n/a' : (
-          <Link
-            href={`/director/teams/${row.original.team_identifier}`}>
+          <Link href={{
+            pathname: '/director/tournaments/[identifier]/teams/[teamId]',
+            query: {
+              identifier: row.original.tournament.identifier,
+              teamId: row.original.team_identifier,
+            }
+          }}>
+            {/*href={`/director/tournaments/${row.original.tournament.identifier}/teams/${row.original.team_identifier}`}>*/}
             {value}
           </Link>
-          )
+        )
       },
       disableSortBy: false,
       filter: equals,

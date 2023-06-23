@@ -26,7 +26,6 @@ const TeamListing = ({teams, shiftCount = 1}) => {
               teamId: row.original.identifier,
             }
           }}>
-          {/*<Link href={`/director/tournaments/${row.original.tournament.identifier}/teams/${row.original.identifier}`}>*/}
             {value}
           </Link>
         )

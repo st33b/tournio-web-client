@@ -84,7 +84,15 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
       Header: 'Name',
       accessor: 'name',
       Cell: ({row, value}) => (
-        <Link href={`/director/bowlers/${row.original.identifier}`}>
+        <Link href={{
+          pathname: '/director/tournaments/[identifier]/bowlers/[bowlerId]',
+          query: {
+            identifier: row.original.tournament.identifier,
+            bowlerId: row.original.identifier,
+          }
+        }}
+          // href={`/director/bowlers/${row.original.identifier}`}
+        >
           {value}
         </Link>
       )
