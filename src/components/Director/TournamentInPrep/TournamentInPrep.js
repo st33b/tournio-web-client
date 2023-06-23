@@ -28,8 +28,8 @@ const TournamentInPrep = ({tournament, stateChangeInitiated, requestStripeStatus
           <div className={'col-12 col-md-6 col-lg-4'}>
             <Basics tournament={tournament}/>
             <ImageUpload/>
-            <Contacts tournament={tournament}/>
-            <Users users={tournament.users}/>
+            <Contacts/>
+            <Users/>
           </div>
 
           <div className={'col-12 col-md-6 col-lg-4'}>
