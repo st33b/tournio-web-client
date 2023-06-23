@@ -33,8 +33,8 @@ const TournamentInPrep = ({tournament, stateChangeInitiated, requestStripeStatus
           </div>
 
           <div className={'col-12 col-md-6 col-lg-4'}>
-            <StatusAndCounts tournament={tournament}/>
-            <StateChangeButton tournament={tournament} stateChangeInitiated={stateChangeInitiated} />
+            <StatusAndCounts/>
+            <StateChangeButton stateChangeInitiated={stateChangeInitiated} />
             <AdditionalQuestions tournament={tournament}/>
             <Shifts tournament={tournament}/>
           </div>

@@ -3,10 +3,14 @@ import Button from 'react-bootstrap/Button';
 import classes from './TournamentInPrep.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {useLoginContext} from "../../../store/LoginContext";
+import {useTournament} from "../../../director";
 
-const StateChangeButton = ({tournament, stateChangeInitiated}) => {
-  const {user} = useLoginContext();
-  if (!tournament || !user) {
+const StateChangeButton = ({stateChangeInitiated}) => {
+  const {ready, user} = useLoginContext();
+
+  const {loading, tournament} = useTournament();
+
+  if (loading || !tournament || !ready || !user) {
     return '';
   }
 
