@@ -10,6 +10,7 @@ import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 import SuccessAlert from "../../common/SuccessAlert";
 import ErrorAlert from "../../common/ErrorAlert";
+import {updateObject} from "../../../utils";
 
 const ImageUpload = () => {
   const {authToken} = useLoginContext();
@@ -22,7 +23,7 @@ const ImageUpload = () => {
   const [success, setSuccess] = useState();
   const [error, setError] = useState();
 
-  const {loading, tournament, tournamentUpdated} = useTournament();
+  const {loading, tournament, tournamentUpdatedQuietly} = useTournament();
 
   const whereTheFileIsChanged = (event) => {
     const newValue = {...fileInput};
@@ -31,12 +32,16 @@ const ImageUpload = () => {
   }
 
   const onSuccess = (data) => {
-    const imageUrl = data.image_url;
     setSuccess('File successfully uploaded.');
     setFormDisplayed(false);
     setInProgress(false);
 
-    tournamentUpdated();
+    const imageUrl = data.image_url;
+    const modifiedTournament = updateObject(tournament, {
+      image_url: imageUrl,
+    });
+
+    tournamentUpdatedQuietly(modifiedTournament);
   }
 
   const uploadTheFile = (e) => {
@@ -61,7 +66,7 @@ const ImageUpload = () => {
   }
 
   if (loading || !tournament) {
-    return 'PLACEHOLDER';
+    return '';
   }
 
   return (

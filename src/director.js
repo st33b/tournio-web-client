@@ -3,7 +3,6 @@ import {useRouter} from "next/router";
 import useSWR from "swr";
 import {apiHost, devConsoleLog, useLocalStorage} from "./utils";
 import {useLoginContext} from "./store/LoginContext";
-import {useDirectorContext} from "./store/DirectorContext";
 
 const handleSuccess = (response, onSuccess, onFailure) => {
   if (response.status >= 200 && response.status < 300) {
