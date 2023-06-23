@@ -5,9 +5,10 @@ import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 
 import classes from './ContactForm.module.scss';
+import {updateObject} from "../../../utils";
 
 const ContactForm = ({contact, newContact}) => {
-  const {loading, tournament, tournamentUpdated} = useTournament();
+  const {loading, tournament, tournamentUpdatedQuietly} = useTournament();
   const { authToken } = useLoginContext();
 
   const initialState = {
@@ -49,10 +50,18 @@ const ContactForm = ({contact, newContact}) => {
   }
 
   const onSuccess = (data) => {
+    const modifiedTournament = updateObject(tournament, {
+      contacts: tournament.contacts.concat(data),
+    });
     if (newContact) {
       setFormData(initialState);
-      tournamentUpdated();
+      modifiedTournament.contacts = tournament.contacts.concat(data);
+    } else {
+      const index = modifiedTournament.contacts.findIndex(({identifier}) => identifier === data.identifier);
+      modifiedTournament.contacts[index] = data;
     }
+
+    tournamentUpdatedQuietly(modifiedTournament);
     setEditing(false);
   }
 
