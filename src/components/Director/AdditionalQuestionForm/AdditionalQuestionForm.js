@@ -2,20 +2,16 @@ import {useEffect, useState} from "react";
 import Card from "react-bootstrap/Card";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
-import {
-  additionalQuestionAdded,
-  additionalQuestionUpdated,
-  additionalQuestionDeleted
-} from "../../../store/actions/directorActions";
 import ButtonRow from "../../common/ButtonRow";
+import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
+import {updateObject} from "../../../utils";
+
 import classes from './AdditionalQuestionForm.module.scss';
 
-const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
+const AdditionalQuestionForm = ({question, newQuestion}) => {
   const {authToken} = useLoginContext();
-  const {dispatch} = useDirectorContext();
+  const {tournament, tournamentUpdatedQuietly} = useTournament();
 
   const initialFormData = {
     extended_form_field_id: '',
@@ -37,9 +33,6 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
     }
   }, [question, newQuestion]);
 
-  const availableQuestions = tournament.available_questions;
-  const roomForMore = availableQuestions.length > 0;
-
   const inputChanged = (event) => {
     const inputName = event.target.name;
     const newValue = inputName === 'required' ? event.target.checked : event.target.value;
@@ -52,11 +45,29 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
   }
 
   const onSuccess = (data) => {
+    let modifiedTournament;
     if (newQuestion) {
-      dispatch(additionalQuestionAdded(data));
+      modifiedTournament = updateObject(tournament, {
+        additional_questions: tournament.additional_questions.concat(data),
+        available_questions: tournament.available_questions.filter(
+          ({id}) => id !== data.extended_form_field_id
+        ),
+      });
     } else {
-      dispatch(additionalQuestionUpdated(data));
+      const qId = data.identifier;
+      const index = tournament.additional_questions.findIndex(c => c.identifier === qId);
+      const updatedQuestion = {
+        ...tournament.additional_questions[index],
+        ...data,
+      }
+      const newQuestions = [...tournament.additional_questions];
+      newQuestions[index] = updatedQuestion;
+      modifiedTournament = updateObject(tournament, {
+        additional_questions: newQuestions,
+      });
     }
+    setFormData(initialFormData);
+    tournamentUpdatedQuietly(modifiedTournament);
     setEditing(false);
   }
 
@@ -102,7 +113,22 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
   }
 
   const onDeleteSuccess = () => {
-    dispatch(additionalQuestionDeleted(question));
+    const qId = question.identifier;
+    const newQuestionSet = tournament.additional_questions.filter(i => {
+      return i.identifier !== qId;
+    })
+    const restoredAvailableQuestion = {
+      id: question.extended_form_field_id,
+      label: question.label,
+      name: question.name,
+      validation_rules: question.validation,
+    }
+    const modifiedTournament = updateObject(tournament, {
+      additional_questions: newQuestionSet,
+      available_questions: tournament.available_questions.concat(restoredAvailableQuestion),
+    });
+
+    tournamentUpdatedQuietly(modifiedTournament);
     setEditing(false);
     setFormData(initialFormData);
   }
@@ -121,6 +147,13 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
       onFailure: (data) => console.log("D'oh!", data),
     });
   }
+
+  if (!tournament) {
+    return '';
+  }
+
+  const availableQuestions = tournament.available_questions;
+  const roomForMore = availableQuestions.length > 0;
 
   const outerClasses = [classes.AdditionalQuestionForm];
   if (editing) {
@@ -193,7 +226,7 @@ const AdditionalQuestionForm = ({tournament, question, newQuestion}) => {
 
               <ButtonRow onCancel={() => setEditing(false)}
                          disableSave={!formData.valid}
-                         onDelete={question ? deleteClicked : false} />
+                         onDelete={question ? deleteClicked : false}/>
             </form>
           </Card.Body>
         }
