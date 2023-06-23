@@ -6,7 +6,7 @@ import {Overlay, Popover} from "react-bootstrap";
 
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
 import BowlerFilterForm from "../BowlerFilterForm/BowlerFilterForm";
-import {doesNotEqual, isOrIsNot, equals} from "../../../utils";
+import {doesNotEqual, isOrIsNot, equals, devConsoleLog} from "../../../utils";
 import {directorApiRequest} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 
@@ -22,9 +22,8 @@ const IgboMemberCell = ({
   const [showPopover, setShowPopover] = useState(false);
   const target = useRef(null);
   const {authToken} = useLoginContext();
-  const router = useRouter();
 
-  const onChangeSuccess = (checked, data) => {
+  const onChangeSuccess = (checked) => {
     updateTheData(index, id, checked);
 
     // trigger the popover
@@ -54,7 +53,7 @@ const IgboMemberCell = ({
       uri: uri,
       requestConfig: requestConfig,
       authToken: authToken,
-      onSuccess: (data) => onChangeSuccess(newStatus, data),
+      onSuccess: () => onChangeSuccess(newStatus),
       onFailure: onChangeFailure,
     });
   }
@@ -94,7 +93,7 @@ const IgboMemberCell = ({
   );
 }
 
-const BowlerListing = ({bowlers}) => {
+const BowlerListing = ({bowlers, onBowlerUpdate}) => {
   const columns = useMemo(() => [
     {
       id: 'name',
@@ -178,7 +177,9 @@ const BowlerListing = ({bowlers}) => {
     const newRow = {...oldRow, [columnId]: isChecked};
     const newData = [...data];
     newData[rowIndex] = newRow;
-    setData(newData);
+    data = newData;
+
+    onBowlerUpdate(newRow);
   }
 
   // tell react-table which things we want to use (sorting, filtering)

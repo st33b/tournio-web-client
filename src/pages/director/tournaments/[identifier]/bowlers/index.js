@@ -10,15 +10,23 @@ import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingM
 import ErrorBoundary from "../../../../../components/common/ErrorBoundary";
 import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
+import {devConsoleLog} from "../../../../../utils";
 
 const BowlersIndex = () => {
   const router = useRouter();
   const {identifier, deleteSuccess} = router.query;
 
   const {loading: tournamentLoading, tournament} = useTournament();
-  const {loading: bowlersLoading, data: bowlers, error} = useDirectorApi({
+  const {loading: bowlersLoading, data: bowlers, error, onDataUpdate: onBowlerUpdate} = useDirectorApi({
     uri: identifier ? `/tournaments/${identifier}/bowlers` : null,
   });
+
+  const bowlerUpdated = (bowler) => {
+    const modifiedBowlers = [...bowlers];
+    const index = bowlers.findIndex(({identifier}) => identifier === bowler.identifier);
+    modifiedBowlers[index] = {...bowler}
+    onBowlerUpdate(modifiedBowlers);
+  }
 
   if (tournamentLoading || bowlersLoading) {
     return <LoadingMessage message={'Retrieving bowler data...'} />
@@ -45,7 +53,7 @@ const BowlersIndex = () => {
           {error && (
             <ErrorAlert message={error.message} className={'mx-3 mt-3'}/>
           )}
-          <BowlerListing bowlers={bowlers} />
+          <BowlerListing bowlers={bowlers} onBowlerUpdate={bowlerUpdated} />
         </Col>
       </Row>
     </ErrorBoundary>
