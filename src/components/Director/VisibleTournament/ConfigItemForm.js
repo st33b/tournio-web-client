@@ -9,7 +9,7 @@ import classes from './VisibleTournament.module.scss';
 import {updateObject} from "../../../utils";
 
 const ConfigItemForm = ({item}) => {
-  const { authToken } = useLoginContext();
+  const {authToken} = useLoginContext();
   const {tournament, tournamentUpdatedQuietly} = useTournament();
 
   const initialState = {
@@ -31,16 +31,6 @@ const ConfigItemForm = ({item}) => {
 
   if (!item) {
     return '';
-  }
-
-  const itemUpdated = (configItem) => {
-    const newConfigItems = [...tournament.config_items];
-    newConfigItems.filter(({id}) => id === configItem.id).forEach(ci => ci.value = configItem.value);
-    const updatedTournament = updateObject(tournament, {
-      config_items: newConfigItems,
-    });
-
-    tournamentUpdatedQuietly(updatedTournament);
   }
 
   const onInputChanged = (event) => {
@@ -68,6 +58,16 @@ const ConfigItemForm = ({item}) => {
     });
   }
 
+  const itemUpdated = (configItem) => {
+    const newConfigItems = [...tournament.config_items];
+    newConfigItems.filter(({id}) => id === configItem.id).forEach(ci => ci.value = configItem.value);
+    const updatedTournament = updateObject(tournament, {
+      config_items: newConfigItems,
+    });
+
+    tournamentUpdatedQuietly(updatedTournament);
+  }
+
   return (
     <ListGroupItem className={`${classes.ConfigItemForm}`} key={item.key}>
       <ErrorBoundary>
@@ -78,7 +78,7 @@ const ConfigItemForm = ({item}) => {
                  name={'config_item'}
                  id={item.key}
                  checked={formData.value}
-                 onChange={onInputChanged} />
+                 onChange={onInputChanged}/>
           <label className={'form-check-label'}
                  htmlFor={item.key}>
             {item.label}

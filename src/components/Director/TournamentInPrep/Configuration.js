@@ -3,8 +3,11 @@ import Card from 'react-bootstrap/Card';
 import classes from './TournamentInPrep.module.scss';
 import ConfigItemForm from "../ConfigItemForm/ConfigItemForm";
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {useTournament} from "../../../director";
 
-const Configuration = ({tournament}) => {
+const Configuration = () => {
+  const {tournament} = useTournament();
+
   if (!tournament) {
     return '';
   }
