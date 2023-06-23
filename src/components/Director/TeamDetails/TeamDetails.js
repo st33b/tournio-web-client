@@ -8,9 +8,10 @@ import PartnerSelectionRow from "./PartnerSelectionRow";
 
 import classes from './TeamDetails.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {useTournament} from "../../../director";
 
 const TeamDetails = ({team, teamUpdateSubmitted}) => {
-  const {state} = useDirectorContext();
+  const {loading, tournament} = useTournament();
 
   let initialFormData = {
     valid: true,
@@ -242,11 +243,11 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
 
   //////////////////////////////////////////////////////////////////
 
-  if (!state.tournament || !team) {
+  if (loading || !tournament || !team) {
     return '';
   }
 
-  const maxTeamSize = parseInt(state.tournament.team_size);
+  const maxTeamSize = parseInt(tournament.team_size);
 
   return (
     <ErrorBoundary>

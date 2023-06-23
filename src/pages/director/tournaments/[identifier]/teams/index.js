@@ -16,7 +16,7 @@ import NewTeamForm from "../../../../../components/Director/NewTeamForm/NewTeamF
 const TeamsIndex = () => {
   const router = useRouter();
   const {authToken} = useLoginContext();
-  const {identifier, deleteSuccess} = router.query;
+  const {identifier, success} = router.query;
   const [successMessage, setSuccessMessage] = useState();
 
   const {loading: tournamentLoading, tournament, tournamentUpdatedQuietly} = useTournament();
@@ -76,9 +76,9 @@ const TeamsIndex = () => {
       <Breadcrumbs ladder={ladder} activeText={'Teams'}/>
       <Row>
         <Col xs={{span: 12, order: 2}} md={{span: 8, order: 1}}>
-          {deleteSuccess && (
+          {success === 'deleted' && (
             <SuccessAlert message={'The team has been removed.'}
-                          onClose={() => router.replace(router.pathname, null, {shallow: true})}/>
+                          onClose={() => router.replace(`/director/tournaments/${identifier}/teams`, null, {shallow: true})}/>
           )}
           <SuccessAlert message={successMessage}
                         className={``}

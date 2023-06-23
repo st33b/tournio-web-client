@@ -19,7 +19,14 @@ const TeamListing = ({teams, shiftCount = 1}) => {
         Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
         accessor: 'name',
         Cell: ({row, value}) => (
-          <Link href={`/director/teams/${row.original.identifier}`}>
+          <Link href={{
+            pathname: '/director/tournaments/[identifier]/teams/[teamId]',
+            query: {
+              identifier: row.original.tournament.identifier,
+              teamId: row.original.identifier,
+            }
+          }}>
+          {/*<Link href={`/director/tournaments/${row.original.tournament.identifier}/teams/${row.original.identifier}`}>*/}
             {value}
           </Link>
         )
