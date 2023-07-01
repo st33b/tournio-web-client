@@ -11,7 +11,7 @@ import Shifts from "./Shifts";
 import StripeStatus from "./StripeStatus";
 import ImageUpload from "./ImageUpload";
 import Users from '../Tournament/Users';
-import RegistrationOptions from "../RegistrationOptions/RegistrationOptions";
+import RegistrationOptions from "../Tournament/RegistrationOptions";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './TournamentInPrep.module.scss';
@@ -41,8 +41,8 @@ const TournamentInPrep = ({tournament, stateChangeInitiated, requestStripeStatus
 
           <div className={'col-12 col-md-6 col-lg-4'}>
             <Configuration/>
-            <RegistrationOptions tournament={tournament}/>
-            <PurchasableItems tournament={tournament}/>
+            <RegistrationOptions/>
+            <PurchasableItems/>
             <StripeStatus tournament={tournament} needStatus={requestStripeStatus} />
             <DeleteTournament tournament={tournament}/>
           </div>

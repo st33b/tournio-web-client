@@ -6,16 +6,16 @@ import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
+import {directorApiRequest, useTournament} from "../../../director";
 import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 
 import classes from './LedgerForm.module.scss';
 import ButtonRow from "../../common/ButtonRow";
 import {useLoginContext} from "../../../store/LoginContext";
 
-const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
+const LedgerForm = ({availableTypes=[], onCancel, onComplete}) => {
   const {authToken} = useLoginContext();
-  const {dispatch} = useDirectorContext();
+  const {tournament} = useTournament();
 
   const initialState = {
     category: 'ledger',
@@ -112,9 +112,9 @@ const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
   }
 
   const submissionSuccess = (data) => {
-    dispatch(purchasableItemsAdded(data));
+    // dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
-    onComplete(`${data[0].name} created.`);
+    onComplete(data);
   }
 
   const formSubmitted = (event) => {

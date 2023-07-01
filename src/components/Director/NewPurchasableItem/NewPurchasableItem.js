@@ -1,4 +1,5 @@
-import {useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
+import {capitalize} from 'voca';
 
 import ErrorBoundary from "../../common/ErrorBoundary";
 import LedgerForm from "./LedgerForm";
@@ -13,8 +14,13 @@ import ProductForm from "./ProductForm";
 import ApparelItemForm from "../ApparelItemForm/ApparelItemForm";
 import BanquetForm from "./BanquetForm";
 import RaffleForm from "./RaffleForm";
+import {useTournament} from "../../../director";
+import SuccessAlert from "../../common/SuccessAlert";
+import {devConsoleLog, updateObject} from "../../../utils";
 
-const NewPurchasableItem = ({tournament}) => {
+const NewPurchasableItem = () => {
+  const {tournament, tournamentUpdatedQuietly} = useTournament();
+
   const [formDisplayed, setFormDisplayed] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [availableLedgerTypes, setAvailableLedgerTypes] = useState([]);
@@ -42,18 +48,9 @@ const NewPurchasableItem = ({tournament}) => {
     setAvailableLedgerTypes(typesAvailable);
   }, [tournament]);
 
-  if (!tournament) {
-    return '';
-  }
-
-  const allowCreate = tournament.state !== 'active';
-
   const addClicked = (event, formType) => {
     event.preventDefault();
-    // Just in case
-    if (formType === 'ledger' && availableLedgerTypes.length === 0) {
-      return;
-    }
+
     setFormDisplayed(formType);
   }
 
@@ -61,29 +58,85 @@ const NewPurchasableItem = ({tournament}) => {
     setFormDisplayed(null);
   }
 
-  const itemSaved = (message) => {
-    setSuccessMessage(message);
+  const itemSaved = (items) => {
+    setSuccessMessage('Created.');
     setFormDisplayed(null);
+
+    const updatedItems = tournament.purchasable_items.concat(items);
+    const modifiedTournament = updateObject(tournament, {
+        purchasable_items: updatedItems,
+    });
+    tournamentUpdatedQuietly(modifiedTournament);
   }
+
+  if (!tournament) {
+    return '';
+  }
+
+  const ITEM_TYPE_DETAILS = [
+    {
+      key: 'ledger',
+      label: 'Fee/Discount',
+      title: '',
+    },
+    {
+      key: 'event',
+      label: 'Core Event',
+      title: '',
+    },
+    {
+      key: 'division',
+      label: 'Division Extra',
+      title: `Something like Scratch Masters, with different prices per division`,
+    },
+    {
+      key: 'single_use',
+      label: 'Bowling Extra (one-time)',
+      title: '',
+    },
+    {
+      key: 'multi_use',
+      label: 'Bowling Extra (multi)',
+      title: '',
+    },
+    {
+      key: 'raffle',
+      label: 'Raffle',
+      title: '',
+    },
+    {
+      key: 'apparel',
+      label: 'Apparel',
+      title: '',
+      form: ApparelItemForm,
+    },
+    {
+      key: 'banquet',
+      label: 'Banquet',
+      title: '',
+    },
+    {
+      key: 'sanction',
+      label: 'Membership',
+      title: '',
+    },
+    {
+      key: 'product',
+      label: 'Other',
+      title: '',
+    },
+  ]
+
+  const allowCreate = tournament.state !== 'active';
 
   const outerClass = formDisplayed ? classes.FormDisplayed : '';
   return (
     <ErrorBoundary>
       <div className={`${classes.NewPurchasableItem} ${outerClass}`}>
-        {successMessage && (
-          <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center m-3'}
-               role={'alert'}>
-            <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
-            <div className={'me-auto'}>
-              {successMessage}
-              <button type="button"
-                      className={"btn-close"}
-                      data-bs-dismiss="alert"
-                      onClick={() => setSuccessMessage(null)}
-                      aria-label="Close"/>
-            </div>
-          </div>
-        )}
+        <SuccessAlert message={successMessage}
+                      className={`m-3`}
+                      onClose={() => setSuccessMessage(null)}
+        />
 
         {!formDisplayed && allowCreate &&
           <div>
@@ -91,85 +144,40 @@ const NewPurchasableItem = ({tournament}) => {
               Create a new thing:
             </h6>
             <div className={`d-flex flex-wrap`}>
-              {availableLedgerTypes.length > 0 &&
-                <div className={`${classes.NewItemLink} flex-fill`}>
-                  <a href={'#'}
-                     className={``}
-                     onClick={(event) => addClicked(event, 'ledger')}>
-                    Fee/Discount
-                  </a>
-                </div>
-              }
-              <div className={`${classes.NewItemLink} flex-fill`}>
-                <a href={'#'}
-                   className={``}
-                   onClick={(event) => addClicked(event, 'event')}>
-                  Core Event
-                </a>
-              </div>
-              <div className={`${classes.NewItemLink} flex-fill`}>
-                <a href={'#'}
-                   className={``}
-                   title={`Something like Scratch Masters`}
-                   onClick={(event) => addClicked(event, 'division')}>
-                  Division Extra
-                </a>
-              </div>
-              <div className={`${classes.NewItemLink} flex-fill`}>
-                <a href={'#'}
-                   className={``}
-                   onClick={(event) => addClicked(event, 'single_use')}>
-                  Bowling Extra (one-time)
-                </a>
-              </div>
-              <div className={`${classes.NewItemLink} flex-fill`}>
-                <a href={'#'}
-                   className={``}
-                   onClick={(event) => addClicked(event, 'multi_use')}>
-                  Bowling Extra (multi)
-                </a>
-              </div>
-              <div className={`${classes.NewItemLink} flex-fill`}>
-                <a href={'#'}
-                   className={``}
-                   onClick={(event) => addClicked(event, 'raffle')}>
-                  Raffle
-                </a>
-              </div>
-              <div className={`${classes.NewItemLink} flex-fill`}>
-                <a href={'#'}
-                   className={``}
-                   onClick={(event) => addClicked(event, 'apparel')}>
-                  Apparel
-                </a>
-              </div>
-              <div className={`${classes.NewItemLink} flex-fill`}>
-                <a href={'#'}
-                   className={``}
-                   onClick={(event) => addClicked(event, 'banquet')}>
-                  Banquet
-                </a>
-              </div>
-              <div className={`${classes.NewItemLink} flex-fill`}>
-                <a href={'#'}
-                   className={``}
-                   onClick={(event) => addClicked(event, 'sanction')}>
-                  Membership
-                </a>
-              </div>
-              <div className={`${classes.NewItemLink} flex-fill`}>
-                <a href={'#'}
-                   className={``}
-                   onClick={(event) => addClicked(event, 'product')}>
-                  Other
-                </a>
-              </div>
+              {ITEM_TYPE_DETAILS.map(pair => {
+                if (pair.key === 'ledger' && availableLedgerTypes.length === 0) {
+                  return '';
+                }
+                return (
+                  <div className={`${classes.NewItemLink} flex-fill`} key={`${pair.key}_link`}>
+                    <a href={'#'}
+                       className={``}
+                       title={pair.title}
+                       onClick={(e) => addClicked(e, pair.key)}>
+                      {pair.label}
+                    </a>
+                  </div>
+                );
+              })}
             </div>
           </div>
         }
 
+        {ITEM_TYPE_DETAILS.map(details => {
+          if (formDisplayed !== details.key) {
+            return '';
+          }
+          const formPrefix = details.form ? details.form : capitalize(details.key)
+          const componentName = `${formPrefix}Form`;
+          return React.createElement(componentName, {
+            onCancel: cancelClicked,
+            onComplete: itemSaved,
+            tournament: tournament,
+            key: details.key,
+          });
+        })}
         {formDisplayed === 'ledger' &&
-          <LedgerForm tournament={tournament} availableTypes={availableLedgerTypes} onCancel={cancelClicked}
+          <LedgerForm availableTypes={availableLedgerTypes} onCancel={cancelClicked}
                       onComplete={itemSaved}/>}
         {formDisplayed === 'event' &&
           <EventForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
