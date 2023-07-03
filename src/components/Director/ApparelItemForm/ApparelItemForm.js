@@ -1,22 +1,19 @@
 import {useEffect, useState} from "react";
 
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
+import {directorApiRequest, useTournament} from "../../../director";
+import {useLoginContext} from "../../../store/LoginContext";
 import ErrorBoundary from "../../common/ErrorBoundary";
 import Item from "../../Commerce/AvailableItems/Item/Item";
-import {purchasableItemsAdded} from "../../../store/actions/directorActions";
+import AvailableSizes from "./AvailableSizes";
+import ButtonRow from "../../common/ButtonRow";
 import {apparelSizes} from "../../../utils";
 
 import classes from './ApparelItemForm.module.scss';
 import productClasses from '../NewPurchasableItem/ProductForm.module.scss';
 
-import AvailableSizes from "./AvailableSizes";
-import ButtonRow from "../../common/ButtonRow";
-import {useLoginContext} from "../../../store/LoginContext";
-
-const ApparelItemForm = ({tournament, onCancel, onComplete, item}) => {
+const ApparelItemForm = ({onCancel, onComplete, item}) => {
   const {authToken} = useLoginContext();
-  const {dispatch} = useDirectorContext();
+  const {tournament} = useTournament();
 
   const initialState = {
     fields: {
@@ -170,9 +167,8 @@ const ApparelItemForm = ({tournament, onCancel, onComplete, item}) => {
   }
 
   const submissionSuccess = (data) => {
-    dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
-    onComplete(`Item ${data[0].name} created.`);
+    onComplete(data);
   }
 
   const formSubmitted = (event) => {
@@ -343,30 +339,6 @@ const ApparelItemForm = ({tournament, onCancel, onComplete, item}) => {
           </div>
 
           <ButtonRow onCancel={onCancel} disableSave={!formData.valid} />
-          {/* Cancel & Save buttons */}
-          {/*<div className={'row'}>*/}
-          {/*  <div className={'d-flex justify-content-end pe-0'}>*/}
-          {/*    <button type={'button'}*/}
-          {/*            title={'Cancel'}*/}
-          {/*            onClick={onCancel}*/}
-          {/*            className={'btn btn-outline-secondary me-2'}>*/}
-          {/*      <i className={'bi-x-lg'} aria-hidden={true}/>*/}
-          {/*      <span className={'visually-hidden'}>*/}
-          {/*        Cancel*/}
-          {/*      </span>*/}
-          {/*    </button>*/}
-          {/*    <button type={'submit'}*/}
-          {/*            title={'Save'}*/}
-          {/*            disabled={!formData.valid}*/}
-          {/*            className={'btn btn-outline-success'}>*/}
-          {/*      <i className={'bi-check-lg'} aria-hidden={true}/>*/}
-          {/*      <span className={'visually-hidden'}>*/}
-          {/*        Save*/}
-          {/*      </span>*/}
-          {/*    </button>*/}
-          {/*  </div>*/}
-          {/*</div>*/}
-
         </form>
       </div>
     </ErrorBoundary>

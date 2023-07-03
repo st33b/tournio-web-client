@@ -1,17 +1,15 @@
 import {useState} from "react";
+import ButtonRow from "../../common/ButtonRow";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
-import {purchasableItemsAdded} from "../../../store/actions/directorActions";
+import {useLoginContext} from "../../../store/LoginContext";
+import {directorApiRequest, useTournament} from "../../../director";
 
 import classes from './EventForm.module.scss';
-import ButtonRow from "../../common/ButtonRow";
-import {useLoginContext} from "../../../store/LoginContext";
 
-const EventForm = ({tournament, onCancel, onComplete}) => {
+const EventForm = ({onCancel, onComplete}) => {
   const {authToken} = useLoginContext();
-  const {dispatch} = useDirectorContext();
+  const {tournament} = useTournament();
 
   const initialState = {
     category: 'bowling',
@@ -51,9 +49,8 @@ const EventForm = ({tournament, onCancel, onComplete}) => {
   }
 
   const submissionSuccess = (data) => {
-    dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
-    onComplete(`${data[0].name} created.`);
+    onComplete(data);
   }
 
   const formSubmitted = (event) => {

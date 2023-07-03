@@ -1,17 +1,15 @@
 import {useState} from "react";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
-import {purchasableItemsAdded} from "../../../store/actions/directorActions";
-
-import classes from './DivisionForm.module.scss';
 import ButtonRow from "../../common/ButtonRow";
+import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 
-const DivisionForm = ({tournament, onCancel, onComplete}) => {
+import classes from './DivisionForm.module.scss';
+
+const DivisionForm = ({onCancel, onComplete}) => {
   const {authToken} = useLoginContext();
-  const {dispatch} = useDirectorContext();
+  const {tournament} = useTournament();
 
   const initialState = {
     name: '',
@@ -76,9 +74,8 @@ const DivisionForm = ({tournament, onCancel, onComplete}) => {
   }
 
   const submissionSuccess = (data) => {
-    dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
-    onComplete(`Division Items created.`);
+    onComplete(data);
   }
 
   const purchasableItemsFromFormData = (data) => {

@@ -5,13 +5,11 @@ import TextField from "@mui/material/TextField";
 import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {useDirectorContext} from "../../../store/DirectorContext";
+import ButtonRow from "../../common/ButtonRow";
 import {directorApiRequest, useTournament} from "../../../director";
-import {purchasableItemsAdded} from "../../../store/actions/directorActions";
+import {useLoginContext} from "../../../store/LoginContext";
 
 import classes from './LedgerForm.module.scss';
-import ButtonRow from "../../common/ButtonRow";
-import {useLoginContext} from "../../../store/LoginContext";
 
 const LedgerForm = ({availableTypes=[], onCancel, onComplete}) => {
   const {authToken} = useLoginContext();
@@ -112,7 +110,6 @@ const LedgerForm = ({availableTypes=[], onCancel, onComplete}) => {
   }
 
   const submissionSuccess = (data) => {
-    // dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
     onComplete(data);
   }

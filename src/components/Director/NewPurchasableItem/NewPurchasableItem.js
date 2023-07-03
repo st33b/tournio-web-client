@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from "react";
-import {capitalize} from 'voca';
 
 import ErrorBoundary from "../../common/ErrorBoundary";
 import LedgerForm from "./LedgerForm";
@@ -16,7 +15,7 @@ import BanquetForm from "./BanquetForm";
 import RaffleForm from "./RaffleForm";
 import {useTournament} from "../../../director";
 import SuccessAlert from "../../common/SuccessAlert";
-import {devConsoleLog, updateObject} from "../../../utils";
+import {updateObject} from "../../../utils";
 
 const NewPurchasableItem = () => {
   const {tournament, tournamentUpdatedQuietly} = useTournament();
@@ -177,26 +176,46 @@ const NewPurchasableItem = () => {
           });
         })}
         {formDisplayed === 'ledger' &&
-          <LedgerForm availableTypes={availableLedgerTypes} onCancel={cancelClicked}
-                      onComplete={itemSaved}/>}
+          <LedgerForm availableTypes={availableLedgerTypes}
+                      onCancel={cancelClicked}
+                      onComplete={itemSaved}
+          />}
         {formDisplayed === 'event' &&
-          <EventForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+          <EventForm onCancel={cancelClicked}
+                     onComplete={itemSaved}
+          />}
         {formDisplayed === 'division' &&
-          <DivisionForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+          <DivisionForm onCancel={cancelClicked}
+                        onComplete={itemSaved}
+          />}
         {formDisplayed === 'single_use' &&
-          <SingleUseForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+          <SingleUseForm onCancel={cancelClicked}
+                         onComplete={itemSaved}
+          />}
         {formDisplayed === 'multi_use' &&
-          <MultiUseForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+          <MultiUseForm onCancel={cancelClicked}
+                        onComplete={itemSaved}
+          />}
         {formDisplayed === 'sanction' &&
-          <SanctionForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+          <SanctionForm onCancel={cancelClicked}
+                        onComplete={itemSaved}
+          />}
         {formDisplayed === 'product' &&
-          <ProductForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+          <ProductForm onCancel={cancelClicked}
+                       onComplete={itemSaved}
+          />}
         {formDisplayed === 'apparel' &&
-          <ApparelItemForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+          <ApparelItemForm onCancel={cancelClicked}
+                           onComplete={itemSaved}
+          />}
         {formDisplayed === 'banquet' &&
-          <BanquetForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+          <BanquetForm onCancel={cancelClicked}
+                       onComplete={itemSaved}
+          />}
         {formDisplayed === 'raffle' &&
-          <RaffleForm tournament={tournament} onCancel={cancelClicked} onComplete={itemSaved}/>}
+          <RaffleForm onCancel={cancelClicked}
+                      onComplete={itemSaved}
+          />}
 
       </div>
     </ErrorBoundary>
