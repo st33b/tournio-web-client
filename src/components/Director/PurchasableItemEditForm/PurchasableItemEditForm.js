@@ -178,7 +178,7 @@ const PurchasableItemEditForm = ({item}) => {
 
   const onUpdateSuccess = (isSizedApparel, data) => {
     toggleEdit(null, false);
-    setSuccessMessage("Item details updated.");
+    setSuccessMessage('Changes saved.');
 
     let modifiedTournament;
     if (isSizedApparel) {
