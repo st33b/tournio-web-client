@@ -16,6 +16,7 @@ export const directorReducer = (state, action) => {
         tournament: {...action.tournament},
       });
     case actionTypes.STRIPE_ACCOUNT_STATUS_CHANGED:
+      devConsoleLog("DEPRECATED ACTION:", action.type);
       return updateObject(state, {
         tournament: updateObject(state.tournament, {
           stripe_account: {...action.stripeAccount},

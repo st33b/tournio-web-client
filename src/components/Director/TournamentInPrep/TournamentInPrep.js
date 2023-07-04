@@ -44,7 +44,7 @@ const TournamentInPrep = ({tournament, stateChangeInitiated, requestStripeStatus
             <Configuration/>
             <RegistrationOptions/>
             <PurchasableItems/>
-            <StripeStatus tournament={tournament} needStatus={requestStripeStatus} />
+            <StripeStatus needStatus={requestStripeStatus} />
             <DeleteTournament tournament={tournament}/>
           </div>
         </div>

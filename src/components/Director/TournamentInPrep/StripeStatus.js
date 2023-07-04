@@ -1,18 +1,17 @@
-import Card from 'react-bootstrap/Card';
-
-import {useDirectorContext} from "../../../store/DirectorContext";
-import ErrorBoundary from "../../common/ErrorBoundary";
 import {useState, useEffect} from "react";
-import {directorApiRequest} from "../../../director";
-import {stripeAccountStatusChanged} from "../../../store/actions/directorActions";
-
-import classes from './StripeStatus.module.scss';
-import {useLoginContext} from "../../../store/LoginContext";
+import Card from 'react-bootstrap/Card';
 import Link from "next/link";
 
-const StripeStatus = ({tournament, needStatus}) => {
+import ErrorBoundary from "../../common/ErrorBoundary";
+import {directorApiRequest, useTournament} from "../../../director";
+import {useLoginContext} from "../../../store/LoginContext";
+import {devConsoleLog, updateObject} from "../../../utils";
+
+import classes from './StripeStatus.module.scss';
+
+const StripeStatus = ({needStatus}) => {
   const {authToken} = useLoginContext();
-  const {dispatch} = useDirectorContext();
+  const {tournament, tournamentUpdatedQuietly} = useTournament();
 
   // If needStatus is set, then we need to request the Stripe status from the server
   // Otherwise, show a button that can trigger an on-demand status check
@@ -26,12 +25,15 @@ const StripeStatus = ({tournament, needStatus}) => {
     setStatusRequested(false);
     const previousStatus = tournament.stripe_account.can_accept_payments;
     if (!data.can_accept_payments && needStatus) {
-      console.log("Can't accept payments, requesting status again soon.");
+      devConsoleLog("Can't accept payments, requesting status again soon.");
       setTimeout(initiateStatusRequest, 3000);
     } else {
-      console.log("We can accept payments, so we're good.");
+      devConsoleLog("We can accept payments, so we're good.");
       if (data.can_accept_payments !== previousStatus) {
-        dispatch(stripeAccountStatusChanged(data));
+        const modifiedTournament = updateObject(tournament, {
+          stripe_account: {...data},
+        });
+        tournamentUpdatedQuietly(modifiedTournament);
       }
     }
   }
