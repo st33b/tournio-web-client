@@ -1,8 +1,7 @@
-import {useState} from "react";
+import React, {useState} from "react";
 
 import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
-import ErrorBoundary from "../../common/ErrorBoundary";
 import Item from "../../Commerce/AvailableItems/Item/Item";
 import ButtonRow from "../../common/ButtonRow";
 
@@ -103,7 +102,7 @@ const RaffleForm = ({onCancel, onComplete}) => {
   );
 
   return (
-    <ErrorBoundary>
+    <>
       <div className={classes.MultiUseForm}>
         <form onSubmit={formSubmitted} className={`py-2`}>
           <div className={`${classes.HeaderRow} row mb-2`}>
@@ -184,7 +183,7 @@ const RaffleForm = ({onCancel, onComplete}) => {
           <ButtonRow onCancel={onCancel} disableSave={!formData.valid} />
         </form>
       </div>
-    </ErrorBoundary>
+    </>
   );
 }
 

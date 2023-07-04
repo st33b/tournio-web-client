@@ -1,5 +1,6 @@
-import DeleteTournament from "../Tournament/DeleteTournament";
+import React from 'react';
 
+import DeleteTournament from "../Tournament/DeleteTournament";
 import Basics from "./Basics";
 import Configuration from "./Configuration";
 import AdditionalQuestions from "./AdditionalQuestions";

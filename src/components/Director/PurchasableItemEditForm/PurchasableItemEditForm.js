@@ -5,20 +5,17 @@ import Card from "react-bootstrap/Card";
 import TextField from "@mui/material/TextField";
 import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
+import {directorApiRequest, useTournament} from "../../../director";
+import {useLoginContext} from "../../../store/LoginContext";
 import ErrorBoundary from "../../common/ErrorBoundary";
 import Item from "../../Commerce/AvailableItems/Item/Item";
+import AvailableSizes from "../ApparelItemForm/AvailableSizes";
 
 import classes from './PurchasableItemEditForm.module.scss';
-import {purchasableItemDeleted, purchasableItemUpdated, sizedItemUpdated} from "../../../store/actions/directorActions";
-import AvailableSizes from "../ApparelItemForm/AvailableSizes";
-import {devConsoleLog, apparelSizes} from "../../../utils";
-import {useLoginContext} from "../../../store/LoginContext";
 
-const PurchasableItemEditForm = ({tournament, item}) => {
+const PurchasableItemEditForm = ({item}) => {
   const {authToken} = useLoginContext();
-  const {dispatch} = useDirectorContext();
+  const {tournament, tournamentUpdatedQuietly} = useTournament();
 
   const initialState = {
     fields: {
@@ -179,6 +176,47 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     toggleEdit(null, false);
   }
 
+  const onUpdateSuccess = (isSizedApparel, data) => {
+    toggleEdit(null, false);
+    setSuccessMessage("Item details updated.");
+
+    let modifiedTournament;
+    if (isSizedApparel) {
+      modifiedTournament = updateObject(tournament, {
+        purchasable_items: replaceSizedItems(tournament.purchasable_items, data),
+      });
+    } else {
+      const identifier = data.identifier;
+      const index = tournament.purchasable_items.findIndex(i => i.identifier === identifier);
+      if (index < 0) {
+        return;
+      }
+      const items = [...tournament.purchasable_items];
+      items[index] = data;
+      modifiedTournament = updateObject(tournament, {
+        purchasable_items: items,
+      });
+    }
+    tournamentUpdatedQuietly(modifiedTournament);
+  }
+
+  const replaceSizedItems = (allPurchasableItems, newSizedItems) => {
+    const newParentItemIndex = newSizedItems.findIndex(({refinement}) => refinement === 'sized');
+    const newParentItem = newSizedItems[newParentItemIndex];
+    const parentIdentifier = newParentItem.identifier;
+
+    const purchasableItemsSansOldChildren = allPurchasableItems.filter(({configuration}) => {
+      return !configuration.parent_identifier || configuration.parent_identifier !== parentIdentifier
+    });
+
+    const oldParentItemIndex = purchasableItemsSansOldChildren.findIndex(({identifier}) => identifier === parentIdentifier);
+    purchasableItemsSansOldChildren[oldParentItemIndex] = newParentItem;
+
+    const newChildItems = newSizedItems.filter(({identifier}) => identifier !== parentIdentifier);
+    return purchasableItemsSansOldChildren.concat(newChildItems);
+  }
+
+
   const onFormSubmit = (event) => {
     event.preventDefault();
     const uri = `/purchasable_items/${item.identifier}`;
@@ -220,7 +258,8 @@ const PurchasableItemEditForm = ({tournament, item}) => {
           configuration.sizes = {};
           for (const sizeGroup in apparelSizes) {
             configuration.sizes[sizeGroup] = formData.fields.sizes[sizeGroup];
-          };
+          }
+          ;
           updatingSizedApparel = true;
         }
         break;
@@ -239,27 +278,26 @@ const PurchasableItemEditForm = ({tournament, item}) => {
     }
 
     requestConfig.data.purchasable_item.configuration = configuration;
-    // return;
+
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
       authToken: authToken,
-      onSuccess: (data) => {
-        toggleEdit(null, false);
-        setSuccessMessage("Item details updated.");
-        if (updatingSizedApparel) {
-          dispatch(sizedItemUpdated(data));
-        } else {
-          dispatch(purchasableItemUpdated(data));
-        }
-      },
+      onSuccess: (data) => onUpdateSuccess(updatingSizedApparel, data),
       onFailure: (_) => console.log("Failed to save item."),
     });
   }
 
   const deleteSuccess = (_) => {
     toggleEdit(null, false);
-    dispatch(purchasableItemDeleted(item));
+    const identifier = item.identifier;
+    const newItems = tournament.purchasable_items.filter(i => {
+      return i.identifier !== identifier && i.configuration.parent_identifier !== identifier;
+    });
+    const modifiedTournament = updateObject(state.tournament, {
+      purchasable_items: newItems,
+    });
+    tournamentUpdatedQuietly(modifiedTournament);
   }
 
   const onDelete = (event) => {
@@ -470,8 +508,10 @@ const PurchasableItemEditForm = ({tournament, item}) => {
             component: AvailableSizes,
             args: {
               selectedSizes: formData.fields.sizes,
-              onSizeChanged: () => {},
-              onAllInGroupSet: () => {},
+              onSizeChanged: () => {
+              },
+              onAllInGroupSet: () => {
+              },
             }
           });
         }
@@ -593,12 +633,12 @@ const PurchasableItemEditForm = ({tournament, item}) => {
       itemPreviewProps.configuration.quantity = formData.fields.quantity;
 
       itemPreview = (
-      <div className={`row ${classes.PreviewItem}`}>
-        <p className={`${classes.PreviewText}`}>
-          How it will look to bowlers:
-        </p>
-        <Item item={itemPreviewProps} preview={true}/>
-      </div>
+        <div className={`row ${classes.PreviewItem}`}>
+          <p className={`${classes.PreviewText}`}>
+            How it will look to bowlers:
+          </p>
+          <Item item={itemPreviewProps} preview={true}/>
+        </div>
       );
     }
 
@@ -615,7 +655,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
                      className={'form-control-plaintext ps-2'}
                      value={tournament.event_items.event.find(
                        ({identifier}) => identifier === formData.fields.linkedEvent
-                     ).name} />
+                     ).name}/>
             </div>
           )}
           {inputElements.map((elemProps, i) => (
@@ -648,7 +688,7 @@ const PurchasableItemEditForm = ({tournament, item}) => {
               <AvailableSizes selectedSizes={formData.fields.sizes}
                               onSizeChanged={sizeChanged}
                               onAllInGroupSet={setAllSizesInSet}
-                              />
+              />
             </div>
           )}
         </fieldset>

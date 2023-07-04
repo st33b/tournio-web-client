@@ -1,21 +1,21 @@
 import React, {useState, useEffect} from "react";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
+import SuccessAlert from "../../common/SuccessAlert";
 import LedgerForm from "./LedgerForm";
 import DivisionForm from './DivisionForm';
 import SingleUseForm from "./SingleUseForm";
 import MultiUseForm from "./MultiUseForm";
 import SanctionForm from "./SanctionForm";
-
-import classes from './NewPurchasableItem.module.scss';
 import EventForm from "./EventForm";
 import ProductForm from "./ProductForm";
 import ApparelItemForm from "../ApparelItemForm/ApparelItemForm";
 import BanquetForm from "./BanquetForm";
 import RaffleForm from "./RaffleForm";
 import {useTournament} from "../../../director";
-import SuccessAlert from "../../common/SuccessAlert";
-import {updateObject} from "../../../utils";
+import {devConsoleLog, updateObject} from "../../../utils";
+
+import classes from './NewPurchasableItem.module.scss';
 
 const NewPurchasableItem = () => {
   const {tournament, tournamentUpdatedQuietly} = useTournament();
@@ -77,52 +77,64 @@ const NewPurchasableItem = () => {
       key: 'ledger',
       label: 'Fee/Discount',
       title: '',
+      component: LedgerForm,
+      extraProps: {
+        availableTypes: availableLedgerTypes,
+      },
     },
     {
       key: 'event',
       label: 'Core Event',
       title: '',
+      component: EventForm,
     },
     {
       key: 'division',
       label: 'Division Extra',
       title: `Something like Scratch Masters, with different prices per division`,
+      component: DivisionForm,
     },
     {
       key: 'single_use',
       label: 'Bowling Extra (one-time)',
       title: '',
+      component: SingleUseForm,
     },
     {
       key: 'multi_use',
       label: 'Bowling Extra (multi)',
       title: '',
+      component: MultiUseForm,
     },
     {
       key: 'raffle',
       label: 'Raffle',
       title: '',
+      component: RaffleForm,
     },
     {
-      key: 'apparel',
+      key: 'apparelItem',
       label: 'Apparel',
       title: '',
-      form: ApparelItemForm,
+      component: ApparelItemForm,
     },
     {
       key: 'banquet',
       label: 'Banquet',
       title: '',
+      component: BanquetForm,
     },
     {
       key: 'sanction',
       label: 'Membership',
       title: '',
+      component: SanctionForm,
     },
     {
       key: 'product',
       label: 'Other',
       title: '',
+      component: ProductForm,
     },
   ]
 
@@ -166,56 +178,13 @@ const NewPurchasableItem = () => {
           if (formDisplayed !== details.key) {
             return '';
           }
-          const formPrefix = details.form ? details.form : capitalize(details.key)
-          const componentName = `${formPrefix}Form`;
-          return React.createElement(componentName, {
+          return React.createElement(details.component, {
             onCancel: cancelClicked,
             onComplete: itemSaved,
-            tournament: tournament,
             key: details.key,
+            ...details.extraProps,
           });
         })}
-        {formDisplayed === 'ledger' &&
-          <LedgerForm availableTypes={availableLedgerTypes}
-                      onCancel={cancelClicked}
-                      onComplete={itemSaved}
-          />}
-        {formDisplayed === 'event' &&
-          <EventForm onCancel={cancelClicked}
-                     onComplete={itemSaved}
-          />}
-        {formDisplayed === 'division' &&
-          <DivisionForm onCancel={cancelClicked}
-                        onComplete={itemSaved}
-          />}
-        {formDisplayed === 'single_use' &&
-          <SingleUseForm onCancel={cancelClicked}
-                         onComplete={itemSaved}
-          />}
-        {formDisplayed === 'multi_use' &&
-          <MultiUseForm onCancel={cancelClicked}
-                        onComplete={itemSaved}
-          />}
-        {formDisplayed === 'sanction' &&
-          <SanctionForm onCancel={cancelClicked}
-                        onComplete={itemSaved}
-          />}
-        {formDisplayed === 'product' &&
-          <ProductForm onCancel={cancelClicked}
-                       onComplete={itemSaved}
-          />}
-        {formDisplayed === 'apparel' &&
-          <ApparelItemForm onCancel={cancelClicked}
-                           onComplete={itemSaved}
-          />}
-        {formDisplayed === 'banquet' &&
-          <BanquetForm onCancel={cancelClicked}
-                       onComplete={itemSaved}
-          />}
-        {formDisplayed === 'raffle' &&
-          <RaffleForm onCancel={cancelClicked}
-                      onComplete={itemSaved}
-          />}
 
       </div>
     </ErrorBoundary>

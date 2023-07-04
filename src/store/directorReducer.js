@@ -130,6 +130,7 @@ export const directorReducer = (state, action) => {
         }),
       });
     case actionTypes.PURCHASABLE_ITEMS_ADDED:
+      devConsoleLog("DEPRECATED ACTION", action.type);
       const updatedItems = state.tournament.purchasable_items.concat(action.items);
       return updateObject(state, {
         tournament: updateObject(state.tournament, {
@@ -137,6 +138,7 @@ export const directorReducer = (state, action) => {
         }),
       });
     case actionTypes.PURCHASABLE_ITEM_UPDATED:
+      devConsoleLog("DEPRECATED ACTION", action.type);
       identifier = action.item.identifier;
       index = state.tournament.purchasable_items.findIndex(i => i.identifier === identifier);
       if (index < 0) {
@@ -150,12 +152,14 @@ export const directorReducer = (state, action) => {
         }),
       });
     case actionTypes.SIZED_ITEM_UPDATED:
+      devConsoleLog("DEPRECATED ACTION", action.type);
       return updateObject(state, {
         tournament: updateObject(state.tournament, {
           purchasable_items: replaceSizedItems(state.tournament.purchasable_items, action.sizedItem),
         })
       });
     case actionTypes.PURCHASABLE_ITEM_DELETED:
+      devConsoleLog("DEPRECATED ACTION", action.type);
       identifier = action.item.identifier;
       const newItems = state.tournament.purchasable_items.filter(i => {
         return i.identifier !== identifier && i.configuration.parent_identifier !== identifier;
