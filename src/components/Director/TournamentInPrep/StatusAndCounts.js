@@ -6,8 +6,6 @@ import Button from "react-bootstrap/Button";
 import Link from 'next/link';
 
 import {directorApiRequest, directorApiDownloadRequest, useTournament} from "../../../director";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {testDataCleared, tournamentTestEnvironmentUpdated} from "../../../store/actions/directorActions";
 
 import classes from './TournamentInPrep.module.scss';
 import statusClasses from '../TournamentListing/TournamentListing.module.scss';

@@ -1,11 +1,9 @@
 import {useEffect, useState, createElement} from "react";
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {directorApiRequest, useTournament} from "../../../director";
-import {tournamentConfigItemChanged} from "../../../store/actions/directorActions";
 
 import classes from './ConfigItemForm.module.scss';
 import {useLoginContext} from "../../../store/LoginContext";
-import {useDirectorContext} from "../../../store/DirectorContext";
 import {updateObject} from "../../../utils";
 
 const BOOLEAN_CONFIG_ITEMS = [

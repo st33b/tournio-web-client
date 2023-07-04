@@ -2,15 +2,9 @@ import {useEffect, useState} from "react";
 import {Map} from "immutable";
 import Card from 'react-bootstrap/Card';
 
-import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest, useTournament} from "../../../director";
 
 import classes from './ShiftForm.module.scss';
-import {
-  tournamentShiftAdded,
-  tournamentShiftDeleted,
-  tournamentShiftUpdated
-} from "../../../store/actions/directorActions";
 import ButtonRow from "../../common/ButtonRow";
 import {useLoginContext} from "../../../store/LoginContext";
 import {devConsoleLog, updateObject} from "../../../utils";

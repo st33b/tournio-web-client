@@ -2,13 +2,11 @@ import DirectorLayout from "../../../../components/Layout/DirectorLayout/Directo
 import {useRouter} from "next/router";
 
 import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
-import {useDirectorContext} from "../../../../store/DirectorContext";
-import {useDirectorApi} from "../../../../director";
-import {stripeAccountStatusChanged} from "../../../../store/actions/directorActions";
+import {useDirectorApi, useTournament} from "../../../../director";
 
-const Page = () => {
+const StripeAccountSetup = () => {
   const router = useRouter();
-  const {dispatch} = useDirectorContext();
+  const {tournament, tournamentUpdatedQuietly} = useTournament();
 
   const {identifier} = router.query;
 
@@ -17,7 +15,10 @@ const Page = () => {
   });
 
   if (data) {
-    dispatch(stripeAccountStatusChanged(data));
+    const modifiedTournament = updateObject(tournament, {
+      stripe_account: data,
+    });
+    tournamentUpdatedQuietly(modifiedTournament);
     location = data.link_url;
   }
 
@@ -26,7 +27,7 @@ const Page = () => {
   );
 }
 
-Page.getLayout = function getLayout(page) {
+StripeAccountSetup.getLayout = function getLayout(page) {
   return (
     <DirectorLayout>
       {page}
@@ -34,4 +35,4 @@ Page.getLayout = function getLayout(page) {
   );
 }
 
-export default Page;
+export default StripeAccountSetup;
