@@ -168,9 +168,6 @@ export const directorApiDownloadRequest = ({uri, authToken, onSuccess = null, on
     });
 }
 
-////////////////////
-// Experimental hook
-////////////////////
 export const useTournament = (onSuccess = () => {}) => {
   const router = useRouter();
   const {identifier} = router.query;
