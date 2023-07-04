@@ -5,11 +5,12 @@ import Card from "react-bootstrap/Card";
 import TextField from "@mui/material/TextField";
 import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 
-import {directorApiRequest, useTournament} from "../../../director";
-import {useLoginContext} from "../../../store/LoginContext";
 import ErrorBoundary from "../../common/ErrorBoundary";
 import Item from "../../Commerce/AvailableItems/Item/Item";
 import AvailableSizes from "../ApparelItemForm/AvailableSizes";
+import {directorApiRequest, useTournament} from "../../../director";
+import {useLoginContext} from "../../../store/LoginContext";
+import {updateObject} from "../../../utils";
 
 import classes from './PurchasableItemEditForm.module.scss';
 
@@ -294,7 +295,7 @@ const PurchasableItemEditForm = ({item}) => {
     const newItems = tournament.purchasable_items.filter(i => {
       return i.identifier !== identifier && i.configuration.parent_identifier !== identifier;
     });
-    const modifiedTournament = updateObject(state.tournament, {
+    const modifiedTournament = updateObject(tournament, {
       purchasable_items: newItems,
     });
     tournamentUpdatedQuietly(modifiedTournament);
