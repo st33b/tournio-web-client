@@ -1,13 +1,8 @@
-import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
 import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
 import {directorApiRequest, useTournament} from "../../../director";
-import {useDirectorContext} from '../../../store/DirectorContext';
-import {
-  tournamentDetailsRetrieved,
-} from "../../../store/actions/directorActions";
 import {useLoginContext} from "../../../store/LoginContext";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorBoundary from "../../../components/common/ErrorBoundary";
@@ -17,19 +12,8 @@ const Tournament = () => {
   const router = useRouter();
   const {identifier, stripe} = router.query;
 
-  const {dispatch} = useDirectorContext();
   const {authToken} = useLoginContext();
-  const [errorMessage, setErrorMessage] = useState();
-
   const {loading, tournament, error, tournamentUpdated} = useTournament();
-
-  // @swr-refactor -- won't need this anymore
-  useEffect(() => {
-    if (!tournament) {
-      return;
-    }
-    dispatch(tournamentDetailsRetrieved(tournament));
-  }, [tournament]);
 
   const stateChangeInitiated = (stateChangeAction) => {
     const uri = `/tournaments/${identifier}/state_change`;
@@ -50,7 +34,6 @@ const Tournament = () => {
       onSuccess: (data) => {
         tournamentUpdated(data);
       },
-      onFailure: (data) => setErrorMessage(data.error),
     });
   }
 
@@ -69,11 +52,8 @@ const Tournament = () => {
 
         {tournament && (
           (tournament.state === 'active' || tournament.state === 'closed'
-              ? <VisibleTournament closeTournament={stateChangeInitiated}
-                                   tournament={tournament}
-              />
+              ? <VisibleTournament closeTournament={stateChangeInitiated}/>
               : <TournamentInPrep requestStripeStatus={stripe}
-                                  tournament={tournament}
                                   stateChangeInitiated={stateChangeInitiated}
               />
           )

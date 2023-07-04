@@ -17,11 +17,7 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './TournamentInPrep.module.scss';
 
-const TournamentInPrep = ({tournament, stateChangeInitiated, requestStripeStatus}) => {
-  if (!tournament) {
-    return '';
-  }
-
+const TournamentInPrep = ({stateChangeInitiated, requestStripeStatus}) => {
   return (
     <ErrorBoundary>
       <div className={classes.TournamentInPrep}>
