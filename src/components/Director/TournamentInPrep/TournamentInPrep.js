@@ -27,7 +27,7 @@ const TournamentInPrep = ({tournament, stateChangeInitiated, requestStripeStatus
       <div className={classes.TournamentInPrep}>
         <div className={'row'}>
           <div className={'col-12 col-md-6 col-lg-4'}>
-            <Basics tournament={tournament}/>
+            <Basics/>
             <ImageUpload/>
             <Contacts/>
             <Users/>
@@ -45,7 +45,7 @@ const TournamentInPrep = ({tournament, stateChangeInitiated, requestStripeStatus
             <RegistrationOptions/>
             <PurchasableItems/>
             <StripeStatus needStatus={requestStripeStatus} />
-            <DeleteTournament tournament={tournament}/>
+            <DeleteTournament/>
           </div>
         </div>
       </div>

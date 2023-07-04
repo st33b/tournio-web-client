@@ -1,7 +1,6 @@
 import {useRouter} from "next/router";
 import Card from "react-bootstrap/Card";
 
-import {useDirectorContext} from "../../../store/DirectorContext";
 import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 import React, {useState} from "react";
