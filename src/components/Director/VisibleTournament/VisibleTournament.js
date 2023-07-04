@@ -31,6 +31,7 @@ const VisibleTournament = ({closeTournament}) => {
     "publicly_listed",
     "email_in_dev",
     "skip_stripe",
+    "accept_payments",
   ];
 
   const {loading, tournament} = useTournament();

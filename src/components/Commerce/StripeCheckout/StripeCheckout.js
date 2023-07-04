@@ -42,7 +42,7 @@ const StripeCheckout = ({enableFailure}) => {
   const postDetailsFailed = (responseData) => {
     // Convey the error message in the response data
     setRequestInProgress(false);
-    setErrorMessage('Le sigh...');
+    setErrorMessage(responseData.error);
     console.log(responseData);
   }
 

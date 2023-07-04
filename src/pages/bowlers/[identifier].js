@@ -36,7 +36,6 @@ const Page = () => {
 
     if (!commerce.bowler || commerce.bowler.identifier !== identifier) {
       fetchBowlerDetails(identifier, dispatch, onFetchFailure);
-      return;
     }
   }, [identifier, commerce]);
 

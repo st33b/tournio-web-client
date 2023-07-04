@@ -95,7 +95,7 @@ const Page = () => {
               <YouWillNeed tournament={tournament}/>
             </div>
           </div>
-          <PayButton />
+          <PayButton disabled={!!tournament.config_items.find(({key, value}) => key === 'accept_payments' && !value)} />
           <RegisterButtons tournament={tournament}/>
           <div className={'d-lg-none'}>
             <YouWillNeed tournament={tournament}/>

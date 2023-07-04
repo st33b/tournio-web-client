@@ -12,6 +12,7 @@ const BOOLEAN_CONFIG_ITEMS = [
   'publicly_listed',
   'skip_stripe',
   'event_selection',
+  'accept_payments',
 ];
 
 const ConfigItemForm = ({item}) => {
