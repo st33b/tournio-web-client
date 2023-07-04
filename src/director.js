@@ -132,7 +132,7 @@ export const directorApiRequest = ({uri, requestConfig, authToken, onSuccess = n
     .then(response => {
       if (response.status >= 200 && response.status < 400) {
         handleSuccess(response, onSuccess, onFailure);
-      } else if (resposne.status === 401) {
+      } else if (response.status === 401) {
         const err = new Error('Login session has timed out.');
         throw err;
       } else {
