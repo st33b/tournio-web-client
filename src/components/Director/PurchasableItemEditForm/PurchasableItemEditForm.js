@@ -10,13 +10,13 @@ import Item from "../../Commerce/AvailableItems/Item/Item";
 import AvailableSizes from "../ApparelItemForm/AvailableSizes";
 import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
-import {updateObject} from "../../../utils";
+import {updateObject, apparelSizes} from "../../../utils";
 
 import classes from './PurchasableItemEditForm.module.scss';
 
-const PurchasableItemEditForm = ({item}) => {
+const PurchasableItemEditForm = ({item, onUpdate}) => {
   const {authToken} = useLoginContext();
-  const {tournament, tournamentUpdatedQuietly} = useTournament();
+  const {tournament} = useTournament();
 
   const initialState = {
     fields: {
@@ -187,18 +187,18 @@ const PurchasableItemEditForm = ({item}) => {
         purchasable_items: replaceSizedItems(tournament.purchasable_items, data),
       });
     } else {
-      const identifier = data.identifier;
+      const identifier = data[0].identifier;
       const index = tournament.purchasable_items.findIndex(i => i.identifier === identifier);
       if (index < 0) {
         return;
       }
       const items = [...tournament.purchasable_items];
-      items[index] = data;
+      items[index] = data[0];
       modifiedTournament = updateObject(tournament, {
         purchasable_items: items,
       });
     }
-    tournamentUpdatedQuietly(modifiedTournament);
+    onUpdate(modifiedTournament);
   }
 
   const replaceSizedItems = (allPurchasableItems, newSizedItems) => {

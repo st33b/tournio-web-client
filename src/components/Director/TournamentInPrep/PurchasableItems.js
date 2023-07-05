@@ -11,7 +11,7 @@ import {useTournament} from "../../../director";
 import classes from './TournamentInPrep.module.scss';
 
 const PurchasableItems = () => {
-  const {tournament} = useTournament();
+  const {tournament, tournamentUpdatedQuietly} = useTournament();
 
   const sortByOrder = (left, right) => {
     let leftOrder = left.configuration.order || 100;
@@ -181,63 +181,83 @@ const PurchasableItems = () => {
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             {ledgerItems.length > 0 && (
               <Card.Body className={classes.Category}>
-                {ledgerItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+                {ledgerItems.map((item) => <PurchasableItemEditForm key={item.identifier}
+                                                                    onUpdate={(t) => tournamentUpdatedQuietly(t)}
+                                                                    item={item}/>)}
               </Card.Body>
             )}
 
             {eventItems.length > 0 && (
               <Card.Body className={classes.Category}>
-                {eventItems.map(item => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+                {eventItems.map(item => <PurchasableItemEditForm key={item.identifier}
+                                                                 onUpdate={(t) => tournamentUpdatedQuietly(t)}
+                                                                 item={item}/>)}
               </Card.Body>
             )}
 
             {groupValues.map((group, index) => {
               return group.length > 0 && (
                 <Card.Body key={index} className={classes.Category}>
-                  {group.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+                  {group.map((item) => <PurchasableItemEditForm key={item.identifier}
+                                                                onUpdate={(t) => tournamentUpdatedQuietly(t)}
+                                                                item={item}/>)}
                 </Card.Body>
               );
             })}
 
             {singleUseItems.length > 0 &&
               <Card.Body className={classes.Category}>
-                {singleUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+                {singleUseItems.map((item) => <PurchasableItemEditForm key={item.identifier}
+                                                                       onUpdate={(t) => tournamentUpdatedQuietly(t)}
+                                                                       item={item}/>)}
               </Card.Body>
             }
 
             {multiUseItems.length > 0 &&
               <Card.Body className={classes.Category}>
-                {multiUseItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+                {multiUseItems.map((item) => <PurchasableItemEditForm key={item.identifier}
+                                                                      onUpdate={(t) => tournamentUpdatedQuietly(t)}
+                                                                      item={item}/>)}
               </Card.Body>
             }
 
             {raffleItems.length > 0 &&
               <Card.Body className={classes.Category}>
-                {raffleItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/> )}
+                {raffleItems.map((item) => <PurchasableItemEditForm key={item.identifier}
+                                                                    onUpdate={(t) => tournamentUpdatedQuietly(t)}
+                                                                    item={item}/> )}
               </Card.Body>
             }
 
             {banquetItems.length > 0 &&
               <Card.Body className={classes.Category}>
-                {banquetItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/> )}
+                {banquetItems.map((item) => <PurchasableItemEditForm key={item.identifier}
+                                                                     onUpdate={(t) => tournamentUpdatedQuietly(t)}
+                                                                     item={item}/> )}
               </Card.Body>
             }
 
             {apparelItems.length > 0 &&
               <Card.Body className={classes.Category}>
-                {apparelItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/> )}
+                {apparelItems.map((item) => <PurchasableItemEditForm key={item.identifier}
+                                                                     onUpdate={(t) => tournamentUpdatedQuietly(t)}
+                                                                     item={item}/> )}
               </Card.Body>
             }
 
             {products.length > 0 &&
               <Card.Body className={classes.Category}>
-                {products.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+                {products.map((item) => <PurchasableItemEditForm key={item.identifier}
+                                                                 onUpdate={(t) => tournamentUpdatedQuietly(t)}
+                                                                 item={item}/>)}
               </Card.Body>
             }
 
             {sanctionItems.length > 0 &&
               <Card.Body className={classes.Category}>
-                {sanctionItems.map((item) => <PurchasableItemEditForm key={item.identifier} item={item}/>)}
+                {sanctionItems.map((item) => <PurchasableItemEditForm key={item.identifier}
+                                                                      onUpdate={(t) => tournamentUpdatedQuietly(t)}
+                                                                      item={item}/>)}
               </Card.Body>
             }
 
