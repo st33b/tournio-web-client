@@ -11,7 +11,7 @@ const StripeAccountSetup = () => {
   const {identifier} = router.query;
 
   const {data} = useDirectorApi({
-    uri: identifier ? `/tournaments/${tournamentId}/stripe_refresh` : null,
+    uri: identifier ? `/tournaments/${tournament.identifier}/stripe_refresh` : null,
   });
 
   if (data) {
