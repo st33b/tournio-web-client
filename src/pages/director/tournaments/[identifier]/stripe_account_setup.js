@@ -3,6 +3,7 @@ import {useRouter} from "next/router";
 
 import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
 import {useDirectorApi, useTournament} from "../../../../director";
+import {updateObject} from "../../../../utils";
 
 const StripeAccountSetup = () => {
   const router = useRouter();
