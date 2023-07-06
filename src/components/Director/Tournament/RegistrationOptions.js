@@ -5,7 +5,7 @@ import {Map} from 'immutable';
 import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 import ErrorAlert from "../../common/ErrorAlert";
-import {updateObject} from "../../../utils";
+import {devConsoleLog, updateObject} from "../../../utils";
 
 const RegistrationOptions = () => {
   const { authToken } = useLoginContext();
@@ -38,8 +38,8 @@ const RegistrationOptions = () => {
 
   const initialFormData = Map({
     new_team: false,
-    join_team: true,
-    solo: true,
+    join_team: false,
+    solo: false,
     partner: false,
     new_pair: false,
   });
@@ -47,7 +47,8 @@ const RegistrationOptions = () => {
   const [formData, setFormData] = useState(initialFormData);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  // Populate form data with what the tournament already has
+  // Populate form data with what the tournament already has, and disable
+  // the ones that don't apply for the tournament type
   useEffect(() => {
     if (!tournament) {
       return;
@@ -56,6 +57,12 @@ const RegistrationOptions = () => {
       REGISTRATION_TYPES.forEach(rType => {
         map.set(rType, tournament.registration_options[rType]);
       });
+      if (tournament.event_items.event.length > 0) {
+        map.set('new_team', false).set('join_team', false);
+      }
+      else {
+        map.set('partner', false).set('new_pair', false);
+      }
     });
     setFormData(Map(newFormData));
   }, [tournament]);
