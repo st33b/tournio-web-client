@@ -14,6 +14,7 @@ const BowlerFilterForm = ({onFilterApplication, onFilterReset}) => {
     has_free_entry: false,
     igbo_member: '',
     no_team: '',
+    no_partner: '',
     amount_billed: false,
   }
 
@@ -34,6 +35,7 @@ const BowlerFilterForm = ({onFilterApplication, onFilterReset}) => {
       case 'amount_due':
       case 'has_free_entry':
       case 'no_team':
+      case 'no_partner':
       case 'amount_billed':
         const oldValue = filterForm[inputIdentifier];
         const newValue = !oldValue;
@@ -152,6 +154,17 @@ const BowlerFilterForm = ({onFilterApplication, onFilterReset}) => {
                           label={'Not on a team'}
                           checked={filterForm.no_team}
                           onChange={(event) => inputChangedHandler(event, 'no_team')}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group controlId={'no_partner'}
+                      as={Row}
+                      className={'mb-3'}>
+            <Col sm={{span: 8, offset: 4}}>
+              <Form.Check type={'checkbox'}
+                          label={'No doubles partner'}
+                          checked={filterForm.no_partner}
+                          onChange={(event) => inputChangedHandler(event, 'no_partner')}
               />
             </Col>
           </Form.Group>

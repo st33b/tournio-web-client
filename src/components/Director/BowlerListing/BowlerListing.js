@@ -95,92 +95,107 @@ const IgboMemberCell = ({
   );
 }
 
-const BowlerListing = ({bowlers, onBowlerUpdate}) => {
-  const columns = useMemo(() => [
-    {
-      id: 'name',
-      Header: ({column}) => <SortableTableHeader text={'Name'} column={column}/>,
-      accessor: 'full_name',
-      Cell: ({row, cell}) => {
-        return (
-          <Link href={{
-            pathname: `/director/tournaments/[identifier]/bowlers/[bowlerId]`,
-            query: {
-              identifier: row.original.tournament.identifier,
-              bowlerId: row.original.identifier,
+const BowlerListing = ({bowlers, showTeams, onBowlerUpdate}) => {
+  const columns = useMemo(() => {
+    const head = [
+      {
+        id: 'name',
+        Header: ({column}) => <SortableTableHeader text={'Name'} column={column}/>,
+        accessor: 'full_name',
+        Cell: ({row, cell}) => {
+          return (
+            <Link href={{
+              pathname: `/director/tournaments/[identifier]/bowlers/[bowlerId]`,
+              query: {
+                identifier: row.original.tournament.identifier,
+                bowlerId: row.original.identifier,
+              }
             }
-          }
-          }>
-            {cell.value}
-          </Link>
-        )
-      }
-    },
-    {
-      id: 'email',
-      Header: ({column}) => <SortableTableHeader text={'Email'} column={column}/>,
-      accessor: 'email',
-    },
-    {
-      Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
-      accessor: 'team_name',
-      Cell: ({row, value}) => {
-        return (!value) ? 'n/a' : (
-          <Link href={{
-            pathname: '/director/tournaments/[identifier]/teams/[teamId]',
-            query: {
-              identifier: row.original.tournament.identifier,
-              teamId: row.original.team_identifier,
-            }
-          }}>
-            {/*href={`/director/tournaments/${row.original.tournament.identifier}/teams/${row.original.team_identifier}`}>*/}
-            {value}
-          </Link>
-        )
+            }>
+              {cell.value}
+            </Link>
+          )
+        }
       },
-      disableSortBy: false,
-      filter: equals,
-    },
-    {
-      Header: ({column}) => <SortableTableHeader text={'Date Registered'} column={column}/>,
-      accessor: 'date_registered',
-    },
-    {
-      Header: 'IGBO Member?',
-      accessor: 'igbo_member',
-      Cell: IgboMemberCell,
-      disableSortBy: true,
-      filter: isOrIsNot,
-    },
-    {
-      Header: 'Free Entry?',
-      accessor: 'has_free_entry',
-      disableSortBy: true,
-      Cell: ({cell: {value}}) => {
-        const classes = value ? ['text-success', 'bi-check-lg', 'bi'] : ['text-danger', 'bi-dash-lg', 'bi'];
-        const text = value ? 'Yes' : 'No';
-        return (
-          <div className={'text-center'}>
-            <i className={classes.join(' ')} aria-hidden={true}/>
-            <span className={'visually-hidden'}>{text}</span>
-          </div>
-        );
-      }
-    },
-    {
-      Header: 'Billed',
-      accessor: 'amount_billed',
-      disableSortBy: true,
-      filter: equals,
-      Cell: ({value}) => `$${value}`,
-    },
-    {
-      Header: 'Due',
-      accessor: 'amount_due',
-      filter: doesNotEqual,
-      Cell: ({value}) => `$${value}`,
-    },
-  ], []);
+      {
+        id: 'email',
+        Header: ({column}) => <SortableTableHeader text={'Email'} column={column}/>,
+        accessor: 'email',
+      },
+    ];
+    const tail = [
+      {
+        Header: 'Doubles Partner',
+        accessor: 'doubles_partner_name',
+        disableSortBy: true,
+      },
+      {
+        Header: ({column}) => <SortableTableHeader text={'Date Registered'} column={column}/>,
+        accessor: 'date_registered',
+      },
+      {
+        Header: 'IGBO Member?',
+        accessor: 'igbo_member',
+        Cell: IgboMemberCell,
+        disableSortBy: true,
+        filter: isOrIsNot,
+      },
+      {
+        Header: 'Free Entry?',
+        accessor: 'has_free_entry',
+        disableSortBy: true,
+        Cell: ({cell: {value}}) => {
+          const classes = value ? ['text-success', 'bi-check-lg', 'bi'] : ['text-danger', 'bi-dash-lg', 'bi'];
+          const text = value ? 'Yes' : 'No';
+          return (
+            <div className={'text-center'}>
+              <i className={classes.join(' ')} aria-hidden={true}/>
+              <span className={'visually-hidden'}>{text}</span>
+            </div>
+          );
+        }
+      },
+      {
+        Header: 'Billed',
+        accessor: 'amount_billed',
+        disableSortBy: true,
+        filter: equals,
+        Cell: ({value}) => `$${value}`,
+      },
+      {
+        Header: 'Due',
+        accessor: 'amount_due',
+        filter: doesNotEqual,
+        Cell: ({value}) => `$${value}`,
+      },
+    ];
+
+    if (showTeams) {
+      head.push(      {
+          Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
+          accessor: 'team_name',
+          visible: false,
+          Cell: ({row, value}) => {
+            return (!value) ? 'n/a' : (
+              <Link href={{
+                pathname: '/director/tournaments/[identifier]/teams/[teamId]',
+                query: {
+                  identifier: row.original.tournament.identifier,
+                  teamId: row.original.team_identifier,
+                }
+              }}>
+                {value}
+              </Link>
+            )
+          },
+          disableSortBy: false,
+          filter: equals,
+        },
+      );
+    }
+
+    return head.concat(tail);
+  }, []);
 
   let data = [];
   if (bowlers) {
@@ -278,6 +293,11 @@ const BowlerListing = ({bowlers, onBowlerUpdate}) => {
       setFilter('team_name', 'n/a');
     } else {
       setFilter('team_name', undefined);
+    }
+    if (criteria.no_partner) {
+      setFilter('doubles_partner_name', 'n/a');
+    } else {
+      setFilter('doubles_partner_name', undefined);
     }
   }
 

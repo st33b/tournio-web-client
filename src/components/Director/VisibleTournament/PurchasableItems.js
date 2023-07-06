@@ -83,7 +83,7 @@ const PurchasableItems = ({eventKey}) => {
       <Accordion.Body className={`${classes.AccordionBody} p-0`}>
         <ListGroup variant={'flush'}>
           {ITEM_TYPE_ORDER.map(itemType => {
-            if (tournament.purchasable_items[itemType].length === 0) {
+            if (!tournament.purchasable_items[itemType] || tournament.purchasable_items[itemType].length === 0) {
               return '';
             }
             return (

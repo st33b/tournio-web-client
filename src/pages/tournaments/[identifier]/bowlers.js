@@ -18,6 +18,7 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
   const [bowlers, setBowlers] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const onBowlerListRetrieved = (data) => {
     const bowlerComparison = (left, right) => {
@@ -62,6 +63,12 @@ const Page = () => {
     });
   }, [identifier, registration]);
 
+  useEffect(() => {
+    if (success === 'new_pair') {
+      setSuccessMessage('Your pair registration was received! You may now select events pay entry fees.');
+    }
+  }, [success]);
+
   const ready = useClientReady();
   if (!ready) {
     return null;
@@ -75,12 +82,22 @@ const Page = () => {
     return <LoadingMessage message={'Retrieving list of bowlers...'}/>
   }
 
+  // @refactor once the other branches are merged, use SuccessAlert and ErrorAlert here
   let error = '';
   if (errorMessage) {
     error = (
       <Alert variant={'danger'}>
         <h3 className={'display-6 text-center text-danger'}>Uh oh...</h3>
-        <p className={'text-center'}>{error}</p>
+        <p className={'text-center'}>{errorMessage}</p>
+      </Alert>
+    );
+  }
+  let successMsg = '';
+  if (successMessage) {
+    successMsg = (
+      <Alert variant={'success'}>
+        <h3 className={'display-6 text-center text-success'}>Success</h3>
+        <p className={'text-center'}>{successMessage}</p>
       </Alert>
     );
   }
@@ -112,6 +129,7 @@ const Page = () => {
             Registered Bowlers
           </h5>
           {error}
+          {successMsg}
           <BowlerList tournament={registration.tournament}
                       bowlers={bowlers}
                       caption={'Tournament Bowlers'}
