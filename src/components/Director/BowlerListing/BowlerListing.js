@@ -289,10 +289,12 @@ const BowlerListing = ({bowlers, showTeams, onBowlerUpdate}) => {
     }
     setFilter('has_free_entry', criteria.has_free_entry)
     setFilter('igbo_member', criteria.igbo_member);
-    if (criteria.no_team) {
-      setFilter('team_name', 'n/a');
-    } else {
-      setFilter('team_name', undefined);
+    if (showTeams) {
+      if (criteria.no_team) {
+        setFilter('team_name', 'n/a');
+      } else {
+        setFilter('team_name', undefined);
+      }
     }
     if (criteria.no_partner) {
       setFilter('doubles_partner_name', 'n/a');
@@ -307,7 +309,11 @@ const BowlerListing = ({bowlers, showTeams, onBowlerUpdate}) => {
 
   return (
     <div className={classes.BowlerListing}>
-      {data.length > 0 && <BowlerFilterForm onFilterApplication={filterThatData} onFilterReset={resetThoseFilters}/>}
+      {data.length > 0 && (
+        <BowlerFilterForm onFilterApplication={filterThatData}
+                          onFilterReset={resetThoseFilters}
+                          includeTeamFilters={showTeams}/>
+      )}
       {list}
     </div>
   );

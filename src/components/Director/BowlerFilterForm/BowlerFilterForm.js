@@ -6,7 +6,7 @@ import {Col, FloatingLabel, Row} from "react-bootstrap";
 
 import classes from './BowlerFilterForm.module.scss';
 
-const BowlerFilterForm = ({onFilterApplication, onFilterReset}) => {
+const BowlerFilterForm = ({onFilterApplication, onFilterReset, includeTeamFilters=true}) => {
   const initialState = {
     name: '',
     email: '',
@@ -146,17 +146,19 @@ const BowlerFilterForm = ({onFilterApplication, onFilterReset}) => {
               />
             </Col>
           </Form.Group>
-          <Form.Group controlId={'no_team'}
-                      as={Row}
-                      className={'mb-3'}>
-            <Col sm={{span: 8, offset: 4}}>
-              <Form.Check type={'checkbox'}
-                          label={'Not on a team'}
-                          checked={filterForm.no_team}
-                          onChange={(event) => inputChangedHandler(event, 'no_team')}
-              />
-            </Col>
-          </Form.Group>
+          {includeTeamFilters && (
+            <Form.Group controlId={'no_team'}
+                        as={Row}
+                        className={'mb-3'}>
+              <Col sm={{span: 8, offset: 4}}>
+                <Form.Check type={'checkbox'}
+                            label={'Not on a team'}
+                            checked={filterForm.no_team}
+                            onChange={(event) => inputChangedHandler(event, 'no_team')}
+                />
+              </Col>
+            </Form.Group>
+          )}
           <Form.Group controlId={'no_partner'}
                       as={Row}
                       className={'mb-3'}>
