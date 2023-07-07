@@ -107,7 +107,7 @@ const Front = () => {
           <Card className={'mb-3'}>
             <Card.Header>
               <Card.Title className={'mb-0'}>
-                Go Beyond...
+                Offer Your Bowlers More
               </Card.Title>
             </Card.Header>
             <Card.Body>
@@ -121,14 +121,14 @@ const Front = () => {
       </Row>
 
       <div className="d-grid gap-3 d-sm-flex justify-content-sm-center pt-sm-3">
-        <a href="mailto:hello@tourn.io?subject=Using%20Tournio"
-           className="btn btn-outline-primary btn-lg px-4 gap-3">
-          Get In Touch
-        </a>
         <a href={'/tournaments'}
            title={'See the list of current tournaments'}
-           className="btn btn-outline-secondary btn-lg px-4">
-          Current Tournaments
+           className="btn btn-success btn-lg px-4">
+          See Current Tournaments
+        </a>
+        <a href="mailto:hello@tourn.io?subject=Using%20Tournio"
+           className="btn btn-primary btn-lg px-4 gap-3">
+          Get In Touch
         </a>
       </div>
     </div>
