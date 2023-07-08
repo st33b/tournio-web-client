@@ -41,6 +41,8 @@ const BowlersIndex = () => {
   const ladder = [{text: 'Tournaments', path: '/director'}];
   ladder.push({text: tournament.name, path: `/director/tournaments/${identifier}`});
 
+  const showTeams = tournament.event_items.event.length === 0;
+
   return (
     <ErrorBoundary>
       <Breadcrumbs ladder={ladder} activeText={'Bowlers'}/>
@@ -53,7 +55,9 @@ const BowlersIndex = () => {
           {error && (
             <ErrorAlert message={error.message} className={'mx-3 mt-3'}/>
           )}
-          <BowlerListing bowlers={bowlers} onBowlerUpdate={bowlerUpdated} />
+          <BowlerListing bowlers={bowlers}
+                         showTeams={showTeams}
+                         onBowlerUpdate={bowlerUpdated} />
         </Col>
       </Row>
     </ErrorBoundary>

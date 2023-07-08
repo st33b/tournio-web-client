@@ -7,21 +7,21 @@ import {updateObject} from "../../../../utils";
 
 const StripeAccountSetup = () => {
   const router = useRouter();
-  const {tournament, tournamentUpdatedQuietly} = useTournament();
+  // const {tournamentUpdated} = useTournament();
 
   const {identifier} = router.query;
 
-  const {data} = useDirectorApi({
-    uri: identifier ? `/tournaments/${tournament.identifier}/stripe_refresh` : null,
-  });
-
-  if (data) {
-    const modifiedTournament = updateObject(tournament, {
-      stripe_account: data,
-    });
-    tournamentUpdatedQuietly(modifiedTournament);
-    location = data.link_url;
+  const onSuccess = (data) => {
+    if (data) {
+      // tournamentUpdated();
+      location = data.link_url;
+    }
   }
+
+  const {data} = useDirectorApi({
+    uri: identifier ? `/tournaments/${identifier}/stripe_refresh` : null,
+    onSuccess: onSuccess,
+  });
 
   return (
     <LoadingMessage message={'Checking status...'}/>

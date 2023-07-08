@@ -146,6 +146,7 @@ export const apparelSizes = {
     xl: false,
     xxl: false,
     xxxl: false,
+    xxxxl: false,
   },
   women: {
     xxs: false,
@@ -156,6 +157,7 @@ export const apparelSizes = {
     xl: false,
     xxl: false,
     xxxl: false,
+    xxxxl: false,
   },
   men: {
     xxs: false,
@@ -166,6 +168,7 @@ export const apparelSizes = {
     xl: false,
     xxl: false,
     xxxl: false,
+    xxxxl: false,
   },
   infant: {
     newborn: false,
@@ -186,6 +189,7 @@ export const apparelSizeMapping = {
   xl: 'XL',
   xxl: '2XL',
   xxxl: '3XL',
+  xxxxl: '4XL',
   unisex: 'Unisex',
   women: "Women's",
   men: "Men's",
