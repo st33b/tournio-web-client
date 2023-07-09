@@ -1,38 +1,19 @@
 import axios from "axios";
-import {apiHost, devConsoleLog} from "./utils";
-import {useDirectorContext} from "./store/DirectorContext";
-import {loggedIn, loggedOut} from "./store/actions/directorActions";
-import {useEffect, useState} from "react";
+import {useRouter} from "next/router";
+import useSWR from "swr";
+import {apiHost, devConsoleLog, useLocalStorage} from "./utils";
+import {useLoginContext} from "./store/LoginContext";
 
-export const useLoggedIn = () => {
-  const {directorState} = useDirectorContext();
-  const [loggedIn, setLoggedIn] = useState(-1);
-
-  const currentState = loggedIn;
-  useEffect(() => {
-    if (!directorState) {
-      return;
-    }
-    if (!directorState.user) {
-      setLoggedIn(0);
-      return;
-    }
-
-    setLoggedIn(1);
-  }, [directorState.user]);
-  return currentState;
-}
-
-const handleSuccess = (response, dispatch, onSuccess, onFailure) => {
+const handleSuccess = (response, onSuccess, onFailure) => {
   if (response.status >= 200 && response.status < 300) {
     if (onSuccess) {
       onSuccess(response.data);
     }
   } else if (response.status === 401) {
-    dispatch(loggedOut());
+    onFailure('Unauthorized');
   } else if (response.status === 404) {
     if (onFailure) {
-      onFailure({error: 'Not found'});
+      onFailure('Not found');
     }
   } else {
     if (onFailure) {
@@ -45,110 +26,171 @@ const handleError = (error, callbackFn) => {
   if (error.request) {
     console.log('No response was received.');
     if (callbackFn) {
-      callbackFn({error: 'The server did not respond'});
+      callbackFn('The server did not respond');
     }
   } else {
-    devConsoleLog('Exceptional error', error);
     if (callbackFn) {
       callbackFn(error);
     }
   }
 }
 
-export const directorLogin = ({userCreds, dispatch, onSuccess = null, onFailure = null}) => {
-  const config = {
-    url: `${apiHost}/login`,
-    headers: {
-      'Accept': 'application/json',
-    },
-    method: 'post',
-    data: userCreds,
-    validateStatus: (status) => { return status < 500 },
-  };
-  axios(config)
-    .then(response => {
-      if (response.status >= 200 && response.status < 300) {
-        const authToken = response.headers.authorization;
-        const userData = response.data;
-        dispatch(loggedIn(userData, authToken));
-        if (onSuccess) {
-          onSuccess();
-        }
-      } else {
-        if (onFailure) {
-          onFailure(response.data);
-        }
-      }
-    })
-    .catch(error => {
-      handleError(error, onFailure);
-    });
-}
+// We can use this for fetching data from the API required by a component, but that's it.
+// It'll make the pages that need it smaller, since they won't have to worry about
+// handing over the user auth token, among other things.
+export const useDirectorApi = ({
+                                 uri,
+                                 onSuccess = () => {},
+                                 onFailure = () => {},
+                                 initialData = null
+}) => {
+  const {authToken, ready, logout} = useLoginContext();
+  const router = useRouter();
 
-export const directorLogout = ({dispatch, onSuccess = null, onFailure = null}) => {
-  const config = {
-    url: `${apiHost}/logout`,
-    headers: {
-      'Accept': 'application/json',
-    },
-    method: 'delete',
-    validateStatus: (status) => { return status < 500 },
-  };
-  axios(config)
-    .then(response => {
-      if (response.status >= 200 && response.status < 300) {
-        dispatch(loggedOut());
-        if (onSuccess) {
-          onSuccess();
-        }
-      } else {
-        if (onFailure) {
-          onFailure({error: 'Got a strange response from the server.'});
-        }
-      }
-    })
-    .catch(error => {
-      handleError(error, onFailure);
-    });
-}
-
-export const directorApiRequest = ({uri, requestConfig, context, onSuccess = null, onFailure = null}) => {
-  if (!context.directorState.user) {
-    handleError({error: 'Not logged in'}, onFailure);
-    return;
+  const handleSuccess = (data, key, config) => {
+    onSuccess(data);
   }
-  const url = `${apiHost}${uri}`;
+
+  const handleError = (error, key, config) => {
+    if (error.status === 401) {
+      devConsoleLog("Unauthorized request. Logging out and going back to the login page.");
+      logout();
+      router.replace('/director/login');
+    } else {
+      devConsoleLog("Unusual Error: ", error.message);
+      onFailure(error.message);
+    }
+  }
+
+  /////////////////
+  // This prevents SWR from making the request if we don't have a URI yet (which may be
+  // the case when pulling URI details from, say, one or more query parameters
+  const swrKey = uri ? [`${apiHost}/director${uri}`, authToken, ready] : null;
+  // devConsoleLog("SWR Key:", swrKey);
+  const swrOptions = {
+    revalidateOnFocus: false,
+    shouldRetryOnError: false,
+    onSuccess: handleSuccess,
+    onError: handleError,
+    fallbackData: initialData,
+  };
+  const swrFetcher = async (url, token, clientReady) => {
+    if (token) {
+      const headers = new Headers();
+      headers.append("Authorization", token);
+      headers.append("Accept", "application/json");
+
+      // @hooks_todo Merge requestConfig in here when we get to the point where we need to.
+      const fetchInit = {
+        method: 'GET',
+        headers: headers,
+      }
+
+      const response = await fetch(url, fetchInit);
+
+      if (!response.ok) {
+        const error = new Error('Received an error from the server.');
+        error.info = await response.text();
+        error.status = response.status;
+        throw error;
+      }
+
+      return response.json();
+    } else if (clientReady) {
+      const error = new Error('Tried to make an API request without a token. Tsk tsk.');
+      error.status = 401;
+      throw error;
+    }
+  }
+  /////////////////
+
+  const { data, error, isLoading, mutate } = useSWR(
+    swrKey,
+    ([requestUrl, clientToken, clientReady]) => swrFetcher(requestUrl, clientToken, clientReady),
+    swrOptions
+  );
+
+  return {
+    loading: isLoading,
+    data,
+    error,
+    onDataUpdate: (newData) => mutate(newData),
+  }
+}
+
+// This is meant to be used for on-demand requests, such as writes and anything else that
+// happens outside the context of a page load
+export const directorApiRequest = ({uri, requestConfig, authToken, onSuccess = null, onFailure = null}) => {
+  const url = `${apiHost}/director${uri}`;
   const config = {...requestConfig};
   config.url = url;
   config.headers = {...requestConfig.headers}
   config.headers['Accept'] = 'application/json';
-  config.headers['Authorization'] = context.directorState.user.authToken;
+  config.headers['Authorization'] = authToken;
   config.validateStatus = (status) => status < 500;
   axios(config)
     .then(response => {
-      handleSuccess(response, context.dispatch, onSuccess, onFailure);
+      if (response.status >= 200 && response.status < 400) {
+        handleSuccess(response, onSuccess, onFailure);
+      } else if (response.status === 401) {
+        const err = new Error('Login session has timed out.');
+        throw err;
+      } else {
+        const message = response.data && response.data.error ? response.data.error : 'Something went wrong with that request.';
+        const err = new Error(message);
+        throw err;
+      }
     })
     .catch(error => {
+      devConsoleLog("Nope.", error);
       handleError(error, onFailure);
     });
 }
 
-export const directorApiDownloadRequest = ({uri, context, onSuccess = null, onFailure = null}) => {
-  const url = `${apiHost}${uri}`;
+export const directorApiDownloadRequest = ({uri, authToken, onSuccess = null, onFailure = null}) => {
+  const url = `${apiHost}/director${uri}`;
   const config = {
     method: 'get',
     url: url,
     headers: {
-      'Authorization': context.directorState.user.authToken,
+      'Authorization': authToken,
     },
     responseType: 'blob',
     validateStatus: (status) => status < 500,
   }
   axios(config)
     .then(response => {
-      handleSuccess(response, context.dispatch, onSuccess, onFailure)
+      handleSuccess(response, onSuccess, onFailure)
     })
     .catch(error => {
+      devConsoleLog("Nope.", error);
       handleError(error, onFailure);
     });
+}
+
+export const useTournament = (onSuccess = () => {}) => {
+  const router = useRouter();
+  const {identifier} = router.query;
+
+  const {loading, data: tournament, error, onDataUpdate: tournamentUpdated} = useDirectorApi({
+    uri: identifier ? `/tournaments/${identifier}` : null,
+    onSuccess: onSuccess,
+  });
+
+  const tournamentUpdatedQuietly = (updatedTournament) => {
+    const mutateOptions = {
+      optimisticData: updatedTournament,
+      rollbackOnError: true,
+      populateCache: true,
+    }
+    tournamentUpdated(updatedTournament, mutateOptions);
+  }
+
+  return {
+    loading,
+    error,
+    tournament,
+    tournamentUpdated,
+    tournamentUpdatedQuietly,
+  };
 }

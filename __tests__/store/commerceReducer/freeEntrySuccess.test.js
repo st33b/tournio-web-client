@@ -12,9 +12,9 @@ describe ('action type: free entry success', () => {
     message: 'yeah yeah we got it',
   };
 
-  it ('includes the code and message in the free entry', () => {
+  it ('includes just the message in the free entry', () => {
     const result = commerceReducer(previousState, action);
-    expect(result.freeEntry.code).toStrictEqual(action.code);
+    expect(result.freeEntry.code).toStrictEqual('');
     expect(result.freeEntry.message).toStrictEqual(action.message);
   });
 

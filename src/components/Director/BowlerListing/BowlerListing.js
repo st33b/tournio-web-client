@@ -1,13 +1,14 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {useRouter} from "next/router";
+import Link from 'next/link';
 import {useTable, useSortBy, useFilters} from 'react-table';
 import {Overlay, Popover} from "react-bootstrap";
 
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
 import BowlerFilterForm from "../BowlerFilterForm/BowlerFilterForm";
-import {doesNotEqual, isOrIsNot, equals} from "../../../utils";
+import {doesNotEqual, isOrIsNot, equals, devConsoleLog} from "../../../utils";
 import {directorApiRequest} from "../../../director";
-import {useDirectorContext} from "../../../store/DirectorContext";
+import {useLoginContext} from "../../../store/LoginContext";
 
 import classes from './BowlerListing.module.scss';
 
@@ -20,10 +21,9 @@ const IgboMemberCell = ({
   const [checked, setChecked] = useState(initialValue);
   const [showPopover, setShowPopover] = useState(false);
   const target = useRef(null);
-  const context = useDirectorContext();
-  const router = useRouter();
+  const {authToken} = useLoginContext();
 
-  const onChangeSuccess = (checked, data) => {
+  const onChangeSuccess = (checked) => {
     updateTheData(index, id, checked);
 
     // trigger the popover
@@ -35,7 +35,7 @@ const IgboMemberCell = ({
   }
 
   const submitStatusChange = (newStatus) => {
-    const uri = `/director/bowlers/${original.identifier}`;
+    const uri = `/bowlers/${original.identifier}`;
     const requestConfig = {
       method: 'patch',
       headers: {
@@ -52,8 +52,8 @@ const IgboMemberCell = ({
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
-      onSuccess: (data) => onChangeSuccess(newStatus, data),
+      authToken: authToken,
+      onSuccess: () => onChangeSuccess(newStatus),
       onFailure: onChangeFailure,
     });
   }
@@ -78,7 +78,9 @@ const IgboMemberCell = ({
       />
       <Overlay target={target.current}
                rootClose={true}
-               onHide={() => { setShowPopover(false)}}
+               onHide={() => {
+                 setShowPopover(false)
+               }}
                show={showPopover}
                placement={'right'}>
         {(props) => (
@@ -93,79 +95,107 @@ const IgboMemberCell = ({
   );
 }
 
-const BowlerListing = ({bowlers}) => {
-  const columns = useMemo(() => [
-    {
-      id: 'name',
-      Header: ({column}) => <SortableTableHeader text={'Name'} column={column}/>,
-      accessor: 'full_name',
-      Cell: ({row, cell}) => {
-        return (
-          <a href={`/director/bowlers/${row.original.identifier}`}>
-            {cell.value}
-          </a>
-        )
-      }
-    },
-    {
-      id: 'email',
-      Header: ({column}) => <SortableTableHeader text={'Email'} column={column}/>,
-      accessor: 'email',
-    },
-    {
-      Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
-      accessor: 'team_name',
-      Cell: ({row, value}) => {
-        return (!value) ? 'n/a' : (
-          <a
-            href={`/director/teams/${row.original.team_identifier}`}>
-            {value}
-          </a>
+const BowlerListing = ({bowlers, showTeams, onBowlerUpdate}) => {
+  const columns = useMemo(() => {
+    const head = [
+      {
+        id: 'name',
+        Header: ({column}) => <SortableTableHeader text={'Name'} column={column}/>,
+        accessor: 'full_name',
+        Cell: ({row, cell}) => {
+          return (
+            <Link href={{
+              pathname: `/director/tournaments/[identifier]/bowlers/[bowlerId]`,
+              query: {
+                identifier: row.original.tournament.identifier,
+                bowlerId: row.original.identifier,
+              }
+            }
+            }>
+              {cell.value}
+            </Link>
           )
+        }
       },
-      disableSortBy: false,
-      filter: equals,
-    },
-    {
-      Header: ({column}) => <SortableTableHeader text={'Date Registered'} column={column}/>,
-      accessor: 'date_registered',
-    },
-    {
-      Header: 'IGBO Member?',
-      accessor: 'igbo_member',
-      Cell: IgboMemberCell,
-      disableSortBy: true,
-      filter: isOrIsNot,
-    },
-    {
-      Header: 'Free Entry?',
-      accessor: 'has_free_entry',
-      disableSortBy: true,
-      Cell: ({cell: {value}}) => {
-        const classes = value ? ['text-success', 'bi-check-lg', 'bi'] : ['text-danger', 'bi-dash-lg', 'bi'];
-        const text = value ? 'Yes' : 'No';
-        return (
-          <div className={'text-center'}>
-            <i className={classes.join(' ')} aria-hidden={true}/>
-            <span className={'visually-hidden'}>{text}</span>
-          </div>
-        );
-      }
-    },
-    {
-      Header: 'Billed',
-      accessor: 'amount_billed',
-      disableSortBy: true,
-      filter: equals,
-      Cell: ({value}) => `$${value}`,
-    },
-    {
-      Header: 'Due',
-      accessor: 'amount_due',
-      filter: doesNotEqual,
-      Cell: ({value}) => `$${value}`,
-    },
-  ], []);
+      {
+        id: 'email',
+        Header: ({column}) => <SortableTableHeader text={'Email'} column={column}/>,
+        accessor: 'email',
+      },
+    ];
+    const tail = [
+      {
+        Header: 'Doubles Partner',
+        accessor: 'doubles_partner_name',
+        disableSortBy: true,
+      },
+      {
+        Header: ({column}) => <SortableTableHeader text={'Date Registered'} column={column}/>,
+        accessor: 'date_registered',
+      },
+      {
+        Header: 'IGBO Member?',
+        accessor: 'igbo_member',
+        Cell: IgboMemberCell,
+        disableSortBy: true,
+        filter: isOrIsNot,
+      },
+      {
+        Header: 'Free Entry?',
+        accessor: 'has_free_entry',
+        disableSortBy: true,
+        Cell: ({cell: {value}}) => {
+          const classes = value ? ['text-success', 'bi-check-lg', 'bi'] : ['text-danger', 'bi-dash-lg', 'bi'];
+          const text = value ? 'Yes' : 'No';
+          return (
+            <div className={'text-center'}>
+              <i className={classes.join(' ')} aria-hidden={true}/>
+              <span className={'visually-hidden'}>{text}</span>
+            </div>
+          );
+        }
+      },
+      {
+        Header: 'Billed',
+        accessor: 'amount_billed',
+        disableSortBy: true,
+        filter: equals,
+        Cell: ({value}) => `$${value}`,
+      },
+      {
+        Header: 'Due',
+        accessor: 'amount_due',
+        filter: doesNotEqual,
+        Cell: ({value}) => `$${value}`,
+      },
+    ];
+
+    if (showTeams) {
+      head.push(      {
+          Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
+          accessor: 'team_name',
+          visible: false,
+          Cell: ({row, value}) => {
+            return (!value) ? 'n/a' : (
+              <Link href={{
+                pathname: '/director/tournaments/[identifier]/teams/[teamId]',
+                query: {
+                  identifier: row.original.tournament.identifier,
+                  teamId: row.original.team_identifier,
+                }
+              }}>
+                {value}
+              </Link>
+            )
+          },
+          disableSortBy: false,
+          filter: equals,
+        },
+      );
+    }
+
+    return head.concat(tail);
+  }, []);
 
   let data = [];
   if (bowlers) {
@@ -173,10 +203,13 @@ const BowlerListing = ({bowlers}) => {
   }
 
   const updateTheData = (rowIndex, columnId, isChecked) => {
-    const oldRow = data.get(rowIndex);
+    const oldRow = data[rowIndex];
     const newRow = {...oldRow, [columnId]: isChecked};
-    const newData = data.set(rowIndex, newRow);
-    setData(newData);
+    const newData = [...data];
+    newData[rowIndex] = newRow;
+    data = newData;
+
+    onBowlerUpdate(newRow);
   }
 
   // tell react-table which things we want to use (sorting, filtering)
@@ -256,10 +289,17 @@ const BowlerListing = ({bowlers}) => {
     }
     setFilter('has_free_entry', criteria.has_free_entry)
     setFilter('igbo_member', criteria.igbo_member);
-    if (criteria.no_team) {
-      setFilter('team_name', 'n/a');
+    if (showTeams) {
+      if (criteria.no_team) {
+        setFilter('team_name', 'n/a');
+      } else {
+        setFilter('team_name', undefined);
+      }
+    }
+    if (criteria.no_partner) {
+      setFilter('doubles_partner_name', 'n/a');
     } else {
-      setFilter('team_name', undefined);
+      setFilter('doubles_partner_name', undefined);
     }
   }
 
@@ -269,7 +309,11 @@ const BowlerListing = ({bowlers}) => {
 
   return (
     <div className={classes.BowlerListing}>
-      {data.length > 0 && <BowlerFilterForm onFilterApplication={filterThatData} onFilterReset={resetThoseFilters}/>}
+      {data.length > 0 && (
+        <BowlerFilterForm onFilterApplication={filterThatData}
+                          onFilterReset={resetThoseFilters}
+                          includeTeamFilters={showTeams}/>
+      )}
       {list}
     </div>
   );

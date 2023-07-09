@@ -1,17 +1,16 @@
 import {useState} from "react";
 
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
+import {directorApiRequest, useTournament} from "../../../director";
+import {useLoginContext} from "../../../store/LoginContext";
 import ErrorBoundary from "../../common/ErrorBoundary";
 import Item from "../../Commerce/AvailableItems/Item/Item";
-
-import classes from './MultiUseForm.module.scss';
-import {purchasableItemsAdded} from "../../../store/actions/directorActions";
 import ButtonRow from "../../common/ButtonRow";
 
-const BanquetForm = ({tournament, onCancel, onComplete}) => {
-  const context = useDirectorContext();
-  const dispatch = context.dispatch;
+import classes from './MultiUseForm.module.scss';
+
+const BanquetForm = ({onCancel, onComplete}) => {
+  const {authToken} = useLoginContext();
+  const {tournament} = useTournament();
 
   const initialState = {
     name: '',
@@ -45,14 +44,13 @@ const BanquetForm = ({tournament, onCancel, onComplete}) => {
   }
 
   const submissionSuccess = (data) => {
-    dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
-    onComplete(`Item ${data[0].name} created.`);
+    onComplete(data);
   }
 
   const formSubmitted = (event) => {
     event.preventDefault();
-    const uri = `/director/tournaments/${tournament.identifier}/purchasable_items`;
+    const uri = `/tournaments/${tournament.identifier}/purchasable_items`;
     const requestConfig = {
       method: 'post',
       data: {
@@ -72,7 +70,7 @@ const BanquetForm = ({tournament, onCancel, onComplete}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: submissionSuccess,
       onFailure: (_) => console.log("Failed to save new banquet item."),
     });

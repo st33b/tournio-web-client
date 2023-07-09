@@ -1,14 +1,16 @@
 import {useEffect, useState} from "react";
 import {ListGroupItem} from "react-bootstrap";
 
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {directorApiRequest, useTournament} from "../../../director";
+import {useLoginContext} from "../../../store/LoginContext";
 
 import classes from './VisibleTournament.module.scss';
+import {updateObject} from "../../../utils";
 
 const ConfigItemForm = ({item}) => {
-  const context = useDirectorContext();
+  const {authToken} = useLoginContext();
+  const {tournament, tournamentUpdatedQuietly} = useTournament();
 
   const initialState = {
     prevValue: '',
@@ -36,7 +38,7 @@ const ConfigItemForm = ({item}) => {
     newFormData.value = event.target.checked;
     setFormData(newFormData);
 
-    const uri = `/director/config_items/${item.id}`;
+    const uri = `/config_items/${item.id}`;
     const requestConfig = {
       method: 'patch',
       data: {
@@ -48,10 +50,22 @@ const ConfigItemForm = ({item}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
-      onSuccess: (_) => {},
-      onFailure: (data) => { console.log("Failed to save config item.", data) },
+      authToken: authToken,
+      onSuccess: (data) => itemUpdated(data),
+      onFailure: (err) => {
+        setErrorMessage(err.message)
+      },
     });
+  }
+
+  const itemUpdated = (configItem) => {
+    const newConfigItems = [...tournament.config_items];
+    newConfigItems.filter(({id}) => id === configItem.id).forEach(ci => ci.value = configItem.value);
+    const updatedTournament = updateObject(tournament, {
+      config_items: newConfigItems,
+    });
+
+    tournamentUpdatedQuietly(updatedTournament);
   }
 
   return (
@@ -64,7 +78,7 @@ const ConfigItemForm = ({item}) => {
                  name={'config_item'}
                  id={item.key}
                  checked={formData.value}
-                 onChange={onInputChanged} />
+                 onChange={onInputChanged}/>
           <label className={'form-check-label'}
                  htmlFor={item.key}>
             {item.label}

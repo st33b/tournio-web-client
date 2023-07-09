@@ -2,19 +2,17 @@ import {useEffect, useState} from "react";
 import {Map} from "immutable";
 import Card from 'react-bootstrap/Card';
 
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
+import {directorApiRequest, useTournament} from "../../../director";
 
 import classes from './ShiftForm.module.scss';
-import {
-  tournamentShiftAdded,
-  tournamentShiftDeleted,
-  tournamentShiftUpdated
-} from "../../../store/actions/directorActions";
 import ButtonRow from "../../common/ButtonRow";
+import {useLoginContext} from "../../../store/LoginContext";
+import {devConsoleLog, updateObject} from "../../../utils";
+import ErrorAlert from "../../common/ErrorAlert";
 
-const ShiftForm = ({tournament, shift}) => {
-  const context = useDirectorContext();
+const ShiftForm = ({shift}) => {
+  const {loading, tournament, tournamentUpdatedQuietly} = useTournament();
+  const { authToken } = useLoginContext();
 
   const initialFormData = Map({
     name: '',
@@ -27,7 +25,7 @@ const ShiftForm = ({tournament, shift}) => {
 
   const [formData, setFormData] = useState(initialFormData);
   const [formDisplayed, setFormDisplayed] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState();
 
   // Populate form data with the shift prop
   useEffect(() => {
@@ -46,7 +44,7 @@ const ShiftForm = ({tournament, shift}) => {
     setFormData(Map(existingShift));
   }, [shift]);
 
-  if (!context || !tournament) {
+  if (loading) {
     return '';
   }
 
@@ -91,7 +89,7 @@ const ShiftForm = ({tournament, shift}) => {
   const addShiftFormSubmitted = (event) => {
     event.preventDefault();
 
-    const uri = `/director/tournaments/${tournament.identifier}/shifts`;
+    const uri = `/tournaments/${tournament.identifier}/shifts`;
     const requestConfig = {
       method: 'post',
       data: {
@@ -106,16 +104,21 @@ const ShiftForm = ({tournament, shift}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: addShiftSuccess,
-      onFailure: (data) => console.log("D'oh!", data),
+      onFailure: (err) => {
+        setErrorMessage(err.message)
+      },
     });
   }
 
   const addShiftSuccess = (data) => {
-    context.dispatch(tournamentShiftAdded(data));
-    setSuccessMessage('Shift added.');
     setFormDisplayed(false);
+    const updatedTournament = updateObject(tournament, {
+      shifts: tournament.shifts.concat(data),
+    });
+    setFormData(initialFormData);
+    tournamentUpdatedQuietly(updatedTournament);
   }
 
   const toggleEdit = (event) => {
@@ -123,28 +126,37 @@ const ShiftForm = ({tournament, shift}) => {
     setFormDisplayed(!formDisplayed);
   }
 
+  const shiftDeleteSuccess = () => {
+    const updatedTournament = updateObject(tournament, {
+      shifts: tournament.shifts.filter(({identifier}) => identifier !== shift.identifier),
+    });
+    tournamentUpdatedQuietly(updatedTournament);
+  }
+
   const deleteShift = (event) => {
     event.preventDefault();
     if (!allowDelete) {
       return;
     }
-    const uri = `/director/shifts/${shift.identifier}`;
+    const uri = `/shifts/${shift.identifier}`;
     const requestConfig = {
       method: 'delete',
     };
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
-      onSuccess: () => context.dispatch(tournamentShiftDeleted(shift)),
-      onFailure: (data) => console.log("D'oh!", data),
+      authToken: authToken,
+      onSuccess: shiftDeleteSuccess,
+      onFailure: (err) => {
+        setErrorMessage(err.message)
+      },
     });
   }
 
   const updateShiftFormSubmitted = (event) => {
     event.preventDefault();
 
-    const uri = `/director/shifts/${shift.identifier}`;
+    const uri = `/shifts/${shift.identifier}`;
     const requestConfig = {
       method: 'patch',
       data: {
@@ -159,15 +171,23 @@ const ShiftForm = ({tournament, shift}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: updateShiftSuccess,
-      onFailure: (data) => console.log("D'oh!", data),
-    })
+      onFailure: (err) => {
+        setErrorMessage(err.message)
+      },
+    });
   }
 
   const updateShiftSuccess = (data) => {
-    context.dispatch(tournamentShiftUpdated(data));
-    setSuccessMessage('Shift updated.');
+    const shifts = [...tournament.shifts];
+    const index = shifts.findIndex(({identifier}) => identifier === shift.identifier);
+    shifts[index] = {...data};
+    const updatedTournament = updateObject(tournament, {
+      shifts: shifts,
+    });
+
+    tournamentUpdatedQuietly(updatedTournament);
     setFormDisplayed(false);
   }
 
@@ -329,6 +349,10 @@ const ShiftForm = ({tournament, shift}) => {
                          disableSave={!formData.get('valid')}
                          onDelete={allowDelete ? deleteShift : false} />
             </div>
+            <ErrorAlert message={errorMessage}
+                        className={`mt-3 mb-0`}
+                        onClose={() => setErrorMessage(null)}
+                        />
           </form>
         </Card.Body>
       }

@@ -1,15 +1,15 @@
 import {useEffect, useState} from "react";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
-import {tournamentContactAdded, tournamentContactUpdated} from "../../../store/actions/directorActions";
+import {directorApiRequest, useTournament} from "../../../director";
+import {useLoginContext} from "../../../store/LoginContext";
 
 import classes from './ContactForm.module.scss';
+import {updateObject} from "../../../utils";
 
-const ContactForm = ({tournament, contact, newContact}) => {
-  const context = useDirectorContext();
-  const dispatch = context.dispatch;
+const ContactForm = ({contact, newContact}) => {
+  const {loading, tournament, tournamentUpdatedQuietly} = useTournament();
+  const { authToken } = useLoginContext();
 
   const initialState = {
     identifier: '',
@@ -50,21 +50,24 @@ const ContactForm = ({tournament, contact, newContact}) => {
   }
 
   const onSuccess = (data) => {
+    const modifiedTournament = updateObject(tournament, {
+      contacts: tournament.contacts.concat(data),
+    });
     if (newContact) {
-      dispatch(tournamentContactAdded(data));
       setFormData(initialState);
+      modifiedTournament.contacts = tournament.contacts.concat(data);
     } else {
-      dispatch(tournamentContactUpdated(data));
+      const index = modifiedTournament.contacts.findIndex(({identifier}) => identifier === data.identifier);
+      modifiedTournament.contacts[index] = data;
     }
-    setEditing(false);
-  }
 
-  const onFailure = (data) => {
+    tournamentUpdatedQuietly(modifiedTournament);
+    setEditing(false);
   }
 
   const formSubmitted = (event) => {
     event.preventDefault();
-    const uri = newContact ? `/director/tournaments/${tournament.identifier}/contacts` : `/director/contacts/${contact.identifier}`;
+    const uri = newContact ? `/tournaments/${tournament.identifier}/contacts` : `/contacts/${contact.identifier}`;
     const requestConfig = {
       method: newContact ? 'post' : 'patch',
       data: {
@@ -81,10 +84,20 @@ const ContactForm = ({tournament, contact, newContact}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: onSuccess,
-      onFailure: onFailure,
     })
+  }
+
+  const editClicked = (event) => {
+    event.preventDefault();
+    setEditing(true);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  if (loading) {
+    return '';
   }
 
   const roles = {
@@ -113,11 +126,6 @@ const ContactForm = ({tournament, contact, newContact}) => {
   }
   if (formData.notify_on_registration) {
     chosenNotifications.push('registrations');
-  }
-
-  const editClicked = (event) => {
-    event.preventDefault();
-    setEditing(true);
   }
 
   const outerClasses = [classes.ContactForm];

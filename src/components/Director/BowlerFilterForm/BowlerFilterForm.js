@@ -6,7 +6,7 @@ import {Col, FloatingLabel, Row} from "react-bootstrap";
 
 import classes from './BowlerFilterForm.module.scss';
 
-const BowlerFilterForm = ({onFilterApplication, onFilterReset}) => {
+const BowlerFilterForm = ({onFilterApplication, onFilterReset, includeTeamFilters=true}) => {
   const initialState = {
     name: '',
     email: '',
@@ -14,6 +14,7 @@ const BowlerFilterForm = ({onFilterApplication, onFilterReset}) => {
     has_free_entry: false,
     igbo_member: '',
     no_team: '',
+    no_partner: '',
     amount_billed: false,
   }
 
@@ -34,6 +35,7 @@ const BowlerFilterForm = ({onFilterApplication, onFilterReset}) => {
       case 'amount_due':
       case 'has_free_entry':
       case 'no_team':
+      case 'no_partner':
       case 'amount_billed':
         const oldValue = filterForm[inputIdentifier];
         const newValue = !oldValue;
@@ -144,14 +146,27 @@ const BowlerFilterForm = ({onFilterApplication, onFilterReset}) => {
               />
             </Col>
           </Form.Group>
-          <Form.Group controlId={'no_team'}
+          {includeTeamFilters && (
+            <Form.Group controlId={'no_team'}
+                        as={Row}
+                        className={'mb-3'}>
+              <Col sm={{span: 8, offset: 4}}>
+                <Form.Check type={'checkbox'}
+                            label={'Not on a team'}
+                            checked={filterForm.no_team}
+                            onChange={(event) => inputChangedHandler(event, 'no_team')}
+                />
+              </Col>
+            </Form.Group>
+          )}
+          <Form.Group controlId={'no_partner'}
                       as={Row}
                       className={'mb-3'}>
             <Col sm={{span: 8, offset: 4}}>
               <Form.Check type={'checkbox'}
-                          label={'Not on a team'}
-                          checked={filterForm.no_team}
-                          onChange={(event) => inputChangedHandler(event, 'no_team')}
+                          label={'No doubles partner'}
+                          checked={filterForm.no_partner}
+                          onChange={(event) => inputChangedHandler(event, 'no_partner')}
               />
             </Col>
           </Form.Group>

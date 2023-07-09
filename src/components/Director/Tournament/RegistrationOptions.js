@@ -2,13 +2,14 @@ import {useEffect, useState} from 'react';
 import {Card} from "react-bootstrap";
 import {Map} from 'immutable';
 
-import {directorApiRequest} from "../../../director";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {tournamentDetailsRetrieved} from "../../../store/actions/directorActions";
-import {devConsoleLog} from "../../../utils";
+import {directorApiRequest, useTournament} from "../../../director";
+import {useLoginContext} from "../../../store/LoginContext";
+import ErrorAlert from "../../common/ErrorAlert";
+import {devConsoleLog, updateObject} from "../../../utils";
 
-const RegistrationOptions = ({tournament}) => {
-  const context = useDirectorContext();
+const RegistrationOptions = () => {
+  const { authToken } = useLoginContext();
+  const {loading, tournament, tournamentUpdatedQuietly} = useTournament();
 
   const REGISTRATION_TYPES = ['new_team', 'solo', 'join_team', 'partner', 'new_pair'];
   const REGISTRATION_TYPE_LABELS = [
@@ -37,8 +38,8 @@ const RegistrationOptions = ({tournament}) => {
 
   const initialFormData = Map({
     new_team: false,
-    join_team: true,
-    solo: true,
+    join_team: false,
+    solo: false,
     partner: false,
     new_pair: false,
   });
@@ -46,7 +47,8 @@ const RegistrationOptions = ({tournament}) => {
   const [formData, setFormData] = useState(initialFormData);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  // Populate form data with what the tournament already has
+  // Populate form data with what the tournament already has, and disable
+  // the ones that don't apply for the tournament type
   useEffect(() => {
     if (!tournament) {
       return;
@@ -55,6 +57,12 @@ const RegistrationOptions = ({tournament}) => {
       REGISTRATION_TYPES.forEach(rType => {
         map.set(rType, tournament.registration_options[rType]);
       });
+      if (tournament.event_items.event.length > 0) {
+        map.set('new_team', false).set('join_team', false);
+      }
+      else {
+        map.set('partner', false).set('new_pair', false);
+      }
     });
     setFormData(Map(newFormData));
   }, [tournament]);
@@ -74,7 +82,7 @@ const RegistrationOptions = ({tournament}) => {
   }
 
   const submitRegistrationOptions = (options) => {
-    const uri = `/director/tournaments/${tournament.identifier}`;
+    const uri = `/tournaments/${tournament.identifier}`;
     const enabledTypes = [];
     REGISTRATION_TYPES.forEach(rType => {
       if (options.get(rType)) {
@@ -94,10 +102,17 @@ const RegistrationOptions = ({tournament}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
-      onSuccess: (tournament) => { context.dispatch(tournamentDetailsRetrieved(tournament)) },
+      authToken: authToken,
+      onSuccess: (data) => submissionCompleted(data),
       onFailure: (data) => setErrorMessage(data.error),
     })
+  }
+
+  const submissionCompleted = (data) => {
+    const updatedTournsment = updateObject(tournament, {
+      registration_options: {...data.registration_options},
+    });
+    tournamentUpdatedQuietly(updatedTournsment);
   }
 
   return (
@@ -124,20 +139,10 @@ const RegistrationOptions = ({tournament}) => {
           })}
 
       </Card.Body>
-      {errorMessage && (
-        <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mx-3'}
-             role={'alert'}>
-          <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
-          <div className={'me-auto'}>
-            {errorMessage}
-            <button type="button"
-                    className={"btn-close"}
-                    data-bs-dismiss="alert"
-                    onClick={() => setErrorMessage(null)}
-                    aria-label="Close"/>
-          </div>
-        </div>
-      )}
+      <ErrorAlert message={errorMessage}
+                  className={`mx-3`}
+                  onClose={() => setErrorMessage(null)}
+                  />
     </Card>
   );
 }

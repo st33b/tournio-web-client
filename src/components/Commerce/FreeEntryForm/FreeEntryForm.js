@@ -27,6 +27,10 @@ const FreeEntryForm = () => {
   }
 
   const onFreeEntryPostSuccess = (data) => {
+    setFreeEntryForm({
+      ...initialState,
+      freeEntryCode: '',
+    });
     dispatch(freeEntrySuccess(data.unique_code, data.message));
   }
 

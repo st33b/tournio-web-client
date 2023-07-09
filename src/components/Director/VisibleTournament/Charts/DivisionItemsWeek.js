@@ -6,9 +6,11 @@ import {color} from "chart.js/helpers";
 import {chartColors} from "./common";
 
 import classes from '../VisibleTournament.module.scss';
+import {useTournament} from "../../../../director";
 
-const DivisionItemsWeek = ({tournament, title}) => {
-  if (!tournament) {
+const DivisionItemsWeek = ({title}) => {
+  const {loading, tournament} = useTournament();
+  if (loading) {
     return '';
   }
 

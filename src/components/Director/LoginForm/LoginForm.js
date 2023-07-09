@@ -1,24 +1,23 @@
 import {useState, useRef} from "react";
-import {useRouter} from "next/router";
-
+import axios from "axios";
 import {Button, Card, FloatingLabel, Form} from "react-bootstrap";
 
-import {useDirectorContext} from '../../../store/DirectorContext';
+import {useLoginContext} from "../../../store/LoginContext";
+import {apiHost, devConsoleLog} from "../../../utils";
 
 import classes from './LoginForm.module.scss';
-import {directorLogin} from "../../../director";
 
 const LoginForm = ({onLoginSuccess}) => {
-  const {dispatch} = useDirectorContext();
+  const {login} = useLoginContext();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const [loading, setLoading] = useState(false);
-  const [loginFailed, setLoginFailed] = useState(false);
   const [validated, setValidated] = useState(false);
+  const [errorMessage, setErrorMessage] = useState();
 
-  const loginFailure = (data) => {
+  const loginFailure = (error) => {
     setLoading(false);
-    setLoginFailed(true);
+    setErrorMessage(error);
   }
 
   const submitHandler = (event) => {
@@ -38,12 +37,28 @@ const LoginForm = ({onLoginSuccess}) => {
         password: enteredPassword,
       }
     };
-    directorLogin({
-      userCreds: userCreds,
-      dispatch: dispatch,
-      onSuccess: onLoginSuccess,
-      onFailure: loginFailure,
-    });
+
+    const config = {
+      url: `${apiHost}/login`,
+      headers: {
+        'Accept': 'application/json',
+      },
+      method: 'post',
+      data: userCreds,
+      validateStatus: (status) => { return status < 500 },
+    };
+    axios(config)
+      .then(response => {
+        if (response.status >= 200 && response.status < 300) {
+          login(response.data, response.headers.authorization);
+          onLoginSuccess();
+        } else {
+          loginFailure('Invalid email/password combination.');
+        }
+      })
+      .catch(error => {
+        loginFailure(error);
+      });
   }
 
   return (
@@ -72,6 +87,7 @@ const LoginForm = ({onLoginSuccess}) => {
               <Form.Control type={'password'}
                             required
                             placeholder={'Password'}
+                            autoComplete={'current-password'}
                             ref={passwordInputRef}/>
               <Form.Control.Feedback type={'invalid'}>
                 Can&apos;t log in without a password.
@@ -88,9 +104,9 @@ const LoginForm = ({onLoginSuccess}) => {
             </div>
           </Form>
         </Card.Body>
-        {loginFailed && (
+        {errorMessage && (
           <Card.Body className={'pt-0 text-center text-danger'}>
-            Invalid username and/or password. Try again.
+            {errorMessage}
           </Card.Body>
         )}
       </Card>

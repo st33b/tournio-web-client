@@ -83,7 +83,7 @@ export const commerceReducer = (state, action) => {
       return updateObject(state, {
         cart: newCart,
         freeEntry: {
-          code: action.code,
+          code: '',
           message: action.message,
           error: '',
         }

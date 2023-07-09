@@ -53,7 +53,6 @@ const Navigation = ({showCart}) => {
             <span className={'visually-hidden'}>Home</span>
             <i className={'bi-house'} aria-hidden={true} />
           </a>
-          {cartText}
           <a href={'/tournaments'}
              title={'To tournament listing'}
              className={`d-none d-md-inline-block ${classes.LogoLink}`}>

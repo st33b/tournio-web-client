@@ -5,11 +5,11 @@ import classes from '../TournamentBuilder.module.scss';
 import {newTournamentSaved, newTournamentStepCompleted} from "../../../../store/actions/directorActions";
 import {directorApiRequest} from "../../../../director";
 import {devConsoleLog} from "../../../../utils";
+import {useLoginContext} from "../../../../store/LoginContext";
 
 const RequiredEvents = () => {
-  const context = useDirectorContext();
-  const directorState = context.directorState;
-  const dispatch = context.dispatch;
+  const {authToken} = useLoginContext();
+  const {state, dispatch} = useDirectorContext();
 
   const DEFAULT_EVENT_DETAILS = {
     roster_type: '',
@@ -81,8 +81,8 @@ const RequiredEvents = () => {
     if (formData.fields.events.length === 0 ) {
       dispatch(newTournamentStepCompleted('required_events', 'additional_events'));
     } else {
-      const identifier = directorState.builder.tournament.identifier;
-      const uri = `/director/tournaments/${identifier}`;
+      const identifier = state.builder.tournament.identifier;
+      const uri = `/tournaments/${identifier}`;
       const requestData = {
         tournament: {
           events_attributes: formData.fields.events,
@@ -95,7 +95,7 @@ const RequiredEvents = () => {
       directorApiRequest({
         uri: uri,
         requestConfig: requestConfig,
-        context: context,
+        authToken: authToken,
         onSuccess: onSaveSuccess,
         onFailure: (err) => devConsoleLog("Failed to update tournament.", err),
       });
@@ -104,7 +104,7 @@ const RequiredEvents = () => {
 
   return (
     <div>
-      <h2>{directorState.builder.tournament.name}: Required Events</h2>
+      <h2>{state.builder.tournament.name}: Required Events</h2>
 
       <p>
         Events that all participants in the tournament will bowl.

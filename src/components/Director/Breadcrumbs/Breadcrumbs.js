@@ -1,4 +1,5 @@
 import Breadcrumb from "react-bootstrap/Breadcrumb";
+import Link from "next/link";
 
 import classes from './Breadcrumbs.module.scss';
 
@@ -13,7 +14,9 @@ const breadcrumbs = ({ladder, activeText}) => {
         {/* sequential list of crumbs... */}
         {ladder.map((item, i) => {
           return (
-            <Breadcrumb.Item href={item.path} key={i}>
+            <Breadcrumb.Item href={item.path}
+                             linkAs={Link}
+                             key={i}>
               {item.text}
             </Breadcrumb.Item>
           );

@@ -3,8 +3,10 @@ import {Accordion, Placeholder} from "react-bootstrap";
 import ConfigItem from "./ConfigItem";
 
 import classes from './VisibleTournament.module.scss';
+import {useTournament} from "../../../director";
 
-const Configuration = ({eventKey, tournament, excludedKeys}) => {
+const Configuration = ({eventKey, excludedKeys}) => {
+  const {loading, tournament} = useTournament();
   let content = (
     <Placeholder animation={'glow'}>
       <Placeholder xs={3} />{' '}
@@ -18,7 +20,7 @@ const Configuration = ({eventKey, tournament, excludedKeys}) => {
     </Placeholder>
   )
 
-  if (tournament && excludedKeys) {
+  if (!loading && excludedKeys) {
     content = (
       <dl>
         {tournament.config_items.map((item) => {

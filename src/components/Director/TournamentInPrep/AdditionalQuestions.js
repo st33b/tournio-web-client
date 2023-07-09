@@ -4,8 +4,11 @@ import ListGroup from "react-bootstrap/ListGroup";
 import AdditionalQuestionForm from "../AdditionalQuestionForm/AdditionalQuestionForm";
 
 import classes from './TournamentInPrep.module.scss';
+import {useTournament} from "../../../director";
 
-const AdditionalQuestions = ({tournament}) => {
+const AdditionalQuestions = () => {
+  const {tournament} = useTournament();
+
   if (!tournament) {
     return '';
   }
@@ -18,11 +21,11 @@ const AdditionalQuestions = ({tournament}) => {
       <ListGroup variant={'flush'}>
         {tournament.additional_questions.map((question, i) => (
           <ListGroup.Item key={i} className={`p-0`}>
-            <AdditionalQuestionForm tournament={tournament} question={question} />
+            <AdditionalQuestionForm question={question} />
           </ListGroup.Item>
         ))}
         <ListGroup.Item className={'p-0'}>
-          <AdditionalQuestionForm tournament={tournament} newQuestion={true}/>
+          <AdditionalQuestionForm newQuestion={true}/>
         </ListGroup.Item>
       </ListGroup>
     </Card>

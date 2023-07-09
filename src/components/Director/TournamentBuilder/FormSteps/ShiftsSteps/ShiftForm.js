@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import {devConsoleLog} from "../../../../../utils";
 
 import classes from '../../TournamentBuilder.module.scss';
 

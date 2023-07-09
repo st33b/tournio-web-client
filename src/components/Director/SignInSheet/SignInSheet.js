@@ -1,8 +1,8 @@
 import classes from './SignInSheet.module.scss';
 import TournamentLogo from "../../Registration/TournamentLogo/TournamentLogo";
 
-const SignInSheet = ({tournament, bowler, showPrintButton}) => {
-  if (!bowler || !tournament) {
+const SignInSheet = ({bowler, showPrintButton}) => {
+  if (!bowler) {
     return '';
   }
 
@@ -25,9 +25,9 @@ const SignInSheet = ({tournament, bowler, showPrintButton}) => {
   return (
     <div className={`${classes.SignInSheetHtml} d-flex flex-column vh-100`}>
       <div className={'d-flex align-items-center justify-content-center'}>
-        <TournamentLogo url={tournament.image_url} additionalClasses={classes.Logo} />
+        <TournamentLogo url={bowler.tournament.image_url} additionalClasses={classes.Logo} />
         <h2 className={'ps-2'}>
-          {tournament.name} {tournament.year}
+          {bowler.tournament.name} {bowler.tournament.year}
         </h2>
       </div>
 

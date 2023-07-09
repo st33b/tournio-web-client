@@ -1,18 +1,24 @@
 import React, {useEffect, useState} from "react";
-import {useRouter} from "next/router";
 
 import {devConsoleLog, updateObject} from "../../../../utils";
 import {directorApiRequest} from "../../../../director";
-import {newTournamentSaved, newTournamentStepCompleted} from "../../../../store/actions/directorActions";
+import {
+  newTournamentCompleted,
+  newTournamentSaved,
+  newTournamentStepCompleted
+} from "../../../../store/actions/directorActions";
 import {useDirectorContext} from "../../../../store/DirectorContext";
 import Style from "./ShiftsSteps/Style";
 import ShiftForm from "./ShiftsSteps/ShiftForm";
 
 import classes from '../TournamentBuilder.module.scss';
+import {useLoginContext} from "../../../../store/LoginContext";
+import {useRouter} from "next/router";
 
 const Shifts = ({substep}) => {
-  const context = useDirectorContext();
-  const {directorState, dispatch} = context;
+  const {state, dispatch} = useDirectorContext();
+  const {authToken} = useLoginContext();
+  const router = useRouter();
 
   const INITIAL_SHIFT_STATE = {
     name: '',
@@ -95,6 +101,60 @@ const Shifts = ({substep}) => {
     setValid(newShiftSet.every(isValid));
   }
 
+  const addShiftClicked = () => {
+    const newShiftSet = shiftSet.concat(INITIAL_SHIFT_STATE);
+    setShiftSet(newShiftSet);
+    setValid(false);
+  }
+
+  const onSuccess = (data) => {
+    const newTournamentIdentifier = state.builder.tournament.identifier;
+    dispatch(newTournamentSaved(data));
+    // dispatch(newTournamentStepCompleted('shifts', 'scoring'));
+    dispatch(newTournamentCompleted());
+    router.push(`/director/tournaments/${newTournamentIdentifier}`);
+  }
+
+  const onFailure = (data) => {
+    devConsoleLog("Failed to save the shifts :(", data);
+  }
+
+  const nextClicked = () => {
+    // build the data to send
+    let shiftData = [];
+    if (chosenStyle === 'one') {
+      shiftData.push(singleShift);
+    } else {
+      shiftData = [...shiftSet];
+    }
+
+    // send it up, with success/failure handlers
+    const identifier = state.builder.tournament.identifier;
+    const uri = `/tournaments/${identifier}`;
+    const requestData = {
+      tournament: {
+        shifts_attributes: shiftData,
+      }
+    };
+    const requestConfig = {
+      method: 'patch',
+      data: requestData,
+    };
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      authToken: authToken,
+      onSuccess: onSuccess,
+      onFailure: onFailure,
+    });
+  }
+
+  ////////////////////////////////////////////////////////////////
+
+  if (!state.builder) {
+    return '';
+  }
+
   let formContent = '';
   if (displayedSubstep === 'shift_forms') {
     if (chosenStyle === 'one') {
@@ -112,54 +172,9 @@ const Shifts = ({substep}) => {
     }
   }
 
-  const addShiftClicked = () => {
-    const newShiftSet = shiftSet.concat(INITIAL_SHIFT_STATE);
-    setShiftSet(newShiftSet);
-    setValid(false);
-  }
-
-  const onSuccess = (data) => {
-    dispatch(newTournamentSaved(data));
-    dispatch(newTournamentStepCompleted('shifts', 'scoring'));
-  }
-
-  const onFailure = (data) => {
-    devConsoleLog("Failed to save the shifts :(", data);
-  }
-
-  const nextClicked = () => {
-    // build the data to send
-    let shiftData = [];
-    if (chosenStyle === 'one') {
-      shiftData.push(singleShift);
-    } else {
-      shiftData = [...shiftSet];
-    }
-
-    // send it up, with success/failure handlers
-    const identifier = directorState.builder.tournament.identifier;
-    const uri = `/director/tournaments/${identifier}`;
-    const requestData = {
-      tournament: {
-        shifts_attributes: shiftData,
-      }
-    };
-    const requestConfig = {
-      method: 'patch',
-      data: requestData,
-    };
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      onSuccess: onSuccess,
-      onFailure: onFailure,
-    });
-  }
-
   return (
     <div>
-      <h2>{directorState.builder.tournament.name}: Shifts</h2>
+      <h2>{state.builder.tournament.name}: Shifts</h2>
 
       <Style style={chosenStyle} styleChosen={handleStyleSelection}/>
 

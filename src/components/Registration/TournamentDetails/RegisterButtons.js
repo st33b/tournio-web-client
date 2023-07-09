@@ -17,7 +17,7 @@ const RegisterButtons = ({tournament}) => {
       {
         name: 'solo',
         path: 'solo-bowler',
-        linkText: 'Register as a Solo Bowler',
+        linkText: 'Register Solo',
       },
       {
         name: 'join_team',
@@ -37,7 +37,7 @@ const RegisterButtons = ({tournament}) => {
       {
         name: 'new_pair',
         path: 'new-pair',
-        linkText: 'Register a Pair of Bowlers',
+        linkText: 'Register a Pair',
       },
     ]
     const eventSelectionEnabled = tournament.event_items && tournament.event_items.event.length > 0;

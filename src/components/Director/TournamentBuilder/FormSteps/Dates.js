@@ -6,10 +6,11 @@ import classes from '../TournamentBuilder.module.scss';
 import {newTournamentSaved, newTournamentStepCompleted} from "../../../../store/actions/directorActions";
 import {directorApiRequest} from "../../../../director";
 import {devConsoleLog} from "../../../../utils";
+import {useLoginContext} from "../../../../store/LoginContext";
 
 const Dates = () => {
-  const context = useDirectorContext();
-  const {directorState, dispatch} = context;
+  const {state, dispatch} = useDirectorContext();
+  const {authToken} = useLoginContext();
 
   const initialState = {
     fields: {
@@ -22,19 +23,19 @@ const Dates = () => {
 
   const [formData, setFormData] = useState(initialState);
   useEffect(() => {
-    if (!directorState || !directorState.builder) {
+    if (!state || !state.builder) {
       return;
     }
-    if (directorState.builder.tournament) {
+    if (state.builder.tournament) {
       // We might have returned to this page after advancing.
       const newFormData = {...formData};
-      newFormData.fields.start_date = directorState.builder.tournament.start_date || '';
-      newFormData.fields.end_date = directorState.builder.tournament.end_date || '';
-      newFormData.fields.entry_deadline = directorState.builder.tournament.entry_deadline || '';
+      newFormData.fields.start_date = state.builder.tournament.start_date || '';
+      newFormData.fields.end_date = state.builder.tournament.end_date || '';
+      newFormData.fields.entry_deadline = state.builder.tournament.entry_deadline || '';
       newFormData.valid = isValid(newFormData.fields);
       setFormData(newFormData);
     }
-  }, [directorState, directorState.builder])
+  }, [state, state.builder])
 
   const isValid = (fields) => {
     const allHaveValues = fields.start_date.length > 0 &&
@@ -85,8 +86,8 @@ const Dates = () => {
   }
 
   const nextClicked = () => {
-    const identifier = directorState.builder.tournament.identifier;
-    const uri = `/director/tournaments/${identifier}`;
+    const identifier = state.builder.tournament.identifier;
+    const uri = `/tournaments/${identifier}`;
     const requestConfig = {
       method: 'patch',
       data: {
@@ -100,7 +101,7 @@ const Dates = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: saveSuccess,
       onFailure: (err) => devConsoleLog("Failed to update tournament.", err),
     });

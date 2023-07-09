@@ -1,15 +1,8 @@
-import {useCommerceContext} from "../../../store/CommerceContext";
-
 import classes from './TeamDetails.module.scss';
+import Link from "next/link";
 
-const TeamDetails = ({tournament, team, successType, context, enablePayment = true}) => {
-  const {commerce} = useCommerceContext();
-
+const TeamDetails = ({tournament, team, successType, context}) => {
   if (!tournament || !team) {
-    return '';
-  }
-
-  if (!commerce) {
     return '';
   }
 
@@ -33,7 +26,7 @@ const TeamDetails = ({tournament, team, successType, context, enablePayment = tr
     successBanner = (
       <div className={'alert alert-success p-2 mt-2 mt-md-0'} role={'alert'}>
         <h5 className={'alert-heading'}>
-          <i className={'bi-check-circle-fill pe-2'} aria-hidden={true} />
+          <i className={'bi-check-circle-fill pe-2'} aria-hidden={true}/>
           Success!
         </h5>
         <p className={classes.SuccessMessage}>
@@ -46,57 +39,36 @@ const TeamDetails = ({tournament, team, successType, context, enablePayment = tr
   return (
     <div className={classes.TeamDetails}>
       {successBanner}
-      <h3>
+      <h3 className={`text-center`}>
         Team: {team.name}
       </h3>
       {team.bowlers.length > 0 && (
-      <div className={'table-responsive'}>
-        <table className={'table table-striped caption-top'}>
-          <thead>
+        <div className={'table-responsive'}>
+          <table className={'table table-striped caption-top'}>
+            <thead>
             <tr className={'align-middle'}>
               <th><span className={'d-none d-sm-block'}>Position</span></th>
               <th>Name</th>
-              {context === 'join' && (
-                <th>Doubles Partner</th>
-              )}
-              {context !== 'join' && (
-                <th>Amount Due</th>
-              )}
-              {enablePayment && <th></th>}
+              <th>Doubles Partner</th>
             </tr>
-          </thead>
-          <tbody>
-          {team.bowlers.map((b, i) => {
-            // We might've come here from the checkout page, in which case that amount_due
-            // is more up-to-date than the one on the team object.
-            let amountDue = b.amount_due;
-            if (commerce.bowler && commerce.bowler.identifier === b.identifier) {
-              amountDue = commerce.bowler.amount_due;
-            }
-            return (
-              <tr key={i}>
-                <td>{b.position}</td>
-                <td>{b.full_name}</td>
-                {context === 'join' && (
-                  <td>{b.doubles_partner_name}</td>
-                )}
-                {context !== 'join' && (
-                  <td>${amountDue}</td>
-                )}
-                {enablePayment && (
+            </thead>
+            <tbody>
+            {team.bowlers.map((b, i) => {
+              return (
+                <tr key={i}>
+                  <td>{b.position}</td>
                   <td>
-                    <a href={`/bowlers/${b.identifier}`}
-                       className={'btn btn-sm btn-outline-primary'}>
-                      Choose Events &amp; Pay
-                    </a>
+                    <Link href={`/bowlers/${b.identifier}`}>
+                      {b.full_name}
+                    </Link>
                   </td>
-                )}
-              </tr>
-            )
-          })}
-          </tbody>
-        </table>
-      </div>
+                  <td>{b.doubles_partner_name}</td>
+                </tr>
+              )
+            })}
+            </tbody>
+          </table>
+        </div>
       )}
       {team.bowlers.length === 0 && context !== 'join' && (
         <h5 className={'text-center'}>

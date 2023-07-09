@@ -3,8 +3,11 @@ import {format} from "date-fns";
 import {timezones} from "../../../utils";
 
 import classes from './TournamentInPrep.module.scss';
+import {useTournament} from "../../../director";
 
-const Basics = ({tournament}) => {
+const Basics = () => {
+  const {tournament} = useTournament();
+
   if (!tournament) {
     return '';
   }

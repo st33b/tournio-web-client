@@ -3,15 +3,15 @@ import FormData from "form-data";
 
 import {useDirectorContext} from "../../../../store/DirectorContext";
 import {directorApiRequest} from "../../../../director";
-import {devConsoleLog} from "../../../../utils";
 import LogoImage from "../../LogoImage/LogoImage";
 
 import classes from '../TournamentBuilder.module.scss';
 import {newTournamentSaved, newTournamentStepCompleted} from "../../../../store/actions/directorActions";
+import {useLoginContext} from "../../../../store/LoginContext";
 
 const Logo = () => {
-  const context = useDirectorContext();
-  const {directorState, dispatch} = context;
+  const {state, dispatch} = useDirectorContext();
+  const {authToken} = useLoginContext();
 
   const initialState = {
     fields: {
@@ -34,7 +34,7 @@ const Logo = () => {
   }
 
   const onSuccess = (data) => {
-    const tournament = {...directorState.builder.tournament};
+    const tournament = {...state.builder.tournament};
     tournament.image_url = data.image_url;
     dispatch(newTournamentSaved(tournament));
   }
@@ -45,7 +45,7 @@ const Logo = () => {
     const form = new FormData();
     form.append('file', formData.fields.file);
 
-    const uri = `/director/tournaments/${directorState.builder.tournament.identifier}/logo_upload`;
+    const uri = `/tournaments/${state.builder.tournament.identifier}/logo_upload`;
     const requestConfig = {
       method: 'post',
       data: form,
@@ -53,7 +53,7 @@ const Logo = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: onSuccess,
       onFailure: (_) => setError('File failed to upload'),
     });
@@ -68,7 +68,7 @@ const Logo = () => {
       <h2>New Tournament: Logo</h2>
 
       {/* Show the existing image if there is one. */}
-      <LogoImage src={directorState.builder.tournament.image_url}/>
+      <LogoImage src={state.builder.tournament.image_url}/>
 
       <div className={`row ${classes.FieldRow}`}>
         <label htmlFor={'file'}

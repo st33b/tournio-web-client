@@ -1,10 +1,10 @@
 import {useEffect, useState, createElement} from "react";
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
-import {tournamentConfigItemChanged} from "../../../store/actions/directorActions";
+import {directorApiRequest, useTournament} from "../../../director";
 
 import classes from './ConfigItemForm.module.scss';
+import {useLoginContext} from "../../../store/LoginContext";
+import {updateObject} from "../../../utils";
 
 const BOOLEAN_CONFIG_ITEMS = [
   'display_capacity',
@@ -12,10 +12,12 @@ const BOOLEAN_CONFIG_ITEMS = [
   'publicly_listed',
   'skip_stripe',
   'event_selection',
+  'accept_payments',
 ];
 
-const ConfigItemForm = ({item, editable}) => {
-  const context = useDirectorContext();
+const ConfigItemForm = ({item}) => {
+  const {authToken} = useLoginContext();
+  const {tournament, tournamentUpdatedQuietly} = useTournament();
 
   const initialState = {
     prevValue: '',
@@ -25,6 +27,10 @@ const ConfigItemForm = ({item, editable}) => {
 
   const [formData, setFormData] = useState(initialState);
   const [editing, setEditing] = useState(false);
+  const [messages, setMessages] = useState({
+    success: null,
+    error: null,
+  })
 
   // Populate the form data with the item prop
   useEffect(() => {
@@ -36,19 +42,6 @@ const ConfigItemForm = ({item, editable}) => {
     newFormData.prevValue = item.value;
     setFormData(newFormData);
   }, [item]);
-
-  if (!item) {
-    return '';
-  }
-
-  const allowEdit = editable && !BOOLEAN_CONFIG_ITEMS.includes(item.key);
-
-  const toggleEdit = (event, enable) => {
-    if (event) {
-      event.preventDefault();
-    }
-    setEditing(enable);
-  }
 
   const onInputChanged = (event) => {
     const newFormData = {...formData};
@@ -70,12 +63,23 @@ const ConfigItemForm = ({item, editable}) => {
     const newFormData = {...formData}
     newFormData.value = newFormData.prevValue;
     setFormData(newFormData);
-    toggleEdit(null, false);
+    setEditing(false);
   }
 
-  const onSuccessfulUpdate = (data) => {
-    toggleEdit(null, false);
-    context.dispatch(tournamentConfigItemChanged(data));
+  const onSuccessfulUpdate = (configItem) => {
+    setEditing(false);
+    setMessages({
+      ...messages,
+      success: 'Update completed.',
+    });
+
+    const newConfigItems = [...tournament.config_items];
+    newConfigItems.filter(({id}) => id === configItem.id).forEach(ci => ci.value = configItem.value);
+    const updatedTournament = updateObject(tournament, {
+      config_items: newConfigItems,
+    });
+
+    tournamentUpdatedQuietly(updatedTournament);
   }
 
   const onFormSubmit = (event, value = null) => {
@@ -83,7 +87,7 @@ const ConfigItemForm = ({item, editable}) => {
       event.preventDefault();
     }
     const valueToSend = value === null ? formData.value : value;
-    const uri = `/director/config_items/${item.id}`;
+    const uri = `/config_items/${item.id}`;
     const requestConfig = {
       method: 'patch',
       data: {
@@ -95,11 +99,22 @@ const ConfigItemForm = ({item, editable}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: onSuccessfulUpdate,
-      onFailure: (data) => { console.log("Failed to save config item.", data) },
+      onFailure: (error) => { setMessages({
+        ...messages,
+        error: error.message,
+      })},
     });
   }
+
+  /////////////////////////
+
+  if (!tournament || !item) {
+    return '';
+  }
+
+  const allowEdit = !BOOLEAN_CONFIG_ITEMS.includes(item.key);
 
   let content = '';
   if (!editing) {
@@ -110,6 +125,7 @@ const ConfigItemForm = ({item, editable}) => {
           <input type={'checkbox'}
                  className={'form-check-input'}
                  role={'switch'}
+                 id={item.key}
                  name={'config_item'}
                  checked={formData.value}
                  onChange={onInputChanged} />
@@ -140,7 +156,7 @@ const ConfigItemForm = ({item, editable}) => {
     content = !allowEdit ? itemContent : (
       <span className={classes.ItemWrapper}
             title={'Edit this item'}
-            onClick={(e) => toggleEdit(e, true)}
+            onClick={(e) => setEditing(true)}
       >
         {itemContent}
       </span>
@@ -155,7 +171,6 @@ const ConfigItemForm = ({item, editable}) => {
     };
     const elementClassNames = [];
     let children = null;
-    let inputElement = null;
     switch (item.key) {
       case 'team_size':
         elementName = 'input';
@@ -173,9 +188,7 @@ const ConfigItemForm = ({item, editable}) => {
         break;
     }
     elementProps.className = elementClassNames.join(' ');
-    if (inputElement === null) {
-      inputElement = createElement(elementName, elementProps, children);
-    }
+    const inputElement = createElement(elementName, elementProps, children);
     content = (
       <form onSubmit={onFormSubmit} className={`${classes.Form} p-3`}>
           <label className={'form-label'} htmlFor={'config_item'}>

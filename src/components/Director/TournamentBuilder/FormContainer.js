@@ -1,8 +1,3 @@
-import {useEffect, useState} from "react";
-import {useRouter} from "next/router";
-
-import {useDirectorContext} from "../../../store/DirectorContext";
-
 import Name from './FormSteps/Name';
 import Details from "./FormSteps/Details";
 import Dates from './FormSteps/Dates';
@@ -16,9 +11,6 @@ import DerivedEvents from "./FormSteps/DerivedEvents";
 import classes from './TournamentBuilder.module.scss';
 
 const FormContainer = ({activeStep, substep}) => {
-  const router = useRouter();
-  const {directorState, dispatch} = useDirectorContext();
-
   if (!activeStep) {
     return '';
   }
@@ -40,18 +32,18 @@ const FormContainer = ({activeStep, substep}) => {
     case 'shifts':
       shownStep = <Shifts substep={substep}/>;
       break;
-    case 'scoring':
-      shownStep = <Scoring/>;
-      break;
-    case 'required_events':
-      shownStep = <RequiredEvents/>;
-      break;
-    case 'additional_events':
-      shownStep = <AdditionalEvents/>;
-      break;
-    case 'derived_events':
-      shownStep = <DerivedEvents/>;
-      break;
+    // case 'scoring':
+    //   shownStep = <Scoring/>;
+    //   break;
+    // case 'required_events':
+    //   shownStep = <RequiredEvents/>;
+    //   break;
+    // case 'additional_events':
+    //   shownStep = <AdditionalEvents/>;
+    //   break;
+    // case 'derived_events':
+    //   shownStep = <DerivedEvents/>;
+    //   break;
     default:
       shownStep = <Name/>;
       break;

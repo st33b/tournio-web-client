@@ -88,35 +88,42 @@ const AvailableItems = ({itemAddedToCart}) => {
             </div>
           )}
 
-          <div className={``}>
-            <h5 className={``}>
-              Bowling Extras
-            </h5>
-            <Col xs={12}>
-              {divisionItems.map((item) => (
-                <Item key={item.identifier}
-                      item={item}
-                      added={itemAddedToCart} />
-              ))}
-            </Col>
+          {(divisionItems.length > 0 || singleUseItems.length > 0 || multiUseItems.length > 0) && (
+            <>
+              <h5 className={``}>
+                Bowling Extras
+              </h5>
 
-            <Col xs={12}>
-              {singleUseItems.map((item) => (
-                <Item key={item.identifier}
-                      item={item}
-                      added={itemAddedToCart} />
-              ))}
-            </Col>
-          </div>
+              {divisionItems.length > 0 && (
+                <Col xs={12}>
+                  {divisionItems.map((item) => (
+                    <Item key={item.identifier}
+                          item={item}
+                          added={itemAddedToCart} />
+                  ))}
+                </Col>
+              )}
 
-          {multiUseItems.length > 0 && (
-            <Col xs={12} className={``}>
-              {multiUseItems.map((item) => (
-                <Item key={item.identifier}
-                      item={item}
-                      added={itemAddedToCart} />
-              ))}
-            </Col>
+              {multiUseItems.length > 0 && (
+                <Col xs={12}>
+                  {singleUseItems.map((item) => (
+                    <Item key={item.identifier}
+                          item={item}
+                          added={itemAddedToCart} />
+                  ))}
+                </Col>
+              )}
+
+              {multiUseItems.length > 0 && (
+                <Col xs={12} className={``}>
+                  {multiUseItems.map((item) => (
+                    <Item key={item.identifier}
+                          item={item}
+                          added={itemAddedToCart} />
+                  ))}
+                </Col>
+              )}
+            </>
           )}
         </Col>
 

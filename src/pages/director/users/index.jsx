@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {useRouter} from "next/router";
+import Link from 'next/link';
 
 import {Col, Row} from "react-bootstrap";
 
@@ -7,163 +8,60 @@ import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLa
 import UserListing from '../../../components/Director/UserListing/UserListing';
 import UserForm from '../../../components/Director/UserForm/UserForm';
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import {directorApiRequest, useLoggedIn} from "../../../director";
-import {useDirectorContext} from '../../../store/DirectorContext';
-import {tournamentListRetrieved, userListRetrieved} from "../../../store/actions/directorActions";
+import {useDirectorApi} from "../../../director";
+import SuccessAlert from "../../../components/common/SuccessAlert";
+import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Page = () => {
-  const context = useDirectorContext();
-  const directorState = context.directorState;
-  const dispatch = context.dispatch;
   const router = useRouter();
 
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const {success} = router.query;
 
-  // are we a superuser?
-  useEffect(() => {
-    if (!directorState.user) {
-      return;
-    }
-    const isSuperuser = directorState.user && directorState.user.role === 'superuser';
-    if (!isSuperuser) {
-      console.log("Nice try, but you're not logged in as a superuser.");
-      router.push('/director');
-    }
-  }, [directorState.user]);
+  const {loading: usersLoading, data: users, error: usersError, onDataUpdate} = useDirectorApi({
+    uri: '/users',
+  });
 
-  // Do we have a success query parameter?
-  useEffect(() => {
-    const {success} = router.query;
-    if (success === 'deleted') {
-      setSuccessMessage('The user has been removed.');
-      router.replace(router.pathname, null, { shallow: true });
-    }
-  }, [router]);
+  const {loading: tournamentsLoading, data: tournaments, error: tournamnentsError} = useDirectorApi({
+    uri: '/tournaments',
+  });
 
-  const usersRetrieved = (data) => {
-    dispatch(userListRetrieved(data));
-    setLoading(false);
+  const userAdded = (user) => {
+    const newUsers = users.concat(user);
+    onDataUpdate(newUsers);
   }
 
-  const usersFailedToRetrieve = (data) => {
-    setLoading(false);
-    console.log("D'oh!", data);
-    setErrorMessage('Failed to retrieve list of users');
+  const userUpdated = (user) => {
+    onDataUpdate(users);
   }
 
-  // fetch the list of users to send to the listing component -- but only if we haven't fetched them yet
-  useEffect(() => {
-    if (!directorState) {
-      return;
-    }
+  //////////////////////////////////////////////////////////////////////////
 
-    // Don't fetch the list if we have some in state already.
-    if (directorState.users.length > 0) {
-      console.log("User list already in state, not fetching again");
-      return;
-    }
-
-    const uri = `/director/users`;
-    const requestConfig = {
-      method: 'get',
-    }
-    setLoading(true);
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      onSuccess: usersRetrieved,
-      onFailure: usersFailedToRetrieve,
-    });
-  }, [directorState.users]);
-
-  const fetchTournamentsFailure = (data) => {
-    setErrorMessage(data.error);
-  }
-
-  // Retrieve the list of tournaments if we need to, for the new-user form
-  useEffect(() => {
-    if (!context || !directorState) {
-      return;
-    }
-    // Don't fetch the list again if we already have it.
-    if (directorState.tournaments && directorState.tournaments.length > 0) {
-      console.log("List of tournaments is already in state, not re-fetching");
-      return;
-    }
-    const uri = '/director/tournaments';
-    const requestConfig = {
-      method: 'get',
-    }
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      context: context,
-      onSuccess: (data) => dispatch(tournamentListRetrieved(data)),
-      onFailure: (_) => setErrorMessage(data.error),
-    });
-  }, []);
-
-  // Make sure we're logged in and ready to go
-  const loggedInState = useLoggedIn();
-  const ready = loggedInState >= 0;
-  if (!ready) {
-    return '';
-  }
-  if (!loggedInState) {
-    router.push('/director/login');
-  }
-  if (!directorState) {
-    return '';
-  }
-
-  if (loading) {
+  if (usersLoading || tournamentsLoading) {
     return <LoadingMessage message={'Retrieving users, gimme a sec...'} />
-  }
-
-  let success = '';
-  let error = '';
-  if (successMessage) {
-    success = (
-      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
-        <i className={'bi-check-circle-fill pe-2'} aria-hidden={true} />
-        <div className={'me-auto'}>
-          <strong>
-            Success!
-          </strong>
-          {' '}{successMessage}
-        </div>
-        <button type={"button"} className={"btn-close"} data-bs-dismiss={"alert"} aria-label={"Close"} />
-      </div>
-    );
-  }
-  if (errorMessage) {
-    error = (
-      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'} role={'alert'}>
-        <i className={'bi-exclamation-circle-fill pe-2'} aria-hidden={true} />
-        <div className={'me-auto'}>
-          <strong>
-            Oh no!
-          </strong>
-          {' '}{errorMessage}
-        </div>
-        <button type={"button"} className={"btn-close"} data-bs-dismiss={"alert"} aria-label={"Close"} />
-      </div>
-    );
   }
 
   return (
     <div className={'mt-2'}>
       <Row>
         <Col lg={8}>
-          {success}
-          {error}
-          <UserListing tournaments={directorState.tournaments}/>
+          {success === 'deleted' && (
+            <SuccessAlert message={'The user has been removed.'}
+                          className={``}
+                          onClose={() => {
+                            router.replace(router.pathname, null, {shallow: true})
+                          }}/>
+          )}
+          <ErrorAlert message={usersError}
+                      className={``}/>
+          <ErrorAlert message={tournamnentsError}
+                      className={``}/>
+          <UserListing users={users} tournaments={tournaments}/>
         </Col>
         <Col>
-          <UserForm tournaments={directorState.tournaments}/>
+          <UserForm tournaments={tournaments}
+                    onUserAdded={userAdded}
+                    onUserUpdated={userUpdated}
+          />
         </Col>
       </Row>
     </div>

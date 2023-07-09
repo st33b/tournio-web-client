@@ -3,31 +3,36 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
+import Link from 'next/link';
 
-import {directorApiRequest, directorApiDownloadRequest} from "../../../director";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {testDataCleared, tournamentTestEnvironmentUpdated} from "../../../store/actions/directorActions";
+import {directorApiRequest, directorApiDownloadRequest, useTournament} from "../../../director";
 
 import classes from './TournamentInPrep.module.scss';
 import statusClasses from '../TournamentListing/TournamentListing.module.scss';
+import {useLoginContext} from "../../../store/LoginContext";
+import SuccessAlert from "../../common/SuccessAlert";
+import ErrorAlert from "../../common/ErrorAlert";
+import {updateObject} from "../../../utils";
 
-const StatusAndCounts = ({tournament}) => {
-  const context = useDirectorContext();
-  const dispatch = context.dispatch;
+const StatusAndCounts = () => {
+  const {authToken} = useLoginContext();
 
   const testEnvFormInitialData = {
     registration_period: 'regular',
   }
 
   const [downloadMessage, setDownloadMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState();
   const [clearTestDataSuccessMessage, setClearTestDataSuccessMessage] = useState();
   const [loading, setLoading] = useState(false);
   const [testEnvFormData, setTestEnvFormData] = useState(testEnvFormInitialData);
   const [testEnvSuccessMessage, setTestEnvSuccessMessage] = useState(null);
 
-  // Update the state of testEnvFormData with what's in context
+  const {loading: tournamentLoading, tournament, error, tournamentUpdatedQuietly} = useTournament();
+
+  // Update the state of testEnvFormData
   useEffect(() => {
-    if (!context || !tournament) {
+    if (!tournament) {
       return;
     }
 
@@ -40,11 +45,7 @@ const StatusAndCounts = ({tournament}) => {
 
       setTestEnvFormData(formData);
     }
-  }, [context, tournament]);
-
-  if (!context || !tournament) {
-    return '';
-  }
+  }, [tournament]);
 
   const downloadSuccess = (data, name) => {
     const url = URL.createObjectURL(data);
@@ -56,36 +57,10 @@ const StatusAndCounts = ({tournament}) => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    setDownloadMessage(
-      <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'}
-           role={'alert'}>
-        <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
-        <div className={'me-auto'}>
-          Download completed.
-          <button type="button"
-                  className={"btn-close"}
-                  data-bs-dismiss="alert"
-                  onClick={() => setDownloadMessage(null)}
-                  aria-label="Close"/>
-        </div>
-      </div>
-    );
+    setDownloadMessage('Download completed.');
   }
   const downloadFailure = (data) => {
-    setDownloadMessage(
-      <div className={'alert alert-danger alert-dismissible fade show d-flex align-items-center mt-3 mb-0'}
-           role={'alert'}>
-        <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
-        <div className={'me-auto'}>
-          Download failed. {data.error}
-          <button type="button"
-                  className={"btn-close"}
-                  data-bs-dismiss="alert"
-                  onClick={() => setDownloadMessage(null)}
-                  aria-label="Close"/>
-        </div>
-      </div>
-    );
+    setErrorMessage(`Download failed. ${data.error}`);
   }
   const downloadClicked = (event, uri, saveAsName) => {
     event.preventDefault();
@@ -95,66 +70,16 @@ const StatusAndCounts = ({tournament}) => {
     }
     directorApiDownloadRequest({
       uri: uri,
-      context: context,
+      authToken: authToken,
       onSuccess: (data) => downloadSuccess(data, saveAsName),
       onFailure: (data) => downloadFailure(data),
     });
   }
 
-  const counts = (
-    <ListGroup variant={'flush'}>
-      <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
-                      action
-                      href={`/director/bowlers`}>
-        Bowlers
-        <Badge pill={true} className={classes.CountBadge}>
-          {tournament.bowler_count}
-        </Badge>
-      </ListGroup.Item>
-      <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
-                      action
-                      href={`/director/teams`}>
-        Teams
-        <Badge pill={true} >
-          {tournament.team_count}
-        </Badge>
-      </ListGroup.Item>
-      <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
-                      action
-                      href={`/director/free_entries`}>
-        Free Entries
-        <Badge pill={true} >
-          {tournament.free_entry_count}
-        </Badge>
-      </ListGroup.Item>
-    </ListGroup>
-  );
-
-  const downloads = (
-    <Card.Body>
-      <Card.Subtitle className={'mb-3'}>
-        Downloads
-      </Card.Subtitle>
-      <Card.Link className={'btn btn-sm btn-outline-primary'}
-                 href={'#'}
-                 onClick={(event) => downloadClicked(event, `/director/tournaments/${tournament.identifier}/csv_download`, 'bowlers.csv')}
-      >
-        CSV
-      </Card.Link>
-      <Card.Link className={'btn btn-sm btn-outline-primary'}
-                 href={'#'}
-                 onClick={(event) => downloadClicked(event, `/director/tournaments/${tournament.identifier}/igbots_download`, 'bowlers.xml')}
-      >
-        IGBO-TS
-      </Card.Link>
-      {downloadMessage}
-    </Card.Body>
-  );
-
   const onClearTestDataSuccess = (_) => {
-    dispatch(testDataCleared());
     setLoading(false);
     setClearTestDataSuccessMessage('Test data cleared!');
+    tournamentUpdatedQuietly(tournament);
   }
 
   const onClearTestDataFailure = (data) => {
@@ -163,7 +88,7 @@ const StatusAndCounts = ({tournament}) => {
   }
 
   const clearTestDataClickHandler = () => {
-    const uri = `/director/tournaments/${tournament.identifier}/clear_test_data`;
+    const uri = `/tournaments/${tournament.identifier}/clear_test_data`;
     const requestConfig = {
       data: {},
       method: 'post',
@@ -172,7 +97,7 @@ const StatusAndCounts = ({tournament}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: onClearTestDataSuccess,
       onFailure: onClearTestDataFailure,
     });
@@ -187,13 +112,16 @@ const StatusAndCounts = ({tournament}) => {
   }
 
   const testEnvSaveSuccess = (data) => {
-    dispatch(tournamentTestEnvironmentUpdated(data));
     setTestEnvSuccessMessage('Testing environment updated.');
+    const modifiedTournament = updateObject(tournament, {
+      testing_environment: {...data }
+    });
+    tournamentUpdatedQuietly(modifiedTournament);
   }
 
   const testEnvSaved = (event) => {
     event.preventDefault();
-    const uri = `/director/tournaments/${tournament.identifier}/testing_environment`;
+    const uri = `/tournaments/${tournament.identifier}/testing_environment`;
     const requestConfig = {
       method: 'patch',
       headers: {
@@ -208,32 +136,82 @@ const StatusAndCounts = ({tournament}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: testEnvSaveSuccess,
       onFailure: (data) => console.log('Oops.', data),
     });
   }
 
+  if (tournamentLoading || !tournament) {
+    return '';
+  }
+
+  ////////////////////////////
+
+  const downloads = (
+    <Card.Body>
+      <Card.Subtitle className={'mb-3'}>
+        Downloads
+      </Card.Subtitle>
+      <Card.Link className={'btn btn-sm btn-outline-primary'}
+                 href={'#'}
+                 onClick={(event) => downloadClicked(event, `/tournaments/${tournament.identifier}/csv_download`, 'bowlers.csv')}
+      >
+        CSV
+      </Card.Link>
+      <Card.Link className={'btn btn-sm btn-outline-primary'}
+                 href={'#'}
+                 onClick={(event) => downloadClicked(event, `/tournaments/${tournament.identifier}/igbots_download`, 'bowlers.xml')}
+      >
+        IGBO-TS
+      </Card.Link>
+      <SuccessAlert message={downloadMessage}
+                    className={`mt-3 mb-0`}
+                    onClose={() => setDownloadMessage(null)}
+                    />
+      <ErrorAlert message={errorMessage}
+                    className={`mt-3 mb-0`}
+                    onClose={() => setErrorMessage(null)}
+      />
+    </Card.Body>
+  );
+
+  const counts = (
+    <ListGroup variant={'flush'}>
+      <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
+                      action
+                      as={Link}
+                      href={`/director/tournaments/${tournament.identifier}/bowlers`}
+      >
+        Bowlers
+        <Badge pill={true} className={classes.CountBadge}>
+          {tournament.bowler_count}
+        </Badge>
+      </ListGroup.Item>
+      <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
+                      action
+                      as={Link}
+                      href={`/director/tournaments/${tournament.identifier}/teams`}>
+        Teams
+        <Badge pill={true} >
+          {tournament.team_count}
+        </Badge>
+      </ListGroup.Item>
+      <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
+                      action
+                      as={Link}
+                      href={`/director/tournaments/${tournament.identifier}/free_entries`}>
+        Free Entries
+        <Badge pill={true} >
+          {tournament.free_entry_count}
+        </Badge>
+      </ListGroup.Item>
+    </ListGroup>
+  );
+
   let clearTestData = '';
   let testingStatusContent = '';
   if (tournament.state === 'testing' || tournament.state === 'demo') {
-    let success = '';
-    if (clearTestDataSuccessMessage) {
-      success = (
-        <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'}
-             role={'alert'}>
-          <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
-          <div className={'me-auto'}>
-            {clearTestDataSuccessMessage}
-            <button type="button"
-                    className={"btn-close"}
-                    data-bs-dismiss="alert"
-                    onClick={() => setClearTestDataSuccessMessage(null)}
-                    aria-label="Close"/>
-          </div>
-        </div>
-      );
-    }
     clearTestData = (
       <Card.Body>
         <Card.Text>
@@ -248,26 +226,12 @@ const StatusAndCounts = ({tournament}) => {
             </Button>
           )}
         </Card.Text>
-        {success}
+        <SuccessAlert message={clearTestDataSuccessMessage}
+                      className={`mt-3 mb-0`}
+                      onClose={() => setClearTestDataSuccessMessage(null)}
+                      />
       </Card.Body>
     )
-    success = '';
-    if (testEnvSuccessMessage) {
-      success = (
-        <div className={'alert alert-success alert-dismissible fade show d-flex align-items-center mt-3 mb-0'}
-             role={'alert'}>
-          <i className={'bi-check2-circle pe-2'} aria-hidden={true}/>
-          <div className={'me-auto'}>
-            {testEnvSuccessMessage}
-            <button type="button"
-                    className={"btn-close"}
-                    data-bs-dismiss="alert"
-                    onClick={() => setTestEnvSuccessMessage(null)}
-                    aria-label="Close"/>
-          </div>
-        </div>
-      );
-    }
     testingStatusContent = (
       <Card.Body className={'border-bottom border-top'}>
         <Card.Title as={'h6'} className={'fw-light mb-3'}>
@@ -305,7 +269,11 @@ const StatusAndCounts = ({tournament}) => {
               <button type={'submit'} className={'btn btn-primary'}>
                 Save
               </button>
-              {success}
+              <SuccessAlert message={testEnvSuccessMessage}
+                            className={`mt-3 mb-0`}
+                            onClose={() => setTestEnvSuccessMessage(null)}
+              />
+
             </div>
           </div>
         </form>

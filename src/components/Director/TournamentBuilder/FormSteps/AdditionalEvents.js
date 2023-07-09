@@ -6,11 +6,11 @@ import {newTournamentCompleted, newTournamentStepCompleted} from "../../../../st
 import {directorApiRequest} from "../../../../director";
 
 import classes from '../TournamentBuilder.module.scss';
+import {useLoginContext} from "../../../../store/LoginContext";
 
 const AdditionalEvents = () => {
   const router = useRouter();
-  const context = useDirectorContext();
-  const {directorState, dispatch} = context;
+  const {authToken} = useLoginContext();
 
   const DEFAULT_EVENT_DETAILS = {
     roster_type: '',
@@ -41,14 +41,14 @@ const AdditionalEvents = () => {
   const [formData, setFormData] = useState(initialState);
   const [scratchDivisions, setScratchDivisions] = useState([]);
   useEffect(() => {
-    if (!directorState || !directorState.builder) {
+    if (!state || !state.builder) {
       return;
     }
-    if (directorState.builder.tournament.scratch_divisions) {
+    if (state.builder.tournament.scratch_divisions) {
       devConsoleLog("Found scratch divisions in context");
-      setScratchDivisions(directorState.builder.tournament.scratch_divisions);
+      setScratchDivisions(state.builder.tournament.scratch_divisions);
     }
-  }, [directorState.builder.tournament]);
+  }, [state.builder.tournament]);
 
   const isValid = (fields) => {
     return fields.events.every(({roster_type, name, entry_fee}) => !!rosterTypeOptions[roster_type] && name.length > 0 && entry_fee >= 0)
@@ -113,7 +113,7 @@ const AdditionalEvents = () => {
   }
 
   const onSaveSuccess = () => {
-    const identifier = directorState.builder.tournament.identifier;
+    const identifier = state.builder.tournament.identifier;
     router.push(`/director/tournaments/${identifier}`);
   }
 
@@ -121,8 +121,8 @@ const AdditionalEvents = () => {
     if (formData.fields.events.length === 0 ) {
       onSaveSuccess();
     } else {
-      const identifier = directorState.builder.tournament.identifier;
-      const uri = `/director/tournaments/${identifier}`;
+      const identifier = state.builder.tournament.identifier;
+      const uri = `/tournaments/${identifier}`;
       const requestData = {
         tournament: {
           events_attributes: dataForUpdate(formData.fields.events),
@@ -135,7 +135,7 @@ const AdditionalEvents = () => {
       directorApiRequest({
         uri: uri,
         requestConfig: requestConfig,
-        context: context,
+        authToken: authToken,
         onSuccess: onSaveSuccess,
         onFailure: (err) => devConsoleLog("Failed to save additional events.", err),
       });
@@ -157,7 +157,7 @@ const AdditionalEvents = () => {
 
   return (
     <div>
-      <h2>{directorState.builder.tournament.name}: Additional Events</h2>
+      <h2>{state.builder.tournament.name}: Additional Events</h2>
 
       <p>
         Optional, bowled tournament events, such as Scratch Masters or a 9-pin no-tap mixer. These are in addition to any required events.

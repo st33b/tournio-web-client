@@ -6,7 +6,7 @@ import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeade
 
 import classes from './FreeEntryListing.module.scss';
 
-const FreeEntryListing = ({freeEntries, confirmClicked, deleteClicked}) => {
+const FreeEntryListing = ({freeEntries, confirmClicked, deleteClicked, denyClicked}) => {
   const usedBy = (row) => {
     if (row.bowler === null) {
       return '--'
@@ -57,10 +57,27 @@ const FreeEntryListing = ({freeEntries, confirmClicked, deleteClicked}) => {
               Delete
             </Button>
           );
-          let confirmButton = '';
+          let denyButton = (
+            <Button variant={'outline-secondary'}
+                    size={'sm'}
+                    className={classes.ActionButton}
+                    title='Cannot deny a confirmed free entry'
+                    disabled={true}>
+              Deny
+            </Button>
+          );
+          let confirmButton = (
+            <Button variant={'outline-secondary'}
+                    size={'sm'}
+                    className={classes.ActionButton}
+                    title='Already confirmed'
+                    disabled={true}>
+              Confirm
+            </Button>
+          );
           if (!row.values.confirmed) {
             deleteButton = (
-              <Button variant={'outline-danger'}
+              <Button variant={'danger'}
                       size={'sm'}
                       className={classes.ActionButton}
                       title='Delete this free entry'
@@ -81,11 +98,23 @@ const FreeEntryListing = ({freeEntries, confirmClicked, deleteClicked}) => {
                   Confirm
                 </Button>
               );
+              denyButton = (
+                <Button variant={'outline-danger'}
+                        size={'sm'}
+                        className={classes.ActionButton}
+                        title={"Deny the bowler's claim to this free entry"}
+                        disabled={false}
+                        onClick={(event) => denyClicked(row.original)}
+                >
+                  Deny
+                </Button>
+              );
             }
           }
           return (
             <div className={'text-center'}>
               {confirmButton}
+              {denyButton}
               {deleteButton}
             </div>
           );

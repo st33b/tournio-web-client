@@ -1,20 +1,19 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {formatISO, parseISO, isValid as isValidDate} from "date-fns";
 
 import TextField from "@mui/material/TextField";
 import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {useDirectorContext} from "../../../store/DirectorContext";
-import {directorApiRequest} from "../../../director";
-import {purchasableItemsAdded} from "../../../store/actions/directorActions";
+import ButtonRow from "../../common/ButtonRow";
+import {directorApiRequest, useTournament} from "../../../director";
+import {useLoginContext} from "../../../store/LoginContext";
 
 import classes from './LedgerForm.module.scss';
-import ButtonRow from "../../common/ButtonRow";
 
-const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
-  const context = useDirectorContext();
-  const dispatch = context.dispatch;
+const LedgerForm = ({availableTypes=[], onCancel, onComplete}) => {
+  const {authToken} = useLoginContext();
+  const {tournament} = useTournament();
 
   const initialState = {
     category: 'ledger',
@@ -111,9 +110,8 @@ const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
   }
 
   const submissionSuccess = (data) => {
-    dispatch(purchasableItemsAdded(data));
     setFormData({...initialState});
-    onComplete(`${data[0].name} created.`);
+    onComplete(data);
   }
 
   const formSubmitted = (event) => {
@@ -146,7 +144,7 @@ const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
         break;
     }
     itemData.configuration = configuration;
-    const uri = `/director/tournaments/${tournament.identifier}/purchasable_items`;
+    const uri = `/tournaments/${tournament.identifier}/purchasable_items`;
     const requestConfig = {
       method: 'post',
       data: {
@@ -158,7 +156,7 @@ const LedgerForm = ({tournament, availableTypes, onCancel, onComplete}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: submissionSuccess,
       onFailure: (_) => console.log("Failed to save new item."),
     });

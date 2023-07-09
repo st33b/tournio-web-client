@@ -56,7 +56,7 @@ const StateBanners = ({tournament}) => {
   let testingEnvironment = '';
   if (tournament.state === 'testing' || tournament.state === 'demo') {
     testingEnvironment = (
-      <div className={`${classes.TestingEnvironment} mb-2`}>
+      <div className={`${classes.TestingEnvironment} mb-3`}>
         <h4 className={'p-2 mb-0'}>
           <i className={'bi-search pe-3'} aria-hidden={true}/>
           {tournament.testing_environment.settings.registration_period.display_name}:{' '}

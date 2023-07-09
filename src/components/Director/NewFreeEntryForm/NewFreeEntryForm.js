@@ -6,8 +6,6 @@ import {useDirectorContext} from "../../../store/DirectorContext";
 import classes from './NewFreeEntryForm.module.scss';
 
 const NewFreeEntryForm = ({submitted}) => {
-  const directorContext = useDirectorContext();
-
   const initialState = {
     freeEntryCode: '',
   }
@@ -29,10 +27,6 @@ const NewFreeEntryForm = ({submitted}) => {
       freeEntryCode: enteredCode,
     });
     setFreeEntryForm(newState);
-  }
-
-  if (!directorContext || !freeEntryForm) {
-    return '';
   }
 
   return (
@@ -59,7 +53,6 @@ const NewFreeEntryForm = ({submitted}) => {
           <i className={[classes.CreateEntryButtonIcon, 'bi-chevron-right'].join(' ')} aria-hidden={'true'} />
         </Button>
       </Form>
-
     </div>
   );
 }

@@ -1,16 +1,17 @@
-import Card from 'react-bootstrap/Card';
-
-import {useDirectorContext} from "../../../store/DirectorContext";
-import ErrorBoundary from "../../common/ErrorBoundary";
 import {useState, useEffect} from "react";
-import {directorApiRequest} from "../../../director";
-import {stripeAccountStatusChanged} from "../../../store/actions/directorActions";
+import Card from 'react-bootstrap/Card';
+import Link from "next/link";
+
+import ErrorBoundary from "../../common/ErrorBoundary";
+import {directorApiRequest, useTournament} from "../../../director";
+import {useLoginContext} from "../../../store/LoginContext";
+import {devConsoleLog, updateObject} from "../../../utils";
 
 import classes from './StripeStatus.module.scss';
 
-const StripeStatus = ({tournament, needStatus}) => {
-  const context = useDirectorContext();
-  const dispatch = context.dispatch;
+const StripeStatus = ({needStatus}) => {
+  const {authToken} = useLoginContext();
+  const {tournament, tournamentUpdatedQuietly} = useTournament();
 
   // If needStatus is set, then we need to request the Stripe status from the server
   // Otherwise, show a button that can trigger an on-demand status check
@@ -24,12 +25,15 @@ const StripeStatus = ({tournament, needStatus}) => {
     setStatusRequested(false);
     const previousStatus = tournament.stripe_account.can_accept_payments;
     if (!data.can_accept_payments && needStatus) {
-      console.log("Can't accept payments, requesting status again soon.");
+      devConsoleLog("Can't accept payments, requesting status again soon.");
       setTimeout(initiateStatusRequest, 3000);
     } else {
-      console.log("We can accept payments, so we're good.");
+      devConsoleLog("We can accept payments, so we're good.");
       if (data.can_accept_payments !== previousStatus) {
-        dispatch(stripeAccountStatusChanged(data));
+        const modifiedTournament = updateObject(tournament, {
+          stripe_account: {...data},
+        });
+        tournamentUpdatedQuietly(modifiedTournament);
       }
     }
   }
@@ -44,7 +48,7 @@ const StripeStatus = ({tournament, needStatus}) => {
     if (event) {
       event.preventDefault();
     }
-    const uri = `/director/tournaments/${tournament.identifier}/stripe_status`;
+    const uri = `/tournaments/${tournament.identifier}/stripe_status`;
     const requestConfig = {
       method: 'get',
     };
@@ -52,7 +56,7 @@ const StripeStatus = ({tournament, needStatus}) => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: onStatusFetchSuccess,
       onFailure: onStatusFetchFailure,
     });
@@ -124,16 +128,16 @@ const StripeStatus = ({tournament, needStatus}) => {
           )}
           <div className={'d-flex justify-content-around'}>
             {stripeAccount && !stripeAccount.can_accept_payments && (
-              <a href={`/director/tournaments/${tournament.identifier}/stripe_account_setup`}
+              <Link href={`/director/tournaments/${tournament.identifier}/stripe_account_setup`}
                  className={`btn btn-success`}>
                 Resume Setup
-              </a>
+              </Link>
             )}
             {!stripeAccount && (
-              <a href={`/director/tournaments/${tournament.identifier}/stripe_account_setup`}
+              <Link href={`/director/tournaments/${tournament.identifier}/stripe_account_setup`}
                  className={`btn btn-success`}>
                 Begin Setup
-              </a>
+              </Link>
             )}
             {!statusRequested && (
               <button onClick={initiateStatusRequest}

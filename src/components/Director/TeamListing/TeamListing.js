@@ -1,8 +1,8 @@
 import {useMemo} from "react";
 import {useFilters, useSortBy, useTable} from "react-table";
+import Link from 'next/link';
 
-import {lessThan, isOrIsNot} from "../../../utils";
-import {useDirectorContext} from "../../../store/DirectorContext";
+import {lessThan} from "../../../utils";
 import TeamFilterForm from "../TeamFilterForm/TeamFilterForm";
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
 
@@ -19,9 +19,15 @@ const TeamListing = ({teams, shiftCount = 1}) => {
         Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
         accessor: 'name',
         Cell: ({row, value}) => (
-          <a href={`/director/teams/${row.original.identifier}`}>
+          <Link href={{
+            pathname: '/director/tournaments/[identifier]/teams/[teamId]',
+            query: {
+              identifier: row.original.tournament.identifier,
+              teamId: row.original.identifier,
+            }
+          }}>
             {value}
-          </a>
+          </Link>
         )
       },
       {
@@ -148,7 +154,7 @@ const TeamListing = ({teams, shiftCount = 1}) => {
       setFilter('size', undefined);
     }
     if (criteria.place_with_others) {
-      setFilter('place_with_others', true);
+      setFilter('place_with_others', 'true');
     } else {
       setFilter('place_with_others', undefined);
     }

@@ -7,9 +7,11 @@ import {chartColors} from "./common";
 
 import classes from '../VisibleTournament.module.scss';
 import {devConsoleLog} from "../../../../utils";
+import {useTournament} from "../../../../director";
 
-const OptionalItemsWeek = ({tournament, title, dataKeys}) => {
-  if (!tournament) {
+const OptionalItemsWeek = ({title, dataKeys}) => {
+  const {loading, tournament} = useTournament();
+  if (loading) {
     return '';
   }
 
@@ -62,7 +64,7 @@ const OptionalItemsWeek = ({tournament, title, dataKeys}) => {
     datasets: datasets,
   };
 
-  if (datasets.length == 0) {
+  if (datasets.length === 0) {
     return '';
   }
 

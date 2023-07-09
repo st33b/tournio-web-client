@@ -1,13 +1,16 @@
 import Button from 'react-bootstrap/Button';
 
-import {useDirectorContext} from "../../../store/DirectorContext";
-
 import classes from './TournamentInPrep.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {useLoginContext} from "../../../store/LoginContext";
+import {useTournament} from "../../../director";
 
-const StateChangeButton = ({tournament, stateChangeInitiated}) => {
-  const {directorState} = useDirectorContext();
-  if (!directorState.user || !tournament) {
+const StateChangeButton = ({stateChangeInitiated}) => {
+  const {ready, user} = useLoginContext();
+
+  const {loading, tournament} = useTournament();
+
+  if (loading || !tournament || !ready || !user) {
     return '';
   }
 
@@ -62,7 +65,7 @@ const StateChangeButton = ({tournament, stateChangeInitiated}) => {
       stateChangeText = 'Begin Testing';
       stateChangeValue = 'test';
 
-      if (directorState.user.role === 'superuser') {
+      if (user.role === 'superuser') {
         demoButton = (
           <button className={'btn btn-primary'}
                   type={'button'}
@@ -74,7 +77,6 @@ const StateChangeButton = ({tournament, stateChangeInitiated}) => {
       }
       break;
     case 'testing':
-      // TODO: update for Stripe usage
       disabled = unmetOpeningCriteria.length > 0;
       if (disabled) {
         titleText = (
@@ -93,7 +95,7 @@ const StateChangeButton = ({tournament, stateChangeInitiated}) => {
       stateChangeValue = 'open';
       break;
     case 'demo':
-      if (directorState.user.role === 'superuser') {
+      if (user.role === 'superuser') {
         demoButton = (
           <button className={'btn btn-outline-danger'}
                   type={'button'}

@@ -1,12 +1,12 @@
-import classes from './ColorModeToggler.module.scss';
+import Link from 'next/link';
 import {useThemeContext} from "../../../store/ThemeContext";
-import {useEffect} from "react";
-import {devConsoleLog, useClientReady} from "../../../utils";
+import {useClientReady} from "../../../utils";
+import classes from './ColorModeToggler.module.scss';
 
 const ColorModeToggler = (props) => {
   const themeLinkContents = {
     auto: {
-      iconClass: 'bi-arrow-repeat',
+      iconClass: 'bi-circle-half',
       ariaText: 'Automatic',
     },
     light: {
@@ -40,7 +40,7 @@ const ColorModeToggler = (props) => {
               title={'Set the color mode'}
               data-bs-toggle={'dropdown'}
               aria-expanded={false}>
-        <i className={`${preferredIconClass}`} aria-hidden={true}/>
+        <i className={`bi ${preferredIconClass}`} aria-hidden={true}/>
         <span className={'visually-hidden'}>
           {theme.preferred}
         </span>
@@ -48,13 +48,13 @@ const ColorModeToggler = (props) => {
       <ul className={'dropdown-menu dropdown-menu-end'}>
         {Object.keys(themeLinkContents).map(t => (
           <li key={`theme_chooser_${t} ${classes.ThemeItem}`}>
-            <a href={'#'}
+            <Link href={'#'}
                className={'dropdown-item'}
                name={t}
                onClick={themeClicked}>
               <i className={`${themeLinkContents[t].iconClass} pe-2`} aria-hidden={true}/>
               {themeLinkContents[t].ariaText}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>

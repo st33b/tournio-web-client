@@ -5,22 +5,22 @@ import Navigation from './Navigation';
 import Footer from './Footer';
 import classes from './RegistrationLayout.module.scss';
 import MaintenanceAnnouncement from "../../common/MaintenanceAnnouncement/MaintenanceAnnouncement";
-import {ThemeContextProvider} from "../../../store/ThemeContext";
+import {RegistrationContextProvider} from "../../../store/RegistrationContext";
 
 const RegistrationLayout = ({children, showCart}) => {
   return (
-    <ThemeContextProvider>
+    <RegistrationContextProvider>
       <div className={classes.RegistrationLayout}>
         <SiteHeader/>
         <header>
           <Container fluid={'md'}>
-            <Navigation showCart={showCart} />
+            <Navigation showCart={showCart}/>
           </Container>
         </header>
 
         <main>
           <Container fluid={'md'}>
-            <MaintenanceAnnouncement />
+            <MaintenanceAnnouncement/>
             {children}
           </Container>
         </main>
@@ -31,7 +31,7 @@ const RegistrationLayout = ({children, showCart}) => {
           </Container>
         </footer>
       </div>
-    </ThemeContextProvider>
+    </RegistrationContextProvider>
   )
 }
 

@@ -1,19 +1,15 @@
 import {useRouter} from "next/router";
 
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
-import {useLoggedIn} from "../../../director";
 import TournamentBuilder from "../../../components/Director/TournamentBuilder/TournamentBuilder";
-import {devConsoleLog} from "../../../utils";
+import {useLoginContext} from "../../../store/LoginContext";
 
 const Page = () => {
   const router = useRouter();
-  const loggedInState = useLoggedIn();
-  const ready = loggedInState >= 0;
+  const {ready} = useLoginContext();
+
   if (!ready) {
     return '';
-  }
-  if (!loggedInState) {
-    router.push('/director/login');
   }
 
   const {step} = router.query;

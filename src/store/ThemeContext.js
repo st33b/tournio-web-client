@@ -17,7 +17,10 @@ export const ThemeContextProvider = ({children}) => {
     active: 'dark',
   }
   const [theme, setTheme] = useState(initialThemeState);
-  const [storedThemeState, storeThemeState] = useLocalStorage('tournio-color-theme', ThemeContext.theme);
+  const [storedThemeState, storeThemeState] = useLocalStorage({
+    key: 'tournio-color-theme',
+    initialValue: ThemeContext.theme
+  });
 
   const updatePreferredTheme = (toTheme) => {
     let activeTheme = toTheme;

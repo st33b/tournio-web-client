@@ -3,9 +3,11 @@ import {Card, ListGroup} from "react-bootstrap";
 import ShiftForm from '../ShiftForm/ShiftForm';
 
 import classes from './TournamentInPrep.module.scss';
+import {useTournament} from "../../../director";
 
-const Shifts = ({tournament}) => {
-  if (!tournament) {
+const Shifts = () => {
+  const {loading, tournament} = useTournament();
+  if (loading) {
     return '';
   }
 
@@ -18,15 +20,14 @@ const Shifts = ({tournament}) => {
       <ListGroup variant={'flush'}>
         {tournament.shifts.map((shift, i) => (
             <ListGroup.Item key={i} className={'p-0'}>
-              <ShiftForm tournament={tournament} shift={shift}/>
+              <ShiftForm shift={shift}/>
             </ListGroup.Item>
           ))
         }
         <ListGroup.Item className={'p-0'}>
-          <ShiftForm tournament={tournament}/>
+          <ShiftForm/>
         </ListGroup.Item>
       </ListGroup>
-      {/*{tournament.shifts.length === 0 && <ShiftForm tournament={tournament} />}*/}
     </Card>
   )
 }

@@ -5,10 +5,11 @@ import {devConsoleLog, timezones} from "../../../../utils";
 import classes from '../TournamentBuilder.module.scss';
 import {newTournamentSaved, newTournamentStepCompleted} from "../../../../store/actions/directorActions";
 import {directorApiRequest} from "../../../../director";
+import {useLoginContext} from "../../../../store/LoginContext";
 
 const Details = () => {
-  const context = useDirectorContext();
-  const {directorState, dispatch} = context;
+  const {state, dispatch} = useDirectorContext();
+  const {authToken} = useLoginContext();
 
   const initialState = {
     fields: {
@@ -22,16 +23,16 @@ const Details = () => {
 
   const [formData, setFormData] = useState(initialState);
   useEffect(() => {
-    if (!directorState || !directorState.builder) {
+    if (!state || !state.builder) {
       return;
     }
-    if (directorState.builder.tournament) {
+    if (state.builder.tournament) {
       // We might have returned to this page after advancing.
       const newFormData = {...formData};
-      newFormData.fields.location = directorState.builder.tournament.location || '';
-      newFormData.fields.timezone = directorState.builder.tournament.timezone || '';
-      newFormData.fields.website = directorState.builder.tournament.website || '';
-      const websiteConfigItem = directorState.builder.tournament.config_items.find(({key}) => key === 'website');
+      newFormData.fields.location = state.builder.tournament.location || '';
+      newFormData.fields.timezone = state.builder.tournament.timezone || '';
+      newFormData.fields.website = state.builder.tournament.website || '';
+      const websiteConfigItem = state.builder.tournament.config_items.find(({key}) => key === 'website');
       if (websiteConfigItem) {
         newFormData.fields.website_config_item_id = websiteConfigItem.id
       }
@@ -39,7 +40,7 @@ const Details = () => {
       newFormData.valid = isValid(newFormData.fields);
       setFormData(newFormData);
     }
-  }, [directorState, directorState.builder])
+  }, [state, state.builder])
 
   const isValid = (fields) => {
     return fields.location.length > 0 && fields.timezone.length > 0;
@@ -54,7 +55,7 @@ const Details = () => {
     setFormData(changedData);
   }
 
-  if (!directorState.builder) {
+  if (!state.builder) {
     return '';
   }
 
@@ -65,8 +66,8 @@ const Details = () => {
   }
 
   const nextClicked = () => {
-    const identifier = directorState.builder.tournament.identifier;
-    const uri = `/director/tournaments/${identifier}`;
+    const identifier = state.builder.tournament.identifier;
+    const uri = `/tournaments/${identifier}`;
     const configItemAttributes = {
       key: 'website',
       value: formData.fields.website,
@@ -89,7 +90,7 @@ const Details = () => {
     directorApiRequest({
       uri: uri,
       requestConfig: requestConfig,
-      context: context,
+      authToken: authToken,
       onSuccess: saveSuccess,
       onFailure: (err) => devConsoleLog("Failed to update tournament.", err),
     });
@@ -98,9 +99,9 @@ const Details = () => {
   return (
     <div>
       <h3>
-        {directorState.builder.tournament.name}{' '}
-        ({directorState.builder.tournament.abbreviation}){' '}
-        {directorState.builder.tournament.year}
+        {state.builder.tournament.name}{' '}
+        ({state.builder.tournament.abbreviation}){' '}
+        {state.builder.tournament.year}
       </h3>
 
       <div className={`row ${classes.FieldRow}`}>

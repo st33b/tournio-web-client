@@ -2,7 +2,6 @@ import {useEffect} from "react";
 
 import {useClientReady} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
-import {useCommerceContext} from "../../store/CommerceContext";
 import {reset} from "../../store/actions/registrationActions";
 
 import RegistrationLayout from '../../components/Layout/RegistrationLayout/RegistrationLayout';
@@ -10,11 +9,9 @@ import TournamentCards from "../../components/Registration/TournamentListing/Tou
 
 const Page = () => {
   const registrationContext = useRegistrationContext();
-  const commerceContext = useCommerceContext();
 
   useEffect(() => {
     registrationContext.dispatch(reset());
-    commerceContext.dispatch(reset());
   });
 
   const ready = useClientReady();
