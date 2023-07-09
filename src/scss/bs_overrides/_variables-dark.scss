@@ -24,7 +24,7 @@ $body-color-dark: $gray-500;
 
 // The default subtle backgrounds are too subtle.
 
-$primary-bg-subtle-dark:            shade-color($primary, 30%);
+$primary-bg-subtle-dark:            shade-color($primary, 70%);
 $secondary-bg-subtle-dark:          shade-color($secondary, 60%);
 $success-bg-subtle-dark:            shade-color($success, 50%);
 $info-bg-subtle-dark:               shade-color($info, 65%);
@@ -48,7 +48,7 @@ $table-variants-dark: (
   "dark":       $dark-bg-subtle-dark,
 );
 
-$link-color-dark:                   $blue;
+$link-color-dark:                   tint-color($blue, 25%);
 
 $body-emphasis-color-dark: $gray-200;
 
