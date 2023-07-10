@@ -25,7 +25,7 @@ const Navigation = () => {
     cartText = (
       <a href={'#mobile_cart'}
          title={'Cart'}
-         data-bs-toggle={'collapse'}
+         data-bs-toggle={'offcanvas'}
          aria-controls={'mobile_cart'}
          aria-expanded={false}
          className={`${classes.Bag} ms-auto d-md-none`}>
