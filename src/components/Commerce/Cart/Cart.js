@@ -56,7 +56,7 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
     <div className={`offcanvas-md offcanvas-end ${classes.Cart}`}
          aria-labelledby={`cartTitle`}
          tabIndex={-1}
-         id={`offcanvasCart`}
+         id={`mobile_cart`}
     >
       <h5 className={`d-none d-md-block`}>
         Cart
@@ -69,7 +69,7 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
         <button type={"button"}
                 className={`btn-close`}
                 data-bs-dismiss={`offcanvas`}
-                data-bs-target={`#offcanvasCart`}
+                data-bs-target={`#mobile_cart`}
                 aria-label="Close"></button>
       </div>
       <div className={`offcanvas-body flex-wrap`}>
