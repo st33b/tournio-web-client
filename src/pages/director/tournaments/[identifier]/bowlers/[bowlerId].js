@@ -152,7 +152,7 @@ const BowlerPage = () => {
       bowler_count: tournament.bowler_count - 1,
     });
     tournamentUpdatedQuietly(modifiedTournament);
-    router.push('/director/bowlers?deleteSuccess=true');
+    router.push(`/director/tournament/${identifier}/bowlers?deleteSuccess=true`);
   }
   const deleteBowlerFailure = (data) => {
     setLoadingParts({
