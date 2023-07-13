@@ -101,16 +101,18 @@ const AvailableItems = ({itemAddedToCart}) => {
                           item={item}
                           added={itemAddedToCart} />
                   ))}
+                  <hr />
                 </Col>
               )}
 
-              {multiUseItems.length > 0 && (
+              {singleUseItems.length > 0 && (
                 <Col xs={12}>
                   {singleUseItems.map((item) => (
                     <Item key={item.identifier}
                           item={item}
                           added={itemAddedToCart} />
                   ))}
+                  <hr />
                 </Col>
               )}
 
