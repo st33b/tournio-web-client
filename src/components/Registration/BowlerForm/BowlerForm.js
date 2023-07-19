@@ -3,15 +3,14 @@ import {CountryDropdown} from "react-country-region-selector";
 
 import Input from "../../ui/Input/Input";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-
-import classes from './BowlerForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import ShiftForm from "../ShiftForm/ShiftForm";
 import {devConsoleLog, validateEmail} from "../../../utils";
+import * as constants from '../../../constants';
+
+import classes from './BowlerForm.module.scss';
 
 const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref, bowlerIndex = -1}) => {
-  const A_CHAR_CODE = 'A'.charCodeAt(0);
-
   const {registration} = useRegistrationContext();
 
   const initialFormState = {
@@ -666,7 +665,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     bowlerIndexInTeam = registration.bowlers.length;
   }
 
-  let headerText = 'Bowler ' + String.fromCharCode(A_CHAR_CODE + bowlerIndexInTeam);
+  let headerText = 'Bowler ' + String.fromCharCode(constants.A_CHAR_CODE + bowlerIndexInTeam);
 
   return (
     <ErrorBoundary>

@@ -35,9 +35,11 @@ const ReviewEntries = ({editBowler, context}) => {
       </Col>
     );
   } else if (context === 'join') {
+    const index = team.bowlers[team.bowlers.length - 1];
     content = (
       <Col className={'px-lg-2'}>
-        <BowlerSummary bowler={team.bowlers[team.bowlers.length - 1]}
+        <BowlerSummary bowler={team.bowlers[index]}
+                       index={index}
                        editClicked={editBowler}
         />
       </Col>
@@ -46,7 +48,7 @@ const ReviewEntries = ({editBowler, context}) => {
     content = bowlers.map((bowler, i) => {
       return (
         <Col md={6} className={'px-lg-2'} key={i}>
-          <BowlerSummary bowler={bowler} editClicked={bowler => editBowler(bowler, i)}/>
+          <BowlerSummary bowler={bowler} index={i} editClicked={bowler => editBowler(bowler, i)}/>
         </Col>
       );
     });
@@ -55,7 +57,8 @@ const ReviewEntries = ({editBowler, context}) => {
       const colSize = team.bowlers.length > 1 ? 6 : 12;
       return (
         <Col md={colSize} className={'px-lg-2'} key={i}>
-          <BowlerSummary bowler={bowler}
+          <BowlerSummary allBowlers={team.bowlers}
+                         index={i}
                          editClicked={editBowler}
           />
         </Col>

@@ -1,13 +1,13 @@
-import {useEffect, useState} from "react";
 import {Row} from "react-bootstrap";
 
 import {useRegistrationContext} from "../../../store/RegistrationContext";
+import * as constants from "../../../constants";
 
 import classes from './BowlerSummary.module.scss';
 
-const BowlerSummary = ({bowler, editClicked}) => {
+const BowlerSummary = ({allBowlers, index, editClicked}) => {
   const {registration} = useRegistrationContext();
-  if (!bowler || !registration.tournament) {
+  if (!allBowlers || !registration.tournament) {
     return '';
   }
 
@@ -27,13 +27,15 @@ const BowlerSummary = ({bowler, editClicked}) => {
     state: 'State',
     country: 'Country',
     postal_code: 'Postal/ZIP Code',
-    doubles_partner_num: 'Doubles Partner',
+    doublesPartnerIndex: 'Doubles Partner',
   };
+
+  const aqLabels = {};
 
   // Get labels and responses for additional questions, if any
   const aqResponses = {};
   for (let key in registration.tournament.additional_questions) {
-    labels[key] = registration.tournament.additional_questions[key].label;
+    aqLabels[key] = registration.tournament.additional_questions[key].label;
     aqResponses[key] = registration.tournament.additional_questions[key].elementConfig.value;
   }
 
@@ -42,11 +44,13 @@ const BowlerSummary = ({bowler, editClicked}) => {
     editClicked(bowler);
   }
 
+  const bowler = allBowlers[index];
+
   return (
     <div className={classes.BowlerSummary}>
       <div className={`d-flex justify-content-between py-2 ps-2 ${classes.Heading}`}>
         <h4 className={'m-0'}>
-          Bowler #{bowler.position}
+          Bowler {String.fromCharCode(constants.A_CHAR_CODE + index)}
         </h4>
         <p className={'m-0 pe-2'}>
           <a href={'#'}
@@ -57,12 +61,14 @@ const BowlerSummary = ({bowler, editClicked}) => {
       </div>
       <dl>
         {Object.keys(labels).map(key => {
-          let value = bowler[key] || aqResponses[key];
-          if (!value) {
+          let value = bowler[key];
+          if (value === null || typeof value ==='undefined') {
             return null;
           }
-          if (key === 'doubles_partner_num') {
-            value = `Bowler #${value}`;
+          if (key === 'doublesPartnerIndex') {
+            const partner = allBowlers[bowler.doublesPartnerIndex];
+            const firstName = partner.nickname ? partner.nickname : partner.first_name;
+            value = firstName + ' ' + partner.last_name;
           }
           return (
             <Row key={`${key}_${bowler.position}`}>
@@ -75,6 +81,24 @@ const BowlerSummary = ({bowler, editClicked}) => {
             </Row>
           );
         })}
+
+        {Object.keys(aqLabels).map(key => {
+          let value = aqResponses[key];
+          if (!value) {
+            return null;
+          }
+          return (
+            <Row key={`${key}_${bowler.position}`}>
+              <dt className={'col-5 pe-2 label'}>
+                {labels[key]}
+              </dt>
+              <dd className={'col ps-2 value'}>
+                {value}
+              </dd>
+            </Row>
+          );
+        })}
+
       </dl>
     </div>
   );
