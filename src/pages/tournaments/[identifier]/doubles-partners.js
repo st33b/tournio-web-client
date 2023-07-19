@@ -8,7 +8,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import DoublesPartners from "../../../components/Registration/DoublesPartners/DoublesPartners";
 import {newTeamPartnersChosen} from "../../../store/actions/registrationActions";
 import {useEffect, useState} from "react";
-import {useClientReady} from "../../../utils";
+import {devConsoleLog, useClientReady} from "../../../utils";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
@@ -21,7 +21,7 @@ const Page = () => {
       return;
     }
     const theyHavePartners = registration.bowlers.reduce(
-      (prev, bowler) => prev || !!bowler.doubles_partner_num,
+      (prev, bowler) => prev || !!bowler.doublesPartnerIndex,
       registration.bowlers.length < 2
     );
     setPartnersChosen(theyHavePartners);
@@ -37,35 +37,36 @@ const Page = () => {
   //  - set A's partner to be B
   //  - set B's partner to be A (reciprocal)
   //  - set C and D to be partners (the remaining two)
-  const gimmeNewDoublesPartners = (bowlerNum, partnerNum) => {
+  const gimmeNewDoublesPartners = (bowlerIndex, partnerIndex) => {
+    devConsoleLog(`Bowler ${bowlerIndex} partners with ${partnerIndex}`);
     // create a copy of the bowlers array
     const newBowlers = registration.team.bowlers.slice(0);
 
-    // these are index-based, which is position-1
-
-    if (newBowlers[bowlerNum - 1].doubles_partner_num === partnerNum) {
+    // Shouldn't happen, but just in case
+    if (newBowlers[bowlerIndex].doublesPartnerIndex === partnerIndex) {
+      devConsoleLog("Something ain't right, you're trying to partner someone up with themselves.");
       // Nothing is changing, so...
       return;
     }
 
     let bowlersLeftToUpdate = [...newBowlers.keys()];
-    newBowlers[bowlerNum - 1].doubles_partner_num = partnerNum;
-    newBowlers[partnerNum - 1].doubles_partner_num = bowlerNum;
+    newBowlers[bowlerIndex].doublesPartnerIndex = partnerIndex;
+    newBowlers[partnerIndex].doublesPartnerIndex = bowlerIndex;
 
     // Remove those two from the list of bowlers who need to be updated
     bowlersLeftToUpdate = bowlersLeftToUpdate.filter((value) => {
-      return value !== bowlerNum - 1 && value !== partnerNum - 1
+      return value !== bowlerIndex && value !== partnerIndex;
     });
 
     // Update the other two (if there are two) to be partners with each other
     if (bowlersLeftToUpdate.length > 1) {
       const left = bowlersLeftToUpdate[0];
       const right = bowlersLeftToUpdate[1];
-      newBowlers[left].doubles_partner_num = right + 1;
-      newBowlers[right].doubles_partner_num = left + 1;
+      newBowlers[left].doublesPartnerIndex = right;
+      newBowlers[right].doublesPartnerIndex = left;
     } else if (bowlersLeftToUpdate.length === 1) {
       // If there's just one left, then nullify their doubles partner selection
-      newBowlers[bowlersLeftToUpdate[0]].doubles_partner_num = null;
+      newBowlers[bowlersLeftToUpdate[0]].doublesPartnerIndex = null;
     }
 
     setPartnersChosen(true);
