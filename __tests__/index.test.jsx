@@ -46,10 +46,10 @@ describe ('Homepage', () => {
     expect(section).toBeInTheDocument();
   });
 
-  it ('has a Go Beyond section', () => {
+  it ('has an Offer More section', () => {
     render(<Homepage/>);
 
-    const section = screen.getByText(/go beyond.../i);
+    const section = screen.getByText(/offer your bowlers more/i);
     expect(section).toBeInTheDocument();
   });
 });
