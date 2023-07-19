@@ -55,6 +55,7 @@ const Page = () => {
                     bowlerInfoSaved={onBowlerInfoUpdated}
                     tournament={registration.tournament}
                     cancelHref={`/tournaments/${registration.tournament.identifier}/review-entries`}
+                    bowlerIndex={bowlerIndex}
         />
       </Col>
     </Row>

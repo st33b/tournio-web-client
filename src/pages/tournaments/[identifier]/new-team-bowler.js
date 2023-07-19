@@ -40,8 +40,9 @@ const Page = () => {
   }
 
   const onNewBowlerAdded = (bowlerInfo) => {
+    const teamIsNowFull = registration.team.bowlers.length + 1 === registration.tournament.max_bowlers
     dispatch(newTeamBowlerInfoAdded(bowlerInfo));
-    if (bowlerInfo.position === registration.tournament.max_bowlers) {
+    if (teamIsNowFull) {
       // Move on to doubles partner selection
       onFinishedWithBowlers();
     } else {
