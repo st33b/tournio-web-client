@@ -18,8 +18,8 @@ const Page = () => {
     const newBowlers = registration.team.bowlers.slice(0);
 
     // these are index-based, which is position-1
-    newBowlers[0].doubles_partner_num = 2;
-    newBowlers[1].doubles_partner_num = 1;
+    newBowlers[0].doublesPartnerIndex = 1;
+    newBowlers[1].doublesPartnerIndex = 0;
 
     dispatch(newTeamPartnersChosen(newBowlers));
   }
