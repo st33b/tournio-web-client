@@ -5,9 +5,9 @@ import * as constants from "../../../constants";
 
 import classes from './BowlerSummary.module.scss';
 
-const BowlerSummary = ({allBowlers, index, editClicked}) => {
+const BowlerSummary = ({allBowlers=[], bowler, editClicked, index}) => {
   const {registration} = useRegistrationContext();
-  if (!allBowlers || !registration.tournament) {
+  if (!registration.tournament) {
     return '';
   }
 
@@ -40,12 +40,12 @@ const BowlerSummary = ({allBowlers, index, editClicked}) => {
     aqResponses[key] = registration.tournament.additional_questions[key].elementConfig.value;
   }
 
-  const editClickHandler = (event) => {
+  const editClickHandler = (event, who) => {
     event.preventDefault();
-    editClicked(bowler);
+    editClicked(who);
   }
 
-  const bowler = allBowlers[index];
+  const theBowler = allBowlers[index] || bowler;
 
   return (
     <div className={classes.BowlerSummary}>
@@ -55,24 +55,27 @@ const BowlerSummary = ({allBowlers, index, editClicked}) => {
         </h4>
         <p className={'m-0 pe-2'}>
           <a href={'#'}
-             onClick={editClickHandler}>
+             onClick={(e) => editClickHandler(e, theBowler)}>
             edit
           </a>
         </p>
       </div>
       <dl>
         {Object.keys(labels).map(key => {
-          let value = bowler[key];
+          let value = theBowler[key];
           if (value === null || typeof value ==='undefined') {
             return null;
           }
           if (key === 'doublesPartnerIndex') {
-            const partner = allBowlers[bowler.doublesPartnerIndex];
+            const partner = allBowlers[theBowler.doublesPartnerIndex];
             const firstName = partner.nickname ? partner.nickname : partner.first_name;
             value = firstName + ' ' + partner.last_name;
           }
+          if (key === 'position' && value === '') {
+            value = 'n/a';
+          }
           return (
-            <Row key={`${key}_${bowler.position}`}>
+            <Row key={`${key}_${theBowler.position}`}>
               <dt className={'col-5 pe-2 label'}>
                 {labels[key]}
               </dt>
@@ -89,7 +92,7 @@ const BowlerSummary = ({allBowlers, index, editClicked}) => {
             return null;
           }
           return (
-            <Row key={`${key}_${bowler.position}`}>
+            <Row key={`${key}_${theBowler.position}`}>
               <dt className={'col-5 pe-2 label'}>
                 {labels[key]}
               </dt>

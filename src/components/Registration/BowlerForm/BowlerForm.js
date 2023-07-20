@@ -10,7 +10,7 @@ import * as constants from '../../../constants';
 
 import classes from './BowlerForm.module.scss';
 
-const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref, bowlerIndex = -1}) => {
+const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref, bowlerIndex = -1, solo = false}) => {
   const {registration} = useRegistrationContext();
 
   const initialFormState = {
@@ -79,10 +79,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         elementConfig: {
           options: [
             {
-              value: '',
-              label: '-- ',
-            },
-            {
               value: 1,
               label: '1'
             },
@@ -103,9 +99,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         },
         label: 'Position',
         helper: { text: 'In the team bowling order' },
-        validityErrors: [
-          'valueMissing',
-        ],
+        validityErrors: [],
         valid: true,
         touched: false,
       },
@@ -596,8 +590,16 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     setBowlerForm(newFormData);
   }
 
+  const excludedFields = [];
+  if (solo) {
+    excludedFields.push('position');
+  }
+
   const formElements = [];
   for (let key in bowlerForm.formFields) {
+    if (excludedFields.includes(key)) {
+      continue;
+    }
     formElements.push({
       id: key,
       setup: bowlerForm.formFields[key],
