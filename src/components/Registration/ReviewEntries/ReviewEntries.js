@@ -35,7 +35,8 @@ const ReviewEntries = ({editBowler, context}) => {
       </Col>
     );
   } else if (context === 'join') {
-    const index = team.bowlers[team.bowlers.length - 1];
+    // Tne joining bowler is the last one in the list
+    const index = team.bowlers.length - 1;
     content = (
       <Col className={'px-lg-2'}>
         <BowlerSummary bowler={team.bowlers[index]}
