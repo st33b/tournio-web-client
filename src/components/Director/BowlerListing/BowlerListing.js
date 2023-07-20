@@ -180,6 +180,7 @@ const BowlerListing = ({bowlers, showTeams, onBowlerUpdate}) => {
           Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
           accessor: 'team_name',
           visible: false,
+          sortType: nameSortFunc,
           Cell: ({row, value}) => {
             return (!value) ? 'n/a' : (
               <Link href={{
