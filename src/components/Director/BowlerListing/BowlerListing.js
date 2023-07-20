@@ -126,6 +126,7 @@ const BowlerListing = ({bowlers, showTeams, onBowlerUpdate}) => {
         id: 'email',
         Header: ({column}) => <SortableTableHeader text={'Email'} column={column}/>,
         accessor: 'email',
+        sortType: nameSortFunc,
       },
     ];
     const tail = [
