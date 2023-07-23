@@ -24,11 +24,12 @@ const DoublesPartners = ({team, partnersChosen}) => {
         </tr>
         </thead>
         <tbody>
-        {team.bowlers.map(bowler => {
-          const teammates = team.bowlers.filter((value) => { return value.position !== bowler.position });
-          return <PartnerSelectionRow key={bowler.position}
+        {team.bowlers.map((bowler, i) => {
+          // const teammates = team.bowlers.filter((value, j) => { return i !== j });
+          return <PartnerSelectionRow key={`row_${i}`}
                                       bowler={bowler}
-                                      teammates={teammates}
+                                      bowlerIndex={i}
+                                      teammates={team.bowlers}
                                       onPartnerSelected={partnersChosen}
           />
         })}

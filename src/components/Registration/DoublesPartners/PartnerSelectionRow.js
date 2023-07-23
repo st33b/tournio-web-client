@@ -6,32 +6,36 @@ import classes from './PartnerSelectionRow.module.scss';
 // onPartnerSelected -- function to call when a partner has been clicked. It will automatically determine the rest of the assignments
 // values -- the bowlers_attributes from the team form (id, doubles_partner_id, position)
 
-const PartnerSelectionRow = ({bowler, teammates, onPartnerSelected}) => {
-  const bowlerPosition = bowler.position;
+const PartnerSelectionRow = ({bowler, bowlerIndex, teammates, onPartnerSelected}) => {
   return (
     <tr className={classes.PartnerSelectionRow}>
       <td className={classes.ChoosingBowler}>
         {bowler.first_name} {bowler.last_name}
       </td>
-      {teammates.map((partner) => {
-        const partnerPosition = partner.position;
+      {teammates.map((partner, partnerIndex) => {
+
+        // This will happen if we're looking at ourselves.
+        if (bowlerIndex === partnerIndex) {
+          return '';
+        }
+
         const labelClasses = ['btn', 'btn-outline-primary', 'btn-sm'];
-        if (bowler.doubles_partner_num === partnerPosition) {
+        if (bowler.doublesPartnerIndex === partnerIndex) {
           labelClasses.push('active');
         }
         return (
-          <td className={classes.PartnerCandidate} key={bowlerPosition + '-' + partnerPosition}>
+          <td className={classes.PartnerCandidate} key={bowlerIndex + '-' + partnerIndex}>
             <input type={'radio'}
                    className={'btn-check'}
-                   name={'doubles_partner_num-' + bowlerPosition}
-                   value={partnerPosition}
+                   name={'doublesPartnerIndex-' + bowlerIndex}
+                   value={partnerIndex}
                    autoComplete={'off'}
-                   data-bowler-num={bowlerPosition}
+                   data-bowler-num={bowlerIndex}
             />
-            <label key={bowlerPosition + '-' + partnerPosition}
-                   id={bowlerPosition + '-' + partnerPosition}
+            <label key={bowlerIndex + '-' + partnerIndex}
+                   id={bowlerIndex + '-' + partnerIndex}
                    className={labelClasses.join(' ')}
-                   onClick={() => onPartnerSelected(bowlerPosition, partnerPosition)}>
+                   onClick={() => onPartnerSelected(bowlerIndex, partnerIndex)}>
               {partner.first_name} {partner.last_name}
             </label>
           </td>

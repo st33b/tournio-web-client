@@ -51,6 +51,7 @@ const Page = () => {
       <Col lg={8}>
         <BowlerForm tournament={registration.tournament}
                     bowlerInfoSaved={onCompletion}
+                    solo={true}
                     includeShift={includeShift} />
       </Col>
     </Row>
