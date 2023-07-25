@@ -13,7 +13,7 @@ const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
-  const [bowlerIndex, setBowlerNum] = useState(null);
+  const [bowlerNum, setBowlerNum] = useState(null);
 
   // Validate the 'bowler' query parameter
   useEffect(() => {
@@ -29,9 +29,11 @@ const Page = () => {
     }
   }, [router, registration]);
 
-  if (!bowlerIndex || !registration) {
+  if (!bowlerNum || !registration) {
     return '';
   }
+
+  const bowlerIndex = bowlerNum - 1;
 
   const onBowlerInfoUpdated = (bowlerInfo) => {
     dispatch(newTeamBowlerEdited(bowlerInfo, bowlerIndex));

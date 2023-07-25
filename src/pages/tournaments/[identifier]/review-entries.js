@@ -19,7 +19,7 @@ const Page = () => {
   const [processing, setProcessing] = useState(false);
 
   const editBowlerClicked = (bowlerIndex) => {
-    router.push(`/tournaments/${registration.tournament.identifier}/edit-new-team-bowler?bowler=${bowlerIndex}`)
+    router.push(`/tournaments/${registration.tournament.identifier}/edit-new-team-bowler?bowler=${bowlerIndex+1}`)
   }
 
   const newTeamRegistrationSuccess = (teamData) => {
