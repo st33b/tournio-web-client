@@ -76,7 +76,7 @@ export const registrationReducer = (state, action) => {
       });
     case actionTypes.NEW_TEAM_BOWLER_UPDATED:
       const updatedBowlers = [...state.team.bowlers];
-      const bowlerIndex = action.bowler.position - 1;
+      const bowlerIndex = action.index;
       updatedBowlers[bowlerIndex] = updateObject(state.team.bowlers[bowlerIndex], action.bowler);
       const updatedTeam = {...state.team}
       updatedTeam.bowlers = updatedBowlers;

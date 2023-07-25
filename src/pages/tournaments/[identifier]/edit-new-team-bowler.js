@@ -36,7 +36,7 @@ const Page = () => {
   const bowlerIndex = bowlerNum - 1;
 
   const onBowlerInfoUpdated = (bowlerInfo) => {
-    dispatch(newTeamBowlerEdited(bowlerInfo));
+    dispatch(newTeamBowlerEdited(bowlerInfo, bowlerIndex));
     router.push(`/tournaments/${registration.tournament.identifier}/review-entries`);
   }
 
