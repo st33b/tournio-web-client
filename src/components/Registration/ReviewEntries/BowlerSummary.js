@@ -39,9 +39,9 @@ const BowlerSummary = ({allBowlers=[], bowler, editClicked, index}) => {
     aqResponses[key] = registration.tournament.additional_questions[key].elementConfig.value;
   }
 
-  const editClickHandler = (event, who) => {
+  const editClickHandler = (event) => {
     event.preventDefault();
-    editClicked(who);
+    editClicked(index);
   }
 
   const theBowler = allBowlers[index] || bowler;
@@ -54,7 +54,7 @@ const BowlerSummary = ({allBowlers=[], bowler, editClicked, index}) => {
         </h4>
         <p className={'m-0 pe-2'}>
           <a href={'#'}
-             onClick={(e) => editClickHandler(e, theBowler)}>
+             onClick={editClickHandler}>
             edit
           </a>
         </p>

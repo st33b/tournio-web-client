@@ -18,8 +18,8 @@ const Page = () => {
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
 
-  const editBowlerClicked = (bowler) => {
-    router.push(`/tournaments/${registration.tournament.identifier}/edit-new-team-bowler?bowler=${bowler.position}`)
+  const editBowlerClicked = (bowlerIndex) => {
+    router.push(`/tournaments/${registration.tournament.identifier}/edit-new-team-bowler?bowler=${bowlerIndex+1}`)
   }
 
   const newTeamRegistrationSuccess = (teamData) => {
