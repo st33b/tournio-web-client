@@ -95,7 +95,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
               label: '4'
             },
           ],
-          value: '',
+          value: 1,
         },
         label: 'Position',
         helper: { text: 'In the team bowling order' },
