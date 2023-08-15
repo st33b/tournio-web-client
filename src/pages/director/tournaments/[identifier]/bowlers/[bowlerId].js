@@ -767,9 +767,9 @@ const BowlerPage = () => {
   }
 
   let assignPartnerCard = '';
-  const tournamentHasDoublesEvent = ['active', 'closed'].includes(tournament.state) && tournament.purchasable_items.bowling.some(pi => {
-    return pi.determination === 'event' && pi.refinement === 'doubles'
-  });
+  const tournamentHasDoublesEvent = ['testing', 'active', 'demo'].includes(tournament.state) && tournament.purchasable_items.some(pi => (
+    pi.category === 'bowling' && pi.determination === 'event' && pi.refinement === 'double'
+  ));
   if (tournamentHasDoublesEvent && unpartneredBowlers.length > 0) {
     let bowlerPartnerId = '';
     if (bowler.doubles_partner) {
