@@ -8,6 +8,7 @@ const ManualPayment = ({bowler, onSubmit, loading = false}) => {
   const initialFormState = {
     amount: '',
     identifier: '',
+    purchases: [],
 
     valid: false,
   }
@@ -15,19 +16,35 @@ const ManualPayment = ({bowler, onSubmit, loading = false}) => {
   const [formDisplayed, setFormDisplayed] = useState(false);
   const [formData, setFormData] = useState(initialFormState);
 
-  // Pre-populate the form with the amount that the bowler owes.
+  // Pre-populate the form with the amount that the bowler owes and their unpaid purchases
   useEffect(() => {
     if (!bowler) {
       return;
     }
     const newFormData = {...formData};
     newFormData.amount = bowler.amount_due;
+
+    newFormData.purchases = bowler.purchases.filter(purchase => purchase.paid_at === null).map(purchase => (
+      {
+        identifier: purchase.identifier,
+        name: purchase.name,
+        amount: ['early_discount', 'bundle_discount'].includes(purchase.determination) ? -purchase.value : purchase.value,
+        applied: true,
+      }
+    ));
+
     newFormData.valid = isFormValid(newFormData);
     setFormData(newFormData);
   }, [bowler]);
 
+  const appliedAmount = (data) => data.purchases.reduce((runningTotal, purchase) => (
+    purchase.applied ? runningTotal + purchase.amount : runningTotal
+  ), 0);
+
   const isFormValid = (data) => {
-    return data.amount > 0;
+    const amountApplied = appliedAmount(data);
+    const addsUp = amountApplied === 0 || amountApplied == data.amount;
+    return data.amount > 0 && addsUp;
   }
 
   const addClicked = () => {
@@ -39,9 +56,14 @@ const ManualPayment = ({bowler, onSubmit, loading = false}) => {
   }
 
   const inputChanged = (event) => {
-    const newValue = event.target.value;
     const newFormData = {...formData};
-    newFormData[event.target.name] = newValue;
+    const nameParts = event.target.name.split('.');
+    if (nameParts[0] === 'applyTo') {
+      const index = newFormData.purchases.findIndex(({identifier}) => identifier === nameParts[1]);
+      newFormData.purchases[index].applied = event.target.checked;
+    } else {
+      newFormData[event.target.name] = event.target.value;
+    }
     newFormData.valid = isFormValid(newFormData);
     setFormData(newFormData);
   }
@@ -83,9 +105,34 @@ const ManualPayment = ({bowler, onSubmit, loading = false}) => {
                    onChange={inputChanged}/>
           </div>
           <div className={'row mb-3 mx-0'}>
+            <label htmlFor={'link_to_purchases'}
+                   className={'form-label'}>
+              (optional) Apply it to:
+            </label>
+            <div>
+              {formData.purchases.map((p) => (
+                <div className={'form-check'} key={p.identifier}>
+                  <input className={'form-check-input'}
+                         type={'checkbox'}
+                         checked={p.applied}
+                         onChange={inputChanged}
+                         name={`applyTo.${p.identifier}`}
+                         id={`apply_to_${p.identifier}`} />
+                  <label className={'form-check-label'}
+                         htmlFor={`apply_to_${p.identifier}`}>
+                    {p.name} ({p.amount < 0 && '-'}${Math.abs(p.amount)})
+                  </label>
+                </div>
+              ))}
+            </div>
+            <p className={classes.AmountApplied}>
+              <span>Amount applied: ${appliedAmount(formData)}</span>
+            </p>
+          </div>
+          <div className={'row mb-3 mx-0'}>
             <label htmlFor={'identifier'}
                    className={'form-label'}>
-              Identifier/Note (optional)
+              (optional) Note
             </label>
             <input type={'text'}
                    id={'identifier'}
