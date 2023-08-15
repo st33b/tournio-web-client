@@ -43,7 +43,7 @@ const ManualPayment = ({bowler, onSubmit, loading = false}) => {
 
   const isFormValid = (data) => {
     const amountApplied = appliedAmount(data);
-    const addsUp = amountApplied === 0 || amountApplied == data.amount;
+    const addsUp = amountApplied === 0 || amountApplied === data.amount;
     return data.amount > 0 && addsUp;
   }
 
@@ -62,7 +62,7 @@ const ManualPayment = ({bowler, onSubmit, loading = false}) => {
       const index = newFormData.purchases.findIndex(({identifier}) => identifier === nameParts[1]);
       newFormData.purchases[index].applied = event.target.checked;
     } else {
-      newFormData[event.target.name] = event.target.value;
+      newFormData[event.target.name] = parseInt(event.target.value);
     }
     newFormData.valid = isFormValid(newFormData);
     setFormData(newFormData);
