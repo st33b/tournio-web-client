@@ -162,8 +162,8 @@ const BowlerListing = ({bowlers, showTeams, onBowlerUpdate}) => {
         }
       },
       {
-        Header: 'Billed',
-        accessor: 'amount_billed',
+        Header: 'Paid',
+        accessor: 'amount_paid',
         disableSortBy: true,
         filter: equals,
         Cell: ({value}) => `$${value}`,
@@ -288,11 +288,6 @@ const BowlerListing = ({bowlers, showTeams, onBowlerUpdate}) => {
       setFilter('amount_due', 0);
     } else {
       setFilter('amount_due', undefined);
-    }
-    if (criteria.amount_billed) {
-      setFilter('amount_billed', 0);
-    } else {
-      setFilter('amount_billed', undefined);
     }
     setFilter('has_free_entry', criteria.has_free_entry)
     setFilter('igbo_member', criteria.igbo_member);
