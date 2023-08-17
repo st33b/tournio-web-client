@@ -32,6 +32,7 @@ const VisibleTournament = ({closeTournament}) => {
     "email_in_dev",
     "skip_stripe",
     "accept_payments",
+    "automatic_discount_voids",
   ];
 
   const {loading, tournament} = useTournament();
