@@ -13,6 +13,7 @@ const BOOLEAN_CONFIG_ITEMS = [
   'skip_stripe',
   'event_selection',
   'accept_payments',
+  'automatic_discount_voids',
 ];
 
 const ConfigItemForm = ({item}) => {
