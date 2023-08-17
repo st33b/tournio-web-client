@@ -73,11 +73,11 @@ const Summary = ({tournament, nextStepClicked, nextStepText, buttonDisabled, ena
   let bowlersText = '';
   if (team && team.bowlers.length > 0) {
     bowlersText = (
-      <ol>
+      <ol className={classes.BowlerList}>
         {team.bowlers.map((b, i) => {
           return (
             <li key={i}>
-              {b.first_name} {b.last_name}
+              {b.first_name} {b.last_name} ({b.position})
             </li>
           )
         })}
@@ -86,11 +86,11 @@ const Summary = ({tournament, nextStepClicked, nextStepText, buttonDisabled, ena
   }
   if (bowlers && bowlers.length > 0) {
     bowlersText = (
-      <ol>
+      <ol className={classes.BowlerList}>
         {bowlers.map((b, i) => {
           return (
             <li key={i}>
-              {b.first_name} {b.last_name}
+              {b.first_name} {b.last_name} ({b.position})
             </li>
           )
         })}

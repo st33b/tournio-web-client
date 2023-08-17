@@ -50,7 +50,7 @@ const BowlersIndex = () => {
         <Col>
           {deleteSuccess && (
             <SuccessAlert message={'The bowler has been removed.'}
-                          onClose={() => router.replace(router.pathname, null, {shallow: true})}/>
+                          onClose={() => router.replace(`/director/tournaments/${identifier}/bowlers`, null, {shallow: true})}/>
           )}
           {error && (
             <ErrorAlert message={error.message} className={'mx-3 mt-3'}/>

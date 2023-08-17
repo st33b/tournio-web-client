@@ -6,7 +6,6 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import TeamListing from "../../../components/Registration/TeamListing/TeamListing";
-import Contacts from "../../../components/Registration/Contacts/Contacts";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import {useRouter} from "next/router";
 

@@ -3,13 +3,14 @@ import {CountryDropdown} from "react-country-region-selector";
 
 import Input from "../../ui/Input/Input";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-
-import classes from './BowlerForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import ShiftForm from "../ShiftForm/ShiftForm";
 import {devConsoleLog, validateEmail} from "../../../utils";
+import * as constants from '../../../constants';
 
-const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref}) => {
+import classes from './BowlerForm.module.scss';
+
+const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref, bowlerIndex = -1, solo = false}) => {
   const {registration} = useRegistrationContext();
 
   const initialFormState = {
@@ -70,6 +71,35 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           url: 'https://webapps.bowl.com/USBCFindA/Home/Member',
           text: 'Look up your USBC ID',
         },
+        valid: true,
+        touched: false,
+      },
+      position: {
+        elementType: 'select',
+        elementConfig: {
+          options: [
+            {
+              value: 1,
+              label: '1'
+            },
+            {
+              value: 2,
+              label: '2'
+            },
+            {
+              value: 3,
+              label: '3'
+            },
+            {
+              value: 4,
+              label: '4'
+            },
+          ],
+          value: 1,
+        },
+        label: 'Position',
+        helper: { text: 'In the team bowling order' },
+        validityErrors: [],
         valid: true,
         touched: false,
       },
@@ -392,20 +422,19 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     }
 
     // Grab all the values from the form so they can be stored
-    const bowlerData = {};
+    const theBowlerData = {};
     for (let formElementIdentifier in bowlerForm.formFields) {
-      bowlerData[formElementIdentifier] = bowlerForm.formFields[formElementIdentifier].elementConfig.value;
+      theBowlerData[formElementIdentifier] = bowlerForm.formFields[formElementIdentifier].elementConfig.value;
     }
-    bowlerData.position = position;
 
     if (includeShift) {
-      bowlerData.shift = bowlerForm.soloBowlerFields.preferred_shift.elementConfig.value;
+      theBowlerData.shift = bowlerForm.soloBowlerFields.preferred_shift.elementConfig.value;
     }
 
     // Reset the form to take in the next bowler's info
     resetFormData(tournament);
 
-    bowlerInfoSaved(bowlerData);
+    bowlerInfoSaved(theBowlerData);
   }
 
   const validityForField = (fieldIdentifier, failedChecks = []) => {
@@ -443,7 +472,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       // We need to go ahead and do validation for <select> elements, since their value isn't modified
       // between a change event (what we're reacting to here) and a blur event (which is for fieldBlurred)
       // To avoid confusion with extended form fields, we're hard-coding it to birth_month.
-      if (inputIdentifier === 'birth_month') {
+      if (inputIdentifier === 'birth_month' || inputIdentifier === 'position') {
         const checksToRun = updatedFormElement.validityErrors;
         const {validity} = event !== null ? event.target : {};
         const failedChecks = checksToRun.filter(c => validity[c]);
@@ -561,8 +590,16 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     setBowlerForm(newFormData);
   }
 
+  const excludedFields = [];
+  if (solo) {
+    excludedFields.push('position');
+  }
+
   const formElements = [];
   for (let key in bowlerForm.formFields) {
+    if (excludedFields.includes(key)) {
+      continue;
+    }
     formElements.push({
       id: key,
       setup: bowlerForm.formFields[key],
@@ -618,16 +655,19 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     </form>
   );
 
-  let position = 1;
-  if (bowlerData) {
-    position = bowlerData.position;
-  } else if (registration.team) {
-    position = registration.team.bowlers.length + 1;
-  } else if (registration.bowlers) {
-    position = registration.bowlers.length + 1;
+  let bowlerIndexInTeam = 0;
+  // This is for editing a bowler, who may or may not be on a team. That's why we use a prop to give us the index.
+  if (bowlerIndex >= 0) {
+    bowlerIndexInTeam = bowlerIndex;
+  } else
+    if (registration.team) {
+    bowlerIndexInTeam = registration.team.bowlers.length;
+  } else
+    if (registration.bowlers) {
+    bowlerIndexInTeam = registration.bowlers.length;
   }
 
-  let headerText = 'Bowler #' + position;
+  let headerText = 'Bowler ' + String.fromCharCode(constants.A_CHAR_CODE + bowlerIndexInTeam);
 
   return (
     <ErrorBoundary>

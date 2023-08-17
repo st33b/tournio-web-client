@@ -1,5 +1,4 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
-import {useRouter} from "next/router";
 import Link from 'next/link';
 import {useTable, useSortBy, useFilters} from 'react-table';
 import {Overlay, Popover} from "react-bootstrap";
@@ -96,12 +95,18 @@ const IgboMemberCell = ({
 }
 
 const BowlerListing = ({bowlers, showTeams, onBowlerUpdate}) => {
+  const nameSortFunc = (rowA, rowB, columnId) => {
+    let [a, b] = [rowA.values[columnId], rowB.values[columnId]];
+    return a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase());
+  }
+
   const columns = useMemo(() => {
     const head = [
       {
         id: 'name',
         Header: ({column}) => <SortableTableHeader text={'Name'} column={column}/>,
         accessor: 'full_name',
+        sortType: nameSortFunc,
         Cell: ({row, cell}) => {
           return (
             <Link href={{
@@ -121,6 +126,7 @@ const BowlerListing = ({bowlers, showTeams, onBowlerUpdate}) => {
         id: 'email',
         Header: ({column}) => <SortableTableHeader text={'Email'} column={column}/>,
         accessor: 'email',
+        sortType: nameSortFunc,
       },
     ];
     const tail = [
@@ -175,6 +181,7 @@ const BowlerListing = ({bowlers, showTeams, onBowlerUpdate}) => {
           Header: ({column}) => <SortableTableHeader text={'Team Name'} column={column}/>,
           accessor: 'team_name',
           visible: false,
+          sortType: nameSortFunc,
           Cell: ({row, value}) => {
             return (!value) ? 'n/a' : (
               <Link href={{

@@ -152,7 +152,7 @@ const BowlerPage = () => {
       bowler_count: tournament.bowler_count - 1,
     });
     tournamentUpdatedQuietly(modifiedTournament);
-    router.push(`/director/tournament/${identifier}/bowlers?deleteSuccess=true`);
+    router.push(`/director/tournaments/${identifier}/bowlers?deleteSuccess=true`);
   }
   const deleteBowlerFailure = (data) => {
     setLoadingParts({
@@ -662,11 +662,6 @@ const BowlerPage = () => {
                 <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team position</dt>
                 <dd className={'col'}>{bowler.position}</dd>
               </div>
-              <div className={'row'}>
-                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Doubles partner</dt>
-                {bowler.doubles_partner && <dd className={'col'}>{bowler.doubles_partner.full_name}</dd>}
-                {!bowler.doubles_partner && <dd className={'col'}>n/a</dd>}
-              </div>
             </>
           )}
           {!bowler.team && (
@@ -679,10 +674,15 @@ const BowlerPage = () => {
               </div>
               <div className={'row'}>
                 <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Preferred Shift</dt>
-                <dd className={'col'}>{bowler.shift.name}</dd>
+                <dd className={'col'}>{bowler.shift.name || 'n/a'}</dd>
               </div>
             </>
           )}
+          <div className={'row'}>
+            <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Doubles partner</dt>
+            {bowler.doubles_partner && <dd className={'col'}>{bowler.doubles_partner.full_name}</dd>}
+            {!bowler.doubles_partner && <dd className={'col'}>n/a</dd>}
+          </div>
           <div className={'row'}>
             <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Fees Paid?</dt>
             <dd className={'col'}>{bowler.paid ? 'Yes' : 'No'}</dd>
@@ -767,9 +767,10 @@ const BowlerPage = () => {
   }
 
   let assignPartnerCard = '';
-  const tournamentHasDoublesEvent = ['active', 'closed'].includes(tournament.state) && tournament.purchasable_items.bowling.some(pi => {
-    return pi.determination === 'event' && pi.refinement === 'doubles'
-  });
+  const tournamentHasDoublesEvent = ['testing', 'active', 'demo'].includes(tournament.state) &&
+    tournament.event_items.event.some(pi => (
+      pi.refinement === 'double'
+  ));
   if (tournamentHasDoublesEvent && unpartneredBowlers.length > 0) {
     let bowlerPartnerId = '';
     if (bowler.doubles_partner) {

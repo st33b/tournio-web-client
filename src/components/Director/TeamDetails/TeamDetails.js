@@ -3,7 +3,6 @@ import {useTable} from "react-table";
 import {Button} from "react-bootstrap";
 import Link from 'next/link';
 
-import {useDirectorContext} from "../../../store/DirectorContext";
 import PartnerSelectionRow from "./PartnerSelectionRow";
 
 import classes from './TeamDetails.module.scss';

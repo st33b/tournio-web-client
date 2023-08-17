@@ -7,7 +7,6 @@ import classes from './VisibleTournament.module.scss';
 import {useLoginContext} from "../../../store/LoginContext";
 import {devConsoleLog} from "../../../utils";
 import Link from "next/link";
-import SuccessAlert from "../../common/SuccessAlert";
 import ErrorAlert from "../../common/ErrorAlert";
 
 const Downloads = () => {
@@ -47,7 +46,20 @@ const Downloads = () => {
     setDownloadMessage('Download failed.');
   }
   const downloadClicked = (event, which, saveAsName) => {
-    const path = which === 'csv' ? 'csv_download' : 'igbots_download';
+    let path;
+    switch (which) {
+      case 'bowlers_csv':
+        path = 'csv_download';
+        break;
+      case 'financial_csv':
+        path = 'financial_csv_download';
+        break;
+      case 'igbots_download':
+        path = 'igbots_download';
+        break;
+      default:
+        return;
+    }
     const uri = `/tournaments/${tournament.identifier}/${path}`;
     event.preventDefault();
     directorApiDownloadRequest({
@@ -65,21 +77,28 @@ const Downloads = () => {
           <Card.Subtitle className={'mb-3'}>
             Downloads
           </Card.Subtitle>
-          <Link className={'btn btn-sm btn-outline-primary mx-2'}
+          <Link className={'btn btn-sm btn-outline-primary mx-2 mb-2'}
                      href={'#'}
                      disabled={tournament.bowler_count === 0}
-                     onClick ={(event) => downloadClicked(event, 'csv', 'bowlers.csv')}
+                     onClick ={(event) => downloadClicked(event, 'bowlers_csv', 'bowlers.csv')}
           >
-            CSV
+            Bowler CSV
           </Link>
-          <Link className={'btn btn-sm btn-outline-primary mx-2'}
+          <Link className={'btn btn-sm btn-outline-primary mx-2 mb-2'}
+                href={'#'}
+                disabled={tournament.bowler_count === 0}
+                onClick ={(event) => downloadClicked(event, 'financial_csv', 'financial_report.csv')}
+          >
+            Financial CSV
+          </Link>
+          <Link className={'btn btn-sm btn-outline-primary mx-2 mb-2'}
                      href={'#'}
                      disabled={tournament.bowler_count === 0}
                      onClick ={(event) => downloadClicked(event, 'igbots_download', 'bowlers.xml')}
           >
             IGBO-TS
           </Link>
-          <Link className={'btn btn-sm btn-outline-primary mt-3 mx-2'}
+          <Link className={'btn btn-sm btn-outline-primary mx-2'}
              target={'_new'}
              href={`/director/tournaments/${tournament.identifier}/sign-in-sheets`}
              disabled={tournament.bowler_count === 0}

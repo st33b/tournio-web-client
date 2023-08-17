@@ -475,7 +475,7 @@ const convertTeamDataForServer = (tournament, team) => {
 const teamDataForBowler = (bowler) => {
   return {
     position: bowler.position,
-    doubles_partner_num: bowler.doubles_partner_num,
+    doubles_partner_index: bowler.doublesPartnerIndex,
   };
 }
 
@@ -491,7 +491,6 @@ const convertBowlerDataForPost = (tournament, bowler) => {
       first_name: bowler.first_name,
       last_name: bowler.last_name,
       usbc_id: bowler.usbc_id,
-      // igbo_id: bowler.igbo_id,
       birth_month: bowler.birth_month,
       birth_day: bowler.birth_day,
       nickname: bowler.nickname,
