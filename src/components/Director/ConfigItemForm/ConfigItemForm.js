@@ -7,13 +7,13 @@ import {useLoginContext} from "../../../store/LoginContext";
 import {updateObject} from "../../../utils";
 
 const BOOLEAN_CONFIG_ITEMS = [
+  'automatic_discount_voids',
+  'event_selection',
+  'publicly_listed',
+  'accept_payments',
   'display_capacity',
   'email_in_dev',
-  'publicly_listed',
   'skip_stripe',
-  'event_selection',
-  'accept_payments',
-  'automatic_discount_voids',
 ];
 
 const ConfigItemForm = ({item}) => {

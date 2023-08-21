@@ -29,10 +29,10 @@ const VisibleTournament = ({closeTournament}) => {
   const EDITABLE_CONFIG_ITEMS = [
     "display_capacity",
     "publicly_listed",
-    "email_in_dev",
-    "skip_stripe",
     "accept_payments",
     "automatic_discount_voids",
+    "email_in_dev",
+    "skip_stripe",
   ];
 
   const {loading, tournament} = useTournament();
