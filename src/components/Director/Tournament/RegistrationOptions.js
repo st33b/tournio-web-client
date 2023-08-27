@@ -11,11 +11,10 @@ const RegistrationOptions = () => {
   const { authToken } = useLoginContext();
   const {loading, tournament, tournamentUpdatedQuietly} = useTournament();
 
-  const REGISTRATION_TYPES = ['new_team', 'solo', 'join_team', 'partner', 'new_pair'];
+  const REGISTRATION_TYPES = ['new_team', 'solo', 'partner', 'new_pair'];
   const REGISTRATION_TYPE_LABELS = [
     {key: 'new_team', label: 'New Teams'},
     {key: 'solo', label: 'Solo Entries'},
-    {key: 'join_team', label: 'Join a Team'},
     {key: 'partner', label: 'Partner Up'},
     {key: 'new_pair', label: 'New Doubles Pair'},
   ];
@@ -23,14 +22,12 @@ const RegistrationOptions = () => {
     traditional: {
       new_team: true,
       solo: true,
-      join_team: true,
       partner: false,
       new_pair: false,
     },
     eventsSelectable: {
       new_team: false,
       solo: true,
-      join_team: false,
       partner: true,
       new_pair: true,
     },
@@ -38,7 +35,6 @@ const RegistrationOptions = () => {
 
   const initialFormData = Map({
     new_team: false,
-    join_team: false,
     solo: false,
     partner: false,
     new_pair: false,
@@ -58,7 +54,7 @@ const RegistrationOptions = () => {
         map.set(rType, tournament.registration_options[rType]);
       });
       if (tournament.event_items.event.length > 0) {
-        map.set('new_team', false).set('join_team', false);
+        map.set('new_team', false);
       }
       else {
         map.set('partner', false).set('new_pair', false);

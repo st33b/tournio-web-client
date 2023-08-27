@@ -8,7 +8,7 @@ import RegistrationLayout from "../../components/Layout/RegistrationLayout/Regis
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import TeamDetails from "../../components/Registration/TeamDetails/TeamDetails";
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
-import {joinTeamRegistrationInitiated, tournamentDetailsRetrieved} from "../../store/actions/registrationActions";
+import {tournamentDetailsRetrieved} from "../../store/actions/registrationActions";
 
 const Page = () => {
   const router = useRouter();
@@ -60,10 +60,6 @@ const Page = () => {
     }
   }, [identifier, registration, team, dispatch]);
 
-  const joinTeamClicked = (event) => {
-    dispatch(joinTeamRegistrationInitiated(team));
-  }
-
   const ready = useClientReady();
   if (!ready) {
     return null;
@@ -74,21 +70,6 @@ const Page = () => {
 
   if (loading) {
     return <LoadingMessage message={'Retrieving team details...'} />
-  }
-
-  let enablePurchase = true;
-  let joinLink = '';
-  if (team.size < registration.tournament.max_bowlers && context === 'join') {
-    joinLink = (
-      <p className={'text-center mt-2'}>
-        <a href={`/teams/${team.identifier}/join`}
-           onClick={joinTeamClicked}
-           className={'btn btn-outline-primary'}>
-          Join this Team
-        </a>
-      </p>
-    );
-    enablePurchase = false;
   }
 
   return (
@@ -118,10 +99,8 @@ const Page = () => {
         <Col xs={12} md={8} className={''}>
           <TeamDetails tournament={registration.tournament}
                        successType={success}
-                       enablePayment={enablePurchase}
                        context={context}
                        team={team}/>
-          {joinLink}
 
           {errorMessage && (
             <div className={'col-12 alert alert-warning fade show d-flex align-items-center'} role={'alert'}>

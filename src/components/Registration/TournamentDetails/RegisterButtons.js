@@ -20,11 +20,6 @@ const RegisterButtons = ({tournament}) => {
         linkText: 'Register Solo',
       },
       {
-        name: 'join_team',
-        path: 'join-a-team',
-        linkText: 'Join an Existing Team',
-      },
-      {
         name: 'new_team',
         path: 'new-team',
         linkText: 'Register a New Team',
