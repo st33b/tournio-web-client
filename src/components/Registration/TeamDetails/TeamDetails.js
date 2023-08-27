@@ -13,9 +13,6 @@ const TeamDetails = ({tournament, team, successType, context}) => {
       case 'new_team':
         content = 'Your registration was received. Each bowler may now pay their fees and choose additional events.';
         break;
-      case 'join':
-        content = 'You have successfully joined this team! You may now pay your fees and choose additional events.';
-        break;
       case 'solo':
         content = 'Your registration was received. You may now pay your fees and choose additional events.';
         break;
@@ -70,7 +67,7 @@ const TeamDetails = ({tournament, team, successType, context}) => {
           </table>
         </div>
       )}
-      {team.bowlers.length === 0 && context !== 'join' && (
+      {team.bowlers.length === 0 && (
         <h5 className={'text-center'}>
           No bowlers to display.
         </h5>

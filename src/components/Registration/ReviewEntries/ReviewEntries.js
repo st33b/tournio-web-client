@@ -34,17 +34,6 @@ const ReviewEntries = ({editBowler, context}) => {
         />
       </Col>
     );
-  } else if (context === 'join') {
-    // Tne joining bowler is the last one in the list
-    const index = team.bowlers.length - 1;
-    content = (
-      <Col className={'px-lg-2'}>
-        <BowlerSummary bowler={team.bowlers[index]}
-                       index={index}
-                       editClicked={editBowler}
-        />
-      </Col>
-    );
   } else if (context === 'doubles') {
     content = bowlers.map((bowler, i) => {
       return (

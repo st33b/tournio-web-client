@@ -20,7 +20,6 @@ export const registrationReducer = (state, action) => {
         tournament: action.tournament,
       });
     case actionTypes.NEW_TEAM_REGISTRATION_INITIATED:
-    case actionTypes.SUBMIT_JOIN_TEAM_COMPLETED:
     case actionTypes.TEAM_LIST_RETRIEVED:
       return updateObject(state, {
         team: {
@@ -28,10 +27,6 @@ export const registrationReducer = (state, action) => {
           bowlers: [],
           shift: null,
         },
-      });
-    case actionTypes.JOIN_TEAM_REGISTRATION_INITIATED:
-      return updateObject(state, {
-        team: action.team,
       });
     case actionTypes.NEW_PAIR_REGISTRATION_INITIATED:
       return updateObject(state, {

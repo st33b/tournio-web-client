@@ -45,11 +45,6 @@ const RegistrationTypesWeek = () => {
         backgroundColor: bgColors[0],
       },
       {
-        label: 'Join a Team',
-        data: tournament.chart_data.last_week_registration_types.join_team,
-        backgroundColor: bgColors[1],
-      },
-      {
         label: 'Solo',
         data: tournament.chart_data.last_week_registration_types.solo,
         backgroundColor: bgColors[2],

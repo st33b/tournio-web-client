@@ -383,7 +383,6 @@ export const submitSoloRegistration = (tournament, bowler, onSuccess, onFailure)
       onSuccess(newBowler);
     })
     .catch(error => {
-      console.log('womp womp');
       console.log(error);
       console.log(error.response);
       onFailure(error.response.status);
@@ -399,7 +398,6 @@ export const submitDoublesRegistration = (tournament, bowlers, onSuccess, onFail
       onSuccess(newBowlers);
     })
     .catch(error => {
-      console.log('womp womp');
       console.log(error);
       console.log(error.response);
       onFailure(error.response.status);
@@ -417,35 +415,10 @@ export const submitPartnerRegistration = (tournament, bowler, partner, onSuccess
       onSuccess(newBowler);
     })
     .catch(error => {
-      console.log('womp womp');
       console.log(error);
       console.log(error.response);
       onFailure(error.response.status);
     });
-}
-
-export const submitJoinTeamRegistration = (tournament, team, bowler, onSuccess, onFailure) => {
-  // make the post
-  if (team.shift) {
-    bowler.shift = team.shift;
-  }
-  const teamId = team.identifier;
-  const bowlerData = {
-    team_identifier: teamId,
-    bowlers: [{...convertBowlerDataForPost(tournament, bowler), ...teamDataForBowler(bowler) }],
-  };
-  axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, bowlerData)
-    .then(response => {
-      const newBowlerIdentifier = response.data.identifier;
-      onSuccess(newBowlerIdentifier);
-    })
-    .catch(error => {
-      console.log('womp womp');
-      console.log(error);
-      console.log(error.response);
-      onFailure(error.response.status);
-    });
-
 }
 
 const convertTeamDataForServer = (tournament, team) => {

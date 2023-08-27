@@ -38,8 +38,7 @@ describe ('action type: existing team bowler edited', () => {
   }
 
   // Reducer assumes that the bowler being edited is the last one.
-  // That's a reasonable assumption, since bowlers who join an existing team
-  // are placed at the end. But we may wish to consider re-thinking that
+  // We may wish to consider re-thinking that
   // assumption (and implementation) down the road.
 
   it ('updates the bowler to the team roster', () => {
