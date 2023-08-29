@@ -1,20 +1,23 @@
 .TeamForm {
+  .FormElement {
+    hr {
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 1.5rem;
+      width: 90%;
+    }
+  }
   .Label {
-    text-align: left;
-    font-weight: normal;
-
     .Required {
       margin-left: 5px;
       font-size: 60%;
       color: var(--tournio-danger);
       filter: brightness(80%);
     }
-  }
-  @media (min-width: 768px) {
-    .Label {
-      text-align: right;
-      font-weight: bold;
-    }
+    //@media (min-width: 768px) {
+    //  text-align: right;
+    //  font-weight: bold;
+    //}
   }
   .Submit {
     text-align: right;

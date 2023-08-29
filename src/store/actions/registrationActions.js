@@ -13,9 +13,10 @@ export const tournamentDetailsRetrieved = (tournament) => {
   }
 }
 
-export const newTeamRegistrationInitiated = () => {
+export const newTeamRegistrationInitiated = (team) => {
   return {
     type: actionTypes.NEW_TEAM_REGISTRATION_INITIATED,
+    team: team,
   };
 }
 
@@ -55,25 +56,6 @@ export const newTeamEntryCompleted = () => {
   }
 }
 
-export const teamListRetrieved = () => {
-  return {
-    type: actionTypes.TEAM_LIST_RETRIEVED,
-  }
-}
-
-export const existingTeamBowlerInfoAdded = (bowlerInfo) => {
-  return {
-    type: actionTypes.EXISTING_TEAM_BOWLER_INFO_ADDED,
-    bowler: bowlerInfo,
-  }
-}
-
-export const existingTeamBowlerEdited = (bowlerInfo) => {
-  return {
-    type: actionTypes.EXISTING_TEAM_BOWLER_EDITED,
-    bowler: bowlerInfo,
-  }
-}
 
 export const newSoloRegistrationInitiated = () => {
   return {

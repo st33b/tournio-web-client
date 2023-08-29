@@ -1,5 +1,5 @@
 import * as actionTypes from './actions/actionTypes';
-import {updateObject} from "../utils";
+import {devConsoleLog, updateObject} from "../utils";
 
 const initialState = {
   tournament: null,
@@ -20,12 +20,10 @@ export const registrationReducer = (state, action) => {
         tournament: action.tournament,
       });
     case actionTypes.NEW_TEAM_REGISTRATION_INITIATED:
-    case actionTypes.TEAM_LIST_RETRIEVED:
       return updateObject(state, {
         team: {
-          name: '',
+          ...action.team,
           bowlers: [],
-          shift: null,
         },
       });
     case actionTypes.NEW_PAIR_REGISTRATION_INITIATED:
@@ -83,6 +81,7 @@ export const registrationReducer = (state, action) => {
         team: null,
       });
     case actionTypes.EXISTING_TEAM_BOWLER_INFO_ADDED:
+      devConsoleLog("DEPRECATED");
       const modifiedTeam = {...state.team}
       const bowler = {...action.bowler}
       if (modifiedTeam.bowlers.length === 0 && action.bowler.shift) {
@@ -94,6 +93,7 @@ export const registrationReducer = (state, action) => {
         team: modifiedTeam,
       });
     case actionTypes.EXISTING_TEAM_BOWLER_EDITED:
+      devConsoleLog("DEPRECATED");
       const team = {...state.team}
       const bowlers = [...team.bowlers];
       bowlers.pop(); // remove the last bowler, which is the one who's been edited
