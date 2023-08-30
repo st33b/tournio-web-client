@@ -74,35 +74,35 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         valid: true,
         touched: false,
       },
-      position: {
-        elementType: 'select',
-        elementConfig: {
-          options: [
-            {
-              value: 1,
-              label: '1'
-            },
-            {
-              value: 2,
-              label: '2'
-            },
-            {
-              value: 3,
-              label: '3'
-            },
-            {
-              value: 4,
-              label: '4'
-            },
-          ],
-          value: 1,
-        },
-        label: 'Position',
-        helper: { text: 'In the team bowling order' },
-        validityErrors: [],
-        valid: true,
-        touched: false,
-      },
+      // position: {
+      //   elementType: 'select',
+      //   elementConfig: {
+      //     options: [
+      //       {
+      //         value: 1,
+      //         label: '1'
+      //       },
+      //       {
+      //         value: 2,
+      //         label: '2'
+      //       },
+      //       {
+      //         value: 3,
+      //         label: '3'
+      //       },
+      //       {
+      //         value: 4,
+      //         label: '4'
+      //       },
+      //     ],
+      //     value: 1,
+      //   },
+      //   label: 'Position',
+      //   helper: { text: 'In the team bowling order' },
+      //   validityErrors: [],
+      //   valid: true,
+      //   touched: false,
+      // },
       birth_month: {
         elementType: 'select',
         elementConfig: {
@@ -325,7 +325,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
   }
   const [bowlerForm, setBowlerForm] = useState(initialFormState);
   const [showShiftSelection, setShowShiftSelection] = useState(false);
-  const [buttonText, setButtonText] = useState('Save Bowler');
+  const [buttonText, setButtonText] = useState('Review');
   const [showCancelButton, setShowCancelButton] = useState(false);
 
   const additionalFormFields = (tourn) => {
@@ -406,7 +406,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     updatedBowlerForm.valid = true;
 
     setBowlerForm(updatedBowlerForm);
-    setButtonText('Save Changes');
+    setButtonText('Review Changes');
     setShowCancelButton(true);
   }, [bowlerData, tournament]);
 
@@ -610,15 +610,15 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
 
   let form = (
     <form onSubmit={formHandler}>
-      {showShiftSelection && (
-        <div>
-          <ShiftForm tournament={tournament}
-                     onInputChanged={(event) => inputChangedHandler(event, 'preferred_shift')}
-                     currentSelection={bowlerForm.soloBowlerFields.preferred_shift.elementConfig.value}
-                     name={'preferred_shift'}/>
-          <hr/>
-        </div>
-      )}
+      {/*{showShiftSelection && (*/}
+      {/*  <div>*/}
+      {/*    <ShiftForm tournament={tournament}*/}
+      {/*               onInputChanged={(event) => inputChangedHandler(event, 'preferred_shift')}*/}
+      {/*               currentSelection={bowlerForm.soloBowlerFields.preferred_shift.elementConfig.value}*/}
+      {/*               name={'preferred_shift'}/>*/}
+      {/*    <hr/>*/}
+      {/*  </div>*/}
+      {/*)}*/}
       {formElements.map(formElement => (
         <Input
           key={formElement.id}
@@ -639,46 +639,46 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       ))}
 
       <div className="d-flex flex-row-reverse justify-content-between pt-2">
-        <button className="btn btn-primary btn-lg" type="submit" disabled={!bowlerForm.valid || !bowlerForm.touched}>
+        <button className="btn btn-primary btn-lg" type="submit" disabled={!bowlerForm.valid}>
           {buttonText}{' '}
-          <i className="bi-chevron-double-right ps-1" aria-hidden="true"/>
+          <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
         </button>
 
-        {showCancelButton && (
-          <a className={'btn btn-secondary btn-lg'}
-             href={cancelHref}>
-            <i className={'bi-chevron-double-left pe-1'} aria-hidden={true}/>
-            Cancel Changes
-          </a>
-        )}
+        {/*{showCancelButton && (*/}
+        {/*  <a className={'btn btn-secondary btn-lg'}*/}
+        {/*     href={cancelHref}>*/}
+        {/*    <i className={'bi-chevron-double-left pe-1'} aria-hidden={true}/>*/}
+        {/*    Cancel Changes*/}
+        {/*  </a>*/}
+        {/*)}*/}
       </div>
     </form>
   );
 
-  let bowlerIndexInTeam = 0;
-  // This is for editing a bowler, who may or may not be on a team. That's why we use a prop to give us the index.
-  if (bowlerIndex >= 0) {
-    bowlerIndexInTeam = bowlerIndex;
-  } else
-    if (registration.team) {
-    bowlerIndexInTeam = registration.team.bowlers.length;
-  } else
-    if (registration.bowlers) {
-    bowlerIndexInTeam = registration.bowlers.length;
-  }
-
-  let headerText = 'Bowler ' + String.fromCharCode(constants.A_CHAR_CODE + bowlerIndexInTeam);
+  // let bowlerIndexInTeam = 0;
+  // // This is for editing a bowler, who may or may not be on a team. That's why we use a prop to give us the index.
+  // if (bowlerIndex >= 0) {
+  //   bowlerIndexInTeam = bowlerIndex;
+  // } else
+  //   if (registration.team) {
+  //   bowlerIndexInTeam = registration.team.bowlers.length;
+  // } else
+  //   if (registration.bowlers) {
+  //   bowlerIndexInTeam = registration.bowlers.length;
+  // }
+  //
+  // let headerText = 'Bowler ' + String.fromCharCode(constants.A_CHAR_CODE + bowlerIndexInTeam);
 
   return (
     <ErrorBoundary>
       <div className={classes.BowlerForm}>
 
-        <h3>
-          {headerText}
-        </h3>
+        {/*<h3>*/}
+        {/*  {headerText}*/}
+        {/*</h3>*/}
 
-        <p>
-          <i className={`${classes.RequiredLabel} align-top bi-asterisk`}/>
+        <p className={classes.RequiredLabel}>
+          <i className={`align-top bi-asterisk`}/>
           {' '}indicates a required field
         </p>
 

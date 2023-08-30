@@ -20,11 +20,10 @@ export const newTeamRegistrationInitiated = (team) => {
   };
 }
 
-export const teamInfoAdded = (name, shiftId) => {
+export const newTeamInfoEdited = (updatedTeam) => {
   return {
-    type: actionTypes.TEAM_INFO_ADDED,
-    name: name,
-    shiftId: shiftId,
+    type: actionTypes.NEW_TEAM_INFO_EDITED,
+    team: updatedTeam,
   }
 }
 

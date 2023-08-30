@@ -2,12 +2,12 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import TeamForm from "../../../components/Registration/TeamForm/TeamForm";
 import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {newTeamRegistrationInitiated} from "../../../store/actions/registrationActions";
+import {newTeamInfoEdited, newTeamRegistrationInitiated} from "../../../store/actions/registrationActions";
 import {useEffect} from "react";
-import {devConsoleLog, useClientReady} from "../../../utils";
-import Link from "next/link";
+import {useClientReady} from "../../../utils";
+import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
-const Page = () => {
+const Page = ({edit=false}) => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 
@@ -25,9 +25,7 @@ const Page = () => {
   if (!ready || !registration.tournament) {
     return (
       <div>
-        <p>
-          So, this is a placeholder. Enjoy while we load stuff.
-        </p>
+        <LoadingMessage message={'Getting the registration form ready'}/>
       </div>
     )
   }
@@ -35,8 +33,14 @@ const Page = () => {
   ///////////////////////////////////////////
 
   const teamFormCompleted = (formData) => {
-    devConsoleLog('Ready to dispatch team data and get the first bowler details');
-    // dispatch(newTeamRegistrationInitiated(formData));
+    let editQueryParam = '';
+    if (!edit) {
+      dispatch(newTeamRegistrationInitiated(formData));
+    } else {
+      editQueryParam = '?edit=true';
+      dispatch(newTeamInfoEdited(formData));
+    }
+    router.push(`/tournaments/${registration.tournament.identifier}/new-team-first-bowler${editQueryParam}`);
   }
 
   return (

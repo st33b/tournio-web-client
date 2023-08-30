@@ -23,7 +23,7 @@ export const registrationReducer = (state, action) => {
       return updateObject(state, {
         team: {
           ...action.team,
-          bowlers: [],
+          bowler: {},
         },
       });
     case actionTypes.NEW_PAIR_REGISTRATION_INITIATED:
@@ -46,20 +46,15 @@ export const registrationReducer = (state, action) => {
       return updateObject(state, {
         bowlers: null,
       });
-    case actionTypes.TEAM_INFO_ADDED:
+    case actionTypes.NEW_TEAM_INFO_EDITED:
       return updateObject(state, {
         team: {
-          name: action.name,
-          shift: state.tournament.shifts.find(s => s.identifier === action.shiftId),
-          bowlers: [],
+          ...action.team,
         }
       });
     case actionTypes.NEW_TEAM_BOWLER_INFO_ADDED:
-      const newBowler = {...action.bowler}
-      const newTeam = {...state.team}
-      newTeam.bowlers = state.team.bowlers.concat(newBowler);
       return updateObject(state, {
-        team: newTeam,
+        bowler: {...action.bowler},
       });
     case actionTypes.NEW_TEAM_PARTNERS_SELECTED:
       const theNewTeam = {...state.team}
