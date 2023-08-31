@@ -8,6 +8,7 @@ import {devConsoleLog, useClientReady} from "../../../utils";
 import {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import PositionChooser from "../../../components/common/formElements/PositionChooser/PositionChooser";
+import TournamentHeader from "../../../components/ui/TournamentHeader";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
@@ -67,11 +68,7 @@ const Page = () => {
 
   return (
     <div>
-      <div className={`display-2 text-center mt-3`}>
-        {registration.tournament.abbreviation} {registration.tournament.year}
-      </div>
-
-      <hr />
+      <TournamentHeader tournament={registration.tournament}/>
 
       <h2 className={`text-center`}>
         Team:&nbsp;

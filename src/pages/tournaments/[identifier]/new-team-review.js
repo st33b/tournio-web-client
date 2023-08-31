@@ -13,19 +13,20 @@ import {newTeamEntryCompleted} from "../../../store/actions/registrationActions"
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
+  const {identifier} = router.query;
 
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
 
   // If new-team registrations aren't enabled, go back to the tournament home page
   useEffect(() => {
-    if (!registration || !registration.tournament) {
+    if (!identifier || !registration || !registration.tournament) {
       return;
     }
     if (!registration.tournament.registration_options.new_team) {
-      router.push(`/tournaments/${registration.tournament.identifier}`);
+      router.push(`/tournaments/${identifier}`);
     }
-  }, [registration]);
+  }, [identifier, registration]);
 
   const ready = useClientReady();
   if (!ready) {
@@ -46,9 +47,7 @@ const Page = () => {
   const newTeamRegistrationSuccess = (teamData) => {
     dispatch(newTeamEntryCompleted(teamData));
     setProcessing(false);
-    // do a router.replace here, i think
-
-    // router.push(`/teams/${teamData.identifier}?success=new_team`);
+    router.push(`/tournaments/${identifier}/teams/${teamData.identifier}?success=1`);
   }
 
   const newTeamRegistrationFailure = (errorMessage) => {
@@ -57,7 +56,7 @@ const Page = () => {
   }
 
   const editBowlerClicked = () => {
-    router.push(`/tournaments/${registration.tournament.identifier}/new-team-first-bowler`);
+    router.push(`/tournaments/${identifier}/new-team-first-bowler`);
   }
 
   const saveClicked = () => {
@@ -92,7 +91,7 @@ const Page = () => {
       {error && <ErrorAlert message={error}/> }
 
       <div className={`d-flex justify-content-between`}>
-        <Link href={`/tournaments/${registration.tournament.identifier}/new-team-first-bowler?edit=true`}
+        <Link href={`/tournaments/${identifier}/new-team-first-bowler?edit=true`}
               className={`btn btn-lg btn-outline-primary d-block ${processing && 'invisible'}`}>
           <i className={'bi bi-chevron-double-left pe-2'}
              aria-hidden={true}/>
