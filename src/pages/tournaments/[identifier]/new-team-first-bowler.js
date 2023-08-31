@@ -1,13 +1,10 @@
 import {useRouter} from "next/router";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
-import Summary from "../../../components/Registration/Summary/Summary";
-import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamBowlerInfoAdded, newTeamPartnersChosen} from "../../../store/actions/registrationActions";
 import {devConsoleLog, useClientReady} from "../../../utils";
-import ErrorBoundary from "../../../components/common/ErrorBoundary";
 import {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import PositionChooser from "../../../components/common/formElements/PositionChooser/PositionChooser";
@@ -49,24 +46,7 @@ const Page = () => {
     );
   }
 
-  // const onFinishedWithBowlers = () => {
-  //   switch (registration.team.bowlers.length) {
-  //     case 1:
-  //       router.push(`/tournaments/${registration.tournament.identifier}/review-entries`);
-  //       break;
-  //     case 2:
-  //       partnerThePairUp();
-  //       router.push(`/tournaments/${registration.tournament.identifier}/review-entries`);
-  //       break;
-  //     default:
-  //       // Move on to doubles partner selection!
-  //       router.push(`/tournaments/${registration.tournament.identifier}/doubles-partners`);
-  //   }
-  // }
-  //
   const newBowlerAdded = (bowlerInfo) => {
-    devConsoleLog("Bowler saved... now what?");
-
     // put the chosen position into the bowler info
     const bowlerData = {
       ...bowlerInfo,
@@ -116,21 +96,7 @@ const Page = () => {
                   bowlerData={previousBowlerData}
                   bowlerInfoSaved={newBowlerAdded}/>
 
-
     </div>
-    // <Row>
-    //   <Col>
-    //     <Summary tournament={registration.tournament}
-    //              nextStepClicked={onFinishedWithBowlers}
-    //              nextStepText={'Finished With Bowlers'}
-    //     />
-    //   </Col>
-    //   <Col lg={8}>
-    //     <ProgressIndicator active={'bowlers'}/>
-    //     <BowlerForm tournament={registration.tournament}
-    //                 bowlerInfoSaved={onNewBowlerAdded}/>
-    //   </Col>
-    // </Row>
   );
 }
 

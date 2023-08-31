@@ -371,7 +371,38 @@ export const submitNewTeamRegistration = (tournament, team, onSuccess, onFailure
       console.log(error);
       onFailure(error.response.data);
     });
+}
 
+export const submitNewTeamWithPlaceholders = ({tournament, team, bowler, onSuccess, onFailure}) => {
+  const postData = {
+    team: {
+      name: team.name,
+      initial_size: team.bowlerCount,
+      bowlers_attributes: [{
+        ...convertBowlerDataForPost(tournament, bowler),
+        position: bowler.position,
+      }],
+      shift_identifier: team.preferredShift,
+    },
+  }
+  const requestConfig = {
+    method: 'post',
+    url: `${apiHost}/tournaments/${tournament.identifier}/teams`,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    data: postData,
+  }
+  axios(requestConfig)
+    .then(response => {
+      onSuccess(response.data);
+    })
+    .catch(error => {
+      console.log("Entry submission failed.");
+      console.log(error);
+      onFailure(error.response.data);
+    });
 }
 
 export const submitSoloRegistration = (tournament, bowler, onSuccess, onFailure) => {
@@ -425,6 +456,7 @@ const convertTeamDataForServer = (tournament, team) => {
   let postData = {
     team: {
       name: team.name,
+      initial_size: team.bowlerCount,
       bowlers_attributes: [],
       options: {
         place_with_others: !!team.placeWithOthers,

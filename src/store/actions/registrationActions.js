@@ -49,12 +49,12 @@ export const newTeamBowlerEdited = (bowler, index) => {
   }
 }
 
-export const newTeamEntryCompleted = () => {
+export const newTeamEntryCompleted = (newTeam) => {
   return {
     type: actionTypes.NEW_TEAM_ENTRY_COMPLETED,
+    team: newTeam,
   }
 }
-
 
 export const newSoloRegistrationInitiated = () => {
   return {

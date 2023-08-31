@@ -73,7 +73,7 @@ export const registrationReducer = (state, action) => {
       });
     case actionTypes.NEW_TEAM_ENTRY_COMPLETED:
       return updateObject(state, {
-        team: null,
+        team: action.team,
       });
     case actionTypes.EXISTING_TEAM_BOWLER_INFO_ADDED:
       devConsoleLog("DEPRECATED");
