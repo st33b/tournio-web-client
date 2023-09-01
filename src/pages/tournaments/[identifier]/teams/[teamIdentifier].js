@@ -89,7 +89,9 @@ const Page = () => {
       );
     } else {
       // Display "Add Info" link
-      content = <AddBowler tournament={state.tournament} team={state.team}/>;
+      content = <AddBowler tournament={state.tournament}
+                           team={state.team}
+                           position={currentPosition}/>;
     }
     contentByPosition[i] = content;
   }

@@ -1,7 +1,7 @@
 import classes from './AddBowler.module.scss';
 import Link from "next/link";
 
-const AddBowler = ({tournament, team}) => {
+const AddBowler = ({tournament, team, position}) => {
 
   return (
     <div className={classes.AddBowler}>
@@ -11,6 +11,7 @@ const AddBowler = ({tournament, team}) => {
            query: {
              identifier: tournament.identifier,
              teamIdentifier: team.identifier,
+             position: position,
            }
          }}
       >

@@ -12,7 +12,7 @@ const PositionChooser = ({maxPosition=4, chosen, onChoose}) => {
   useEffect(() => {
     if (chosen) {
       const updatedFormState = updateObject(formState, {
-        chosen: chosen,
+        chosen: parseInt(chosen),
       });
       setFormState(updatedFormState);
     }
