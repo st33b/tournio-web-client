@@ -3,8 +3,14 @@ import Button from "react-bootstrap/Button";
 
 import classes from './TournamentDetails.module.scss';
 
-const PayButton = ({disabled}) => {
+const PayButton = ({disabled, bowler}) => {
   const router = useRouter();
+  let href = `${router.asPath}/bowlers`;
+  let buttonSize = '';
+  if (bowler) {
+    href = `/bowlers/${bowler.identifier}`;
+    buttonSize = 'lg';
+  }
 
   return (
     <div className={'d-flex flex-column'}
@@ -13,7 +19,8 @@ const PayButton = ({disabled}) => {
       <Button className={`col-8 col-lg-auto px-lg-4 mx-auto mt-2 mb-3`}
               variant={'success'}
               disabled={disabled}
-              href={`${router.asPath}/bowlers`}>
+              size={buttonSize}
+              href={href}>
         Choose Events &amp; Pay Fees
       </Button>
     </div>

@@ -48,9 +48,9 @@ const PositionChooser = ({maxPosition=4, chosen, onChoose}) => {
 
   return (
     <div className={classes.PositionChooser}>
-      <label className={'form-label'}>
+      <h4 className={classes.Title}>
         Position
-      </label>
+      </h4>
       <div className={`d-flex justify-content-around`}>
         {radios}
       </div>

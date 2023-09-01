@@ -47,7 +47,15 @@ const Page = () => {
   const newTeamRegistrationSuccess = (teamData) => {
     dispatch(newTeamEntryCompleted(teamData));
     setProcessing(false);
-    router.push(`/tournaments/${identifier}/teams/${teamData.identifier}?success=1`);
+    router.push({
+      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]',
+      query: {
+        identifier: identifier,
+        teamIdentifier: teamData.identifier,
+        success: 1,
+        chosen: registration.bowler.position,
+      }
+    })
   }
 
   const newTeamRegistrationFailure = (errorMessage) => {

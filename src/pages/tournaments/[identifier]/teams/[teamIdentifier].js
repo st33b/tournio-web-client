@@ -6,6 +6,8 @@ import {useEffect, useState} from "react";
 import PositionChooser from "../../../../components/common/formElements/PositionChooser/PositionChooser";
 import {devConsoleLog, updateObject} from "../../../../utils";
 import SuccessAlert from "../../../../components/common/SuccessAlert";
+import RegisteredBowler from "../../../../components/Registration/RegisteredBowler/RegisteredBowler";
+import AddBowler from "../../../../components/Registration/AddBowler/AddBowler";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
@@ -15,7 +17,7 @@ const Page = () => {
   const [state, setState] = useState({
     tournament: null,
     team: null,
-    chosenPosition: chosen || 1,
+    chosenPosition: 1,
     errorMessage: null,
     successMessage: null,
   });
@@ -46,13 +48,16 @@ const Page = () => {
         break;
     }
 
+    const chosenPosition = chosen ? parseInt(chosen) : state.chosenPosition;
+
     setState(updateObject(state, {
       tournament: registration.tournament,
       team: registration.team,
       successMessage: updatedSuccessMsg,
+      chosenPosition: chosenPosition,
     }));
 
-  }, [registration.tournament, registration.team, success, error]);
+  }, [registration.tournament, registration.team, chosen, success, error]);
 
   if (!registration || !state.tournament || !state.team) {
     return '';
@@ -74,16 +79,7 @@ const Page = () => {
     let content = '';
     if (bowler) {
       // Display minimal bowler data, plus pay/extras link
-      content = (
-        <div>
-          <p>
-            {bowler.full_name}
-          </p>
-          <p>
-            Pay fees &amp; buy stuff
-          </p>
-        </div>
-      );
+      content = <RegisteredBowler bowler={bowler}/>;
     } else if (noMoreOpenings) {
       // Display "position unavailable"
       content = (
@@ -93,11 +89,7 @@ const Page = () => {
       );
     } else {
       // Display "Add Info" link
-      content = (
-        <p>
-          Add Info link
-        </p>
-      );
+      content = <AddBowler tournament={state.tournament} team={state.team}/>;
     }
     contentByPosition[i] = content;
   }
@@ -107,6 +99,12 @@ const Page = () => {
       <TournamentHeader tournament={state.tournament}/>
 
       {state.successMessage && <SuccessAlert message={state.successMessage}/>}
+
+      <h3 className={'text-center'}>
+        Team: <strong>{state.team.name}</strong>
+      </h3>
+
+      <hr />
 
     {/* URL */}
 
