@@ -56,6 +56,20 @@ export const newTeamEntryCompleted = (newTeam) => {
   }
 }
 
+export const existingTeamBowlerInfoAdded = (bowlerInfo) => {
+  return {
+    type: actionTypes.NEW_TEAM_BOWLER_INFO_ADDED,
+    bowler: bowlerInfo,
+  }
+}
+
+export const existingTeamBowlerSaved = (teamInfo) => {
+  return {
+    type: actionTypes.EXISTING_TEAM_BOWLER_SAVED,
+    team: teamInfo,
+  }
+}
+
 export const newSoloRegistrationInitiated = () => {
   return {
     type: actionTypes.NEW_SOLO_REGISTRATION_INITIATED,

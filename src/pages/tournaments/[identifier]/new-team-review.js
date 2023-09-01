@@ -2,7 +2,7 @@ import {useRouter} from "next/router";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {submitNewTeamWithPlaceholders, useClientReady} from "../../../utils";
+import {devConsoleLog, submitNewTeamWithPlaceholders, useClientReady} from "../../../utils";
 import {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import NewTeamReview from "../../../components/Registration/NewTeamReview/NewTeamReview";
@@ -46,6 +46,7 @@ const Page = () => {
 
   const newTeamRegistrationSuccess = (teamData) => {
     dispatch(newTeamEntryCompleted(teamData));
+    devConsoleLog("All done, do some cleanup");
     setProcessing(false);
     router.push({
       pathname: '/tournaments/[identifier]/teams/[teamIdentifier]',
@@ -117,19 +118,6 @@ const Page = () => {
 
       {processing && <LoadingMessage message={'Submitting registration...'} />}
     </div>
-    // <Row>
-    //   <Col>
-    //     <Summary tournament={registration.tournament}
-    //              nextStepClicked={onFinishedWithBowlers}
-    //              nextStepText={'Finished With Bowlers'}
-    //     />
-    //   </Col>
-    //   <Col lg={8}>
-    //     <ProgressIndicator active={'bowlers'}/>
-    //     <BowlerForm tournament={registration.tournament}
-    //                 bowlerInfoSaved={onNewBowlerAdded}/>
-    //   </Col>
-    // </Row>
   );
 }
 

@@ -3,13 +3,17 @@ import React, {useEffect, useState} from "react";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import BowlerSummary from "../ReviewEntries/BowlerSummary";
 
-const NewTeamReview = ({team, bowler, onEdit, onSave}) => {
-  const {registration, dispatch} = useRegistrationContext();
+const NewTeamReview = ({team, bowler}) => {
+  const {registration} = useRegistrationContext();
 
-  const shiftIdentifier = registration.team.preferredShift;
+  const shiftIdentifier = team.preferredShift;
   const chosenShift = registration.tournament.shifts.length === 1
     ? ''
-    : registration.tournament.shifts.find(({identifier}) => identifier === shiftIdentifier)
+    : registration.tournament.shifts.find(({identifier}) => identifier === shiftIdentifier);
+
+  if (!team || !bowler) {
+    return '';
+  }
 
   return (
     <div className={classes.NewTeamReview}>
@@ -25,7 +29,7 @@ const NewTeamReview = ({team, bowler, onEdit, onSave}) => {
             Team Name:
           </dt>
           <dd className={`col`}>
-            {registration.team.name}
+            {team.name}
           </dd>
         </div>
         <div className={`row g-2`}>
@@ -33,7 +37,7 @@ const NewTeamReview = ({team, bowler, onEdit, onSave}) => {
             # of Bowlers:
           </dt>
           <dd className={`col`}>
-            {registration.team.bowlerCount}
+            {team.bowlerCount}
           </dd>
         </div>
 
@@ -51,8 +55,7 @@ const NewTeamReview = ({team, bowler, onEdit, onSave}) => {
 
       <hr/>
 
-      <BowlerSummary bowler={registration.bowler}
-                     editClicked={onEdit}/>
+      <BowlerSummary bowler={bowler}/>
     </div>
   );
 }

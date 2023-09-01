@@ -15,7 +15,6 @@ const BowlerSummary = ({allBowlers=[], bowler, editClicked, index}) => {
     first_name: 'First Name',
     last_name: 'Last Name',
     nickname: 'Preferred Name',
-    // position: 'Position',
     usbc_id: 'USBC ID',
     birth_month: 'Birth Month',
     birth_day: 'Birth Day',

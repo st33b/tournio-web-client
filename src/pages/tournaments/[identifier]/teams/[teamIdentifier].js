@@ -4,19 +4,22 @@ import RegistrationLayout from "../../../../components/Layout/RegistrationLayout
 import TournamentHeader from "../../../../components/ui/TournamentHeader";
 import {useEffect, useState} from "react";
 import PositionChooser from "../../../../components/common/formElements/PositionChooser/PositionChooser";
-import {devConsoleLog, updateObject} from "../../../../utils";
+import {devConsoleLog, updateObject, useTeam} from "../../../../utils";
 import SuccessAlert from "../../../../components/common/SuccessAlert";
 import RegisteredBowler from "../../../../components/Registration/RegisteredBowler/RegisteredBowler";
 import AddBowler from "../../../../components/Registration/AddBowler/AddBowler";
 
+import ErrorAlert from "../../../../components/common/ErrorAlert";
+import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
+
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
-  const {chosen, success, error} = router.query;
+  const {identifier, teamIdentifier, chosen, success, error} = router.query;
 
   const [state, setState] = useState({
     tournament: null,
-    team: null,
+    // team: null,
     chosenPosition: 1,
     errorMessage: null,
     successMessage: null,
@@ -27,10 +30,10 @@ const Page = () => {
       return;
     }
 
-    // retrieve team (and tournament) if we need to
-    if (!registration.team) {
-      // fetch it
-    }
+    // // retrieve team (and tournament) if we need to
+    // if (!registration.team) {
+    //   // fetch it
+    // }
 
     // switch (error) {
     //   case 1:
@@ -44,6 +47,8 @@ const Page = () => {
       case '1':
         updatedSuccessMsg = 'Team and bowler created.';
         break;
+      case '2':
+        updatedSuccessMsg = 'Bowler added to team.';
       default:
         break;
     }
@@ -52,15 +57,33 @@ const Page = () => {
 
     setState(updateObject(state, {
       tournament: registration.tournament,
-      team: registration.team,
+      // team: registration.team,
       successMessage: updatedSuccessMsg,
       chosenPosition: chosenPosition,
     }));
 
-  }, [registration.tournament, registration.team, chosen, success, error]);
+  }, [registration.tournament, chosen, success, error]);
 
-  if (!registration || !state.tournament || !state.team) {
+  const {loading, team, error: fetchError } = useTeam(teamIdentifier);
+
+  if (!registration || !state.tournament || !team) {
     return '';
+  }
+
+  if (loading) {
+    return (
+      <div>
+        <LoadingMessage message={'Loading the team'}/>
+      </div>
+    )
+  }
+
+  if (fetchError) {
+    return (
+      <div>
+        <ErrorAlert message={'Failed to load team.'}/>
+      </div>
+    );
   }
 
   //////////////////////////
@@ -72,10 +95,12 @@ const Page = () => {
   }
 
   const contentByPosition = Array(state.tournament.team_size);
-  const noMoreOpenings = state.team.bowlers.count === state.team.initial_size;
+  // const noMoreOpenings = state.team.bowlers.count === state.team.initial_size;
+  const noMoreOpenings = team.bowlers.count === team.initial_size;
   for (let i = 0; i < state.tournament.team_size; i++) {
     const currentPosition = i + 1;
-    const bowler = state.team.bowlers.find(({position}) => position === currentPosition);
+    // const bowler = state.team.bowlers.find(({position}) => position === currentPosition);
+    const bowler = team.bowlers.find(({position}) => position === currentPosition);
     let content = '';
     if (bowler) {
       // Display minimal bowler data, plus pay/extras link
@@ -90,7 +115,8 @@ const Page = () => {
     } else {
       // Display "Add Info" link
       content = <AddBowler tournament={state.tournament}
-                           team={state.team}
+                           // team={state.team}
+                           team={team}
                            position={currentPosition}/>;
     }
     contentByPosition[i] = content;
@@ -103,7 +129,8 @@ const Page = () => {
       {state.successMessage && <SuccessAlert message={state.successMessage}/>}
 
       <h3 className={'text-center'}>
-        Team: <strong>{state.team.name}</strong>
+        {/*Team: <strong>{state.team.name}</strong>*/}
+        Team: <strong>{team.name}</strong>
       </h3>
 
       <hr />

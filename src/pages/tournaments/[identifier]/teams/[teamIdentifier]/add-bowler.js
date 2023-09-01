@@ -1,32 +1,45 @@
 import {useRegistrationContext} from "../../../../../store/RegistrationContext";
 import {useRouter} from "next/router";
-import {useEffect} from "react";
-import {devConsoleLog, useClientReady} from "../../../../../utils";
+import {useEffect, useState} from "react";
+import {devConsoleLog, useTeam} from "../../../../../utils";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import RegistrationLayout from "../../../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentHeader from "../../../../../components/ui/TournamentHeader";
 import PositionChooser from "../../../../../components/common/formElements/PositionChooser/PositionChooser";
 import BowlerForm from "../../../../../components/Registration/BowlerForm/BowlerForm";
+import ErrorAlert from "../../../../../components/common/ErrorAlert";
+import {existingTeamBowlerInfoAdded} from "../../../../../store/actions/registrationActions";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
-  const {identifier, teamIdentifier, position} = router.query;
+  const {identifier, teamIdentifier, position, edit} = router.query;
 
   useEffect(() => {
-    if (!registration || !registration.team) {
+    if (!registration || !teamIdentifier) {
       return;
     }
+  }, [registration, teamIdentifier]);
 
-  }, [registration, registration.team]);
+  const {loading, team, error: fetchError } = useTeam(teamIdentifier);
 
-  const ready = useClientReady();
-  if (!ready) {
-    return null;
+  if (!registration || !registration.tournament) {
+    return '';
   }
 
-  if (!registration || !registration.tournament || !registration.team) {
+  if (loading) {
     return <LoadingMessage message={'Getting things ready...'}/>
+  }
+  if (!team) {
+    return '';
+  }
+
+  if (fetchError) {
+    return (
+      <div>
+        <ErrorAlert message={'Failed to load team.'}/>
+      </div>
+    );
   }
 
   //////////////////////
@@ -46,18 +59,21 @@ const Page = () => {
     devConsoleLog("Bowler data saved!", bowlerData);
     const completeBowlerData = {
       ...bowlerData,
-      position: position,
+      position: parseInt(position),
     };
-    // dispatch( ... );
-    // router.push({
-    //   pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/review',
-    //   query: {
-    //     identifier: identifier,
-    //     teamIdentifier: teamIdentifier,
-    //   }
-    // });
+    dispatch(existingTeamBowlerInfoAdded(completeBowlerData));
+    router.push({
+      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/review-bowler',
+      query: {
+        identifier: identifier,
+        teamIdentifier: teamIdentifier,
+      }
+    });
   }
 
+  const previousBowlerData = registration.bowler ? registration.bowler : null;
+  // If we're editing, we shouldn't rely on position coming from a query param
+  const chosenPosition = position ? parseInt(position) : (registration.bowler.position || 1);
   return (
     <div>
       <TournamentHeader tournament={registration.tournament}/>
@@ -65,17 +81,14 @@ const Page = () => {
       <h2 className={`text-center`}>
         Team:&nbsp;
         <strong>
-          {registration.team.name}
+          {team.name}
         </strong>
       </h2>
 
       <hr />
 
-      {/*<h4 className={'text-center'}>*/}
-      {/*  <strong>Position:</strong> {position}*/}
-      {/*</h4>*/}
       <PositionChooser maxPosition={registration.tournament.team_size}
-                       chosen={position}
+                       chosen={chosenPosition}
                        onChoose={otherPositionClicked}/>
 
       <hr />
@@ -87,7 +100,7 @@ const Page = () => {
       <hr />
 
       <BowlerForm tournament={registration.tournament}
-                  // bowlerData={previousBowlerData}
+                  bowlerData={previousBowlerData}
                   bowlerInfoSaved={bowlerInfoSaved}/>
 
     </div>
