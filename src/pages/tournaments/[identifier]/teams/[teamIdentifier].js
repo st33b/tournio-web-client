@@ -11,17 +11,16 @@ import AddBowler from "../../../../components/Registration/AddBowler/AddBowler";
 
 import ErrorAlert from "../../../../components/common/ErrorAlert";
 import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
+import PositionUnavailable from "../../../../components/Registration/PositionUnavailable/PositionUnavailable";
 
 const Page = () => {
-  const {registration, dispatch} = useRegistrationContext();
+  const {registration} = useRegistrationContext();
   const router = useRouter();
-  const {identifier, teamIdentifier, chosen, success, error} = router.query;
+  const {identifier, teamIdentifier, chosen, success} = router.query;
 
   const [state, setState] = useState({
     tournament: null,
-    // team: null,
     chosenPosition: 1,
-    errorMessage: null,
     successMessage: null,
   });
 
@@ -29,18 +28,6 @@ const Page = () => {
     if (!registration) {
       return;
     }
-
-    // // retrieve team (and tournament) if we need to
-    // if (!registration.team) {
-    //   // fetch it
-    // }
-
-    // switch (error) {
-    //   case 1:
-    //     // ...
-    //   default:
-    //     break;
-    // }
 
     let updatedSuccessMsg = state.successMessage;
     switch (success) {
@@ -57,12 +44,11 @@ const Page = () => {
 
     setState(updateObject(state, {
       tournament: registration.tournament,
-      // team: registration.team,
       successMessage: updatedSuccessMsg,
       chosenPosition: chosenPosition,
     }));
 
-  }, [registration.tournament, chosen, success, error]);
+  }, [registration.tournament, chosen, success]);
 
   const {loading, team, error: fetchError } = useTeam(teamIdentifier);
 
@@ -94,28 +80,22 @@ const Page = () => {
     }));
   }
 
+  const dropQueryParams = () => {
+    router.replace(`/tournaments/${identifier}/teams/${teamIdentifier}`, null, {shallow: true});
+  }
+
   const contentByPosition = Array(state.tournament.team_size);
-  // const noMoreOpenings = state.team.bowlers.count === state.team.initial_size;
-  const noMoreOpenings = team.bowlers.count === team.initial_size;
+  const noMoreOpenings = team.bowlers.length === team.initial_size;
   for (let i = 0; i < state.tournament.team_size; i++) {
     const currentPosition = i + 1;
-    // const bowler = state.team.bowlers.find(({position}) => position === currentPosition);
     const bowler = team.bowlers.find(({position}) => position === currentPosition);
     let content = '';
     if (bowler) {
-      // Display minimal bowler data, plus pay/extras link
       content = <RegisteredBowler bowler={bowler}/>;
     } else if (noMoreOpenings) {
-      // Display "position unavailable"
-      content = (
-        <p>
-          Position unavailable
-        </p>
-      );
+      content = <PositionUnavailable/>;
     } else {
-      // Display "Add Info" link
       content = <AddBowler tournament={state.tournament}
-                           // team={state.team}
                            team={team}
                            position={currentPosition}/>;
     }
@@ -126,10 +106,11 @@ const Page = () => {
     <div>
       <TournamentHeader tournament={state.tournament}/>
 
-      {state.successMessage && <SuccessAlert message={state.successMessage}/>}
+      {state.successMessage && <SuccessAlert message={state.successMessage}
+                                             onClose={dropQueryParams}
+      />}
 
       <h3 className={'text-center'}>
-        {/*Team: <strong>{state.team.name}</strong>*/}
         Team: <strong>{team.name}</strong>
       </h3>
 
@@ -139,20 +120,11 @@ const Page = () => {
 
     {/* URL copy function */}
 
-    {/* TEAM FULL indicator if bowlers.count === initial_size */}
-
-    {/* Position chooser */}
       <PositionChooser maxPosition={state.tournament.team_size}
                        chosen={state.chosenPosition}
                        onChoose={positionChosen}/>
 
       {contentByPosition[state.chosenPosition - 1]}
-    {/* Display relevant thing for chosen position:
-      *  Name of already-registered bowler, with link to payment/extra page
-      *  "Add Info" for bowler in that position, if team isn't full
-      *  Bowler Form for bowler in the chosen position, after clicking "Add Info"
-      *  Review Bowler page after entering bowler data
-      */}
     </div>
   );
 }

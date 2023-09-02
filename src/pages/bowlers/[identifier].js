@@ -12,6 +12,7 @@ import FreeEntryForm from "../../components/Commerce/FreeEntryForm/FreeEntryForm
 import CommerceLayout from "../../components/Layout/CommerceLayout/CommerceLayout";
 import SuccessAlert from "../../components/common/SuccessAlert";
 import ErrorAlert from "../../components/common/ErrorAlert";
+import TournamentHeader from "../../components/ui/TournamentHeader";
 
 const Page = () => {
   const router = useRouter();
@@ -86,33 +87,33 @@ const Page = () => {
     <div>
       {commerce.tournament && commerce.bowler && (
         <Row className={``}>
-          <Col className={'col-3 col-md-1'}>
-            <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
-              <TournamentLogo url={commerce.tournament.image_url}/>
-            </a>
-          </Col>
-          <Col className={'d-none d-md-block col-md-3'}>
-            <h4 className={``}>
-              <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>
-                {commerce.tournament.name}
-              </a>
-            </h4>
-          </Col>
-          <Col xs={9} md={4} className={'ps-2'}>
-            <h3 className={``}>
-              Bowler: {name}
+          {/*<Col className={'col-3 col-md-1'}>*/}
+          {/*  <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>*/}
+          {/*    <TournamentLogo url={commerce.tournament.image_url}/>*/}
+          {/*  </a>*/}
+          {/*</Col>*/}
+          {/*<Col className={'d-none d-md-block col-md-3'}>*/}
+          {/*  <h4 className={``}>*/}
+          {/*    <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>*/}
+          {/*      {commerce.tournament.name}*/}
+          {/*    </a>*/}
+          {/*  </h4>*/}
+          {/*</Col>*/}
+          <Col md={4} className={'ps-2'}>
+            <TournamentHeader tournament={commerce.tournament}/>
+
+            <h3 className={`text-center`}>
+              Bowler: <strong>{name}</strong>
             </h3>
             {commerce.bowler.team_identifier && (
-              <h4>
-                <a href={`/teams/${commerce.bowler.team_identifier}`}>
-                  Team: {commerce.bowler.team_name}
-                </a>
+              <h4 className={`text-center`}>
+                Team: <strong>{commerce.bowler.team_name}</strong>
               </h4>
             )}
             {!commerce.bowler.has_free_entry && <FreeEntryForm/>}
           </Col>
           <Col className={`d-none d-md-block col-md-4`}>
-            <h4>
+            <h4 className={`text-center`}>
               Paid Items
             </h4>
             <PreviousPurchases/>

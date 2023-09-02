@@ -74,7 +74,7 @@ const FreeEntryForm = () => {
     setFreeEntryForm(newState);
   }
 
-  let textClass = 'd-block';
+  let textClass = 'd-block text-center';
   let formClass = 'd-none';
   if (freeEntryForm.display) {
     textClass = 'd-none';
@@ -164,17 +164,17 @@ const FreeEntryForm = () => {
                    name={'free_entry_code'}
                    id={'free_entry_code'}
                    maxLength={25}
-                   className={'form-control'}
+                   className={'form-control form-control-lg'}
                    value={freeEntryForm.freeEntryCode}
                    onChange={(event) => inputChangedHandler(event)} />
           </div>
         </div>
 
         <div className={classes.ActionRow}>
-          <button className={'btn btn-outline-secondary btn-sm me-3'} type={'button'} onClick={cancelClicked}>
+          <button className={'btn btn-outline-secondary me-3'} type={'button'} onClick={cancelClicked}>
             Cancel
           </button>
-          <button className={'btn btn-primary btn-sm'} type={'submit'} disabled={!freeEntryForm.valid}>
+          <button className={'btn btn-primary'} type={'submit'} disabled={!freeEntryForm.valid}>
             Submit
           </button>
         </div>
