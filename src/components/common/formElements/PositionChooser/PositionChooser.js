@@ -38,7 +38,7 @@ const PositionChooser = ({maxPosition=4, chosen, onChoose}) => {
                checked={formState.chosen === i+1}
                onChange={(e) => inputChanged(e, i+1)}
                autoComplete={'off'} />
-        <label className={`btn btn-lg`}
+        <label className={`btn btn-lg btn-outline-primary`}
                htmlFor={`position_${i+1}`}>
           {i+1}
         </label>

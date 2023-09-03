@@ -77,7 +77,7 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
                checked={componentState.form.fields.bowlerCount === i+1}
                onChange={inputChanged}
                autoComplete={'off'} />
-        <label className={`btn btn-lg`}
+        <label className={`btn btn-lg btn-outline-primary`}
                htmlFor={`bowlerCount_${i+1}`}>
           {i+1}
         </label>
@@ -134,7 +134,7 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
                          onChange={inputChanged}
                          checked={componentState.form.fields.preferredShift === shift.identifier}
                          autoComplete={'off'} />
-                  <label className={`btn btn-lg`}
+                  <label className={`btn btn-lg btn-outline-primary`}
                          htmlFor={`preferredShift_${i}`}>
                     {shift.name}
                   </label>
