@@ -85,10 +85,11 @@ const Page = () => {
   }
 
   const contentByPosition = Array(state.tournament.team_size);
-  const noMoreOpenings = team.bowlers.length === team.initial_size;
+  const bowlers = team.bowlers ? [...team.bowlers] : [];
+  const noMoreOpenings = bowlers.length === team.initial_size;
   for (let i = 0; i < state.tournament.team_size; i++) {
     const currentPosition = i + 1;
-    const bowler = team.bowlers.find(({position}) => position === currentPosition);
+    const bowler = bowlers.find(({position}) => position === currentPosition);
     let content = '';
     if (bowler) {
       content = <RegisteredBowler bowler={bowler}/>;
