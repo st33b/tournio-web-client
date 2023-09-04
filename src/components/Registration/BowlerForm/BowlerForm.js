@@ -51,7 +51,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, solo = false, avai
         label: 'Preferred Name',
         touched: false,
       },
-      doubles_partner: null,
       usbc_id: {
         elementType: 'input',
         elementConfig: {
@@ -75,35 +74,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, solo = false, avai
         valid: true,
         touched: false,
       },
-      // position: {
-      //   elementType: 'select',
-      //   elementConfig: {
-      //     options: [
-      //       {
-      //         value: 1,
-      //         label: '1'
-      //       },
-      //       {
-      //         value: 2,
-      //         label: '2'
-      //       },
-      //       {
-      //         value: 3,
-      //         label: '3'
-      //       },
-      //       {
-      //         value: 4,
-      //         label: '4'
-      //       },
-      //     ],
-      //     value: 1,
-      //   },
-      //   label: 'Position',
-      //   helper: { text: 'In the team bowling order' },
-      //   validityErrors: [],
-      //   valid: true,
-      //   touched: false,
-      // },
       birth_month: {
         elementType: 'select',
         elementConfig: {
@@ -188,6 +158,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, solo = false, avai
         valid: true,
         touched: false,
       },
+      doubles_partner: null,
       email: {
         elementType: 'input',
         elementConfig: {
@@ -353,7 +324,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, solo = false, avai
         label: partner.full_name,
       }));
       formData.formFields.doubles_partner = {
-        elementType: 'radio',
+        elementType: 'radio-limited-set',
         elementConfig: {
           choices: [
             {
