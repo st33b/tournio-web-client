@@ -13,13 +13,19 @@ import {existingTeamBowlerInfoAdded} from "../../../../../store/actions/registra
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
-  const {identifier, teamIdentifier, position, edit} = router.query;
+  const {identifier, teamIdentifier, position = 1, edit} = router.query;
 
+  const [chosenPosition, choosePosition] = useState();
   useEffect(() => {
     if (!registration || !teamIdentifier) {
       return;
     }
-  }, [registration, teamIdentifier]);
+    if (registration.bowler && registration.bowler.position) {
+      choosePosition(registration.bowler.position);
+    } else {
+      choosePosition(parseInt(position));
+    }
+  }, [registration, teamIdentifier, position]);
 
   const {loading, team, error: fetchError } = useTeam(teamIdentifier);
 
@@ -57,10 +63,11 @@ const Page = () => {
 
   const bowlerInfoSaved = (bowlerData) => {
     devConsoleLog("Bowler data saved!", bowlerData);
-    const completeBowlerData = {
-      ...bowlerData,
-      position: parseInt(position),
-    };
+    const completeBowlerData = {...bowlerData};
+    if (!bowlerData.position) {
+      devConsoleLog("Setting position to:", chosenPosition);
+      completeBowlerData.position = chosenPosition;
+    }
     dispatch(existingTeamBowlerInfoAdded(completeBowlerData));
     router.push({
       pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/review-bowler',
@@ -71,9 +78,26 @@ const Page = () => {
     });
   }
 
-  const previousBowlerData = registration.bowler ? registration.bowler : null;
-  // If we're editing, we shouldn't rely on position coming from a query param
-  const chosenPosition = position ? parseInt(position) : (registration.bowler.position || 1);
+  //
+  // Best way to support specifying a doubles partner when the team has at least one
+  // unpartnered bowler?
+  //
+  // - radios
+  // - button-like radios
+  // - select
+  //
+  // Be sure we can say "no partner" or "partner not registered yet"
+  //
+
+  // If we're editing, we can't rely on position coming from a query param. (It should
+  // already be on the bowler!)
+  // const chosenPosition = position ? parseInt(position) : registration.bowler.position;
+
+  const previousBowlerData = edit && registration.bowler ? registration.bowler : null;
+
+  const availableDoublesPartners = team.bowlers.filter(partner => (
+    partner.doubles_partner_name === 'n/a'
+  ));
   return (
     <div>
       <TournamentHeader tournament={registration.tournament}/>
@@ -101,6 +125,7 @@ const Page = () => {
 
       <BowlerForm tournament={registration.tournament}
                   bowlerData={previousBowlerData}
+                  availablePartners={availableDoublesPartners}
                   bowlerInfoSaved={bowlerInfoSaved}/>
 
     </div>

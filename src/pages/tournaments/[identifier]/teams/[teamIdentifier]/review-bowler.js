@@ -85,6 +85,11 @@ const Page = () => {
     setProcessing(true);
   }
 
+  let doublesPartner = null;
+  if (registration.bowler.doubles_partner) {
+    doublesPartner = team.bowlers.find(({identifier}) => registration.bowler.doubles_partner);
+  }
+
   return (
     <div>
       <TournamentHeader tournament={registration.tournament}/>
@@ -95,7 +100,7 @@ const Page = () => {
 
       <hr/>
 
-      <BowlerSummary bowler={registration.bowler}/>
+      <BowlerSummary bowler={registration.bowler} partner={doublesPartner} />
 
       <hr />
 

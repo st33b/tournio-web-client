@@ -10,7 +10,7 @@ import * as constants from '../../../constants';
 
 import classes from './BowlerForm.module.scss';
 
-const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref, bowlerIndex = -1, solo = false}) => {
+const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, solo = false, availablePartners = []}) => {
   const {registration} = useRegistrationContext();
 
   const initialFormState = {
@@ -51,6 +51,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         label: 'Preferred Name',
         touched: false,
       },
+      doubles_partner: null,
       usbc_id: {
         elementType: 'input',
         elementConfig: {
@@ -324,9 +325,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     }
   }
   const [bowlerForm, setBowlerForm] = useState(initialFormState);
-  const [showShiftSelection, setShowShiftSelection] = useState(false);
   const [buttonText, setButtonText] = useState('Review');
-  const [showCancelButton, setShowCancelButton] = useState(false);
 
   const additionalFormFields = (tourn) => {
     const formFields = {};
@@ -347,24 +346,32 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
   const resetFormData = (tourn) => {
     const formData = {...initialFormState};
 
-    // get the additional questions
-    formData.formFields = {...formData.formFields, ...additionalFormFields(tourn)};
+    // add doubles partner if there are any available
+    if (availablePartners.length > 0) {
+      const partnerChoices = availablePartners.map(partner => ({
+        value: partner.identifier,
+        label: partner.full_name,
+      }));
+      formData.formFields.doubles_partner = {
+        elementType: 'radio',
+        elementConfig: {
+          choices: [
+            {
+              value: '',
+              label: 'unspecified',
 
-    // put shift info in there, if needed
-    if (includeShift) {
-      if (tourn.available_shifts.length > 1) {
-        formData.soloBowlerFields.preferred_shift.elementConfig.choices = [];
-        tourn.available_shifts.map(shift => {
-          formData.soloBowlerFields.preferred_shift.elementConfig.choices.push(
-            {value: shift.identifier, label: shift.name}
-          );
-        });
-        setShowShiftSelection(true);
-      } else {
-        formData.soloBowlerFields.preferred_shift.elementConfig.value = tourn.available_shifts[0].identifier;
-        formData.soloBowlerFields.preferred_shift.valid = true;
+            },
+          ].concat(partnerChoices),
+          value: '',
+        },
+        label: 'Doubles Partner',
+        valid: true,
+        touched: false,
       }
     }
+
+    // get the additional questions
+    formData.formFields = {...formData.formFields, ...additionalFormFields(tourn)};
 
     setBowlerForm(formData);
   }
@@ -397,17 +404,10 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       updatedBowlerForm.formFields[inputIdentifier].elementConfig.value = bowlerData[inputIdentifier];
     }
 
-    // Now, shift information, if there is any
-    if (includeShift) {
-      updatedBowlerForm.soloBowlerFields.preferred_shift.elementConfig.value = bowlerData.shift.identifier;
-      updatedBowlerForm.soloBowlerFields.preferred_shift.valid = true;
-    }
-
     updatedBowlerForm.valid = true;
 
     setBowlerForm(updatedBowlerForm);
     setButtonText('Review Changes');
-    setShowCancelButton(true);
   }, [bowlerData, tournament]);
 
   if (!registration || !tournament) {
@@ -424,11 +424,10 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     // Grab all the values from the form so they can be stored
     const theBowlerData = {};
     for (let formElementIdentifier in bowlerForm.formFields) {
+      if (bowlerForm.formFields[formElementIdentifier] === null) {
+        continue;
+      }
       theBowlerData[formElementIdentifier] = bowlerForm.formFields[formElementIdentifier].elementConfig.value;
-    }
-
-    if (includeShift) {
-      theBowlerData.shift = bowlerForm.soloBowlerFields.preferred_shift.elementConfig.value;
     }
 
     // Reset the form to take in the next bowler's info
@@ -580,24 +579,16 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     };
 
     // Now, determine whether the whole form is valid
-    const shiftFormIsValid = includeShift
-      ? newFormData.soloBowlerFields.preferred_shift.elementConfig.value.length > 0
-      : true;
-    newFormData.valid = shiftFormIsValid && Object.values(newFormData.formFields).every(
-      formField => typeof formField.valid === 'undefined' || formField.valid
+    newFormData.valid = Object.values(newFormData.formFields).every(
+      formField => formField === null  || typeof formField.valid === 'undefined' || formField.valid
     );
 
     setBowlerForm(newFormData);
   }
 
-  const excludedFields = [];
-  if (solo) {
-    excludedFields.push('position');
-  }
-
   const formElements = [];
   for (let key in bowlerForm.formFields) {
-    if (excludedFields.includes(key)) {
+    if (!bowlerForm.formFields[key]) {
       continue;
     }
     formElements.push({
@@ -610,15 +601,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
 
   let form = (
     <form onSubmit={formHandler}>
-      {/*{showShiftSelection && (*/}
-      {/*  <div>*/}
-      {/*    <ShiftForm tournament={tournament}*/}
-      {/*               onInputChanged={(event) => inputChangedHandler(event, 'preferred_shift')}*/}
-      {/*               currentSelection={bowlerForm.soloBowlerFields.preferred_shift.elementConfig.value}*/}
-      {/*               name={'preferred_shift'}/>*/}
-      {/*    <hr/>*/}
-      {/*  </div>*/}
-      {/*)}*/}
       {formElements.map(formElement => (
         <Input
           key={formElement.id}
@@ -643,39 +625,13 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           {buttonText}{' '}
           <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
         </button>
-
-        {/*{showCancelButton && (*/}
-        {/*  <a className={'btn btn-secondary btn-lg'}*/}
-        {/*     href={cancelHref}>*/}
-        {/*    <i className={'bi-chevron-double-left pe-1'} aria-hidden={true}/>*/}
-        {/*    Cancel Changes*/}
-        {/*  </a>*/}
-        {/*)}*/}
       </div>
     </form>
   );
 
-  // let bowlerIndexInTeam = 0;
-  // // This is for editing a bowler, who may or may not be on a team. That's why we use a prop to give us the index.
-  // if (bowlerIndex >= 0) {
-  //   bowlerIndexInTeam = bowlerIndex;
-  // } else
-  //   if (registration.team) {
-  //   bowlerIndexInTeam = registration.team.bowlers.length;
-  // } else
-  //   if (registration.bowlers) {
-  //   bowlerIndexInTeam = registration.bowlers.length;
-  // }
-  //
-  // let headerText = 'Bowler ' + String.fromCharCode(constants.A_CHAR_CODE + bowlerIndexInTeam);
-
   return (
     <ErrorBoundary>
       <div className={classes.BowlerForm}>
-
-        {/*<h3>*/}
-        {/*  {headerText}*/}
-        {/*</h3>*/}
 
         <p className={classes.RequiredLabel}>
           <i className={`align-top bi-asterisk`}/>
