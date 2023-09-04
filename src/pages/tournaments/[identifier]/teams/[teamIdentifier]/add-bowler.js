@@ -62,10 +62,8 @@ const Page = () => {
   }
 
   const bowlerInfoSaved = (bowlerData) => {
-    devConsoleLog("Bowler data saved!", bowlerData);
     const completeBowlerData = {...bowlerData};
     if (!bowlerData.position) {
-      devConsoleLog("Setting position to:", chosenPosition);
       completeBowlerData.position = chosenPosition;
     }
     dispatch(existingTeamBowlerInfoAdded(completeBowlerData));
@@ -77,21 +75,6 @@ const Page = () => {
       }
     });
   }
-
-  //
-  // Best way to support specifying a doubles partner when the team has at least one
-  // unpartnered bowler?
-  //
-  // - radios
-  // - button-like radios
-  // - select
-  //
-  // Be sure we can say "no partner" or "partner not registered yet"
-  //
-
-  // If we're editing, we can't rely on position coming from a query param. (It should
-  // already be on the bowler!)
-  // const chosenPosition = position ? parseInt(position) : registration.bowler.position;
 
   const previousBowlerData = edit && registration.bowler ? registration.bowler : null;
 
