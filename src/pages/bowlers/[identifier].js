@@ -99,18 +99,6 @@ const Page = () => {
     <div>
       {commerce.tournament && commerce.bowler && (
         <Row className={``}>
-          {/*<Col className={'col-3 col-md-1'}>*/}
-          {/*  <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>*/}
-          {/*    <TournamentLogo url={commerce.tournament.image_url}/>*/}
-          {/*  </a>*/}
-          {/*</Col>*/}
-          {/*<Col className={'d-none d-md-block col-md-3'}>*/}
-          {/*  <h4 className={``}>*/}
-          {/*    <a href={`/tournaments/${commerce.tournament.identifier}`} title={'To tournament page'}>*/}
-          {/*      {commerce.tournament.name}*/}
-          {/*    </a>*/}
-          {/*  </h4>*/}
-          {/*</Col>*/}
           <Col md={4} className={'ps-2'}>
             <TournamentHeader tournament={commerce.tournament}/>
 

@@ -1,13 +1,12 @@
 import {Row} from "react-bootstrap";
 
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-// import * as constants from "../../../constants";
 
 import classes from './BowlerSummary.module.scss';
 
 const BowlerSummary = ({allBowlers=[], bowler, partner = null}) => {
   const {registration} = useRegistrationContext();
-  if (!registration.tournament) {
+  if (!registration.tournament || !bowler) {
     return '';
   }
 
