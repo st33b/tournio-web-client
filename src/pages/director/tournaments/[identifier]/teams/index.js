@@ -12,6 +12,7 @@ import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
 import {useLoginContext} from "../../../../../store/LoginContext";
 import NewTeamForm from "../../../../../components/Director/NewTeamForm/NewTeamForm";
+import {updateObject} from "../../../../../utils";
 
 const TeamsIndex = () => {
   const router = useRouter();
@@ -34,7 +35,7 @@ const TeamsIndex = () => {
     setSuccessMessage('Team created.');
   }
 
-  const newTeamSubmitted = (teamName) => {
+  const newTeamSubmitted = (team) => {
     const uri = `/tournaments/${identifier}/teams`;
     const requestConfig = {
       method: 'post',
@@ -43,10 +44,8 @@ const TeamsIndex = () => {
       },
       data: {
         team: {
-          name: teamName,
-          options: {
-            place_with_others: true
-          },
+          name: team.name,
+          shift_identifier: team.shift_identifier,
         }
       }
     }
@@ -87,7 +86,7 @@ const TeamsIndex = () => {
           {error && (
             <ErrorAlert message={error.message} className={'mx-3 mt-3'}/>
           )}
-          <TeamListing teams={teams} />
+          <TeamListing tournament={tournament} teams={teams} />
         </Col>
         <Col xs={{span: 12, order: 1}} md={{span: 4, order: 2}}>
           <Card className={`mb-3`}>
@@ -95,7 +94,7 @@ const TeamsIndex = () => {
               New Team
             </Card.Header>
             <Card.Body>
-              <NewTeamForm submitted={newTeamSubmitted} />
+              <NewTeamForm allShifts={tournament.shifts} submitted={newTeamSubmitted} />
             </Card.Body>
           </Card>
         </Col>
