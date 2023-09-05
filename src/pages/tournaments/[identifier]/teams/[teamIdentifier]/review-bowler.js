@@ -132,19 +132,6 @@ const Page = () => {
 
       {processing && <LoadingMessage message={'Submitting registration...'} />}
     </div>
-    // <Row>
-    //   <Col>
-    //     <Summary tournament={registration.tournament}
-    //              nextStepClicked={onFinishedWithBowlers}
-    //              nextStepText={'Finished With Bowlers'}
-    //     />
-    //   </Col>
-    //   <Col lg={8}>
-    //     <ProgressIndicator active={'bowlers'}/>
-    //     <BowlerForm tournament={registration.tournament}
-    //                 bowlerInfoSaved={onNewBowlerAdded}/>
-    //   </Col>
-    // </Row>
   );
 }
 

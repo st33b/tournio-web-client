@@ -9,6 +9,7 @@ import NewTeamReview from "../../../components/Registration/NewTeamReview/NewTea
 import Link from "next/link";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 import {newTeamEntryCompleted} from "../../../store/actions/registrationActions";
+import TournamentHeader from "../../../components/ui/TournamentHeader";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
@@ -18,7 +19,7 @@ const Page = () => {
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
 
-  // If new-team registrations aren't enabled, go back to the tournament home page
+  // If new-team registrations isn't enabled, go back to the tournament home page
   useEffect(() => {
     if (!identifier || !registration || !registration.tournament) {
       return;
@@ -84,9 +85,7 @@ const Page = () => {
 
   return (
     <div>
-      <div className={`display-2 text-center mt-3`}>
-        {registration.tournament.abbreviation} {registration.tournament.year}
-      </div>
+      <TournamentHeader tournament={registration.tournament}/>
 
       <hr />
 

@@ -6,6 +6,7 @@ import {newTeamInfoEdited, newTeamRegistrationInitiated} from "../../../store/ac
 import {useEffect} from "react";
 import {useClientReady} from "../../../utils";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import TournamentHeader from "../../../components/ui/TournamentHeader";
 
 const Page = ({edit=false}) => {
   const {registration, dispatch} = useRegistrationContext();
@@ -45,11 +46,7 @@ const Page = ({edit=false}) => {
 
   return (
     <div>
-      <div className={`display-2 text-center mt-3`}>
-        {registration.tournament.abbreviation} {registration.tournament.year}
-      </div>
-
-      <hr />
+      <TournamentHeader tournament={registration.tournament}/>
 
       <h2 className={`text-center flex-grow-1`}>
         Create a Team

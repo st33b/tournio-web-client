@@ -70,12 +70,6 @@ export const existingTeamBowlerSaved = (teamInfo) => {
   }
 }
 
-export const newSoloRegistrationInitiated = () => {
-  return {
-    type: actionTypes.NEW_SOLO_REGISTRATION_INITIATED,
-  }
-}
-
 export const soloBowlerInfoAdded = (bowlerInfo) => {
   return {
     type: actionTypes.SOLO_BOWLER_INFO_ADDED,

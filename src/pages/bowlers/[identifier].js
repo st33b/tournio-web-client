@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
-import {fetchBowlerDetails, fetchTournamentDetails, useClientReady} from "../../utils";
+import {devConsoleLog, fetchBowlerDetails, fetchTournamentDetails, updateObject, useClientReady} from "../../utils";
 import {useCommerceContext} from "../../store/CommerceContext";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import Menu from '../../components/Commerce/Menu';
@@ -16,12 +16,17 @@ import TournamentHeader from "../../components/ui/TournamentHeader";
 
 const Page = () => {
   const router = useRouter();
-  const {success, identifier} = router.query;
+  const {identifier, success, error} = router.query;
   const {commerce, dispatch} = useCommerceContext();
 
+  // TODO Remove these deprecated state values
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [enablePurchase, setEnablePurchase] = useState(true);
+
+  const [state, setState] = useState({
+    successMessage: null,
+    errorMessage: null,
+  });
 
   const onFetchFailure = (response) => {
     if (response.status === 404) {
@@ -41,14 +46,33 @@ const Page = () => {
   }, [identifier, commerce]);
 
   useEffect(() => {
-    if (success === 'purchase') {
-      setSuccessMessage('Your purchase was completed. Thank you for supporting our tournament!');
-    } else if (success === 'register') {
-      setSuccessMessage('Your registration was received! You may now select events, optional items, and pay entry fees.');
-    } else if (success === 'expired') {
-      setErrorMessage('Checkout was not successful.');
+    const updatedState = {...state};
+    switch (success) {
+      case '1':
+        updatedState.successMessage = 'Registration successful! You may now select events, extras, and pay entry fees.';
+        break;
+      case '2':
+        updatedState.successMessage = 'Your purchase is complete.';
+      default:
+        break;
     }
-  }, [success]);
+    switch (error) {
+      case '1':
+        updatedState.errorMessage = 'Checkout was not successful';
+        break;
+    }
+
+    // TODO Remove these deprecated messages
+    if (success === 'purchase') {
+      updatedState.successMessage = 'Your purchase was completed. Thank you for supporting our tournament!';
+    } else if (success === 'register') {
+      updatedState.successMessage = 'Your registration was received! You may now select events, optional items, and pay entry fees.';
+    } else if (success === 'expired') {
+      updatedState.errorMessage = 'Checkout was not successful.';
+    }
+
+    setState(updateObject(state, updatedState));
+  }, [success, error]);
 
   const ready = useClientReady();
   if (!ready) {
@@ -59,28 +83,16 @@ const Page = () => {
     return <LoadingMessage message={'One moment, please...'}/>;
   }
 
-  if (commerce.bowler && commerce.bowler.shift_info.full && !commerce.bowler.shift_info.confirmed) {
-    if (commerce.bowler.unpaid_purchases.some(p => p.category === 'ledger' || p.determination === 'event')) {
-      // either the tournament is full, or the chosen shift is full.
-      // first, see if there are available shifts
-      // if (commerce.tournament.available_shifts.length > 0) {
-      //   setErrorMessage("Your team's requested shift is full. Please contact the tournament director about changing to another shift before paying your entry fee.");
-      //   setEnablePurchase(false);
-      // } else {
-      setErrorMessage("The tournament has reached its maximum capacity. Your registration is now provisional.");
-      setEnablePurchase(false);
-      // }
-    }
+  const clearSuccessMessage = () => {
+    setState(updateObject(state, {
+      successMessage: null,
+    }));
   }
 
-  let displayed_name = '';
-  let name = '';
-  if (commerce.bowler) {
-    displayed_name = commerce.bowler.first_name;
-    if (commerce.bowler.preferred_name) {
-      displayed_name = commerce.bowler.preferred_name;
-    }
-    name = displayed_name + ' ' + commerce.bowler.last_name;
+  const clearErrorMessage = () => {
+    setState(updateObject(state, {
+      errorMessage: null,
+    }));
   }
 
   return (
@@ -103,7 +115,7 @@ const Page = () => {
             <TournamentHeader tournament={commerce.tournament}/>
 
             <h3 className={`text-center`}>
-              Bowler: <strong>{name}</strong>
+              Bowler: <strong>{commerce.bowler.full_name}</strong>
             </h3>
             {commerce.bowler.team_identifier && (
               <h4 className={`text-center`}>
@@ -124,13 +136,13 @@ const Page = () => {
       <hr/>
 
       <SuccessAlert className={``}
-                    message={successMessage}
-                    onClose={() => setSuccessMessage(null)}/>
+                    message={state.successMessage}
+                    onClose={clearSuccessMessage}/>
       <ErrorAlert className={``}
-                  message={errorMessage}
-                  onClose={() => setErrorMessage(null)}/>
+                  message={state.errorMessage}
+                  onClose={clearErrorMessage}/>
 
-      {commerce.bowler && enablePurchase && <Menu/>}
+      {commerce.bowler && <Menu/>}
 
     </div>
   );

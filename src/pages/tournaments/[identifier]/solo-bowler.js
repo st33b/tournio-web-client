@@ -1,60 +1,87 @@
 import {useEffect} from "react";
 import {useRouter} from "next/router";
-import {Row, Col} from "react-bootstrap";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
-import Summary from "../../../components/Registration/Summary/Summary";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {newSoloRegistrationInitiated, soloBowlerInfoAdded} from "../../../store/actions/registrationActions";
-import {useClientReady} from "../../../utils";
+import {
+  soloBowlerInfoAdded
+} from "../../../store/actions/registrationActions";
+import {devConsoleLog, useClientReady} from "../../../utils";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
+import TournamentHeader from "../../../components/ui/TournamentHeader";
+import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
+  const {identifier} = router.query;
 
-  // If solo registration is not allowed, go back to the tournament page.
   useEffect(() => {
-    if (!registration || !registration.tournament) {
+    if (!identifier || !registration || !registration.tournament) {
       return;
     }
     if (!registration.tournament.registration_options.solo) {
-      router.push(`/tournaments/${registration.tournament.identifier}`);
+      router.push(`/tournaments/${identifier}`);
     }
   }, [registration]);
 
-  useEffect(() => {
-    dispatch(newSoloRegistrationInitiated());
-  }, [dispatch]);
-
-  const onCompletion = (bowler) => {
-    dispatch(soloBowlerInfoAdded(bowler));
-    router.push(`/tournaments/${registration.tournament.identifier}/solo-bowler-review`);
-  }
-
+  // useEffect(() => {
+  //   dispatch(newSoloRegistrationInitiated());
+  // }, [dispatch]);
+  //
+  // const onCompletion = (bowler) => {
+  //   dispatch(soloBowlerInfoAdded(bowler));
+  //   router.push(`/tournaments/${registration.tournament.identifier}/solo-bowler-review`);
+  // }
+  //
   const ready = useClientReady();
   if (!ready) {
-    return null;
+    return (
+      <div>
+        <LoadingMessage message={'Getting the registration form ready'}/>
+      </div>
+    );
+  }
+  if (!registration.tournament) {
+    return (
+      <div>
+        <LoadingMessage message={'Getting the registration form ready'}/>
+      </div>
+    );
   }
 
-  if (!registration || !registration.tournament) {
-    return '';
+  /////////////////////////////////////
+
+  const bowlerInfoSaved = (bowlerData) => {
+
+    devConsoleLog("Bowler data saved!", bowlerData);
+    dispatch(soloBowlerInfoAdded(bowlerData));
+    router.push({
+      pathname: '/tournaments/[identifier]/solo-bowler-review',
+      query: {
+        identifier: identifier,
+      }
+    });
   }
 
-  const includeShift = registration.tournament.available_shifts && registration.tournament.available_shifts.length > 0;
+  const previousBowlerData = registration.bowler ? registration.bowler : null;
 
   return (
-    <Row>
-      <Col>
-        <Summary tournament={registration.tournament} />
-      </Col>
-      <Col lg={8}>
-        <BowlerForm tournament={registration.tournament}
-                    bowlerInfoSaved={onCompletion}
-                    solo={true}
-                    includeShift={includeShift} />
-      </Col>
-    </Row>
+    <div>
+      <TournamentHeader tournament={registration.tournament}/>
+
+      <h3 className={`text-center`}>
+        Solo Registration
+      </h3>
+
+      <hr />
+
+      <BowlerForm tournament={registration.tournament}
+                  bowlerData={previousBowlerData}
+                  solo={true}
+                  bowlerInfoSaved={bowlerInfoSaved}/>
+
+    </div>
   );
 }
 
