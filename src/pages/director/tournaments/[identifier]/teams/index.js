@@ -91,7 +91,7 @@ const TeamsIndex = () => {
         <Col xs={{span: 12, order: 1}} md={{span: 4, order: 2}}>
           <Card className={`mb-3`}>
             <Card.Header as={'h5'} className={'fw-light'}>
-              New Team
+              Create a Team
             </Card.Header>
             <Card.Body>
               <NewTeamForm allShifts={tournament.shifts} submitted={newTeamSubmitted} />

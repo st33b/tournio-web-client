@@ -63,7 +63,7 @@ const NewTeamForm = ({allShifts=[], submitted}) => {
   return (
     <div className={classes.NewTeamForm}>
       <Form onSubmit={formHandler}>
-        <FloatingLabel label={'Team Name'}
+        <FloatingLabel label={'Name'}
                        controlId={'name'}
                        className={'mb-3'}>
           <Form.Control type={'text'}
@@ -74,16 +74,23 @@ const NewTeamForm = ({allShifts=[], submitted}) => {
           />
         </FloatingLabel>
 
-        {allShifts.length > 1 && allShifts.map((shift, i) => (
-            <Form.Check type={'radio'}
-                        key={i}
-                        onChange={shiftChosen}
-                        label={shift.name}
-                        value={shift.identifier}
-                        checked={newTeamForm.fields.shift_identifier === shift.identifier}
-                        id={`shift_${i}`}
-                        name={'shift'} />
-          )
+        {allShifts.length > 1 && (
+          <div>
+            <Form.Label htmlFor={`shift`}>
+              Shift
+            </Form.Label>
+            {allShifts.map((shift, i) => (
+                <Form.Check type={'radio'}
+                            key={i}
+                            onChange={shiftChosen}
+                            label={shift.name}
+                            value={shift.identifier}
+                            checked={newTeamForm.fields.shift_identifier === shift.identifier}
+                            id={`shift_${i}`}
+                            name={'shift'} />
+              )
+            )}
+          </div>
         )}
 
         <Row>
