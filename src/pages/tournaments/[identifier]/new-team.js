@@ -4,31 +4,42 @@ import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamInfoEdited, newTeamRegistrationInitiated} from "../../../store/actions/registrationActions";
 import {useEffect} from "react";
-import {useClientReady} from "../../../utils";
+import {useTournament} from "../../../utils";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import TournamentHeader from "../../../components/ui/TournamentHeader";
+import ErrorAlert from "../../../components/common/ErrorAlert";
 
-const Page = ({edit=false}) => {
-  const {registration, dispatch} = useRegistrationContext();
+const Page = () => {
+  const {dispatch} = useRegistrationContext();
   const router = useRouter();
+  const {identifier, edit} = router.query;
+
+  const {tournament, loading, error} = useTournament(identifier);
 
   // If new-team registrations aren't enabled, go back to the tournament home page
   useEffect(() => {
-    if (!registration.tournament) {
+    if (!tournament) {
       return;
     }
-    if (!registration.tournament.registration_options.new_team) {
-      router.push(`/tournaments/${registration.tournament.identifier}`);
+    if (!tournament.registration_options.new_team) {
+      router.push(`/tournaments/${tournament.identifier}`);
     }
-  }, [registration]);
+  }, [tournament]);
 
-  const ready = useClientReady();
-  if (!ready || !registration.tournament) {
+  if (loading || !tournament) {
     return (
       <div>
-        <LoadingMessage message={'Getting the registration form ready'}/>
+        <LoadingMessage message={'Loading the tournament'}/>
       </div>
     )
+  }
+
+  if (error) {
+    return (
+      <div>
+        <ErrorAlert message={error}/>
+      </div>
+    );
   }
 
   ///////////////////////////////////////////
@@ -41,12 +52,12 @@ const Page = ({edit=false}) => {
       editQueryParam = '?edit=true';
       dispatch(newTeamInfoEdited(formData));
     }
-    router.push(`/tournaments/${registration.tournament.identifier}/new-team-first-bowler${editQueryParam}`);
+    router.push(`/tournaments/${identifier}/new-team-first-bowler${editQueryParam}`);
   }
 
   return (
     <div>
-      <TournamentHeader tournament={registration.tournament}/>
+      <TournamentHeader tournament={tournament}/>
 
       <h2 className={`text-center flex-grow-1`}>
         Create a Team
@@ -54,8 +65,8 @@ const Page = ({edit=false}) => {
 
       <hr />
 
-      <TeamForm shifts={registration.tournament.shifts}
-                maxBowlers={registration.tournament.team_size}
+      <TeamForm shifts={tournament.shifts}
+                maxBowlers={tournament.team_size}
                 onSubmit={teamFormCompleted} />
     </div>
   );
