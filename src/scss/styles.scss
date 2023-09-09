@@ -34,6 +34,11 @@ html {
   }
 }
 
+.selected-radio-container {
+  padding-bottom: 0.5rem;
+  border-bottom: 8px solid var(--tournio-primary);
+}
+
 .btn {
   .btn-check + &:hover {
     color: var(--tournio-btn-hover-color);

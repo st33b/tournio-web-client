@@ -66,14 +66,15 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
 
   const bowlerCountRadios = [];
   for (let i = 0; i < maxBowlers; i++) {
+    const selected = componentState.form.fields.bowlerCount === i+1;
     bowlerCountRadios.push(
-      <div key={`bowlerCountInput${i+1}`}>
+      <div key={`bowlerCountInput${i+1}`} className={selected ? 'selected-radio-container' : ''}>
         <input type={'radio'}
                className={'btn-check'}
                name={'bowlerCount'}
                id={`bowlerCount_${i+1}`}
                value={i+1}
-               checked={componentState.form.fields.bowlerCount === i+1}
+               checked={selected}
                onChange={inputChanged}
                autoComplete={'off'} />
         <label className={`btn btn-lg btn-tournio-radio`}
@@ -127,7 +128,7 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
                 const selected = componentState.form.fields.preferredShift === shift.identifier;
                 return (
                 <div key={`preferredShiftInput${i}`}
-                     className={selected ? classes.Selected : ''}>
+                     className={selected ? 'selected-radio-container' : ''}>
                   <input type={'radio'}
                          className={'btn-check'}
                          name={'preferredShift'}

@@ -28,17 +28,18 @@ const PositionChooser = ({maxPosition=4, chosen, onChoose}) => {
 
   const radios = [];
   for (let i = 0; i < maxPosition; i++) {
+    const selected = formState.chosen === i + 1;
     radios.push(
-      <div key={`positionInput${i+1}`}>
+      <div key={`positionInput${i+1}`} className={selected ? 'selected-radio-container' : ''}>
         <input type={'radio'}
                className={'btn-check'}
                name={'position'}
                id={`position_${i+1}`}
                value={i+1}
-               checked={formState.chosen === i+1}
+               checked={selected}
                onChange={(e) => inputChanged(e, i+1)}
                autoComplete={'off'} />
-        <label className={`btn btn-lg btn-outline-primary`}
+        <label className={`btn btn-lg btn-tournio-radio`}
                htmlFor={`position_${i+1}`}>
           {i+1}
         </label>
