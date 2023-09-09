@@ -107,3 +107,7 @@ $navbar-light-active-color:         rgba(var(--#{$prefix}emphasis-color-rgb), .9
 $navbar-light-disabled-color:       rgba(var(--#{$prefix}emphasis-color-rgb), .4) !default;
 
 $admin-form-bg: #edf5ef;
+
+$radio-button-color-light: $gray-200;
+$radio-button-color-dark: $gray-800;
+$btn-active-border-shade-amount: 75%;

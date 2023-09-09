@@ -60,7 +60,7 @@ const Page = () => {
 
   const {tournament, loading, error} = useTournament(identifier, onFetchSuccess)
 
-  if (loading) {
+  if (loading || !tournament) {
     return (
       <div>
         <LoadingMessage message={'Loading the tournament'}/>
@@ -109,7 +109,7 @@ const Page = () => {
             <div className={'flex-fill w-100'}>
               <Details tournament={tournament}/>
             </div>
-            <div className={'d-none d-lg-block flex-shrink-1'}>
+            <div className={'d-none d-xl-block flex-shrink-1'}>
               <YouWillNeed tournament={tournament}/>
             </div>
           </div>
@@ -117,7 +117,7 @@ const Page = () => {
           <PayButton disabled={!!tournament.config_items.find(({key, value}) => key === 'accept_payments' && !value)} />
           <RegisterButtons tournament={tournament}/>
 
-          <div className={'d-lg-none'}>
+          <div className={'d-xl-none'}>
             <YouWillNeed tournament={tournament}/>
           </div>
           <div className={'mt-4'}>

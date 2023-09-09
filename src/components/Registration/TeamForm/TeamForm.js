@@ -2,8 +2,7 @@ import React, {useEffect, useState} from "react";
 
 import classes from './TeamForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {devConsoleLog, updateObject, useClientReady} from "../../../utils";
-import ShiftForm from "../ShiftForm/ShiftForm";
+import {updateObject} from "../../../utils";
 
 const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
   const initialFormValues = {
@@ -77,7 +76,7 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
                checked={componentState.form.fields.bowlerCount === i+1}
                onChange={inputChanged}
                autoComplete={'off'} />
-        <label className={`btn btn-lg btn-outline-primary`}
+        <label className={`btn btn-lg btn-tournio-radio`}
                htmlFor={`bowlerCount_${i+1}`}>
           {i+1}
         </label>
@@ -124,22 +123,25 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
               Shift Preference
             </label>
             <div className={`d-flex justify-content-around`}>
-              {shifts.map((shift, i) => (
-                <div key={`preferredShiftInput${i}`}>
+              {shifts.map((shift, i) => {
+                const selected = componentState.form.fields.preferredShift === shift.identifier;
+                return (
+                <div key={`preferredShiftInput${i}`}
+                     className={selected ? classes.Selected : ''}>
                   <input type={'radio'}
                          className={'btn-check'}
                          name={'preferredShift'}
                          id={`preferredShift_${i}`}
                          value={shift.identifier}
                          onChange={inputChanged}
-                         checked={componentState.form.fields.preferredShift === shift.identifier}
-                         autoComplete={'off'} />
-                  <label className={`btn btn-lg btn-outline-primary`}
+                         checked={selected}
+                         autoComplete={'off'}/>
+                  <label className={`btn btn-lg btn-tournio-radio`}
                          htmlFor={`preferredShift_${i}`}>
                     {shift.name}
                   </label>
                 </div>
-              ))}
+              )})}
             </div>
             <hr />
           </div>

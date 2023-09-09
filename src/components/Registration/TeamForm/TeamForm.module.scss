@@ -1,3 +1,5 @@
+@use "bootstrap/scss/mixins/buttons";
+
 .TeamForm {
   .FormElement {
     hr {
@@ -19,7 +21,15 @@
     //  font-weight: bold;
     //}
   }
+  .Selected {
+    padding-bottom: 0.5rem;
+    border-bottom: 8px solid var(--tournio-primary);
+
+    .RadioButton {
+    }
+  }
   .Submit {
     text-align: right;
+
   }
 }
