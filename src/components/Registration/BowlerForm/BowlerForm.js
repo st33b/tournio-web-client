@@ -4,13 +4,11 @@ import {CountryDropdown} from "react-country-region-selector";
 import Input from "../../ui/Input/Input";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ErrorBoundary from "../../common/ErrorBoundary";
-import ShiftForm from "../ShiftForm/ShiftForm";
 import {devConsoleLog, validateEmail} from "../../../utils";
-import * as constants from '../../../constants';
 
 import classes from './BowlerForm.module.scss';
 
-const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, solo = false, availablePartners = []}) => {
+const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = []}) => {
   const {registration} = useRegistrationContext();
 
   const initialFormState = {
@@ -431,13 +429,12 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, solo = false, avai
       updatedFormElement.elementConfig = {...bowlerForm.formFields[inputIdentifier].elementConfig}
 
       // Our special snowflakes:
-      let newValue = null;
+      let newValue = event.target.value;
       if (inputIdentifier === 'country')
         newValue = event;
       else if (updatedFormElement.elementType === 'checkbox') {
         newValue = event.target.checked ? 'yes' : 'no';
-      } else
-        newValue = event.target.value;
+      }
 
       // We need to go ahead and do validation for <select> elements, since their value isn't modified
       // between a change event (what we're reacting to here) and a blur event (which is for fieldBlurred)
