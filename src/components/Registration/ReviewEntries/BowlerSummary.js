@@ -43,7 +43,7 @@ const BowlerSummary = ({allBowlers=[], bowler, partner = null}) => {
         {bowler.position && (
           <Row className={classes.Position}>
             <dt className={`col-5 pe-2 label`}>
-              Bowler Position
+              Position
             </dt>
             <dd className={`col ps-2 value`}>
               {bowler.position}

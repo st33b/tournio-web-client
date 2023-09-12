@@ -30,7 +30,7 @@ const PositionChooser = ({maxPosition=4, chosen, onChoose}) => {
   for (let i = 0; i < maxPosition; i++) {
     const selected = formState.chosen === i + 1;
     radios.push(
-      <div key={`positionInput${i+1}`} className={selected ? 'selected-radio-container' : ''}>
+      <div key={`positionInput${i+1}`} className={`mx-md-4 ${selected ? 'selected-radio-container' : ''}`}>
         <input type={'radio'}
                className={'btn-check'}
                name={'position'}
@@ -52,7 +52,7 @@ const PositionChooser = ({maxPosition=4, chosen, onChoose}) => {
       <h4 className={classes.Title}>
         Position
       </h4>
-      <div className={`d-flex justify-content-around`}>
+      <div className={`d-flex justify-content-evenly justify-content-md-center`}>
         {radios}
       </div>
     </div>

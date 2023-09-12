@@ -604,7 +604,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, solo = false, avai
     <ErrorBoundary>
       <div className={classes.BowlerForm}>
 
-        <p className={classes.RequiredLabel}>
+        <p className={`${classes.RequiredLabel} text-md-center`}>
           <i className={`align-top bi-asterisk`}/>
           {' '}indicates a required field
         </p>

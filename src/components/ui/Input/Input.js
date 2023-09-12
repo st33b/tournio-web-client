@@ -160,8 +160,8 @@ const Input = (props) => {
   }
 
   return (
-    <div className={`${classes.Input} row mb-1 mb-sm-2`}>
-      <label className="col-12 col-sm-5 col-form-label text-sm-end pb-0" htmlFor={props.identifier}>
+    <div className={`${classes.Input} row mb-1 mb-md-2`}>
+      <label className="col-12 col-sm-5 col-form-label text-sm-end pb-1" htmlFor={props.identifier}>
         {props.label}
         {required && (
           <div className="d-inline">

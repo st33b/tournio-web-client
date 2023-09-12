@@ -87,8 +87,6 @@ const Page = () => {
     <div>
       <TournamentHeader tournament={registration.tournament}/>
 
-      <hr />
-
       <NewTeamReview team={registration.team}
                      bowler={registration.bowler}
                      onEdit={editBowlerClicked}
