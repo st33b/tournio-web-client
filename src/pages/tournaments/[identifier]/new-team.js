@@ -56,7 +56,7 @@ const Page = () => {
   }
 
   return (
-    <div>
+    <div className={`col-md-8 offset-md-2`}>
       <TournamentHeader tournament={tournament}/>
 
       <h2 className={`text-center flex-grow-1`}>

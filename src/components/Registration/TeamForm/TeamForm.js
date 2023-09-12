@@ -68,7 +68,7 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
   for (let i = 0; i < maxBowlers; i++) {
     const selected = componentState.form.fields.bowlerCount === i+1;
     bowlerCountRadios.push(
-      <div key={`bowlerCountInput${i+1}`} className={selected ? 'selected-radio-container' : ''}>
+      <div key={`bowlerCountInput${i+1}`} className={`mx-lg-4 ${selected ? 'selected-radio-container' : ''}`}>
         <input type={'radio'}
                className={'btn-check'}
                name={'bowlerCount'}
@@ -87,16 +87,15 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
 
   return (
     <ErrorBoundary>
-      <div className={classes.TeamForm}>
+      <div className={`${classes.TeamForm}`}>
         {/* bowler count selector */}
         <div className={`${classes.FormElement}`}>
           <label className={`${classes.Label} col-form-label-lg`}>
             How many bowlers do you have?
           </label>
-          <div className={`d-flex justify-content-around`}>
+          <div className={`d-flex justify-content-evenly justify-content-lg-center`}>
             {bowlerCountRadios}
           </div>
-          <hr />
         </div>
 
         {/* team name */}
@@ -114,7 +113,6 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
                  className={`form-control form-control-lg`}
                  placeholder={'... name ...'}
           />
-          <hr />
         </div>
 
         {/* shift preference selector */}
@@ -123,12 +121,12 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
             <label className={`${classes.Label} col-form-label-lg`}>
               Shift Preference
             </label>
-            <div className={`d-flex justify-content-around`}>
+            <div className={`d-flex justify-content-evenly justify-content-lg-center`}>
               {shifts.map((shift, i) => {
                 const selected = componentState.form.fields.preferredShift === shift.identifier;
                 return (
                 <div key={`preferredShiftInput${i}`}
-                     className={selected ? 'selected-radio-container' : ''}>
+                     className={`mx-lg-4 ${selected ? 'selected-radio-container' : ''}`}>
                   <input type={'radio'}
                          className={'btn-check'}
                          name={'preferredShift'}
@@ -144,7 +142,6 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
                 </div>
               )})}
             </div>
-            <hr />
           </div>
         )}
         <div className={`${classes.Submit}`}>
