@@ -11,24 +11,21 @@
     margin: 0;
   }
 
-  ul {
-    background-color: var(--tournio-bookend-bg);
-    padding-top: 0.5rem;
+  .Item {
     padding-bottom: 0.5rem;
+    .ListMarker {
+      padding: 0 0.75rem;
+      font-size: 125%;
+      color: var(--tournio-success-text-emphasis);
+    }
 
-    li {
-      list-style-type: circle;
-      margin-top: 0;
-      margin-bottom: 0.5rem;
+    .MainText {
+      margin: 0.2rem auto;
+    }
 
-      .MainText {
-        margin: 0 auto;
-      }
-
-      .Note {
-        font-size: 85%;
-        margin: 0 auto;
-      }
+    .Note {
+      font-size: 85%;
+      margin: 0 auto;
     }
   }
 }
