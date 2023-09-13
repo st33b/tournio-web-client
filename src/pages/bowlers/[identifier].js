@@ -99,7 +99,7 @@ const Page = () => {
     <div>
       {commerce.tournament && commerce.bowler && (
         <Row className={``}>
-          <Col md={4} className={'ps-2'}>
+          <Col md={{offset: 2, span: 8}} xl={{offset: 3, span: 6}} className={'ps-2'}>
             <TournamentHeader tournament={commerce.tournament}/>
 
             <h3 className={`text-center`}>
@@ -111,12 +111,6 @@ const Page = () => {
               </h4>
             )}
             {!commerce.bowler.has_free_entry && <FreeEntryForm/>}
-          </Col>
-          <Col className={`d-none d-md-block col-md-4`}>
-            <h4 className={`text-center`}>
-              Paid Items
-            </h4>
-            <PreviousPurchases/>
           </Col>
         </Row>
       )}

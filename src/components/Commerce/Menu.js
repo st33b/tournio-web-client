@@ -25,17 +25,18 @@ const Menu = () => {
 
   return (
     <div className={classes.Menu}>
-      <Row>
-        <Col md={8}>
-          <AvailableItems itemAddedToCart={itemAdded}/>
-        </Col>
-        <Col md={4}
-             className={`${classes.CartContainer}`}
+      <div className={`row`}>
+        <AvailableItems itemAddedToCart={itemAdded}/>
+        <div className={`col ${classes.CartContainer}`}
              id={'cart'}>
           <Cart itemAddedToCart={itemAdded}
                 itemRemovedFromCart={itemRemoved} />
-        </Col>
-      </Row>
+
+          <hr className={`mt-0 mb-3 mt-md-3`} />
+
+          <PreviousPurchases/>
+        </div>
+      </div>
     </div>
   );
 }

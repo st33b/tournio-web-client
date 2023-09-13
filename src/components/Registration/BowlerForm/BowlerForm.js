@@ -429,11 +429,13 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       updatedFormElement.elementConfig = {...bowlerForm.formFields[inputIdentifier].elementConfig}
 
       // Our special snowflakes:
-      let newValue = event.target.value;
+      let newValue;
       if (inputIdentifier === 'country')
         newValue = event;
       else if (updatedFormElement.elementType === 'checkbox') {
         newValue = event.target.checked ? 'yes' : 'no';
+      } else {
+        newValue = event.target.value;
       }
 
       // We need to go ahead and do validation for <select> elements, since their value isn't modified

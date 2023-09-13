@@ -11,7 +11,7 @@ const PreviousPurchases = () => {
 
   let purchaseList = (
     <div className={classes.EmptyItemList}>
-      <p className={'my-0 py-2 ps-2'}>
+      <p className={''}>
         No paid purchases yet.
       </p>
     </div>
@@ -69,6 +69,9 @@ const PreviousPurchases = () => {
 
   return (
     <div className={classes.PreviousPurchases}>
+      <h5>
+        Paid Items
+      </h5>
       {purchaseList}
     </div>
   )

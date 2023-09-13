@@ -1,13 +1,25 @@
 .PreviousPurchases {
-  background-color: var(--tournio-bookend-bg);
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
+  h5 {
+    font-weight: bold;
+    background-color: var(--tournio-gray-800);
+    color: var(--tournio-gray-300);
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    margin: 0;
+  }
 
   ul {
-    margin-bottom: 0;
+    background-color: var(--tournio-bookend-bg);
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+
     li {
       list-style-type: circle;
-      margin: 0.5rem auto;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
 
       .MainText {
         margin: 0 auto;
@@ -18,5 +30,12 @@
         margin: 0 auto;
       }
     }
+  }
+}
+
+[data-bs-theme="dark"] .PreviousPurchases {
+  h5 {
+    background-color: var(--tournio-gray-800);
+    color: var(--tournio-gray-300);
   }
 }
