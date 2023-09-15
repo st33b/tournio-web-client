@@ -5,11 +5,6 @@ const ProgressBarLegend = () => (
     <div className={`d-flex justify-content-end pt-2`}>
       <div>
         <div>
-          <i className={'bi-square-fill text-success pe-2'}/>
-          <span className={'visually-hidden'}>Green</span>
-          Paid*
-        </div>
-        <div>
           <i className={'bi-square-fill text-primary pe-2'}/>
           <span className={'visually-hidden'}>Blue</span>
           Requested

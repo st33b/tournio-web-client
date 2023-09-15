@@ -14,6 +14,8 @@ const ShiftForm = ({shift}) => {
   const {loading, tournament, tournamentUpdatedQuietly} = useTournament();
   const { authToken } = useLoginContext();
 
+  const ALMOST_FULL_THRESHOLD = 4;
+
   const initialFormData = Map({
     name: '',
     description: '',
@@ -195,9 +197,9 @@ const ShiftForm = ({shift}) => {
   let colorClass = '';
   if (shift) {
     submitFunction = updateShiftFormSubmitted;
-    if (shift.paid_count === shift.capacity) {
+    if (shift.requested === shift.capacity) {
       colorClass = classes.Full;
-    } else if (shift.paid_count + shift.unpaid_count + 16 >= shift.capacity) {
+    } else if (shift.capacity - shift.requested <= ALMOST_FULL_THRESHOLD) {
       colorClass = classes.AlmostFull;
     }
   }
@@ -253,19 +255,13 @@ const ShiftForm = ({shift}) => {
                 Capacity
               </dt>
               <dd className={ddClass}>
-                {shift.capacity} bowlers
+                {shift.capacity} teams
               </dd>
               <dt className={dtClass}>
-                Paid
+                Requested
               </dt>
               <dd className={ddClass}>
-                {shift.paid_count}
-              </dd>
-              <dt className={dtClass}>
-                Unpaid
-              </dt>
-              <dd className={ddClass}>
-                {shift.unpaid_count}
+                {shift.requested}
               </dd>
             </div>
           </dl>
