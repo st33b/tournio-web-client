@@ -113,20 +113,6 @@ export const itemRemovedFromCart = (item) => {
   }
 }
 
-export const purchaseCompleted = (newPaidPurchases) => {
-  return {
-    type: actionTypes.PURCHASE_COMPLETED,
-    newPaidPurchases: newPaidPurchases,
-  }
-}
-
-export const purchaseFailed = (error) => {
-  return {
-    type: actionTypes.PURCHASE_FAILED,
-    error: error,
-  }
-}
-
 export const freeEntryDeclared = () => {
   return {
     type: actionTypes.FREE_ENTRY_DECLARED,
@@ -173,33 +159,6 @@ export const newPairBowlerUpdated = (bowlerInfo, index) => {
 export const newPairRegistrationCompleted = () => {
   return {
     type: actionTypes.NEW_PAIR_REGISTRATION_COMPLETED,
-  }
-}
-
-export const partnerUpRegistrationInitiated = (partner) => {
-  return {
-    type: actionTypes.PARTNER_UP_REGISTRATION_INITIATED,
-    partner: partner,
-  }
-}
-
-export const partnerUpBowlerAdded = (bowler) => {
-  return {
-    type: actionTypes.PARTNER_UP_BOWLER_INFO_ADDED,
-    bowler: bowler,
-  }
-}
-
-export const partnerUpBowlerUpdated = (bowlerInfo) => {
-  return {
-    type: actionTypes.PARTNER_UP_BOWLER_UPDATED,
-    bowler: bowlerInfo,
-  }
-}
-
-export const partnerUpRegistrationCompleted = () => {
-  return {
-    type: actionTypes.PARTNER_UP_REGISTRATION_COMPLETED,
   }
 }
 
