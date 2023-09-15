@@ -274,23 +274,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     valid: true,
     touched: false,
     soloBowlerFields: {
-      preferred_shift: {
-        elementType: 'radio',
-        elementConfig: {
-          value: '',
-          choices: [],
-        },
-        label: 'Preferred Shift',
-        validityErrors: [
-          'valueMissing',
-        ],
-        helper: {
-          url: null,
-          text: `Note: A bowler's place in a shift cannot be confirmed until they have paid their registration fees.`,
-        },
-        valid: true,
-        touched: false,
-      }
     }
   }
   const [bowlerForm, setBowlerForm] = useState(initialFormState);
@@ -419,58 +402,54 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       ...bowlerForm,
     };
 
-    if (inputIdentifier === 'preferred_shift') {
-      updatedBowlerForm.soloBowlerFields.preferred_shift.elementConfig.value = event.target.value;
-    } else {
-      let updatedFormElement = {
-        ...bowlerForm.formFields[inputIdentifier]
-      }
-      // Deep-copy the element config, since that has the part that gets changed...
-      updatedFormElement.elementConfig = {...bowlerForm.formFields[inputIdentifier].elementConfig}
-
-      // Our special snowflakes:
-      let newValue;
-      if (inputIdentifier === 'country')
-        newValue = event;
-      else if (updatedFormElement.elementType === 'checkbox') {
-        newValue = event.target.checked ? 'yes' : 'no';
-      } else {
-        newValue = event.target.value;
-      }
-
-      // We need to go ahead and do validation for <select> elements, since their value isn't modified
-      // between a change event (what we're reacting to here) and a blur event (which is for fieldBlurred)
-      // To avoid confusion with extended form fields, we're hard-coding it to birth_month.
-      if (inputIdentifier === 'birth_month' || inputIdentifier === 'position') {
-        const checksToRun = updatedFormElement.validityErrors;
-        const {validity} = event !== null ? event.target : {};
-        const failedChecks = checksToRun.filter(c => validity[c]);
-        updatedFormElement = {
-          ...updatedFormElement,
-          ...validityForField(inputIdentifier, failedChecks),
-        }
-      } else if (inputIdentifier === 'country') {
-        // special snowflake...
-        const failedChecks = event.length === 0 ? ['valueMissing'] : [];
-        updatedFormElement = {
-          ...updatedFormElement,
-          ...validityForField(inputIdentifier, failedChecks),
-        }
-      } else {
-        updatedFormElement.validated = false;
-      }
-
-      // Update the relevant parts of the changed field (the new value, whether it's valid, and the fact that it was changed at all)
-      updatedFormElement.elementConfig.value = newValue;
-      updatedFormElement.touched = true;
-
-      // Deep-copy the formFields property, because it's complex
-      updatedBowlerForm.formFields = {
-        ...bowlerForm.formFields
-      }
-      // Put the changed field in the copy of the bowler form structure
-      updatedBowlerForm.formFields[inputIdentifier] = updatedFormElement;
+    let updatedFormElement = {
+      ...bowlerForm.formFields[inputIdentifier]
     }
+    // Deep-copy the element config, since that has the part that gets changed...
+    updatedFormElement.elementConfig = {...bowlerForm.formFields[inputIdentifier].elementConfig}
+
+    // Our special snowflakes:
+    let newValue;
+    if (inputIdentifier === 'country')
+      newValue = event;
+    else if (updatedFormElement.elementType === 'checkbox') {
+      newValue = event.target.checked ? 'yes' : 'no';
+    } else {
+      newValue = event.target.value;
+    }
+
+    // We need to go ahead and do validation for <select> elements, since their value isn't modified
+    // between a change event (what we're reacting to here) and a blur event (which is for fieldBlurred)
+    // To avoid confusion with extended form fields, we're hard-coding it to birth_month.
+    if (inputIdentifier === 'birth_month' || inputIdentifier === 'position') {
+      const checksToRun = updatedFormElement.validityErrors;
+      const {validity} = event !== null ? event.target : {};
+      const failedChecks = checksToRun.filter(c => validity[c]);
+      updatedFormElement = {
+        ...updatedFormElement,
+        ...validityForField(inputIdentifier, failedChecks),
+      }
+    } else if (inputIdentifier === 'country') {
+      // special snowflake...
+      const failedChecks = event.length === 0 ? ['valueMissing'] : [];
+      updatedFormElement = {
+        ...updatedFormElement,
+        ...validityForField(inputIdentifier, failedChecks),
+      }
+    } else {
+      updatedFormElement.validated = false;
+    }
+
+    // Update the relevant parts of the changed field (the new value, whether it's valid, and the fact that it was changed at all)
+    updatedFormElement.elementConfig.value = newValue;
+    updatedFormElement.touched = true;
+
+    // Deep-copy the formFields property, because it's complex
+    updatedBowlerForm.formFields = {
+      ...bowlerForm.formFields
+    }
+    // Put the changed field in the copy of the bowler form structure
+    updatedBowlerForm.formFields[inputIdentifier] = updatedFormElement;
 
     updatedBowlerForm.touched = true;
 
