@@ -18,6 +18,7 @@ describe ('action type: existing team bowler info added', () => {
         },
       ],
     },
+    bowler: null,
     another: 'property',
   };
   const newBowler = {
@@ -31,10 +32,9 @@ describe ('action type: existing team bowler info added', () => {
     bowler: newBowler,
   };
 
-  it ('adds the bowler to the team roster', () => {
+  it ('writes the bowler information to state', () => {
     const result = registrationReducer(previousState, action);
-    const index = result.team.bowlers.findIndex(b => b.name === newBowler.name);
-    expect(index).toBeGreaterThanOrEqual(0);
+    expect(result.bowler).toStrictEqual(newBowler);
   });
 
   it ('does not affect other properties in previousState', () => {
