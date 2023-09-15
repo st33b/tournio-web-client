@@ -2,7 +2,7 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import TeamForm from "../../../components/Registration/TeamForm/TeamForm";
 import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {newTeamInfoEdited, newTeamRegistrationInitiated} from "../../../store/actions/registrationActions";
+import {newTeamRegistrationInitiated} from "../../../store/actions/registrationActions";
 import {useEffect} from "react";
 import {useTournament} from "../../../utils";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
@@ -45,14 +45,8 @@ const Page = () => {
   ///////////////////////////////////////////
 
   const teamFormCompleted = (formData) => {
-    let editQueryParam = '';
-    if (!edit) {
-      dispatch(newTeamRegistrationInitiated(formData));
-    } else {
-      editQueryParam = '?edit=true';
-      dispatch(newTeamInfoEdited(formData));
-    }
-    router.push(`/tournaments/${identifier}/new-team-first-bowler${editQueryParam}`);
+    dispatch(newTeamRegistrationInitiated(formData));
+    router.push(`/tournaments/${identifier}/new-team-first-bowler`);
   }
 
   return (

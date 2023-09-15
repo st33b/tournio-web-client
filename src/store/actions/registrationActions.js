@@ -20,32 +20,10 @@ export const newTeamRegistrationInitiated = (team) => {
   };
 }
 
-export const newTeamInfoEdited = (updatedTeam) => {
-  return {
-    type: actionTypes.NEW_TEAM_INFO_EDITED,
-    team: updatedTeam,
-  }
-}
-
 export const newTeamBowlerInfoAdded = (bowlerInfo) => {
   return {
     type: actionTypes.NEW_TEAM_BOWLER_INFO_ADDED,
     bowler: bowlerInfo,
-  }
-}
-
-export const newTeamPartnersChosen = (bowlers) => {
-  return {
-    type: actionTypes.NEW_TEAM_PARTNERS_SELECTED,
-    bowlers: bowlers,
-  }
-}
-
-export const newTeamBowlerEdited = (bowler, index) => {
-  return {
-    type: actionTypes.NEW_TEAM_BOWLER_UPDATED,
-    bowler: bowler,
-    index: index,
   }
 }
 

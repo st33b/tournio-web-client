@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {newTeamBowlerInfoAdded, newTeamPartnersChosen} from "../../../store/actions/registrationActions";
+import {newTeamBowlerInfoAdded} from "../../../store/actions/registrationActions";
 import {devConsoleLog, useClientReady} from "../../../utils";
 import {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";

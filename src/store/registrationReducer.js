@@ -26,6 +26,25 @@ export const registrationReducer = (state, action) => {
           bowler: {},
         },
       });
+    case actionTypes.NEW_TEAM_BOWLER_INFO_ADDED:
+      return updateObject(state, {
+        bowler: {...action.bowler},
+      });
+    case actionTypes.NEW_TEAM_ENTRY_COMPLETED:
+      return updateObject(state, {
+        team: action.team,
+        bowler: null,
+      });
+    case actionTypes.EXISTING_TEAM_BOWLER_INFO_ADDED:
+      const bowler = {...action.bowler}
+      return updateObject(state, {
+        bowler: bowler,
+      });
+    case actionTypes.EXISTING_TEAM_BOWLER_SAVED:
+      return updateObject(state, {
+        team: action.team,
+        bowler: null,
+      });
     case actionTypes.NEW_PAIR_REGISTRATION_INITIATED:
       return updateObject(state, {
         bowlers: [],
@@ -45,46 +64,6 @@ export const registrationReducer = (state, action) => {
     case actionTypes.NEW_PAIR_REGISTRATION_COMPLETED:
       return updateObject(state, {
         bowlers: null,
-      });
-    case actionTypes.NEW_TEAM_INFO_EDITED:
-      return updateObject(state, {
-        team: {
-          ...action.team,
-        }
-      });
-    case actionTypes.NEW_TEAM_BOWLER_INFO_ADDED:
-      return updateObject(state, {
-        bowler: {...action.bowler},
-      });
-    case actionTypes.NEW_TEAM_PARTNERS_SELECTED:
-      const theNewTeam = {...state.team}
-      theNewTeam.bowlers = [...action.bowlers];
-      return updateObject(state, {
-        team: theNewTeam,
-      });
-    case actionTypes.NEW_TEAM_BOWLER_UPDATED:
-      const updatedBowlers = [...state.team.bowlers];
-      const bowlerIndex = action.index;
-      updatedBowlers[bowlerIndex] = updateObject(state.team.bowlers[bowlerIndex], action.bowler);
-      const updatedTeam = {...state.team}
-      updatedTeam.bowlers = updatedBowlers;
-      return updateObject(state, {
-        team: updatedTeam,
-      });
-    case actionTypes.NEW_TEAM_ENTRY_COMPLETED:
-      return updateObject(state, {
-        team: action.team,
-        bowler: null,
-      });
-    case actionTypes.EXISTING_TEAM_BOWLER_INFO_ADDED:
-      const bowler = {...action.bowler}
-      return updateObject(state, {
-        bowler: bowler,
-      });
-    case actionTypes.EXISTING_TEAM_BOWLER_SAVED:
-      return updateObject(state, {
-        team: action.team,
-        bowler: null,
       });
     case actionTypes.NEW_SOLO_REGISTRATION_INITIATED:
       return updateObject(state, {
