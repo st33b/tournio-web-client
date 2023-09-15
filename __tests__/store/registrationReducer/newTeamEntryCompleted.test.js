@@ -22,10 +22,6 @@ describe ('action type: new team entry completed', () => {
     type: actionTypes.NEW_TEAM_ENTRY_COMPLETED,
     team: updatedTeam,
   };
-  const expectedResult = {
-    ...previousState,
-    team: updatedTeam,
-  }
 
   it ('nulls out the bowler', () => {
     const result = registrationReducer(previousState, action);

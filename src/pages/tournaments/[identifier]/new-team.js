@@ -12,7 +12,7 @@ import ErrorAlert from "../../../components/common/ErrorAlert";
 const Page = () => {
   const {dispatch} = useRegistrationContext();
   const router = useRouter();
-  const {identifier, edit} = router.query;
+  const {identifier} = router.query;
 
   const {tournament, loading, error} = useTournament(identifier);
 

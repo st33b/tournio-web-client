@@ -1,5 +1,5 @@
 import * as actionTypes from './actions/actionTypes';
-import {devConsoleLog, updateObject} from "../utils";
+import {updateObject} from "../utils";
 
 const initialState = {
   tournament: null,
