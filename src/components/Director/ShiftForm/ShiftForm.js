@@ -7,7 +7,7 @@ import {directorApiRequest, useTournament} from "../../../director";
 import classes from './ShiftForm.module.scss';
 import ButtonRow from "../../common/ButtonRow";
 import {useLoginContext} from "../../../store/LoginContext";
-import {devConsoleLog, updateObject} from "../../../utils";
+import {updateObject} from "../../../utils";
 import ErrorAlert from "../../common/ErrorAlert";
 
 const ShiftForm = ({shift}) => {
