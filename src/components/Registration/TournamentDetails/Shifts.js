@@ -1,6 +1,4 @@
 import classes from './TournamentDetails.module.scss';
-import ShiftCapacity from "../../common/ShiftCapacity/ShiftCapacity";
-import ProgressBarLegend from "../../common/ShiftCapacity/ProgressBarLegend";
 
 const Shifts = ({tournament}) => {
   if (!tournament) {
@@ -19,8 +17,15 @@ const Shifts = ({tournament}) => {
             <div key={i} className={`${classes.ShiftInfo} border rounded-2`}>
               <div className={'row'}>
                 <div className={'col'}>
-                  <h5>
-                    {shift.name}
+                  <h5 className={shift.is_full ? classes.Full : ''}>
+                    {shift.is_full && (
+                        <span className={classes.Indicator}>
+                        [FULL]&nbsp;
+                      </span>
+                    )}
+                    <span className={classes.Name}>
+                      {shift.name}
+                    </span>
                   </h5>
                   {!!shift.description && (
                     <p className={'fw-light'}>
