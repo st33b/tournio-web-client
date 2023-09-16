@@ -19,13 +19,6 @@ const Page = () => {
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState();
 
-  // If new-team registrations aren't enabled, go back to the tournament home page
-  useEffect(() => {
-    if (!registration || !teamIdentifier) {
-      return;
-    }
-  }, [teamIdentifier, registration]);
-
   const {loading, team, error: fetchError, teamHasChanged } = useTeam(teamIdentifier);
 
   if (!registration || !registration.tournament || !registration.bowler) {
@@ -56,12 +49,12 @@ const Page = () => {
     dispatch(existingTeamBowlerSaved(team));
     setProcessing(false);
     router.push({
-      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]',
+      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/[chosen]',
       query: {
         identifier: identifier,
         teamIdentifier: teamIdentifier,
+        chosen: bowlerData.position,
         success: 2,
-        chosen: registration.bowler.position,
       }
     });
   }
@@ -87,7 +80,7 @@ const Page = () => {
 
   let doublesPartner = null;
   if (registration.bowler.doubles_partner) {
-    doublesPartner = team.bowlers.find(({identifier}) => registration.bowler.doubles_partner);
+    doublesPartner = team.bowlers.find(bowler => registration.bowler.doubles_partner === bowler.identifier);
   }
 
   return (

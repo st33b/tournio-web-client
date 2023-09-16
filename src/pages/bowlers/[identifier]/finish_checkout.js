@@ -31,7 +31,7 @@ const Page = () => {
       return;
     }
     if (!commerce.checkoutSessionId) {
-      router.push(`/bowlers/${identifier}?success=purchase`);
+      router.push(`/bowlers/${identifier}?success=2`);
     }
   }, [commerce.checkoutSessionId]);
 
@@ -66,7 +66,7 @@ const Page = () => {
       dispatch(stripeCheckoutSessionCompleted());
       return;
     } else if (data.status === 'expired') {
-      router.push(`/bowlers/${identifier}?success=expired`);
+      router.push(`/bowlers/${identifier}?error=1`);
     } else {
       devConsoleLog('But our status is not completed. Trying again.');
       setTimeout(() => checkTheStatus(count), 2 ** count * 10);

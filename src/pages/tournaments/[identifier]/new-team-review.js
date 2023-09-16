@@ -2,7 +2,7 @@ import {useRouter} from "next/router";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {devConsoleLog, submitNewTeamWithPlaceholders, useClientReady} from "../../../utils";
+import {submitNewTeamWithPlaceholders, useClientReady} from "../../../utils";
 import {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import NewTeamReview from "../../../components/Registration/NewTeamReview/NewTeamReview";
@@ -44,16 +44,16 @@ const Page = () => {
   }
 
   const newTeamRegistrationSuccess = (teamData) => {
+    const bowlerPosition = registration.bowler.position;
     dispatch(newTeamEntryCompleted(teamData));
-    devConsoleLog("All done, do some cleanup");
     setProcessing(false);
     router.push({
-      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]',
+      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/[chosen]',
       query: {
         identifier: identifier,
         teamIdentifier: teamData.identifier,
         success: 1,
-        chosen: registration.bowler.position,
+        chosen: bowlerPosition,
       }
     });
   }

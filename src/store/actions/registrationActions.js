@@ -83,6 +83,12 @@ export const bowlerCommerceDetailsRetrieved = (bowler, availableItems) => {
   }
 }
 
+export const bowlerCommerceDetailsMooted = () => {
+  return {
+    type: actionTypes.BOWLER_DETAILS_MOOTED,
+  }
+}
+
 export const itemAddedToCart = (item, sizeIdentifier = null) => {
   return {
     type: actionTypes.ITEM_ADDED_TO_CART,
