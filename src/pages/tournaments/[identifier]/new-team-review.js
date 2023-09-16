@@ -7,7 +7,6 @@ import {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import NewTeamReview from "../../../components/Registration/NewTeamReview/NewTeamReview";
 import Link from "next/link";
-import ErrorAlert from "../../../components/common/ErrorAlert";
 import {newTeamEntryCompleted} from "../../../store/actions/registrationActions";
 import TournamentHeader from "../../../components/ui/TournamentHeader";
 
@@ -16,7 +15,6 @@ const Page = () => {
   const router = useRouter();
   const {identifier} = router.query;
 
-  const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
 
   // If new-team registrations isn't enabled, go back to the tournament home page
@@ -111,8 +109,6 @@ const Page = () => {
                      onSave={saveClicked}/>
 
       <hr />
-
-      {error && <ErrorAlert message={error}/> }
 
       <div className={`d-flex justify-content-between`}>
         <Link href={`/tournaments/${identifier}/new-team-first-bowler?edit=true`}
