@@ -64,7 +64,6 @@ const Page = () => {
     if (data.status === 'completed') {
       // It'd be nice to get a report here, how high did "count" get before we had the full details from Stripe?
       dispatch(stripeCheckoutSessionCompleted());
-      return;
     } else if (data.status === 'expired') {
       router.push(`/bowlers/${identifier}?error=1`);
     } else {

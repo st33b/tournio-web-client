@@ -2,7 +2,7 @@ import {useRouter} from "next/router";
 
 import RegistrationLayout from "../../../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../../../store/RegistrationContext";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import Link from "next/link";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
