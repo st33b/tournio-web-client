@@ -88,6 +88,9 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
   return (
     <ErrorBoundary>
       <div className={`${classes.TeamForm}`}>
+        <p className={`text-center`}>
+          All fields are required.
+        </p>
         {/* bowler count selector */}
         <div className={`${classes.FormElement}`}>
           <label className={`${classes.Label} col-form-label-lg`}>
@@ -123,6 +126,9 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
             </label>
             <div className={`d-flex justify-content-evenly justify-content-lg-center`}>
               {shifts.map((shift, i) => {
+                if (shift.is_full) {
+                  return '';
+                }
                 const selected = componentState.form.fields.preferredShift === shift.identifier;
                 return (
                 <div key={`preferredShiftInput${i}`}
@@ -147,6 +153,7 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
         <div className={`${classes.Submit}`}>
           <button className={`btn btn-lg btn-success`}
                   onClick={formHandler}
+                  disabled={!componentState.form.valid}
                   role={'button'}>
             Go
             <i className={'bi bi-arrow-right ps-2'} aria-hidden={true}/>

@@ -20,6 +20,13 @@ export const newTeamRegistrationInitiated = (team) => {
   };
 }
 
+export const newTeamRegistrationUpdated = (team) => {
+  return {
+    type: actionTypes.NEW_TEAM_REGISTRATION_UPDATED,
+    team: team,
+  }
+}
+
 export const newTeamBowlerInfoAdded = (bowlerInfo) => {
   return {
     type: actionTypes.NEW_TEAM_BOWLER_INFO_ADDED,

@@ -29,7 +29,7 @@ const Page = () => {
       devConsoleLog("Edit is true.");
       choosePosition(registration.bowler.position);
     }
-  }, [registration]);
+  }, [registration, edit]);
 
   const ready = useClientReady();
   if (!ready) {
@@ -42,7 +42,8 @@ const Page = () => {
   if (!registration.tournament) {
     return (
       <div>
-        <LoadingMessage message={'Getting the registration form ready'}/>
+        <LoadingMessage message={'Looking for the tournament...'}/>
+        {/*<LoadingMessage message={'Getting the registration form ready'}/>*/}
       </div>
     );
   }

@@ -57,12 +57,30 @@ const Page = () => {
         success: 1,
         chosen: registration.bowler.position,
       }
-    })
+    });
   }
 
   const newTeamRegistrationFailure = (errorMessage) => {
     setProcessing(false);
-    setError(errorMessage);
+    if (errorMessage.team) {
+      // back to team info
+      router.push({
+        pathname: '/tournaments/[identifier]/new-team',
+        query: {
+          identifier: identifier,
+          message: 2,
+        }
+      });
+    } else if (errorMessage.bowler) {
+      // back to bowler info
+      router.push({
+        pathname: '/tournaments/[identifier]/new-team-first-bowler',
+        query: {
+          identifier: identifier,
+          edit: true,
+        }
+      });
+    }
   }
 
   const editBowlerClicked = () => {

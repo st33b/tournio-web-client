@@ -26,6 +26,14 @@ export const registrationReducer = (state, action) => {
           bowler: {},
         },
       });
+    case actionTypes.NEW_TEAM_REGISTRATION_UPDATED:
+      // Same as the above, but don't reset the bowler data. We had to update
+      // the team info due to validation failure.
+      return updateObject(state, {
+        team: {
+          ...action.team,
+        },
+      });
     case actionTypes.NEW_TEAM_BOWLER_INFO_ADDED:
       return updateObject(state, {
         bowler: {...action.bowler},
