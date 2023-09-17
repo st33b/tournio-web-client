@@ -31,7 +31,9 @@ const UrlShare = ({url}) => {
                value={url}
                readOnly={true}
         />
-        <OverlayTrigger trigger="click" placement="top" overlay={popover}>
+        <OverlayTrigger trigger="click"
+                        placement="top"
+                        overlay={popover}>
           <button className={'btn btn-secondary'}
                   onClick={copyClicked}>
             <i className={'bi bi-copy'} aria-hidden={true}/>
