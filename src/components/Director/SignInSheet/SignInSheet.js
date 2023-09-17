@@ -181,10 +181,10 @@ const SignInSheet = ({bowler, showPrintButton}) => {
         <div className={'col'}>
           <div className={'row'}>
             <div className={'col-8 text-end pe-2'}>
-              Total charges
+              Total paid
             </div>
             <div className={'col fw-bold'}>
-              ${bowler.amount_billed}
+              ${bowler.amount_paid}
             </div>
           </div>
 

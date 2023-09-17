@@ -59,12 +59,16 @@
       margin-bottom: 0.5rem;
 
       background-color: var(--tournio-gray-100);
-    }
-    .ConfirmedNote {
-      text-align: right;
-      font-size: 85%;
-      font-weight: 200;
-      padding-top: 0.5rem;
+
+      .Full {
+        .Name {
+          opacity: 70%;
+        }
+
+        .Indicator {
+          color: var(--tournio-danger-text-emphasis);
+        }
+      }
     }
   }
 

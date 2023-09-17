@@ -8,7 +8,7 @@ import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeade
 
 import classes from './TeamListing.module.scss';
 
-const TeamListing = ({teams, shiftCount = 1}) => {
+const TeamListing = ({tournament, teams, shiftCount = 1}) => {
   const confClasses = {
     none: 'danger',
     some: 'warning',
@@ -35,53 +35,17 @@ const TeamListing = ({teams, shiftCount = 1}) => {
         accessor: 'date_registered',
       },
       {
-        Header: 'Size',
+        Header: '# of Bowlers',
         accessor: 'size',
         disableSortBy: true,
         filter: lessThan,
       },
       {
-        Header: shiftCount > 1 ? 'Shift' : 'All Paid?',
-        accessor: 'shift',
-        Cell: ({row, value}) => {
-          if (value === null) {
-            return 'n/a';
-          }
-          const confClass = `text-${confClasses[row.original.who_has_paid]}`;
-          let tooltip = '';
-          switch(row.original.who_has_paid) {
-            case 'none':
-              tooltip = 'No members paid yet';
-              break;
-            case 'some':
-              tooltip = 'At least one member paid, but not all';
-              break;
-            default:
-              tooltip = 'All team members paid';
-          }
-          const shiftName = shiftCount > 1 ? value.name : '';
-          return (
-            <span className={'text-nowrap'}>
-              {shiftName}
-              <i className={`bi-circle-fill ms-1 ${confClass}`} aria-hidden={true} title={tooltip}/>
-              <span className={'visually-hidden'}>{tooltip}</span>
-            </span>
-          )
-        },
-      },
-      {
-        Header: 'Place with Others?',
-        accessor: 'place_with_others',
-        Cell: ({value}) => {
-          const classes = value ? ['text-success', 'bi-check-lg'] : ['text-danger', 'bi-dash-circle'];
-          const text = value ? 'Yes' : 'No';
-          return (
-            <div className={'text-center'}>
-              <i className={classes.join(' ')} aria-hidden={true}/>
-              <span className={'visually-hidden'}>{text}</span>
-            </div>
-          );
-        },
+        Header: 'Available Slots',
+        accessor: 'initial_size',
+        Cell: ({row, value}) => value - row.original.size,
+        disableSortBy: true,
+        filter: lessThan,
       },
     ], []);
 
@@ -149,14 +113,9 @@ const TeamListing = ({teams, shiftCount = 1}) => {
 
   const filterThatData = (criteria) => {
     if (criteria.incomplete) {
-      setFilter('size', 4);
+      setFilter('size', tournament.team_size);
     } else {
       setFilter('size', undefined);
-    }
-    if (criteria.place_with_others) {
-      setFilter('place_with_others', 'true');
-    } else {
-      setFilter('place_with_others', undefined);
     }
   }
 

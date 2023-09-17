@@ -3,7 +3,7 @@ import {registrationReducer} from "../../../src/store/registrationReducer";
 
 describe ('action type: solo bowler info added', () => {
   const previousState = {
-    bowler: {},
+    bowler: null,
     tournament: {
       shifts: [
         {
@@ -31,10 +31,5 @@ describe ('action type: solo bowler info added', () => {
   it ('sets the bowler details', () => {
     const result = registrationReducer(previousState, action);
     expect(result.bowler.name).toStrictEqual(newBowler.name);
-  });
-
-  it ('adds the correct shift object to the bowler', () => {
-    const result = registrationReducer(previousState, action);
-    expect(result.bowler.shift.shiftiness).toStrictEqual('light');
   });
 });

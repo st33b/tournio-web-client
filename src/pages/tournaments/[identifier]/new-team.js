@@ -1,57 +1,102 @@
-import {Row, Col} from "react-bootstrap";
-
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TeamForm from "../../../components/Registration/TeamForm/TeamForm";
-import Summary from "../../../components/Registration/Summary/Summary";
-import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {newTeamRegistrationInitiated, teamInfoAdded} from "../../../store/actions/registrationActions";
-import {useEffect} from "react";
-import {useClientReady} from "../../../utils";
+import {newTeamRegistrationInitiated, newTeamRegistrationUpdated} from "../../../store/actions/registrationActions";
+import {useEffect, useState} from "react";
+import {useTournament} from "../../../utils";
+import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import TournamentHeader from "../../../components/ui/TournamentHeader";
+import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Page = () => {
-  const {registration, dispatch} = useRegistrationContext();
+  const ERRORS = [
+    '',
+    'Please name your team!',
+    'Requested shift is full',
+  ];
+
+  const {dispatch} = useRegistrationContext();
   const router = useRouter();
+  const {identifier, message} = router.query;
+
+  const {tournament, loading, error} = useTournament(identifier);
+  const [errorMessage, setErrorMessage] = useState();
 
   // If new-team registrations aren't enabled, go back to the tournament home page
   useEffect(() => {
-    if (!registration.tournament) {
+    if (!tournament) {
       return;
     }
-    const shift = registration.tournament.shifts[0];
-    if (shift && !registration.tournament.registration_options.new_team) {
-      router.push(`/tournaments/${registration.tournament.identifier}`);
+    if (!tournament.registration_options.new_team) {
+      router.push(`/tournaments/${tournament.identifier}`);
     }
-  }, [registration]);
 
-  useEffect(() => {
-    dispatch(newTeamRegistrationInitiated());
-  }, [dispatch]);
+    // Did we get sent here because of a validation failure?
+    if (message) {
+      const index = parseInt(message);
+      if (index > 0) {
+        setErrorMessage(ERRORS[index]);
+      }
+    }
+  }, [tournament]);
 
-  const onTeamFormCompleted = (teamName, shift) => {
-    dispatch(teamInfoAdded(teamName, shift));
-    router.push(`/tournaments/${registration.tournament.identifier}/new-team-bowler`);
+  if (loading || !tournament) {
+    return (
+      <div>
+        <LoadingMessage message={'Loading the tournament'}/>
+      </div>
+    )
   }
 
-  const ready = useClientReady();
-  if (!ready) {
-    return null;
+  if (error) {
+    return (
+      <div>
+        <ErrorAlert message={error}/>
+      </div>
+    );
   }
-  if (!registration.tournament) {
-    return '';
+
+  ///////////////////////////////////////////
+
+  const teamFormCompleted = (formData) => {
+    const queryParams = {
+      identifier: identifier,
+    };
+    if (message) {
+      queryParams.edit = true;
+      dispatch(newTeamRegistrationUpdated(formData));
+    } else {
+      dispatch(newTeamRegistrationInitiated(formData));
+    }
+
+    router.push({
+      pathname: '/tournaments/[identifier]/new-team-first-bowler',
+      query: queryParams,
+    });
   }
 
   return (
-    <Row>
-      <Col>
-        <Summary tournament={registration.tournament}/>
-      </Col>
-      <Col lg={8}>
-        <ProgressIndicator active={'team'} />
-        <TeamForm tournament={registration.tournament} teamFormCompleted={onTeamFormCompleted} />
-      </Col>
-    </Row>
+    <div className={`col-md-8 offset-md-2`}>
+      <TournamentHeader tournament={tournament}/>
+
+      <h2 className={`text-center flex-grow-1`}>
+        Create a Team
+      </h2>
+
+      <hr />
+
+      {errorMessage && (
+          <>
+            <ErrorAlert message={errorMessage} onClose={() => setErrorMessage(null)} />
+            <hr/>
+          </>
+      )}
+
+      <TeamForm shifts={tournament.shifts}
+                maxBowlers={tournament.team_size}
+                onSubmit={teamFormCompleted} />
+    </div>
   );
 }
 

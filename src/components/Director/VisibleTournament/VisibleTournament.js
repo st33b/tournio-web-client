@@ -24,17 +24,44 @@ import Shifts from "../TournamentInPrep/Shifts";
 import {useTournament} from "../../../director";
 
 import classes from './VisibleTournament.module.scss';
+import {useEffect, useState} from "react";
+import {isPast} from "date-fns";
+import {devConsoleLog} from "../../../utils";
 
 const VisibleTournament = ({closeTournament}) => {
   const EDITABLE_CONFIG_ITEMS = [
     "display_capacity",
     "publicly_listed",
+    "accept_payments",
+    "automatic_discount_voids",
+    "automatic_late_fees",
     "email_in_dev",
     "skip_stripe",
-    "accept_payments",
   ];
 
   const {loading, tournament} = useTournament();
+
+  const [editableConfigItems, setEditableConfigItems] = useState(EDITABLE_CONFIG_ITEMS);
+  useEffect(() => {
+    if (loading || !tournament) {
+      return;
+    }
+    let items = [...editableConfigItems];
+
+    // Hide the automatic_late_fees option if it doesn't make sense
+    const lateFeeItem = tournament.purchasable_items.ledger.find(item => item.determination === 'late_fee');
+    if (!lateFeeItem || isPast(Date.parse(lateFeeItem.configuration.applies_at))) {
+      items = items.filter(elem => elem !== "automatic_late_fees");
+    }
+
+    // Hide the automatic_discount_voids option if it doesn't make sense
+    const earlyDiscountItem = tournament.purchasable_items.ledger.find(item => item.determination === 'early_discount');
+    if (!earlyDiscountItem || isPast(Date.parse(earlyDiscountItem.configuration.valid_until))) {
+      items = items.filter(elem => elem !== "automatic_discount_voids");
+    }
+
+    setEditableConfigItems(items);
+  }, [loading, tournament]);
 
   if (loading) {
     return '';
@@ -104,7 +131,7 @@ const VisibleTournament = ({closeTournament}) => {
           <Counts/>
 
           <RegistrationOptions/>
-          <EditableConfiguration editableKeys={EDITABLE_CONFIG_ITEMS} />
+          <EditableConfiguration editableKeys={editableConfigItems} />
           <Shifts/>
           <MassActions/>
 

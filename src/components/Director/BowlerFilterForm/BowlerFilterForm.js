@@ -15,7 +15,6 @@ const BowlerFilterForm = ({onFilterApplication, onFilterReset, includeTeamFilter
     igbo_member: '',
     no_team: '',
     no_partner: '',
-    amount_billed: false,
   }
 
   const [filterForm, setFilterForm] = useState(initialState);
@@ -36,7 +35,6 @@ const BowlerFilterForm = ({onFilterApplication, onFilterReset, includeTeamFilter
       case 'has_free_entry':
       case 'no_team':
       case 'no_partner':
-      case 'amount_billed':
         const oldValue = filterForm[inputIdentifier];
         const newValue = !oldValue;
         updatedForm[inputIdentifier] = newValue;
@@ -113,17 +111,6 @@ const BowlerFilterForm = ({onFilterApplication, onFilterReset, includeTeamFilter
       <Row>
         <Col sm={6}>
 
-          <Form.Group controlId={'amount_billed'}
-                      as={Row}
-                      className={'mb-3'}>
-            <Col sm={{span: 8, offset: 4}}>
-              <Form.Check type={'checkbox'}
-                          label={'No charges yet'}
-                          checked={filterForm.amount_billed}
-                          onChange={(event) => inputChangedHandler(event, 'amount_billed')}
-              />
-            </Col>
-          </Form.Group>
           <Form.Group controlId={'amount_due'}
                       as={Row}
                       className={'mb-3'}>

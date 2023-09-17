@@ -20,6 +20,17 @@
       --#{$prefix}btn-disabled-bg: #{tint-color($value, 20%)};
     }
   }
+
+  .btn-tournio-radio {
+    @include button-variant(
+      $radio-button-color-light,
+      $radio-button-color-light,
+      $hover-background: shade-color($radio-button-color-light, $btn-hover-bg-shade-amount),
+      $hover-border: shade-color($radio-button-color-light, $btn-hover-border-shade-amount),
+      $active-background: shade-color($radio-button-color-light, $btn-active-bg-shade-amount),
+      $active-border: shade-color($radio-button-color-light, $btn-active-border-shade-amount)
+    );
+  }
 }
 
 // CSS vars for color mode: dark

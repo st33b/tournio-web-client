@@ -4,9 +4,6 @@ import Cookies from "js-cookie";
 
 import '../scss/styles.scss';
 
-import {DirectorContextProvider} from "../store/DirectorContext";
-import {RegistrationContextProvider} from "../store/RegistrationContext";
-import {CommerceContextProvider} from "../store/CommerceContext";
 import {ThemeContextProvider} from "../store/ThemeContext";
 
 const APP_VERSION = 'app_version';

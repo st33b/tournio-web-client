@@ -1,0 +1,22 @@
+.NewTeamReview {
+  .TeamDetails {
+
+    dt {
+      text-align: right;
+    }
+    dd {
+      margin-bottom: 0;
+    }
+
+    @media(min-width: 768px) {
+      font-size: 1.4rem;
+    }
+  }
+
+  .BowlerDetailLabel {
+
+  }
+  .BowlerDetailValue {
+
+  }
+}

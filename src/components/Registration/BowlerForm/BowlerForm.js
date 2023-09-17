@@ -4,13 +4,11 @@ import {CountryDropdown} from "react-country-region-selector";
 import Input from "../../ui/Input/Input";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ErrorBoundary from "../../common/ErrorBoundary";
-import ShiftForm from "../ShiftForm/ShiftForm";
 import {devConsoleLog, validateEmail} from "../../../utils";
-import * as constants from '../../../constants';
 
 import classes from './BowlerForm.module.scss';
 
-const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, cancelHref, bowlerIndex = -1, solo = false}) => {
+const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = []}) => {
   const {registration} = useRegistrationContext();
 
   const initialFormState = {
@@ -71,35 +69,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
           url: 'https://webapps.bowl.com/USBCFindA/Home/Member',
           text: 'Look up your USBC ID',
         },
-        valid: true,
-        touched: false,
-      },
-      position: {
-        elementType: 'select',
-        elementConfig: {
-          options: [
-            {
-              value: 1,
-              label: '1'
-            },
-            {
-              value: 2,
-              label: '2'
-            },
-            {
-              value: 3,
-              label: '3'
-            },
-            {
-              value: 4,
-              label: '4'
-            },
-          ],
-          value: 1,
-        },
-        label: 'Position',
-        helper: { text: 'In the team bowling order' },
-        validityErrors: [],
         valid: true,
         touched: false,
       },
@@ -187,6 +156,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
         valid: true,
         touched: false,
       },
+      doubles_partner: null,
       email: {
         elementType: 'input',
         elementConfig: {
@@ -304,29 +274,10 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     valid: true,
     touched: false,
     soloBowlerFields: {
-      preferred_shift: {
-        elementType: 'radio',
-        elementConfig: {
-          value: '',
-          choices: [],
-        },
-        label: 'Preferred Shift',
-        validityErrors: [
-          'valueMissing',
-        ],
-        helper: {
-          url: null,
-          text: `Note: A bowler's place in a shift cannot be confirmed until they have paid their registration fees.`,
-        },
-        valid: true,
-        touched: false,
-      }
     }
   }
   const [bowlerForm, setBowlerForm] = useState(initialFormState);
-  const [showShiftSelection, setShowShiftSelection] = useState(false);
-  const [buttonText, setButtonText] = useState('Save Bowler');
-  const [showCancelButton, setShowCancelButton] = useState(false);
+  const [buttonText, setButtonText] = useState('Review');
 
   const additionalFormFields = (tourn) => {
     const formFields = {};
@@ -347,24 +298,32 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
   const resetFormData = (tourn) => {
     const formData = {...initialFormState};
 
-    // get the additional questions
-    formData.formFields = {...formData.formFields, ...additionalFormFields(tourn)};
+    // add doubles partner if there are any available
+    if (availablePartners.length > 0) {
+      const partnerChoices = availablePartners.map(partner => ({
+        value: partner.identifier,
+        label: partner.full_name,
+      }));
+      formData.formFields.doubles_partner = {
+        elementType: 'radio-limited-set',
+        elementConfig: {
+          choices: [
+            {
+              value: '',
+              label: 'unspecified',
 
-    // put shift info in there, if needed
-    if (includeShift) {
-      if (tourn.available_shifts.length > 1) {
-        formData.soloBowlerFields.preferred_shift.elementConfig.choices = [];
-        tourn.available_shifts.map(shift => {
-          formData.soloBowlerFields.preferred_shift.elementConfig.choices.push(
-            {value: shift.identifier, label: shift.name}
-          );
-        });
-        setShowShiftSelection(true);
-      } else {
-        formData.soloBowlerFields.preferred_shift.elementConfig.value = tourn.available_shifts[0].identifier;
-        formData.soloBowlerFields.preferred_shift.valid = true;
+            },
+          ].concat(partnerChoices),
+          value: '',
+        },
+        label: 'Doubles Partner',
+        valid: true,
+        touched: false,
       }
     }
+
+    // get the additional questions
+    formData.formFields = {...formData.formFields, ...additionalFormFields(tourn)};
 
     setBowlerForm(formData);
   }
@@ -397,17 +356,10 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       updatedBowlerForm.formFields[inputIdentifier].elementConfig.value = bowlerData[inputIdentifier];
     }
 
-    // Now, shift information, if there is any
-    if (includeShift) {
-      updatedBowlerForm.soloBowlerFields.preferred_shift.elementConfig.value = bowlerData.shift.identifier;
-      updatedBowlerForm.soloBowlerFields.preferred_shift.valid = true;
-    }
-
     updatedBowlerForm.valid = true;
 
     setBowlerForm(updatedBowlerForm);
-    setButtonText('Save Changes');
-    setShowCancelButton(true);
+    setButtonText('Review Changes');
   }, [bowlerData, tournament]);
 
   if (!registration || !tournament) {
@@ -424,11 +376,10 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     // Grab all the values from the form so they can be stored
     const theBowlerData = {};
     for (let formElementIdentifier in bowlerForm.formFields) {
+      if (bowlerForm.formFields[formElementIdentifier] === null) {
+        continue;
+      }
       theBowlerData[formElementIdentifier] = bowlerForm.formFields[formElementIdentifier].elementConfig.value;
-    }
-
-    if (includeShift) {
-      theBowlerData.shift = bowlerForm.soloBowlerFields.preferred_shift.elementConfig.value;
     }
 
     // Reset the form to take in the next bowler's info
@@ -451,57 +402,54 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       ...bowlerForm,
     };
 
-    if (inputIdentifier === 'preferred_shift') {
-      updatedBowlerForm.soloBowlerFields.preferred_shift.elementConfig.value = event.target.value;
-    } else {
-      let updatedFormElement = {
-        ...bowlerForm.formFields[inputIdentifier]
-      }
-      // Deep-copy the element config, since that has the part that gets changed...
-      updatedFormElement.elementConfig = {...bowlerForm.formFields[inputIdentifier].elementConfig}
-
-      // Our special snowflakes:
-      let newValue = null;
-      if (inputIdentifier === 'country')
-        newValue = event;
-      else if (updatedFormElement.elementType === 'checkbox') {
-        newValue = event.target.checked ? 'yes' : 'no';
-      } else
-        newValue = event.target.value;
-
-      // We need to go ahead and do validation for <select> elements, since their value isn't modified
-      // between a change event (what we're reacting to here) and a blur event (which is for fieldBlurred)
-      // To avoid confusion with extended form fields, we're hard-coding it to birth_month.
-      if (inputIdentifier === 'birth_month' || inputIdentifier === 'position') {
-        const checksToRun = updatedFormElement.validityErrors;
-        const {validity} = event !== null ? event.target : {};
-        const failedChecks = checksToRun.filter(c => validity[c]);
-        updatedFormElement = {
-          ...updatedFormElement,
-          ...validityForField(inputIdentifier, failedChecks),
-        }
-      } else if (inputIdentifier === 'country') {
-        // special snowflake...
-        const failedChecks = event.length === 0 ? ['valueMissing'] : [];
-        updatedFormElement = {
-          ...updatedFormElement,
-          ...validityForField(inputIdentifier, failedChecks),
-        }
-      } else {
-        updatedFormElement.validated = false;
-      }
-
-      // Update the relevant parts of the changed field (the new value, whether it's valid, and the fact that it was changed at all)
-      updatedFormElement.elementConfig.value = newValue;
-      updatedFormElement.touched = true;
-
-      // Deep-copy the formFields property, because it's complex
-      updatedBowlerForm.formFields = {
-        ...bowlerForm.formFields
-      }
-      // Put the changed field in the copy of the bowler form structure
-      updatedBowlerForm.formFields[inputIdentifier] = updatedFormElement;
+    let updatedFormElement = {
+      ...bowlerForm.formFields[inputIdentifier]
     }
+    // Deep-copy the element config, since that has the part that gets changed...
+    updatedFormElement.elementConfig = {...bowlerForm.formFields[inputIdentifier].elementConfig}
+
+    // Our special snowflakes:
+    let newValue;
+    if (inputIdentifier === 'country')
+      newValue = event;
+    else if (updatedFormElement.elementType === 'checkbox') {
+      newValue = event.target.checked ? 'yes' : 'no';
+    } else {
+      newValue = event.target.value;
+    }
+
+    // We need to go ahead and do validation for <select> elements, since their value isn't modified
+    // between a change event (what we're reacting to here) and a blur event (which is for fieldBlurred)
+    // To avoid confusion with extended form fields, we're hard-coding it to birth_month.
+    if (inputIdentifier === 'birth_month' || inputIdentifier === 'position') {
+      const checksToRun = updatedFormElement.validityErrors;
+      const {validity} = event !== null ? event.target : {};
+      const failedChecks = checksToRun.filter(c => validity[c]);
+      updatedFormElement = {
+        ...updatedFormElement,
+        ...validityForField(inputIdentifier, failedChecks),
+      }
+    } else if (inputIdentifier === 'country') {
+      // special snowflake...
+      const failedChecks = event.length === 0 ? ['valueMissing'] : [];
+      updatedFormElement = {
+        ...updatedFormElement,
+        ...validityForField(inputIdentifier, failedChecks),
+      }
+    } else {
+      updatedFormElement.validated = false;
+    }
+
+    // Update the relevant parts of the changed field (the new value, whether it's valid, and the fact that it was changed at all)
+    updatedFormElement.elementConfig.value = newValue;
+    updatedFormElement.touched = true;
+
+    // Deep-copy the formFields property, because it's complex
+    updatedBowlerForm.formFields = {
+      ...bowlerForm.formFields
+    }
+    // Put the changed field in the copy of the bowler form structure
+    updatedBowlerForm.formFields[inputIdentifier] = updatedFormElement;
 
     updatedBowlerForm.touched = true;
 
@@ -580,24 +528,16 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
     };
 
     // Now, determine whether the whole form is valid
-    const shiftFormIsValid = includeShift
-      ? newFormData.soloBowlerFields.preferred_shift.elementConfig.value.length > 0
-      : true;
-    newFormData.valid = shiftFormIsValid && Object.values(newFormData.formFields).every(
-      formField => typeof formField.valid === 'undefined' || formField.valid
+    newFormData.valid = Object.values(newFormData.formFields).every(
+      formField => formField === null  || typeof formField.valid === 'undefined' || formField.valid
     );
 
     setBowlerForm(newFormData);
   }
 
-  const excludedFields = [];
-  if (solo) {
-    excludedFields.push('position');
-  }
-
   const formElements = [];
   for (let key in bowlerForm.formFields) {
-    if (excludedFields.includes(key)) {
+    if (!bowlerForm.formFields[key]) {
       continue;
     }
     formElements.push({
@@ -610,15 +550,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
 
   let form = (
     <form onSubmit={formHandler}>
-      {showShiftSelection && (
-        <div>
-          <ShiftForm tournament={tournament}
-                     onInputChanged={(event) => inputChangedHandler(event, 'preferred_shift')}
-                     currentSelection={bowlerForm.soloBowlerFields.preferred_shift.elementConfig.value}
-                     name={'preferred_shift'}/>
-          <hr/>
-        </div>
-      )}
       {formElements.map(formElement => (
         <Input
           key={formElement.id}
@@ -639,46 +570,20 @@ const BowlerForm = ({tournament, bowlerInfoSaved, includeShift, bowlerData, canc
       ))}
 
       <div className="d-flex flex-row-reverse justify-content-between pt-2">
-        <button className="btn btn-primary btn-lg" type="submit" disabled={!bowlerForm.valid || !bowlerForm.touched}>
+        <button className="btn btn-primary btn-lg" type="submit" disabled={!bowlerForm.valid}>
           {buttonText}{' '}
-          <i className="bi-chevron-double-right ps-1" aria-hidden="true"/>
+          <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
         </button>
-
-        {showCancelButton && (
-          <a className={'btn btn-secondary btn-lg'}
-             href={cancelHref}>
-            <i className={'bi-chevron-double-left pe-1'} aria-hidden={true}/>
-            Cancel Changes
-          </a>
-        )}
       </div>
     </form>
   );
-
-  let bowlerIndexInTeam = 0;
-  // This is for editing a bowler, who may or may not be on a team. That's why we use a prop to give us the index.
-  if (bowlerIndex >= 0) {
-    bowlerIndexInTeam = bowlerIndex;
-  } else
-    if (registration.team) {
-    bowlerIndexInTeam = registration.team.bowlers.length;
-  } else
-    if (registration.bowlers) {
-    bowlerIndexInTeam = registration.bowlers.length;
-  }
-
-  let headerText = 'Bowler ' + String.fromCharCode(constants.A_CHAR_CODE + bowlerIndexInTeam);
 
   return (
     <ErrorBoundary>
       <div className={classes.BowlerForm}>
 
-        <h3>
-          {headerText}
-        </h3>
-
-        <p>
-          <i className={`${classes.RequiredLabel} align-top bi-asterisk`}/>
+        <p className={`${classes.RequiredLabel} text-md-center`}>
+          <i className={`align-top bi-asterisk`}/>
           {' '}indicates a required field
         </p>
 

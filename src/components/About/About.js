@@ -155,7 +155,7 @@ const about = () => (
               <ul>
                 <li>
                   Exercise the registration flow to ensure the optimal bowler experience. Includes full and partial team
-                  registrations, joining an existing partial team, and registering as a solo bowler.
+                  registrations, and registering as a solo bowler.
                 </li>
                 <li>
                   Simulate registrations happening during the early, regular, and late registration periods (when applicable),
@@ -176,12 +176,11 @@ const about = () => (
               capacity.
             </li>
             <li>
-              Display how close the tournament is to its full capacity, including bowlers who are confirmed (e.g., paid
-              in full) vs. those who have registered but not yet paid.
+              Display how close each tournament shift is to its full capacity.
             </li>
             <li>
               Enable or disable different registration modes as needed, e.g., limit registrations to individual bowlers,
-              or to those wishing to join an existing, incomplete team.
+              or to new teams only.
             </li>
           </ul>
           <p>Interested in using the system for your tournament?{' '}

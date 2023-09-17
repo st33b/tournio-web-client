@@ -273,22 +273,20 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
             />
           </div>
         </div>
-        {team.size < maxTeamSize &&
-          <div className={'row mb-2'}>
-            <label htmlFor={'place_with_others'}
-                   className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
-              Place With Others?
-            </label>
-            <div className={'col'}>
-              <input type={'text'}
-                     readOnly={true}
-                     className={'form-control-plaintext'}
-                     id={'place_with_others'}
-                     value={team.place_with_others === 'n/a' ? 'no response' : (team.place_with_others ? 'Yes' : 'No')}
-              />
-            </div>
+        <div className={'row mb-2'}>
+          <label htmlFor={'initial_size'}
+                 className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
+            Initially Requested Size
+          </label>
+          <div className={'col'}>
+            <input type={'text'}
+                   readOnly={true}
+                   className={'form-control-plaintext'}
+                   id={'initial_size'}
+                   value={team.initial_size}
+            />
           </div>
-        }
+        </div>
         {team.size === 0 && (
           <div className={'border-top border-1 mt-3'}>
             <p className={'lead text-center mt-3'}>No bowlers on this team.</p>

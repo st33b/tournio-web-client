@@ -7,12 +7,14 @@ import {useLoginContext} from "../../../store/LoginContext";
 import {updateObject} from "../../../utils";
 
 const BOOLEAN_CONFIG_ITEMS = [
+  'automatic_discount_voids',
+  'automatic_late_fees',
+  'event_selection',
+  'publicly_listed',
+  'accept_payments',
   'display_capacity',
   'email_in_dev',
-  'publicly_listed',
   'skip_stripe',
-  'event_selection',
-  'accept_payments',
 ];
 
 const ConfigItemForm = ({item}) => {
@@ -149,7 +151,7 @@ const ConfigItemForm = ({item}) => {
     }
     const itemContent = (
         <div className={`${classes.Item} d-flex`} key={item.key}>
-          <dt className={'col-4'}>{item.label}</dt>
+          <dt className={'col-5'}>{item.label}</dt>
           <dd className={'ps-3 flex-grow-1 overflow-hidden'}>{displayedValue}</dd>
         </div>
     )

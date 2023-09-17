@@ -1,110 +1,164 @@
 import React, {useEffect, useState} from "react";
-import {Form, Row, Col, Button} from "react-bootstrap";
-import {Map} from "immutable";
 
 import classes from './TeamForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {useClientReady} from "../../../utils";
-import ShiftForm from "../ShiftForm/ShiftForm";
+import {updateObject} from "../../../utils";
 
-const TeamForm = ({tournament, teamFormCompleted}) => {
-  const initialFormState = {
-    teamName: '',
-    shift: '',
+const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
+  const initialFormValues = {
+    fields: {
+      bowlerCount: 4,
+      name: '',
+      preferredShift: '',
+    },
     valid: false,
   }
-  const [teamForm, setTeamForm] = useState(Map(initialFormState));
+  const [componentState, setComponentState] = useState({
+    form: initialFormValues,
+  });
 
   useEffect(() => {
-    if (!tournament) {
+    if (!shifts) {
       return;
     }
-    if (tournament.available_shifts.length === 1) {
-      const newTeamForm = teamForm.set('shift', tournament.available_shifts[0].identifier);
-      setTeamForm(newTeamForm);
-    }
-  }, [tournament]);
+    // Default the form's preferredShift value to the first shift
+    const newFormValues = {...componentState.form };
+    newFormValues.fields.preferredShift = shifts[0].identifier;
+    setComponentState(updateObject(componentState, {
+      form: newFormValues,
+    }));
+  }, [shifts]);
 
   const formHandler = (event) => {
     event.preventDefault();
 
-    if (!teamForm.get('valid')) {
+    if (!componentState.form.valid) {
       return;
     }
 
-    teamFormCompleted(teamForm.get('teamName'), teamForm.get('shift'));
+    onSubmit(componentState.form.fields);
   }
 
-  const isValid = (formData) => {
-    const shiftSatisfied = tournament.available_shifts.length > 1 ? formData.get('shift').length > 0 : true;
-    return shiftSatisfied && formData.get('teamName').trim().length > 0;
+  const isFormValid = (fields) => {
+    return fields.bowlerCount > 0 && fields.bowlerCount <= maxBowlers
+      && fields.name.length > 0
+      && fields.preferredShift.length > 0;
   }
 
-  const inputChangedHandler = (event) => {
-    const inputName = event.target.name;
-    const newValue = event.target.value;
-
-    const changedForm = teamForm.set(inputName, newValue);
-    setTeamForm(changedForm.set('valid', isValid(changedForm)));
+  const inputChanged = (element) => {
+    const newFormValues = {...componentState.form };
+    switch (element.target.name) {
+      case 'bowlerCount':
+        newFormValues.fields.bowlerCount = parseInt(element.target.value);
+        break;
+      case 'name':
+      case 'preferredShift':
+        newFormValues.fields[element.target.name] = element.target.value;
+        break;
+      default:
+        return;
+    }
+    newFormValues.valid = isFormValid(newFormValues.fields);
+    setComponentState(updateObject(componentState, {
+      form: newFormValues,
+    }));
   }
 
-  const ready = useClientReady();
-  if (!ready) {
-    return null;
-  }
-  if (!tournament) {
-    return '';
+  const bowlerCountRadios = [];
+  for (let i = 0; i < maxBowlers; i++) {
+    const selected = componentState.form.fields.bowlerCount === i+1;
+    bowlerCountRadios.push(
+      <div key={`bowlerCountInput${i+1}`} className={`mx-lg-4 ${selected ? 'selected-radio-container' : ''}`}>
+        <input type={'radio'}
+               className={'btn-check'}
+               name={'bowlerCount'}
+               id={`bowlerCount_${i+1}`}
+               value={i+1}
+               checked={selected}
+               onChange={inputChanged}
+               autoComplete={'off'} />
+        <label className={`btn btn-lg btn-tournio-radio`}
+               htmlFor={`bowlerCount_${i+1}`}>
+          {i+1}
+        </label>
+      </div>
+    );
   }
 
   return (
     <ErrorBoundary>
-      <div className={classes.TeamForm}>
-        <Form onSubmit={formHandler} noValidate>
-          <Form.Group as={Row}
-                      className={'mb-3'}
-                      controlId={'teamName'}>
-            <Form.Label column={'lg'}
-                        className={classes.Label}
-                        md={4}>
-              Team Name
-              <div className="d-inline">
-                <i className={`${classes.Required} align-top bi-asterisk`} />
-                <span className="visually-hidden">
-                  This field is required.
-                </span>
-              </div>
-            </Form.Label>
-            <Col md={8}>
-              <Form.Control type={'text'}
-                            placeholder={'Name your team!'}
-                            maxLength={100}
-                            size={'lg'}
-                            name={'teamName'}
-                            required
-                            onChange={inputChangedHandler}
-                            value={teamForm.get('teamName')}/>
-              <Form.Control.Feedback type={'invalid'}>
-                Every team needs a good name!
-              </Form.Control.Feedback>
-            </Col>
-          </Form.Group>
+      <div className={`${classes.TeamForm}`}>
+        <p className={`text-center`}>
+          All fields are required.
+        </p>
+        {/* bowler count selector */}
+        <div className={`${classes.FormElement}`}>
+          <label className={`${classes.Label} col-form-label-lg`}>
+            How many bowlers do you have?
+          </label>
+          <div className={`d-flex justify-content-evenly justify-content-lg-center`}>
+            {bowlerCountRadios}
+          </div>
+        </div>
 
-          <ShiftForm tournament={tournament}
-                     onInputChanged={inputChangedHandler}
-                     currentSelection={teamForm.get('shift')} />
+        {/* team name */}
+        <div className={`${classes.FormElement}`}>
+          <label className={'col-form-label-lg'}
+                 htmlFor={'teamName'}>
+            Team Name
+          </label>
+          <input type={'text'}
+                 id={'teamName'}
+                 name={'name'}
+                 value={componentState.form.fields.name}
+                 onChange={inputChanged}
+                 aria-label={'Team Name'}
+                 className={`form-control form-control-lg`}
+                 placeholder={'... name ...'}
+          />
+        </div>
 
-          <Row>
-            <Col className={classes.Submit}>
-              <Button type={'submit'}
-                      variant={'success'}
-                      size={'lg'}
-                      disabled={!teamForm.get('valid')}>
-                Next: Bowler Details
-                <i className={'bi-chevron-right'} aria-hidden={true}/>
-              </Button>
-            </Col>
-          </Row>
-        </Form>
+        {/* shift preference selector */}
+        {shifts.length > 1 && (
+          <div className={`${classes.FormElement}`}>
+            <label className={`${classes.Label} col-form-label-lg`}>
+              Shift Preference
+            </label>
+            <div className={`d-flex justify-content-evenly justify-content-lg-center`}>
+              {shifts.map((shift, i) => {
+                if (shift.is_full) {
+                  return '';
+                }
+                const selected = componentState.form.fields.preferredShift === shift.identifier;
+                return (
+                <div key={`preferredShiftInput${i}`}
+                     className={`mx-lg-4 ${selected ? 'selected-radio-container' : ''}`}>
+                  <input type={'radio'}
+                         className={'btn-check'}
+                         name={'preferredShift'}
+                         id={`preferredShift_${i}`}
+                         value={shift.identifier}
+                         onChange={inputChanged}
+                         checked={selected}
+                         autoComplete={'off'}/>
+                  <label className={`btn btn-lg btn-tournio-radio`}
+                         htmlFor={`preferredShift_${i}`}>
+                    {shift.name}
+                  </label>
+                </div>
+              )})}
+            </div>
+          </div>
+        )}
+        <div className={`${classes.Submit}`}>
+          <button className={`btn btn-lg btn-success`}
+                  onClick={formHandler}
+                  disabled={!componentState.form.valid}
+                  role={'button'}>
+            Go
+            <i className={'bi bi-arrow-right ps-2'} aria-hidden={true}/>
+          </button>
+        </div>
       </div>
     </ErrorBoundary>
   )

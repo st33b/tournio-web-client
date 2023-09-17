@@ -1,9 +1,10 @@
 import axios from "axios";
 import {
   bowlerCommerceDetailsRetrieved,
-  teamListRetrieved,
 } from "./store/actions/registrationActions";
 import {useEffect, useState} from "react";
+import {useRouter} from "next/router";
+import useSWR from "swr";
 
 export const useStorage = (key, initialValue) => {
   const [value, setValue] = useState(() => {
@@ -95,7 +96,7 @@ export const tournamentName = (rows, id, filterValue) => {
   return rows.filter(row => row.values[id].some(t => t.name === filterValue));
 }
 
-export const devConsoleLog = (message, object=null) => {
+export const devConsoleLog = (message, object = null) => {
   if (process.env.NODE_ENV === 'development') {
     console.log(`[DEV] ${message}`, object);
   }
@@ -212,7 +213,9 @@ export const fetchTournamentList = (onSuccess, onFailure) => {
     headers: {
       'Accept': 'application/json',
     },
-    validateStatus: (status) => { return status < 500 },
+    validateStatus: (status) => {
+      return status < 500
+    },
   };
   axios(requestConfig)
     .then(response => {
@@ -256,7 +259,9 @@ export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure}) => {
     headers: {
       'Accept': 'application/json',
     },
-    validateStatus: (status) => { return status < 500 },
+    validateStatus: (status) => {
+      return status < 500
+    },
   }
   axios(requestConfig)
     .then(response => {
@@ -278,7 +283,9 @@ export const fetchBowlerDetails = (bowlerIdentifier, dispatch, onFailure) => {
     headers: {
       'Accept': 'application/json',
     },
-    validateStatus: (status) => { return status < 500 },
+    validateStatus: (status) => {
+      return status < 500
+    },
   }
   axios(requestConfig)
     .then(response => {
@@ -309,7 +316,9 @@ export const fetchTeamList = ({tournamentIdentifier, dispatch, onSuccess, onFail
       'Accept': 'application/json',
     },
     params: queryParams,
-    validateStatus: (status) => { return status < 500 },
+    validateStatus: (status) => {
+      return status < 500
+    },
   }
   axios(requestConfig)
     .then(response => {
@@ -333,7 +342,9 @@ export const fetchBowlerList = ({tournamentIdentifier, onSuccess, onFailure, unp
     headers: {
       'Accept': 'application/json',
     },
-    validateStatus: status => { return status < 500 },
+    validateStatus: status => {
+      return status < 500
+    },
   };
   axios(requestConfig)
     .then(response => {
@@ -371,19 +382,70 @@ export const submitNewTeamRegistration = (tournament, team, onSuccess, onFailure
       console.log(error);
       onFailure(error.response.data);
     });
+}
 
+export const submitNewTeamWithPlaceholders = ({tournament, team, bowler, onSuccess, onFailure}) => {
+  const postData = {
+    team: {
+      name: team.name,
+      initial_size: team.bowlerCount,
+      bowlers_attributes: [{
+        ...convertBowlerDataForPost(tournament, bowler),
+        position: bowler.position,
+      }],
+      shift_identifier: team.preferredShift,
+    },
+  }
+  const requestConfig = {
+    method: 'post',
+    url: `${apiHost}/tournaments/${tournament.identifier}/teams`,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    data: postData,
+  }
+  axios(requestConfig)
+    .then(response => {
+      onSuccess(response.data);
+    })
+    .catch(error => {
+      console.log("Entry submission failed.");
+      console.log(error);
+      onFailure(error.response.data);
+    });
 }
 
 export const submitSoloRegistration = (tournament, bowler, onSuccess, onFailure) => {
   // make the post
-  const bowlerData = { bowlers: [convertBowlerDataForPost(tournament, bowler)] };
+  const bowlerData = {bowlers: [convertBowlerDataForPost(tournament, bowler)]};
   axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, bowlerData)
     .then(response => {
       const newBowler = response.data[0];
       onSuccess(newBowler);
     })
     .catch(error => {
-      console.log('womp womp');
+      console.log(error);
+      console.log(error.response);
+      onFailure(error.response.status);
+    });
+}
+
+export const submitAddBowler = ({tournament, team, bowler, onSuccess, onFailure}) => {
+  // make the post
+  const bowlerData = convertBowlerDataForPost(tournament, bowler);
+  bowlerData.position = bowler.position;
+  const postData =
+    {
+      team_identifier: team.identifier,
+      bowlers: [bowlerData],
+    };
+  axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, postData)
+    .then(response => {
+      const newBowler = response.data[0];
+      onSuccess(newBowler);
+    })
+    .catch(error => {
       console.log(error);
       console.log(error.response);
       onFailure(error.response.status);
@@ -392,14 +454,13 @@ export const submitSoloRegistration = (tournament, bowler, onSuccess, onFailure)
 
 export const submitDoublesRegistration = (tournament, bowlers, onSuccess, onFailure) => {
   // make the post
-  const bowlerData = { bowlers: bowlers.map(bowler => convertBowlerDataForPost(tournament, bowler)) };
+  const bowlerData = {bowlers: bowlers.map(bowler => convertBowlerDataForPost(tournament, bowler))};
   axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, bowlerData)
     .then(response => {
       const newBowlers = response.data;
       onSuccess(newBowlers);
     })
     .catch(error => {
-      console.log('womp womp');
       console.log(error);
       console.log(error.response);
       onFailure(error.response.status);
@@ -408,7 +469,7 @@ export const submitDoublesRegistration = (tournament, bowlers, onSuccess, onFail
 
 export const submitPartnerRegistration = (tournament, bowler, partner, onSuccess, onFailure) => {
   // make the post
-  const bowlerData = { bowlers: [convertBowlerDataForPost(tournament, bowler)] };
+  const bowlerData = {bowlers: [convertBowlerDataForPost(tournament, bowler)]};
   bowlerData.bowlers[0].doubles_partner_identifier = partner.identifier;
 
   axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, bowlerData)
@@ -417,41 +478,17 @@ export const submitPartnerRegistration = (tournament, bowler, partner, onSuccess
       onSuccess(newBowler);
     })
     .catch(error => {
-      console.log('womp womp');
       console.log(error);
       console.log(error.response);
       onFailure(error.response.status);
     });
-}
-
-export const submitJoinTeamRegistration = (tournament, team, bowler, onSuccess, onFailure) => {
-  // make the post
-  if (team.shift) {
-    bowler.shift = team.shift;
-  }
-  const teamId = team.identifier;
-  const bowlerData = {
-    team_identifier: teamId,
-    bowlers: [{...convertBowlerDataForPost(tournament, bowler), ...teamDataForBowler(bowler) }],
-  };
-  axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, bowlerData)
-    .then(response => {
-      const newBowlerIdentifier = response.data.identifier;
-      onSuccess(newBowlerIdentifier);
-    })
-    .catch(error => {
-      console.log('womp womp');
-      console.log(error);
-      console.log(error.response);
-      onFailure(error.response.status);
-    });
-
 }
 
 const convertTeamDataForServer = (tournament, team) => {
   let postData = {
     team: {
       name: team.name,
+      initial_size: team.bowlerCount,
       bowlers_attributes: [],
       options: {
         place_with_others: !!team.placeWithOthers,
@@ -481,10 +518,6 @@ const teamDataForBowler = (bowler) => {
 
 const convertBowlerDataForPost = (tournament, bowler) => {
   const additionalQuestionResponses = convertAdditionalQuestionResponsesForPost(tournament, bowler);
-  const shiftObj = {};
-  if (bowler.shift) {
-    shiftObj.shift_identifier = bowler.shift.identifier;
-  }
 
   const bowlerObj = {
     person_attributes: {
@@ -505,7 +538,10 @@ const convertBowlerDataForPost = (tournament, bowler) => {
     },
     additional_question_responses: additionalQuestionResponses,
   };
-  return {...bowlerObj, ...shiftObj};
+  if (bowler.doubles_partner) {
+    bowlerObj.doubles_partner_identifier = bowler.doubles_partner;
+  }
+  return bowlerObj;
 }
 
 const convertAdditionalQuestionResponsesForPost = (tournament, bowler) => {
@@ -530,7 +566,9 @@ export const postFreeEntry = (tournamentIdentifier, postData, onSuccess, onFailu
       'Accept': 'application/json',
     },
     data: postData,
-    validateStatus: (status) => { return status < 500 },
+    validateStatus: (status) => {
+      return status < 500
+    },
   }
   axios(requestConfig)
     .then(response => {
@@ -585,7 +623,9 @@ export const postPurchaseDetails = (bowlerIdentifier, path, postData, onSuccess,
       'Content-Type': 'application/json',
     },
     data: postData,
-    validateStatus: (status) => { return status < 500 },
+    validateStatus: (status) => {
+      return status < 500
+    },
   }
   axios(requestConfig)
     .then(response => {
@@ -607,7 +647,9 @@ export const getCheckoutSessionStatus = (identifier, onSuccess, onFailure) => {
     headers: {
       'Accept': 'application/json',
     },
-    validateStatus: (status) => { return status < 500 },
+    validateStatus: (status) => {
+      return status < 500
+    },
   }
   axios(requestConfig)
     .then(response => {
@@ -634,7 +676,9 @@ export const directorForgotPasswordRequest = (postData, onSuccess, onFailure) =>
       'Accept': 'application/json',
     },
     url: url,
-    validateStatus: (status) => { return status < 500 },
+    validateStatus: (status) => {
+      return status < 500
+    },
     data: postData,
   }
   axios(requestConfig)
@@ -668,7 +712,9 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
       'Accept': 'application/json',
     },
     url: url,
-    validateStatus: (status) => { return status < 500 },
+    validateStatus: (status) => {
+      return status < 500
+    },
     data: postData,
   }
   axios(requestConfig)
@@ -695,7 +741,7 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
 
 /////////////////////////////////////////////////////
 
-export const validateEmail = async function (emailAddress) {
+export const validateEmail = async function(emailAddress) {
   const response = await fetch('/api/email_check', {
     method: 'POST',
     mode: 'same-origin',
@@ -705,7 +751,126 @@ export const validateEmail = async function (emailAddress) {
     redirect: 'follow',
     body: JSON.stringify({email: emailAddress}),
   }).catch((error) => {
-    return { error: error };
+    return {error: error};
   });
   return await response.json();
+}
+
+/////////////////////////////////////////////////////
+
+// We can use this for fetching data from the API required by a component, but that's it.
+// It'll make the pages that need it smaller, since they won't have to worry about
+// handing over the user auth token, among other things.
+export const useApi = ({
+                         uri,
+                         onSuccess = () => {},
+                         onFailure = () => {},
+                         initialData = null,
+                       }) => {
+  const ready = useClientReady();
+
+  const handleSuccess = (data, key, config) => {
+    onSuccess(data);
+  }
+
+  const handleError = (error) => {
+    devConsoleLog("Unusual Error: ", error.message);
+    onFailure(error.message);
+  }
+
+  /////////////////
+  // This prevents SWR from making the request if we don't have a URI yet (which may be
+  // the case when pulling URI details from, say, one or more query parameters
+  const swrKey = uri ? [`${apiHost}${uri}`, ready] : null;
+  // devConsoleLog("SWR Key:", swrKey);
+  const swrOptions = {
+    revalidateOnFocus: false,
+    shouldRetryOnError: false,
+    onSuccess: handleSuccess,
+    onError: handleError,
+    fallbackData: initialData,
+  };
+  const swrFetcher = async (url, clientReady) => {
+    if (clientReady) {
+      const headers = new Headers();
+      headers.append("Accept", "application/json");
+      // @hooks_todo Merge requestConfig in here when we get to the point where we need to.
+      const fetchInit = {
+        method: 'GET',
+        headers: headers,
+      }
+      const response = await fetch(url, fetchInit);
+
+      if (!response.ok) {
+        const error = new Error('Received an error from the server.');
+        error.info = await response.text();
+        error.status = response.status;
+        throw error;
+      }
+
+      return response.json();
+    }
+  }
+  /////////////////
+
+  const {data, error, isLoading, mutate} = useSWR(
+    swrKey,
+    ([requestUrl, clientReady]) => swrFetcher(requestUrl, clientReady),
+    swrOptions
+  );
+
+  return {
+    loading: isLoading,
+    data,
+    error,
+    onDataUpdate: (newData) => mutate(newData),
+  }
+}
+
+export const useTournament = (identifier, onSuccess = () => {
+}, onFailure = () => {}) => {
+  const {loading, data: tournament, error, onDataUpdate} = useApi({
+    uri: identifier ? `/tournaments/${identifier}` : null,
+    onSuccess: onSuccess,
+  });
+
+  const tournamentHasChanged = (updatedTournament) => {
+    const mutateOptions = {
+      optimisticData: updatedTournament,
+      rollbackOnError: true,
+      populateCache: true,
+    };
+    onDataUpdate(updatedTournament, mutateOptions);
+  }
+
+  return {
+    loading,
+    error,
+    tournament,
+    tournamentHasChanged,
+  }
+}
+
+export const useTeam = (teamIdentifier, onSuccess = () => {
+}) => {
+  const {loading, data: team, error, onDataUpdate} = useApi({
+    uri: teamIdentifier ? `/teams/${teamIdentifier}` : null,
+    onSuccess: onSuccess,
+  });
+
+  const teamHasChanged = (updatedTeam) => {
+    const mutateOptions = {
+      optimisticData: updatedTeam,
+      rollbackOnError: true,
+      populateCache: true,
+    };
+    onDataUpdate(updatedTeam, mutateOptions);
+  }
+
+  return {
+    loading,
+    error,
+    team,
+    teamHasChanged,
+  }
 }

@@ -20,7 +20,6 @@ const TeamFilterForm = (props) => {
 
     switch (inputIdentifier) {
       case 'incomplete':
-      case 'place_with_others':
         const oldValue = filterForm[inputIdentifier];
         const newValue = !oldValue;
         updatedForm[inputIdentifier] = newValue;
@@ -53,13 +52,6 @@ const TeamFilterForm = (props) => {
                       label={'Incomplete teams only'}
                       checked={filterForm.incomplete}
                       onChange={(event) => inputChangedHandler(event, 'incomplete')}
-          />
-          <Form.Check type={'switch'}
-                      id={'place_with_others'}
-                      name={'place_with_others'}
-                      label={'Wants committee to place others with them'}
-                      checked={filterForm.place_with_others}
-                      onChange={(event) => inputChangedHandler(event, 'place_with_others')}
           />
         </Col>
       </Row>

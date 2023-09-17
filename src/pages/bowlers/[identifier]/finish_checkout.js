@@ -31,7 +31,7 @@ const Page = () => {
       return;
     }
     if (!commerce.checkoutSessionId) {
-      router.push(`/bowlers/${identifier}?success=purchase`);
+      router.push(`/bowlers/${identifier}?success=2`);
     }
   }, [commerce.checkoutSessionId]);
 
@@ -64,9 +64,8 @@ const Page = () => {
     if (data.status === 'completed') {
       // It'd be nice to get a report here, how high did "count" get before we had the full details from Stripe?
       dispatch(stripeCheckoutSessionCompleted());
-      return;
     } else if (data.status === 'expired') {
-      router.push(`/bowlers/${identifier}?success=expired`);
+      router.push(`/bowlers/${identifier}?error=1`);
     } else {
       devConsoleLog('But our status is not completed. Trying again.');
       setTimeout(() => checkTheStatus(count), 2 ** count * 10);

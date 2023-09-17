@@ -76,7 +76,7 @@ const Front = () => {
             </Card.Header>
             <Card.Body>
               <Card.Text>
-                Allow your bowlers to register full or partial teams, join existing partial teams, or register individually.
+                Allow your bowlers to register full or partial teams or register individually.
               </Card.Text>
               <Card.Text>
                 There&apos;s even support for tournaments with non-traditional formats, as well as tournaments with multiple shifts.

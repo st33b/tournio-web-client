@@ -2,6 +2,11 @@
   .Heading {
     background-color: var(--tournio-secondary-bg-subtle);
   }
+  .Position {
+    @media (min-width: 768px) {
+      font-size: 1.2rem;
+    }
+  }
   dt {
     text-align: right;
   }

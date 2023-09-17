@@ -13,17 +13,17 @@ export const tournamentDetailsRetrieved = (tournament) => {
   }
 }
 
-export const newTeamRegistrationInitiated = () => {
+export const newTeamRegistrationInitiated = (team) => {
   return {
     type: actionTypes.NEW_TEAM_REGISTRATION_INITIATED,
+    team: team,
   };
 }
 
-export const teamInfoAdded = (name, shiftId) => {
+export const newTeamRegistrationUpdated = (team) => {
   return {
-    type: actionTypes.TEAM_INFO_ADDED,
-    name: name,
-    shiftId: shiftId,
+    type: actionTypes.NEW_TEAM_REGISTRATION_UPDATED,
+    team: team,
   }
 }
 
@@ -34,64 +34,24 @@ export const newTeamBowlerInfoAdded = (bowlerInfo) => {
   }
 }
 
-export const newTeamPartnersChosen = (bowlers) => {
-  return {
-    type: actionTypes.NEW_TEAM_PARTNERS_SELECTED,
-    bowlers: bowlers,
-  }
-}
-
-export const newTeamBowlerEdited = (bowler, index) => {
-  return {
-    type: actionTypes.NEW_TEAM_BOWLER_UPDATED,
-    bowler: bowler,
-    index: index,
-  }
-}
-
-export const newTeamEntryCompleted = () => {
+export const newTeamEntryCompleted = (newTeam) => {
   return {
     type: actionTypes.NEW_TEAM_ENTRY_COMPLETED,
-  }
-}
-
-export const joinTeamRegistrationInitiated = (team) => {
-  return {
-    type: actionTypes.JOIN_TEAM_REGISTRATION_INITIATED,
-    team: team,
-  }
-}
-
-export const teamListRetrieved = () => {
-  return {
-    type: actionTypes.TEAM_LIST_RETRIEVED,
+    team: newTeam,
   }
 }
 
 export const existingTeamBowlerInfoAdded = (bowlerInfo) => {
   return {
-    type: actionTypes.EXISTING_TEAM_BOWLER_INFO_ADDED,
+    type: actionTypes.NEW_TEAM_BOWLER_INFO_ADDED,
     bowler: bowlerInfo,
   }
 }
 
-export const existingTeamBowlerEdited = (bowlerInfo) => {
+export const existingTeamBowlerSaved = (teamInfo) => {
   return {
-    type: actionTypes.EXISTING_TEAM_BOWLER_EDITED,
-    bowler: bowlerInfo,
-  }
-}
-
-export const submitJoinTeamCompleted = (bowlerIdentifier) => {
-  return {
-    type: actionTypes.SUBMIT_JOIN_TEAM_COMPLETED,
-    bowlerIdentifier: bowlerIdentifier,
-  }
-}
-
-export const newSoloRegistrationInitiated = () => {
-  return {
-    type: actionTypes.NEW_SOLO_REGISTRATION_INITIATED,
+    type: actionTypes.EXISTING_TEAM_BOWLER_SAVED,
+    team: teamInfo,
   }
 }
 
@@ -123,6 +83,12 @@ export const bowlerCommerceDetailsRetrieved = (bowler, availableItems) => {
   }
 }
 
+export const bowlerCommerceDetailsMooted = () => {
+  return {
+    type: actionTypes.BOWLER_DETAILS_MOOTED,
+  }
+}
+
 export const itemAddedToCart = (item, sizeIdentifier = null) => {
   return {
     type: actionTypes.ITEM_ADDED_TO_CART,
@@ -135,20 +101,6 @@ export const itemRemovedFromCart = (item) => {
   return {
     type: actionTypes.ITEM_REMOVED_FROM_CART,
     item: item,
-  }
-}
-
-export const purchaseCompleted = (newPaidPurchases) => {
-  return {
-    type: actionTypes.PURCHASE_COMPLETED,
-    newPaidPurchases: newPaidPurchases,
-  }
-}
-
-export const purchaseFailed = (error) => {
-  return {
-    type: actionTypes.PURCHASE_FAILED,
-    error: error,
   }
 }
 
@@ -198,33 +150,6 @@ export const newPairBowlerUpdated = (bowlerInfo, index) => {
 export const newPairRegistrationCompleted = () => {
   return {
     type: actionTypes.NEW_PAIR_REGISTRATION_COMPLETED,
-  }
-}
-
-export const partnerUpRegistrationInitiated = (partner) => {
-  return {
-    type: actionTypes.PARTNER_UP_REGISTRATION_INITIATED,
-    partner: partner,
-  }
-}
-
-export const partnerUpBowlerAdded = (bowler) => {
-  return {
-    type: actionTypes.PARTNER_UP_BOWLER_INFO_ADDED,
-    bowler: bowler,
-  }
-}
-
-export const partnerUpBowlerUpdated = (bowlerInfo) => {
-  return {
-    type: actionTypes.PARTNER_UP_BOWLER_UPDATED,
-    bowler: bowlerInfo,
-  }
-}
-
-export const partnerUpRegistrationCompleted = () => {
-  return {
-    type: actionTypes.PARTNER_UP_REGISTRATION_COMPLETED,
   }
 }
 

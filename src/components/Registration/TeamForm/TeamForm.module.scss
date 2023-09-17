@@ -1,20 +1,20 @@
-.TeamForm {
-  .Label {
-    text-align: left;
-    font-weight: normal;
+@use "bootstrap/scss/mixins/buttons";
 
+.TeamForm {
+  .FormElement {
+    margin-bottom: 1.25rem;
+  }
+  .Label {
     .Required {
       margin-left: 5px;
       font-size: 60%;
       color: var(--tournio-danger);
       filter: brightness(80%);
     }
-  }
-  @media (min-width: 768px) {
-    .Label {
-      text-align: right;
-      font-weight: bold;
-    }
+    //@media (min-width: 768px) {
+    //  text-align: right;
+    //  font-weight: bold;
+    //}
   }
   .Submit {
     text-align: right;

@@ -1,22 +1,38 @@
 .PreviousPurchases {
-  background-color: var(--tournio-bookend-bg);
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
+  h5 {
+    font-weight: bold;
+    background-color: var(--tournio-gray-800);
+    color: var(--tournio-gray-300);
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+  }
 
-  ul {
-    margin-bottom: 0;
-    li {
-      list-style-type: circle;
-      margin: 0.5rem auto;
+  p {
+    margin: 0;
+  }
 
-      .MainText {
-        margin: 0 auto;
-      }
-
-      .Note {
-        font-size: 85%;
-        margin: 0 auto;
-      }
+  .Item {
+    padding-bottom: 0.5rem;
+    .ListMarker {
+      padding: 0 0.75rem;
+      font-size: 125%;
+      color: var(--tournio-success-text-emphasis);
     }
+
+    .MainText {
+      margin: 0.2rem auto;
+    }
+
+    .Note {
+      font-size: 85%;
+      margin: 0 auto;
+    }
+  }
+}
+
+[data-bs-theme="dark"] .PreviousPurchases {
+  h5 {
+    background-color: var(--tournio-gray-800);
+    color: var(--tournio-gray-300);
   }
 }

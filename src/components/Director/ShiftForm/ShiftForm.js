@@ -7,18 +7,21 @@ import {directorApiRequest, useTournament} from "../../../director";
 import classes from './ShiftForm.module.scss';
 import ButtonRow from "../../common/ButtonRow";
 import {useLoginContext} from "../../../store/LoginContext";
-import {devConsoleLog, updateObject} from "../../../utils";
+import {updateObject} from "../../../utils";
 import ErrorAlert from "../../common/ErrorAlert";
 
 const ShiftForm = ({shift}) => {
   const {loading, tournament, tournamentUpdatedQuietly} = useTournament();
   const { authToken } = useLoginContext();
 
+  const ALMOST_FULL_THRESHOLD = 4;
+
   const initialFormData = Map({
     name: '',
     description: '',
     capacity: 0,
     display_order: 1,
+    is_full: false,
 
     valid: false,
   });
@@ -37,6 +40,7 @@ const ShiftForm = ({shift}) => {
       description: shift.description,
       capacity: shift.capacity,
       display_order: shift.display_order,
+      is_full: shift.is_full,
 
       valid: true,
     };
@@ -71,6 +75,9 @@ const ShiftForm = ({shift}) => {
       case 'name':
       case 'description':
         newValue = event.target.value;
+        break;
+      case 'is_full':
+        newValue = event.target.checked;
         break;
       default:
         break;
@@ -165,8 +172,9 @@ const ShiftForm = ({shift}) => {
           name: formData.get('name'),
           description: formData.get('description'),
           display_order: formData.get('display_order'),
-        }
-      }
+          is_full: formData.get('is_full'),
+        },
+      },
     };
     directorApiRequest({
       uri: uri,
@@ -195,9 +203,9 @@ const ShiftForm = ({shift}) => {
   let colorClass = '';
   if (shift) {
     submitFunction = updateShiftFormSubmitted;
-    if (shift.paid_count === shift.capacity) {
+    if (shift.requested === shift.capacity) {
       colorClass = classes.Full;
-    } else if (shift.paid_count + shift.unpaid_count + 16 >= shift.capacity) {
+    } else if (shift.capacity - shift.requested <= ALMOST_FULL_THRESHOLD) {
       colorClass = classes.AlmostFull;
     }
   }
@@ -253,20 +261,20 @@ const ShiftForm = ({shift}) => {
                 Capacity
               </dt>
               <dd className={ddClass}>
-                {shift.capacity} bowlers
+                {shift.capacity} teams
               </dd>
               <dt className={dtClass}>
-                Paid
+                Requested
               </dt>
               <dd className={ddClass}>
-                {shift.paid_count}
+                {shift.requested}
               </dd>
-              <dt className={dtClass}>
-                Unpaid
-              </dt>
-              <dd className={ddClass}>
-                {shift.unpaid_count}
-              </dd>
+                <dt className={dtClass}>
+                    Marked as Full?
+                </dt>
+                <dd className={ddClass}>
+                    {shift.is_full ? 'Yes' : 'No'}
+                </dd>
             </div>
           </dl>
         </a>
@@ -343,6 +351,23 @@ const ShiftForm = ({shift}) => {
                 />
               </div>
             </div>
+
+              <div className={'row mb-3'}>
+                  <label htmlFor={'is_full'} className={'form-label col-7'}>
+                      Mark as Full?
+                  </label>
+                  <div className={'col-5'}>
+                      <div className={'col-5 form-check form-switch'}>
+                          <input type={'checkbox'}
+                                 className={'form-check-input'}
+                                 role={'switch'}
+                                 id={`is_full`}
+                                 name={`is_full`}
+                                 checked={formData.get('is_full')}
+                                 onChange={inputChanged} />
+                      </div>
+                  </div>
+              </div>
 
             <div className={'row'}>
               <ButtonRow onCancel={formCancelled}
