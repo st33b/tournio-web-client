@@ -5,11 +5,11 @@ import {Map} from 'immutable';
 import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 import ErrorAlert from "../../common/ErrorAlert";
-import {devConsoleLog, updateObject} from "../../../utils";
+import {updateObject} from "../../../utils";
 
 const RegistrationOptions = () => {
   const { authToken } = useLoginContext();
-  const {loading, tournament, tournamentUpdatedQuietly} = useTournament();
+  const {tournament, tournamentUpdatedQuietly} = useTournament();
 
   const REGISTRATION_TYPES = ['new_team', 'solo', 'new_pair'];
   const REGISTRATION_TYPE_LABELS = [
