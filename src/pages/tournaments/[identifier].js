@@ -30,34 +30,6 @@ const Page = () => {
     registrationContext.dispatch(tournamentDetailsRetrieved(data));
   }
 
-  // const onFetchFailure = (error) => {
-  //   devConsoleLog("Failed to fetch", error);
-  //   // let's clear the tournaments out of context
-  //   router.push('/tournaments');
-  // }
-  //
-  // fetch the tournament details and put the tournament into context
-  // useEffect(() => {
-  //   if (!identifier || !registrationContext) {
-  //     return;
-  //   }
-  //
-  //   const needToFetch = !tournament || tournament.identifier !== identifier;
-  //   const registrationMismatch = registrationContext.registration.tournament && registrationContext.registration.tournament.identifier !== identifier;
-  //
-  //   if (!needToFetch) {
-  //     if (registrationMismatch) {
-  //       devConsoleLog("Registration context has the wrong tournament, updating it");
-  //       registrationContext.dispatch(tournamentDetailsRetrieved(tournament));
-  //     }
-  //   }
-  //
-  //   if (needToFetch) {
-  //     devConsoleLog("Fetching tournament details");
-  //     fetchTournamentDetails(identifier, onFetchSuccess, onFetchFailure);
-  //   }
-  // }, [identifier, tournament]);
-
   const {tournament, loading, error} = useTournament(identifier, onFetchSuccess)
 
   if (loading || !tournament) {
@@ -75,14 +47,6 @@ const Page = () => {
       </div>
     );
   }
-
-  // const ready = useClientReady();
-  // if (!ready) {
-  //   return null;
-  // }
-  // if (!tournament) {
-  //   return null;
-  // }
 
   return (
     <div className={classes.TournamentDetails}>
