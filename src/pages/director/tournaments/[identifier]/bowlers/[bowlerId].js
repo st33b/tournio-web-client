@@ -672,10 +672,6 @@ const BowlerPage = () => {
                   n/a
                 </dd>
               </div>
-              <div className={'row'}>
-                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Preferred Shift</dt>
-                <dd className={'col'}>{bowler.shift.name || 'n/a'}</dd>
-              </div>
             </>
           )}
           <div className={'row'}>
