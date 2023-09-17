@@ -59,7 +59,6 @@ export const registrationReducer = (state, action) => {
       });
     case actionTypes.NEW_PAIR_BOWLER_INFO_ADDED:
       const theBowler = {...action.bowler};
-      theBowler.shift = state.tournament.shifts.find(s => s.identifier === action.bowler.shift);
       return updateObject(state, {
         bowlers: state.bowlers.concat(theBowler),
       });

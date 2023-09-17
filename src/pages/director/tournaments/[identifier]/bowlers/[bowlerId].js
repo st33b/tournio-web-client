@@ -77,7 +77,7 @@ const BowlerPage = () => {
     // any other state data the bowler needs...
   }
 
-  const {loading: tournamentLoading, tournament, error: tournamentError, tournamentUpdatedQuietly} = useTournament();
+  const {tournament, tournamentUpdatedQuietly} = useTournament();
 
   const {loading: bowlerLoading, data: bowler, error: bowlerError, onDataUpdate: onBowlerUpdate} = useDirectorApi({
     uri: bowlerId ? `/bowlers/${bowlerId}` : null,
