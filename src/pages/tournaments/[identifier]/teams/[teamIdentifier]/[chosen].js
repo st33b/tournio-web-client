@@ -11,6 +11,7 @@ import AddBowler from "../../../../../components/Registration/AddBowler/AddBowle
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import PositionUnavailable from "../../../../../components/Registration/PositionUnavailable/PositionUnavailable";
+import UrlShare from "../../../../../components/ui/UrlShare/UrlShare";
 
 const Page = () => {
   const router = useRouter();
@@ -19,6 +20,7 @@ const Page = () => {
   const [state, setState] = useState({
     chosenPosition: 1,
     successMessage: null,
+    currentLocation: null,
   });
 
   useEffect(() => {
@@ -42,6 +44,7 @@ const Page = () => {
     setState(updateObject(state, {
       successMessage: updatedSuccessMsg,
       chosenPosition: chosenPosition,
+      currentLocation: window.location,
     }));
 
   }, [chosen, success]);
@@ -120,8 +123,11 @@ const Page = () => {
     contentByPosition[i] = content;
   }
 
+  const port = process.env.NODE_ENV === 'development' ? `:${state.currentLocation.port}` : '';
+  const shareUrl = `${state.currentLocation.protocol}//${state.currentLocation.hostname}${port}/teams/${teamIdentifier}`;
+
   return (
-    <div>
+    <div className={`col-md-8 offset-md-2`}>
       <TournamentHeader tournament={tournament}/>
 
       {state.successMessage && <SuccessAlert message={state.successMessage}
@@ -131,6 +137,8 @@ const Page = () => {
       <h3 className={'text-center'}>
         Team: <strong>{team.name}</strong>
       </h3>
+
+      <UrlShare url={shareUrl}/>
 
       <hr/>
 
