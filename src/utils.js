@@ -3,7 +3,6 @@ import {
   bowlerCommerceDetailsRetrieved,
 } from "./store/actions/registrationActions";
 import {useEffect, useState} from "react";
-import {useRouter} from "next/router";
 import useSWR from "swr";
 
 export const useStorage = (key, initialValue) => {

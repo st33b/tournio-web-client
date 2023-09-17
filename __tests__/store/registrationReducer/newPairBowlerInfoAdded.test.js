@@ -32,9 +32,4 @@ describe ('action type: new pair bowler info added', () => {
     const index = result.bowlers.findIndex(b => b.name === newBowler.name);
     expect(index).toBeGreaterThanOrEqual(0);
   });
-
-  it ('has added the correct shift to the returned bowler', () => {
-    const result = registrationReducer(previousState, action);
-    const bowler = result.bowlers.find(b => b.name === newBowler.name);
-  });
 });
