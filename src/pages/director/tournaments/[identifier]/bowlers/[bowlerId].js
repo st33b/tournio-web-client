@@ -77,7 +77,7 @@ const BowlerPage = () => {
     // any other state data the bowler needs...
   }
 
-  const {loading: tournamentLoading, tournament, error: tournamentError, tournamentUpdatedQuietly} = useTournament();
+  const {tournament, tournamentUpdatedQuietly} = useTournament();
 
   const {loading: bowlerLoading, data: bowler, error: bowlerError, onDataUpdate: onBowlerUpdate} = useDirectorApi({
     uri: bowlerId ? `/bowlers/${bowlerId}` : null,
@@ -671,10 +671,6 @@ const BowlerPage = () => {
                 <dd className={'col'}>
                   n/a
                 </dd>
-              </div>
-              <div className={'row'}>
-                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Preferred Shift</dt>
-                <dd className={'col'}>{bowler.shift.name || 'n/a'}</dd>
               </div>
             </>
           )}

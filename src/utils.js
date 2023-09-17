@@ -3,7 +3,6 @@ import {
   bowlerCommerceDetailsRetrieved,
 } from "./store/actions/registrationActions";
 import {useEffect, useState} from "react";
-import {useRouter} from "next/router";
 import useSWR from "swr";
 
 export const useStorage = (key, initialValue) => {
@@ -495,9 +494,6 @@ const convertTeamDataForServer = (tournament, team) => {
       }
     },
   };
-  if (team.shift) {
-    team.bowlers.forEach(bowler => bowler.shift = team.shift);
-  }
   for (const bowler of team.bowlers) {
     postData.team.bowlers_attributes.push(
       {
