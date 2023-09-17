@@ -10,12 +10,6 @@
       height: 100%;
     }
 
-    .Paid {
-      background-color: var(--tournio-success);
-      [data-bs-theme='dark'] & {
-        background-color: var(--tournio-success-moody);
-      }
-    }
     .Requested {
       background-color: var(--tournio-primary);
       [data-bs-theme='dark'] & {

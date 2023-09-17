@@ -20,13 +20,38 @@ export const registrationReducer = (state, action) => {
         tournament: action.tournament,
       });
     case actionTypes.NEW_TEAM_REGISTRATION_INITIATED:
-    case actionTypes.TEAM_LIST_RETRIEVED:
       return updateObject(state, {
         team: {
-          name: '',
-          bowlers: [],
-          shift: null,
+          ...action.team,
+          bowler: {},
         },
+      });
+    case actionTypes.NEW_TEAM_REGISTRATION_UPDATED:
+      // Same as the above, but don't reset the bowler data. We had to update
+      // the team info due to validation failure.
+      return updateObject(state, {
+        team: {
+          ...action.team,
+        },
+      });
+    case actionTypes.NEW_TEAM_BOWLER_INFO_ADDED:
+      return updateObject(state, {
+        bowler: {...action.bowler},
+      });
+    case actionTypes.NEW_TEAM_ENTRY_COMPLETED:
+      return updateObject(state, {
+        team: action.team,
+        bowler: null,
+      });
+    case actionTypes.EXISTING_TEAM_BOWLER_INFO_ADDED:
+      const bowler = {...action.bowler}
+      return updateObject(state, {
+        bowler: bowler,
+      });
+    case actionTypes.EXISTING_TEAM_BOWLER_SAVED:
+      return updateObject(state, {
+        team: action.team,
+        bowler: null,
       });
     case actionTypes.NEW_PAIR_REGISTRATION_INITIATED:
       return updateObject(state, {
@@ -48,65 +73,6 @@ export const registrationReducer = (state, action) => {
       return updateObject(state, {
         bowlers: null,
       });
-    case actionTypes.TEAM_INFO_ADDED:
-      return updateObject(state, {
-        team: {
-          name: action.name,
-          shift: state.tournament.shifts.find(s => s.identifier === action.shiftId),
-          bowlers: [],
-        }
-      });
-    case actionTypes.NEW_TEAM_BOWLER_INFO_ADDED:
-      const newBowler = {...action.bowler}
-      const newTeam = {...state.team}
-      newTeam.bowlers = state.team.bowlers.concat(newBowler);
-      return updateObject(state, {
-        team: newTeam,
-      });
-    case actionTypes.NEW_TEAM_PARTNERS_SELECTED:
-      const theNewTeam = {...state.team}
-      theNewTeam.bowlers = [...action.bowlers];
-      return updateObject(state, {
-        team: theNewTeam,
-      });
-    case actionTypes.NEW_TEAM_BOWLER_UPDATED:
-      const updatedBowlers = [...state.team.bowlers];
-      const bowlerIndex = action.index;
-      updatedBowlers[bowlerIndex] = updateObject(state.team.bowlers[bowlerIndex], action.bowler);
-      const updatedTeam = {...state.team}
-      updatedTeam.bowlers = updatedBowlers;
-      return updateObject(state, {
-        team: updatedTeam,
-      });
-    case actionTypes.NEW_TEAM_ENTRY_COMPLETED:
-      return updateObject(state, {
-        team: null,
-      });
-    case actionTypes.EXISTING_TEAM_BOWLER_INFO_ADDED:
-      const modifiedTeam = {...state.team}
-      const bowler = {...action.bowler}
-      if (modifiedTeam.bowlers.length === 0 && action.bowler.shift) {
-        modifiedTeam.shift = state.tournament.shifts.find(s => s.identifier === action.bowler.shift);
-        bowler.shift = modifiedTeam.shift;
-      }
-      modifiedTeam.bowlers = state.team.bowlers.concat(bowler);
-      return updateObject(state, {
-        team: modifiedTeam,
-      });
-    case actionTypes.EXISTING_TEAM_BOWLER_EDITED:
-      const team = {...state.team}
-      const bowlers = [...team.bowlers];
-      bowlers.pop(); // remove the last bowler, which is the one who's been edited
-      const updatedBowler = {...action.bowler}
-      if (bowlers.length === 0 && action.bowler.shift) {
-        team.shift = state.tournament.shifts.find(s => s.identifier === action.bowler.shift);
-        updatedBowler.shift = team.shift;
-      }
-      bowlers.push(updatedBowler);
-      team.bowlers = bowlers;
-      return updateObject(state, {
-        team: team,
-      });
     case actionTypes.NEW_SOLO_REGISTRATION_INITIATED:
       return updateObject(state, {
         bowler: {},
@@ -117,7 +83,6 @@ export const registrationReducer = (state, action) => {
     case actionTypes.SOLO_BOWLER_INFO_ADDED:
     case actionTypes.SOLO_BOWLER_INFO_UPDATED:
       const soloBowler = {...action.bowler};
-      soloBowler.shift = state.tournament.shifts.find(s => s.identifier === action.bowler.shift);
       return updateObject(state, {
         bowler: soloBowler,
       });
@@ -125,31 +90,9 @@ export const registrationReducer = (state, action) => {
       return updateObject(state, {
         bowler: null,
       });
-    case actionTypes.PARTNER_UP_REGISTRATION_INITIATED:
-      const freshBowler = {};
-      if (action.partner.shift) {
-        freshBowler.shift = action.partner.shift;
-      }
-      return updateObject(state, {
-        team: null,
-        bowler: freshBowler,
-        bowlers: null,
-        partner: action.partner,
-      });
-    case actionTypes.PARTNER_UP_BOWLER_INFO_ADDED:
-    case actionTypes.PARTNER_UP_BOWLER_UPDATED:
-      return updateObject(state, {
-        bowler: {...state.bowler, ...action.bowler},
-      });
-    case actionTypes.PARTNER_UP_REGISTRATION_COMPLETED:
-      return updateObject(state, {
-        bowler: null,
-        partner: null,
-      });
     default:
       console.log("Nope!");
       break;
   }
   return state;
 }
-

@@ -22,4 +22,17 @@
     font-size: 90%;
     margin-top: 0.25rem;
   }
+
+  .LimitedSetRadio {
+    div {
+      margin: 1rem 3rem;
+      @media (min-width: 768px) {
+        margin: 0.5rem 0;
+      }
+
+      input {
+        font-size: 110%;
+      }
+    }
+  }
 }

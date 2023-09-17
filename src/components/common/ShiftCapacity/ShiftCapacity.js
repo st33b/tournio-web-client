@@ -10,8 +10,6 @@ const ShiftCapacity = ({shift, includeName}) => {
     return Math.round(num / outOf * 100);
   }
 
-  const unpaidCount = Math.min(shift.unpaid_count, shift.capacity - shift.paid_count);
-
   return (
     <ErrorBoundary>
 
@@ -27,24 +25,13 @@ const ShiftCapacity = ({shift, includeName}) => {
                  aria-label={"Shift capacity indicator"}>
               <div className={`progress ${classes.Segment}`}
                    role={`progressbar`}
-                   aria-label={`Paid segment`}
-                   aria-valuenow={percent(shift.paid_count, shift.capacity)}
-                   style={{width: `${percent(shift.paid_count, shift.capacity)}%`}}
-                   aria-valuemin={0}
-                   aria-valuemax={100}>
-                <div className={`progress-bar ${classes.Paid}`}>
-                  {percent(shift.paid_count, shift.capacity)}%
-                </div>
-              </div>
-              <div className={`progress ${classes.Segment}`}
-                   role={`progressbar`}
                    aria-label={`Requested segment`}
-                   aria-valuenow={percent(unpaidCount, shift.capacity)}
-                   style={{width: `${percent(unpaidCount, shift.capacity)}%`}}
+                   aria-valuenow={percent(shift.requested, shift.capacity)}
+                   style={{width: `${percent(shift.requested, shift.capacity)}%`}}
                    aria-valuemin={0}
                    aria-valuemax={100}>
                 <div className={`progress-bar ${classes.Requested}`}>
-                  {percent(unpaidCount, shift.capacity)}%
+                  {percent(shift.requested, shift.capacity)}%
                 </div>
               </div>
             </div>

@@ -17,11 +17,11 @@
     text-align: right;
     font-size: 120%;
   }
-  @media (min-width: 768px) {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-  }
+  //@media (min-width: 768px) {
+  //  position: -webkit-sticky;
+  //  position: sticky;
+  //  top: 0;
+  //}
 }
 
 [data-bs-theme="dark"] .Cart {

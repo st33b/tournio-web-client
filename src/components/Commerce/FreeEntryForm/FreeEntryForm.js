@@ -74,7 +74,7 @@ const FreeEntryForm = () => {
     setFreeEntryForm(newState);
   }
 
-  let textClass = 'd-block';
+  let textClass = 'd-block text-center';
   let formClass = 'd-none';
   if (freeEntryForm.display) {
     textClass = 'd-none';
@@ -148,36 +148,40 @@ const FreeEntryForm = () => {
   }
 
   return (
-    <div className={classes.FreeEntryForm}>
+    <div className={`${classes.FreeEntryForm} pt-2`}>
       {appliedCode}
       {declareLink}
       {serverMessage}
       {errorMessage}
       <form onSubmit={formHandler} className={`${formClass} ${classes.CodeForm}`}>
-        <div className={'row mb-0'}>
-          <label className={`${classes.FormLabel} col-12 col-form-label col-form-label`}
-                 htmlFor={'free_entry_code'}>
-            Free Entry Code
-          </label>
-          <div className={'col-12'}>
+        <div className={'input-group mt-3'}>
+          <div className={`form-floating`}>
             <input type={'text'}
                    name={'free_entry_code'}
                    id={'free_entry_code'}
                    maxLength={25}
                    className={'form-control'}
                    value={freeEntryForm.freeEntryCode}
+                   placeholder={'abc-123'}
                    onChange={(event) => inputChangedHandler(event)} />
+            <label className={`${classes.FormLabel} col-form-label`}
+                   htmlFor={'free_entry_code'}>
+              What&apos;s your free entry code?
+            </label>
           </div>
-        </div>
-
-        <div className={classes.ActionRow}>
-          <button className={'btn btn-outline-secondary btn-sm me-3'} type={'button'} onClick={cancelClicked}>
-            Cancel
-          </button>
-          <button className={'btn btn-primary btn-sm'} type={'submit'} disabled={!freeEntryForm.valid}>
+          <button className={'btn btn-primary'} type={'submit'} disabled={!freeEntryForm.valid}>
             Submit
           </button>
         </div>
+
+        {/*<div className={classes.ActionRow}>*/}
+        {/*  <button className={'btn btn-outline-secondary me-3'} type={'button'} onClick={cancelClicked}>*/}
+        {/*    Cancel*/}
+        {/*  </button>*/}
+        {/*  <button className={'btn btn-primary'} type={'submit'} disabled={!freeEntryForm.valid}>*/}
+        {/*    Submit*/}
+        {/*  </button>*/}
+        {/*</div>*/}
       </form>
     </div>
   );

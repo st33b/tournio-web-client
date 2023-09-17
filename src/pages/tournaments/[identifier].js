@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Row, Col} from "react-bootstrap";
 
-import {devConsoleLog, fetchTournamentDetails, useClientReady} from "../../utils";
+import {devConsoleLog, fetchTournamentDetails, useClientReady, useTournament} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
@@ -17,54 +17,72 @@ import PayButton from "../../components/Registration/TournamentDetails/PayButton
 import Shifts from "../../components/Registration/TournamentDetails/Shifts";
 import YouWillNeed from "../../components/Registration/TournamentDetails/YouWillNeed";
 import StateBanners from "../../components/Registration/TournamentDetails/StateBanners";
+import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
+import ErrorAlert from "../../components/common/ErrorAlert";
 
 const Page = () => {
   const router = useRouter();
   const { identifier } = router.query;
   const registrationContext = useRegistrationContext();
-  const [tournament, setTournament] = useState();
 
   const onFetchSuccess = (data) => {
-    devConsoleLog("Success. Dispatching to context");
-    setTournament(data);
+    devConsoleLog("Success. Dispatching to context. But we won't need to for long.");
     registrationContext.dispatch(tournamentDetailsRetrieved(data));
   }
 
-  const onFetchFailure = (error) => {
-    devConsoleLog("Failed to fetch", error);
-    // let's clear the tournaments out of context
-    router.push('/tournaments');
-  }
-
+  // const onFetchFailure = (error) => {
+  //   devConsoleLog("Failed to fetch", error);
+  //   // let's clear the tournaments out of context
+  //   router.push('/tournaments');
+  // }
+  //
   // fetch the tournament details and put the tournament into context
-  useEffect(() => {
-    if (!identifier || !registrationContext) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!identifier || !registrationContext) {
+  //     return;
+  //   }
+  //
+  //   const needToFetch = !tournament || tournament.identifier !== identifier;
+  //   const registrationMismatch = registrationContext.registration.tournament && registrationContext.registration.tournament.identifier !== identifier;
+  //
+  //   if (!needToFetch) {
+  //     if (registrationMismatch) {
+  //       devConsoleLog("Registration context has the wrong tournament, updating it");
+  //       registrationContext.dispatch(tournamentDetailsRetrieved(tournament));
+  //     }
+  //   }
+  //
+  //   if (needToFetch) {
+  //     devConsoleLog("Fetching tournament details");
+  //     fetchTournamentDetails(identifier, onFetchSuccess, onFetchFailure);
+  //   }
+  // }, [identifier, tournament]);
 
-    const needToFetch = !tournament || tournament.identifier !== identifier;
-    const registrationMismatch = registrationContext.registration.tournament && registrationContext.registration.tournament.identifier !== identifier;
+  const {tournament, loading, error} = useTournament(identifier, onFetchSuccess)
 
-    if (!needToFetch) {
-      if (registrationMismatch) {
-        devConsoleLog("Registration context has the wrong tournament, updating it");
-        registrationContext.dispatch(tournamentDetailsRetrieved(tournament));
-      }
-    }
-
-    if (needToFetch) {
-      devConsoleLog("Fetching tournament details");
-      fetchTournamentDetails(identifier, onFetchSuccess, onFetchFailure);
-    }
-  }, [identifier, tournament]);
-
-  const ready = useClientReady();
-  if (!ready) {
-    return null;
+  if (loading || !tournament) {
+    return (
+      <div>
+        <LoadingMessage message={'Loading the tournament'}/>
+      </div>
+    )
   }
-  if (!tournament) {
-    return null;
+
+  if (error) {
+    return (
+      <div>
+        <ErrorAlert message={error}/>
+      </div>
+    );
   }
+
+  // const ready = useClientReady();
+  // if (!ready) {
+  //   return null;
+  // }
+  // if (!tournament) {
+  //   return null;
+  // }
 
   return (
     <div className={classes.TournamentDetails}>
@@ -91,13 +109,15 @@ const Page = () => {
             <div className={'flex-fill w-100'}>
               <Details tournament={tournament}/>
             </div>
-            <div className={'d-none d-lg-block flex-shrink-1'}>
+            <div className={'d-none d-xl-block flex-shrink-1'}>
               <YouWillNeed tournament={tournament}/>
             </div>
           </div>
+
           <PayButton disabled={!!tournament.config_items.find(({key, value}) => key === 'accept_payments' && !value)} />
           <RegisterButtons tournament={tournament}/>
-          <div className={'d-lg-none'}>
+
+          <div className={'d-xl-none'}>
             <YouWillNeed tournament={tournament}/>
           </div>
           <div className={'mt-4'}>

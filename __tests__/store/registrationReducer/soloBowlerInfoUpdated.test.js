@@ -40,9 +40,4 @@ describe ('action type: solo bowler info updated', () => {
     const result = registrationReducer(previousState, action);
     expect(result.bowler.home_city).toStrictEqual(newBowler.home_city);
   });
-
-  it ('sets the correct shift object on the bowler', () => {
-    const result = registrationReducer(previousState, action);
-    expect(result.bowler.shift.shiftiness).toStrictEqual('moderate');
-  });
 });

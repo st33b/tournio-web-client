@@ -18,9 +18,14 @@ describe ('action type: new team bowler info added', () => {
     bowler: newBowler,
   }
 
-  it ('adds the bowler to the team roster', () => {
+  it ('does not add the bowler to the team roster', () => {
     const result = registrationReducer(previousState, action);
     const index = result.team.bowlers.findIndex(b => b.name === newBowler.name);
-    expect(index).toBe(0);
+    expect(index).toBe(-1);
+  });
+
+  it ('puts the bowler in state', () => {
+    const result = registrationReducer(previousState, action);
+    expect(result.bowler).toStrictEqual(newBowler);
   });
 });

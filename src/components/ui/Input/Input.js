@@ -1,14 +1,12 @@
 import React from 'react';
 
 import classes from './Input.module.scss';
-import {devConsoleLog} from "../../../utils";
 import {Collapse} from "react-bootstrap";
 
 const Input = (props) => {
   let inputElement = null;
 
   const required = props.validityErrors && props.validityErrors.includes('valueMissing');
-// devConsoleLog("failed validations", props.failedValidations);
   const errorMessages = props.failedValidations.map(fv => {
     // If there's a specified error message for the failed validation, return it.
     if (props.errorMessages && props.errorMessages[fv]) {
@@ -102,6 +100,8 @@ const Input = (props) => {
       break;
     case('radio'):
       columnClasses.push('d-flex', 'align-items-center'); // vertically center the radio button
+    case('radio-limited-set'):
+      columnClasses.push(classes.LimitedSetRadio);
       inputElement = props.elementConfig.choices.map((choice, i) => (
         <div className={`form-check`} key={i}>
           <input type={'radio'}
@@ -157,8 +157,8 @@ const Input = (props) => {
   }
 
   return (
-    <div className={`${classes.Input} row mb-1 mb-sm-2`}>
-      <label className="col-12 col-sm-5 col-form-label text-sm-end pb-0" htmlFor={props.identifier}>
+    <div className={`${classes.Input} row mb-1 mb-md-2`}>
+      <label className="col-12 col-sm-5 col-form-label text-sm-end pb-1" htmlFor={props.identifier}>
         {props.label}
         {required && (
           <div className="d-inline">

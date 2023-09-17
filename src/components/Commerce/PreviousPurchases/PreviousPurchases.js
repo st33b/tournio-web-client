@@ -11,7 +11,7 @@ const PreviousPurchases = () => {
 
   let purchaseList = (
     <div className={classes.EmptyItemList}>
-      <p className={'my-0 py-2 ps-2'}>
+      <p className={''}>
         No paid purchases yet.
       </p>
     </div>
@@ -26,49 +26,54 @@ const PreviousPurchases = () => {
       countsByItemID[piId] += 1;
     });
 
-    purchaseList = (
-      <ul>
-        {commerce.purchasedItems.map((item, index) => {
-          const quantity = countsByItemID[item.purchasable_item_identifier];
-          if (quantity === 0) {
-            return '';
-          }
-          const multiplier = quantity === 1 ? '' : (
-            <span>
-                <i className={'bi-x px-1'}aria-hidden={true} />
-              {quantity}
-              <span className={'visually-hidden'}>
-                  purchased
-                </span>
-              </span>
-          );
-          countsByItemID[item.purchasable_item_identifier] = 0;
-                {multiplier}
+    purchaseList = commerce.purchasedItems.map((item, index) => {
+      const quantity = countsByItemID[item.purchasable_item_identifier];
+      if (quantity === 0) {
+        return '';
+      }
+      const multiplier = quantity === 1 ? '' : (
+        <span>
+          <i className={'bi bi-x-lg px-2'} aria-hidden={true} />
+          {quantity}
+          <span className={'visually-hidden'}>
+              purchased
+            </span>
+          </span>
+      );
+      countsByItemID[item.purchasable_item_identifier] = 0;
+      {
+        multiplier
+      }
 
-          let note = '';
-          if (item.configuration.division) {
-            note = (
-              <p className={classes.Note}>
-                Division: {item.configuration.division}
-              </p>
-            );
-          }
-          return (
-            <li key={index}>
-              <p className={classes.MainText}>
-                {item.name}
-                {multiplier}
-              </p>
-              {note}
-            </li>
-          );
-        })}
-      </ul>
-    );
+      let note = '';
+      if (item.configuration.division) {
+        note = (
+          <p className={classes.Note}>
+            Division: {item.configuration.division}
+          </p>
+        );
+      }
+      return (
+        <div className={`d-flex ${classes.Item}`} key={index}>
+          <i className={`bi bi-check2-square ${classes.ListMarker}`} aria-hidden={true}></i>
+          <div className={``}>
+            <p className={classes.MainText}>
+              {item.name}
+              {multiplier}
+            </p>
+            {note}
+          </div>
+        </div>
+
+      );
+    });
   }
 
   return (
     <div className={classes.PreviousPurchases}>
+      <h5>
+        Paid Items
+      </h5>
       {purchaseList}
     </div>
   )

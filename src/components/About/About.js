@@ -176,8 +176,7 @@ const about = () => (
               capacity.
             </li>
             <li>
-              Display how close the tournament is to its full capacity, including bowlers who are confirmed (e.g., paid
-              in full) vs. those who have registered but not yet paid.
+              Display how close each tournament shift is to its full capacity.
             </li>
             <li>
               Enable or disable different registration modes as needed, e.g., limit registrations to individual bowlers,

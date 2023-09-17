@@ -34,17 +34,25 @@ html {
   }
 }
 
+.selected-radio-container {
+  padding-bottom: 0.5rem;
+  border-bottom: 8px solid var(--tournio-primary);
+}
+
 .btn {
   .btn-check + &:hover {
     color: var(--tournio-btn-hover-color);
     background-color: var(--tournio-btn-hover-bg);
     border-color: var(--tournio-btn-hover-border-color);
   }
+  .btn-check:checked + & {
+    color: var(--tournio-btn-active-color);
+    background-color: var(--tournio-btn-active-bg);
+    // Remove CSS gradients if they're enabled
+    background-image: if($enable-gradients, none, null);
+    border-color: var(--tournio-btn-active-border-color);
+    @include box-shadow(var(--tournio-btn-active-shadow));
 
-  &.active {
-    color: var(--tournio-btn-hover-color);
-    background-color: var(--tournio-btn-hover-bg);
-    border-color: var(--tournio-btn-hover-border-color);
   }
 }
 
