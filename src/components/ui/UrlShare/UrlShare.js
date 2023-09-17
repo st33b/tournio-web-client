@@ -1,12 +1,7 @@
 import classes from './UrlShare.module.scss';
-import SuccessAlert from "../../common/SuccessAlert";
-import {useEffect, useState} from "react";
-import {devConsoleLog} from "../../../utils";
 import {Popover, OverlayTrigger} from "react-bootstrap";
 
 const UrlShare = ({url}) => {
-  const [success, setSuccess] = useState();
-
   const copyClicked = () => {
     navigator.clipboard.writeText(url).then(
       () => {
@@ -49,7 +44,6 @@ const UrlShare = ({url}) => {
       <p className={'form-text'}>
         Share this URL with your teammates so they can enter their details.
       </p>
-      {/*{success && <SuccessAlert message={success} onClose={() => setSuccess(null)}/>}*/}
     </div>
   );
 }
