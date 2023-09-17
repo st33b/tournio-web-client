@@ -52,6 +52,16 @@ export const commerceReducer = (state, action) => {
         error: null,
         tournament: {...action.bowler.tournament},
       });
+    case actionTypes.BOWLER_DETAILS_MOOTED:
+      return updateObject(state, {
+        tournament: null,
+        bowler: null,
+        cart: [],
+        availableItems: {},
+        availableApparelItems: {},
+        purchasedItems: [],
+        freeEntry: null,
+      });
     case actionTypes.ITEM_ADDED_TO_CART:
       return itemAddedToCart(state, action.item, action.sizeIdentifier);
     case actionTypes.ITEM_REMOVED_FROM_CART:

@@ -2,7 +2,7 @@ import {useRouter} from "next/router";
 
 import RegistrationLayout from "../../../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../../../store/RegistrationContext";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import Link from "next/link";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
@@ -18,13 +18,6 @@ const Page = () => {
 
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState();
-
-  // If new-team registrations aren't enabled, go back to the tournament home page
-  useEffect(() => {
-    if (!registration || !teamIdentifier) {
-      return;
-    }
-  }, [teamIdentifier, registration]);
 
   const {loading, team, error: fetchError, teamHasChanged } = useTeam(teamIdentifier);
 
@@ -56,12 +49,12 @@ const Page = () => {
     dispatch(existingTeamBowlerSaved(team));
     setProcessing(false);
     router.push({
-      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]',
+      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/[chosen]',
       query: {
         identifier: identifier,
         teamIdentifier: teamIdentifier,
+        chosen: bowlerData.position,
         success: 2,
-        chosen: registration.bowler.position,
       }
     });
   }
@@ -87,11 +80,11 @@ const Page = () => {
 
   let doublesPartner = null;
   if (registration.bowler.doubles_partner) {
-    doublesPartner = team.bowlers.find(({identifier}) => registration.bowler.doubles_partner);
+    doublesPartner = team.bowlers.find(bowler => registration.bowler.doubles_partner === bowler.identifier);
   }
 
   return (
-    <div>
+    <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
       <TournamentHeader tournament={registration.tournament}/>
 
       <h2 className={`text-center`}>

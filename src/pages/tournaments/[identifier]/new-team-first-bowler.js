@@ -68,7 +68,7 @@ const Page = () => {
   devConsoleLog("Previous bowler data: ", previousBowlerData);
 
   return (
-    <div>
+    <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
       <TournamentHeader tournament={registration.tournament}/>
 
       <h2 className={`text-center`}>
