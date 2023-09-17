@@ -1,4 +1,6 @@
 import classes from './TournamentDetails.module.scss';
+import ShiftCapacity from "../../common/ShiftCapacity/ShiftCapacity";
+import ProgressBarLegend from "../../common/ShiftCapacity/ProgressBarLegend";
 
 const Shifts = ({tournament}) => {
   if (!tournament) {
@@ -6,6 +8,7 @@ const Shifts = ({tournament}) => {
   }
 
   let shiftContent = '';
+  const displayCapacity = tournament.display_capacity;
   if (tournament.shifts.length > 1) {
     shiftContent = (
       <div className={`${classes.Shifts}`}>
@@ -28,16 +31,37 @@ const Shifts = ({tournament}) => {
                     </span>
                   </h5>
                   {!!shift.description && (
-                    <p className={'fw-light'}>
+                    <p className={'fw-light mb-0'}>
                         {shift.description}
                       </p>
                   )}
                 </div>
               </div>
+              {displayCapacity && <ShiftCapacity shift={shift} key={i} />}
             </div>
           )
         })}
+        {displayCapacity && <ProgressBarLegend/>}
       </div>
+    );
+  } else if (tournament.shifts.length === 1 && displayCapacity) {
+    const shift = tournament.shifts[0];
+    shiftContent = (
+        <div className={classes.Shifts}>
+          <h4 className={'fw-light'}>
+            Capacity
+          </h4>
+          <div className={`${classes.ShiftInfo} border rounded-2`}>
+            <div>
+              <p>
+                The tournament can accommodate up to {shift.capacity} teams.
+              </p>
+
+              <ShiftCapacity shift={shift}/>
+            </div>
+            <ProgressBarLegend/>
+          </div>
+        </div>
     );
   }
 

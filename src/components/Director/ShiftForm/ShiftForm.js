@@ -320,7 +320,7 @@ const ShiftForm = ({shift}) => {
 
             <div className={'row mb-3'}>
               <label htmlFor={'capacity'} className={'form-label col-7'}>
-                Capacity (bowlers)
+                Capacity (teams)
               </label>
               <div className={'col-5'}>
                 <input type={'number'}
