@@ -26,12 +26,12 @@ const ShiftCapacity = ({shift, includeName}) => {
               <div className={`progress ${classes.Segment}`}
                    role={`progressbar`}
                    aria-label={`Requested segment`}
-                   aria-valuenow={percent(shift.requested, shift.capacity)}
-                   style={{width: `${percent(shift.requested, shift.capacity)}%`}}
+                   aria-valuenow={percent(shift.team_count, shift.capacity)}
+                   style={{width: `${percent(shift.team_count, shift.capacity)}%`}}
                    aria-valuemin={0}
                    aria-valuemax={100}>
                 <div className={`progress-bar ${classes.Requested}`}>
-                  {percent(shift.requested, shift.capacity)}%
+                  {percent(shift.team_count, shift.capacity)}%
                 </div>
               </div>
             </div>
