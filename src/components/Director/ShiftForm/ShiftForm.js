@@ -203,9 +203,9 @@ const ShiftForm = ({shift}) => {
   let colorClass = '';
   if (shift) {
     submitFunction = updateShiftFormSubmitted;
-    if (shift.requested === shift.capacity) {
+    if (shift.is_full) {
       colorClass = classes.Full;
-    } else if (shift.capacity - shift.requested <= ALMOST_FULL_THRESHOLD) {
+    } else if (shift.capacity - shift.team_count <= ALMOST_FULL_THRESHOLD) {
       colorClass = classes.AlmostFull;
     }
   }
@@ -267,7 +267,7 @@ const ShiftForm = ({shift}) => {
                 Requested
               </dt>
               <dd className={ddClass}>
-                {shift.requested}
+                {shift.team_count}
               </dd>
                 <dt className={dtClass}>
                     Marked as Full?
