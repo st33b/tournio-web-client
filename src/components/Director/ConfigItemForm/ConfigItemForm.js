@@ -15,6 +15,7 @@ const BOOLEAN_CONFIG_ITEMS = [
   'display_capacity',
   'email_in_dev',
   'skip_stripe',
+  'stripe_receipts',
 ];
 
 const ConfigItemForm = ({item}) => {
@@ -118,7 +119,7 @@ const ConfigItemForm = ({item}) => {
 
   const allowEdit = !BOOLEAN_CONFIG_ITEMS.includes(item.key);
 
-  let content = '';
+  let content;
   if (!editing) {
     let displayedValue;
     if (BOOLEAN_CONFIG_ITEMS.includes(item.key)) {
@@ -158,7 +159,7 @@ const ConfigItemForm = ({item}) => {
     content = !allowEdit ? itemContent : (
       <span className={classes.ItemWrapper}
             title={'Edit this item'}
-            onClick={(e) => setEditing(true)}
+            onClick={() => setEditing(true)}
       >
         {itemContent}
       </span>
