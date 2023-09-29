@@ -73,6 +73,99 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         valid: true,
         touched: false,
       },
+      // date_of_birth: {
+      //   elementType: 'combo',
+      //   label: 'Date of Birth',
+      //   validityErrors: [],
+      //   valid: true,
+      //   touched: false,
+      //   elements: [
+      //     {
+      //       // Month
+      //       elementType: 'select',
+      //       elementConfig: {
+      //         options: [
+      //           // {
+      //           //   value: '',
+      //           //   label: '--',
+      //           // },
+      //           {
+      //             value: 1,
+      //             label: 'Jan'
+      //           },
+      //           {
+      //             value: 2,
+      //             label: 'Feb'
+      //           },
+      //           {
+      //             value: 3,
+      //             label: 'Mar'
+      //           },
+      //           {
+      //             value: 4,
+      //             label: 'Apr'
+      //           },
+      //           {
+      //             value: 5,
+      //             label: 'May'
+      //           },
+      //           {
+      //             value: 6,
+      //             label: 'Jun'
+      //           },
+      //           {
+      //             value: 7,
+      //             label: 'Jul'
+      //           },
+      //           {
+      //             value: 8,
+      //             label: 'Aug'
+      //           },
+      //           {
+      //             value: 9,
+      //             label: 'Sep'
+      //           },
+      //           {
+      //             value: 10,
+      //             label: 'Oct'
+      //           },
+      //           {
+      //             value: 11,
+      //             label: 'Nov'
+      //           },
+      //           {
+      //             value: 12,
+      //             label: 'Dec'
+      //           },
+      //         ],
+      //         value: 1,
+      //       },
+      //       label: 'Month',
+      //       validityErrors: [
+      //         'valueMissing',
+      //       ],
+      //       valid: true,
+      //       touched: false,
+      //     },
+      //     {
+      //       // Day
+      //       elementType: 'select',
+      //       elementConfig: {
+      //         optionRange: {
+      //           min: 1,
+      //           max: 31,
+      //         },
+      //         value: 1,
+      //       },
+      //       label: 'Day',
+      //       validityErrors: [
+      //         'valueMissing',
+      //       ],
+      //       valid: true,
+      //       touched: false,
+      //     },
+      //   ],
+      // },
       birth_month: {
         elementType: 'select',
         elementConfig: {
@@ -140,23 +233,42 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         touched: false,
       },
       birth_day: {
-        elementType: 'input',
+        elementType: 'select',
         elementConfig: {
-          type: 'number',
-          value: '',
-          min: 1,
-          max: 31,
+          optionRange: {
+            min: 1,
+            max: 31,
+          },
+          value: 1,
         },
         label: 'Birth day',
         validityErrors: [
           'valueMissing',
-          'rangeUnderflow',
-          'rangeOverflow',
-          'typeMismatch',
+          // 'rangeUnderflow',
+          // 'rangeOverflow',
+          // 'typeMismatch',
         ],
         valid: true,
         touched: false,
       },
+      // birth_day: {
+      //   elementType: 'input',
+      //   elementConfig: {
+      //     type: 'number',
+      //     value: '',
+      //     min: 1,
+      //     max: 31,
+      //   },
+      //   label: 'Birth day',
+      //   validityErrors: [
+      //     'valueMissing',
+      //     'rangeUnderflow',
+      //     'rangeOverflow',
+      //     'typeMismatch',
+      //   ],
+      //   valid: true,
+      //   touched: false,
+      // },
       doubles_partner: null,
       email: {
         elementType: 'input',

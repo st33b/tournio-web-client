@@ -59,13 +59,23 @@ const Input = (props) => {
       break;
     case('select'):
       outerLabelClasses.push("col-form-label");
-      const optionText = props.elementConfig.options.map((option, i) => {
-        return (
-          <option value={option.value} key={i}>
-            {option.label}
-          </option>
-        );
-      });
+      let optionText;
+      if (props.elementConfig.optionRange) {
+        const options = [];
+        const {min, max} = props.elementConfig.optionRange;
+        for (let i = min; i <= max; i++) {
+          options.push(<option value={i} key={`option_${i}`}>{i}</option>);
+        };
+        optionText = options;
+      } else {
+        optionText = props.elementConfig.options.map((option, i) => {
+          return (
+            <option value={option.value} key={i}>
+              {option.label}
+            </option>
+          );
+        });
+      }
       inputElement = <select
         id={props.identifier}
         name={props.identifier}
@@ -76,6 +86,9 @@ const Input = (props) => {
       >
         {optionText}
       </select>
+      break;
+    case('combo'):
+      // const elems =
       break;
     case('component'):
       outerLabelClasses.push("col-form-label");
