@@ -2,6 +2,7 @@ import React from 'react';
 
 import classes from './Input.module.scss';
 import {Collapse} from "react-bootstrap";
+import {devConsoleLog} from "../../../utils";
 
 const Input = (props) => {
   let inputElement = null;
@@ -89,6 +90,31 @@ const Input = (props) => {
       break;
     case('combo'):
       // const elems =
+      inputElement = (
+        <div>
+          {props.elementConfig.elements.map((elem, i) => {
+            const elemIdentifier = `${props.identifier}:${elem.identifier}`;
+            return (
+              <Input
+                key={i}
+                identifier={elemIdentifier}
+                elementType={elem.elementType}
+                elementConfig={elem.elementConfig}
+                changed={(event) => { devConsoleLog(`combo element changed: ${elemIdentifier}`, i); props.changed(event, elemIdentifier, i) } }
+                label={elem.label}
+                helper={''}
+                validityErrors={elem.validityErrors}
+                errorMessages={elem.errorMessages}
+                // For <select> elements, onBlur is redundant to onChange
+                blurred={false}
+                failedValidations={typeof elem.validityFailures !== 'undefined' ? elem.validityFailures : []}
+                wasValidated={elem.validated}
+                loading={false}
+              />
+            );
+          })}
+        </div>
+      )
       break;
     case('component'):
       outerLabelClasses.push("col-form-label");

@@ -73,184 +73,165 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         valid: true,
         touched: false,
       },
-      // date_of_birth: {
-      //   elementType: 'combo',
-      //   label: 'Date of Birth',
-      //   validityErrors: [],
-      //   valid: true,
-      //   touched: false,
-      //   elements: [
-      //     {
-      //       // Month
-      //       elementType: 'select',
-      //       elementConfig: {
-      //         options: [
-      //           // {
-      //           //   value: '',
-      //           //   label: '--',
-      //           // },
-      //           {
-      //             value: 1,
-      //             label: 'Jan'
-      //           },
-      //           {
-      //             value: 2,
-      //             label: 'Feb'
-      //           },
-      //           {
-      //             value: 3,
-      //             label: 'Mar'
-      //           },
-      //           {
-      //             value: 4,
-      //             label: 'Apr'
-      //           },
-      //           {
-      //             value: 5,
-      //             label: 'May'
-      //           },
-      //           {
-      //             value: 6,
-      //             label: 'Jun'
-      //           },
-      //           {
-      //             value: 7,
-      //             label: 'Jul'
-      //           },
-      //           {
-      //             value: 8,
-      //             label: 'Aug'
-      //           },
-      //           {
-      //             value: 9,
-      //             label: 'Sep'
-      //           },
-      //           {
-      //             value: 10,
-      //             label: 'Oct'
-      //           },
-      //           {
-      //             value: 11,
-      //             label: 'Nov'
-      //           },
-      //           {
-      //             value: 12,
-      //             label: 'Dec'
-      //           },
-      //         ],
-      //         value: 1,
-      //       },
-      //       label: 'Month',
-      //       validityErrors: [
-      //         'valueMissing',
-      //       ],
-      //       valid: true,
-      //       touched: false,
-      //     },
-      //     {
-      //       // Day
-      //       elementType: 'select',
-      //       elementConfig: {
-      //         optionRange: {
-      //           min: 1,
-      //           max: 31,
-      //         },
-      //         value: 1,
-      //       },
-      //       label: 'Day',
-      //       validityErrors: [
-      //         'valueMissing',
-      //       ],
-      //       valid: true,
-      //       touched: false,
-      //     },
-      //   ],
-      // },
-      birth_month: {
-        elementType: 'select',
+      date_of_birth: {
+        elementType: 'combo',
         elementConfig: {
-          options: [
+          elements: [
             {
-              value: '',
-              label: '-- Choose your month',
+              // Month
+              identifier: 'month',
+              elementType: 'select',
+              elementConfig: {
+                options: [
+                  {
+                    value: 1,
+                    label: 'Jan'
+                  },
+                  {
+                    value: 2,
+                    label: 'Feb'
+                  },
+                  {
+                    value: 3,
+                    label: 'Mar'
+                  },
+                  {
+                    value: 4,
+                    label: 'Apr'
+                  },
+                  {
+                    value: 5,
+                    label: 'May'
+                  },
+                  {
+                    value: 6,
+                    label: 'Jun'
+                  },
+                  {
+                    value: 7,
+                    label: 'Jul'
+                  },
+                  {
+                    value: 8,
+                    label: 'Aug'
+                  },
+                  {
+                    value: 9,
+                    label: 'Sep'
+                  },
+                  {
+                    value: 10,
+                    label: 'Oct'
+                  },
+                  {
+                    value: 11,
+                    label: 'Nov'
+                  },
+                  {
+                    value: 12,
+                    label: 'Dec'
+                  },
+                ],
+                value: 1,
+              },
+              label: 'Month',
+              validityErrors: [
+                'valueMissing',
+              ],
+              valid: true,
+              touched: false,
             },
             {
-              value: 1,
-              label: 'Jan'
-            },
-            {
-              value: 2,
-              label: 'Feb'
-            },
-            {
-              value: 3,
-              label: 'Mar'
-            },
-            {
-              value: 4,
-              label: 'Apr'
-            },
-            {
-              value: 5,
-              label: 'May'
-            },
-            {
-              value: 6,
-              label: 'Jun'
-            },
-            {
-              value: 7,
-              label: 'Jul'
-            },
-            {
-              value: 8,
-              label: 'Aug'
-            },
-            {
-              value: 9,
-              label: 'Sep'
-            },
-            {
-              value: 10,
-              label: 'Oct'
-            },
-            {
-              value: 11,
-              label: 'Nov'
-            },
-            {
-              value: 12,
-              label: 'Dec'
+              // Day
+              identifier: 'day',
+              elementType: 'select',
+              elementConfig: {
+                optionRange: {
+                  min: 1,
+                  max: 31,
+                },
+                value: 1,
+              },
+              label: 'Day',
+              validityErrors: [
+                'valueMissing',
+              ],
+              valid: true,
+              touched: false,
             },
           ],
-          value: '',
         },
-        label: 'Birth month',
-        validityErrors: [
-          'valueMissing',
-        ],
+        label: 'Date of Birth',
+        validityErrors: [],
         valid: true,
         touched: false,
       },
-      birth_day: {
-        elementType: 'select',
-        elementConfig: {
-          optionRange: {
-            min: 1,
-            max: 31,
-          },
-          value: 1,
-        },
-        label: 'Birth day',
-        validityErrors: [
-          'valueMissing',
-          // 'rangeUnderflow',
-          // 'rangeOverflow',
-          // 'typeMismatch',
-        ],
-        valid: true,
-        touched: false,
-      },
+      // birth_month: {
+      //   elementType: 'select',
+      //   elementConfig: {
+      //     options: [
+      //       {
+      //         value: '',
+      //         label: '-- Choose your month',
+      //       },
+      //       {
+      //         value: 1,
+      //         label: 'Jan'
+      //       },
+      //       {
+      //         value: 2,
+      //         label: 'Feb'
+      //       },
+      //       {
+      //         value: 3,
+      //         label: 'Mar'
+      //       },
+      //       {
+      //         value: 4,
+      //         label: 'Apr'
+      //       },
+      //       {
+      //         value: 5,
+      //         label: 'May'
+      //       },
+      //       {
+      //         value: 6,
+      //         label: 'Jun'
+      //       },
+      //       {
+      //         value: 7,
+      //         label: 'Jul'
+      //       },
+      //       {
+      //         value: 8,
+      //         label: 'Aug'
+      //       },
+      //       {
+      //         value: 9,
+      //         label: 'Sep'
+      //       },
+      //       {
+      //         value: 10,
+      //         label: 'Oct'
+      //       },
+      //       {
+      //         value: 11,
+      //         label: 'Nov'
+      //       },
+      //       {
+      //         value: 12,
+      //         label: 'Dec'
+      //       },
+      //     ],
+      //     value: '',
+      //   },
+      //   label: 'Birth month',
+      //   validityErrors: [
+      //     'valueMissing',
+      //   ],
+      //   valid: true,
+      //   touched: false,
+      // },
       // birth_day: {
       //   elementType: 'input',
       //   elementConfig: {
@@ -501,7 +482,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     bowlerInfoSaved(theBowlerData);
   }
 
-  const validityForField = (fieldIdentifier, failedChecks = []) => {
+  const validityForField = (failedChecks = []) => {
     return {
       validated: true,
       valid: failedChecks.length === 0,
@@ -509,61 +490,87 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     }
   }
 
-  const inputChangedHandler = (event, inputIdentifier) => {
+  const inputChangedHandler = (event, inputIdentifier, elemIndex = -1) => {
+    devConsoleLog("input identifier: ", inputIdentifier);
+    devConsoleLog("Verification of elemIndex: ", elemIndex);
+
     // Create a copy of the bowler form; this is where we'll make updates
     const updatedBowlerForm = {
       ...bowlerForm,
+      // Deep-copy the formFields property, because it's complex
+      formFields: { ...bowlerForm.formFields },
     };
 
-    let updatedFormElement = {
-      ...bowlerForm.formFields[inputIdentifier]
-    }
-    // Deep-copy the element config, since that has the part that gets changed...
-    updatedFormElement.elementConfig = {...bowlerForm.formFields[inputIdentifier].elementConfig}
-
-    // Our special snowflakes:
+    // Our special snowflakes for the new value:
     let newValue;
     if (inputIdentifier === 'country')
       newValue = event;
-    else if (updatedFormElement.elementType === 'checkbox') {
+    else if (bowlerForm[inputIdentifier].elementType === 'checkbox') {
       newValue = event.target.checked ? 'yes' : 'no';
     } else {
       newValue = event.target.value;
     }
 
-    if (inputIdentifier === 'country') {
-      // special snowflake...
-      const failedChecks = event.length === 0 ? ['valueMissing'] : [];
-      updatedFormElement = {
-        ...updatedFormElement,
-        ...validityForField(inputIdentifier, failedChecks),
-      }
-    } else if (updatedFormElement.elementType === 'select') {
-      // We need to go ahead and do validation for <select> elements, since their value isn't modified
-      // between a change event (what we're reacting to here) and a blur event (which is for fieldBlurred)
-      const checksToRun = updatedFormElement.validityErrors;
-      const {validity} = event !== null ? event.target : {};
-      const failedChecks = checksToRun.filter(c => validity[c]);
-      updatedFormElement = {
-        ...updatedFormElement,
-        ...validityForField(inputIdentifier, failedChecks),
-      }
-    } else  {
-      updatedFormElement.validated = false;
+    // We need to go ahead and do validation for <select> elements, since their value isn't modified
+    // between a change event (what we're reacting to here) and a blur event (which is for fieldBlurred)
+    let failedChecks, checksToRun, validity;
+    // Note: this may be a combo element, so don't do any other deep-copying of its elementConfig
+    let updatedFormElement;
+    const [comboIdentifier, elemIdentifier] = inputIdentifier.split(':');
+    switch (inputIdentifier) {
+      case 'country':
+        updatedFormElement = {
+          ...bowlerForm.formFields[inputIdentifier],
+          elementConfig: {...bowlerForm.formFields[inputIdentifier].elementConfig},
+        }
+
+        failedChecks = event.length === 0 ? ['valueMissing'] : [];
+        updatedFormElement = {
+          ...updatedFormElement,
+          ...validityForField(failedChecks),
+        }
+        break;
+      case 'date_of_birth:month':
+      case 'date_of_birth:day':
+        // month or day
+        const dobElem = bowlerForm.formFields[comboIdentifier].elementConfig.elements[elemIndex];
+
+        updatedFormElement = {
+          ...dobElem,
+          elementConfig: {...dobElem.elementConfig},
+        }
+
+        checksToRun = dobElem.validityErrors;
+        validity = event !== null ? event.target.validity : {};
+        failedChecks = checksToRun.filter(c => validity[c]);
+        updatedFormElement = {
+          ...updatedFormElement,
+          ...validityForField(failedChecks),
+        }
+        break;
+      default:
+        updatedFormElement = {
+          ...bowlerForm.formFields[inputIdentifier],
+          elementConfig: {...bowlerForm.formFields[inputIdentifier].elementConfig},
+          validated: false,
+        }
+        break;
     }
 
-    // Update the relevant parts of the changed field (the new value, whether it's valid, and the fact that it was changed at all)
     updatedFormElement.elementConfig.value = newValue;
     updatedFormElement.touched = true;
 
-    // Deep-copy the formFields property, because it's complex
-    updatedBowlerForm.formFields = {
-      ...bowlerForm.formFields
+    // put the updated form element in the updated form
+    if (['date_of_birth:month', 'date_of_birth:day'].includes(inputIdentifier)) {
+      // if it's one of the combo elements
+      updatedBowlerForm.formFields[comboIdentifier].elementConfig.elements[elemIndex] = updatedFormElement;
+    } else {
+      // if it's not one of the combo elements
+      updatedBowlerForm.formFields[inputIdentifier] = updatedFormElement;
     }
-    // Put the changed field in the copy of the bowler form structure
-    updatedBowlerForm.formFields[inputIdentifier] = updatedFormElement;
 
     updatedBowlerForm.touched = true;
+    
     // Now, determine whether the whole form is valid
     devConsoleLog("Form validity...")
     updatedBowlerForm.valid = Object.values(updatedBowlerForm.formFields).every(
@@ -613,7 +620,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
 
           newFormData.formFields[inputIdentifier] = {
             ...newFormData.formFields[inputIdentifier],
-            ...validityForField(inputIdentifier, whoopsies),
+            ...validityForField(whoopsies),
           }
         }
       }).catch(error => {
@@ -645,7 +652,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
 
     newFormData.formFields[inputIdentifier] = {
       ...newFormData.formFields[inputIdentifier],
-      ...validityForField(inputIdentifier, failedChecks),
+      ...validityForField(failedChecks),
     };
 
     // Now, determine whether the whole form is valid
