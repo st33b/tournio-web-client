@@ -3,6 +3,7 @@ import {Row} from "react-bootstrap";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './BowlerSummary.module.scss';
+import {devConsoleLog} from "../../../utils";
 
 const BowlerSummary = ({bowler, partner = null}) => {
   const {registration} = useRegistrationContext();
@@ -34,8 +35,11 @@ const BowlerSummary = ({bowler, partner = null}) => {
   const aqResponses = {};
   for (let key in registration.tournament.additional_questions) {
     aqLabels[key] = registration.tournament.additional_questions[key].label;
-    aqResponses[key] = registration.tournament.additional_questions[key].elementConfig.value;
+    aqResponses[key] = bowler[key];
   }
+
+  devConsoleLog("aqResponses:", aqResponses);
+  devConsoleLog("aqLabels", aqLabels);
 
   return (
     <div className={classes.BowlerSummary}>
@@ -78,7 +82,7 @@ const BowlerSummary = ({bowler, partner = null}) => {
           return (
             <Row key={`${key}_${bowler.position}`}>
               <dt className={'col-5 pe-2 label'}>
-                {labels[key]}
+                {aqLabels[key]}
               </dt>
               <dd className={'col ps-2 value'}>
                 {value}

@@ -1,16 +1,11 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import {Alert, Col, Row} from "react-bootstrap";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
-import Summary from "../../../components/Registration/Summary/Summary";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
 import {soloBowlerRegistrationCompleted} from "../../../store/actions/registrationActions";
 import {submitSoloRegistration, useClientReady} from "../../../utils";
-import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import NewTeamReview from "../../../components/Registration/NewTeamReview/NewTeamReview";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 import Link from "next/link";
 import TournamentHeader from "../../../components/ui/TournamentHeader";
@@ -32,10 +27,6 @@ const Page = () => {
       router.push(`/tournaments/${identifier}`);
     }
   }, [registration]);
-
-  // const editBowlerClicked = () => {
-  //   router.push(`/tournaments/${registration.tournament.identifier}/solo-bowler-edit`);
-  // }
 
   const ready = useClientReady();
   if (!ready) {
@@ -68,10 +59,6 @@ const Page = () => {
   const soloRegistrationFailure = (errorMessage) => {
     setProcessing(false);
     setError(errorMessage);
-  }
-
-  const editBowlerClicked = () => {
-    router.push(`/tournaments/${identifier}/solo-bowler`);
   }
 
   const saveClicked = () => {
