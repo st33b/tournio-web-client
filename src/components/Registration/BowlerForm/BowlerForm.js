@@ -271,7 +271,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         touched: false,
       },
     },
-    valid: true,
+    valid: false,
     touched: false,
     soloBowlerFields: {
     }
@@ -285,7 +285,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       formFields[key] = {...tourn.additional_questions[key]}
       if (tourn.additional_questions[key].validation.required) {
         formFields[key].validityErrors = ['valueMissing'];
-        formFields[key].valid = true;
+        formFields[key].valid = false;
       } else {
         formFields[key].valid = true
       }
@@ -451,6 +451,10 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     updatedBowlerForm.formFields[inputIdentifier] = updatedFormElement;
 
     updatedBowlerForm.touched = true;
+    // Now, determine whether the whole form is valid
+    updatedBowlerForm.valid = Object.values(updatedBowlerForm.formFields).every(
+      formField => formField === null  || typeof formField.valid === 'undefined' || formField.valid
+    );
 
     // Replace the form in state, to reflect changes based on the value that changed, and resulting validity
     setBowlerForm(updatedBowlerForm);
@@ -543,7 +547,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       id: key,
       setup: bowlerForm.formFields[key],
       // <select> elements get excluded, since onChange covers it
-      validateOnBlur: !!bowlerForm.formFields[key].validityErrors && !['birth_month', 'country'].includes(key),
+      validateOnBlur: !!bowlerForm.formFields[key].validityErrors && key !== 'country' && bowlerForm.formFields[key].elementType !== 'select',
     });
   }
 
