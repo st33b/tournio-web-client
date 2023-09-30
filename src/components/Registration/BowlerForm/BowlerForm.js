@@ -373,18 +373,18 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
   const [bowlerForm, setBowlerForm] = useState(initialFormState);
   const [buttonText, setButtonText] = useState('Review');
 
-  const additionalFormFields = (tourn, editing = false) => {
+  const additionalFormFields = (editing = false) => {
     const formFields = {};
-    for (let key in tourn.additional_questions) {
-      formFields[key] = {...tourn.additional_questions[key]}
-      if (tourn.additional_questions[key].validation.required) {
+    for (let key in tournament.additional_questions) {
+      formFields[key] = {...tournament.additional_questions[key]}
+      if (tournament.additional_questions[key].validation.required) {
         formFields[key].validityErrors = ['valueMissing'];
         formFields[key].valid = editing;
       } else {
         formFields[key].valid = true
       }
       formFields[key].touched = false;
-      formFields[key].elementConfig = {...tourn.additional_questions[key].elementConfig}
+      formFields[key].elementConfig = {...tournament.additional_questions[key].elementConfig}
     }
     return formFields;
   }
@@ -417,7 +417,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     }
 
     // get the additional questions
-    formData.formFields = {...formData.formFields, ...additionalFormFields(tourn)};
+    formData.formFields = {...formData.formFields, ...additionalFormFields()};
 
     setBowlerForm(formData);
   }
@@ -439,7 +439,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     const updatedBowlerForm = {...bowlerForm};
     updatedBowlerForm.formFields = {
       ...updatedBowlerForm.formFields,
-      ...additionalFormFields(tournament, true),
+      ...additionalFormFields(true),
     };
 
     // First, all the standard fields and additional questions
@@ -505,7 +505,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     let newValue;
     if (inputIdentifier === 'country')
       newValue = event;
-    else if (bowlerForm[inputIdentifier].elementType === 'checkbox') {
+    else if (bowlerForm.formFields[inputIdentifier].elementType === 'checkbox') {
       newValue = event.target.checked ? 'yes' : 'no';
     } else {
       newValue = event.target.value;
@@ -549,10 +549,14 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         }
         break;
       default:
+        checksToRun = bowlerForm.formFields[inputIdentifier].validityErrors;
+        validity = event.target.validity;
+        failedChecks = checksToRun.filter(c => validity[c]);
+
         updatedFormElement = {
           ...bowlerForm.formFields[inputIdentifier],
           elementConfig: {...bowlerForm.formFields[inputIdentifier].elementConfig},
-          validated: false,
+          ...validityForField(failedChecks)
         }
         break;
     }
@@ -570,12 +574,12 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     }
 
     updatedBowlerForm.touched = true;
-    
+
     // Now, determine whether the whole form is valid
-    devConsoleLog("Form validity...")
+    // devConsoleLog("Form validity...")
     updatedBowlerForm.valid = Object.values(updatedBowlerForm.formFields).every(
       formField => {
-        devConsoleLog(`Field:`, isNil(formField) ? 'null' : `${formField.label} --> ${formField.valid}`);
+        // devConsoleLog(`Field:`, isNil(formField) ? 'null' : `${formField.label} --> ${formField.valid}`);
 
         return formField === null || typeof formField.valid === 'undefined' || formField.valid
       }
