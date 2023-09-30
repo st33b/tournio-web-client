@@ -285,7 +285,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       formFields[key] = {...tourn.additional_questions[key]}
       if (tourn.additional_questions[key].validation.required) {
         formFields[key].validityErrors = ['valueMissing'];
-        formFields[key].valid = false;
+        formFields[key].valid = true;
       } else {
         formFields[key].valid = true
       }
@@ -418,10 +418,16 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       newValue = event.target.value;
     }
 
-    // We need to go ahead and do validation for <select> elements, since their value isn't modified
-    // between a change event (what we're reacting to here) and a blur event (which is for fieldBlurred)
-    // To avoid confusion with extended form fields, we're hard-coding it to birth_month.
-    if (inputIdentifier === 'birth_month' || inputIdentifier === 'position') {
+    if (inputIdentifier === 'country') {
+      // special snowflake...
+      const failedChecks = event.length === 0 ? ['valueMissing'] : [];
+      updatedFormElement = {
+        ...updatedFormElement,
+        ...validityForField(inputIdentifier, failedChecks),
+      }
+    } else if (updatedFormElement.elementType === 'select') {
+      // We need to go ahead and do validation for <select> elements, since their value isn't modified
+      // between a change event (what we're reacting to here) and a blur event (which is for fieldBlurred)
       const checksToRun = updatedFormElement.validityErrors;
       const {validity} = event !== null ? event.target : {};
       const failedChecks = checksToRun.filter(c => validity[c]);
@@ -429,14 +435,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         ...updatedFormElement,
         ...validityForField(inputIdentifier, failedChecks),
       }
-    } else if (inputIdentifier === 'country') {
-      // special snowflake...
-      const failedChecks = event.length === 0 ? ['valueMissing'] : [];
-      updatedFormElement = {
-        ...updatedFormElement,
-        ...validityForField(inputIdentifier, failedChecks),
-      }
-    } else {
+    } else  {
       updatedFormElement.validated = false;
     }
 
