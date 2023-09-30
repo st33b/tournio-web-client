@@ -7,7 +7,6 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 import {devConsoleLog, validateEmail} from "../../../utils";
 
 import classes from './BowlerForm.module.scss';
-import {isNil} from "voca/internal/is_nil";
 
 const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = []}) => {
   const {registration} = useRegistrationContext();
@@ -389,7 +388,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     return formFields;
   }
 
-  const resetFormData = (tourn) => {
+  const resetFormData = () => {
     const formData = {...initialFormState};
 
     // add doubles partner if there are any available
@@ -428,7 +427,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       return;
     }
 
-    resetFormData(tournament);
+    resetFormData();
   }, [tournament]);
 
   // We're editing a bowler. Put their data into the form.
@@ -477,7 +476,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     }
 
     // Reset the form to take in the next bowler's info
-    resetFormData(tournament);
+    resetFormData();
 
     bowlerInfoSaved(theBowlerData);
   }
