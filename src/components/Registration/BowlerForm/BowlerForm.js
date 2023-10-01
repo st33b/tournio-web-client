@@ -7,6 +7,7 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 import {devConsoleLog, validateEmail} from "../../../utils";
 
 import classes from './BowlerForm.module.scss';
+import {isNil} from "voca/internal/is_nil";
 
 const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = []}) => {
   const {registration} = useRegistrationContext();
@@ -271,7 +272,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         touched: false,
       },
     },
-    valid: true,
+    valid: false,
     touched: false,
     soloBowlerFields: {
     }
@@ -279,13 +280,13 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
   const [bowlerForm, setBowlerForm] = useState(initialFormState);
   const [buttonText, setButtonText] = useState('Review');
 
-  const additionalFormFields = (tourn) => {
+  const additionalFormFields = (tourn, editing = false) => {
     const formFields = {};
     for (let key in tourn.additional_questions) {
       formFields[key] = {...tourn.additional_questions[key]}
       if (tourn.additional_questions[key].validation.required) {
         formFields[key].validityErrors = ['valueMissing'];
-        formFields[key].valid = false;
+        formFields[key].valid = editing;
       } else {
         formFields[key].valid = true
       }
@@ -345,7 +346,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     const updatedBowlerForm = {...bowlerForm};
     updatedBowlerForm.formFields = {
       ...updatedBowlerForm.formFields,
-      ...additionalFormFields(tournament),
+      ...additionalFormFields(tournament, true),
     };
 
     // First, all the standard fields and additional questions
@@ -418,10 +419,16 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       newValue = event.target.value;
     }
 
-    // We need to go ahead and do validation for <select> elements, since their value isn't modified
-    // between a change event (what we're reacting to here) and a blur event (which is for fieldBlurred)
-    // To avoid confusion with extended form fields, we're hard-coding it to birth_month.
-    if (inputIdentifier === 'birth_month' || inputIdentifier === 'position') {
+    if (inputIdentifier === 'country') {
+      // special snowflake...
+      const failedChecks = event.length === 0 ? ['valueMissing'] : [];
+      updatedFormElement = {
+        ...updatedFormElement,
+        ...validityForField(inputIdentifier, failedChecks),
+      }
+    } else if (updatedFormElement.elementType === 'select') {
+      // We need to go ahead and do validation for <select> elements, since their value isn't modified
+      // between a change event (what we're reacting to here) and a blur event (which is for fieldBlurred)
       const checksToRun = updatedFormElement.validityErrors;
       const {validity} = event !== null ? event.target : {};
       const failedChecks = checksToRun.filter(c => validity[c]);
@@ -429,14 +436,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         ...updatedFormElement,
         ...validityForField(inputIdentifier, failedChecks),
       }
-    } else if (inputIdentifier === 'country') {
-      // special snowflake...
-      const failedChecks = event.length === 0 ? ['valueMissing'] : [];
-      updatedFormElement = {
-        ...updatedFormElement,
-        ...validityForField(inputIdentifier, failedChecks),
-      }
-    } else {
+    } else  {
       updatedFormElement.validated = false;
     }
 
@@ -452,6 +452,12 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     updatedBowlerForm.formFields[inputIdentifier] = updatedFormElement;
 
     updatedBowlerForm.touched = true;
+    // Now, determine whether the whole form is valid
+    updatedBowlerForm.valid = Object.values(updatedBowlerForm.formFields).every(
+      formField => {
+        return formField === null || typeof formField.valid === 'undefined' || formField.valid
+      }
+    );
 
     // Replace the form in state, to reflect changes based on the value that changed, and resulting validity
     setBowlerForm(updatedBowlerForm);
@@ -544,7 +550,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       id: key,
       setup: bowlerForm.formFields[key],
       // <select> elements get excluded, since onChange covers it
-      validateOnBlur: !!bowlerForm.formFields[key].validityErrors && !['birth_month', 'country'].includes(key),
+      validateOnBlur: !!bowlerForm.formFields[key].validityErrors && key !== 'country' && bowlerForm.formFields[key].elementType !== 'select',
     });
   }
 

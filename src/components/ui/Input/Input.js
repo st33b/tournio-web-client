@@ -33,10 +33,19 @@ const Input = (props) => {
     }
   });
 
+  // Classes for the outer label (not for checkboxes/radios)
+  const outerLabelClasses = [
+    "col-12",
+    "col-sm-5",
+    "text-sm-end",
+    "pb-1",
+  ];
+
   // Classes to put on div.col that contains the input element and its other stuff
   const columnClasses = [];
   switch (props.elementType) {
     case('input'):
+      outerLabelClasses.push("col-form-label");
       inputElement = <input
         id={props.identifier}
         name={props.identifier}
@@ -49,6 +58,7 @@ const Input = (props) => {
       />
       break;
     case('select'):
+      outerLabelClasses.push("col-form-label");
       const optionText = props.elementConfig.options.map((option, i) => {
         return (
           <option value={option.value} key={i}>
@@ -68,6 +78,7 @@ const Input = (props) => {
       </select>
       break;
     case('component'):
+      outerLabelClasses.push("col-form-label");
       const Component = props.elementConfig.component;
       const componentClasses = props.elementConfig.classNames.concat(errorMessages.length > 0 ? 'is-invalid' : []);
       inputElement = React.createElement(Component, {
@@ -101,6 +112,7 @@ const Input = (props) => {
     case('radio'):
       columnClasses.push('d-flex', 'align-items-center'); // vertically center the radio button
     case('radio-limited-set'):
+      outerLabelClasses.push("col-form-label");
       columnClasses.push(classes.LimitedSetRadio);
       inputElement = props.elementConfig.choices.map((choice, i) => (
         <div className={`form-check`} key={i}>
@@ -158,7 +170,7 @@ const Input = (props) => {
 
   return (
     <div className={`${classes.Input} row mb-1 mb-md-2`}>
-      <label className="col-12 col-sm-5 col-form-label text-sm-end pb-1" htmlFor={props.identifier}>
+      <label className={outerLabelClasses.join(' ')} htmlFor={props.identifier}>
         {props.label}
         {required && (
           <div className="d-inline">

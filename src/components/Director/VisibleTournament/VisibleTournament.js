@@ -26,7 +26,6 @@ import {useTournament} from "../../../director";
 import classes from './VisibleTournament.module.scss';
 import {useEffect, useState} from "react";
 import {isPast} from "date-fns";
-import {devConsoleLog} from "../../../utils";
 
 const VisibleTournament = ({closeTournament}) => {
   const EDITABLE_CONFIG_ITEMS = [
@@ -37,6 +36,7 @@ const VisibleTournament = ({closeTournament}) => {
     "automatic_late_fees",
     "email_in_dev",
     "skip_stripe",
+    "stripe_receipts",
   ];
 
   const {loading, tournament} = useTournament();

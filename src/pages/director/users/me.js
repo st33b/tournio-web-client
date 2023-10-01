@@ -3,7 +3,6 @@ import {useRouter} from "next/router";
 import {useEffect} from "react";
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import Page from "./[identifier]";
-import {devConsoleLog} from "../../../utils";
 
 const Me = () => {
   const {user, ready} = useLoginContext();

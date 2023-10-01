@@ -50,8 +50,6 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
     );
   }
 
-  const enableFailure = commerce.tournament.state === 'testing';
-
   return (
     <div className={`offcanvas-md offcanvas-end ${classes.Cart}`}
          aria-labelledby={`cartTitle`}
@@ -78,8 +76,7 @@ const Cart = ({itemAddedToCart, itemRemovedFromCart}) => {
             Total: ${totalFees}
           </p>
           <div className={'w-100'}>
-            {/*<StripeCheckout />*/}
-            <StripeCheckout enableFailure={enableFailure}/>
+            <StripeCheckout />
           </div>
       </div>
     </div>
