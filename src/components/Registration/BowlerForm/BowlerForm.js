@@ -135,7 +135,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
               },
               label: 'Month',
               validityErrors: [
-                'valueMissing',
+                // 'valueMissing',
               ],
               valid: true,
               touched: false,
@@ -153,7 +153,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
               },
               label: 'Day',
               validityErrors: [
-                'valueMissing',
+                // 'valueMissing',
               ],
               valid: true,
               touched: false,
@@ -161,7 +161,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
           ],
         },
         label: 'Date of Birth',
-        validityErrors: [],
+        validityErrors: ['valueMissing'],
         valid: true,
         touched: false,
       },
@@ -489,9 +489,15 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     }
   }
 
-  const inputChangedHandler = (event, inputIdentifier, elemIndex = -1) => {
-    devConsoleLog("input identifier: ", inputIdentifier);
-    devConsoleLog("Verification of elemIndex: ", elemIndex);
+  const inputChangedHandler = (event) => {
+    let inputIdentifier;
+    if (event.target) {
+      devConsoleLog("inferred identifier: ", event.target.id);
+      inputIdentifier = event.target.id;
+    } else {
+      devConsoleLog("Stupid country...");
+      inputIdentifier = 'country';
+    }
 
     // Create a copy of the bowler form; this is where we'll make updates
     const updatedBowlerForm = {
@@ -500,27 +506,17 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       formFields: { ...bowlerForm.formFields },
     };
 
-    // Our special snowflakes for the new value:
-    let newValue;
-    if (inputIdentifier === 'country')
-      newValue = event;
-    else if (bowlerForm.formFields[inputIdentifier].elementType === 'checkbox') {
-      newValue = event.target.checked ? 'yes' : 'no';
-    } else {
-      newValue = event.target.value;
-    }
-
-    // We need to go ahead and do validation for <select> elements, since their value isn't modified
-    // between a change event (what we're reacting to here) and a blur event (which is for fieldBlurred)
     let failedChecks, checksToRun, validity;
     // Note: this may be a combo element, so don't do any other deep-copying of its elementConfig
-    let updatedFormElement;
-    const [comboIdentifier, elemIdentifier] = inputIdentifier.split(':');
+    let updatedFormElement, newValue;
     switch (inputIdentifier) {
       case 'country':
         updatedFormElement = {
           ...bowlerForm.formFields[inputIdentifier],
-          elementConfig: {...bowlerForm.formFields[inputIdentifier].elementConfig},
+          elementConfig: {
+            ...bowlerForm.formFields[inputIdentifier].elementConfig,
+            value: event,
+          },
         }
 
         failedChecks = event.length === 0 ? ['valueMissing'] : [];
@@ -531,44 +527,46 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         break;
       case 'date_of_birth:month':
       case 'date_of_birth:day':
+        const [comboIdentifier, elemIdentifier] = inputIdentifier.split(':');
+
         // month or day
-        const dobElem = bowlerForm.formFields[comboIdentifier].elementConfig.elements[elemIndex];
+        const index = elemIdentifier === 'month' ? 0 : 1;
+        const dobElem = bowlerForm.formFields[comboIdentifier].elementConfig.elements[index];
 
         updatedFormElement = {
           ...dobElem,
-          elementConfig: {...dobElem.elementConfig},
+          elementConfig: {
+            ...dobElem.elementConfig,
+            value: event.target.value,
+          },
+          touched: true,
         }
 
-        checksToRun = dobElem.validityErrors;
-        validity = event !== null ? event.target.validity : {};
-        failedChecks = checksToRun.filter(c => validity[c]);
-        updatedFormElement = {
-          ...updatedFormElement,
-          ...validityForField(failedChecks),
-        }
+        updatedBowlerForm.formFields[comboIdentifier].elementConfig.elements[index] = updatedFormElement;
         break;
       default:
         checksToRun = bowlerForm.formFields[inputIdentifier].validityErrors;
-        validity = event.target.validity;
-        failedChecks = checksToRun.filter(c => validity[c]);
+        validity = !!checksToRun ? event.target.validity : {};
+        failedChecks = !!checksToRun ? checksToRun.filter(c => validity[c]) : [];
 
         updatedFormElement = {
           ...bowlerForm.formFields[inputIdentifier],
           elementConfig: {...bowlerForm.formFields[inputIdentifier].elementConfig},
           ...validityForField(failedChecks)
         }
+        if (bowlerForm.formFields[inputIdentifier].elementType === 'checkbox') {
+          updatedFormElement.elementConfig.value = event.target.checked ? 'yes' : 'no';
+        }  else {
+          updatedFormElement.elementConfig.value = event.target.value;
+        }
         break;
     }
 
-    updatedFormElement.elementConfig.value = newValue;
     updatedFormElement.touched = true;
 
     // put the updated form element in the updated form
-    if (['date_of_birth:month', 'date_of_birth:day'].includes(inputIdentifier)) {
-      // if it's one of the combo elements
-      updatedBowlerForm.formFields[comboIdentifier].elementConfig.elements[elemIndex] = updatedFormElement;
-    } else {
-      // if it's not one of the combo elements
+    // if it's not one of the combo elements
+    if (!['date_of_birth:month', 'date_of_birth:day'].includes(inputIdentifier)) {
       updatedBowlerForm.formFields[inputIdentifier] = updatedFormElement;
     }
 
@@ -687,7 +685,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
           identifier={formElement.id}
           elementType={formElement.setup.elementType}
           elementConfig={formElement.setup.elementConfig}
-          changed={(event) => inputChangedHandler(event, formElement.id)}
+          changed={inputChangedHandler}
           label={formElement.setup.label}
           helper={formElement.setup.helper}
           validityErrors={formElement.setup.validityErrors}

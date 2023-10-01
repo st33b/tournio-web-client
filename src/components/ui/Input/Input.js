@@ -100,7 +100,7 @@ const Input = (props) => {
                 identifier={elemIdentifier}
                 elementType={elem.elementType}
                 elementConfig={elem.elementConfig}
-                changed={(event) => { devConsoleLog(`combo element changed: ${elemIdentifier}`, i); props.changed(event, elemIdentifier, i) } }
+                changed={props.changed}
                 label={elem.label}
                 helper={''}
                 validityErrors={elem.validityErrors}
