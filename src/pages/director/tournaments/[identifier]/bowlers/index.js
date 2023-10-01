@@ -10,7 +10,6 @@ import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingM
 import ErrorBoundary from "../../../../../components/common/ErrorBoundary";
 import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
-import {devConsoleLog} from "../../../../../utils";
 
 const BowlersIndex = () => {
   const router = useRouter();

@@ -1,7 +1,6 @@
 import {formatInTimeZone} from 'date-fns-tz';
 
 import classes from './TournamentDetails.module.scss';
-import {devConsoleLog} from "../../../utils";
 
 const EventPriceBreakdown = ({tournament}) => {
   if (!tournament) {

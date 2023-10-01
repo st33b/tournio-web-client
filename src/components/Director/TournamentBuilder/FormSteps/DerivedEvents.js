@@ -2,7 +2,6 @@ import {useState} from "react";
 import {useDirectorContext} from "../../../../store/DirectorContext";
 
 import classes from '../TournamentBuilder.module.scss';
-import {devConsoleLog} from "../../../../utils";
 
 const DerivedEvents = () => {
   const {directorState, dispatch} = useDirectorContext();

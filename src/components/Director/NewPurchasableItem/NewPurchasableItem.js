@@ -13,7 +13,7 @@ import ApparelItemForm from "../ApparelItemForm/ApparelItemForm";
 import BanquetForm from "./BanquetForm";
 import RaffleForm from "./RaffleForm";
 import {useTournament} from "../../../director";
-import {devConsoleLog, updateObject} from "../../../utils";
+import {updateObject} from "../../../utils";
 
 import classes from './NewPurchasableItem.module.scss';
 

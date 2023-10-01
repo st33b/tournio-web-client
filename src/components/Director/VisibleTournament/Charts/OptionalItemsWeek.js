@@ -6,7 +6,6 @@ import {color} from "chart.js/helpers";
 import {chartColors} from "./common";
 
 import classes from '../VisibleTournament.module.scss';
-import {devConsoleLog} from "../../../../utils";
 import {useTournament} from "../../../../director";
 
 const OptionalItemsWeek = ({title, dataKeys}) => {

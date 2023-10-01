@@ -1,7 +1,6 @@
 import classes from './EmailButton.module.scss';
 import {useRef, useState} from "react";
 import {Overlay, Popover} from "react-bootstrap";
-import {devConsoleLog} from "../../../utils";
 
 const EmailButton = ({bowlerIdentifier, emailType, orderIdentifier, orderCredit, onClick}) => {
   const target = useRef(null);

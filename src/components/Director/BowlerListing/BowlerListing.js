@@ -5,7 +5,7 @@ import {Overlay, Popover} from "react-bootstrap";
 
 import SortableTableHeader from "../../ui/SortableTableHeader/SortableTableHeader";
 import BowlerFilterForm from "../BowlerFilterForm/BowlerFilterForm";
-import {doesNotEqual, isOrIsNot, equals, devConsoleLog} from "../../../utils";
+import {doesNotEqual, isOrIsNot, equals} from "../../../utils";
 import {directorApiRequest} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 
