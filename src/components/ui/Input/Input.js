@@ -2,7 +2,6 @@ import React from 'react';
 
 import classes from './Input.module.scss';
 import {Collapse} from "react-bootstrap";
-import {devConsoleLog} from "../../../utils";
 
 const Input = (props) => {
   let inputElement = null;
@@ -66,7 +65,7 @@ const Input = (props) => {
         const {min, max} = props.elementConfig.optionRange;
         for (let i = min; i <= max; i++) {
           options.push(<option value={i} key={`option_${i}`}>{i}</option>);
-        };
+        }
         optionText = options;
       } else {
         optionText = props.elementConfig.options.map((option, i) => {

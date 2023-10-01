@@ -508,7 +508,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
 
     let failedChecks, checksToRun, validity;
     // Note: this may be a combo element, so don't do any other deep-copying of its elementConfig
-    let updatedFormElement, newValue;
+    let updatedFormElement;
     switch (inputIdentifier) {
       case 'country':
         updatedFormElement = {
