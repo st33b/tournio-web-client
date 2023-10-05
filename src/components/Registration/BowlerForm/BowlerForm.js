@@ -132,6 +132,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
                   },
                 ],
                 value: 1,
+                labelClasses: ['visually-hidden'],
+                layoutClass: 'col-6',
               },
               label: 'Month',
               validityErrors: [
@@ -150,6 +152,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
                   max: 31,
                 },
                 value: 1,
+                labelClasses: ['visually-hidden'],
+                layoutClass: 'col-6',
               },
               label: 'Day',
               validityErrors: [

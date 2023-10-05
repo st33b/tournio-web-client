@@ -39,10 +39,15 @@ const Input = (props) => {
     "col-sm-5",
     "text-sm-end",
     "pb-1",
+    // "col-form-label",
   ];
 
   // Classes to put on div.col that contains the input element and its other stuff
   const columnClasses = [];
+
+  // Class(es) to drive layout. Allows child Input elements to be arranged differently
+  const layoutClass = props.elementConfig.layoutClass ? props.elementConfig.layoutClass : 'row';
+
   switch (props.elementType) {
     case('input'):
       outerLabelClasses.push("col-form-label");
@@ -59,6 +64,9 @@ const Input = (props) => {
       break;
     case('select'):
       outerLabelClasses.push("col-form-label");
+      if (props.elementConfig.labelClasses) {
+        outerLabelClasses.push(...props.elementConfig.labelClasses);
+      }
       let optionText;
       if (props.elementConfig.optionRange) {
         const options = [];
@@ -88,9 +96,9 @@ const Input = (props) => {
       </select>
       break;
     case('combo'):
-      // const elems =
+      outerLabelClasses.push("col-form-label");
       inputElement = (
-        <div>
+        <div className={`row g-1`}>
           {props.elementConfig.elements.map((elem, i) => {
             const elemIdentifier = `${props.identifier}:${elem.identifier}`;
             return (
@@ -207,7 +215,7 @@ const Input = (props) => {
   }
 
   return (
-    <div className={`${classes.Input} row mb-1 mb-md-2`}>
+    <div className={`${classes.Input} ${layoutClass} mb-1 mb-md-2`}>
       <label className={outerLabelClasses.join(' ')} htmlFor={props.identifier}>
         {props.label}
         {required && (
