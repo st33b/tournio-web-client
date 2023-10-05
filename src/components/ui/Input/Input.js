@@ -39,10 +39,15 @@ const Input = (props) => {
     "col-sm-5",
     "text-sm-end",
     "pb-1",
+    // "col-form-label",
   ];
 
   // Classes to put on div.col that contains the input element and its other stuff
   const columnClasses = [];
+
+  // Class(es) to drive layout. Allows child Input elements to be arranged differently
+  const layoutClass = props.elementConfig.layoutClass ? props.elementConfig.layoutClass : 'row';
+
   switch (props.elementType) {
     case('input'):
       outerLabelClasses.push("col-form-label");
@@ -59,13 +64,26 @@ const Input = (props) => {
       break;
     case('select'):
       outerLabelClasses.push("col-form-label");
-      const optionText = props.elementConfig.options.map((option, i) => {
-        return (
-          <option value={option.value} key={i}>
-            {option.label}
-          </option>
-        );
-      });
+      if (props.elementConfig.labelClasses) {
+        outerLabelClasses.push(...props.elementConfig.labelClasses);
+      }
+      let optionText;
+      if (props.elementConfig.optionRange) {
+        const options = [];
+        const {min, max} = props.elementConfig.optionRange;
+        for (let i = min; i <= max; i++) {
+          options.push(<option value={i} key={`option_${i}`}>{i}</option>);
+        }
+        optionText = options;
+      } else {
+        optionText = props.elementConfig.options.map((option, i) => {
+          return (
+            <option value={option.value} key={i}>
+              {option.label}
+            </option>
+          );
+        });
+      }
       inputElement = <select
         id={props.identifier}
         name={props.identifier}
@@ -76,6 +94,34 @@ const Input = (props) => {
       >
         {optionText}
       </select>
+      break;
+    case('combo'):
+      outerLabelClasses.push("col-form-label");
+      inputElement = (
+        <div className={`row g-1`}>
+          {props.elementConfig.elements.map((elem, i) => {
+            const elemIdentifier = `${props.identifier}:${elem.identifier}`;
+            return (
+              <Input
+                key={i}
+                identifier={elemIdentifier}
+                elementType={elem.elementType}
+                elementConfig={elem.elementConfig}
+                changed={props.changed}
+                label={elem.label}
+                helper={''}
+                validityErrors={elem.validityErrors}
+                errorMessages={elem.errorMessages}
+                // For <select> elements, onBlur is redundant to onChange
+                blurred={false}
+                failedValidations={typeof elem.validityFailures !== 'undefined' ? elem.validityFailures : []}
+                wasValidated={elem.validated}
+                loading={false}
+              />
+            );
+          })}
+        </div>
+      )
       break;
     case('component'):
       outerLabelClasses.push("col-form-label");
@@ -169,7 +215,7 @@ const Input = (props) => {
   }
 
   return (
-    <div className={`${classes.Input} row mb-1 mb-md-2`}>
+    <div className={`${classes.Input} ${layoutClass} mb-1 mb-md-2`}>
       <label className={outerLabelClasses.join(' ')} htmlFor={props.identifier}>
         {props.label}
         {required && (
