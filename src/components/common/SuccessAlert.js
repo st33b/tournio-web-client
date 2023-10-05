@@ -1,5 +1,3 @@
-import {devConsoleLog} from "../../utils";
-
 const SuccessAlert = ({message, className='', onClose=()=>{}}) => {
   if (!message) {
     return '';

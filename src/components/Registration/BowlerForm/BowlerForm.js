@@ -577,11 +577,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     updatedBowlerForm.touched = true;
 
     // Now, determine whether the whole form is valid
-    // devConsoleLog("Form validity...")
     updatedBowlerForm.valid = Object.values(updatedBowlerForm.formFields).every(
       formField => {
-        // devConsoleLog(`Field:`, isNil(formField) ? 'null' : `${formField.label} --> ${formField.valid}`);
-
         return formField === null || typeof formField.valid === 'undefined' || formField.valid
       }
     );

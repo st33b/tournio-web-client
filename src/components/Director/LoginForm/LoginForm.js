@@ -3,7 +3,7 @@ import axios from "axios";
 import {Button, Card, FloatingLabel, Form} from "react-bootstrap";
 
 import {useLoginContext} from "../../../store/LoginContext";
-import {apiHost, devConsoleLog} from "../../../utils";
+import {apiHost} from "../../../utils";
 
 import classes from './LoginForm.module.scss';
 

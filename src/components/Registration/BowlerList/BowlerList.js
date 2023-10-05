@@ -8,7 +8,6 @@ import {
   getFilteredRowModel,
   useReactTable
 } from "@tanstack/react-table";
-import {devConsoleLog} from "../../../utils";
 import {partnerUpRegistrationInitiated} from "../../../store/actions/registrationActions";
 import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";

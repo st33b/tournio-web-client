@@ -2,7 +2,6 @@ import classes from './TournamentDetails.module.scss';
 import {ListGroup} from "react-bootstrap";
 import {useRouter} from "next/router";
 import Button from "react-bootstrap/Button";
-import {devConsoleLog} from "../../../utils";
 
 const RegisterButtons = ({tournament}) => {
   const router = useRouter();

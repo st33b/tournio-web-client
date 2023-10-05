@@ -11,7 +11,7 @@ import ErrorBoundary from "../../../../../components/common/ErrorBoundary";
 import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
 import NewFreeEntryForm from "../../../../../components/Director/NewFreeEntryForm/NewFreeEntryForm";
-import {devConsoleLog, updateObject} from "../../../../../utils";
+import {updateObject} from "../../../../../utils";
 import {useLoginContext} from "../../../../../store/LoginContext";
 
 const FreeEntriesIndex = () => {
