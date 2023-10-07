@@ -9,8 +9,6 @@ import {devConsoleLog, validateEmail} from "../../../utils";
 import classes from './BowlerForm.module.scss';
 
 const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = []}) => {
-  const {registration} = useRegistrationContext();
-
   const initialFormState = {
     formFields: {
       first_name: {
@@ -459,7 +457,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     setButtonText('Review Changes');
   }, [bowlerData, tournament]);
 
-  if (!registration || !tournament) {
+  if (!tournament) {
     return '';
   }
 
@@ -549,6 +547,9 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         updatedBowlerForm.formFields[comboIdentifier].elementConfig.elements[index] = updatedFormElement;
         break;
       default:
+        devConsoleLog("Event:", event)
+        // Conundrum: name vs id. Name would make it easier to deal with radios. Will the country field play nice?
+        // And what about the combo element's kids?
         checksToRun = bowlerForm.formFields[inputIdentifier].validityErrors;
         validity = !!checksToRun ? event.target.validity : {};
         failedChecks = !!checksToRun ? checksToRun.filter(c => validity[c]) : [];

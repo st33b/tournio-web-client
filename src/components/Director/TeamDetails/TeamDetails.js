@@ -8,9 +8,12 @@ import PartnerSelectionRow from "./PartnerSelectionRow";
 import classes from './TeamDetails.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {useTournament} from "../../../director";
+import {useRouter} from "next/router";
 
 const TeamDetails = ({team, teamUpdateSubmitted}) => {
   const {loading, tournament} = useTournament();
+  const router = useRouter();
+  const {identifier: tournamentId, teamId} = router.query;
 
   let initialFormData = {
     valid: true,
@@ -105,7 +108,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
       id: 'free_entry',
       Header: 'Free Entry',
       accessor: 'free_entry',
-      Cell: ({row, value}) => {
+      Cell: ({value}) => {
         if (value === null) {
           return '--';
         }
@@ -326,7 +329,24 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
                 </tbody>
               </table>
             </div>
+
+            {maxTeamSize > team.bowlers.length && (
+              <div className={'text-center'}>
+                <Link href={{
+                  pathname: `/director/tournaments/[identifier]/teams/[teamId]/add_bowler`,
+                  query: {
+                    identifier: tournamentId,
+                    teamId: teamId,
+                  }
+                }}
+                      className={'btn btn-success'}>
+                  Add a New Bowler
+                </Link>
+              </div>
+            )}
+
             {doublesPartnerSelection}
+
             <div className={'text-center mt-4'}>
               <Button variant={'primary'}
                       disabled={!teamForm.touched || !teamForm.valid}

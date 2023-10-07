@@ -81,6 +81,7 @@ const Page = () => {
   const availableDoublesPartners = team.bowlers.filter(partner => (
     partner.doubles_partner_name === 'n/a'
   ));
+
   return (
     <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
       <TournamentHeader tournament={registration.tournament}/>
