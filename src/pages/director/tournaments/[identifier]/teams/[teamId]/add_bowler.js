@@ -62,10 +62,6 @@ const Page = () => {
 
   const maxPosition = parseInt(tournament.team_size);
 
-  const availableDoublesPartners = team.bowlers.filter(partner => (
-    partner.doubles_partner_name === 'n/a'
-  ));
-
   const ladder = [
     {text: 'Tournaments', path: '/director/tournaments'},
     {text: tournament.name, path: `/director/tournaments/${tournamentId}`},
@@ -100,7 +96,6 @@ const Page = () => {
       <hr />
 
       <BowlerForm tournament={tournament}
-                  availablePartners={availableDoublesPartners}
                   bowlerInfoSaved={bowlerInfoSaved}/>
 
     </ErrorBoundary>
