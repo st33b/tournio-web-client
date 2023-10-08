@@ -7,7 +7,7 @@ import {devConsoleLog, validateEmail} from "../../../utils";
 
 import classes from './BowlerForm.module.scss';
 
-const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = []}) => {
+const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = [], nextButtonText}) => {
   const initialFormState = {
     formFields: {
       first_name: {
@@ -371,7 +371,9 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     }
   }
   const [bowlerForm, setBowlerForm] = useState(initialFormState);
-  const [buttonText, setButtonText] = useState('Review');
+
+  // Because this may be used by registering bowlers or by an admin adding a bowler
+  const [buttonText, setButtonText] = useState(nextButtonText ? nextButtonText : 'Review');
 
   const additionalFormFields = (editing = false) => {
     const formFields = {};
@@ -469,7 +471,9 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     updatedBowlerForm.valid = true;
 
     setBowlerForm(updatedBowlerForm);
-    setButtonText('Review Changes');
+    if (!nextButtonText) {
+      setButtonText('Review Changes');
+    }
   }, [bowlerData, tournament]);
 
   if (!tournament) {
