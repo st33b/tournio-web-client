@@ -1,5 +1,5 @@
 import {useRouter} from "next/router";
-import {useDirectorApi, useTournament} from "../../../../../../director";
+import {directorApiRequest, useDirectorApi, useTournament} from "../../../../../../director";
 import DirectorLayout from "../../../../../../components/Layout/DirectorLayout/DirectorLayout";
 import {useEffect, useState} from "react";
 import ErrorBoundary from "../../../../../../components/common/ErrorBoundary";
@@ -8,10 +8,13 @@ import Breadcrumbs from "../../../../../../components/Director/Breadcrumbs/Bread
 import ErrorAlert from "../../../../../../components/common/ErrorAlert";
 import PositionChooser from "../../../../../../components/common/formElements/PositionChooser/PositionChooser";
 import BowlerForm from "../../../../../../components/Registration/BowlerForm/BowlerForm";
+import {devConsoleLog} from "../../../../../../utils";
+import {useLoginContext} from "../../../../../../store/LoginContext";
 
 const Page = () => {
   const router = useRouter();
   const {identifier: tournamentId, teamId} = router.query;
+  const {authToken} = useLoginContext();
 
   const {loading: tournamentLoading, tournament} = useTournament();
   const {loading: teamLoading, data: team, error: teamError, onDataUpdate: teamChanged} = useDirectorApi({
@@ -69,8 +72,73 @@ const Page = () => {
     setProcessing(true);
     setBowlerData(bowlerDeets);
 
-    // write the bowler data
-    bowlerSubmitFailure('Not yet implemented.');
+    const postData = convertBowlerDataForPost(bowlerDeets);
+
+    // bowlerSubmitFailure("Not just yet");
+    // devConsoleLog("Tournament property", tournament.additional_questions)
+    // devConsoleLog("Post data", postData);
+
+    const uri = `/tournaments/${tournamentId}/bowlers`;
+    const requestConfig = {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        bowler: {
+          ...postData,
+          position: chosenPosition,
+          team: {
+            identifier: teamId,
+          },
+        },
+      },
+    }
+    setProcessing(true);
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      authToken: authToken,
+      onSuccess: bowlerSubmitSuccess,
+      onFailure: bowlerSubmitFailure,
+    });
+  }
+
+  // @refactor This is virtually identical to what's on the registration side.
+  // The difference is getting through the additional questions.
+  // (On registration, they're indexed by name; on director, they're an array.)
+  const convertBowlerDataForPost = (bowlerData) => {
+    return {
+      person_attributes: {
+        first_name: bowlerData.first_name,
+        last_name: bowlerData.last_name,
+        usbc_id: bowlerData.usbc_id,
+        birth_month: bowlerData.birth_month,
+        birth_day: bowlerData.birth_day,
+        nickname: bowlerData.nickname,
+        phone: bowlerData.phone,
+        email: bowlerData.email,
+        address1: bowlerData.address1,
+        address2: bowlerData.address2,
+        city: bowlerData.city,
+        state: bowlerData.state,
+        country: bowlerData.country,
+        postal_code: bowlerData.postal_code,
+      },
+      additional_question_responses: convertAdditionalQuestionResponsesForPost(bowlerData),
+    };
+  }
+
+  const convertAdditionalQuestionResponsesForPost = (bowlerData) => {
+    const responses = [];
+    tournament.additional_questions.forEach(aq => {
+      const key = aq.name;
+      responses.push({
+        name: key,
+        response: bowlerData[key] || '',
+      });
+    });
+    return responses;
   }
   ////////////////////////////////////////////////////////////////////
 

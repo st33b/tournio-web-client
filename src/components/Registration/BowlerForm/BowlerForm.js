@@ -460,12 +460,22 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       ...additionalFormFields(true),
     };
 
-    // First, all the standard fields and additional questions
+    // all the standard fields and additional questions
     for (const inputName in bowlerData) {
       if (!updatedBowlerForm.formFields[inputName]) {
         continue;
       }
       updatedBowlerForm.formFields[inputName].elementConfig.value = bowlerData[inputName];
+    }
+
+    // add the date-of-birth combo elements
+    if (bowlerForm.formFields.date_of_birth) {
+      const dobObj = updatedBowlerForm.formFields.date_of_birth;
+
+      bowlerForm.formFields.date_of_birth.elementConfig.elements.forEach((elem, index) => {
+        const key = `birth_${elem.identifier}`;
+        dobObj.elementConfig.elements[index].elementConfig.value = bowlerData[key];
+      });
     }
 
     updatedBowlerForm.valid = true;
@@ -494,6 +504,14 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         continue;
       }
       theBowlerData[formElementIdentifier] = bowlerForm.formFields[formElementIdentifier].elementConfig.value;
+    }
+
+    // add the date-of-birth combo elements
+    if (bowlerForm.formFields.date_of_birth) {
+      bowlerForm.formFields.date_of_birth.elementConfig.elements.forEach(elem => {
+        const key = `birth_${elem.identifier}`;
+        theBowlerData[key] = elem.elementConfig.value;
+      });
     }
 
     // Reset the form to take in the next bowler's info
