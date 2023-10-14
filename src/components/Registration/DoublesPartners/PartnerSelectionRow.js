@@ -4,7 +4,6 @@ import classes from './PartnerSelectionRow.module.scss';
 // bowler -- the bowler for whom we are selecting a partner
 // allBowlers -- all the bowlers on the team
 // onPartnerSelected -- function to call when a partner has been clicked. It will automatically determine the rest of the assignments
-// values -- the bowlers_attributes from the team form (id, doubles_partner_id, position)
 
 const PartnerSelectionRow = ({bowler, bowlerIndex, teammates, onPartnerSelected}) => {
   return (

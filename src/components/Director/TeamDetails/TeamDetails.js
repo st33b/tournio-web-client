@@ -219,6 +219,11 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     updatedTeamForm.fields.bowlers_attributes.value = newBowlers;
     updatedTeamForm.touched = true;
     setTeamForm(updatedTeamForm);
+
+    // update the bowlers on the team, so that the partner selection rows get presented correctly
+    updatedTeamForm.fields.bowlers_attributes.value.forEach((bowlerAttributeRow, index) => {
+      team.bowlers[index].doubles_partner_id = bowlerAttributeRow.doubles_partner_id;
+    })
   }
 
   const doublesPartnerSelection = (
@@ -239,11 +244,11 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
         </thead>
         <tbody>
         {team.bowlers.map(bowler => {
-          return <PartnerSelectionRow key={bowler.id}
+          // Need the bowler to reflect the current state of doubles assignment in the form
+          return <PartnerSelectionRow key={bowler.identifier}
                                       bowler={bowler}
                                       allBowlers={team.bowlers}
                                       onPartnerSelected={gimmeNewDoublesPartners}
-                                      values={teamForm.fields.bowlers_attributes.value}
           />
         })}
         </tbody>
@@ -258,6 +263,21 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
   }
 
   const maxTeamSize = parseInt(tournament.team_size);
+
+  const addBowlerLink = (
+    <div className={'text-center'}>
+      <Link href={{
+        pathname: `/director/tournaments/[identifier]/teams/[teamId]/add_bowler`,
+        query: {
+          identifier: tournamentId,
+          teamId: teamId,
+        }
+      }}
+            className={'btn btn-success'}>
+        Add a New Bowler
+      </Link>
+    </div>
+  );
 
   return (
     <ErrorBoundary>
@@ -292,7 +312,10 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
         </div>
         {team.size === 0 && (
           <div className={'border-top border-1 mt-3'}>
-            <p className={'lead text-center mt-3'}>No bowlers on this team.</p>
+            <p className={'lead text-center mt-3'}>
+              No bowlers on this team.
+            </p>
+            {addBowlerLink}
           </div>
         )}
         {team.size > 0 && (
@@ -330,20 +353,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
               </table>
             </div>
 
-            {maxTeamSize > team.bowlers.length && (
-              <div className={'text-center'}>
-                <Link href={{
-                  pathname: `/director/tournaments/[identifier]/teams/[teamId]/add_bowler`,
-                  query: {
-                    identifier: tournamentId,
-                    teamId: teamId,
-                  }
-                }}
-                      className={'btn btn-success'}>
-                  Add a New Bowler
-                </Link>
-              </div>
-            )}
+            {team.size < maxTeamSize && addBowlerLink}
 
             {doublesPartnerSelection}
 
