@@ -26,7 +26,7 @@ const EventForm = ({onCancel, onComplete}) => {
     ['single', 'Singles'],
     ['double', 'Doubles'],
     ['team', 'Team'],
-    ['trios', 'Trios'],
+    ['trio', 'Trios'],
   ];
 
   const [formData, setFormData] = useState(initialState);
