@@ -8,9 +8,12 @@ import PartnerSelectionRow from "./PartnerSelectionRow";
 import classes from './TeamDetails.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {useTournament} from "../../../director";
+import {useRouter} from "next/router";
 
 const TeamDetails = ({team, teamUpdateSubmitted}) => {
   const {loading, tournament} = useTournament();
+  const router = useRouter();
+  const {identifier: tournamentId, teamId} = router.query;
 
   let initialFormData = {
     valid: true,
@@ -105,7 +108,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
       id: 'free_entry',
       Header: 'Free Entry',
       accessor: 'free_entry',
-      Cell: ({row, value}) => {
+      Cell: ({value}) => {
         if (value === null) {
           return '--';
         }
@@ -216,6 +219,11 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     updatedTeamForm.fields.bowlers_attributes.value = newBowlers;
     updatedTeamForm.touched = true;
     setTeamForm(updatedTeamForm);
+
+    // update the bowlers on the team, so that the partner selection rows get presented correctly
+    updatedTeamForm.fields.bowlers_attributes.value.forEach((bowlerAttributeRow, index) => {
+      team.bowlers[index].doubles_partner_id = bowlerAttributeRow.doubles_partner_id;
+    })
   }
 
   const doublesPartnerSelection = (
@@ -236,11 +244,11 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
         </thead>
         <tbody>
         {team.bowlers.map(bowler => {
-          return <PartnerSelectionRow key={bowler.id}
+          // Need the bowler to reflect the current state of doubles assignment in the form
+          return <PartnerSelectionRow key={bowler.identifier}
                                       bowler={bowler}
                                       allBowlers={team.bowlers}
                                       onPartnerSelected={gimmeNewDoublesPartners}
-                                      values={teamForm.fields.bowlers_attributes.value}
           />
         })}
         </tbody>
@@ -255,6 +263,21 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
   }
 
   const maxTeamSize = parseInt(tournament.team_size);
+
+  const addBowlerLink = (
+    <div className={'text-center'}>
+      <Link href={{
+        pathname: `/director/tournaments/[identifier]/teams/[teamId]/add_bowler`,
+        query: {
+          identifier: tournamentId,
+          teamId: teamId,
+        }
+      }}
+            className={'btn btn-success'}>
+        Add a New Bowler
+      </Link>
+    </div>
+  );
 
   return (
     <ErrorBoundary>
@@ -289,7 +312,10 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
         </div>
         {team.size === 0 && (
           <div className={'border-top border-1 mt-3'}>
-            <p className={'lead text-center mt-3'}>No bowlers on this team.</p>
+            <p className={'lead text-center mt-3'}>
+              No bowlers on this team.
+            </p>
+            {addBowlerLink}
           </div>
         )}
         {team.size > 0 && (
@@ -326,7 +352,11 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
                 </tbody>
               </table>
             </div>
+
+            {team.size < maxTeamSize && addBowlerLink}
+
             {doublesPartnerSelection}
+
             <div className={'text-center mt-4'}>
               <Button variant={'primary'}
                       disabled={!teamForm.touched || !teamForm.valid}

@@ -41,9 +41,9 @@ const TeamListing = ({tournament, teams, shiftCount = 1}) => {
         filter: lessThan,
       },
       {
-        Header: 'Available Slots',
+        Header: 'Reserved Slots',
         accessor: 'initial_size',
-        Cell: ({row, value}) => value - row.original.size,
+        // Cell: ({row, value}) => Math.max(0, value - row.original.size),
         disableSortBy: true,
         filter: lessThan,
       },

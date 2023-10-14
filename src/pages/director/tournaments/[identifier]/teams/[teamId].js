@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Card, Button, Row, Col} from "react-bootstrap";
 
@@ -16,7 +16,7 @@ import {updateObject} from "../../../../../utils";
 const Page = () => {
   const router = useRouter();
   const {authToken} = useLoginContext();
-  const {identifier: tournamentId, teamId} = router.query;
+  const {identifier: tournamentId, teamId, successCode} = router.query;
 
   const {loading: tournamentLoading, tournament, tournamentUpdatedQuietly} = useTournament();
   const {loading: teamLoading, data: team, error: teamError, onDataUpdate: onTeamUpdate} = useDirectorApi({
@@ -34,6 +34,25 @@ const Page = () => {
     delete: false,
     update: false,
   });
+
+  useEffect(() => {
+    if (!successCode) {
+      return;
+    }
+    let msg = '';
+    switch (successCode) {
+      case '2':
+        msg = 'Bowler added';
+        break;
+      default:
+        msg = 'Something went well!';
+        break;
+    }
+    setSuccess({
+      ...success,
+      update: msg,
+    });
+  }, [successCode]);
 
   const onDeleteTeamSuccess = (_) => {
     setOperationInProgress({

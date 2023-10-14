@@ -38,9 +38,6 @@ const BowlerSummary = ({bowler, partner = null}) => {
     aqResponses[key] = bowler[key];
   }
 
-  devConsoleLog("aqResponses:", aqResponses);
-  devConsoleLog("aqLabels", aqLabels);
-
   return (
     <div className={classes.BowlerSummary}>
       <dl>

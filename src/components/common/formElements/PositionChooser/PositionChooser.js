@@ -2,7 +2,7 @@ import classes from "./PositionChooser.module.scss";
 import React, {useEffect, useState} from "react";
 import {updateObject} from "../../../../utils";
 
-const PositionChooser = ({maxPosition=4, chosen, onChoose}) => {
+const PositionChooser = ({maxPosition=4, chosen, onChoose, disallowedPositions=[]}) => {
   const initialState = {
     chosen: 1,
   }
@@ -16,7 +16,7 @@ const PositionChooser = ({maxPosition=4, chosen, onChoose}) => {
       });
       setFormState(updatedFormState);
     }
-  }, []);
+  }, [chosen]);
 
   const inputChanged = (element, newValue) => {
     const updatedFormState = updateObject(formState, {
@@ -28,20 +28,25 @@ const PositionChooser = ({maxPosition=4, chosen, onChoose}) => {
 
   const radios = [];
   for (let i = 0; i < maxPosition; i++) {
-    const selected = formState.chosen === i + 1;
+    const currentPosition = i + 1;
+    const selected = formState.chosen === currentPosition;
+    const disallowed = disallowedPositions.includes(currentPosition)
     radios.push(
-      <div key={`positionInput${i+1}`} className={`mx-md-4 ${selected ? 'selected-radio-container' : ''}`}>
+      <div key={`positionInput${currentPosition}`}
+           title={disallowed ? 'This position is not available' : ''}
+           className={`mx-md-4 ${selected ? 'selected-radio-container' : ''}`}>
         <input type={'radio'}
                className={'btn-check'}
                name={'position'}
-               id={`position_${i+1}`}
-               value={i+1}
+               id={`position_${currentPosition}`}
+               value={currentPosition}
                checked={selected}
+               disabled={disallowed}
                onChange={(e) => inputChanged(e, i+1)}
                autoComplete={'off'} />
         <label className={`btn btn-lg btn-tournio-radio`}
-               htmlFor={`position_${i+1}`}>
-          {i+1}
+               htmlFor={`position_${currentPosition}`}>
+          {currentPosition}
         </label>
       </div>
     );

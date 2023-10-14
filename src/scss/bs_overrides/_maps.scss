@@ -28,7 +28,7 @@
       $hover-background: shade-color($radio-button-color-light, $btn-hover-bg-shade-amount),
       $hover-border: shade-color($radio-button-color-light, $btn-hover-border-shade-amount),
       $active-background: shade-color($radio-button-color-light, $btn-active-bg-shade-amount),
-      $active-border: shade-color($radio-button-color-light, $btn-active-border-shade-amount)
+      $active-border: shade-color($radio-button-color-light, $btn-active-border-shade-amount),
     );
   }
 }
@@ -89,5 +89,16 @@
         $color,
         $value,
     )
+  }
+
+  .btn-tournio-radio {
+    @include button-variant(
+        $radio-button-color-dark,
+        $radio-button-color-dark,
+      $hover-background: shade-color($radio-button-color-dark, $btn-hover-bg-shade-amount),
+      $hover-border: shade-color($radio-button-color-dark, $btn-hover-border-shade-amount),
+      $active-background: shade-color($radio-button-color-dark, $btn-active-bg-shade-amount),
+      $active-border: shade-color($radio-button-color-dark, $btn-active-border-shade-amount)
+    );
   }
 }
