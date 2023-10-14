@@ -1,6 +1,5 @@
 import classes from "./BowlerList.module.scss";
-import {useEffect, useMemo, useRef, useState} from 'react';
-import {Link} from 'next';
+import {useState} from 'react';
 import {
   createColumnHelper,
   flexRender,
@@ -8,11 +7,10 @@ import {
   getFilteredRowModel,
   useReactTable
 } from "@tanstack/react-table";
-import {partnerUpRegistrationInitiated} from "../../../store/actions/registrationActions";
 import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 
-const BowlerList = ({tournament, bowlers = [], caption, action = 'bowlerDetail'}) => {
+const BowlerList = ({tournament, bowlers = [], action = 'bowlerDetail'}) => {
   const router = useRouter();
   const {dispatch} = useRegistrationContext();
   const columnHelper = createColumnHelper();
@@ -24,6 +22,11 @@ const BowlerList = ({tournament, bowlers = [], caption, action = 'bowlerDetail'}
     columnHelper.accessor('identifier', {
       header: 'ID',
       enableGlobalFilter: false,
+      enableHiding: true,
+    }),
+    columnHelper.accessor('firstName', {
+      header: 'First Name',
+      enableGlobalFilter: true,
       enableHiding: true,
     }),
     columnHelper.accessor('listName', {
