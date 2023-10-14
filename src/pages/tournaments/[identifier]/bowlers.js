@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
-import {Alert, Col, Row} from "react-bootstrap";
+import {Alert} from "react-bootstrap";
 import {useRouter} from "next/router";
 
-import {devConsoleLog, fetchBowlerList, fetchTournamentDetails, useClientReady} from "../../../utils";
+import {fetchBowlerList, fetchTournamentDetails, useClientReady} from "../../../utils";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
@@ -35,7 +35,6 @@ const Page = () => {
   }
 
   const onTournamentFetchSuccess = (data) => {
-    devConsoleLog("Dispatching tournament details retrieved");
     dispatch(tournamentDetailsRetrieved(data));
   }
 
@@ -46,7 +45,6 @@ const Page = () => {
     }
     const tournamentIdentifier = identifier;
     if (!registration.tournament || registration.tournament.identifier !== tournamentIdentifier) {
-      devConsoleLog("Need to fetch the identified tournament");
       fetchTournamentDetails(
         tournamentIdentifier,
         onTournamentFetchSuccess,
@@ -132,7 +130,6 @@ const Page = () => {
           {successMsg}
           <BowlerList tournament={registration.tournament}
                       bowlers={bowlers}
-                      caption={'Tournament Bowlers'}
           />
         </div>
       </div>
