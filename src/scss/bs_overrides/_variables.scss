@@ -98,7 +98,8 @@ $alert-border-scale: -20%;
 $modal-lg: 650px;
 $btn-hover-bg-shade-amount: 50%;
 $btn-hover-bg-tint-amount: 50%;
-$btn-disabled-opacity: 1;
+//$btn-disabled-bg-shade-amount: 20%;
+$btn-disabled-opacity: 0.5;
 $link-shade-percentage: 30%;
 
 $navbar-light-color:                rgba(var(--#{$prefix}emphasis-color-rgb), .8) !default;

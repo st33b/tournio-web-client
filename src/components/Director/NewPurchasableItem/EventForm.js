@@ -26,14 +26,13 @@ const EventForm = ({onCancel, onComplete}) => {
     ['single', 'Singles'],
     ['double', 'Doubles'],
     ['team', 'Team'],
-    ['trios', 'Trios'],
+    ['trio', 'Trios'],
   ];
 
   const [formData, setFormData] = useState(initialState);
 
   const inputChanged = (event) => {
-    let newValue = '';
-    newValue = event.target.value;
+    let newValue = event.target.value;
     const inputName = event.target.name;
     if (inputName === 'value' || inputName === 'order') {
       if (newValue.length > 0) {

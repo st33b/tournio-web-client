@@ -2,16 +2,12 @@ import React, {useEffect, useState} from "react";
 import {CountryDropdown} from "react-country-region-selector";
 
 import Input from "../../ui/Input/Input";
-import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {devConsoleLog, validateEmail} from "../../../utils";
 
 import classes from './BowlerForm.module.scss';
-import {isNil} from "voca/internal/is_nil";
 
-const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = []}) => {
-  const {registration} = useRegistrationContext();
-
+const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = [], nextButtonText}) => {
   const initialFormState = {
     formFields: {
       first_name: {
@@ -73,90 +69,187 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         valid: true,
         touched: false,
       },
-      birth_month: {
-        elementType: 'select',
+      date_of_birth: {
+        elementType: 'combo',
         elementConfig: {
-          options: [
+          elements: [
             {
-              value: '',
-              label: '-- Choose your month',
+              // Month
+              identifier: 'month',
+              elementType: 'select',
+              elementConfig: {
+                options: [
+                  {
+                    value: 1,
+                    label: 'Jan'
+                  },
+                  {
+                    value: 2,
+                    label: 'Feb'
+                  },
+                  {
+                    value: 3,
+                    label: 'Mar'
+                  },
+                  {
+                    value: 4,
+                    label: 'Apr'
+                  },
+                  {
+                    value: 5,
+                    label: 'May'
+                  },
+                  {
+                    value: 6,
+                    label: 'Jun'
+                  },
+                  {
+                    value: 7,
+                    label: 'Jul'
+                  },
+                  {
+                    value: 8,
+                    label: 'Aug'
+                  },
+                  {
+                    value: 9,
+                    label: 'Sep'
+                  },
+                  {
+                    value: 10,
+                    label: 'Oct'
+                  },
+                  {
+                    value: 11,
+                    label: 'Nov'
+                  },
+                  {
+                    value: 12,
+                    label: 'Dec'
+                  },
+                ],
+                value: 1,
+                labelClasses: ['visually-hidden'],
+                layoutClass: 'col-6',
+              },
+              label: 'Month',
+              validityErrors: [
+                // 'valueMissing',
+              ],
+              valid: true,
+              touched: false,
             },
             {
-              value: 1,
-              label: 'Jan'
-            },
-            {
-              value: 2,
-              label: 'Feb'
-            },
-            {
-              value: 3,
-              label: 'Mar'
-            },
-            {
-              value: 4,
-              label: 'Apr'
-            },
-            {
-              value: 5,
-              label: 'May'
-            },
-            {
-              value: 6,
-              label: 'Jun'
-            },
-            {
-              value: 7,
-              label: 'Jul'
-            },
-            {
-              value: 8,
-              label: 'Aug'
-            },
-            {
-              value: 9,
-              label: 'Sep'
-            },
-            {
-              value: 10,
-              label: 'Oct'
-            },
-            {
-              value: 11,
-              label: 'Nov'
-            },
-            {
-              value: 12,
-              label: 'Dec'
+              // Day
+              identifier: 'day',
+              elementType: 'select',
+              elementConfig: {
+                optionRange: {
+                  min: 1,
+                  max: 31,
+                },
+                value: 1,
+                labelClasses: ['visually-hidden'],
+                layoutClass: 'col-6',
+              },
+              label: 'Day',
+              validityErrors: [
+                // 'valueMissing',
+              ],
+              valid: true,
+              touched: false,
             },
           ],
-          value: '',
         },
-        label: 'Birth month',
-        validityErrors: [
-          'valueMissing',
-        ],
+        label: 'Date of Birth',
+        validityErrors: ['valueMissing'],
         valid: true,
         touched: false,
       },
-      birth_day: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'number',
-          value: '',
-          min: 1,
-          max: 31,
-        },
-        label: 'Birth day',
-        validityErrors: [
-          'valueMissing',
-          'rangeUnderflow',
-          'rangeOverflow',
-          'typeMismatch',
-        ],
-        valid: true,
-        touched: false,
-      },
+      // birth_month: {
+      //   elementType: 'select',
+      //   elementConfig: {
+      //     options: [
+      //       {
+      //         value: '',
+      //         label: '-- Choose your month',
+      //       },
+      //       {
+      //         value: 1,
+      //         label: 'Jan'
+      //       },
+      //       {
+      //         value: 2,
+      //         label: 'Feb'
+      //       },
+      //       {
+      //         value: 3,
+      //         label: 'Mar'
+      //       },
+      //       {
+      //         value: 4,
+      //         label: 'Apr'
+      //       },
+      //       {
+      //         value: 5,
+      //         label: 'May'
+      //       },
+      //       {
+      //         value: 6,
+      //         label: 'Jun'
+      //       },
+      //       {
+      //         value: 7,
+      //         label: 'Jul'
+      //       },
+      //       {
+      //         value: 8,
+      //         label: 'Aug'
+      //       },
+      //       {
+      //         value: 9,
+      //         label: 'Sep'
+      //       },
+      //       {
+      //         value: 10,
+      //         label: 'Oct'
+      //       },
+      //       {
+      //         value: 11,
+      //         label: 'Nov'
+      //       },
+      //       {
+      //         value: 12,
+      //         label: 'Dec'
+      //       },
+      //     ],
+      //     value: '',
+      //   },
+      //   label: 'Birth month',
+      //   validityErrors: [
+      //     'valueMissing',
+      //   ],
+      //   valid: true,
+      //   touched: false,
+      // },
+      // birth_day: {
+      //   elementType: 'input',
+      //   elementConfig: {
+      //     type: 'number',
+      //     value: '',
+      //     min: 1,
+      //     max: 31,
+      //   },
+      //   label: 'Birth day',
+      //   validityErrors: [
+      //     'valueMissing',
+      //     'rangeUnderflow',
+      //     'rangeOverflow',
+      //     'typeMismatch',
+      //   ],
+      //   valid: true,
+      //   touched: false,
+      // },
       doubles_partner: null,
       email: {
         elementType: 'input',
@@ -278,25 +371,40 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     }
   }
   const [bowlerForm, setBowlerForm] = useState(initialFormState);
-  const [buttonText, setButtonText] = useState('Review');
 
-  const additionalFormFields = (tourn, editing = false) => {
+  // Because this may be used by registering bowlers or by an admin adding a bowler
+  const [buttonText, setButtonText] = useState(nextButtonText ? nextButtonText : 'Review');
+
+  const additionalFormFields = (editing = false) => {
     const formFields = {};
-    for (let key in tourn.additional_questions) {
-      formFields[key] = {...tourn.additional_questions[key]}
-      if (tourn.additional_questions[key].validation.required) {
+
+    // for (let key in tournament.additional_questions) {
+    Object.values(tournament.additional_questions).forEach(q => {
+      const key = q.name;
+      formFields[key] = {...q}
+      if (q.validation.required) {
         formFields[key].validityErrors = ['valueMissing'];
         formFields[key].valid = editing;
       } else {
         formFields[key].valid = true
       }
       formFields[key].touched = false;
-      formFields[key].elementConfig = {...tourn.additional_questions[key].elementConfig}
-    }
+      formFields[key].elementConfig = {...q.elementConfig}
+    });
+      // formFields[key] = {...tournament.additional_questions[key]}
+      // if (tournament.additional_questions[key].validation.required) {
+      //   formFields[key].validityErrors = ['valueMissing'];
+      //   formFields[key].valid = editing;
+      // } else {
+      //   formFields[key].valid = true
+      // }
+      // formFields[key].touched = false;
+      // formFields[key].elementConfig = {...tournament.additional_questions[key].elementConfig}
+    // }
     return formFields;
   }
 
-  const resetFormData = (tourn) => {
+  const resetFormData = () => {
     const formData = {...initialFormState};
 
     // add doubles partner if there are any available
@@ -324,7 +432,10 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     }
 
     // get the additional questions
-    formData.formFields = {...formData.formFields, ...additionalFormFields(tourn)};
+    formData.formFields = {
+      ...formData.formFields,
+      ...additionalFormFields(),
+    };
 
     setBowlerForm(formData);
   }
@@ -335,7 +446,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       return;
     }
 
-    resetFormData(tournament);
+    resetFormData();
   }, [tournament]);
 
   // We're editing a bowler. Put their data into the form.
@@ -346,24 +457,36 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     const updatedBowlerForm = {...bowlerForm};
     updatedBowlerForm.formFields = {
       ...updatedBowlerForm.formFields,
-      ...additionalFormFields(tournament, true),
+      ...additionalFormFields(true),
     };
 
-    // First, all the standard fields and additional questions
-    for (const inputIdentifier in bowlerData) {
-      if (!updatedBowlerForm.formFields[inputIdentifier]) {
+    // all the standard fields and additional questions
+    for (const inputName in bowlerData) {
+      if (!updatedBowlerForm.formFields[inputName]) {
         continue;
       }
-      updatedBowlerForm.formFields[inputIdentifier].elementConfig.value = bowlerData[inputIdentifier];
+      updatedBowlerForm.formFields[inputName].elementConfig.value = bowlerData[inputName];
+    }
+
+    // add the date-of-birth combo elements
+    if (bowlerForm.formFields.date_of_birth) {
+      const dobObj = updatedBowlerForm.formFields.date_of_birth;
+
+      bowlerForm.formFields.date_of_birth.elementConfig.elements.forEach((elem, index) => {
+        const key = `birth_${elem.identifier}`;
+        dobObj.elementConfig.elements[index].elementConfig.value = bowlerData[key];
+      });
     }
 
     updatedBowlerForm.valid = true;
 
     setBowlerForm(updatedBowlerForm);
-    setButtonText('Review Changes');
+    if (!nextButtonText) {
+      setButtonText('Review Changes');
+    }
   }, [bowlerData, tournament]);
 
-  if (!registration || !tournament) {
+  if (!tournament) {
     return '';
   }
 
@@ -383,13 +506,21 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       theBowlerData[formElementIdentifier] = bowlerForm.formFields[formElementIdentifier].elementConfig.value;
     }
 
+    // add the date-of-birth combo elements
+    if (bowlerForm.formFields.date_of_birth) {
+      bowlerForm.formFields.date_of_birth.elementConfig.elements.forEach(elem => {
+        const key = `birth_${elem.identifier}`;
+        theBowlerData[key] = elem.elementConfig.value;
+      });
+    }
+
     // Reset the form to take in the next bowler's info
-    resetFormData(tournament);
+    resetFormData();
 
     bowlerInfoSaved(theBowlerData);
   }
 
-  const validityForField = (fieldIdentifier, failedChecks = []) => {
+  const validityForField = (failedChecks = []) => {
     return {
       validated: true,
       valid: failedChecks.length === 0,
@@ -397,61 +528,88 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     }
   }
 
-  const inputChangedHandler = (event, inputIdentifier) => {
+  const inputChangedHandler = (event) => {
+    let inputName;
+    if (event.target) {
+      inputName = event.target.name;
+    } else {
+      inputName = 'country';
+    }
+
     // Create a copy of the bowler form; this is where we'll make updates
     const updatedBowlerForm = {
       ...bowlerForm,
+      // Deep-copy the formFields property, because it's complex
+      formFields: { ...bowlerForm.formFields },
     };
 
-    let updatedFormElement = {
-      ...bowlerForm.formFields[inputIdentifier]
-    }
-    // Deep-copy the element config, since that has the part that gets changed...
-    updatedFormElement.elementConfig = {...bowlerForm.formFields[inputIdentifier].elementConfig}
+    let failedChecks, checksToRun, validity;
+    // Note: this may be a combo element, so don't do any other deep-copying of its elementConfig
+    let updatedFormElement;
+    switch (inputName) {
+      case 'country':
+        updatedFormElement = {
+          ...bowlerForm.formFields[inputName],
+          elementConfig: {
+            ...bowlerForm.formFields[inputName].elementConfig,
+            value: event,
+          },
+        }
 
-    // Our special snowflakes:
-    let newValue;
-    if (inputIdentifier === 'country')
-      newValue = event;
-    else if (updatedFormElement.elementType === 'checkbox') {
-      newValue = event.target.checked ? 'yes' : 'no';
-    } else {
-      newValue = event.target.value;
+        failedChecks = event.length === 0 ? ['valueMissing'] : [];
+        updatedFormElement = {
+          ...updatedFormElement,
+          ...validityForField(failedChecks),
+        }
+        break;
+      case 'date_of_birth:month':
+      case 'date_of_birth:day':
+        const [comboIdentifier, elemIdentifier] = inputName.split(':');
+
+        // month or day
+        const index = elemIdentifier === 'month' ? 0 : 1;
+        const dobElem = bowlerForm.formFields[comboIdentifier].elementConfig.elements[index];
+
+        updatedFormElement = {
+          ...dobElem,
+          elementConfig: {
+            ...dobElem.elementConfig,
+            value: event.target.value,
+          },
+          touched: true,
+        }
+
+        updatedBowlerForm.formFields[comboIdentifier].elementConfig.elements[index] = updatedFormElement;
+        break;
+      default:
+        checksToRun = bowlerForm.formFields[inputName].validityErrors;
+        validity = !!checksToRun ? event.target.validity : {};
+        failedChecks = !!checksToRun ? checksToRun.filter(c => validity[c]) : [];
+
+        updatedFormElement = {
+          ...bowlerForm.formFields[inputName],
+          elementConfig: {...bowlerForm.formFields[inputName].elementConfig},
+          validated: false,
+          ...validityForField(failedChecks)
+        }
+        if (bowlerForm.formFields[inputName].elementType === 'checkbox') {
+          updatedFormElement.elementConfig.value = event.target.checked ? 'yes' : 'no';
+        }  else {
+          updatedFormElement.elementConfig.value = event.target.value;
+        }
+        break;
     }
 
-    if (inputIdentifier === 'country') {
-      // special snowflake...
-      const failedChecks = event.length === 0 ? ['valueMissing'] : [];
-      updatedFormElement = {
-        ...updatedFormElement,
-        ...validityForField(inputIdentifier, failedChecks),
-      }
-    } else if (updatedFormElement.elementType === 'select') {
-      // We need to go ahead and do validation for <select> elements, since their value isn't modified
-      // between a change event (what we're reacting to here) and a blur event (which is for fieldBlurred)
-      const checksToRun = updatedFormElement.validityErrors;
-      const {validity} = event !== null ? event.target : {};
-      const failedChecks = checksToRun.filter(c => validity[c]);
-      updatedFormElement = {
-        ...updatedFormElement,
-        ...validityForField(inputIdentifier, failedChecks),
-      }
-    } else  {
-      updatedFormElement.validated = false;
-    }
-
-    // Update the relevant parts of the changed field (the new value, whether it's valid, and the fact that it was changed at all)
-    updatedFormElement.elementConfig.value = newValue;
     updatedFormElement.touched = true;
 
-    // Deep-copy the formFields property, because it's complex
-    updatedBowlerForm.formFields = {
-      ...bowlerForm.formFields
+    // put the updated form element in the updated form
+    // if it's not one of the combo elements
+    if (!['date_of_birth:month', 'date_of_birth:day'].includes(inputName)) {
+      updatedBowlerForm.formFields[inputName] = updatedFormElement;
     }
-    // Put the changed field in the copy of the bowler form structure
-    updatedBowlerForm.formFields[inputIdentifier] = updatedFormElement;
 
     updatedBowlerForm.touched = true;
+
     // Now, determine whether the whole form is valid
     updatedBowlerForm.valid = Object.values(updatedBowlerForm.formFields).every(
       formField => {
@@ -463,15 +621,15 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     setBowlerForm(updatedBowlerForm);
   }
 
-  const bonusValidityCheck = (inputIdentifier, inputElement, value) => {
+  const bonusValidityCheck = (inputName, inputElement, value) => {
     // Doing this specifically for email addresses rather than opting for a generic
     // approach, since emails are, so far, the only input field for which we want
     // validation beyond the Validation API
 
     // Only do this on active tournaments
-    if (['demo', 'testing', 'active'].includes(tournament.state) && inputIdentifier === 'email') {
+    if (['demo', 'testing', 'active'].includes(tournament.state) && inputName === 'email') {
       const newFormData = {...bowlerForm};
-      newFormData.formFields[inputIdentifier].bonusCheckUnderway = true;
+      newFormData.formFields[inputName].bonusCheckUnderway = true;
 
       devConsoleLog("Let's validate an email!");
       validateEmail(value).then(result => {
@@ -496,25 +654,25 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
             inputElement.setCustomValidity('');
           }
 
-          newFormData.formFields[inputIdentifier] = {
-            ...newFormData.formFields[inputIdentifier],
-            ...validityForField(inputIdentifier, whoopsies),
+          newFormData.formFields[inputName] = {
+            ...newFormData.formFields[inputName],
+            ...validityForField(whoopsies),
           }
         }
       }).catch(error => {
         devConsoleLog("Unexpected error: ", error);
       }).then(() => {
-        newFormData.formFields[inputIdentifier].bonusCheckUnderway = false;
+        newFormData.formFields[inputName].bonusCheckUnderway = false;
         setBowlerForm(newFormData);
       });
     }
   }
 
-  const fieldBlurred = (event, inputIdentifier) => {
+  const fieldBlurred = (event, inputName) => {
     const newFormData = {...bowlerForm}
-    const fieldIsChanged = newFormData.formFields[inputIdentifier].touched;
+    const fieldIsChanged = newFormData.formFields[inputName].touched;
 
-    const checksToRun = bowlerForm.formFields[inputIdentifier].validityErrors;
+    const checksToRun = bowlerForm.formFields[inputName].validityErrors;
     if (!checksToRun || !fieldIsChanged) {
       // Don't update validations if we've blurred but the input was never changed
       return;
@@ -525,12 +683,12 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
 
     // If everything in the Validation API passed, then run any bonus checks
     if (failedChecks.length === 0) {
-      bonusValidityCheck(inputIdentifier, event.target, newFormData.formFields[inputIdentifier].elementConfig.value);
+      bonusValidityCheck(inputName, event.target, newFormData.formFields[inputName].elementConfig.value);
     }
 
-    newFormData.formFields[inputIdentifier] = {
-      ...newFormData.formFields[inputIdentifier],
-      ...validityForField(inputIdentifier, failedChecks),
+    newFormData.formFields[inputName] = {
+      ...newFormData.formFields[inputName],
+      ...validityForField(failedChecks),
     };
 
     // Now, determine whether the whole form is valid
@@ -562,7 +720,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
           identifier={formElement.id}
           elementType={formElement.setup.elementType}
           elementConfig={formElement.setup.elementConfig}
-          changed={(event) => inputChangedHandler(event, formElement.id)}
+          changed={inputChangedHandler}
           label={formElement.setup.label}
           helper={formElement.setup.helper}
           validityErrors={formElement.setup.validityErrors}
