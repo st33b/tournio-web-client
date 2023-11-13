@@ -14,6 +14,7 @@ import ShiftForm from "./ShiftsSteps/ShiftForm";
 import classes from '../TournamentBuilder.module.scss';
 import {useLoginContext} from "../../../../store/LoginContext";
 import {useRouter} from "next/router";
+import chosen from "../../../../pages/tournaments/[identifier]/teams/[teamIdentifier]/[chosen]";
 
 const Shifts = ({substep}) => {
   const {state, dispatch} = useDirectorContext();
@@ -162,13 +163,16 @@ const Shifts = ({substep}) => {
                                shift={singleShift}
                                onShiftUpdated={shiftUpdated}/>;
     }
-    if (chosenStyle === 'multi_inclusive') {
+    else if (chosenStyle === 'multi_inclusive') {
       formContent = shiftSet.map((shift, i) => <ShiftForm key={i}
                                                           index={i}
                                                           withDetails={true}
                                                           shift={shift}
                                                           onShiftDeleted={i > 1 ? () => shiftDeleted(i) : undefined}
                                                           onShiftUpdated={(newShift) => shiftUpdated(newShift, i)}/>);
+    }
+    else if (chosenStyle === 'mix_and_match') {
+
     }
   }
 
