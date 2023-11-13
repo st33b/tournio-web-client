@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamRegistrationInitiated, newTeamRegistrationUpdated} from "../../../store/actions/registrationActions";
 import {useEffect, useState} from "react";
-import {useTournament} from "../../../utils";
+import {devConsoleLog, useTournament} from "../../../utils";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import TournamentHeader from "../../../components/ui/TournamentHeader";
 import ErrorAlert from "../../../components/common/ErrorAlert";
@@ -93,9 +93,10 @@ const Page = () => {
           </>
       )}
 
-      <TeamForm shifts={tournament.shifts}
+      <TeamForm tournament={tournament}
                 maxBowlers={tournament.team_size}
                 onSubmit={teamFormCompleted} />
+
     </div>
   );
 }
