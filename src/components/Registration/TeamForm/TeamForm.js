@@ -2,14 +2,15 @@ import React, {useEffect, useState} from "react";
 
 import classes from './TeamForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {updateObject} from "../../../utils";
+import {devConsoleLog, updateObject} from "../../../utils";
+import InclusiveShiftForm from "../InclusiveShiftForm/InclusiveShiftForm";
+import MixAndMatchShiftForm from "../MixAndMatchShiftForm/MixAndMatchShiftForm";
 
-const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
+const TeamForm = ({tournament, maxBowlers=4, onSubmit}) => {
   const initialFormValues = {
     fields: {
       bowlerCount: 4,
       name: '',
-      preferredShift: '',
     },
     valid: false,
   }
@@ -18,16 +19,10 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
   });
 
   useEffect(() => {
-    if (!shifts) {
+    if (!tournament) {
       return;
     }
-    // Default the form's preferredShift value to the first shift
-    const newFormValues = {...componentState.form };
-    newFormValues.fields.preferredShift = shifts[0].identifier;
-    setComponentState(updateObject(componentState, {
-      form: newFormValues,
-    }));
-  }, [shifts]);
+  }, [tournament]);
 
   const formHandler = (event) => {
     event.preventDefault();
@@ -41,8 +36,7 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
 
   const isFormValid = (fields) => {
     return fields.bowlerCount > 0 && fields.bowlerCount <= maxBowlers
-      && fields.name.length > 0
-      && fields.preferredShift.length > 0;
+      && fields.name.length > 0;
   }
 
   const inputChanged = (element) => {
@@ -52,7 +46,6 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
         newFormValues.fields.bowlerCount = parseInt(element.target.value);
         break;
       case 'name':
-      case 'preferredShift':
         newFormValues.fields[element.target.name] = element.target.value;
         break;
       default:
@@ -84,6 +77,9 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
       </div>
     );
   }
+
+  const tournamentType = tournament.config_items.find(({key}) => key === 'tournament_type').value || 'igbo_standard';
+  devConsoleLog("Tournament type: ", tournamentType);
 
   return (
     <ErrorBoundary>
@@ -118,38 +114,16 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
           />
         </div>
 
-        {/* shift preference selector */}
-        {shifts.length > 1 && (
-          <div className={`${classes.FormElement}`}>
-            <label className={`${classes.Label} col-form-label-lg`}>
-              Shift Preference
-            </label>
-            <div className={`d-flex justify-content-evenly justify-content-lg-center`}>
-              {shifts.map((shift, i) => {
-                if (shift.is_full) {
-                  return '';
-                }
-                const selected = componentState.form.fields.preferredShift === shift.identifier;
-                return (
-                <div key={`preferredShiftInput${i}`}
-                     className={`mx-lg-4 ${selected ? 'selected-radio-container' : ''}`}>
-                  <input type={'radio'}
-                         className={'btn-check'}
-                         name={'preferredShift'}
-                         id={`preferredShift_${i}`}
-                         value={shift.identifier}
-                         onChange={inputChanged}
-                         checked={selected}
-                         autoComplete={'off'}/>
-                  <label className={`btn btn-lg btn-tournio-radio`}
-                         htmlFor={`preferredShift_${i}`}>
-                    {shift.name}
-                  </label>
-                </div>
-              )})}
-            </div>
-          </div>
+        {/* No shift form for single-shift standard tournaments */}
+
+        {tournamentType === 'igbo_multi_shift' && (
+          <InclusiveShiftForm shifts={tournament.shifts}/>
         )}
+
+        {tournamentType === 'igbo_mix_and_match' && (
+          <MixAndMatchShiftForm shiftsByEvent={tournament.shifts_by_event}/>
+        )}
+
         <div className={`${classes.Submit}`}>
           <button className={`btn btn-lg btn-success`}
                   onClick={formHandler}

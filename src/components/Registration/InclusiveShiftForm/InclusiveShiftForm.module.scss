@@ -1,0 +1,15 @@
+@use "bootstrap/scss/mixins/buttons";
+
+.InclusiveShiftForm {
+  .FormElement {
+    margin-bottom: 1.25rem;
+  }
+  .Label {
+    .Required {
+      margin-left: 5px;
+      font-size: 60%;
+      color: var(--tournio-danger);
+      filter: brightness(80%);
+    }
+  }
+}
