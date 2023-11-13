@@ -53,7 +53,7 @@ const Style = ({style, styleChosen}) => {
                      className={`form-check-input`}
                      onChange={inputChanged}
                      value={key}
-                     disabled={key === 'mix_and_match'}
+                     // disabled={key === 'mix_and_match'}
               />
               <label className={`form-check-label`}
                      htmlFor={`style_${key}`}>
