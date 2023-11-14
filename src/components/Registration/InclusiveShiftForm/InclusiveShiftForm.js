@@ -15,7 +15,8 @@ const InclusiveShiftForm = ({shifts, onUpdate}) => {
     }
     // Default the form's preferredShift value to the first shift
     const newFormValues = {...componentState };
-    newFormValues.fields.preferredShift = shifts[0].identifier;
+    const availableShifts = shifts.filter(({is_full}) => !is_full)
+    newFormValues.fields.preferredShift = availableShifts[0].identifier;
     setComponentState(newFormValues);
     onUpdate([newFormValues.fields.preferredShift]);
   }, [shifts]);
@@ -42,9 +43,6 @@ const InclusiveShiftForm = ({shifts, onUpdate}) => {
         </label>
         <div className={`d-flex justify-content-evenly justify-content-lg-center`}>
           {shifts.map((shift, i) => {
-            if (shift.is_full) {
-              return '';
-            }
             const selected = componentState.fields.preferredShift === shift.identifier;
             return (
               <div key={`preferredShiftInput${i}`}
@@ -56,10 +54,11 @@ const InclusiveShiftForm = ({shifts, onUpdate}) => {
                        value={shift.identifier}
                        onChange={inputChanged}
                        checked={selected}
+                       disabled={!!shift.is_full}
                        autoComplete={'off'}/>
                 <label className={`btn btn-lg btn-tournio-radio`}
                        htmlFor={`preferredShift_${i}`}>
-                  {shift.name}
+                  {!!shift.is_full ? '[full]' : ''} {shift.name}
                 </label>
               </div>
             )})}

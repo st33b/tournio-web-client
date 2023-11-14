@@ -2,7 +2,6 @@ import React, {useState} from "react";
 
 import classes from './TeamForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {devConsoleLog} from "../../../utils";
 import InclusiveShiftForm from "../InclusiveShiftForm/InclusiveShiftForm";
 import MixAndMatchShiftForm from "../MixAndMatchShiftForm/MixAndMatchShiftForm";
 
@@ -49,7 +48,6 @@ const TeamForm = ({tournament, maxBowlers=4, onSubmit}) => {
   }
 
   const shiftIdentifiersUpdated = (newShiftIdentifiers) => {
-    devConsoleLog("Oh hi!", newShiftIdentifiers);
     const newFormValues = {...componentState };
     newFormValues.fields.shiftIdentifiers = newShiftIdentifiers;
     setComponentState(newFormValues);
