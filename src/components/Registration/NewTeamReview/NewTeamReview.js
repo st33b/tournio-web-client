@@ -6,10 +6,10 @@ const NewTeamReview = ({team, bowler, tournament}) => {
     return '';
   }
 
-  const shiftIdentifier = team.preferredShift;
-  const chosenShift = tournament.shifts.length === 1
+  const shiftIdentifiers = team.shiftIdentifiers || [];
+  const chosenShifts = tournament.shifts.length === 1
     ? ''
-    : tournament.shifts.find(({identifier}) => identifier === shiftIdentifier);
+    : tournament.shifts.filter(({identifier}) => shiftIdentifiers.includes(identifier));
 
   if (!team || !bowler) {
     return '';
@@ -41,13 +41,13 @@ const NewTeamReview = ({team, bowler, tournament}) => {
           </dd>
         </div>
 
-        {chosenShift && (
+        {chosenShifts && (
           <div className={`row g-2`}>
             <dt className={`col-5`}>
-              Preferred Shift:
+              Shift Preference:
             </dt>
             <dd className={`col`}>
-              {chosenShift.name}
+              {chosenShifts.map(({name}) => name).join(', ')}
             </dd>
           </div>
         )}

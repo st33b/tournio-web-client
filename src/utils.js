@@ -392,7 +392,7 @@ export const submitNewTeamWithPlaceholders = ({tournament, team, bowler, onSucce
         ...convertBowlerDataForPost(tournament, bowler),
         position: bowler.position,
       }],
-      shift_identifier: team.preferredShift,
+      shift_identifiers: [...team.shiftIdentifiers],
     },
   }
   const requestConfig = {
