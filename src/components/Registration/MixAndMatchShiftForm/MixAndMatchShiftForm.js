@@ -13,10 +13,11 @@ const MixAndMatchShiftForm = ({shiftsByEvent, onUpdate}) => {
     if (!shiftsByEvent) {
       return;
     }
-    // Set the form to select the first (available) shift in each group
+    // Set the form to select the first (not full) shift in each group
     const formValues = {...initialFormValues}
     for (const eventStr in shiftsByEvent) {
-      formValues.fields[eventStr] = shiftsByEvent[eventStr][0].identifier;
+      const availableShifts = shiftsByEvent[eventStr].filter(({is_full}) => !is_full)
+      formValues.fields[eventStr] = availableShifts[0].identifier;
     }
     setComponentState(updateObject(componentState, {
         fields: {
@@ -53,7 +54,7 @@ const MixAndMatchShiftForm = ({shiftsByEvent, onUpdate}) => {
           {shiftsByEvent[eventGroup][0].group_title}
         </h4>
 
-        {shiftsByEvent[eventGroup].map(({identifier, name, description}) => {
+        {shiftsByEvent[eventGroup].map(({identifier, name, description, is_full}) => {
           const selected = componentState.fields[eventGroup] === identifier;
 
           return (
@@ -65,10 +66,11 @@ const MixAndMatchShiftForm = ({shiftsByEvent, onUpdate}) => {
                       value={identifier}
                       onChange={(e) => inputUpdated(e, eventGroup)}
                       checked={selected}
+                      disabled={!!is_full}
                       autoComplete={'off'}/>
                <label className={`form-check-label`}
                       htmlFor={`shift_${identifier}`}>
-                 {name}: {description}
+                 {!!is_full ? '[full]' : ''} {name}: {description}
                </label>
             </div>
           )
