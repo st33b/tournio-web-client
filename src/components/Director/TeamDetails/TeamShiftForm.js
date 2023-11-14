@@ -4,7 +4,7 @@ import {useClientReady} from "../../../utils";
 
 import classes from './TeamShiftForm.module.scss';
 
-const TeamShiftForm = ({allShifts, team, onShiftChange}) => {
+const TeamShiftForm = ({allShifts, team, shift, onShiftChange}) => {
   const initialFormData = {
     touched: false,
     valid: false,
@@ -23,15 +23,15 @@ const TeamShiftForm = ({allShifts, team, onShiftChange}) => {
     if (!allShifts || !team) {
       return;
     }
-    if (!team.shift) {
+    if (!shift) {
       return;
     }
     const newFormData = {...formData}
-    newFormData.fields.shift_identifier = team.shift.identifier;
+    newFormData.fields.shift_identifier = shift.identifier;
     newFormData.touched = false;
-    newFormData.valid = isValid(team.shift.identifier);
+    newFormData.valid = isValid(shift.identifier);
     setFormData(newFormData);
-  }, [allShifts, team]);
+  }, [allShifts, team, shift]);
 
   const shiftChosen = (event) => {
     const newShiftIdentifier = event.target.value;
@@ -54,16 +54,16 @@ const TeamShiftForm = ({allShifts, team, onShiftChange}) => {
 
   return (
     <div className={classes.TeamShiftForm}>
-      {!team.shift && <p>n/a</p>}
-      {team.shift && (
+      {!shift && <p>n/a</p>}
+      {shift && (
         <Form onSubmit={submitClicked} noValidate={true}>
-          {allShifts.map((shift, i) => (
+          {allShifts.map((s, i) => (
               <Form.Check type={'radio'}
                           key={i}
                           onChange={shiftChosen}
-                          label={shift.name}
-                          value={shift.identifier}
-                          checked={formData.fields.shift_identifier === shift.identifier}
+                          label={s.name}
+                          value={s.identifier}
+                          checked={formData.fields.shift_identifier === s.identifier}
                           id={`shift_${i}`}
                           name={'shift'} />
             )
