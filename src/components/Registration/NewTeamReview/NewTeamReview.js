@@ -7,7 +7,7 @@ const NewTeamReview = ({team, bowler, tournament}) => {
   }
 
   const shiftIdentifiers = team.shiftIdentifiers || [];
-  const chosenShifts = registration.tournament.shifts.length === 1
+  const chosenShifts = tournament.shifts.length === 1
     ? ''
     : tournament.shifts.filter(({identifier}) => shiftIdentifiers.includes(identifier));
 
