@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 
 import classes from './TeamForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {devConsoleLog, updateObject} from "../../../utils";
+import {devConsoleLog} from "../../../utils";
 import InclusiveShiftForm from "../InclusiveShiftForm/InclusiveShiftForm";
 import MixAndMatchShiftForm from "../MixAndMatchShiftForm/MixAndMatchShiftForm";
 
@@ -11,27 +11,20 @@ const TeamForm = ({tournament, maxBowlers=4, onSubmit}) => {
     fields: {
       bowlerCount: 4,
       name: '',
+      shiftIdentifiers: [],
     },
     valid: false,
   }
-  const [componentState, setComponentState] = useState({
-    form: initialFormValues,
-  });
-
-  useEffect(() => {
-    if (!tournament) {
-      return;
-    }
-  }, [tournament]);
+  const [componentState, setComponentState] = useState(initialFormValues);
 
   const formHandler = (event) => {
     event.preventDefault();
 
-    if (!componentState.form.valid) {
+    if (!componentState.valid) {
       return;
     }
 
-    onSubmit(componentState.form.fields);
+    onSubmit(componentState.fields);
   }
 
   const isFormValid = (fields) => {
@@ -40,7 +33,7 @@ const TeamForm = ({tournament, maxBowlers=4, onSubmit}) => {
   }
 
   const inputChanged = (element) => {
-    const newFormValues = {...componentState.form };
+    const newFormValues = {...componentState };
     switch (element.target.name) {
       case 'bowlerCount':
         newFormValues.fields.bowlerCount = parseInt(element.target.value);
@@ -52,14 +45,19 @@ const TeamForm = ({tournament, maxBowlers=4, onSubmit}) => {
         return;
     }
     newFormValues.valid = isFormValid(newFormValues.fields);
-    setComponentState(updateObject(componentState, {
-      form: newFormValues,
-    }));
+    setComponentState(newFormValues);
+  }
+
+  const shiftIdentifiersUpdated = (newShiftIdentifiers) => {
+    devConsoleLog("Oh hi!", newShiftIdentifiers);
+    const newFormValues = {...componentState };
+    newFormValues.fields.shiftIdentifiers = newShiftIdentifiers;
+    setComponentState(newFormValues);
   }
 
   const bowlerCountRadios = [];
   for (let i = 0; i < maxBowlers; i++) {
-    const selected = componentState.form.fields.bowlerCount === i+1;
+    const selected = componentState.fields.bowlerCount === i+1;
     bowlerCountRadios.push(
       <div key={`bowlerCountInput${i+1}`} className={`mx-lg-4 ${selected ? 'selected-radio-container' : ''}`}>
         <input type={'radio'}
@@ -79,7 +77,6 @@ const TeamForm = ({tournament, maxBowlers=4, onSubmit}) => {
   }
 
   const tournamentType = tournament.config_items.find(({key}) => key === 'tournament_type').value || 'igbo_standard';
-  devConsoleLog("Tournament type: ", tournamentType);
 
   return (
     <ErrorBoundary>
@@ -106,7 +103,7 @@ const TeamForm = ({tournament, maxBowlers=4, onSubmit}) => {
           <input type={'text'}
                  id={'teamName'}
                  name={'name'}
-                 value={componentState.form.fields.name}
+                 value={componentState.fields.name}
                  onChange={inputChanged}
                  aria-label={'Team Name'}
                  className={`form-control form-control-lg`}
@@ -117,17 +114,19 @@ const TeamForm = ({tournament, maxBowlers=4, onSubmit}) => {
         {/* No shift form for single-shift standard tournaments */}
 
         {tournamentType === 'igbo_multi_shift' && (
-          <InclusiveShiftForm shifts={tournament.shifts}/>
+          <InclusiveShiftForm shifts={tournament.shifts}
+                              onUpdate={shiftIdentifiersUpdated}/>
         )}
 
         {tournamentType === 'igbo_mix_and_match' && (
-          <MixAndMatchShiftForm shiftsByEvent={tournament.shifts_by_event}/>
+          <MixAndMatchShiftForm shiftsByEvent={tournament.shifts_by_event}
+                                onUpdate={shiftIdentifiersUpdated}/>
         )}
 
         <div className={`${classes.Submit}`}>
           <button className={`btn btn-lg btn-success`}
                   onClick={formHandler}
-                  disabled={!componentState.form.valid}
+                  disabled={!componentState.valid}
                   role={'button'}>
             Go
             <i className={'bi bi-arrow-right ps-2'} aria-hidden={true}/>

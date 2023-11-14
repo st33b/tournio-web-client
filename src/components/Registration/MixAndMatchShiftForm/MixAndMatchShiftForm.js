@@ -4,8 +4,7 @@ import {devConsoleLog, updateObject} from "../../../utils";
 
 const MixAndMatchShiftForm = ({shiftsByEvent, onUpdate}) => {
   const initialFormValues = {
-    fields: {
-    },
+    fields: {},
   }
 
   const [componentState, setComponentState] = useState(initialFormValues);
@@ -18,14 +17,16 @@ const MixAndMatchShiftForm = ({shiftsByEvent, onUpdate}) => {
     const formValues = {...initialFormValues}
     for (const eventStr in shiftsByEvent) {
       formValues.fields[eventStr] = shiftsByEvent[eventStr][0].identifier;
-      devConsoleLog("Event string:", eventStr);
-      devConsoleLog("Initial value:", formValues.fields[eventStr]);
     }
     setComponentState(updateObject(componentState, {
         fields: {
-          ...formValues.fields
+          ...formValues.fields,
         }
       }));
+
+    // Now convey that to our parent
+    devConsoleLog("Telling parent about selected fields: ", Object.values(formValues.fields));
+    onUpdate(Object.values(formValues.fields));
   }, [shiftsByEvent]);
 
   /////////////////////////////
@@ -37,6 +38,10 @@ const MixAndMatchShiftForm = ({shiftsByEvent, onUpdate}) => {
     setComponentState(updateObject(componentState, {
       fields: updatedFields,
     }));
+
+    // Now convey that to our parent
+    const shiftIdentifiers = Object.values(updatedFields);
+    onUpdate(shiftIdentifiers);
   }
 
   {/* A set of radios for each event set */}
@@ -45,7 +50,7 @@ const MixAndMatchShiftForm = ({shiftsByEvent, onUpdate}) => {
     groups.push(
       <div className={classes.EventGroup} key={eventGroup}>
         <h4>
-          {eventGroup}
+          {shiftsByEvent[eventGroup][0].group_title}
         </h4>
 
         {shiftsByEvent[eventGroup].map(({identifier, name, description}) => {
