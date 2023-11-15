@@ -1,8 +1,7 @@
-import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Row, Col} from "react-bootstrap";
 
-import {devConsoleLog, fetchTournamentDetails, useClientReady, useTournament} from "../../utils";
+import {devConsoleLog, useTournament} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
