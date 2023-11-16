@@ -56,6 +56,11 @@ html {
   }
 }
 
+.accordion-button {
+  font-size: inherit;
+  padding-left: 1rem;
+}
+
 [data-bs-theme="dark"] .form-check-input {
   &:checked {
     background-color: var(--tournio-primary-moody);

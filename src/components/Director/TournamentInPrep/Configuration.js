@@ -14,7 +14,7 @@ const Configuration = () => {
 
   // Exclude these from the Configuration panel
   const SKIPPABLE_ITEMS = [
-    'required_bowler_fields',
+    'bowler_form_fields',
   ]
 
   return (
