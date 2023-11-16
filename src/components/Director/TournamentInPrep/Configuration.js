@@ -12,6 +12,11 @@ const Configuration = () => {
     return '';
   }
 
+  // Exclude these from the Configuration panel
+  const SKIPPABLE_ITEMS = [
+    'required_bowler_fields',
+  ]
+
   return (
     <ErrorBoundary>
       <Card className={`${classes.Card} ${classes.Configuration}`}>
@@ -21,6 +26,9 @@ const Configuration = () => {
         <Card.Body className={'px-1'}>
           <dl>
             {tournament.config_items.map((item) => {
+              if (SKIPPABLE_ITEMS.includes(item.key)) {
+                return null;
+              }
               return (
                 <ConfigItemForm item={item} key={item.key} editable={true} />
               )

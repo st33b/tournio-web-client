@@ -187,6 +187,15 @@ const ConfigItemForm = ({item}) => {
         elementProps.type = 'text';
         elementClassNames.push('form-control');
         break;
+      case 'tournament_type':
+        elementName = 'select';
+        elementClassNames.push('form-select');
+        children = [
+          <option key={'igbo_standard'} value={'igbo_standard'}>IGBO Standard</option>,
+          <option key={'igbo_multi_shift'} value={'igbo_multi_shift'}>IGBO Standard (multi-shift)</option>,
+          <option key={'igbo_mix_and_match'} value={'igbo_mix_and_match'}>IGBO Standard (mix and match)</option>,
+        ];
+        break;
       default:
         break;
     }
