@@ -16,7 +16,7 @@ import RegistrationOptions from "../Tournament/RegistrationOptions";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './TournamentInPrep.module.scss';
-import RequiredBowlerFields from "../Tournament/RequiredBowlerFields";
+import BowlerFormFields from "./BowlerFormFields";
 
 const TournamentInPrep = ({stateChangeInitiated, requestStripeStatus}) => {
   return (
@@ -33,7 +33,7 @@ const TournamentInPrep = ({stateChangeInitiated, requestStripeStatus}) => {
           <div className={'col-12 col-md-6 col-lg-4'}>
             <StatusAndCounts/>
             <StateChangeButton stateChangeInitiated={stateChangeInitiated} />
-            <RequiredBowlerFields/>
+            <BowlerFormFields/>
             <AdditionalQuestions/>
             <Shifts/>
           </div>
