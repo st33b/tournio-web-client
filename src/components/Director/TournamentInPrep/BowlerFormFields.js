@@ -6,23 +6,11 @@ import {useLoginContext} from "../../../store/LoginContext";
 import ErrorAlert from "../../common/ErrorAlert";
 import {updateObject} from "../../../utils";
 
-const RequiredBowlerFields = () => {
+const BowlerFormFields = () => {
   const { authToken } = useLoginContext();
   const {tournament, tournamentUpdatedQuietly} = useTournament();
 
   const initialFormData = {
-    birth_month: {
-      label: 'Birth Month',
-      required: false,
-    },
-    birth_day: {
-      label: 'Birth Day',
-      required: false,
-    },
-    birth_year: {
-      label: 'Birth Year',
-      required: false,
-    },
     address1: {
       label: 'Street Address',
       required: false,
@@ -45,6 +33,10 @@ const RequiredBowlerFields = () => {
     },
     usbc_id: {
       label: 'USBC ID',
+      required: false,
+    },
+    date_of_birth: {
+      label: 'Date of Birth',
       required: false,
     },
   }
@@ -157,4 +149,4 @@ const RequiredBowlerFields = () => {
   );
 }
 
-export default RequiredBowlerFields;
+export default BowlerFormFields;
