@@ -130,11 +130,11 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
                 ],
                 value: 1,
                 labelClasses: ['visually-hidden'],
-                layoutClass: 'col-6',
+                layoutClass: 'col-3',
               },
               label: 'Month',
               validityErrors: [
-                // 'valueMissing',
+                'valueMissing',
               ],
               valid: true,
               touched: false,
@@ -150,7 +150,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
                 },
                 value: 1,
                 labelClasses: ['visually-hidden'],
-                layoutClass: 'col-6',
+                layoutClass: 'col-3',
               },
               label: 'Day',
               validityErrors: [
@@ -159,6 +159,26 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
               valid: true,
               touched: false,
             },
+            {
+              // Year
+              identifier: 'year',
+              elementType: 'select',
+              elementConfig: {
+                optionRange: {
+                  min: 1900,
+                  max: 2010,
+                },
+                value: 1976,
+                labelClasses: ['visually-hidden'],
+                layoutClass: 'col-6',
+              },
+              label: 'Year',
+              validityErrors: [
+                // 'valueMissing',
+              ],
+              valid: false,
+              touched: false,
+            }
           ],
         },
         label: 'Date of Birth',
@@ -166,90 +186,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         valid: true,
         touched: false,
       },
-      // birth_month: {
-      //   elementType: 'select',
-      //   elementConfig: {
-      //     options: [
-      //       {
-      //         value: '',
-      //         label: '-- Choose your month',
-      //       },
-      //       {
-      //         value: 1,
-      //         label: 'Jan'
-      //       },
-      //       {
-      //         value: 2,
-      //         label: 'Feb'
-      //       },
-      //       {
-      //         value: 3,
-      //         label: 'Mar'
-      //       },
-      //       {
-      //         value: 4,
-      //         label: 'Apr'
-      //       },
-      //       {
-      //         value: 5,
-      //         label: 'May'
-      //       },
-      //       {
-      //         value: 6,
-      //         label: 'Jun'
-      //       },
-      //       {
-      //         value: 7,
-      //         label: 'Jul'
-      //       },
-      //       {
-      //         value: 8,
-      //         label: 'Aug'
-      //       },
-      //       {
-      //         value: 9,
-      //         label: 'Sep'
-      //       },
-      //       {
-      //         value: 10,
-      //         label: 'Oct'
-      //       },
-      //       {
-      //         value: 11,
-      //         label: 'Nov'
-      //       },
-      //       {
-      //         value: 12,
-      //         label: 'Dec'
-      //       },
-      //     ],
-      //     value: '',
-      //   },
-      //   label: 'Birth month',
-      //   validityErrors: [
-      //     'valueMissing',
-      //   ],
-      //   valid: true,
-      //   touched: false,
-      // },
-      // birth_day: {
-      //   elementType: 'input',
-      //   elementConfig: {
-      //     type: 'number',
-      //     value: '',
-      //     min: 1,
-      //     max: 31,
-      //   },
-      //   label: 'Birth day',
-      //   validityErrors: [
-      //     'valueMissing',
-      //     'rangeUnderflow',
-      //     'rangeOverflow',
-      //     'typeMismatch',
-      //   ],
-      //   valid: true,
-      //   touched: false,
-      // },
+
       doubles_partner: null,
       email: {
         elementType: 'input',
@@ -264,9 +201,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         ],
         errorMessages: {
           typeMismatch: "That's not a valid email address",
-          undeliverable: "This address is marked as Undeliverable. Are you sure you have it right?"
         },
-        bonusCheckUnderway: false,
         valid: true,
         touched: false,
       },
