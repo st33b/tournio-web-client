@@ -12,6 +12,7 @@ import {useLoginContext} from "../../../../../store/LoginContext";
 import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
 import {updateObject} from "../../../../../utils";
+import MixAndMatchShiftForm from "../../../../../components/Director/TeamDetails/MixAndMatchShiftForm";
 
 const Page = () => {
   const router = useRouter();
@@ -39,7 +40,7 @@ const Page = () => {
     if (!successCode) {
       return;
     }
-    let msg = '';
+    let msg;
     switch (successCode) {
       case '2':
         msg = 'Bowler added';
@@ -156,9 +157,15 @@ const Page = () => {
     });
   }
 
-  const shiftChangeHandler = (newShiftIdentifier) => {
+  const multiShiftChangeHandler = (newShiftIdentifier) => {
     updateSubmitHandler({
-      shift_identifier: newShiftIdentifier,
+      shift_identifiers: [newShiftIdentifier],
+    });
+  }
+
+  const mixAndMatchShiftChangeHandler = (newShiftIdentifiers) => {
+    updateSubmitHandler({
+      shift_identifiers: [...newShiftIdentifiers],
     });
   }
 
@@ -174,6 +181,7 @@ const Page = () => {
     {text: 'Teams', path: `/director/tournaments/${tournamentId}/teams`},
   ];
 
+  const tournamentType = tournament.config_items.find(({key}) => key === 'tournament_type').value || 'igbo_standard';
 
   return (
     <div>
@@ -189,10 +197,21 @@ const Page = () => {
           {tournament.shifts.length > 1 && (
             <Card className={'mb-3'}>
               <Card.Header as={'h5'}>
-                Shift
+                {tournamentType === 'igbo_multi_shift' && 'Shift Preference'}
+                {tournamentType === 'igbo_mix_and_match' && 'Shift Preferences'}
               </Card.Header>
               <Card.Body>
-                <TeamShiftForm allShifts={tournament.shifts} team={team} onShiftChange={shiftChangeHandler}/>
+                {tournamentType === 'igbo_multi_shift' && (
+                  <TeamShiftForm allShifts={tournament.shifts}
+                                 team={team}
+                                 shift={team.shifts[0]}
+                                 onShiftChange={multiShiftChangeHandler}/>
+                )}
+                {tournamentType === 'igbo_mix_and_match' && (
+                  <MixAndMatchShiftForm shiftsByEvent={tournament.shifts_by_event}
+                                        currentShifts={team.shifts}
+                                        onUpdate={mixAndMatchShiftChangeHandler}/>
+                )}
               </Card.Body>
             </Card>
           )}

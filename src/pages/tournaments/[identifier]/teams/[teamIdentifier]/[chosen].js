@@ -138,6 +138,10 @@ const Page = () => {
         Team: <strong>{team.name}</strong>
       </h3>
 
+      <h5 className={'text-center'}>
+        Shift Preference: {team.shifts.map(({name}) => name).join(', ')}
+      </h5>
+
       <UrlShare url={shareUrl}/>
 
       <hr/>
