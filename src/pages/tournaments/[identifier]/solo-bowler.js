@@ -25,15 +25,6 @@ const Page = () => {
     }
   }, [registration]);
 
-  // useEffect(() => {
-  //   dispatch(newSoloRegistrationInitiated());
-  // }, [dispatch]);
-  //
-  // const onCompletion = (bowler) => {
-  //   dispatch(soloBowlerInfoAdded(bowler));
-  //   router.push(`/tournaments/${registration.tournament.identifier}/solo-bowler-review`);
-  // }
-  //
   const ready = useClientReady();
   if (!ready) {
     return (
@@ -66,6 +57,9 @@ const Page = () => {
 
   const previousBowlerData = registration.bowler ? registration.bowler : null;
 
+  const bowlerFieldsItem = registration.tournament.config_items.find(({key}) => key === 'bowler_form_fields');
+  const bowlerFormFields = !!bowlerFieldsItem ? bowlerFieldsItem.value : [];
+
   return (
     <div>
       <TournamentHeader tournament={registration.tournament}/>
@@ -77,6 +71,7 @@ const Page = () => {
       <hr />
 
       <BowlerForm tournament={registration.tournament}
+                  optionalFields={bowlerFormFields}
                   bowlerData={previousBowlerData}
                   solo={true}
                   bowlerInfoSaved={bowlerInfoSaved}/>
