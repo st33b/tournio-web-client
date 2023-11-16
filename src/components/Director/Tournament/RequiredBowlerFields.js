@@ -4,7 +4,7 @@ import {Accordion} from "react-bootstrap";
 import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 import ErrorAlert from "../../common/ErrorAlert";
-import {devConsoleLog, updateObject} from "../../../utils";
+import {updateObject} from "../../../utils";
 
 const RequiredBowlerFields = () => {
   const { authToken } = useLoginContext();
