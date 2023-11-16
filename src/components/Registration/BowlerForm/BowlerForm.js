@@ -7,305 +7,303 @@ import {devConsoleLog, validateEmail} from "../../../utils";
 
 import classes from './BowlerForm.module.scss';
 
-const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = [], nextButtonText}) => {
+const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = [], nextButtonText, optionalFields = []}) => {
+  // These are the required ones
+  const minimumFormFields = {
+    first_name: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'text',
+        value: '',
+      },
+      label: 'First name',
+      validityErrors: [
+        'valueMissing',
+      ],
+      valid: true,
+      touched: false,
+    },
+    last_name: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'text',
+        value: '',
+      },
+      label: 'Last name',
+      validityErrors: [
+        'valueMissing',
+      ],
+      valid: true,
+      touched: false,
+    },
+    nickname: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'text',
+        value: '',
+        placeholder: 'if different from first name',
+      },
+      label: 'Preferred Name',
+      touched: false,
+    },
+    email: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'email',
+        value: '',
+      },
+      label: 'Email address',
+      validityErrors: [
+        'valueMissing',
+        'typeMismatch',
+      ],
+      errorMessages: {
+        typeMismatch: "That's not a valid email address",
+      },
+      valid: true,
+      touched: false,
+    },
+    phone: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'tel',
+        value: '',
+      },
+      label: 'Phone number',
+      validityErrors: [
+        'valueMissing',
+      ],
+      valid: true,
+      touched: false,
+    },
+  }
+
+  // These are configurable by the tournament
+  const potentialFormFields = {
+    usbc_id: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'text',
+        value: '',
+        pattern: "\\d+-\\d+",
+        placeholder: 'including the hyphen',
+      },
+      label: 'USBC ID',
+      validityErrors: [
+        'valueMissing',
+        'patternMismatch',
+      ],
+      errorMessages: {
+        patternMismatch: 'Just digits and a hyphen, e.g., 123-4567',
+      },
+      helper: {
+        url: 'https://webapps.bowl.com/USBCFindA/Home/Member',
+        text: 'Look up your USBC ID',
+      },
+      valid: true,
+      touched: false,
+    },
+    date_of_birth: {
+      elementType: 'combo',
+      elementConfig: {
+        elements: [
+          {
+            // Month
+            identifier: 'month',
+            elementType: 'select',
+            elementConfig: {
+              options: [
+                {
+                  value: 1,
+                  label: 'Jan'
+                },
+                {
+                  value: 2,
+                  label: 'Feb'
+                },
+                {
+                  value: 3,
+                  label: 'Mar'
+                },
+                {
+                  value: 4,
+                  label: 'Apr'
+                },
+                {
+                  value: 5,
+                  label: 'May'
+                },
+                {
+                  value: 6,
+                  label: 'Jun'
+                },
+                {
+                  value: 7,
+                  label: 'Jul'
+                },
+                {
+                  value: 8,
+                  label: 'Aug'
+                },
+                {
+                  value: 9,
+                  label: 'Sep'
+                },
+                {
+                  value: 10,
+                  label: 'Oct'
+                },
+                {
+                  value: 11,
+                  label: 'Nov'
+                },
+                {
+                  value: 12,
+                  label: 'Dec'
+                },
+              ],
+              value: 1,
+              labelClasses: ['visually-hidden'],
+              layoutClass: 'col-4 col-lg-3',
+            },
+            label: 'Month',
+            validityErrors: [
+              'valueMissing',
+            ],
+            valid: true,
+            touched: false,
+          },
+          {
+            // Day
+            identifier: 'day',
+            elementType: 'select',
+            elementConfig: {
+              optionRange: {
+                min: 1,
+                max: 31,
+              },
+              value: 1,
+              labelClasses: ['visually-hidden'],
+              layoutClass: 'col-4 col-lg-3',
+            },
+            label: 'Day',
+            validityErrors: [
+              // 'valueMissing',
+            ],
+            valid: true,
+            touched: false,
+          },
+          {
+            // Year
+            identifier: 'year',
+            elementType: 'select',
+            elementConfig: {
+              optionRange: {
+                min: 1900,
+                max: 2010,
+              },
+              value: 1976,
+              labelClasses: ['visually-hidden'],
+              layoutClass: 'col-4 col-lg-3',
+            },
+            label: 'Year',
+            validityErrors: [
+              // 'valueMissing',
+            ],
+            valid: false,
+            touched: false,
+          }
+        ],
+      },
+      label: 'Date of Birth',
+      validityErrors: ['valueMissing'],
+      valid: true,
+      touched: false,
+    },
+    address1: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'text',
+        value: '',
+      },
+      label: 'Street Address',
+      validityErrors: [
+        'valueMissing',
+      ],
+      valid: true,
+      touched: false,
+    },
+    city: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'text',
+        value: '',
+      },
+      label: 'City',
+      validityErrors: [
+        'valueMissing',
+      ],
+      valid: true,
+      touched: false,
+    },
+    state: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'text',
+        value: '',
+      },
+      label: 'State/Province',
+      validityErrors: [
+        'valueMissing',
+      ],
+      valid: true,
+      touched: false,
+    },
+    country: {
+      elementType: 'component',
+      elementConfig: {
+        component: CountryDropdown,
+        value: '',
+        classNames: ['form-select'],
+        props: {
+          name: 'country',
+          valueType: 'short',
+          priorityOptions: ['US', 'CA', 'NZ'],
+          defaultOptionLabel: '-- Choose your country',
+        },
+      },
+      label: 'Country',
+      validityErrors: [
+        'valueMissing',
+      ],
+      valid: true,
+      touched: false,
+    },
+    postal_code: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'text',
+        value: '',
+      },
+      label: 'ZIP/Postal Code',
+      validityErrors: [
+        'valueMissing',
+      ],
+      valid: true,
+      touched: false,
+    },
+  }
+
   const initialFormState = {
     formFields: {
-      first_name: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          value: '',
-        },
-        label: 'First name',
-        validityErrors: [
-          'valueMissing',
-        ],
-        valid: true,
-        touched: false,
-      },
-      last_name: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          value: '',
-        },
-        label: 'Last name',
-        validityErrors: [
-          'valueMissing',
-        ],
-        valid: true,
-        touched: false,
-      },
-      nickname: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          value: '',
-          placeholder: 'if different from first name',
-        },
-        label: 'Preferred Name',
-        touched: false,
-      },
-      usbc_id: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          value: '',
-          pattern: "\\d+-\\d+",
-          placeholder: 'including the hyphen',
-        },
-        label: 'USBC ID',
-        validityErrors: [
-          'valueMissing',
-          'patternMismatch',
-        ],
-        errorMessages: {
-          patternMismatch: 'Just digits and a hyphen, e.g., 123-4567',
-        },
-        helper: {
-          url: 'https://webapps.bowl.com/USBCFindA/Home/Member',
-          text: 'Look up your USBC ID',
-        },
-        valid: true,
-        touched: false,
-      },
-      date_of_birth: {
-        elementType: 'combo',
-        elementConfig: {
-          elements: [
-            {
-              // Month
-              identifier: 'month',
-              elementType: 'select',
-              elementConfig: {
-                options: [
-                  {
-                    value: 1,
-                    label: 'Jan'
-                  },
-                  {
-                    value: 2,
-                    label: 'Feb'
-                  },
-                  {
-                    value: 3,
-                    label: 'Mar'
-                  },
-                  {
-                    value: 4,
-                    label: 'Apr'
-                  },
-                  {
-                    value: 5,
-                    label: 'May'
-                  },
-                  {
-                    value: 6,
-                    label: 'Jun'
-                  },
-                  {
-                    value: 7,
-                    label: 'Jul'
-                  },
-                  {
-                    value: 8,
-                    label: 'Aug'
-                  },
-                  {
-                    value: 9,
-                    label: 'Sep'
-                  },
-                  {
-                    value: 10,
-                    label: 'Oct'
-                  },
-                  {
-                    value: 11,
-                    label: 'Nov'
-                  },
-                  {
-                    value: 12,
-                    label: 'Dec'
-                  },
-                ],
-                value: 1,
-                labelClasses: ['visually-hidden'],
-                layoutClass: 'col-4 col-lg-3',
-              },
-              label: 'Month',
-              validityErrors: [
-                'valueMissing',
-              ],
-              valid: true,
-              touched: false,
-            },
-            {
-              // Day
-              identifier: 'day',
-              elementType: 'select',
-              elementConfig: {
-                optionRange: {
-                  min: 1,
-                  max: 31,
-                },
-                value: 1,
-                labelClasses: ['visually-hidden'],
-                layoutClass: 'col-4 col-lg-3',
-              },
-              label: 'Day',
-              validityErrors: [
-                // 'valueMissing',
-              ],
-              valid: true,
-              touched: false,
-            },
-            {
-              // Year
-              identifier: 'year',
-              elementType: 'select',
-              elementConfig: {
-                optionRange: {
-                  min: 1900,
-                  max: 2010,
-                },
-                value: 1976,
-                labelClasses: ['visually-hidden'],
-                layoutClass: 'col-4 col-lg-3',
-              },
-              label: 'Year',
-              validityErrors: [
-                // 'valueMissing',
-              ],
-              valid: false,
-              touched: false,
-            }
-          ],
-        },
-        label: 'Date of Birth',
-        validityErrors: ['valueMissing'],
-        valid: true,
-        touched: false,
-      },
-
-      doubles_partner: null,
-      email: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'email',
-          value: '',
-        },
-        label: 'Email address',
-        validityErrors: [
-          'valueMissing',
-          'typeMismatch',
-        ],
-        errorMessages: {
-          typeMismatch: "That's not a valid email address",
-        },
-        valid: true,
-        touched: false,
-      },
-      phone: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'tel',
-          value: '',
-        },
-        label: 'Phone number',
-        validityErrors: [
-          'valueMissing',
-        ],
-        valid: true,
-        touched: false,
-      },
-      address1: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          value: '',
-        },
-        label: 'Address 1',
-        validityErrors: [
-          'valueMissing',
-        ],
-        valid: true,
-        touched: false,
-      },
-      address2: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          value: '',
-        },
-        label: 'Address 2',
-        touched: false,
-      },
-      city: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          value: '',
-        },
-        label: 'City',
-        validityErrors: [
-          'valueMissing',
-        ],
-        valid: true,
-        touched: false,
-      },
-      state: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          value: '',
-        },
-        label: 'State/Province',
-        validityErrors: [
-          'valueMissing',
-        ],
-        valid: true,
-        touched: false,
-      },
-      country: {
-        elementType: 'component',
-        elementConfig: {
-          component: CountryDropdown,
-          value: '',
-          classNames: ['form-select'],
-          props: {
-            name: 'country',
-            valueType: 'short',
-            priorityOptions: ['US', 'CA', 'NZ'],
-            defaultOptionLabel: '-- Choose your country',
-          },
-        },
-        label: 'Country',
-        validityErrors: [
-          'valueMissing',
-        ],
-        valid: true,
-        touched: false,
-      },
-      postal_code: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          value: '',
-        },
-        label: 'ZIP/Postal Code',
-        validityErrors: [
-          'valueMissing',
-        ],
-        valid: true,
-        touched: false,
-      },
+      ...minimumFormFields,
     },
     valid: false,
     touched: false,
-    soloBowlerFields: {
-    }
   }
+
   const [bowlerForm, setBowlerForm] = useState(initialFormState);
+  const [fieldsToUse, setFieldsToUse] = useState(Object.keys(minimumFormFields));
 
   // Because this may be used by registering bowlers or by an admin adding a bowler
   const [buttonText, setButtonText] = useState(nextButtonText ? nextButtonText : 'Review');
@@ -313,9 +311,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
   const additionalFormFields = (editing = false) => {
     const formFields = {};
 
-    // for (let key in tournament.additional_questions) {
-    Object.values(tournament.additional_questions).forEach(q => {
-      const key = q.name;
+    for (let key in tournament.additional_questions) {
+      const q = tournament.additional_questions[key];
       formFields[key] = {...q}
       if (q.validation.required) {
         formFields[key].validityErrors = ['valueMissing'];
@@ -325,22 +322,21 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       }
       formFields[key].touched = false;
       formFields[key].elementConfig = {...q.elementConfig}
-    });
-      // formFields[key] = {...tournament.additional_questions[key]}
-      // if (tournament.additional_questions[key].validation.required) {
-      //   formFields[key].validityErrors = ['valueMissing'];
-      //   formFields[key].valid = editing;
-      // } else {
-      //   formFields[key].valid = true
-      // }
-      // formFields[key].touched = false;
-      // formFields[key].elementConfig = {...tournament.additional_questions[key].elementConfig}
-    // }
+    }
     return formFields;
   }
 
   const resetFormData = () => {
-    const formData = {...initialFormState};
+    const formData = {
+      formFields: {
+        ...minimumFormFields, // our minimum
+        ...potentialFormFields, // plus any that the tournament enables
+        ...additionalFormFields(), // plus any extras
+        doublesPartner: null, // and a placeholder for a doubles partner
+      },
+      valid: false,
+      touched: false,
+    }
 
     // add doubles partner if there are any available
     if (availablePartners.length > 0) {
@@ -348,7 +344,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         value: partner.identifier,
         label: partner.full_name,
       }));
-      formData.formFields.doubles_partner = {
+      formData.formFields.doublesPartner = {
         elementType: 'radio-limited-set',
         elementConfig: {
           choices: [
@@ -366,22 +362,18 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       }
     }
 
-    // get the additional questions
-    formData.formFields = {
-      ...formData.formFields,
-      ...additionalFormFields(),
-    };
-
     setBowlerForm(formData);
   }
 
-  // get the additional questions into the bowler form, along with shift info if needed
+  // set up the form data the way the tournament wants it
   useEffect(() => {
     if (!tournament) {
       return;
     }
 
     resetFormData();
+    const updatedFields = fieldsToUse.concat(optionalFields).concat(Object.keys(tournament.additional_questions));
+    setFieldsToUse(updatedFields);
   }, [tournament]);
 
   // We're editing a bowler. Put their data into the form.
@@ -635,17 +627,16 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
   }
 
   const formElements = [];
-  for (let key in bowlerForm.formFields) {
-    if (!bowlerForm.formFields[key]) {
-      continue;
+  fieldsToUse.forEach(key => {
+    if (bowlerForm.formFields[key]) {
+      formElements.push({
+        id: key,
+        setup: bowlerForm.formFields[key],
+        // <select> elements get excluded, since onChange covers it
+        validateOnBlur: !!bowlerForm.formFields[key].validityErrors && key !== 'country' && bowlerForm.formFields[key].elementType !== 'select',
+      });
     }
-    formElements.push({
-      id: key,
-      setup: bowlerForm.formFields[key],
-      // <select> elements get excluded, since onChange covers it
-      validateOnBlur: !!bowlerForm.formFields[key].validityErrors && key !== 'country' && bowlerForm.formFields[key].elementType !== 'select',
-    });
-  }
+  });
 
   let form = (
     <form onSubmit={formHandler}>
