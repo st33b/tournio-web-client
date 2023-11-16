@@ -130,7 +130,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
                 ],
                 value: 1,
                 labelClasses: ['visually-hidden'],
-                layoutClass: 'col-3',
+                layoutClass: 'col-4 col-lg-3',
               },
               label: 'Month',
               validityErrors: [
@@ -150,7 +150,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
                 },
                 value: 1,
                 labelClasses: ['visually-hidden'],
-                layoutClass: 'col-3',
+                layoutClass: 'col-4 col-lg-3',
               },
               label: 'Day',
               validityErrors: [
@@ -170,7 +170,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
                 },
                 value: 1976,
                 labelClasses: ['visually-hidden'],
-                layoutClass: 'col-6',
+                layoutClass: 'col-4 col-lg-3',
               },
               label: 'Year',
               validityErrors: [
