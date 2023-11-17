@@ -10,23 +10,26 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
     return '';
   }
 
-  const labels = {
+  const minimumLabels = {
     first_name: 'First Name',
     last_name: 'Last Name',
     nickname: 'Preferred Name',
-    doubles_partner: 'Doubles Partner',
-    usbc_id: 'USBC ID',
-    birth_month: 'Birth Month',
-    birth_day: 'Birth Day',
     email: 'Email',
     phone: 'Phone',
-    address1: 'Address 1',
-    address2: 'Address 2',
+  }
+
+  const potentialLabels = {
+    usbc_id: 'USBC ID',
+    date_of_birth: 'Date of Birth',
+    address1: 'Mailing Address',
     city: 'City',
     state: 'State',
     country: 'Country',
     postal_code: 'Postal/ZIP Code',
   };
+
+  const bowlerFieldsItem = registration.tournament.config_items.find(({key}) => key === 'bowler_form_fields');
+  const optionalFields = !!bowlerFieldsItem ? bowlerFieldsItem.value : [];
 
   const aqLabels = {};
 
@@ -50,18 +53,33 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
             </dd>
           </Row>
         )}
-        {Object.keys(labels).map(key => {
+
+        {Object.keys(minimumLabels).map(key => {
           let value = bowler[key];
           if (value === null || typeof value ==='undefined') {
             return null;
           }
-          if (key === 'doubles_partner' && partner) {
-            value = partner.full_name;
+          return (
+            <Row key={`${key}_${bowler.position}`}>
+              <dt className={'col-5 pe-2 label'}>
+                {minimumLabels[key]}
+              </dt>
+              <dd className={'col ps-2 value'}>
+                {value || 'n/a'}
+              </dd>
+            </Row>
+          );
+        })}
+
+        {optionalFields.map(key => {
+          let value = bowler[key];
+          if (value === null || typeof value ==='undefined') {
+            return null;
           }
           return (
             <Row key={`${key}_${bowler.position}`}>
               <dt className={'col-5 pe-2 label'}>
-                {labels[key]}
+                {potentialLabels[key]}
               </dt>
               <dd className={'col ps-2 value'}>
                 {value || 'n/a'}
@@ -87,6 +105,16 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
           );
         })}
 
+        {partner && (
+          <Row key={`${doublesPartner}_${bowler.position}`}>
+            <dt className={'col-5 pe-2 label'}>
+              Doubles Partner
+            </dt>
+            <dd className={'col ps-2 value'}>
+              {partner.full_name}
+            </dd>
+          </Row>
+        )}
       </dl>
     </div>
   );

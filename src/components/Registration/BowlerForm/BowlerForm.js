@@ -7,7 +7,7 @@ import {devConsoleLog, validateEmail} from "../../../utils";
 
 import classes from './BowlerForm.module.scss';
 
-const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = [], nextButtonText, optionalFields = []}) => {
+const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = [], nextButtonText}) => {
   // These are the required ones
   const minimumFormFields = {
     first_name: {
@@ -226,7 +226,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         type: 'text',
         value: '',
       },
-      label: 'Street Address',
+      label: 'Mailing Address',
       validityErrors: [
         'valueMissing',
       ],
@@ -370,6 +370,9 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     if (!tournament) {
       return;
     }
+
+    const bowlerFieldsItem = tournament.config_items.find(({key}) => key === 'bowler_form_fields');
+    const optionalFields = !!bowlerFieldsItem ? bowlerFieldsItem.value : [];
 
     resetFormData();
     const updatedFields = fieldsToUse.concat(optionalFields).concat(Object.keys(tournament.additional_questions));
