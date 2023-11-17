@@ -60,7 +60,7 @@ const BowlerSummary = ({bowler, partner = null}) => {
             return null;
           }
           return (
-            <Row key={`${key}_${bowler.position}`}>
+            <Row key={`${key}`}>
               <dt className={'col-5 pe-2 label'}>
                 {minimumLabels[key]}
               </dt>
@@ -72,17 +72,17 @@ const BowlerSummary = ({bowler, partner = null}) => {
         })}
 
         {optionalFields.map(key => {
-          let value = bowler[key];
-          if (value === null || typeof value ==='undefined') {
-            return null;
+          let displayedValue = bowler[key];
+          if (key === 'date_of_birth') {
+            displayedValue = `${bowler.birth_month} / ${bowler.birth_day} / ${bowler.birth_year}`;
           }
           return (
-            <Row key={`${key}_${bowler.position}`}>
+            <Row key={`${key}`}>
               <dt className={'col-5 pe-2 label'}>
                 {potentialLabels[key]}
               </dt>
               <dd className={'col ps-2 value'}>
-                {value || 'n/a'}
+                {displayedValue || 'n/a'}
               </dd>
             </Row>
           );
@@ -94,7 +94,7 @@ const BowlerSummary = ({bowler, partner = null}) => {
             return null;
           }
           return (
-            <Row key={`${key}_${bowler.position}`}>
+            <Row key={`${key}`}>
               <dt className={'col-5 pe-2 label'}>
                 {aqLabels[key]}
               </dt>
@@ -106,7 +106,7 @@ const BowlerSummary = ({bowler, partner = null}) => {
         })}
 
         {partner && (
-          <Row key={`${doublesPartner}_${bowler.position}`}>
+          <Row key={`${doublesPartner}`}>
             <dt className={'col-5 pe-2 label'}>
               Doubles Partner
             </dt>
