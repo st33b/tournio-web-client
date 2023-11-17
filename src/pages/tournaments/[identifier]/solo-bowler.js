@@ -6,7 +6,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {
   soloBowlerInfoAdded
 } from "../../../store/actions/registrationActions";
-import {devConsoleLog, useClientReady} from "../../../utils";
+import {useClientReady} from "../../../utils";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import TournamentHeader from "../../../components/ui/TournamentHeader";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
@@ -44,8 +44,6 @@ const Page = () => {
   /////////////////////////////////////
 
   const bowlerInfoSaved = (bowlerData) => {
-
-    devConsoleLog("Bowler data saved!", bowlerData);
     dispatch(soloBowlerInfoAdded(bowlerData));
     router.push({
       pathname: '/tournaments/[identifier]/solo-bowler-review',
@@ -69,7 +67,6 @@ const Page = () => {
 
       <BowlerForm tournament={registration.tournament}
                   bowlerData={previousBowlerData}
-                  solo={true}
                   bowlerInfoSaved={bowlerInfoSaved}/>
 
     </div>

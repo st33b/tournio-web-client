@@ -8,6 +8,12 @@ import {devConsoleLog, validateEmail} from "../../../utils";
 import classes from './BowlerForm.module.scss';
 
 const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = [], nextButtonText}) => {
+  const DATE_OF_BIRTH_FIELDS = [
+    'birth_month',
+    'birth_day',
+    'birth_year',
+  ];
+
   // These are the required ones
   const minimumFormFields = {
     first_name: {
@@ -164,7 +170,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
               ],
               value: 1,
               labelClasses: ['visually-hidden'],
-              layoutClass: 'col-4 col-lg-3',
+              layoutClass: 'col-4 col-xl-3',
             },
             label: 'Month',
             validityErrors: [
@@ -184,7 +190,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
               },
               value: 1,
               labelClasses: ['visually-hidden'],
-              layoutClass: 'col-4 col-lg-3',
+              layoutClass: 'col-4 col-xl-3',
             },
             label: 'Day',
             validityErrors: [
@@ -204,7 +210,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
               },
               value: 1976,
               labelClasses: ['visually-hidden'],
-              layoutClass: 'col-4 col-lg-3',
+              layoutClass: 'col-4 col-xl-3',
             },
             label: 'Year',
             validityErrors: [
@@ -294,21 +300,13 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     },
   }
 
-  const initialFormState = {
-    formFields: {
-      ...minimumFormFields,
-    },
-    valid: false,
-    touched: false,
-  }
-
-  const [bowlerForm, setBowlerForm] = useState(initialFormState);
+  const [bowlerForm, setBowlerForm] = useState();
   const [fieldsToUse, setFieldsToUse] = useState(Object.keys(minimumFormFields));
 
   // Because this may be used by registering bowlers or by an admin adding a bowler
   const [buttonText, setButtonText] = useState(nextButtonText ? nextButtonText : 'Review');
 
-  const additionalFormFields = (editing = false) => {
+  const additionalFormFields = () => {
     const formFields = {};
 
     for (let key in tournament.additional_questions) {
@@ -316,7 +314,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       formFields[key] = {...q}
       if (q.validation.required) {
         formFields[key].validityErrors = ['valueMissing'];
-        formFields[key].valid = editing;
+        formFields[key].valid = !!bowlerData;
       } else {
         formFields[key].valid = true
       }
@@ -326,13 +324,12 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     return formFields;
   }
 
-  const resetFormData = () => {
+  const getInitialFormData = () => {
     const formData = {
       formFields: {
         ...minimumFormFields, // our minimum
         ...potentialFormFields, // plus any that the tournament enables
         ...additionalFormFields(), // plus any extras
-        doublesPartner: null, // and a placeholder for a doubles partner
       },
       valid: false,
       touched: false,
@@ -362,10 +359,37 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       }
     }
 
-    setBowlerForm(formData);
+    return formData;
   }
 
-  // set up the form data the way the tournament wants it
+  // Fill in the given structure with existing form data.
+  // Pre-requisite: bowlerData exists
+  const getPopulatedFormData = (formData) => {
+    const updatedBowlerForm = {
+      ...formData,
+      valid: true,
+      touched: false,
+    };
+
+    // fill most of the form data
+    for (const inputName in formData.formFields) {
+      // skip the DOB fields, do them separately
+      if (!DATE_OF_BIRTH_FIELDS.includes(inputName)) {
+        updatedBowlerForm.formFields[inputName].elementConfig.value = bowlerData[inputName];
+      }
+    }
+
+    // now do the DOB fields
+    const dobObj = updatedBowlerForm.formFields.date_of_birth;
+    formData.formFields.date_of_birth.elementConfig.elements.forEach((elem, index) => {
+      const key = `birth_${elem.identifier}`;
+      dobObj.elementConfig.elements[index].elementConfig.value = bowlerData[key];
+    });
+
+    return updatedBowlerForm;
+  }
+
+  // set up the form to reflect any optional fields and additional questions
   useEffect(() => {
     if (!tournament) {
       return;
@@ -374,49 +398,24 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     const bowlerFieldsItem = tournament.config_items.find(({key}) => key === 'bowler_form_fields');
     const optionalFields = !!bowlerFieldsItem ? bowlerFieldsItem.value : [];
 
-    resetFormData();
     const updatedFields = fieldsToUse.concat(optionalFields).concat(Object.keys(tournament.additional_questions));
     setFieldsToUse(updatedFields);
+
+    const initialFormData = getInitialFormData();
+
+    if (bowlerData) {
+      const populatedFormData = getPopulatedFormData(initialFormData);
+      setBowlerForm(populatedFormData);
+
+      if (!nextButtonText) {
+        setButtonText('Review Changes');
+      }
+    } else {
+      setBowlerForm(initialFormData);
+    }
   }, [tournament]);
 
-  // We're editing a bowler. Put their data into the form.
-  useEffect(() => {
-    if (!bowlerData || !tournament) {
-      return;
-    }
-    const updatedBowlerForm = {...bowlerForm};
-    updatedBowlerForm.formFields = {
-      ...updatedBowlerForm.formFields,
-      ...additionalFormFields(true),
-    };
-
-    // all the standard fields and additional questions
-    for (const inputName in bowlerData) {
-      if (!updatedBowlerForm.formFields[inputName]) {
-        continue;
-      }
-      updatedBowlerForm.formFields[inputName].elementConfig.value = bowlerData[inputName];
-    }
-
-    // add the date-of-birth combo elements
-    if (bowlerForm.formFields.date_of_birth) {
-      const dobObj = updatedBowlerForm.formFields.date_of_birth;
-
-      bowlerForm.formFields.date_of_birth.elementConfig.elements.forEach((elem, index) => {
-        const key = `birth_${elem.identifier}`;
-        dobObj.elementConfig.elements[index].elementConfig.value = bowlerData[key];
-      });
-    }
-
-    updatedBowlerForm.valid = true;
-
-    setBowlerForm(updatedBowlerForm);
-    if (!nextButtonText) {
-      setButtonText('Review Changes');
-    }
-  }, [bowlerData, tournament]);
-
-  if (!tournament) {
+  if (!tournament || !bowlerForm) {
     return '';
   }
 
@@ -430,14 +429,13 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     // Grab all the values from the form so they can be stored
     const theBowlerData = {};
     for (let formElementIdentifier in bowlerForm.formFields) {
-      if (bowlerForm.formFields[formElementIdentifier] === null) {
-        continue;
+      if (typeof bowlerForm.formFields[formElementIdentifier].elementConfig.value !== 'undefined') {
+        theBowlerData[formElementIdentifier] = bowlerForm.formFields[formElementIdentifier].elementConfig.value;
       }
-      theBowlerData[formElementIdentifier] = bowlerForm.formFields[formElementIdentifier].elementConfig.value;
     }
 
     // add the date-of-birth combo elements
-    if (bowlerForm.formFields.date_of_birth) {
+    if (fieldsToUse.includes('date_of_birth')) {
       bowlerForm.formFields.date_of_birth.elementConfig.elements.forEach(elem => {
         const key = `birth_${elem.identifier}`;
         theBowlerData[key] = elem.elementConfig.value;
@@ -445,7 +443,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     }
 
     // Reset the form to take in the next bowler's info
-    resetFormData();
+    setBowlerForm(getInitialFormData());
 
     bowlerInfoSaved(theBowlerData);
   }
@@ -494,10 +492,16 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         break;
       case 'date_of_birth:month':
       case 'date_of_birth:day':
+      case 'date_of_birth:year':
         const [comboIdentifier, elemIdentifier] = inputName.split(':');
 
         // month or day
-        const index = elemIdentifier === 'month' ? 0 : 1;
+        const elems = [
+          'month',
+          'day',
+          'year',
+        ];
+        const index = elems.findIndex(e => e === elemIdentifier);
         const dobElem = bowlerForm.formFields[comboIdentifier].elementConfig.elements[index];
 
         updatedFormElement = {
@@ -534,7 +538,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
 
     // put the updated form element in the updated form
     // if it's not one of the combo elements
-    if (!['date_of_birth:month', 'date_of_birth:day'].includes(inputName)) {
+    if (!['date_of_birth:month', 'date_of_birth:day', 'date_of_birth:year'].includes(inputName)) {
       updatedBowlerForm.formFields[inputName] = updatedFormElement;
     }
 
