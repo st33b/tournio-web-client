@@ -583,7 +583,14 @@ export const purchaseDetailsPostData = (items) => {
   const purchaseIdentifiers = [];
   const purchasableItems = [];
 
-  const sum = (runningTotal, currentValue) => runningTotal + currentValue.value * (currentValue.quantity || 1);
+  const sum = (runningTotal, currentValue) => {
+    if (currentValue.category === 'ledger' && (currentValue.determination === 'early_discount'
+      || currentValue.determination === 'bundle_discount')) {
+      return runningTotal - currentValue.value * (currentValue.quantity || 1);
+    }
+    return runningTotal + currentValue.value * (currentValue.quantity || 1);
+  };
+
   const expectedTotal = items.reduce(sum, 0);
 
   for (let i of items) {
