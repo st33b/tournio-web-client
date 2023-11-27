@@ -94,7 +94,7 @@ const TeamForm = ({shifts=[], maxBowlers=4, onSubmit}) => {
         {/* bowler count selector */}
         <div className={`${classes.FormElement}`}>
           <label className={`${classes.Label} col-form-label-lg`}>
-            How many bowlers do you have?
+            How many bowlers do you have, in total? (Your teammates may add their details later.)
           </label>
           <div className={`d-flex justify-content-evenly justify-content-lg-center`}>
             {bowlerCountRadios}
