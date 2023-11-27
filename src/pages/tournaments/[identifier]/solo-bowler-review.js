@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {soloBowlerRegistrationCompleted} from "../../../store/actions/registrationActions";
-import {submitSoloRegistration, useClientReady} from "../../../utils";
+import {submitSoloRegistration, useClientReady, useTournament} from "../../../utils";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 import Link from "next/link";
@@ -19,11 +19,13 @@ const Page = () => {
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
 
+  const {loading: tournamentLoading, tournament, error: tournamentError} = useTournament(identifier);
+
   useEffect(() => {
-    if (!identifier || !registration || !registration.tournament) {
+    if (!identifier || !tournament) {
       return;
     }
-    if (!registration.tournament.registration_options.solo) {
+    if (!tournament.registration_options.solo) {
       router.push(`/tournaments/${identifier}`);
     }
   }, [registration]);
@@ -36,7 +38,7 @@ const Page = () => {
       </div>
     );
   }
-  if (!registration.tournament) {
+  if (tournamentLoading) {
     return (
       <div>
         <LoadingMessage message={'Putting everything together...'}/>
@@ -65,7 +67,7 @@ const Page = () => {
     // Write the bowler to the backend.
     // Upon success, redirect to the bowler's page, which will
     // present its payment/extras button
-    submitSoloRegistration(registration.tournament,
+    submitSoloRegistration(tournament,
       registration.bowler,
       soloRegistrationSuccess,
       soloRegistrationFailure);
@@ -74,7 +76,7 @@ const Page = () => {
 
   return (
     <div>
-      <TournamentHeader tournament={registration.tournament}/>
+      <TournamentHeader tournament={tournament}/>
 
       <h2 className={`text-center`}>
         Review Bowler Details
@@ -82,7 +84,7 @@ const Page = () => {
 
       <hr/>
 
-      <BowlerSummary bowler={registration.bowler} />
+      <BowlerSummary bowler={registration.bowler} tournament={tournament} />
 
       <hr />
 

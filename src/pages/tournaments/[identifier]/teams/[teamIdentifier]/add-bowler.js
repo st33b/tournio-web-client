@@ -1,7 +1,7 @@
 import {useRegistrationContext} from "../../../../../store/RegistrationContext";
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
-import {useTeam} from "../../../../../utils";
+import {useTeam, useTournament} from "../../../../../utils";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import RegistrationLayout from "../../../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentHeader from "../../../../../components/ui/TournamentHeader";
@@ -28,22 +28,28 @@ const Page = () => {
   }, [registration, teamIdentifier, position]);
 
   const {loading, team, error: fetchError } = useTeam(teamIdentifier);
+  const {loading: tournamentLoading, tournament, error: tournamentError} = useTournament(identifier);
 
-  if (!registration || !registration.tournament) {
+  if (!registration || !tournament) {
     return '';
   }
 
   if (loading) {
     return <LoadingMessage message={'Getting things ready...'}/>
   }
-  if (!team) {
-    return '';
-  }
 
   if (fetchError) {
     return (
       <div>
         <ErrorAlert message={'Failed to load team.'}/>
+      </div>
+    );
+  }
+
+  if (tournamentError) {
+    return (
+      <div>
+        <ErrorAlert message={'Failed to load tournament.'}/>
       </div>
     );
   }
@@ -84,7 +90,7 @@ const Page = () => {
 
   return (
     <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
-      <TournamentHeader tournament={registration.tournament}/>
+      <TournamentHeader tournament={tournament}/>
 
       <h2 className={`text-center`}>
         Team:&nbsp;
@@ -95,7 +101,7 @@ const Page = () => {
 
       <hr />
 
-      <PositionChooser maxPosition={registration.tournament.team_size}
+      <PositionChooser maxPosition={tournament.team_size}
                        chosen={chosenPosition}
                        onChoose={otherPositionClicked}/>
 
@@ -107,7 +113,7 @@ const Page = () => {
 
       <hr />
 
-      <BowlerForm tournament={registration.tournament}
+      <BowlerForm tournament={tournament}
                   bowlerData={previousBowlerData}
                   availablePartners={availableDoublesPartners}
                   bowlerInfoSaved={bowlerInfoSaved}/>
