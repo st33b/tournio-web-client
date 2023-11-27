@@ -15,7 +15,7 @@ import ErrorAlert from "../../../components/common/ErrorAlert";
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
-  const {identifier} = router.identifier;
+  const {identifier} = router.query;
 
   const [bowlers, setBowlers] = useState();
   const [error, setError] = useState(null);
