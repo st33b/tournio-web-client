@@ -3,11 +3,10 @@ import {Row} from "react-bootstrap";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './BowlerSummary.module.scss';
-import {devConsoleLog} from "../../../utils";
 
-const BowlerSummary = ({bowler, partner = null}) => {
+const BowlerSummary = ({bowler, tournament, partner = null}) => {
   const {registration} = useRegistrationContext();
-  if (!registration.tournament || !bowler) {
+  if (!bowler) {
     return '';
   }
 
@@ -33,8 +32,8 @@ const BowlerSummary = ({bowler, partner = null}) => {
 
   // Get labels and responses for additional questions, if any
   const aqResponses = {};
-  for (let key in registration.tournament.additional_questions) {
-    aqLabels[key] = registration.tournament.additional_questions[key].label;
+  for (let key in tournament.additional_questions) {
+    aqLabels[key] = tournament.additional_questions[key].label;
     aqResponses[key] = bowler[key];
   }
 

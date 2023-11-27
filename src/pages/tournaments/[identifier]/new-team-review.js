@@ -2,7 +2,7 @@ import {useRouter} from "next/router";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {submitNewTeamWithPlaceholders, useClientReady} from "../../../utils";
+import {submitNewTeamWithPlaceholders, useClientReady, useTournament} from "../../../utils";
 import {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import NewTeamReview from "../../../components/Registration/NewTeamReview/NewTeamReview";
@@ -16,13 +16,14 @@ const Page = () => {
   const {identifier} = router.query;
 
   const [processing, setProcessing] = useState(false);
+  const {loading: tournamentLoading, tournament, error: tournamentError} = useTournament(identifier);
 
   // If new-team registrations isn't enabled, go back to the tournament home page
   useEffect(() => {
-    if (!identifier || !registration || !registration.tournament) {
+    if (!identifier || !registration || !tournament) {
       return;
     }
-    if (!registration.tournament.registration_options.new_team) {
+    if (!tournament.registration_options.new_team) {
       router.push(`/tournaments/${identifier}`);
     }
   }, [identifier, registration]);
@@ -35,7 +36,7 @@ const Page = () => {
       </div>
     );
   }
-  if (!registration.tournament) {
+  if (tournamentLoading) {
     return (
       <div>
         <LoadingMessage message={'Putting everything together...'}/>
@@ -105,6 +106,7 @@ const Page = () => {
 
       <NewTeamReview team={registration.team}
                      bowler={registration.bowler}
+                     tournament={tournament}
                      onEdit={editBowlerClicked}
                      onSave={saveClicked}/>
 

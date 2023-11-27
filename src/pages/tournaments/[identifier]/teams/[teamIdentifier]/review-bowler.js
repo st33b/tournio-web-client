@@ -6,7 +6,7 @@ import {useState} from "react";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import Link from "next/link";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
-import {submitAddBowler, useTeam} from "../../../../../utils";
+import {submitAddBowler, useTeam, useTournament} from "../../../../../utils";
 import TournamentHeader from "../../../../../components/ui/TournamentHeader";
 import BowlerSummary from "../../../../../components/Registration/ReviewEntries/BowlerSummary";
 import {existingTeamBowlerSaved} from "../../../../../store/actions/registrationActions";
@@ -20,8 +20,9 @@ const Page = () => {
   const [error, setError] = useState();
 
   const {loading, team, error: fetchError, teamHasChanged } = useTeam(teamIdentifier);
+  const {loading: tournamentLoading, tournament, error: tournamentError} = useTournament(identifier);
 
-  if (!registration || !registration.tournament || !registration.bowler) {
+  if (!registration || !tournament || !registration.bowler) {
     return '';
   }
 
@@ -36,6 +37,13 @@ const Page = () => {
     return (
       <div>
         <ErrorAlert message={'Failed to load team.'}/>
+      </div>
+    );
+  }
+  if (tournamentError) {
+    return (
+      <div>
+        <ErrorAlert message={'Failed to load tournament.'}/>
       </div>
     );
   }
@@ -69,7 +77,7 @@ const Page = () => {
     // Upon success, redirect to the team's page, which will
     // present its options.
     submitAddBowler({
-      tournament: registration.tournament,
+      tournament: tournament,
       team: team,
       bowler: registration.bowler,
       onSuccess: addBowlerSuccess,
@@ -85,7 +93,7 @@ const Page = () => {
 
   return (
     <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
-      <TournamentHeader tournament={registration.tournament}/>
+      <TournamentHeader tournament={tournament}/>
 
       <h2 className={`text-center`}>
         Review Bowler Details
@@ -93,7 +101,7 @@ const Page = () => {
 
       <hr/>
 
-      <BowlerSummary bowler={registration.bowler} partner={doublesPartner} />
+      <BowlerSummary bowler={registration.bowler} tournament={tournament} partner={doublesPartner} />
 
       <hr />
 
