@@ -23,6 +23,10 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
         value: '',
         valid: true,
       },
+      initial_size: {
+        value: 4,
+        valid: true,
+      },
       bowlers_attributes: {
         value: [],
         valid: true,
@@ -38,6 +42,7 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     }
     const newFormData = {...teamForm}
     newFormData.fields.name.value = team.name;
+    newFormData.fields.initial_size.value = team.initial_size;
     newFormData.fields.bowlers_attributes.value = team.bowlers.map((b) => {
       return {
         id: b.id,
@@ -156,6 +161,9 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
     switch (inputName) {
       case 'name':
         updatedTeamForm.fields.name.value = event.target.value;
+        break;
+      case 'initial_size':
+        updatedTeamForm.fields.initial_size.value = parseInt(event.target.value);
         break;
       case 'position':
         updatedTeamForm.fields.bowlers_attributes.value[index].position = parseInt(event.target.value);
@@ -299,14 +307,16 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
         <div className={'row mb-2'}>
           <label htmlFor={'initial_size'}
                  className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
-            Initially Requested Size
+            Joinable Positions
           </label>
           <div className={'col'}>
-            <input type={'text'}
-                   readOnly={true}
+            <input type={'number'}
+                   min={1}
+                   max={tournament.team_size}
+                   onChange={(event) => inputChangedHandler(event, 'initial_size')}
                    className={'form-control-plaintext'}
                    id={'initial_size'}
-                   value={team.initial_size}
+                   value={teamForm.fields.initial_size.value}
             />
           </div>
         </div>
