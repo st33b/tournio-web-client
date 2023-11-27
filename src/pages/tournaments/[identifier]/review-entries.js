@@ -7,19 +7,21 @@ import Summary from "../../../components/Registration/Summary/Summary";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
-import {submitNewTeamRegistration, useClientReady} from "../../../utils";
+import {submitNewTeamRegistration, useClientReady, useTournament} from "../../../utils";
 import {newTeamEntryCompleted} from "../../../store/actions/registrationActions";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
+  const {identifier} = router.query;
 
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
+  const {loading: tournamentLoading, tournament, error: tournamentError} = useTournament(identifier);
 
   const editBowlerClicked = (bowlerIndex) => {
-    router.push(`/tournaments/${registration.tournament.identifier}/edit-new-team-bowler?bowler=${bowlerIndex+1}`)
+    router.push(`/tournaments/${tournament.identifier}/edit-new-team-bowler?bowler=${bowlerIndex+1}`)
   }
 
   const newTeamRegistrationSuccess = (teamData) => {
@@ -40,7 +42,7 @@ const Page = () => {
       registration.team.placeWithOthers = event.target.elements.placeWithOthers.checked;
     }
 
-    submitNewTeamRegistration(registration.tournament,
+    submitNewTeamRegistration(tournament,
       registration.team,
       newTeamRegistrationSuccess,
       newTeamRegistrationFailure);
@@ -72,7 +74,7 @@ const Page = () => {
       <div className={'border-bottom mb-3 mb-sm-0'}>
         <ProgressIndicator active={'review'} />
         {errorMessage}
-        <ReviewEntries editBowler={editBowlerClicked} />
+        <ReviewEntries editBowler={editBowlerClicked} tournament={tournament} />
       </div>
     )
   }
@@ -83,7 +85,7 @@ const Page = () => {
         {output}
       </Col>
       <Col>
-        <Summary tournament={registration.tournament}
+        <Summary tournament={tournament}
                  nextStepClicked={submitRegistration}
                  nextStepText={'Submit Registration'}
                  enableDoublesEdit={true}

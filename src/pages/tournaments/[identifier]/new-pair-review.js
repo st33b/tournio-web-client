@@ -7,28 +7,29 @@ import Summary from "../../../components/Registration/Summary/Summary";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
 import {newPairRegistrationCompleted} from "../../../store/actions/registrationActions";
-import {submitDoublesRegistration} from "../../../utils";
+import {submitDoublesRegistration, useTournament} from "../../../utils";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
+  const {identifier} = router.identifier;
 
   const [bowlers, setBowlers] = useState();
-  const [tournament, setTournament] = useState();
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
+  const {loading: tournamentLoading, tournament, error: tournamentError} = useTournament(identifier);
 
   useEffect(() => {
-    if (!registration || !registration.tournament || !registration.bowlers) {
+    if (!registration || !registration.bowlers) {
       return;
     }
-    setTournament(registration.tournament);
     setBowlers(registration.bowlers);
   }, [registration]);
 
-  if (!tournament || !bowlers) {
+  if (!bowlers) {
     return '';
   }
 
@@ -52,6 +53,14 @@ const Page = () => {
       registrationSuccess,
       registrationFailure);
     setProcessing(true);
+  }
+
+  if (tournamentLoading) {
+    return <LoadingMessage message={'Getting things ready...'}/>;
+  }
+
+  if (!tournament) {
+    return <ErrorAlert message={'Failed to load tournament'}/>;
   }
 
   let errorMessage = '';

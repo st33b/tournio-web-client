@@ -1,14 +1,15 @@
 import classes from "./NewTeamReview.module.scss";
-import {useRegistrationContext} from "../../../store/RegistrationContext";
 import BowlerSummary from "../ReviewEntries/BowlerSummary";
 
-const NewTeamReview = ({team, bowler}) => {
-  const {registration} = useRegistrationContext();
+const NewTeamReview = ({team, bowler, tournament}) => {
+  if (!tournament) {
+    return '';
+  }
 
   const shiftIdentifiers = team.shiftIdentifiers || [];
   const chosenShifts = registration.tournament.shifts.length === 1
     ? ''
-    : registration.tournament.shifts.filter(({identifier}) => shiftIdentifiers.includes(identifier));
+    : tournament.shifts.filter(({identifier}) => shiftIdentifiers.includes(identifier));
 
   if (!team || !bowler) {
     return '';
@@ -54,7 +55,7 @@ const NewTeamReview = ({team, bowler}) => {
 
       <hr/>
 
-      <BowlerSummary bowler={bowler}/>
+      <BowlerSummary bowler={bowler} tournament={tournament}/>
     </div>
   );
 }

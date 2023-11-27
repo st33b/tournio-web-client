@@ -5,7 +5,7 @@ import classes from './ReviewEntries.module.scss';
 import {Alert, Col, Row} from "react-bootstrap";
 import {useEffect, useState} from "react";
 
-const ReviewEntries = ({editBowler, context}) => {
+const ReviewEntries = ({editBowler, context, tournament}) => {
   const {registration} = useRegistrationContext();
 
   const [bowler, setBowler] = useState();
@@ -25,12 +25,17 @@ const ReviewEntries = ({editBowler, context}) => {
     return '';
   }
 
+  if (!tournament) {
+    return '';
+  }
+
   let content = '';
   if (context === 'solo' || context === 'partner') {
     content = (
       <Col className={'px-lg-2'}>
         <BowlerSummary bowler={bowler}
                        editClicked={editBowler}
+                       tournament={tournament}
         />
       </Col>
     );
@@ -38,7 +43,11 @@ const ReviewEntries = ({editBowler, context}) => {
     content = bowlers.map((bowler, i) => {
       return (
         <Col md={6} className={'px-lg-2'} key={i}>
-          <BowlerSummary bowler={bowler} index={i} editClicked={bowler => editBowler(bowler, i)}/>
+          <BowlerSummary bowler={bowler}
+                         index={i}
+                         editClicked={bowler => editBowler(bowler, i)}
+                         tournament={tournament}
+          />
         </Col>
       );
     });
@@ -50,6 +59,7 @@ const ReviewEntries = ({editBowler, context}) => {
           <BowlerSummary allBowlers={team.bowlers}
                          index={i}
                          editClicked={editBowler}
+                         tournament={tournament}
           />
         </Col>
       )
