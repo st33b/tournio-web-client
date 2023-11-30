@@ -10,26 +10,21 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 import {useTournament} from "../../../director";
 import {useRouter} from "next/router";
 
-const TeamDetails = ({team, teamUpdateSubmitted}) => {
+const TeamDetails = ({team, teamUpdated}) => {
   const {loading, tournament} = useTournament();
   const router = useRouter();
   const {identifier: tournamentId, teamId} = router.query;
 
   let initialFormData = {
-    valid: true,
-    touched: false,
     fields: {
       name: {
         value: '',
-        valid: true,
       },
       initial_size: {
         value: 4,
-        valid: true,
       },
       bowlers_attributes: {
         value: [],
-        valid: true,
       },
     }
   }
@@ -156,7 +151,6 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
 
   const inputChangedHandler = (event, inputName, index = -1) => {
     const updatedTeamForm = {...teamForm};
-    updatedTeamForm.touched = true;
 
     switch (inputName) {
       case 'name':
@@ -168,26 +162,19 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
       case 'position':
         updatedTeamForm.fields.bowlers_attributes.value[index].position = parseInt(event.target.value);
         const positions = updatedTeamForm.fields.bowlers_attributes.value.map((attrs) => attrs.position).sort();
-        updatedTeamForm.fields.bowlers_attributes.valid = positions.reduce((result, value, index, array) => result && array[index - 1] < value);
         break;
     }
 
-    // Do we need to Handle validity of partner assignments?
-    let formIsValid = true;
-    for (let fieldName in updatedTeamForm.fields) {
-      formIsValid = formIsValid && updatedTeamForm.fields[fieldName].valid;
-    }
-    updatedTeamForm.valid = formIsValid;
-
     setTeamForm(updatedTeamForm);
+    handleUpdate(updatedTeamForm);
   }
 
-  const updateSubmitHandler = () => {
+  const handleUpdate = (updatedFormData) => {
     const formData = {};
-    for (let key in teamForm.fields) {
-      formData[key] = teamForm.fields[key].value;
+    for (let key in updatedFormData.fields) {
+      formData[key] = updatedFormData.fields[key].value;
     }
-    teamUpdateSubmitted(formData);
+    teamUpdated(formData);
   }
 
   // When a doubles partner is clicked, what needs to happen:
@@ -225,13 +212,15 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
 
     const updatedTeamForm = {...teamForm}
     updatedTeamForm.fields.bowlers_attributes.value = newBowlers;
-    updatedTeamForm.touched = true;
     setTeamForm(updatedTeamForm);
 
     // update the bowlers on the team, so that the partner selection rows get presented correctly
     updatedTeamForm.fields.bowlers_attributes.value.forEach((bowlerAttributeRow, index) => {
       team.bowlers[index].doubles_partner_id = bowlerAttributeRow.doubles_partner_id;
-    })
+    });
+
+    // Send update notification
+    handleUpdate(updatedTeamForm);
   }
 
   const doublesPartnerSelection = (
@@ -273,16 +262,16 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
   const maxTeamSize = parseInt(tournament.team_size);
 
   const addBowlerLink = (
-    <div className={'text-center'}>
+    <div className={'text-end'}>
       <Link href={{
         pathname: `/director/tournaments/[identifier]/teams/[teamId]/add_bowler`,
         query: {
           identifier: tournamentId,
           teamId: teamId,
         }
-      }}
-            className={'btn btn-success'}>
-        Add a New Bowler
+      }}>
+        <i className={'bi bi-plus-lg pe-2'} aria-hidden={true}/>
+        Add a Bowler
       </Link>
     </div>
   );
@@ -367,14 +356,14 @@ const TeamDetails = ({team, teamUpdateSubmitted}) => {
 
             {doublesPartnerSelection}
 
-            <div className={'text-center mt-4'}>
-              <Button variant={'primary'}
-                      disabled={!teamForm.touched || !teamForm.valid}
-                      onClick={updateSubmitHandler}
-              >
-                Update Details
-              </Button>
-            </div>
+            {/*<div className={'text-center mt-4'}>*/}
+            {/*  <Button variant={'primary'}*/}
+            {/*          disabled={!teamForm.valid}*/}
+            {/*          onClick={updateSubmitHandler}*/}
+            {/*  >*/}
+            {/*    Save Team Details*/}
+            {/*  </Button>*/}
+            {/*</div>*/}
           </>
         )}
       </div>

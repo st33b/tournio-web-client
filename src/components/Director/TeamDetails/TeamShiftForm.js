@@ -6,7 +6,6 @@ import classes from './TeamShiftForm.module.scss';
 
 const TeamShiftForm = ({allShifts, team, shift, onShiftChange}) => {
   const initialFormData = {
-    touched: false,
     valid: false,
     fields: {
       shift_identifier: '',
@@ -28,7 +27,6 @@ const TeamShiftForm = ({allShifts, team, shift, onShiftChange}) => {
     }
     const newFormData = {...formData}
     newFormData.fields.shift_identifier = shift.identifier;
-    newFormData.touched = false;
     newFormData.valid = isValid(shift.identifier);
     setFormData(newFormData);
   }, [allShifts, team, shift]);
@@ -36,7 +34,6 @@ const TeamShiftForm = ({allShifts, team, shift, onShiftChange}) => {
   const shiftChosen = (event) => {
     const newShiftIdentifier = event.target.value;
     const newFormData = {...formData};
-    newFormData.touched = true;
     newFormData.fields.shift_identifier = newShiftIdentifier;
     newFormData.valid = isValid(newShiftIdentifier);
     setFormData(newFormData);
@@ -68,14 +65,6 @@ const TeamShiftForm = ({allShifts, team, shift, onShiftChange}) => {
                           name={'shift'} />
             )
           )}
-          <div className={'text-center mt-3'}>
-            <Button variant={'primary'}
-                    type={'submit'}
-                    disabled={!formData.valid || !formData.touched}
-            >
-              Set Shift
-            </Button>
-          </div>
         </Form>
       )}
     </div>

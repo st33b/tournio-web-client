@@ -5,7 +5,6 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 const MixAndMatchShiftForm = ({shiftsByEvent = {}, currentShifts = [], onUpdate}) => {
   const initialFormValues = {
     fields: {},
-    touched: false,
   };
 
   const [shiftForm, setShiftForm] = useState(initialFormValues);
@@ -21,30 +20,19 @@ const MixAndMatchShiftForm = ({shiftsByEvent = {}, currentShifts = [], onUpdate}
     for (const shift of currentShifts) {
       updatedForm.fields[shift.event_string] = shift.identifier;
     }
-    setShiftForm(updatedForm)
+    setShiftForm(updatedForm);
+    onUpdate(Object.values(updatedForm.fields)); // Make sure our parent component is consistent
   }, [currentShifts]);
 
   const inputUpdated = (event, groupString) => {
     // Update the component's state
     const updatedForm = {...shiftForm};
     updatedForm.fields[groupString] = event.target.value;
-    updatedForm.touched = true;
     setShiftForm(updatedForm);
 
     // // Now convey that to our parent
-    // const shiftIdentifiers = Object.values(updatedForm.fields);
-    // onUpdate(shiftIdentifiers);
-  }
-
-  const submitClicked = (e) => {
-    e.preventDefault();
-    const updatedForm = {
-      ...shiftForm,
-      touched: false,
-    };
     const shiftIdentifiers = Object.values(updatedForm.fields);
     onUpdate(shiftIdentifiers);
-    setShiftForm(updatedForm);
   }
 
   {/* A set of radios for each event set */}
@@ -83,14 +71,8 @@ const MixAndMatchShiftForm = ({shiftsByEvent = {}, currentShifts = [], onUpdate}
   return (
     <div className={classes.MixAndMatchShiftForm}>
       <ErrorBoundary>
-        <form onSubmit={submitClicked} noValidate={true}>
+        <form noValidate={true}>
           {groups}
-          <div className={'d-flex justify-content-center'}>
-            <input type={'submit'}
-                   value={'Set Preferences'}
-                   disabled={!shiftForm.touched}
-                   className={`btn btn-primary mt-3`}/>
-          </div>
         </form>
       </ErrorBoundary>
     </div>

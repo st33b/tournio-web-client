@@ -11,7 +11,7 @@ import TeamShiftForm from "../../../../../components/Director/TeamDetails/TeamSh
 import {useLoginContext} from "../../../../../store/LoginContext";
 import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
-import {updateObject} from "../../../../../utils";
+import {devConsoleLog, updateObject} from "../../../../../utils";
 import MixAndMatchShiftForm from "../../../../../components/Director/TeamDetails/MixAndMatchShiftForm";
 
 const Page = () => {
@@ -35,6 +35,8 @@ const Page = () => {
     delete: false,
     update: false,
   });
+
+  const [teamData, setTeamData] = useState({});
 
   useEffect(() => {
     if (!successCode) {
@@ -133,16 +135,22 @@ const Page = () => {
     });
   }
 
-  const updateSubmitHandler = (teamData) => {
+  const updateSubmitHandler = (teamPostData) => {
+    const newObj = {
+      team: {
+        ...teamData,
+        ...teamPostData,
+      },
+    };
+    devConsoleLog("Resulting object:", newObj);
+    return;
     const uri = `/teams/${teamId}`;
     const requestConfig = {
       method: 'patch',
       headers: {
         'Content-Type': 'application/json',
       },
-      data: {
-        team: teamData,
-      },
+      data: newObj,
     }
     setOperationInProgress({
       ...operationInProgress,
@@ -164,9 +172,9 @@ const Page = () => {
   }
 
   const mixAndMatchShiftChangeHandler = (newShiftIdentifiers) => {
-    updateSubmitHandler({
+    setTeamData(updateObject(teamData, {
       shift_identifiers: [...newShiftIdentifiers],
-    });
+    }));
   }
 
   ////////////////////////////////////////////////////////////////////
@@ -189,7 +197,7 @@ const Page = () => {
       <Row>
         <Col md={8}>
           <TeamDetails team={team}
-                       teamUpdateSubmitted={updateSubmitHandler}
+                       teamUpdated={updateSubmitHandler}
           />
         </Col>
 
@@ -215,6 +223,8 @@ const Page = () => {
               </Card.Body>
             </Card>
           )}
+
+          {/* To-do: add submit button here, and arrange the page. */}
 
           <Card>
             <Card.Body className={'text-center'}>
