@@ -1,6 +1,7 @@
 import classes from './MixAndMatchShiftForm.module.scss';
 import React, {useEffect, useState} from "react";
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {devConsoleLog} from "../../../utils";
 
 const MixAndMatchShiftForm = ({shiftsByEvent = {}, currentShifts = [], onUpdate}) => {
   const initialFormValues = {
@@ -35,45 +36,43 @@ const MixAndMatchShiftForm = ({shiftsByEvent = {}, currentShifts = [], onUpdate}
     onUpdate(shiftIdentifiers);
   }
 
-  {/* A set of radios for each event set */}
-  const groups = [];
-  for (const eventGroup in shiftsByEvent) {
-    groups.push(
-      <div className={classes.EventGroup} key={eventGroup}>
-        <h6>
-          {shiftsByEvent[eventGroup][0].group_title}
-        </h6>
-
-        {shiftsByEvent[eventGroup].map(({identifier, name, description}) => {
-          const selected = shiftForm.fields[eventGroup] === identifier;
-
-          return (
-            <div key={`shiftInput_${identifier}`} className={`mx-lg-4 mb-1 form-check`}>
-              <input type={'radio'}
-                     className={'form-check-input'}
-                     name={`${eventGroup}_shift`}
-                     id={`shift_${identifier}`}
-                     value={identifier}
-                     onChange={(e) => inputUpdated(e, eventGroup)}
-                     checked={selected}
-                     autoComplete={'off'}/>
-              <label className={`form-check-label`}
-                     htmlFor={`shift_${identifier}`}>
-                {name}: {description}
-              </label>
-            </div>
-          )
-        })}
-      </div>
-    )
-  }
-
   return (
     <div className={classes.MixAndMatchShiftForm}>
       <ErrorBoundary>
-        <form noValidate={true}>
-          {groups}
-        </form>
+        {Object.values(shiftsByEvent).map(eventGroup => {
+          const eventString = eventGroup[0].event_string;
+          return (
+            <div className={'row mb-2'} key={`event_group_${eventString}`}>
+              <label htmlFor={`shiftInput_${eventGroup}`}
+                     className={'col-form-label col-form-label-lg text-sm-end col-12 col-sm-4'}>
+                {eventGroup[0].group_title}
+              </label>
+              <div className={'col'}>
+                {eventGroup.map(({identifier, name, description}) => {
+                  const selected = shiftForm.fields[eventString] === identifier;
+
+                  return (
+                    <div key={`shiftInput_${identifier}`} className={`form-check`}>
+                      <input type={'radio'}
+                             className={'form-check-input'}
+                             name={`${eventString}_shift`}
+                             id={`shift_${identifier}`}
+                             value={identifier}
+                             onChange={(e) => inputUpdated(e, eventString)}
+                             checked={selected}
+                             autoComplete={'off'}/>
+                      <label className={`form-check-label`}
+                             htmlFor={`shift_${identifier}`}>
+                        {name}: {description}
+                      </label>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+          );
+        })}
       </ErrorBoundary>
     </div>
   )

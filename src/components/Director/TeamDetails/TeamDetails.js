@@ -1,6 +1,6 @@
-import {useState, useEffect, useMemo} from "react";
+import React, {useState, useEffect, useMemo} from "react";
 import {useTable} from "react-table";
-import {Button} from "react-bootstrap";
+import {Button, Card} from "react-bootstrap";
 import Link from 'next/link';
 
 import PartnerSelectionRow from "./PartnerSelectionRow";
@@ -9,24 +9,22 @@ import classes from './TeamDetails.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import {useTournament} from "../../../director";
 import {useRouter} from "next/router";
+import TeamShiftForm from "./TeamShiftForm";
+import MixAndMatchShiftForm from "./MixAndMatchShiftForm";
+import {devConsoleLog, updateObject} from "../../../utils";
 
-const TeamDetails = ({team, teamUpdated}) => {
-  const {loading, tournament} = useTournament();
+const TeamDetails = ({tournament, team, teamUpdated}) => {
   const router = useRouter();
   const {identifier: tournamentId, teamId} = router.query;
 
   let initialFormData = {
     fields: {
-      name: {
-        value: '',
-      },
-      initial_size: {
-        value: 4,
-      },
-      bowlers_attributes: {
-        value: [],
-      },
-    }
+      name: '',
+      initial_size: 4,
+      bowlers_attributes: [],
+      shift_identifiers: [],
+    },
+    touched: false,
   }
 
   const [teamForm, setTeamForm] = useState(initialFormData);
@@ -36,16 +34,18 @@ const TeamDetails = ({team, teamUpdated}) => {
       return;
     }
     const newFormData = {...teamForm}
-    newFormData.fields.name.value = team.name;
-    newFormData.fields.initial_size.value = team.initial_size;
-    newFormData.fields.bowlers_attributes.value = team.bowlers.map((b) => {
+    newFormData.fields.name = team.name;
+    newFormData.fields.initial_size = team.initial_size;
+    newFormData.fields.bowlers_attributes = team.bowlers.map((b) => {
       return {
         id: b.id,
         position: b.position,
         doubles_partner_id: b.doubles_partner_id,
       }
     }, [team]);
+    newFormData.fields.shift_identifiers = team.shifts.map(({identifier}) => identifier);
     setTeamForm(newFormData);
+    teamUpdated(newFormData);
   }, [team]);
 
   let data = [];
@@ -59,7 +59,7 @@ const TeamDetails = ({team, teamUpdated}) => {
       accessor: 'position',
       Cell: ({row}) => {
         const index = row.index;
-        if (!teamForm.fields.bowlers_attributes.value[index]) {
+        if (!teamForm.fields.bowlers_attributes[index]) {
           return '';
         }
         return (
@@ -67,7 +67,7 @@ const TeamDetails = ({team, teamUpdated}) => {
             <input type={'number'}
                    min={1}
                    max={4}
-                   value={teamForm.fields.bowlers_attributes.value[index].position}
+                   value={teamForm.fields.bowlers_attributes[index].position}
                    className={[classes.PositionInput, 'form-control'].join(' ')}
                    name={'team[bowlers_attributes][' + index + '][position]'}
                    id={'team_bowlers_attributes_' + index + '_position'}
@@ -99,11 +99,11 @@ const TeamDetails = ({team, teamUpdated}) => {
         </Link>
       )
     },
-    {
-      Header: 'Amount Due',
-      accessor: 'amount_due',
-      Cell: ({value}) => `$${value}`,
-    },
+    // {
+    //   Header: 'Amount Due',
+    //   accessor: 'amount_due',
+    //   Cell: ({value}) => `$${value}`,
+    // },
     {
       id: 'free_entry',
       Header: 'Free Entry',
@@ -150,31 +150,26 @@ const TeamDetails = ({team, teamUpdated}) => {
   );
 
   const inputChangedHandler = (event, inputName, index = -1) => {
-    const updatedTeamForm = {...teamForm};
+    const updatedTeamForm = {
+       ...teamForm,
+      touched: true,
+    };
 
     switch (inputName) {
       case 'name':
-        updatedTeamForm.fields.name.value = event.target.value;
+        updatedTeamForm.fields.name = event.target.value;
         break;
       case 'initial_size':
-        updatedTeamForm.fields.initial_size.value = parseInt(event.target.value);
+        updatedTeamForm.fields.initial_size = parseInt(event.target.value);
         break;
       case 'position':
-        updatedTeamForm.fields.bowlers_attributes.value[index].position = parseInt(event.target.value);
-        const positions = updatedTeamForm.fields.bowlers_attributes.value.map((attrs) => attrs.position).sort();
+        updatedTeamForm.fields.bowlers_attributes[index].position = parseInt(event.target.value);
+        const positions = updatedTeamForm.fields.bowlers_attributes.map((attrs) => attrs.position).sort();
         break;
     }
 
     setTeamForm(updatedTeamForm);
-    handleUpdate(updatedTeamForm);
-  }
-
-  const handleUpdate = (updatedFormData) => {
-    const formData = {};
-    for (let key in updatedFormData.fields) {
-      formData[key] = updatedFormData.fields[key].value;
-    }
-    teamUpdated(formData);
+    teamUpdated(updatedTeamForm);
   }
 
   // When a doubles partner is clicked, what needs to happen:
@@ -185,7 +180,7 @@ const TeamDetails = ({team, teamUpdated}) => {
   //  - set C and D to be partners (the remaining two)
   const gimmeNewDoublesPartners = (bowlerId, partnerId) => {
     // create a copy of the bowlers_attributes value array
-    const newBowlers = teamForm.fields.bowlers_attributes.value.slice(0);
+    const newBowlers = teamForm.fields.bowlers_attributes.slice(0);
 
     let bowlersLeftToUpdate = [...newBowlers.keys()];
     const bowlerIndex = newBowlers.findIndex(b => b.id === bowlerId);
@@ -211,11 +206,11 @@ const TeamDetails = ({team, teamUpdated}) => {
     }
 
     const updatedTeamForm = {...teamForm}
-    updatedTeamForm.fields.bowlers_attributes.value = newBowlers;
+    updatedTeamForm.fields.bowlers_attributes = newBowlers;
     setTeamForm(updatedTeamForm);
 
     // update the bowlers on the team, so that the partner selection rows get presented correctly
-    updatedTeamForm.fields.bowlers_attributes.value.forEach((bowlerAttributeRow, index) => {
+    updatedTeamForm.fields.bowlers_attributes.forEach((bowlerAttributeRow, index) => {
       team.bowlers[index].doubles_partner_id = bowlerAttributeRow.doubles_partner_id;
     });
 
@@ -253,13 +248,28 @@ const TeamDetails = ({team, teamUpdated}) => {
     </div>
   );
 
+  const mixAndMatchShiftChangeHandler = (newShiftIdentifiers) => {
+    const updatedFields = {
+      ...teamForm.fields,
+      shift_identifiers: [...newShiftIdentifiers],
+    }
+    const updatedTeamForm = {
+      fields: updatedFields,
+      touched: true,
+    };
+
+    setTeamForm(updatedTeamForm);
+    teamUpdated(updatedTeamForm);
+  }
+
   //////////////////////////////////////////////////////////////////
 
-  if (loading || !tournament || !team) {
+  if (!tournament || !team) {
     return '';
   }
 
   const maxTeamSize = parseInt(tournament.team_size);
+  const tournamentType = tournament.config_items.find(({key}) => key === 'tournament_type').value || 'igbo_standard';
 
   const addBowlerLink = (
     <div className={'text-end'}>
@@ -280,7 +290,8 @@ const TeamDetails = ({team, teamUpdated}) => {
     <ErrorBoundary>
       <div className={classes.TeamDetails}>
         <div className={'row mb-2'}>
-          <label htmlFor={'team_name'} className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
+          <label htmlFor={'team_name'}
+                 className={'col-form-label col-form-label-lg text-sm-end col-12 col-sm-4'}>
             Team Name
           </label>
           <div className={'col'}>
@@ -288,27 +299,41 @@ const TeamDetails = ({team, teamUpdated}) => {
                    className={'form-control'}
                    name={'name'}
                    id={'name'}
-                   value={teamForm.fields.name.value}
+                   value={teamForm.fields.name}
                    onChange={(event) => inputChangedHandler(event, 'name')}
             />
           </div>
         </div>
         <div className={'row mb-2'}>
           <label htmlFor={'initial_size'}
-                 className={'col-form-label fw-bold text-sm-end col-12 col-sm-4'}>
+                 className={'col-form-label col-form-label-lg text-sm-end col-12 col-sm-4'}>
             Joinable Positions
           </label>
-          <div className={'col'}>
+          <div className={'col-sm-4'}>
             <input type={'number'}
                    min={1}
                    max={tournament.team_size}
                    onChange={(event) => inputChangedHandler(event, 'initial_size')}
-                   className={'form-control-plaintext'}
+                   className={'form-control'}
                    id={'initial_size'}
-                   value={teamForm.fields.initial_size.value}
+                   value={teamForm.fields.initial_size}
             />
           </div>
         </div>
+
+        {/* one for each set of selectable shifts */}
+        {tournamentType === 'igbo_mix_and_match' && (
+          <MixAndMatchShiftForm shiftsByEvent={tournament.shifts_by_event}
+                                currentShifts={team.shifts}
+                                onUpdate={mixAndMatchShiftChangeHandler}/>
+        )}
+        {/*{tournamentType === 'igbo_multi_shift' && (*/}
+        {/*  <TeamShiftForm allShifts={tournament.shifts}*/}
+        {/*               team={team}*/}
+        {/*               shift={team.shifts[0]}*/}
+        {/*               onShiftChange={multiShiftChangeHandler}/>*/}
+        {/*)}*/}
+
         {team.size === 0 && (
           <div className={'border-top border-1 mt-3'}>
             <p className={'lead text-center mt-3'}>

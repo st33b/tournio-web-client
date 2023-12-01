@@ -36,7 +36,10 @@ const Page = () => {
     update: false,
   });
 
-  const [teamData, setTeamData] = useState({});
+  const [teamData, setTeamData] = useState({
+    fields: {},
+    touched: false,
+  });
 
   useEffect(() => {
     if (!successCode) {
@@ -135,22 +138,31 @@ const Page = () => {
     });
   }
 
-  const updateSubmitHandler = (teamPostData) => {
-    const newObj = {
-      team: {
-        ...teamData,
-        ...teamPostData,
-      },
-    };
-    devConsoleLog("Resulting object:", newObj);
+  const formChangedHandler = (newTeamData) => {
+    // devConsoleLog("Data sent to page:", newTeamData);
+    const updatedTeamData = {
+      ...teamData,
+      ...newTeamData,
+    }
+    // devConsoleLog("Updated team data:", updatedTeamData);
+    setTeamData(updatedTeamData);
+  }
+
+  const updateSubmitHandler = () => {
+    devConsoleLog("Blocking update of team to server");
     return;
+
     const uri = `/teams/${teamId}`;
     const requestConfig = {
       method: 'patch',
       headers: {
         'Content-Type': 'application/json',
       },
-      data: newObj,
+      data: {
+        team: {
+          ...teamData.fields,
+        },
+      },
     }
     setOperationInProgress({
       ...operationInProgress,
@@ -196,47 +208,34 @@ const Page = () => {
       <Breadcrumbs ladder={ladder} activeText={team.name}/>
       <Row>
         <Col md={8}>
-          <TeamDetails team={team}
-                       teamUpdated={updateSubmitHandler}
+          <TeamDetails tournament={tournament}
+                       team={team}
+                       teamUpdated={formChangedHandler}
           />
-        </Col>
 
-        <Col md={4}>
-          {tournament.shifts.length > 1 && (
-            <Card className={'mb-3'}>
-              <Card.Header as={'h5'}>
-                {tournamentType === 'igbo_multi_shift' && 'Shift Preference'}
-                {tournamentType === 'igbo_mix_and_match' && 'Shift Preferences'}
-              </Card.Header>
-              <Card.Body>
-                {tournamentType === 'igbo_multi_shift' && (
-                  <TeamShiftForm allShifts={tournament.shifts}
-                                 team={team}
-                                 shift={team.shifts[0]}
-                                 onShiftChange={multiShiftChangeHandler}/>
-                )}
-                {tournamentType === 'igbo_mix_and_match' && (
-                  <MixAndMatchShiftForm shiftsByEvent={tournament.shifts_by_event}
-                                        currentShifts={team.shifts}
-                                        onUpdate={mixAndMatchShiftChangeHandler}/>
-                )}
-              </Card.Body>
-            </Card>
-          )}
+          {/*{tournament.shifts.length > 1 && (*/}
+          {/*  <Card className={'mb-3'}>*/}
+          {/*    <Card.Header as={'h5'}>*/}
+          {/*      {tournamentType === 'igbo_multi_shift' && 'Shift Preference'}*/}
+          {/*      {tournamentType === 'igbo_mix_and_match' && 'Shift Preferences'}*/}
+          {/*    </Card.Header>*/}
+          {/*    <Card.Body>*/}
+          {/*      {tournamentType === 'igbo_multi_shift' && (*/}
+          {/*        <TeamShiftForm allShifts={tournament.shifts}*/}
+          {/*                       team={team}*/}
+          {/*                       shift={team.shifts[0]}*/}
+          {/*                       onShiftChange={multiShiftChangeHandler}/>*/}
+          {/*      )}*/}
+          {/*      {tournamentType === 'igbo_mix_and_match' && (*/}
+          {/*        <MixAndMatchShiftForm shiftsByEvent={tournament.shifts_by_event}*/}
+          {/*                              currentShifts={team.shifts}*/}
+          {/*                              onUpdate={mixAndMatchShiftChangeHandler}/>*/}
+          {/*      )}*/}
+          {/*    </Card.Body>*/}
+          {/*  </Card>*/}
+          {/*)}*/}
 
           {/* To-do: add submit button here, and arrange the page. */}
-
-          <Card>
-            <Card.Body className={'text-center'}>
-              <form onSubmit={deleteSubmitHandler}>
-                <Button variant={'danger'}
-                        type={'submit'}
-                >
-                  Delete Team
-                </Button>
-              </form>
-            </Card.Body>
-          </Card>
 
           <SuccessAlert message={success.update}
                         className={`mt-3`}
@@ -252,6 +251,26 @@ const Page = () => {
                         update: null,
                       })}
           />
+
+
+        </Col>
+
+        <Col md={4}>
+          <hr className={'d-sm-none'} />
+          <Card>
+            <Card.Header as={'h5'}>
+              Danger Zone
+            </Card.Header>
+            <Card.Body className={'text-center'}>
+              <form onSubmit={deleteSubmitHandler}>
+                <Button variant={'danger'}
+                        type={'submit'}
+                >
+                  Delete Team
+                </Button>
+              </form>
+            </Card.Body>
+          </Card>
 
         </Col>
       </Row>
