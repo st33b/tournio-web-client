@@ -1,17 +1,14 @@
 import React, {useState, useEffect, useMemo} from "react";
 import {useTable} from "react-table";
-import {Button, Card} from "react-bootstrap";
 import Link from 'next/link';
 
 import PartnerSelectionRow from "./PartnerSelectionRow";
 
 import classes from './TeamDetails.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {useTournament} from "../../../director";
 import {useRouter} from "next/router";
 import TeamShiftForm from "./TeamShiftForm";
 import MixAndMatchShiftForm from "./MixAndMatchShiftForm";
-import {devConsoleLog, updateObject} from "../../../utils";
 
 const TeamDetails = ({tournament, team, teamUpdated}) => {
   const router = useRouter();
@@ -24,6 +21,7 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
       bowlers_attributes: [],
       shift_identifiers: [],
     },
+    valid: true, // TODO
     touched: false,
   }
 
@@ -164,6 +162,7 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
         break;
       case 'position':
         updatedTeamForm.fields.bowlers_attributes[index].position = parseInt(event.target.value);
+        // TODO: need to do something with this?
         const positions = updatedTeamForm.fields.bowlers_attributes.map((attrs) => attrs.position).sort();
         break;
     }
@@ -248,7 +247,7 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
     </div>
   );
 
-  const mixAndMatchShiftChangeHandler = (newShiftIdentifiers) => {
+  const updateShiftIdentifiers = (newShiftIdentifiers) => {
     const updatedFields = {
       ...teamForm.fields,
       shift_identifiers: [...newShiftIdentifiers],
@@ -260,6 +259,10 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
 
     setTeamForm(updatedTeamForm);
     teamUpdated(updatedTeamForm);
+  }
+
+  const multiShiftChangeHandler = (newShiftIdentifier) => {
+    updateShiftIdentifiers([newShiftIdentifier]);
   }
 
   //////////////////////////////////////////////////////////////////
@@ -321,18 +324,25 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
           </div>
         </div>
 
-        {/* one for each set of selectable shifts */}
         {tournamentType === 'igbo_mix_and_match' && (
           <MixAndMatchShiftForm shiftsByEvent={tournament.shifts_by_event}
                                 currentShifts={team.shifts}
-                                onUpdate={mixAndMatchShiftChangeHandler}/>
+                                onUpdate={updateShiftIdentifiers}/>
         )}
-        {/*{tournamentType === 'igbo_multi_shift' && (*/}
-        {/*  <TeamShiftForm allShifts={tournament.shifts}*/}
-        {/*               team={team}*/}
-        {/*               shift={team.shifts[0]}*/}
-        {/*               onShiftChange={multiShiftChangeHandler}/>*/}
-        {/*)}*/}
+        {tournamentType === 'igbo_multi_shift' && (
+          <div className={'row mb-2'}>
+            <label htmlFor={'shift_identifier'}
+                   className={'col-form-label col-form-label-lg text-sm-end col-12 col-sm-4'}>
+              Shift Preference
+            </label>
+            <div className={'col-sm-4'} id={'shift_identifier'}>
+              <TeamShiftForm allShifts={tournament.shifts}
+                           team={team}
+                           shift={team.shifts[0]}
+                           onShiftChange={multiShiftChangeHandler}/>
+            </div>
+          </div>
+        )}
 
         {team.size === 0 && (
           <div className={'border-top border-1 mt-3'}>

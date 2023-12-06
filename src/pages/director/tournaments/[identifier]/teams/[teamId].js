@@ -7,12 +7,10 @@ import Breadcrumbs from "../../../../../components/Director/Breadcrumbs/Breadcru
 import TeamDetails from "../../../../../components/Director/TeamDetails/TeamDetails";
 import {directorApiRequest, useDirectorApi, useTournament} from "../../../../../director";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
-import TeamShiftForm from "../../../../../components/Director/TeamDetails/TeamShiftForm";
 import {useLoginContext} from "../../../../../store/LoginContext";
 import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
 import {devConsoleLog, updateObject} from "../../../../../utils";
-import MixAndMatchShiftForm from "../../../../../components/Director/TeamDetails/MixAndMatchShiftForm";
 
 const Page = () => {
   const router = useRouter();
@@ -177,18 +175,6 @@ const Page = () => {
     });
   }
 
-  const multiShiftChangeHandler = (newShiftIdentifier) => {
-    updateSubmitHandler({
-      shift_identifiers: [newShiftIdentifier],
-    });
-  }
-
-  const mixAndMatchShiftChangeHandler = (newShiftIdentifiers) => {
-    setTeamData(updateObject(teamData, {
-      shift_identifiers: [...newShiftIdentifiers],
-    }));
-  }
-
   ////////////////////////////////////////////////////////////////////
 
   if (tournamentLoading || teamLoading || !team) {
@@ -201,8 +187,6 @@ const Page = () => {
     {text: 'Teams', path: `/director/tournaments/${tournamentId}/teams`},
   ];
 
-  const tournamentType = tournament.config_items.find(({key}) => key === 'tournament_type').value || 'igbo_standard';
-
   return (
     <div>
       <Breadcrumbs ladder={ladder} activeText={team.name}/>
@@ -212,30 +196,6 @@ const Page = () => {
                        team={team}
                        teamUpdated={formChangedHandler}
           />
-
-          {/*{tournament.shifts.length > 1 && (*/}
-          {/*  <Card className={'mb-3'}>*/}
-          {/*    <Card.Header as={'h5'}>*/}
-          {/*      {tournamentType === 'igbo_multi_shift' && 'Shift Preference'}*/}
-          {/*      {tournamentType === 'igbo_mix_and_match' && 'Shift Preferences'}*/}
-          {/*    </Card.Header>*/}
-          {/*    <Card.Body>*/}
-          {/*      {tournamentType === 'igbo_multi_shift' && (*/}
-          {/*        <TeamShiftForm allShifts={tournament.shifts}*/}
-          {/*                       team={team}*/}
-          {/*                       shift={team.shifts[0]}*/}
-          {/*                       onShiftChange={multiShiftChangeHandler}/>*/}
-          {/*      )}*/}
-          {/*      {tournamentType === 'igbo_mix_and_match' && (*/}
-          {/*        <MixAndMatchShiftForm shiftsByEvent={tournament.shifts_by_event}*/}
-          {/*                              currentShifts={team.shifts}*/}
-          {/*                              onUpdate={mixAndMatchShiftChangeHandler}/>*/}
-          {/*      )}*/}
-          {/*    </Card.Body>*/}
-          {/*  </Card>*/}
-          {/*)}*/}
-
-          {/* To-do: add submit button here, and arrange the page. */}
 
           <SuccessAlert message={success.update}
                         className={`mt-3`}
