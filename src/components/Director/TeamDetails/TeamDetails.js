@@ -23,6 +23,7 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
     },
     valid: true, // TODO
     touched: false,
+    errors: [],
   }
 
   const [teamForm, setTeamForm] = useState(initialFormData);
@@ -147,6 +148,31 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
     {columns, data},
   );
 
+  const errorMessages = (fields) => {
+    const messages = [];
+
+    // an array of flags, where the 0th element is ignored
+    const markedPositions = Array(tournament.team_size + 1).fill(false);
+    // mark the chosen positions as true
+    fields.bowlers_attributes.forEach(bowler => markedPositions[bowler.position] = true);
+    // filtering by marked positions, does its size match the number of bowlers we have?
+    const noDuplicates = markedPositions.filter(p => !!p).length === fields.bowlers_attributes.length;
+
+    if (!noDuplicates) {
+      messages.push('Bowler positions overlap');
+    }
+    if (fields.name.length === 0) {
+      messages.push('Team needs a name');
+    }
+
+    const sizeIsValid = fields.initial_size > 0 && fields.initial_size <= tournament.team_size;
+    if (!sizeIsValid) {
+      messages.push(`Joinable positions must be 1 - ${tournament.team_size}`);
+    }
+
+    return messages;
+  }
+
   const inputChangedHandler = (event, inputName, index = -1) => {
     const updatedTeamForm = {
        ...teamForm,
@@ -162,10 +188,12 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
         break;
       case 'position':
         updatedTeamForm.fields.bowlers_attributes[index].position = parseInt(event.target.value);
-        // TODO: need to do something with this?
-        const positions = updatedTeamForm.fields.bowlers_attributes.map((attrs) => attrs.position).sort();
+        // TODO: do something with this?
+        // const sortedByPosition = updatedTeamForm.fields.bowlers_attributes.map((attrs) => attrs.position).sort();
         break;
     }
+    updatedTeamForm.errors = errorMessages(updatedTeamForm.fields);
+    updatedTeamForm.valid = updatedTeamForm.errors.length === 0;
 
     setTeamForm(updatedTeamForm);
     teamUpdated(updatedTeamForm);
@@ -204,7 +232,10 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
       newBowlers[bowlersLeftToUpdate[0]].doubles_partner_id = null;
     }
 
-    const updatedTeamForm = {...teamForm}
+    const updatedTeamForm = {
+      ...teamForm,
+      touched: true,
+    }
     updatedTeamForm.fields.bowlers_attributes = newBowlers;
     setTeamForm(updatedTeamForm);
 
@@ -214,7 +245,7 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
     });
 
     // Send update notification
-    handleUpdate(updatedTeamForm);
+    teamUpdated(updatedTeamForm);
   }
 
   const doublesPartnerSelection = (
@@ -390,15 +421,6 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
             {team.size < maxTeamSize && addBowlerLink}
 
             {doublesPartnerSelection}
-
-            {/*<div className={'text-center mt-4'}>*/}
-            {/*  <Button variant={'primary'}*/}
-            {/*          disabled={!teamForm.valid}*/}
-            {/*          onClick={updateSubmitHandler}*/}
-            {/*  >*/}
-            {/*    Save Team Details*/}
-            {/*  </Button>*/}
-            {/*</div>*/}
           </>
         )}
       </div>

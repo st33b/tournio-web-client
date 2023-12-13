@@ -37,6 +37,8 @@ const Page = () => {
   const [teamData, setTeamData] = useState({
     fields: {},
     touched: false,
+    valid: true,
+    errors: [],
   });
 
   useEffect(() => {
@@ -147,9 +149,6 @@ const Page = () => {
   }
 
   const updateSubmitHandler = () => {
-    devConsoleLog("Blocking update of team to server");
-    return;
-
     const uri = `/teams/${teamId}`;
     const requestConfig = {
       method: 'patch',
@@ -197,6 +196,22 @@ const Page = () => {
                        teamUpdated={formChangedHandler}
           />
 
+          {teamData.errors.length > 0 && (
+            <div className={`alert alert-danger fade show pb-1`}>
+              <ul>
+                {teamData.errors.map((err, i) => <li key={i}>{err}</li>)}
+              </ul>
+            </div>
+          )}
+
+          <div className={'text-center mt-3'}>
+            <button className={'btn btn-primary'}
+                    disabled={!(teamData.touched && teamData.valid)}
+                    onClick={updateSubmitHandler}>
+              Save Team Details
+            </button>
+          </div>
+
           <SuccessAlert message={success.update}
                         className={`mt-3`}
                         onClose={() => setSuccess({
@@ -216,14 +231,14 @@ const Page = () => {
         </Col>
 
         <Col md={4}>
-          <hr className={'d-sm-none'} />
+          <hr className={'d-sm-none'}/>
           <Card>
             <Card.Header as={'h5'}>
               Danger Zone
             </Card.Header>
             <Card.Body className={'text-center'}>
               <form onSubmit={deleteSubmitHandler}>
-                <Button variant={'danger'}
+              <Button variant={'danger'}
                         type={'submit'}
                 >
                   Delete Team
