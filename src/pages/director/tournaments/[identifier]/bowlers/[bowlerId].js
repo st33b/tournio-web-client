@@ -6,7 +6,6 @@ import {Card, Button, Row, Col, ListGroup, Alert} from "react-bootstrap";
 import {directorApiRequest, useDirectorApi, useTournament} from "../../../../../director";
 import DirectorLayout from "../../../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../../../components/Director/Breadcrumbs/Breadcrumbs";
-import BowlerDetails from "../../../../../components/Director/BowlerDetails/BowlerDetails";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import ManualPayment from "../../../../../components/Director/BowlerDetails/ManualPayment";
 import OfficeUseOnly from "../../../../../components/Director/BowlerDetails/OfficeUseOnly";

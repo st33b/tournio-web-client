@@ -150,6 +150,10 @@ const Page = () => {
     return <LoadingMessage message={'Retrieving bowler registration form...'}/>
   }
 
+  if (processing) {
+    return <LoadingMessage message={'Adding bowler...'}/>
+  }
+
   const maxPosition = parseInt(tournament.team_size);
 
   const ladder = [
