@@ -6,7 +6,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {
   soloBowlerInfoAdded
 } from "../../../store/actions/registrationActions";
-import {useClientReady} from "../../../utils";
+import {useTournament} from "../../../utils";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import TournamentHeader from "../../../components/ui/TournamentHeader";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
@@ -16,24 +16,18 @@ const Page = () => {
   const router = useRouter();
   const {identifier} = router.query;
 
+  const {loading, tournament, error: tournamentError} = useTournament(identifier);
+
   useEffect(() => {
-    if (!identifier || !registration || !registration.tournament) {
+    if (!identifier || !tournament) {
       return;
     }
-    if (!registration.tournament.registration_options.solo) {
+    if (!tournament.registration_options.solo) {
       router.push(`/tournaments/${identifier}`);
     }
-  }, [registration]);
+  }, [tournament]);
 
-  const ready = useClientReady();
-  if (!ready) {
-    return (
-      <div>
-        <LoadingMessage message={'Getting the registration form ready'}/>
-      </div>
-    );
-  }
-  if (!registration.tournament) {
+  if (loading || !tournament) {
     return (
       <div>
         <LoadingMessage message={'Getting the registration form ready'}/>
@@ -57,7 +51,7 @@ const Page = () => {
 
   return (
     <div>
-      <TournamentHeader tournament={registration.tournament}/>
+      <TournamentHeader tournament={tournament}/>
 
       <h3 className={`text-center`}>
         Solo Registration
@@ -65,7 +59,7 @@ const Page = () => {
 
       <hr />
 
-      <BowlerForm tournament={registration.tournament}
+      <BowlerForm tournament={tournament}
                   bowlerData={previousBowlerData}
                   bowlerInfoSaved={bowlerInfoSaved}/>
 

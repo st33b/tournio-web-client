@@ -28,7 +28,7 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
     postal_code: 'Postal/ZIP Code',
   };
 
-  const bowlerFieldsItem = registration.tournament.config_items.find(({key}) => key === 'bowler_form_fields');
+  const bowlerFieldsItem = tournament.config_items.find(({key}) => key === 'bowler_form_fields');
   const optionalFields = !!bowlerFieldsItem ? bowlerFieldsItem.value : [];
 
   const aqLabels = {};

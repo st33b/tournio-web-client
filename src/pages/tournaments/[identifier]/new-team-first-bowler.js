@@ -4,7 +4,7 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamBowlerInfoAdded} from "../../../store/actions/registrationActions";
-import {devConsoleLog, useClientReady} from "../../../utils";
+import {devConsoleLog, useTournament} from "../../../utils";
 import {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import PositionChooser from "../../../components/common/formElements/PositionChooser/PositionChooser";
@@ -17,33 +17,26 @@ const Page = () => {
 
   const [chosenPosition, choosePosition] = useState(1);
 
+  const {loading, tournament, error: tournamentError} = useTournament(identifier);
+
   // If new-team registrations aren't enabled, go back to the tournament home page
   useEffect(() => {
-    if (!identifier || !registration || !registration.tournament) {
+    if (!identifier || !tournament || !registration) {
       return;
     }
-    if (!registration.tournament.registration_options.new_team) {
+    if (!tournament.registration_options.new_team) {
       router.push(`/tournaments/${identifier}`);
     }
     if (edit) {
       devConsoleLog("Edit is true.");
       choosePosition(registration.bowler.position);
     }
-  }, [registration, edit]);
+  }, [edit, tournament, registration]);
 
-  const ready = useClientReady();
-  if (!ready) {
-    return (
-      <div>
-        <LoadingMessage message={'Getting the registration form ready'}/>
-      </div>
-    );
-  }
-  if (!registration.tournament) {
+  if (loading || !tournament) {
     return (
       <div>
         <LoadingMessage message={'Looking for the tournament...'}/>
-        {/*<LoadingMessage message={'Getting the registration form ready'}/>*/}
       </div>
     );
   }
@@ -65,11 +58,10 @@ const Page = () => {
   }
 
   const previousBowlerData = edit ? registration.bowler : null;
-  devConsoleLog("Previous bowler data: ", previousBowlerData);
 
   return (
     <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
-      <TournamentHeader tournament={registration.tournament}/>
+      <TournamentHeader tournament={tournament}/>
 
       <h2 className={`text-center`}>
         Team:&nbsp;
@@ -86,11 +78,11 @@ const Page = () => {
 
       <hr />
 
-      <PositionChooser maxPosition={registration.tournament.team_size}
+      <PositionChooser maxPosition={tournament.team_size}
                        chosen={chosenPosition}
                        onChoose={positionChosen}/>
 
-      <BowlerForm tournament={registration.tournament}
+      <BowlerForm tournament={tournament}
                   bowlerData={previousBowlerData}
                   bowlerInfoSaved={newBowlerAdded}/>
 

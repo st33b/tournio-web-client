@@ -126,6 +126,8 @@ const Page = () => {
   const port = process.env.NODE_ENV === 'development' ? `:${state.currentLocation.port}` : '';
   const shareUrl = `${state.currentLocation.protocol}//${state.currentLocation.hostname}${port}/teams/${teamIdentifier}`;
 
+  const tournamentType = tournament.config_items.find(({key}) => key === 'tournament_type').value || 'igbo_standard';
+
   return (
     <div className={`col-md-8 offset-md-2`}>
       <TournamentHeader tournament={tournament}/>
@@ -138,17 +140,20 @@ const Page = () => {
         Team: <strong>{team.name}</strong>
       </h3>
 
-      <h5 className={'text-center'}>
-        Shift Preference: {team.shifts.map(({name}) => name).join(', ')}
-      </h5>
+      {tournamentType === 'igbo_multi_shift' && (
+        <h5 className={'text-center'}>
+          Shift Preference: {team.shifts.map(({name}) => name).join(', ')}
+        </h5>
+      )}
+      {tournamentType === 'igbo_mix_and_match' && (
+        <h5 className={'text-center'}>
+          Shift Preferences: {team.shifts.map(({name}) => name).join(', ')}
+        </h5>
+      )}
 
       <UrlShare url={shareUrl}/>
 
       <hr/>
-
-      {/* URL */}
-
-      {/* URL copy function */}
 
       <PositionChooser maxPosition={tournament.team_size}
                        chosen={state.chosenPosition}
