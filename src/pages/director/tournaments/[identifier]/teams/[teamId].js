@@ -7,12 +7,10 @@ import Breadcrumbs from "../../../../../components/Director/Breadcrumbs/Breadcru
 import TeamDetails from "../../../../../components/Director/TeamDetails/TeamDetails";
 import {directorApiRequest, useDirectorApi, useTournament} from "../../../../../director";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
-import TeamShiftForm from "../../../../../components/Director/TeamDetails/TeamShiftForm";
 import {useLoginContext} from "../../../../../store/LoginContext";
 import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
 import {updateObject} from "../../../../../utils";
-import MixAndMatchShiftForm from "../../../../../components/Director/TeamDetails/MixAndMatchShiftForm";
 
 const Page = () => {
   const router = useRouter();
@@ -34,6 +32,13 @@ const Page = () => {
   const [operationInProgress, setOperationInProgress] = useState({
     delete: false,
     update: false,
+  });
+
+  const [teamData, setTeamData] = useState({
+    fields: {},
+    touched: false,
+    valid: true,
+    errors: [],
   });
 
   useEffect(() => {
@@ -133,7 +138,17 @@ const Page = () => {
     });
   }
 
-  const updateSubmitHandler = (teamData) => {
+  const formChangedHandler = (newTeamData) => {
+    // devConsoleLog("Data sent to page:", newTeamData);
+    const updatedTeamData = {
+      ...teamData,
+      ...newTeamData,
+    }
+    // devConsoleLog("Updated team data:", updatedTeamData);
+    setTeamData(updatedTeamData);
+  }
+
+  const updateSubmitHandler = () => {
     const uri = `/teams/${teamId}`;
     const requestConfig = {
       method: 'patch',
@@ -141,7 +156,9 @@ const Page = () => {
         'Content-Type': 'application/json',
       },
       data: {
-        team: teamData,
+        team: {
+          ...teamData.fields,
+        },
       },
     }
     setOperationInProgress({
@@ -157,18 +174,6 @@ const Page = () => {
     });
   }
 
-  const multiShiftChangeHandler = (newShiftIdentifier) => {
-    updateSubmitHandler({
-      shift_identifiers: [newShiftIdentifier],
-    });
-  }
-
-  const mixAndMatchShiftChangeHandler = (newShiftIdentifiers) => {
-    updateSubmitHandler({
-      shift_identifiers: [...newShiftIdentifiers],
-    });
-  }
-
   ////////////////////////////////////////////////////////////////////
 
   if (tournamentLoading || teamLoading || !team) {
@@ -181,52 +186,31 @@ const Page = () => {
     {text: 'Teams', path: `/director/tournaments/${tournamentId}/teams`},
   ];
 
-  const tournamentType = tournament.config_items.find(({key}) => key === 'tournament_type').value || 'igbo_standard';
-
   return (
     <div>
       <Breadcrumbs ladder={ladder} activeText={team.name}/>
       <Row>
         <Col md={8}>
-          <TeamDetails team={team}
-                       teamUpdateSubmitted={updateSubmitHandler}
+          <TeamDetails tournament={tournament}
+                       team={team}
+                       teamUpdated={formChangedHandler}
           />
-        </Col>
 
-        <Col md={4}>
-          {tournament.shifts.length > 1 && (
-            <Card className={'mb-3'}>
-              <Card.Header as={'h5'}>
-                {tournamentType === 'igbo_multi_shift' && 'Shift Preference'}
-                {tournamentType === 'igbo_mix_and_match' && 'Shift Preferences'}
-              </Card.Header>
-              <Card.Body>
-                {tournamentType === 'igbo_multi_shift' && (
-                  <TeamShiftForm allShifts={tournament.shifts}
-                                 team={team}
-                                 shift={team.shifts[0]}
-                                 onShiftChange={multiShiftChangeHandler}/>
-                )}
-                {tournamentType === 'igbo_mix_and_match' && (
-                  <MixAndMatchShiftForm shiftsByEvent={tournament.shifts_by_event}
-                                        currentShifts={team.shifts}
-                                        onUpdate={mixAndMatchShiftChangeHandler}/>
-                )}
-              </Card.Body>
-            </Card>
+          {teamData.errors.length > 0 && (
+            <div className={`alert alert-danger fade show pb-1`}>
+              <ul>
+                {teamData.errors.map((err, i) => <li key={i}>{err}</li>)}
+              </ul>
+            </div>
           )}
 
-          <Card>
-            <Card.Body className={'text-center'}>
-              <form onSubmit={deleteSubmitHandler}>
-                <Button variant={'danger'}
-                        type={'submit'}
-                >
-                  Delete Team
-                </Button>
-              </form>
-            </Card.Body>
-          </Card>
+          <div className={'text-center mt-3'}>
+            <button className={'btn btn-primary'}
+                    disabled={!(teamData.touched && teamData.valid)}
+                    onClick={updateSubmitHandler}>
+              Save Team Details
+            </button>
+          </div>
 
           <SuccessAlert message={success.update}
                         className={`mt-3`}
@@ -242,6 +226,26 @@ const Page = () => {
                         update: null,
                       })}
           />
+
+
+        </Col>
+
+        <Col md={4}>
+          <hr className={'d-sm-none'}/>
+          <Card>
+            <Card.Header as={'h5'}>
+              Danger Zone
+            </Card.Header>
+            <Card.Body className={'text-center'}>
+              <form onSubmit={deleteSubmitHandler}>
+              <Button variant={'danger'}
+                        type={'submit'}
+                >
+                  Delete Team
+                </Button>
+              </form>
+            </Card.Body>
+          </Card>
 
         </Col>
       </Row>
