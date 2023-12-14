@@ -48,20 +48,19 @@ const AdditionalQuestionForm = ({question, newQuestion}) => {
     let modifiedTournament;
     if (newQuestion) {
       modifiedTournament = updateObject(tournament, {
-        additional_questions: tournament.additional_questions.concat(data),
+        additional_questions: Object.values(tournament.additional_questions).concat(data),
         available_questions: tournament.available_questions.filter(
           ({id}) => id !== data.extended_form_field_id
         ),
       });
     } else {
       const qId = data.identifier;
-      const index = tournament.additional_questions.findIndex(c => c.identifier === qId);
       const updatedQuestion = {
-        ...tournament.additional_questions[index],
+        ...tournament.additional_questions[qId],
         ...data,
       }
-      const newQuestions = [...tournament.additional_questions];
-      newQuestions[index] = updatedQuestion;
+      const newQuestions = {...tournament.additional_questions};
+      newQuestions[qId] = updatedQuestion;
       modifiedTournament = updateObject(tournament, {
         additional_questions: newQuestions,
       });
@@ -114,9 +113,8 @@ const AdditionalQuestionForm = ({question, newQuestion}) => {
 
   const onDeleteSuccess = () => {
     const qId = question.identifier;
-    const newQuestionSet = tournament.additional_questions.filter(i => {
-      return i.identifier !== qId;
-    })
+    const newQuestionSet = {...tournament.additional_questions};
+    newQuestionSet[qId] = undefined;
     const restoredAvailableQuestion = {
       id: question.extended_form_field_id,
       label: question.label,
