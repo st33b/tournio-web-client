@@ -16,7 +16,7 @@ const AdditionalQuestions = ({eventKey}) => {
   )
   if (!loading) {
     const list = (
-      tournament.additional_questions.map((q, i) => {
+      Object.values(tournament.additional_questions).map((q, i) => {
         return (
           <ListGroup.Item key={i} className={classes.ListItem}>
             <strong>

@@ -19,7 +19,7 @@ const AdditionalQuestions = () => {
         Additional Questions
       </Card.Header>
       <ListGroup variant={'flush'}>
-        {tournament.additional_questions.map((question, i) => (
+        {Object.values(tournament.additional_questions).map((question, i) => (
           <ListGroup.Item key={i} className={`p-0`}>
             <AdditionalQuestionForm question={question} />
           </ListGroup.Item>
