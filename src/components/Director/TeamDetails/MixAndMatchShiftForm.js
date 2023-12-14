@@ -1,11 +1,11 @@
 import classes from './MixAndMatchShiftForm.module.scss';
 import React, {useEffect, useState} from "react";
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {devConsoleLog} from "../../../utils";
 
 const MixAndMatchShiftForm = ({shiftsByEvent = {}, currentShifts = [], onUpdate}) => {
   const initialFormValues = {
     fields: {},
+    touched: false,
   };
 
   const [shiftForm, setShiftForm] = useState(initialFormValues);

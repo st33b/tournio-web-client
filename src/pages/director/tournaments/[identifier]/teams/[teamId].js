@@ -10,7 +10,7 @@ import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingM
 import {useLoginContext} from "../../../../../store/LoginContext";
 import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
-import {devConsoleLog, updateObject} from "../../../../../utils";
+import {updateObject} from "../../../../../utils";
 
 const Page = () => {
   const router = useRouter();
