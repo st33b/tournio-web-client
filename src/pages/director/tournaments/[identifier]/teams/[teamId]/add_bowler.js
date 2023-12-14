@@ -8,8 +8,8 @@ import Breadcrumbs from "../../../../../../components/Director/Breadcrumbs/Bread
 import ErrorAlert from "../../../../../../components/common/ErrorAlert";
 import PositionChooser from "../../../../../../components/common/formElements/PositionChooser/PositionChooser";
 import BowlerForm from "../../../../../../components/Registration/BowlerForm/BowlerForm";
-import {devConsoleLog} from "../../../../../../utils";
 import {useLoginContext} from "../../../../../../store/LoginContext";
+import {devConsoleLog} from "../../../../../../utils";
 
 const Page = () => {
   const router = useRouter();
@@ -25,7 +25,7 @@ const Page = () => {
   const [occupiedPositions, setOccupiedPositions] = useState([]);
   const [processing, setProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
-  const [bowlerData, setBowlerData] = useState();
+  const [bowlerData, setBowlerData] = useState(null);
 
   useEffect(() => {
     if (!tournament || !team || chosenPosition > 0) {
@@ -74,10 +74,6 @@ const Page = () => {
 
     const postData = convertBowlerDataForPost(bowlerDeets);
 
-    // bowlerSubmitFailure("Not just yet");
-    // devConsoleLog("Tournament property", tournament.additional_questions)
-    // devConsoleLog("Post data", postData);
-
     const uri = `/tournaments/${tournamentId}/bowlers`;
     const requestConfig = {
       method: 'post',
@@ -108,6 +104,7 @@ const Page = () => {
   // The difference is getting through the additional questions.
   // (On registration, they're indexed by name; on director, they're an array.)
   const convertBowlerDataForPost = (bowlerData) => {
+    devConsoleLog("Bowler data:", bowlerData);
     return {
       person_attributes: {
         first_name: bowlerData.first_name,
@@ -131,13 +128,12 @@ const Page = () => {
 
   const convertAdditionalQuestionResponsesForPost = (bowlerData) => {
     const responses = [];
-    tournament.additional_questions.forEach(aq => {
-      const key = aq.name;
+    for (const questionKey in tournament.additional_questions) {
       responses.push({
-        name: key,
-        response: bowlerData[key] || '',
+        name: questionKey,
+        response: bowlerData[questionKey] || '',
       });
-    });
+    }
     return responses;
   }
   ////////////////////////////////////////////////////////////////////
