@@ -21,7 +21,7 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
       bowlers_attributes: [],
       shift_identifiers: [],
     },
-    valid: true, // TODO
+    valid: true,
     touched: false,
     errors: [],
   }
