@@ -442,9 +442,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       });
     }
 
-    // Reset the form to take in the next bowler's info
-    setBowlerForm(getInitialFormData());
-
     bowlerInfoSaved(theBowlerData);
   }
 
