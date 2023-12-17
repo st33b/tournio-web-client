@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {soloBowlerRegistrationCompleted} from "../../../store/actions/registrationActions";
-import {submitSoloRegistration, useClientReady, useTournament} from "../../../utils";
+import {submitSoloRegistration, useTournament} from "../../../utils";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 import Link from "next/link";
@@ -19,7 +19,7 @@ const Page = () => {
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
 
-  const {loading: tournamentLoading, tournament, error: tournamentError} = useTournament(identifier);
+  const {loading, tournament, error: tournamentError} = useTournament(identifier);
 
   useEffect(() => {
     if (!identifier || !tournament) {
@@ -30,15 +30,7 @@ const Page = () => {
     }
   }, [registration]);
 
-  const ready = useClientReady();
-  if (!ready) {
-    return (
-      <div>
-        <LoadingMessage message={'Getting the registration form ready'}/>
-      </div>
-    );
-  }
-  if (tournamentLoading) {
+  if (loading || !tournament) {
     return (
       <div>
         <LoadingMessage message={'Putting everything together...'}/>

@@ -7,7 +7,6 @@ import Breadcrumbs from "../../../../../components/Director/Breadcrumbs/Breadcru
 import TeamDetails from "../../../../../components/Director/TeamDetails/TeamDetails";
 import {directorApiRequest, useDirectorApi, useTournament} from "../../../../../director";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
-import TeamShiftForm from "../../../../../components/Director/TeamDetails/TeamShiftForm";
 import {useLoginContext} from "../../../../../store/LoginContext";
 import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
@@ -35,11 +34,18 @@ const Page = () => {
     update: false,
   });
 
+  const [teamData, setTeamData] = useState({
+    fields: {},
+    touched: false,
+    valid: true,
+    errors: [],
+  });
+
   useEffect(() => {
     if (!successCode) {
       return;
     }
-    let msg = '';
+    let msg;
     switch (successCode) {
       case '2':
         msg = 'Bowler added';
@@ -132,7 +138,17 @@ const Page = () => {
     });
   }
 
-  const updateSubmitHandler = (teamData) => {
+  const formChangedHandler = (newTeamData) => {
+    // devConsoleLog("Data sent to page:", newTeamData);
+    const updatedTeamData = {
+      ...teamData,
+      ...newTeamData,
+    }
+    // devConsoleLog("Updated team data:", updatedTeamData);
+    setTeamData(updatedTeamData);
+  }
+
+  const updateSubmitHandler = () => {
     const uri = `/teams/${teamId}`;
     const requestConfig = {
       method: 'patch',
@@ -140,7 +156,9 @@ const Page = () => {
         'Content-Type': 'application/json',
       },
       data: {
-        team: teamData,
+        team: {
+          ...teamData.fields,
+        },
       },
     }
     setOperationInProgress({
@@ -156,12 +174,6 @@ const Page = () => {
     });
   }
 
-  const shiftChangeHandler = (newShiftIdentifier) => {
-    updateSubmitHandler({
-      shift_identifier: newShiftIdentifier,
-    });
-  }
-
   ////////////////////////////////////////////////////////////////////
 
   if (tournamentLoading || teamLoading || !team) {
@@ -174,40 +186,31 @@ const Page = () => {
     {text: 'Teams', path: `/director/tournaments/${tournamentId}/teams`},
   ];
 
-
   return (
     <div>
       <Breadcrumbs ladder={ladder} activeText={team.name}/>
       <Row>
         <Col md={8}>
-          <TeamDetails team={team}
-                       teamUpdateSubmitted={updateSubmitHandler}
+          <TeamDetails tournament={tournament}
+                       team={team}
+                       teamUpdated={formChangedHandler}
           />
-        </Col>
 
-        <Col md={4}>
-          {tournament.shifts.length > 1 && (
-            <Card className={'mb-3'}>
-              <Card.Header as={'h5'}>
-                Shift
-              </Card.Header>
-              <Card.Body>
-                <TeamShiftForm allShifts={tournament.shifts} team={team} onShiftChange={shiftChangeHandler}/>
-              </Card.Body>
-            </Card>
+          {teamData.errors.length > 0 && (
+            <div className={`alert alert-danger fade show pb-1`}>
+              <ul>
+                {teamData.errors.map((err, i) => <li key={i}>{err}</li>)}
+              </ul>
+            </div>
           )}
 
-          <Card>
-            <Card.Body className={'text-center'}>
-              <form onSubmit={deleteSubmitHandler}>
-                <Button variant={'danger'}
-                        type={'submit'}
-                >
-                  Delete Team
-                </Button>
-              </form>
-            </Card.Body>
-          </Card>
+          <div className={'text-center mt-3'}>
+            <button className={'btn btn-primary'}
+                    disabled={!(teamData.touched && teamData.valid)}
+                    onClick={updateSubmitHandler}>
+              Save Team Details
+            </button>
+          </div>
 
           <SuccessAlert message={success.update}
                         className={`mt-3`}
@@ -223,6 +226,26 @@ const Page = () => {
                         update: null,
                       })}
           />
+
+
+        </Col>
+
+        <Col md={4}>
+          <hr className={'d-sm-none'}/>
+          <Card>
+            <Card.Header as={'h5'}>
+              Danger Zone
+            </Card.Header>
+            <Card.Body className={'text-center'}>
+              <form onSubmit={deleteSubmitHandler}>
+              <Button variant={'danger'}
+                        type={'submit'}
+                >
+                  Delete Team
+                </Button>
+              </form>
+            </Card.Body>
+          </Card>
 
         </Col>
       </Row>

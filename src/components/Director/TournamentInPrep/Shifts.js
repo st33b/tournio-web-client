@@ -24,9 +24,12 @@ const Shifts = () => {
             </ListGroup.Item>
           ))
         }
-        <ListGroup.Item className={'p-0'}>
-          <ShiftForm/>
-        </ListGroup.Item>
+        {/* Let's only permit adding a shift to a tournament that hasn't opened (or closed) yet. */}
+        {!['active', 'closed'].includes(tournament.state) && (
+          <ListGroup.Item className={'p-0'}>
+            <ShiftForm/>
+          </ListGroup.Item>
+        )}
       </ListGroup>
     </Card>
   )

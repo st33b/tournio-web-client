@@ -13,7 +13,7 @@ const Page = () => {
   const ERRORS = [
     '',
     'Please name your team!',
-    'Requested shift is full',
+    'Invalid shift preference specified',
   ];
 
   const {dispatch} = useRegistrationContext();
@@ -93,9 +93,10 @@ const Page = () => {
           </>
       )}
 
-      <TeamForm shifts={tournament.shifts}
+      <TeamForm tournament={tournament}
                 maxBowlers={tournament.team_size}
                 onSubmit={teamFormCompleted} />
+
     </div>
   );
 }

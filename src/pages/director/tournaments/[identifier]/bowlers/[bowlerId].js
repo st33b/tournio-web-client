@@ -6,7 +6,6 @@ import {Card, Button, Row, Col, ListGroup, Alert} from "react-bootstrap";
 import {directorApiRequest, useDirectorApi, useTournament} from "../../../../../director";
 import DirectorLayout from "../../../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../../../components/Director/Breadcrumbs/Breadcrumbs";
-import BowlerDetails from "../../../../../components/Director/BowlerDetails/BowlerDetails";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import ManualPayment from "../../../../../components/Director/BowlerDetails/ManualPayment";
 import OfficeUseOnly from "../../../../../components/Director/BowlerDetails/OfficeUseOnly";
@@ -16,6 +15,7 @@ import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
 import EmailButton from "../../../../../components/Director/BowlerDetails/EmailButton";
 import {updateObject} from "../../../../../utils";
+import BowlerForm from "../../../../../components/Registration/BowlerForm/BowlerForm";
 
 const BowlerPage = () => {
   const router = useRouter();
@@ -424,13 +424,12 @@ const BowlerPage = () => {
 
   const convertAdditionalQuestionResponsesForPatch = (bowlerData) => {
     const responses = [];
-    tournament.additional_questions.forEach(aq => {
-      const key = aq.name;
+    for (const questionKey in tournament.additional_questions) {
       responses.push({
-        name: key,
-        response: bowlerData[key] || '',
+        name: questionKey,
+        response: bowlerData[questionKey] || '',
       });
-    });
+    }
     return responses;
   }
 
@@ -1020,15 +1019,21 @@ const BowlerPage = () => {
     {text: 'Bowlers', path: `/director/tournaments/${identifier}/bowlers`},
   ];
 
+  // Put the additional question responses at the top level of bowler data, for the form
+  for (const questionKey in bowler.additional_question_responses) {
+    bowler[questionKey] = bowler.additional_question_responses[questionKey].response;
+  }
+
   return (
     <ErrorBoundary>
       <Breadcrumbs ladder={ladder} activeText={bowler.display_name}/>
       <Row>
         <Col md={8}>
           {bowlerSummary}
-          <BowlerDetails tournament={tournament}
-                         bowler={bowler}
-                         bowlerUpdateSubmitted={updateSubmitHandler}
+          <BowlerForm tournament={tournament}
+                      bowlerInfoSaved={updateSubmitHandler}
+                      bowlerData={bowler}
+                      nextButtonText={'Update Bowler'}
           />
           <SuccessAlert message={success.updateBowler}/>
           <ErrorAlert message={bowlerError}/>

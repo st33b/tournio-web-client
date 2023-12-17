@@ -9,6 +9,7 @@ import PositionChooser from "../../../../../components/common/formElements/Posit
 import BowlerForm from "../../../../../components/Registration/BowlerForm/BowlerForm";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
 import {existingTeamBowlerInfoAdded} from "../../../../../store/actions/registrationActions";
+import Link from "next/link";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
@@ -56,16 +57,7 @@ const Page = () => {
 
   //////////////////////
 
-  const otherPositionClicked = (otherPosition) => {
-    router.push({
-      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]',
-      query: {
-        identifier: identifier,
-        teamIdentifier: teamIdentifier,
-        chosen: otherPosition,
-      }
-    });
-  }
+  const unavailablePositions = team.bowlers.map(({position}) => position);
 
   const bowlerInfoSaved = (bowlerData) => {
     const completeBowlerData = {...bowlerData};
@@ -95,7 +87,14 @@ const Page = () => {
       <h2 className={`text-center`}>
         Team:&nbsp;
         <strong>
-          {team.name}
+          <Link href={{
+            pathname: '/tournaments/[identifier]/teams/[teamIdentifier]',
+            query: {
+              identifier: identifier,
+              teamIdentifier: team.identifier,
+            }}}>
+            {team.name}
+          </Link>
         </strong>
       </h2>
 
@@ -103,7 +102,9 @@ const Page = () => {
 
       <PositionChooser maxPosition={tournament.team_size}
                        chosen={chosenPosition}
-                       onChoose={otherPositionClicked}/>
+                       onChoose={choosePosition}
+                       disallowedPositions={unavailablePositions}
+      />
 
       <hr />
 
