@@ -101,7 +101,9 @@ const Page = () => {
 
       <hr/>
 
-      <BowlerSummary bowler={registration.bowler} tournament={tournament} partner={doublesPartner} />
+      <BowlerSummary bowler={registration.bowler}
+                     tournament={tournament}
+                     partner={doublesPartner} />
 
       <hr />
 
