@@ -11,6 +11,7 @@ import {useLoginContext} from "../../../../../store/LoginContext";
 import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
 import {updateObject} from "../../../../../utils";
+import UrlShare from "../../../../../components/ui/UrlShare/UrlShare";
 
 const Page = () => {
   const router = useRouter();
@@ -186,6 +187,9 @@ const Page = () => {
     {text: 'Teams', path: `/director/tournaments/${tournamentId}/teams`},
   ];
 
+  const port = process.env.NODE_ENV === 'development' ? `:${window.location.port}` : '';
+  const shareUrl = `${window.location.protocol}//${window.location.hostname}${port}/teams/${teamId}`;
+
   return (
     <div>
       <Breadcrumbs ladder={ladder} activeText={team.name}/>
@@ -228,6 +232,9 @@ const Page = () => {
           />
 
 
+          <div className={'mt-4'}>
+            <UrlShare url={shareUrl}/>
+          </div>
         </Col>
 
         <Col md={4}>
