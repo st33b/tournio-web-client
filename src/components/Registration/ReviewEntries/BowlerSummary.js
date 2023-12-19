@@ -1,11 +1,8 @@
 import {Row} from "react-bootstrap";
 
-import {useRegistrationContext} from "../../../store/RegistrationContext";
-
 import classes from './BowlerSummary.module.scss';
 
 const BowlerSummary = ({bowler, tournament, partner = null}) => {
-  const {registration} = useRegistrationContext();
   if (!bowler) {
     return '';
   }
@@ -106,7 +103,7 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
         })}
 
         {partner && (
-          <Row key={`${doublesPartner}`}>
+          <Row key={`${bowler.doubles_partner}`}>
             <dt className={'col-5 pe-2 label'}>
               Doubles Partner
             </dt>

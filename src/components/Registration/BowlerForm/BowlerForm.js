@@ -324,7 +324,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     return formFields;
   }
 
-  const getInitialFormData = () => {
+  const getInitialFormData = (listOfFieldsToUse) => {
     const formData = {
       formFields: {
         ...minimumFormFields, // our minimum
@@ -341,7 +341,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         value: partner.identifier,
         label: partner.full_name,
       }));
-      formData.formFields.doublesPartner = {
+      formData.formFields.doubles_partner = {
         elementType: 'radio-limited-set',
         elementConfig: {
           choices: [
@@ -357,7 +357,10 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         valid: true,
         touched: false,
       }
+      listOfFieldsToUse.push('doubles_partner');
     }
+
+    setFieldsToUse(listOfFieldsToUse);
 
     return formData;
   }
@@ -399,9 +402,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     const optionalFields = !!bowlerFieldsItem ? bowlerFieldsItem.value : [];
 
     const updatedFields = fieldsToUse.concat(optionalFields).concat(Object.keys(tournament.additional_questions));
-    setFieldsToUse(updatedFields);
 
-    const initialFormData = getInitialFormData();
+    const initialFormData = getInitialFormData(updatedFields);
 
     if (bowlerData) {
       const populatedFormData = getPopulatedFormData(initialFormData);
