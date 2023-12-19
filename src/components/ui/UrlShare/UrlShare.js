@@ -44,7 +44,7 @@ const UrlShare = ({url}) => {
         </OverlayTrigger>
       </div>
       <p className={'form-text'}>
-        Share this URL with your teammates so they can enter their details.
+        Share this URL with teammates so they can join the team and provide their information.
       </p>
     </div>
   );
