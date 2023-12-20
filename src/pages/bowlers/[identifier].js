@@ -1,8 +1,9 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
+import Link from "next/link";
 import {Col, Row} from "react-bootstrap";
 
-import {fetchBowlerDetails, updateObject, useClientReady} from "../../utils";
+import {devConsoleLog, fetchBowlerDetails, updateObject, useBowler} from "../../utils";
 import {useCommerceContext} from "../../store/CommerceContext";
 import Menu from '../../components/Commerce/Menu';
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
@@ -11,7 +12,6 @@ import CommerceLayout from "../../components/Layout/CommerceLayout/CommerceLayou
 import SuccessAlert from "../../components/common/SuccessAlert";
 import ErrorAlert from "../../components/common/ErrorAlert";
 import TournamentHeader from "../../components/ui/TournamentHeader";
-import Link from "next/link";
 import {bowlerCommerceDetailsMooted} from "../../store/actions/registrationActions";
 
 const Page = () => {
@@ -37,7 +37,8 @@ const Page = () => {
       return;
     }
 
-    if (!commerce.bowler || commerce.bowler.identifier !== identifier) {
+    if (!commerce.cart) {
+      // @early-discount Initialize cart, with early-registration discount if appropriate
       fetchBowlerDetails(identifier, dispatch, onFetchFailure);
     }
   }, [identifier, commerce]);
@@ -63,12 +64,9 @@ const Page = () => {
     setState(updateObject(state, updatedState));
   }, [success, error]);
 
-  const ready = useClientReady();
-  if (!ready) {
-    return null;
-  }
+  const {loading: bowlerLoading, data, error: fetchError} = useBowler(identifier);
 
-  if (!commerce) {
+  if (!commerce || !data) {
     return <LoadingMessage message={'One moment, please...'}/>;
   }
 
@@ -84,36 +82,36 @@ const Page = () => {
     }));
   }
 
+  const bowler = data.bowler;
+
   return (
     <div>
-      {commerce.tournament && commerce.bowler && (
-        <Row className={``}>
-          <Col md={{offset: 2, span: 8}} xl={{offset: 3, span: 6}} className={'ps-2'}>
-            <TournamentHeader tournament={commerce.tournament}/>
+      <Row className={``}>
+        <Col md={{offset: 2, span: 8}} xl={{offset: 3, span: 6}} className={'ps-2'}>
+          <TournamentHeader tournament={bowler.tournament}/>
 
-            <h3 className={`text-center`}>
-              Bowler: <strong>{commerce.bowler.full_name}</strong>
-            </h3>
-            {commerce.bowler.team_identifier && (
-              <h4 className={`text-center`}>
-                Team:&nbsp;
-                <strong>
-                  <Link href={{
-                    pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/[chosen]',
-                    query: {
-                      identifier: commerce.tournament.identifier,
-                      teamIdentifier: commerce.bowler.team_identifier,
-                      chosen: commerce.bowler.position,
-                    }}}>
-                    {commerce.bowler.team_name}
-                  </Link>
-                </strong>
-              </h4>
-            )}
-            {!commerce.bowler.has_free_entry && <FreeEntryForm/>}
-          </Col>
-        </Row>
-      )}
+          <h3 className={`text-center`}>
+            Bowler: <strong>{bowler.full_name}</strong>
+          </h3>
+          {bowler.team_identifier && (
+            <h4 className={`text-center`}>
+              Team:&nbsp;
+              <strong>
+                <Link href={{
+                  pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/[chosen]',
+                  query: {
+                    identifier: bowler.tournament.identifier,
+                    teamIdentifier: bowler.team_identifier,
+                    chosen: bowler.position,
+                  }}}>
+                  {bowler.team_name}
+                </Link>
+              </strong>
+            </h4>
+          )}
+          {!bowler.has_free_entry && <FreeEntryForm/>}
+        </Col>
+      </Row>
 
       <hr/>
 
@@ -124,7 +122,7 @@ const Page = () => {
                   message={state.errorMessage}
                   onClose={clearErrorMessage}/>
 
-      {commerce.bowler && <Menu/>}
+      <Menu/>
 
     </div>
   );

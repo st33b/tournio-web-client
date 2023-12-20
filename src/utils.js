@@ -251,30 +251,6 @@ export const fetchTournamentDetails = (identifier, onSuccess, onFailure) => {
     });
 }
 
-export const fetchTeamDetails = ({teamIdentifier, onSuccess, onFailure}) => {
-  const requestConfig = {
-    method: 'get',
-    url: `${apiHost}/teams/${teamIdentifier}`,
-    headers: {
-      'Accept': 'application/json',
-    },
-    validateStatus: (status) => {
-      return status < 500
-    },
-  }
-  axios(requestConfig)
-    .then(response => {
-      if (response.status >= 200 && response.status < 400) {
-        onSuccess(response.data);
-      } else {
-        onFailure(response.data);
-      }
-    })
-    .catch(error => {
-      onFailure({error: 'Unexpected error from the server'});
-    });
-}
-
 export const fetchBowlerDetails = (bowlerIdentifier, dispatch, onFailure) => {
   const requestConfig = {
     method: 'get',
@@ -875,5 +851,18 @@ export const useTeam = (teamIdentifier, onSuccess = () => {
     error,
     team,
     teamHasChanged,
+  }
+}
+
+export const useBowler = (bowlerIdentifier, onSuccess = () => {}) => {
+  const {loading, data, error} = useApi({
+    uri: bowlerIdentifier ? `/bowlers/${bowlerIdentifier}` : null,
+    onSuccess: onSuccess,
+  });
+
+  return {
+    loading,
+    error,
+    data,
   }
 }

@@ -4,8 +4,9 @@ import {itemAddedToCart} from "./commerce/itemAddedToCart";
 import {itemRemovedFromCart} from "./commerce/itemRemovedFromCart";
 
 const initialState = {
-  tournament: null,
-  bowler: null,
+  // tournament: null,
+  // bowler: null,
+  bowlerIdentifier: null,
   cart: [],
   availableItems: {},
   availableApparelItems: {},
@@ -29,7 +30,10 @@ export const commerceReducer = (state, action) => {
         tournament: action.tournament,
         error: null,
       });
+    case actionTypes.COMMERCE_SESSION_INITIATED:
+
     case actionTypes.BOWLER_DETAILS_RETRIEVED:
+      // @early-discount Kill this once we're using the other action
       let unpaidItems = action.bowler.unpaid_purchases.slice(0);
       // if they have a free entry--confirmed or otherwise--remove any ledger
       // items from the cart. We don't want to force them to pay an entry fee
