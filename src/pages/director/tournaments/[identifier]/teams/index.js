@@ -45,7 +45,7 @@ const TeamsIndex = () => {
       data: {
         team: {
           name: team.name,
-          shift_identifier: team.shift_identifier,
+          shift_identifiers: [team.shift_identifier],
         }
       }
     }
