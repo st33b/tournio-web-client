@@ -854,10 +854,11 @@ export const useTeam = (teamIdentifier, onSuccess = () => {
   }
 }
 
-export const useBowler = (bowlerIdentifier, onSuccess = () => {}) => {
+export const useBowlerCommerce = (bowlerIdentifier, onSuccess = () => {}, onFailure = () => {}) => {
   const {loading, data, error} = useApi({
-    uri: bowlerIdentifier ? `/bowlers/${bowlerIdentifier}` : null,
+    uri: bowlerIdentifier ? `/bowlers/${bowlerIdentifier}/commerce` : null,
     onSuccess: onSuccess,
+    onFailure: onFailure,
   });
 
   return {
@@ -866,3 +867,4 @@ export const useBowler = (bowlerIdentifier, onSuccess = () => {}) => {
     data,
   }
 }
+

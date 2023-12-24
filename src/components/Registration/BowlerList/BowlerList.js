@@ -10,6 +10,11 @@ import {
 import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 
+//
+// @early-discount
+// I'd like not to use ReactTable anymore, since bowlers are now displayed in a list
+//
+
 const BowlerList = ({tournament, bowlers = [], action = 'bowlerDetail'}) => {
   const router = useRouter();
   const {dispatch} = useRegistrationContext();

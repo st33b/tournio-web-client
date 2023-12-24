@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import Link from "next/link";
 import {Col, Row} from "react-bootstrap";
 
-import {devConsoleLog, fetchBowlerDetails, updateObject, useBowler} from "../../utils";
+import {devConsoleLog, updateObject, useBowlerCommerce} from "../../utils";
 import {useCommerceContext} from "../../store/CommerceContext";
 import Menu from '../../components/Commerce/Menu';
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
@@ -26,22 +26,15 @@ const Page = () => {
 
   const onFetchFailure = (response) => {
     if (response.status === 404) {
-      dispatch(bowlerCommerceDetailsMooted());
+      // dispatch(bowlerCommerceDetailsMooted());
       router.push('/404');
     }
   }
 
-  // fetch the bowler details
-  useEffect(() => {
-    if (!identifier || !commerce) {
-      return;
-    }
+  const onFetchSuccess = (response) => {
+    // initialize the reducer for this bowler
 
-    if (!commerce.cart) {
-      // @early-discount Initialize cart, with early-registration discount if appropriate
-      fetchBowlerDetails(identifier, dispatch, onFetchFailure);
-    }
-  }, [identifier, commerce]);
+  }
 
   useEffect(() => {
     const updatedState = {...state};
@@ -64,10 +57,14 @@ const Page = () => {
     setState(updateObject(state, updatedState));
   }, [success, error]);
 
-  const {loading: bowlerLoading, data, error: fetchError} = useBowler(identifier);
+  const {loading, data, error: fetchError} = useBowlerCommerce(identifier, onFetchSuccess, onFetchFailure);
 
-  if (!commerce || !data) {
+  if (loading) {
     return <LoadingMessage message={'One moment, please...'}/>;
+  }
+
+  if (!data) {
+    return <LoadingMessage message={'Almost ready...'}/>;
   }
 
   const clearSuccessMessage = () => {
@@ -82,34 +79,34 @@ const Page = () => {
     }));
   }
 
-  const bowler = data.bowler;
+  const {bowler, team, tournament} = data;
 
   return (
     <div>
       <Row className={``}>
         <Col md={{offset: 2, span: 8}} xl={{offset: 3, span: 6}} className={'ps-2'}>
-          <TournamentHeader tournament={bowler.tournament}/>
+          <TournamentHeader tournament={tournament}/>
 
           <h3 className={`text-center`}>
-            Bowler: <strong>{bowler.full_name}</strong>
+            Bowler: <strong>{bowler.fullName}</strong>
           </h3>
-          {bowler.team_identifier && (
+          {team && (
             <h4 className={`text-center`}>
               Team:&nbsp;
               <strong>
                 <Link href={{
                   pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/[chosen]',
                   query: {
-                    identifier: bowler.tournament.identifier,
-                    teamIdentifier: bowler.team_identifier,
+                    identifier: tournament.identifier,
+                    teamIdentifier: team.identifier,
                     chosen: bowler.position,
                   }}}>
-                  {bowler.team_name}
+                  {team.name}
                 </Link>
               </strong>
             </h4>
           )}
-          {!bowler.has_free_entry && <FreeEntryForm/>}
+          {!bowler.freeEntry && <FreeEntryForm/>}
         </Col>
       </Row>
 
