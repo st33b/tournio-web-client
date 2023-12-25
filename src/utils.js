@@ -251,34 +251,6 @@ export const fetchTournamentDetails = (identifier, onSuccess, onFailure) => {
     });
 }
 
-export const fetchBowlerDetails = (bowlerIdentifier, dispatch, onFailure) => {
-  const requestConfig = {
-    method: 'get',
-    url: `${apiHost}/bowlers/${bowlerIdentifier}`,
-    headers: {
-      'Accept': 'application/json',
-    },
-    validateStatus: (status) => {
-      return status < 500
-    },
-  }
-  axios(requestConfig)
-    .then(response => {
-      if (response.status === 404) {
-        onFailure(response);
-      } else if (response.data) {
-        const bowlerData = response.data.bowler;
-        const availableItems = response.data.available_items;
-        dispatch(bowlerCommerceDetailsRetrieved(bowlerData, availableItems));
-      }
-    })
-    .catch(error => {
-      // Display some kind of error message
-      console.log('Whoops!', error);
-      onFailure(error);
-    });
-}
-
 export const fetchTeamList = ({tournamentIdentifier, dispatch, onSuccess, onFailure, incomplete = false}) => {
   const queryParams = {};
   if (incomplete) {
@@ -848,8 +820,8 @@ export const useTeam = (teamIdentifier, onSuccess = () => {
 
   return {
     loading,
-    error,
     team,
+    error,
     teamHasChanged,
   }
 }
@@ -863,8 +835,7 @@ export const useBowlerCommerce = (bowlerIdentifier, onSuccess = () => {}, onFail
 
   return {
     loading,
-    error,
     data,
+    error,
   }
 }
-

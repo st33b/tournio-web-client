@@ -6,15 +6,14 @@ describe ('action type: reset', () => {
     type: actionTypes.RESET,
   }
   const expected = {
-    tournament: null,
     bowler: null,
+    bowlerIdentifier: null,
     cart: [],
-    availableItems: {},
-    availableApparelItems: {},
+    availableItems: [],
+    availableApparelItems: [],
     purchasedItems: [],
     freeEntry: null,
     checkoutSessionId: null,
-    error: null,
   }
 
   it ('returns the expected object', () => {

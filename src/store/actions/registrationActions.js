@@ -1,4 +1,6 @@
 import * as actionTypes from './actionTypes';
+import axios from "axios";
+import {apiHost, devConsoleLog} from "../../utils";
 
 export const reset = () => {
   return {
@@ -75,11 +77,27 @@ export const soloBowlerRegistrationCompleted = () => {
   }
 }
 
-export const bowlerCommerceDetailsRetrieved = (bowler, availableItems) => {
+export const commerceDetailsRetrieved = ({
+                                           bowler,
+                                           freeEntry,
+                                           purchases,
+                                           automaticItems,
+                                           availableItems,
+                                         }) => {
+  devConsoleLog("Handing commerce deets off to the reducer", {
+    bowler,
+    freeEntry,
+    purchases,
+    automaticItems,
+    availableItems,
+  });
   return {
-    type: actionTypes.BOWLER_DETAILS_RETRIEVED,
+    type: actionTypes.COMMERCE_SESSION_INITIATED,
     bowler: bowler,
+    freeEntry: freeEntry,
     availableItems: availableItems,
+    purchases: purchases,
+    automaticItems: automaticItems,
   }
 }
 

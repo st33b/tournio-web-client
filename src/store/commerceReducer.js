@@ -5,15 +5,14 @@ import {itemRemovedFromCart} from "./commerce/itemRemovedFromCart";
 
 const initialState = {
   // tournament: null,
-  // bowler: null,
+  bowler: null,
   bowlerIdentifier: null,
   cart: [],
-  availableItems: {},
-  availableApparelItems: {},
+  availableItems: [],
+  availableApparelItems: [],
   purchasedItems: [],
   freeEntry: null,
   checkoutSessionId: null,
-  error: null,
 }
 
 export const commerceReducerInit = (initial = initialState) => initial;
@@ -31,18 +30,6 @@ export const commerceReducer = (state, action) => {
         error: null,
       });
     case actionTypes.COMMERCE_SESSION_INITIATED:
-
-    case actionTypes.BOWLER_DETAILS_RETRIEVED:
-      // @early-discount Kill this once we're using the other action
-      let unpaidItems = action.bowler.unpaid_purchases.slice(0);
-      // if they have a free entry--confirmed or otherwise--remove any ledger
-      // items from the cart. We don't want to force them to pay an entry fee
-      // while they're awaiting confirmation. And we don't want to force them
-      // to wait to buy anything else if they're awaiting free entry confirmation.
-      if (action.bowler.has_free_entry) {
-        unpaidItems = unpaidItems.filter((element) => element.category !== 'ledger');
-      }
-
       // Separate apparel items from the rest (ooh, maybe separate out by categories/determinations entirely...)
       const separated = extractApparelFromItems(action.availableItems);
 
@@ -50,11 +37,10 @@ export const commerceReducer = (state, action) => {
         bowler: action.bowler,
         availableItems: separated.items,
         availableApparelItems: separated.apparelItems,
-        cart: unpaidItems,
-        purchasedItems: action.bowler.paid_purchases,
-        freeEntry: null,
-        error: null,
-        tournament: {...action.bowler.tournament},
+        cart: [...action.automaticItems],
+        purchasedItems: [...action.purchases],
+        freeEntry: {...action.freeEntry},
+        // tournament: {...action.tournament},
       });
     case actionTypes.BOWLER_DETAILS_MOOTED:
       return updateObject(state, {
@@ -128,17 +114,14 @@ export const commerceReducer = (state, action) => {
 }
 
 export const extractApparelFromItems = (allItems) => {
-  const nonApparelItems = {};
-  const apparelItems = {};
+  const apparelItems = [];
 
-  const itemArray = Object.values(allItems);
-  const otherItems = itemArray.filter(({category, determination}) => {
+  const nonApparelItems = allItems.filter(({category, determination}) => {
     return category !== 'product' || determination !== 'apparel'
   });
-  otherItems.forEach(i => nonApparelItems[i.identifier] = i);
 
   // Pull out the one-size-fits-all and size-parent items
-  itemArray.filter(item => {
+  allItems.filter(item => {
     return item.category === 'product' &&
       item.determination === 'apparel' &&
       !item.configuration.parent_identifier
@@ -147,18 +130,20 @@ export const extractApparelFromItems = (allItems) => {
     if (item.refinement === 'sized') {
       item.configuration.sizes = [];
     }
-    apparelItems[item.identifier] = item;
+    apparelItems.push(item);
   });
 
   // Now go through the items with a size-parent and add the size info to the parent.
-  itemArray.filter(item => {
+  allItems.filter(item => {
     return item.category === 'product' &&
       item.determination === 'apparel' &&
       !!item.configuration.parent_identifier
   }).forEach(item => {
     const [groupKey, sizeKey] = item.configuration.size.split('.');
 
-    apparelItems[item.configuration.parent_identifier].configuration.sizes.push({
+    const index = apparelItems.findIndex(({identifier}) => identifier === item.configuration.parent_identifier);
+
+    apparelItems[index].configuration.sizes.push({
       identifier: item.identifier,
       size: item.configuration.size,
       displaySize: `${apparelSizeMapping[groupKey]} ${apparelSizeMapping[sizeKey]}`,

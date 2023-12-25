@@ -12,7 +12,7 @@ import CommerceLayout from "../../components/Layout/CommerceLayout/CommerceLayou
 import SuccessAlert from "../../components/common/SuccessAlert";
 import ErrorAlert from "../../components/common/ErrorAlert";
 import TournamentHeader from "../../components/ui/TournamentHeader";
-import {bowlerCommerceDetailsMooted} from "../../store/actions/registrationActions";
+import {bowlerCommerceDetailsMooted, commerceDetailsRetrieved} from "../../store/actions/registrationActions";
 
 const Page = () => {
   const router = useRouter();
@@ -29,11 +29,15 @@ const Page = () => {
       // dispatch(bowlerCommerceDetailsMooted());
       router.push('/404');
     }
+    setState({
+      ...state,
+      errorMessage: response,
+    })
   }
 
   const onFetchSuccess = (response) => {
     // initialize the reducer for this bowler
-
+    dispatch(commerceDetailsRetrieved({...response}));
   }
 
   useEffect(() => {
@@ -57,7 +61,7 @@ const Page = () => {
     setState(updateObject(state, updatedState));
   }, [success, error]);
 
-  const {loading, data, error: fetchError} = useBowlerCommerce(identifier, onFetchSuccess, onFetchFailure);
+  const {loading, data} = useBowlerCommerce(identifier, onFetchSuccess, onFetchFailure);
 
   if (loading) {
     return <LoadingMessage message={'One moment, please...'}/>;
@@ -118,7 +122,6 @@ const Page = () => {
       <ErrorAlert className={``}
                   message={state.errorMessage}
                   onClose={clearErrorMessage}/>
-
       <Menu/>
 
     </div>
