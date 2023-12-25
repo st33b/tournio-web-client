@@ -1,5 +1,4 @@
 import {Col, Row} from "react-bootstrap";
-import {apparelSizes} from '../../../utils';
 import {useCommerceContext} from "../../../store/CommerceContext";
 import Item from "./Item/Item";
 
@@ -32,15 +31,13 @@ const AvailableItems = ({itemAddedToCart}) => {
   // category: banquet
   // category: raffle
 
-  const allItems = Object.values(commerce.availableItems);
-
   // sort the event items by their order
-  const eventItems = allItems.filter(item => {
+  const eventItems = commerce.availableItems.filter(item => {
     return item.category === 'bowling' && item.determination === 'event';
   }).sort(sortByOrder);
 
   // sort the division items by name and note
-  const divisionItems = allItems.filter(item => {
+  const divisionItems = commerce.availableItems.filter(item => {
     return item.refinement === 'division';
   }).sort((left, right) => {
     const leftText = left.name + left.configuration.division;
@@ -49,28 +46,26 @@ const AvailableItems = ({itemAddedToCart}) => {
   });
 
   // sort the single_use items by their order
-  const singleUseItems = allItems.filter(item => {
+  const singleUseItems = commerce.availableItems.filter(item => {
     return item.determination === 'single_use' && !item.refinement;
   }).sort(sortByOrder);
 
   // sort the multi-use items by their order
-  const multiUseItems = allItems.filter(item => {
+  const multiUseItems = commerce.availableItems.filter(item => {
     return item.determination === 'multi_use';
   }).sort(sortByOrder);
 
   // Sanction items
-  const sanctionItems = allItems.filter(({category}) => category === 'sanction');
+  const sanctionItems = commerce.availableItems.filter(({category}) => category === 'sanction');
 
   // Non-apparel Products
-  const productItems = allItems.filter(({
+  const productItems = commerce.availableItems.filter(({
                                           category,
                                           determination
                                         }) => category === 'product' && determination === 'general').sort(sortByOrder);
 
-  const apparelItems = Object.values(commerce.availableApparelItems);
-
-  const banquetItems = allItems.filter(({category}) => category === 'banquet')
-  const raffleItems = allItems.filter(({category}) => category === 'raffle')
+  const banquetItems = commerce.availableItems.filter(({category}) => category === 'banquet')
+  const raffleItems = commerce.availableItems.filter(({category}) => category === 'raffle')
 
   const anyBowlingExtras = (divisionItems.length +
     singleUseItems.length +
@@ -79,7 +74,7 @@ const AvailableItems = ({itemAddedToCart}) => {
   const bowlingItemsClass = anyBowlingItems ? '' : 'd-none';
 
   const anyOtherExtras = (raffleItems.length +
-    apparelItems.length +
+    commerce.availableApparelItems.length +
     productItems.length +
     banquetItems.length +
     sanctionItems.length) > 0;
@@ -170,12 +165,12 @@ const AvailableItems = ({itemAddedToCart}) => {
               </div>
             )}
 
-            {apparelItems.length > 0 && (
+            {commerce.availableApparelItems.length > 0 && (
               <div className={``}>
                 <h5 className={``}>
                   Apparel
                 </h5>
-                {apparelItems.map((item) => (
+                {commerce.availableApparelItems.map((item) => (
                   <Item key={item.identifier}
                         item={item}
                         added={itemAddedToCart}/>
