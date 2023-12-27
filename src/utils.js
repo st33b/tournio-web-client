@@ -470,6 +470,7 @@ const convertBowlerDataForPost = (tournament, bowler) => {
       usbc_id: bowler.usbc_id,
       birth_month: bowler.birth_month,
       birth_day: bowler.birth_day,
+      birth_year: bowler.birth_year,
       nickname: bowler.nickname,
       phone: bowler.phone,
       email: bowler.email,
