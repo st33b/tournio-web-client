@@ -112,6 +112,7 @@ const Page = () => {
         usbc_id: bowlerData.usbc_id,
         birth_month: bowlerData.birth_month,
         birth_day: bowlerData.birth_day,
+        birth_year: bowlerData.birth_year,
         nickname: bowlerData.nickname,
         phone: bowlerData.phone,
         email: bowlerData.email,
