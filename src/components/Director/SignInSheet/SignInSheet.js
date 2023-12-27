@@ -66,7 +66,7 @@ const SignInSheet = ({bowler, showPrintButton}) => {
 
         <div className={'col-6'}>
           <div>
-            Birthday: {bowler.birth_month} / {bowler.birth_day}
+            Date of Birth: {bowler.birth_month} / {bowler.birth_day} / {bowler.birth_year}
           </div>
           <div>
             Phone: {bowler.phone}
