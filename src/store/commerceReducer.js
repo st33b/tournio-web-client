@@ -33,11 +33,17 @@ export const commerceReducer = (state, action) => {
       // Separate apparel items from the rest (ooh, maybe separate out by categories/determinations entirely...)
       const separated = extractApparelFromItems(action.availableItems);
 
+      // Remove automatic items if there is a free entry
+      let updatedCart = [];
+      if (!action.freeEntry) {
+        updatedCart = [...action.automaticItems];
+      }
+
       return updateObject(state, {
         bowler: action.bowler,
         availableItems: separated.items,
         availableApparelItems: separated.apparelItems,
-        cart: [...action.automaticItems],
+        cart: updatedCart,
         purchasedItems: [...action.purchases],
         freeEntry: {...action.freeEntry},
         // tournament: {...action.tournament},

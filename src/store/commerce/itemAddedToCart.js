@@ -6,6 +6,9 @@
 //   -> determination
 //     -> refinement
 
+//
+// these items cannot be added to the cart; they're automatic
+//
 // ledger
 //   -> entry_fee
 //   -> late_fee
@@ -52,6 +55,7 @@
 
 import {devConsoleLog, updateObject} from "../../utils";
 import {compareAsc} from "date-fns";
+import availableItems from "../../components/Commerce/AvailableItems/AvailableItems";
 
 export const itemAddedToCart = (currentState, itemToAdd, sizeIdentifier = null) => {
   switch(itemToAdd.category) {
@@ -195,12 +199,13 @@ const handleAsPossiblyMany = (previousState, itemToAdd) => {
   });
 
   let updatedCart;
-  const updatedAvailableItems = {...previousState.availableItems};
+  const updatedAvailableItems = [...previousState.availableItems];
   if (newQuantity === 1) {
     updatedCart = previousState.cart.concat(addedItem);
-    updatedAvailableItems[newItemIdentifier] = addedItem;
+    const availableItemIndex = updatedAvailableItems.findIndex(({identifier}) => identifier === addedItem.identifier);
+    updatedAvailableItems[availableItemIndex] = addedItem;
   } else {
-    updatedCart = previousState.cart.slice(0);
+    updatedCart = [...previousState.cart];
     updatedCart[cartItemIndex] = addedItem;
   }
 
@@ -224,8 +229,9 @@ const handleAsSingleton = (previousState, itemToAdd) => {
     addedToCart: true,
   });
 
-  const updatedAvailableItems = {...previousState.availableItems};
-  updatedAvailableItems[newItemIdentifier] = addedItem;
+  const updatedAvailableItems = [...previousState.availableItems];
+  const availableItemIndex = updatedAvailableItems.findIndex(({identifier}) => identifier === addedItem.identifier);
+  updatedAvailableItems[availableItemIndex] = addedItem;
 
   const updatedCart = previousState.cart.concat(addedItem);
 
@@ -236,31 +242,32 @@ const handleAsSingleton = (previousState, itemToAdd) => {
 }
 
 const handleAsDivisionItem = (previousState, itemToAdd) => {
-  const availableItems = {...previousState.availableItems};
+  const availableItems = [...previousState.availableItems];
   if (itemToAdd.refinement !== 'division') {
     return previousState;
   }
 
-  for (const identifier in availableItems) {
+  availableItems.forEach(item => {
     // skip it if we're looking in the mirror
-    if (identifier === itemToAdd.identifier) {
-      continue;
+    if (item.identifier === itemToAdd.identifier) {
+      return;
     }
 
     // We're only interested in division things.
     // Technically, single-use as well, but we don't currently support multi-use division items.
     // (Would there be two different kinds of Scratch Masters?)
-    if (availableItems[identifier].refinement !== 'division') {
-      continue;
+    if (item.refinement !== 'division') {
+      return;
     }
 
     // Every item with the same name is now considered added-to-cart.
     // Because we differentiate between Division things based on the name.
     // Seems kinda fragile, but it works for now.
-    if (availableItems[identifier].name === itemToAdd.name) {
-      availableItems[identifier].addedToCart = true;
+    if (item.name === itemToAdd.name) {
+      // This assumes that changes to item will stick...
+      item.addedToCart = true;
     }
-  }
+  });
   return updateObject(previousState, {
     availableItems: availableItems,
   });
@@ -289,7 +296,7 @@ const eligibleBundleDiscount = (previousState) => {
   const cartItemIdentifiers = cart.map(item => item.identifier);
   const purchasedItemIdentifiers = purchasedItems.map(item => item.purchasable_item_identifier);
   const itemsToConsider = cartItemIdentifiers.concat(purchasedItemIdentifiers);
-  return Object.values(availableItems).find(item => {
+  return availableItems.find(item => {
     if (item.category !== 'ledger' || item.determination !== 'bundle_discount' || item.addedToCart) {
       return false;
     }
@@ -321,7 +328,7 @@ const tryAddingLateFee = (previousState, itemToAdd) => {
 const applicableLateFee = (previousState, itemToAdd) => {
   const {availableItems, tournament} = previousState;
 
-  const lateFeeItem = Object.values(availableItems).find(item => {
+  const lateFeeItem = availableItems.find(item => {
     if (item.category !== 'ledger' || item.determination !== 'late_fee' || item.refinement !== 'event_linked') {
       return false;
     }

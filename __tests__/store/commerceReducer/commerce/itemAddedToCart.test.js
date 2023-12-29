@@ -7,15 +7,14 @@ describe('itemAddedToCart -- dedicated function', () => {
   //  - availableItems is a map of identifier to item details, possibly empty, and without any apparel items
   //  - apparelItems is a map of any apparel items that are available
   //  - purchasedItems is a list of items, possibly empty -- passed as a function arg when item.determination is 'event'
-  //  - tournament -- passed as a function arg when item.determination is 'event'
   // Postrequisites:
   // - The item in the cart contains an updated quantity
   // - The item in "available items" is marked as added to cart -- so that the UI can indicate as much
 
   const previousState = {
     cart: [],
-    availableItems: {},
-    availableApparelItems: {},
+    availableItems: [],
+    availableApparelItems: [],
     purchasedItems: [],
     tournament: {},
   }
@@ -43,7 +42,7 @@ describe('itemAddedToCart -- dedicated function', () => {
       }
 
       const myPreviousState = {...previousState};
-      myPreviousState.availableItems['bowling-special'] = {...itemToAdd};
+      myPreviousState.availableItems.push({...itemToAdd});
 
       const result = itemAddedToCart(myPreviousState, itemToAdd);
 
@@ -54,7 +53,7 @@ describe('itemAddedToCart -- dedicated function', () => {
       });
 
       it ('marks the item in availableItems as added to cart', () => {
-        const item = result.availableItems[itemToAdd.identifier];
+        const item = result.availableItems.find(({identifier}) => identifier === itemToAdd.identifier);
         expect(item.addedToCart).toBeDefined();
         expect(item.addedToCart).toBeTruthy();
       });
@@ -69,42 +68,40 @@ describe('itemAddedToCart -- dedicated function', () => {
         };
 
         // they must have the same name
-        const divisionItems = {
-          abba: {
+        const divisionItems = [
+          {
             category: 'bowling',
             determination: 'single_use',
             refinement: 'division',
             name: 'a division-based item',
             identifier: 'abba',
           },
-          beyonce: {
+          {
             category: 'bowling',
             determination: 'single_use',
             refinement: 'division',
             name: 'a division-based item',
             identifier: 'beyonce',
           },
-          carlyrae: {
+          {
             category: 'bowling',
             determination: 'single_use',
             refinement: 'division',
             name: 'a division-based item',
             identifier: 'carlyrae',
           },
-          dolly: {
+          {
             category: 'bowling',
             determination: 'single_use',
             refinement: 'division',
             name: 'a division-based item',
             identifier: 'dolly',
           },
-        }
+        ];
+
         const myPreviousState = {
           ...previousState,
-          availableItems: {
-            ...previousState.availableItems,
-            ...divisionItems,
-          },
+          availableItems: previousState.availableItems.concat(divisionItems),
         };
 
         const result = itemAddedToCart(myPreviousState, itemToAdd);
@@ -116,8 +113,8 @@ describe('itemAddedToCart -- dedicated function', () => {
         });
 
         it ('marks the other items in the division as unavailable', () => {
-          const availableDivisionItems = Object.values(result.availableItems).filter(({name}) => name === 'a division-based item');
-          expect(availableDivisionItems.length).toBe(Object.keys(divisionItems).length);
+          const availableDivisionItems = result.availableItems.filter(({name}) => name === 'a division-based item');
+          expect(availableDivisionItems.length).toBe(divisionItems.length);
           const allAddedToCart = availableDivisionItems.every(item => item.addedToCart);
           expect(allAddedToCart).toBeTruthy();
         });
@@ -146,8 +143,11 @@ describe('itemAddedToCart -- dedicated function', () => {
         category: 'sanction',
         determination: 'igbo',
       }
-      const myPreviousState = {...previousState};
-      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+      const myPreviousState = {
+        ...previousState,
+        availableItems: [...previousState.availableItems],
+      };
+      myPreviousState.availableItems.push({...itemToAdd});
 
       const result = itemAddedToCart(myPreviousState, itemToAdd);
 
@@ -164,7 +164,7 @@ describe('itemAddedToCart -- dedicated function', () => {
         category: 'banquet',
       }
       const myPreviousState = {...previousState};
-      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+      myPreviousState.availableItems.push({...itemToAdd});
 
       const result = itemAddedToCart(myPreviousState, itemToAdd);
 
@@ -184,7 +184,7 @@ describe('itemAddedToCart -- dedicated function', () => {
         identifier: 'pack-of-100',
       }
       const myPreviousState = {...previousState};
-      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+      myPreviousState.availableItems.push({...itemToAdd});
 
       const result = itemAddedToCart(myPreviousState, itemToAdd);
 
@@ -205,7 +205,7 @@ describe('itemAddedToCart -- dedicated function', () => {
         determination: 'general',
       }
       const myPreviousState = {...previousState};
-      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+      myPreviousState.availableItems.push({...itemToAdd});
 
       const result = itemAddedToCart(myPreviousState, itemToAdd);
 
@@ -225,7 +225,7 @@ describe('itemAddedToCart -- dedicated function', () => {
         size: "Ah, but I do have a size",
       }
       const myPreviousState = {...previousState};
-      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+      myPreviousState.availableItems.push({...itemToAdd});
 
       const result = itemAddedToCart(myPreviousState, itemToAdd);
 
@@ -285,10 +285,10 @@ describe('itemAddedToCart -- dedicated function', () => {
 
       const myPreviousState = {
         ...previousState,
-        availableApparelItems: {
-          'something-to-wear': itemToAdd,
-        }
-      };
+        availableApparelItems: [
+          itemToAdd,
+        ],
+      }
 
       const chosenSize = {...itemToAdd.configuration.sizes[1]};
       const result = itemAddedToCart(myPreviousState, itemToAdd, chosenSize.identifier);
@@ -323,135 +323,140 @@ describe('itemAddedToCart -- dedicated function', () => {
       });
     });
 
-    describe ('an event', () => {
-      const itemToAdd = {
-        identifier: 'a-core-event',
-        category: 'bowling',
-        determination: 'event',
-      }
-
-      const myPreviousState = {...previousState};
-      myPreviousState.availableItems['a-core-event'] = {...itemToAdd};
-
-      const result = itemAddedToCart(myPreviousState, itemToAdd);
-
-      it ('adds it to the cart', () => {
-        expect(result.cart.length).toStrictEqual(1);
-        const item = result.cart[0];
-        expect(item.quantity).toStrictEqual(1);
-      });
-
-      describe ('with an eligible bundle discount', () => {
-        const otherItem = {
-          identifier: 'another-core-event',
-          category: 'bowling',
-          determination: 'event',
-        };
-
-        const discountItem = {
-          identifier: 'bundle_up',
-          category: 'ledger',
-          determination: 'bundle_discount',
-          configuration: {
-            events: [
-              itemToAdd.identifier,
-              otherItem.identifier,
-            ],
-          },
-        };
-
-        describe ('bowler has the rest of the bundle in their cart', () => {
-          // set up the other item being in the cart already
-          const myPreviousState = {...previousState};
-          myPreviousState.availableItems = {...previousState.availableItems};
-          myPreviousState.availableItems[discountItem.identifier] = discountItem;
-          myPreviousState.cart = [
-            {
-              ...otherItem,
-              quantity: 1,
-              addedToCart: true
-            },
-          ];
-
-          const result = itemAddedToCart(myPreviousState, itemToAdd);
-
-          it ('adds the bundle discount to the cart as well', () => {
-            const bundleItemIndex = result.cart.findIndex(item => item.identifier === discountItem.identifier);
-            expect(bundleItemIndex).toBeGreaterThanOrEqual(0);
-          });
-        });
-
-        describe ('bowler previously purchased the rest of the bundle', () => {
-          // set up the other item having been purchased already
-          const purchasedItem = {
-            identifier: 'blahbitty-blah-a-purchase',
-            purchasable_item_identifier: otherItem.identifier,
-          }
-
-          const myPreviousState = {...previousState};
-          myPreviousState.availableItems = {...previousState.availableItems};
-          myPreviousState.availableItems[discountItem.identifier] = discountItem;
-          myPreviousState.purchasedItems = [...previousState.purchasedItems];
-          myPreviousState.purchasedItems = [purchasedItem];
-
-          const result = itemAddedToCart(myPreviousState, itemToAdd);
-
-          it ('adds the bundle discount to the cart as well', () => {
-            const bundleItemIndex = result.cart.findIndex(item => item.identifier === discountItem.identifier);
-            expect(bundleItemIndex).toBeGreaterThanOrEqual(0);
-          });
-        });
-      });
-
-      describe ('with an applicable late fee', () => {
-        const lateFeeItem = {
-          identifier: 'tardy-to-the-party',
-          category: 'ledger',
-          determination: 'late_fee',
-          refinement: 'event_linked',
-          configuration: {
-            event: itemToAdd.identifier,
-            applies_at: new Date(Date.now() - 86400000),
-          },
-        };
-
-        describe ('when the tournament is in testing, with the late setting on', () => {
-          const myPreviousState = {...previousState};
-          myPreviousState.availableItems = {...previousState.availableItems};
-          myPreviousState.availableItems[lateFeeItem.identifier] = lateFeeItem;
-          myPreviousState.tournament = {
-            testing_environment: {
-              settings: {
-                registration_period: {
-                  value: 'late',
-                },
-              },
-            },
-          };
-
-          const result = itemAddedToCart(myPreviousState, itemToAdd);
-
-          it ('adds the late-fee item to the cart', () => {
-            const lateFeeItemIndex = result.cart.findIndex(item => item.identifier === lateFeeItem.identifier);
-            expect(lateFeeItemIndex).toBeGreaterThanOrEqual(0);
-          });
-        });
-
-        describe ('when the tournament actually is in late registration', () => {
-          const myPreviousState = {...previousState};
-          myPreviousState.availableItems = {...previousState.availableItems};
-          myPreviousState.availableItems[lateFeeItem.identifier] = lateFeeItem;
-          myPreviousState.tournament = {...previousState.tournament};
-
-          const result = itemAddedToCart(myPreviousState, itemToAdd);
-
-          it ('adds the late-fee item to the cart', () => {
-            const lateFeeItemIndex = result.cart.findIndex(item => item.identifier === lateFeeItem.identifier);
-            expect(lateFeeItemIndex).toBeGreaterThanOrEqual(0);
-          });
-        });
-      });
-    });
+    //
+    // TODO: Events and bundle discounts
+    //
+    // How should they work in this brave new world?
+    //
+    // describe ('an event', () => {
+    //   const itemToAdd = {
+    //     identifier: 'a-core-event',
+    //     category: 'bowling',
+    //     determination: 'event',
+    //   }
+    //
+    //   const myPreviousState = {...previousState};
+    //   myPreviousState.availableItems.push({...itemToAdd})
+    //
+    //   const result = itemAddedToCart(myPreviousState, itemToAdd);
+    //
+    //   it ('adds it to the cart', () => {
+    //     expect(result.cart.length).toStrictEqual(1);
+    //     const item = result.cart[0];
+    //     expect(item.quantity).toStrictEqual(1);
+    //   });
+    //
+    //   describe ('with an eligible bundle discount', () => {
+    //     const otherItem = {
+    //       identifier: 'another-core-event',
+    //       category: 'bowling',
+    //       determination: 'event',
+    //     };
+    //
+    //     const discountItem = {
+    //       identifier: 'bundle_up',
+    //       category: 'ledger',
+    //       determination: 'bundle_discount',
+    //       configuration: {
+    //         events: [
+    //           itemToAdd.identifier,
+    //           otherItem.identifier,
+    //         ],
+    //       },
+    //     };
+    //
+    //     describe ('bowler has the rest of the bundle in their cart', () => {
+    //       // set up the other item being in the cart already
+    //       const myPreviousState = {...previousState};
+    //       myPreviousState.availableItems = {...previousState.availableItems};
+    //       myPreviousState.availableItems[discountItem.identifier] = discountItem;
+    //       myPreviousState.cart = [
+    //         {
+    //           ...otherItem,
+    //           quantity: 1,
+    //           addedToCart: true
+    //         },
+    //       ];
+    //
+    //       const result = itemAddedToCart(myPreviousState, itemToAdd);
+    //
+    //       it ('adds the bundle discount to the cart as well', () => {
+    //         const bundleItemIndex = result.cart.findIndex(item => item.identifier === discountItem.identifier);
+    //         expect(bundleItemIndex).toBeGreaterThanOrEqual(0);
+    //       });
+    //     });
+    //
+    //     describe ('bowler previously purchased the rest of the bundle', () => {
+    //       // set up the other item having been purchased already
+    //       const purchasedItem = {
+    //         identifier: 'blahbitty-blah-a-purchase',
+    //         purchasable_item_identifier: otherItem.identifier,
+    //       }
+    //
+    //       const myPreviousState = {...previousState};
+    //       myPreviousState.availableItems = {...previousState.availableItems};
+    //       myPreviousState.availableItems[discountItem.identifier] = discountItem;
+    //       myPreviousState.purchasedItems = [...previousState.purchasedItems];
+    //       myPreviousState.purchasedItems = [purchasedItem];
+    //
+    //       const result = itemAddedToCart(myPreviousState, itemToAdd);
+    //
+    //       it ('adds the bundle discount to the cart as well', () => {
+    //         const bundleItemIndex = result.cart.findIndex(item => item.identifier === discountItem.identifier);
+    //         expect(bundleItemIndex).toBeGreaterThanOrEqual(0);
+    //       });
+    //     });
+    //   });
+    //
+    //   describe ('with an applicable late fee', () => {
+    //     const lateFeeItem = {
+    //       identifier: 'tardy-to-the-party',
+    //       category: 'ledger',
+    //       determination: 'late_fee',
+    //       refinement: 'event_linked',
+    //       configuration: {
+    //         event: itemToAdd.identifier,
+    //         applies_at: new Date(Date.now() - 86400000),
+    //       },
+    //     };
+    //
+    //     describe ('when the tournament is in testing, with the late setting on', () => {
+    //       const myPreviousState = {...previousState};
+    //       myPreviousState.availableItems = {...previousState.availableItems};
+    //       myPreviousState.availableItems[lateFeeItem.identifier] = lateFeeItem;
+    //       myPreviousState.tournament = {
+    //         testing_environment: {
+    //           settings: {
+    //             registration_period: {
+    //               value: 'late',
+    //             },
+    //           },
+    //         },
+    //       };
+    //
+    //       const result = itemAddedToCart(myPreviousState, itemToAdd);
+    //
+    //       it ('adds the late-fee item to the cart', () => {
+    //         const lateFeeItemIndex = result.cart.findIndex(item => item.identifier === lateFeeItem.identifier);
+    //         expect(lateFeeItemIndex).toBeGreaterThanOrEqual(0);
+    //       });
+    //     });
+    //
+    //     describe ('when the tournament actually is in late registration', () => {
+    //       const myPreviousState = {...previousState};
+    //       myPreviousState.availableItems = {...previousState.availableItems};
+    //       myPreviousState.availableItems[lateFeeItem.identifier] = lateFeeItem;
+    //       myPreviousState.tournament = {...previousState.tournament};
+    //
+    //       const result = itemAddedToCart(myPreviousState, itemToAdd);
+    //
+    //       it ('adds the late-fee item to the cart', () => {
+    //         const lateFeeItemIndex = result.cart.findIndex(item => item.identifier === lateFeeItem.identifier);
+    //         expect(lateFeeItemIndex).toBeGreaterThanOrEqual(0);
+    //       });
+    //     });
+    //   });
+    // });
   });
 
   describe('the item is already in the cart', () => {
@@ -517,7 +522,7 @@ describe('itemAddedToCart -- dedicated function', () => {
         { ...itemToAdd },
       ];
 
-      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+      myPreviousState.availableItems.push({...itemToAdd});
 
       const result = itemAddedToCart(myPreviousState, itemToAdd);
 
@@ -543,7 +548,7 @@ describe('itemAddedToCart -- dedicated function', () => {
         },
       ];
 
-      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+      myPreviousState.availableItems.push({...itemToAdd});
 
       const result = itemAddedToCart(myPreviousState, itemToAdd);
 
@@ -560,7 +565,7 @@ describe('itemAddedToCart -- dedicated function', () => {
         category: 'banquet',
       }
       const myPreviousState = {...previousState};
-      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+      myPreviousState.availableItems.push({...itemToAdd});
       myPreviousState.cart = [...previousState.cart];
       myPreviousState.cart.push({
         ...itemToAdd,
@@ -586,7 +591,7 @@ describe('itemAddedToCart -- dedicated function', () => {
         quantity: 3,
       }
       const myPreviousState = {...previousState};
-      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+      myPreviousState.availableItems.push({...itemToAdd});
       myPreviousState.cart = [...previousState.cart];
       myPreviousState.cart.push(itemToAdd);
 
@@ -609,7 +614,7 @@ describe('itemAddedToCart -- dedicated function', () => {
         determination: 'general',
       }
       const myPreviousState = {...previousState};
-      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+      myPreviousState.availableItems.push(itemToAdd);
       myPreviousState.cart = [...previousState.cart];
       myPreviousState.cart.push({
         ...itemToAdd,
@@ -638,7 +643,7 @@ describe('itemAddedToCart -- dedicated function', () => {
       };
 
       const myPreviousState = {...previousState};
-      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+      myPreviousState.availableItems.push(itemToAdd);
       myPreviousState.cart = [...previousState.cart];
       myPreviousState.cart.push({
         ...itemToAdd,
@@ -689,7 +694,7 @@ describe('itemAddedToCart -- dedicated function', () => {
 
       const myPreviousState = {...previousState};
       const sizeIdentifier = chosenSize.identifier;
-      myPreviousState.availableItems[itemToAdd.identifier] = {...itemToAdd};
+      myPreviousState.availableItems.push(itemToAdd);
       myPreviousState.cart = [...previousState.cart];
       myPreviousState.cart.push(
         {

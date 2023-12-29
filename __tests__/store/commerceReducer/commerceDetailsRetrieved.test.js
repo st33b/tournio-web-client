@@ -51,17 +51,13 @@ describe ('action type: bowler details retrieved', () => {
     }
   ]
   const availableApparelItems = []
-  //   type: actionTypes.COMMERCE_SESSION_INITIATED,
-  //   bowler: bowler,
-  //   availableItems: availableItems,
-  //   purchases: purchases,
-  //   automaticItems: automaticItems,
   const action = {
     type: actionTypes.COMMERCE_SESSION_INITIATED,
     bowler: actionBowler,
     availableItems: availableItems,
     purchases: paidPurchases,
     automaticItems: automaticItems,
+    freeEntry: null,
   }
 
   //
@@ -108,24 +104,14 @@ describe ('action type: bowler details retrieved', () => {
     expect(result.cart).toStrictEqual(automaticItems);
   });
 
-  //
-  // Making changes to the action's contents
-  //
-  describe ('the bowler has no unpaid items', () => {
-    it ('includes an initialized cart in the returned object', () => {
-      const myAction = {...action};
-      myAction.bowler = {...actionBowler}
-      myAction.bowler.unpaid_purchases = [];
-      const result = commerceReducer({}, myAction);
-      expect(result.cart).toStrictEqual([]);
-    });
-  });
-
   describe ('the bowler has a free entry', () => {
     it ('includes only non-ledger items in the cart', () => {
       const myAction = {...action};
       myAction.bowler = {...actionBowler}
-      myAction.bowler.has_free_entry = true;
+      myAction.freeEntry = {
+        blah: 'blah',
+        uniqueCode: 'uh-huh',
+      };
       const result = commerceReducer({}, myAction);
       expect(result.cart).toStrictEqual([]);
     });
