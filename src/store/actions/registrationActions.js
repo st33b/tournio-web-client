@@ -83,6 +83,7 @@ export const commerceDetailsRetrieved = ({
                                            purchases,
                                            automaticItems,
                                            availableItems,
+                                           tournament,
                                          }) => {
   devConsoleLog("Handing commerce deets off to the reducer", {
     bowler,
@@ -90,6 +91,7 @@ export const commerceDetailsRetrieved = ({
     purchases,
     automaticItems,
     availableItems,
+    tournament,
   });
   return {
     type: actionTypes.COMMERCE_SESSION_INITIATED,
@@ -98,6 +100,7 @@ export const commerceDetailsRetrieved = ({
     availableItems: availableItems,
     purchases: purchases,
     automaticItems: automaticItems,
+    tournament: tournament,
   }
 }
 

@@ -6,6 +6,7 @@ describe ('action type: reset', () => {
     type: actionTypes.RESET,
   }
   const expected = {
+    tournament: null,
     bowler: null,
     bowlerIdentifier: null,
     cart: [],

@@ -36,8 +36,11 @@ const Page = () => {
   }
 
   const onFetchSuccess = (response) => {
-    // initialize the reducer for this bowler
-    dispatch(commerceDetailsRetrieved({...response}));
+    // initialize the reducer for this bowler, but only if they aren't in context yet
+    if (commerce && (!commerce.bowler || commerce.bowler.identifier !== identifier)) {
+      devConsoleLog("New bowler for context!");
+      dispatch(commerceDetailsRetrieved({...response}));
+    }
   }
 
   useEffect(() => {

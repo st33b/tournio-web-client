@@ -51,6 +51,11 @@ describe ('action type: bowler details retrieved', () => {
     }
   ]
   const availableApparelItems = []
+  const tournament = {
+    identifier: 'bowl-2024',
+    name: 'Bowling On Wider Lanes',
+    year: 2024,
+  }
   const action = {
     type: actionTypes.COMMERCE_SESSION_INITIATED,
     bowler: actionBowler,
@@ -58,6 +63,7 @@ describe ('action type: bowler details retrieved', () => {
     purchases: paidPurchases,
     automaticItems: automaticItems,
     freeEntry: null,
+    tournament: tournament,
   }
 
   //
@@ -83,6 +89,10 @@ describe ('action type: bowler details retrieved', () => {
     const result = commerceReducer({}, action);
     expect(result.freeEntry).toBeDefined();
   });
+  it ('includes a tournament property in the return', () => {
+    const result = commerceReducer({}, action);
+    expect(result.tournament).toBeDefined();
+  });
 
   //
   // Objects in the response
@@ -102,6 +112,10 @@ describe ('action type: bowler details retrieved', () => {
   it ('includes all unpaid items in the cart', () => {
     const result = commerceReducer({}, action);
     expect(result.cart).toStrictEqual(automaticItems);
+  });
+  it ('includes the indicated tournament in the returned object', () => {
+    const result = commerceReducer({}, action);
+    expect(result.tournament).toStrictEqual(tournament);
   });
 
   describe ('the bowler has a free entry', () => {

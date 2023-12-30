@@ -4,7 +4,7 @@ import {itemAddedToCart} from "./commerce/itemAddedToCart";
 import {itemRemovedFromCart} from "./commerce/itemRemovedFromCart";
 
 const initialState = {
-  // tournament: null,
+  tournament: null,
   bowler: null,
   bowlerIdentifier: null,
   cart: [],
@@ -46,7 +46,7 @@ export const commerceReducer = (state, action) => {
         cart: updatedCart,
         purchasedItems: [...action.purchases],
         freeEntry: {...action.freeEntry},
-        // tournament: {...action.tournament},
+        tournament: {...action.tournament},
       });
     case actionTypes.BOWLER_DETAILS_MOOTED:
       return updateObject(state, {
