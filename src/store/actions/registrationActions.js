@@ -1,6 +1,5 @@
 import * as actionTypes from './actionTypes';
-import axios from "axios";
-import {apiHost, devConsoleLog} from "../../utils";
+import {devConsoleLog} from "../../utils";
 
 export const reset = () => {
   return {

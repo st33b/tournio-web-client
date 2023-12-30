@@ -12,7 +12,7 @@ import CommerceLayout from "../../components/Layout/CommerceLayout/CommerceLayou
 import SuccessAlert from "../../components/common/SuccessAlert";
 import ErrorAlert from "../../components/common/ErrorAlert";
 import TournamentHeader from "../../components/ui/TournamentHeader";
-import {bowlerCommerceDetailsMooted, commerceDetailsRetrieved} from "../../store/actions/registrationActions";
+import {commerceDetailsRetrieved} from "../../store/actions/registrationActions";
 
 const Page = () => {
   const router = useRouter();
