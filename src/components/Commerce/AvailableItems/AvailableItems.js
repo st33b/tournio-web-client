@@ -3,6 +3,7 @@ import {useCommerceContext} from "../../../store/CommerceContext";
 import Item from "./Item/Item";
 
 import classes from './AvailableItems.module.scss';
+import {devConsoleLog} from "../../../utils";
 
 const AvailableItems = ({itemAddedToCart}) => {
   const {commerce} = useCommerceContext();
@@ -79,6 +80,9 @@ const AvailableItems = ({itemAddedToCart}) => {
     banquetItems.length +
     sanctionItems.length) > 0;
 
+  const anyItemsAtAll = anyBowlingExtras || anyOtherExtras;
+  devConsoleLog("Anything to show?", anyItemsAtAll);
+
   let largeWidth = 12;
   let largeClass = `col-lg-7';`
   if (anyBowlingItems && anyOtherExtras) {
@@ -91,6 +95,11 @@ const AvailableItems = ({itemAddedToCart}) => {
   return (
     <div className={`${classes.AvailableItems} col-md-7 ${largeClass}`}>
       <Row className={``}>
+        {(!anyItemsAtAll) && (
+          <Col lg={largeWidth} className={'d-none d-md-block'}>
+            <p>No other items to show.</p>
+          </Col>
+        )}
         {anyBowlingItems && (
           <Col lg={largeWidth} className={bowlingItemsClass}>
             {eventItems.length > 0 && (

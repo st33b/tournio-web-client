@@ -36,9 +36,13 @@ const Page = () => {
   }
 
   const onFetchSuccess = (response) => {
+    if (!response) {
+      devConsoleLog("No response object in commerce fetch success, for some reason", identifier);
+      return;
+    }
     // initialize the reducer for this bowler, but only if they aren't in context yet
     if (commerce && (!commerce.bowler || commerce.bowler.identifier !== identifier)) {
-      devConsoleLog("New bowler for context!");
+      devConsoleLog("New bowler for context!", response);
       dispatch(commerceDetailsRetrieved({...response}));
     }
   }
