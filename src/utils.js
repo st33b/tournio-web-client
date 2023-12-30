@@ -529,8 +529,8 @@ export const postFreeEntry = (tournamentIdentifier, postData, onSuccess, onFailu
 }
 
 export const purchaseDetailsPostData = (items) => {
-  const purchaseIdentifiers = [];
   const purchasableItems = [];
+  const automaticItemIdentifiers = [];
 
   const sum = (runningTotal, currentValue) => {
     if (currentValue.category === 'ledger' && (currentValue.determination === 'early_discount'
@@ -546,12 +546,13 @@ export const purchaseDetailsPostData = (items) => {
     if (i.category === 'ledger') {
       // mandatory things like entry & late fees, early discount
 
-      // some things we want the server to add: bundle discount, event-linked late fees & early discounts
-      if (i.determination === 'bundle_discount' || i.refinement === 'event_linked') {
-        devConsoleLog("Not adding to the checkout request:", i);
-        continue;
-      }
-      purchaseIdentifiers.push(i.identifier);
+      // hold off on this for now
+      // if (i.determination === 'bundle_discount' || i.refinement === 'event_linked') {
+      //   devConsoleLog("Not adding to the checkout request:", i);
+      //   continue;
+      // }
+
+      automaticItemIdentifiers.push(i.identifier);
     } else {
       purchasableItems.push({
         identifier: i.identifier,
@@ -560,7 +561,7 @@ export const purchaseDetailsPostData = (items) => {
     }
   }
   return {
-    purchase_identifiers: purchaseIdentifiers,
+    automatic_items: automaticItemIdentifiers,
     purchasable_items: purchasableItems,
     expected_total: expectedTotal,
   };
