@@ -19,15 +19,16 @@ const PreviousPurchases = () => {
   if (commerce.purchasedItems && commerce.purchasedItems.length > 0) {
     const countsByItemID = {};
     commerce.purchasedItems.forEach(p => {
-      const piId = p.purchasable_item_identifier;
+      const piId = p.purchasableItem.identifier;
       if (!countsByItemID[piId]) {
         countsByItemID[piId] = 0;
       }
       countsByItemID[piId] += 1;
     });
 
-    purchaseList = commerce.purchasedItems.map((item, index) => {
-      const quantity = countsByItemID[item.purchasable_item_identifier];
+    purchaseList = commerce.purchasedItems.map((purchase, index) => {
+      const purchasableItem = purchase.purchasableItem;
+      const quantity = countsByItemID[purchasableItem.identifier];
       if (quantity === 0) {
         return '';
       }
@@ -40,16 +41,16 @@ const PreviousPurchases = () => {
             </span>
           </span>
       );
-      countsByItemID[item.purchasable_item_identifier] = 0;
+      countsByItemID[purchasableItem.identifier] = 0;
       {
         multiplier
       }
 
       let note = '';
-      if (item.configuration.division) {
+      if (purchasableItem.configuration.division) {
         note = (
           <p className={classes.Note}>
-            Division: {item.configuration.division}
+            Division: {purchasableItem.configuration.division}
           </p>
         );
       }
@@ -58,7 +59,7 @@ const PreviousPurchases = () => {
           <i className={`bi bi-check2-square ${classes.ListMarker}`} aria-hidden={true}></i>
           <div className={``}>
             <p className={classes.MainText}>
-              {item.name}
+              {purchasableItem.name}
               {multiplier}
             </p>
             {note}
