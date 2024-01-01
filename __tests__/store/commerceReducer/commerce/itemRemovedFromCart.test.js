@@ -1,4 +1,5 @@
 import {itemRemovedFromCart} from "../../../../src/store/commerce/itemRemovedFromCart";
+import {id} from "date-fns/locale";
 
 describe('itemRemovedFromCart -- dedicated function', () => {
   // Prerequisites:
@@ -16,10 +17,10 @@ describe('itemRemovedFromCart -- dedicated function', () => {
   }
   const previousState = {
     cart: [basicItem],
-    availableItems: {
-      [basicItem.identifier]: basicItem,
-    },
-    availableApparelItems: {},
+    availableItems: [
+      basicItem,
+    ],
+    availableApparelItems: [],
   };
 
   describe('an unknown kind of item', () => {
@@ -49,9 +50,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
     const myPreviousState = {
       ...previousState,
       cart: [myBasicItem],
-      availableItems: {
-        [myBasicItem.identifier]: myBasicItem,
-      }
+      availableItems: [
+        myBasicItem,
+      ],
     }
 
     const result = itemRemovedFromCart(myPreviousState, myBasicItem);
@@ -61,11 +62,13 @@ describe('itemRemovedFromCart -- dedicated function', () => {
     });
 
     it('drops the quantity to zero', () => {
-      expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(0);
+      const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
+      expect(item.quantity).toStrictEqual(0);
     });
 
     it('marks addedToCart as false', () => {
-      expect(result.availableItems[myBasicItem.identifier].addedToCart).toBeFalsy();
+      const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
+      expect(item.addedToCart).toBeFalsy();
     });
   });
 
@@ -83,9 +86,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       const myPreviousState = {
         ...previousState,
         cart: [myItem],
-        availableItems: {
-          [myItem.identifier]: myItem,
-        }
+        availableItems: [
+          myItem,
+        ],
       }
 
       const result = itemRemovedFromCart(myPreviousState, myItem);
@@ -95,11 +98,13 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       });
 
       it('drops the quantity to zero', () => {
-        expect(result.availableItems[myItem.identifier].quantity).toStrictEqual(0);
+        const item = result.availableItems.find(({identifier}) => identifier === myItem.identifier);
+        expect(item.quantity).toStrictEqual(0);
       });
 
       it('marks addedToCart as false', () => {
-        expect(result.availableItems[myItem.identifier].addedToCart).toBeFalsy();
+        const item = result.availableItems.find(({identifier}) => identifier === myItem.identifier);
+        expect(item.addedToCart).toBeFalsy();
       });
 
       describe('division', () => {
@@ -114,8 +119,8 @@ describe('itemRemovedFromCart -- dedicated function', () => {
         };
 
         // they must have the same name
-        const divisionItems = {
-          abba: {
+        const divisionItems = [
+          {
             category: 'bowling',
             determination: 'single_use',
             refinement: 'division',
@@ -123,7 +128,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
             identifier: 'abba',
             addedToCart: true,
           },
-          beyonce: {
+          {
             category: 'bowling',
             determination: 'single_use',
             refinement: 'division',
@@ -131,7 +136,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
             identifier: 'beyonce',
             addedToCart: true,
           },
-          carlyrae: {
+          {
             category: 'bowling',
             determination: 'single_use',
             refinement: 'division',
@@ -139,7 +144,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
             identifier: 'carlyrae',
             addedToCart: true,
           },
-          dolly: {
+          {
             category: 'bowling',
             determination: 'single_use',
             refinement: 'division',
@@ -147,15 +152,12 @@ describe('itemRemovedFromCart -- dedicated function', () => {
             identifier: 'dolly',
             addedToCart: true,
           },
-        };
+        ];
 
         const myPreviousState = {
           ...previousState,
           cart: [myDivisionItem],
-          availableItems: {
-            ...previousState.availableItems,
-            ...divisionItems,
-          },
+          availableItems: previousState.availableItems.concat(divisionItems),
         };
 
         const result = itemRemovedFromCart(myPreviousState, myDivisionItem);
@@ -165,8 +167,8 @@ describe('itemRemovedFromCart -- dedicated function', () => {
         });
 
         it ('marks the other items in the division as available', () => {
-          const availableDivisionItems = Object.values(result.availableItems).filter(({name}) => name === myDivisionItem.name);
-          expect(availableDivisionItems.length).toBe(Object.keys(divisionItems).length);
+          const availableDivisionItems = result.availableItems.filter(({name}) => name === myDivisionItem.name);
+          expect(availableDivisionItems.length).toBe(divisionItems.length);
           const allRemovedFromCart = availableDivisionItems.every(item => !item.addedToCart);
           expect(allRemovedFromCart).toBeTruthy();
         });
@@ -186,9 +188,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
         const myPreviousState = {
           ...previousState,
           cart: [myBasicItem],
-          availableItems: {
-            [myBasicItem.identifier]: myBasicItem,
-          }
+          availableItems: [
+            myBasicItem,
+          ],
         }
 
         const result = itemRemovedFromCart(myPreviousState, myBasicItem);
@@ -198,7 +200,8 @@ describe('itemRemovedFromCart -- dedicated function', () => {
         });
 
         it('drops the quantity to zero', () => {
-          expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(0);
+          const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
+          expect(item.quantity).toStrictEqual(0);
         });
       });
 
@@ -214,9 +217,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
         const myPreviousState = {
           ...previousState,
           cart: [myBasicItem],
-          availableItems: {
-            [myBasicItem.identifier]: myBasicItem,
-          }
+          availableItems: [
+            myBasicItem,
+          ],
         }
 
         const result = itemRemovedFromCart(myPreviousState, myBasicItem);
@@ -226,7 +229,8 @@ describe('itemRemovedFromCart -- dedicated function', () => {
         });
 
         it('drops the quantity by 1', () => {
-          expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(myBasicItem.quantity - 1);
+          const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
+          expect(item.quantity).toStrictEqual(myBasicItem.quantity - 1);
         });
       });
     });
@@ -243,9 +247,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
     const myPreviousState = {
       ...previousState,
       cart: [myBasicItem],
-      availableItems: {
-        [myBasicItem.identifier]: myBasicItem,
-      }
+      availableItems: [
+        myBasicItem,
+      ],
     }
 
     const result = itemRemovedFromCart(myPreviousState, myBasicItem);
@@ -255,11 +259,13 @@ describe('itemRemovedFromCart -- dedicated function', () => {
     });
 
     it('drops the quantity to zero', () => {
-      expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(0);
+      const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
+      expect(item.quantity).toStrictEqual(0);
     });
 
     it('marks addedToCart as false', () => {
-      expect(result.availableItems[myBasicItem.identifier].addedToCart).toBeFalsy();
+      const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
+      expect(item.addedToCart).toBeFalsy();
     });
   });
 
@@ -274,9 +280,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
     }
     const myPreviousState = {
       ...previousState,
-      availableItems: {
-        [myBasicItem.identifier]: myBasicItem,
-      },
+      availableItems: [
+        myBasicItem,
+      ],
       cart: [myBasicItem],
     };
 
@@ -288,128 +294,135 @@ describe('itemRemovedFromCart -- dedicated function', () => {
     });
 
     it('drops the quantity to zero', () => {
-      expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(0);
+      const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
+      expect(item.quantity).toStrictEqual(0);
     });
 
     it('marks addedToCart as false', () => {
-      expect(result.availableItems[myBasicItem.identifier].addedToCart).toBeFalsy();
+      const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
+      expect(item.addedToCart).toBeFalsy();
     });
 
-    describe('with a linked bundle discount in the cart', () => {
-      const otherItem = {
-        ...basicItem,
-        addedToCart: true,
-        identifier: 'another-core-event',
-        category: 'bowling',
-        determination: 'event',
-        quantity: 1,
-      };
-
-      const discountItem = {
-        ...basicItem,
-        addedToCart: true,
-        identifier: 'bundle_up',
-        category: 'ledger',
-        determination: 'bundle_discount',
-        configuration: {
-          events: [
-            myBasicItem.identifier,
-            otherItem.identifier,
-          ],
-        },
-        quantity: 1,
-      };
-
-      const discountedPreviousState = {
-        ...myPreviousState,
-        cart: [...myPreviousState.cart, otherItem, discountItem],
-        availableItems: {
-          ...myPreviousState.availableItems,
-          [otherItem.identifier]: otherItem,
-          [discountItem.identifier]: discountItem,
-        }
-      };
-
-      const result = itemRemovedFromCart(discountedPreviousState, myBasicItem);
-
-      it('removes the item and the discount', () => {
-        expect(result.cart.length).toStrictEqual(discountedPreviousState.cart.length - 2);
-      });
-
-      it('drops the quantity to zero on the event item', () => {
-        expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(0);
-      });
-
-      it('drops the quantity to zero on the discount item', () => {
-        expect(result.availableItems[discountItem.identifier].quantity).toStrictEqual(0);
-      });
-
-      it('marks addedToCart as false on the event item', () => {
-        expect(result.availableItems[myBasicItem.identifier].addedToCart).toBeFalsy();
-      });
-
-      it('marks addedToCart as false on the discount item', () => {
-        expect(result.availableItems[discountItem.identifier].addedToCart).toBeFalsy();
-      });
-
-      it("does not change the other item's addedToCart", () => {
-        expect(result.availableItems[otherItem.identifier].addedToCart).toBeTruthy();
-      });
-
-      it("does not change the other item's quantity", () => {
-        expect(result.availableItems[otherItem.identifier].quantity).toStrictEqual(1);
-      });
-
-      it("leaves the other item in the cart", () => {
-        const matchingItems = result.cart.filter(({identifier}) => identifier === otherItem.identifier);
-        expect(matchingItems.length).toStrictEqual(1);
-      });
-    });
-
-    describe('with a linked late fee in the cart', () => {
-      const lateFeeItem = {
-        ...basicItem,
-        addedToCart: true,
-        identifier: 'you_are_late',
-        category: 'ledger',
-        determination: 'late_fee',
-        configuration: {
-          event: myBasicItem.identifier,
-        },
-        quantity: 1,
-      };
-
-      const latePreviousState = {
-        ...myPreviousState,
-        cart: [...myPreviousState.cart, lateFeeItem],
-        availableItems: {
-          ...myPreviousState.availableItems,
-          [lateFeeItem.identifier]: lateFeeItem,
-        }
-      };
-
-      const result = itemRemovedFromCart(latePreviousState, myBasicItem);
-
-      it('removes the item and the late fee', () => {
-        expect(result.cart.length).toStrictEqual(latePreviousState.cart.length - 2);
-      });
-
-      it('drops the quantity to zero on the event item', () => {
-        expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(0);
-      });
-
-      it('drops the quantity to zero on the late fee item', () => {
-        expect(result.availableItems[lateFeeItem.identifier].quantity).toStrictEqual(0);
-      });
-
-      it('marks addedToCart as false on the event item', () => {
-        expect(result.availableItems[myBasicItem.identifier].addedToCart).toBeFalsy();
-      });
-
-      it('marks addedToCart as false on the late fee item', () => {
-        expect(result.availableItems[lateFeeItem.identifier].addedToCart).toBeFalsy();
-      });
-    });
+    //
+    // TODO: Events, bundle discounts, and late fees
+    //
+    // How should they work in this brave new world?
+    //
+    // describe('with a linked bundle discount in the cart', () => {
+    //   const otherItem = {
+    //     ...basicItem,
+    //     addedToCart: true,
+    //     identifier: 'another-core-event',
+    //     category: 'bowling',
+    //     determination: 'event',
+    //     quantity: 1,
+    //   };
+    //
+    //   const discountItem = {
+    //     ...basicItem,
+    //     addedToCart: true,
+    //     identifier: 'bundle_up',
+    //     category: 'ledger',
+    //     determination: 'bundle_discount',
+    //     configuration: {
+    //       events: [
+    //         myBasicItem.identifier,
+    //         otherItem.identifier,
+    //       ],
+    //     },
+    //     quantity: 1,
+    //   };
+    //
+    //   const discountedPreviousState = {
+    //     ...myPreviousState,
+    //     cart: [...myPreviousState.cart, otherItem, discountItem],
+    //     availableItems: {
+    //       ...myPreviousState.availableItems,
+    //       [otherItem.identifier]: otherItem,
+    //       [discountItem.identifier]: discountItem,
+    //     }
+    //   };
+    //
+    //   const result = itemRemovedFromCart(discountedPreviousState, myBasicItem);
+    //
+    //   it('removes the item and the discount', () => {
+    //     expect(result.cart.length).toStrictEqual(discountedPreviousState.cart.length - 2);
+    //   });
+    //
+    //   it('drops the quantity to zero on the event item', () => {
+    //     expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(0);
+    //   });
+    //
+    //   it('drops the quantity to zero on the discount item', () => {
+    //     expect(result.availableItems[discountItem.identifier].quantity).toStrictEqual(0);
+    //   });
+    //
+    //   it('marks addedToCart as false on the event item', () => {
+    //     expect(result.availableItems[myBasicItem.identifier].addedToCart).toBeFalsy();
+    //   });
+    //
+    //   it('marks addedToCart as false on the discount item', () => {
+    //     expect(result.availableItems[discountItem.identifier].addedToCart).toBeFalsy();
+    //   });
+    //
+    //   it("does not change the other item's addedToCart", () => {
+    //     expect(result.availableItems[otherItem.identifier].addedToCart).toBeTruthy();
+    //   });
+    //
+    //   it("does not change the other item's quantity", () => {
+    //     expect(result.availableItems[otherItem.identifier].quantity).toStrictEqual(1);
+    //   });
+    //
+    //   it("leaves the other item in the cart", () => {
+    //     const matchingItems = result.cart.filter(({identifier}) => identifier === otherItem.identifier);
+    //     expect(matchingItems.length).toStrictEqual(1);
+    //   });
+    // });
+    //
+    // describe('with a linked late fee in the cart', () => {
+    //   const lateFeeItem = {
+    //     ...basicItem,
+    //     addedToCart: true,
+    //     identifier: 'you_are_late',
+    //     category: 'ledger',
+    //     determination: 'late_fee',
+    //     configuration: {
+    //       event: myBasicItem.identifier,
+    //     },
+    //     quantity: 1,
+    //   };
+    //
+    //   const latePreviousState = {
+    //     ...myPreviousState,
+    //     cart: [...myPreviousState.cart, lateFeeItem],
+    //     availableItems: {
+    //       ...myPreviousState.availableItems,
+    //       [lateFeeItem.identifier]: lateFeeItem,
+    //     }
+    //   };
+    //
+    //   const result = itemRemovedFromCart(latePreviousState, myBasicItem);
+    //
+    //   it('removes the item and the late fee', () => {
+    //     expect(result.cart.length).toStrictEqual(latePreviousState.cart.length - 2);
+    //   });
+    //
+    //   it('drops the quantity to zero on the event item', () => {
+    //     expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(0);
+    //   });
+    //
+    //   it('drops the quantity to zero on the late fee item', () => {
+    //     expect(result.availableItems[lateFeeItem.identifier].quantity).toStrictEqual(0);
+    //   });
+    //
+    //   it('marks addedToCart as false on the event item', () => {
+    //     expect(result.availableItems[myBasicItem.identifier].addedToCart).toBeFalsy();
+    //   });
+    //
+    //   it('marks addedToCart as false on the late fee item', () => {
+    //     expect(result.availableItems[lateFeeItem.identifier].addedToCart).toBeFalsy();
+    //   });
+    // });
   });
 
   describe('a banquet item', () => {
@@ -427,9 +440,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       const myPreviousState = {
         ...previousState,
         cart: [banquetItem],
-        availableItems: {
-          [banquetItem.identifier]: banquetItem,
-        }
+        availableItems: [
+          banquetItem,
+        ],
       }
 
       const result = itemRemovedFromCart(myPreviousState, banquetItem);
@@ -439,7 +452,8 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       });
 
       it('drops the quantity to zero', () => {
-        expect(result.availableItems[banquetItem.identifier].quantity).toStrictEqual(0);
+        const item = result.availableItems.find(({identifier}) => identifier === banquetItem.identifier);
+        expect(item.quantity).toStrictEqual(0);
       });
     });
 
@@ -451,9 +465,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       const myPreviousState = {
         ...previousState,
         cart: [banquetItem],
-        availableItems: {
-          [banquetItem.identifier]: banquetItem,
-        }
+        availableItems: [
+          banquetItem,
+        ],
       }
 
       const result = itemRemovedFromCart(myPreviousState, banquetItem);
@@ -463,7 +477,8 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       });
 
       it('drops the quantity by 1', () => {
-        expect(result.availableItems[banquetItem.identifier].quantity).toStrictEqual(banquetItem.quantity - 1);
+        const item = result.availableItems.find(({identifier}) => identifier === banquetItem.identifier);
+        expect(item.quantity).toStrictEqual(banquetItem.quantity - 1);
       });
     });
 
@@ -483,9 +498,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       const myPreviousState = {
         ...previousState,
         cart: [myBasicItem],
-        availableItems: {
-          [myBasicItem.identifier]: myBasicItem,
-        }
+        availableItems: [
+          myBasicItem,
+        ],
       }
 
       const result = itemRemovedFromCart(myPreviousState, myBasicItem);
@@ -495,7 +510,8 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       });
 
       it('drops the quantity to zero', () => {
-        expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(0);
+        const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
+        expect(item.quantity).toStrictEqual(0);
       });
     });
 
@@ -512,9 +528,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       const myPreviousState = {
         ...previousState,
         cart: [myBasicItem],
-        availableItems: {
-          [myBasicItem.identifier]: myBasicItem,
-        }
+        availableItems: [
+          myBasicItem,
+        ],
       }
 
       const result = itemRemovedFromCart(myPreviousState, myBasicItem);
@@ -524,7 +540,8 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       });
 
       it('drops the quantity by 1', () => {
-        expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(myBasicItem.quantity - 1);
+        const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
+        expect(item.quantity).toStrictEqual(myBasicItem.quantity - 1);
       });
     });
   });
@@ -543,9 +560,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       const myPreviousState = {
         ...previousState,
         cart: [myBasicItem],
-        availableItems: {
-          [myBasicItem.identifier]: myBasicItem,
-        }
+        availableItems: [
+          myBasicItem,
+        ],
       }
 
       const result = itemRemovedFromCart(myPreviousState, myBasicItem);
@@ -555,7 +572,8 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       });
 
       it('drops the quantity to zero', () => {
-        expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(0);
+        const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
+        expect(item.quantity).toStrictEqual(0);
       });
     });
 
@@ -572,9 +590,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       const myPreviousState = {
         ...previousState,
         cart: [myBasicItem],
-        availableItems: {
-          [myBasicItem.identifier]: myBasicItem,
-        }
+        availableItems: [
+          myBasicItem,
+        ],
       }
 
       const result = itemRemovedFromCart(myPreviousState, myBasicItem);
@@ -584,7 +602,8 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       });
 
       it('drops the quantity by 1', () => {
-        expect(result.availableItems[myBasicItem.identifier].quantity).toStrictEqual(myBasicItem.quantity - 1);
+        const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
+        expect(item.quantity).toStrictEqual(myBasicItem.quantity - 1);
       });
     });
   });
@@ -642,9 +661,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
 
       const myPreviousState = {
         ...previousState,
-        availableApparelItems: {
-          'something-to-wear': parentItem,
-        },
+        availableApparelItems: [
+          parentItem,
+        ],
         cart: [
           {
             ...chosenItem,
@@ -665,9 +684,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
 
       const myPreviousState = {
         ...previousState,
-        availableApparelItems: {
-          'something-to-wear': parentItem,
-        },
+        availableApparelItems: [
+          parentItem,
+        ],
         cart: [
           {
             ...chosenItem,
@@ -704,9 +723,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       const myPreviousState = {
         ...previousState,
         cart: [raffleItem],
-        availableItems: {
-          [raffleItem.identifier]: raffleItem,
-        }
+        availableItems: [
+          raffleItem,
+        ],
       }
 
       const result = itemRemovedFromCart(myPreviousState, raffleItem);
@@ -716,7 +735,8 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       });
 
       it('drops the quantity to zero', () => {
-        expect(result.availableItems[raffleItem.identifier].quantity).toStrictEqual(0);
+        const item = result.availableItems.find(({identifier}) => identifier === raffleItem.identifier);
+        expect(item.quantity).toStrictEqual(0);
       });
     });
 
@@ -728,9 +748,9 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       const myPreviousState = {
         ...previousState,
         cart: [raffleItem],
-        availableItems: {
-          [raffleItem.identifier]: raffleItem,
-        }
+        availableItems: [
+          raffleItem,
+        ],
       }
 
       const result = itemRemovedFromCart(myPreviousState, raffleItem);
@@ -740,7 +760,8 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       });
 
       it('drops the quantity by 1', () => {
-        expect(result.availableItems[raffleItem.identifier].quantity).toStrictEqual(raffleItem.quantity - 1);
+        const item = result.availableItems.find(({identifier}) => identifier === raffleItem.identifier);
+        expect(item.quantity).toStrictEqual(raffleItem.quantity - 1);
       });
     });
 

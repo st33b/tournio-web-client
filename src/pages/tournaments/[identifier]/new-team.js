@@ -94,7 +94,6 @@ const Page = () => {
       )}
 
       <TeamForm tournament={tournament}
-                maxBowlers={tournament.team_size}
                 onSubmit={teamFormCompleted} />
 
     </div>

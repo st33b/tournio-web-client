@@ -5,10 +5,9 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 import InclusiveShiftForm from "../InclusiveShiftForm/InclusiveShiftForm";
 import MixAndMatchShiftForm from "../MixAndMatchShiftForm/MixAndMatchShiftForm";
 
-const TeamForm = ({tournament, maxBowlers=4, onSubmit}) => {
+const TeamForm = ({tournament, onSubmit}) => {
   const initialFormValues = {
     fields: {
-      bowlerCount: 4,
       name: '',
       shiftIdentifiers: [],
     },
@@ -27,16 +26,12 @@ const TeamForm = ({tournament, maxBowlers=4, onSubmit}) => {
   }
 
   const isFormValid = (fields) => {
-    return fields.bowlerCount > 0 && fields.bowlerCount <= maxBowlers
-      && fields.name.length > 0;
+    return fields.name.length > 0;
   }
 
   const inputChanged = (element) => {
     const newFormValues = {...componentState };
     switch (element.target.name) {
-      case 'bowlerCount':
-        newFormValues.fields.bowlerCount = parseInt(element.target.value);
-        break;
       case 'name':
         newFormValues.fields[element.target.name] = element.target.value;
         break;
@@ -53,27 +48,6 @@ const TeamForm = ({tournament, maxBowlers=4, onSubmit}) => {
     setComponentState(newFormValues);
   }
 
-  const bowlerCountRadios = [];
-  for (let i = 0; i < maxBowlers; i++) {
-    const selected = componentState.fields.bowlerCount === i+1;
-    bowlerCountRadios.push(
-      <div key={`bowlerCountInput${i+1}`} className={`mx-lg-4 ${selected ? 'selected-radio-container' : ''}`}>
-        <input type={'radio'}
-               className={'btn-check'}
-               name={'bowlerCount'}
-               id={`bowlerCount_${i+1}`}
-               value={i+1}
-               checked={selected}
-               onChange={inputChanged}
-               autoComplete={'off'} />
-        <label className={`btn btn-lg btn-tournio-radio`}
-               htmlFor={`bowlerCount_${i+1}`}>
-          {i+1}
-        </label>
-      </div>
-    );
-  }
-
   const tournamentType = tournament.config_items.find(({key}) => key === 'tournament_type').value || 'igbo_standard';
 
   return (
@@ -82,15 +56,6 @@ const TeamForm = ({tournament, maxBowlers=4, onSubmit}) => {
         <p className={`text-center`}>
           All fields are required.
         </p>
-        {/* bowler count selector */}
-        <div className={`${classes.FormElement}`}>
-          <label className={`${classes.Label} col-form-label-lg`}>
-            How many bowlers do you have, in total? (Your teammates may add their details later.)
-          </label>
-          <div className={`d-flex justify-content-evenly justify-content-lg-center`}>
-            {bowlerCountRadios}
-          </div>
-        </div>
 
         {/* team name */}
         <div className={`${classes.FormElement}`}>

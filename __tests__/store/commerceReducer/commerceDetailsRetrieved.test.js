@@ -10,28 +10,8 @@ describe ('action type: bowler details retrieved', () => {
       name: 'silly hat',
     }
   ];
-  const unpaidNonLedgerItems = [
-    {
-      name: 'a flag',
-      category: 'identity',
-    },
-  ];
-  const unpaidLedgerItems = [
-    {
-      name: 'entry fee',
-      category: 'ledger',
-    },
-  ];
-  const tournament = {
-    name: 'Bowl-a-rama',
-    date: '2023-01-01',
-  };
   const actionBowler = {
-    // these are expected to be there
-    has_free_entry: false,
-    paid_purchases: paidPurchases,
-    unpaid_purchases: unpaidLedgerItems.concat(unpaidNonLedgerItems),
-    tournament: tournament,
+    identifier: 'blah-blah-blah',
 
     // these are things added just for the fun of testing
     name: 'Captain Marvel',
@@ -46,30 +26,44 @@ describe ('action type: bowler details retrieved', () => {
       "puts up with men's shit",
     ],
   };
-  const availableItems = {
-    foo: {
+  const availableItems = [
+    {
       id: 1,
       identifier: 'foo',
       name: 'shirt',
     },
-    bar: {
+    {
       id: 2,
       identifier: 'bar',
       name: 'shoes',
     },
-    bubba: {
+    {
       id: 3,
       identifier: 'bubba',
       name: 'service',
     },
-  };
-  const availableApparelItems = {
-
+  ];
+  const automaticItems = [
+    {
+      identifier: 'probably-an-entry-fee',
+      value: 109,
+      name: 'The most likely thing',
+    }
+  ]
+  const availableApparelItems = []
+  const tournament = {
+    identifier: 'bowl-2024',
+    name: 'Bowling On Wider Lanes',
+    year: 2024,
   }
   const action = {
-    type: actionTypes.BOWLER_DETAILS_RETRIEVED,
+    type: actionTypes.COMMERCE_SESSION_INITIATED,
     bowler: actionBowler,
     availableItems: availableItems,
+    purchases: paidPurchases,
+    automaticItems: automaticItems,
+    freeEntry: null,
+    tournament: tournament,
   }
 
   //
@@ -95,21 +89,9 @@ describe ('action type: bowler details retrieved', () => {
     const result = commerceReducer({}, action);
     expect(result.freeEntry).toBeDefined();
   });
-  it ('includes an error property in the return', () => {
+  it ('includes a tournament property in the return', () => {
     const result = commerceReducer({}, action);
-    expect(result.error).toBeDefined();
-  });
-
-  //
-  // Nulled-out properties
-  //
-  it ('nulls the freeEntry property in the return', () => {
-    const result = commerceReducer({}, action);
-    expect(result.freeEntry).toBeNull();
-  });
-  it ('nulls the error property in the return', () => {
-    const result = commerceReducer({}, action);
-    expect(result.error).toBeNull();
+    expect(result.tournament).toBeDefined();
   });
 
   //
@@ -129,33 +111,23 @@ describe ('action type: bowler details retrieved', () => {
   });
   it ('includes all unpaid items in the cart', () => {
     const result = commerceReducer({}, action);
-    expect(result.cart).toStrictEqual(unpaidLedgerItems.concat(unpaidNonLedgerItems));
+    expect(result.cart).toStrictEqual(automaticItems);
   });
-  it ('populates the tournament property', () => {
+  it ('includes the indicated tournament in the returned object', () => {
     const result = commerceReducer({}, action);
     expect(result.tournament).toStrictEqual(tournament);
-  })
-
-  //
-  // Making changes to the action's contents
-  //
-  describe ('the bowler has no unpaid items', () => {
-    it ('includes an initialized cart in the returned object', () => {
-      const myAction = {...action};
-      myAction.bowler = {...actionBowler}
-      myAction.bowler.unpaid_purchases = [];
-      const result = commerceReducer({}, myAction);
-      expect(result.cart).toStrictEqual([]);
-    });
   });
 
   describe ('the bowler has a free entry', () => {
     it ('includes only non-ledger items in the cart', () => {
       const myAction = {...action};
       myAction.bowler = {...actionBowler}
-      myAction.bowler.has_free_entry = true;
+      myAction.freeEntry = {
+        blah: 'blah',
+        uniqueCode: 'uh-huh',
+      };
       const result = commerceReducer({}, myAction);
-      expect(result.cart).toStrictEqual(unpaidNonLedgerItems);
+      expect(result.cart).toStrictEqual([]);
     });
   });
 });

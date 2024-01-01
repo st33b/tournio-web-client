@@ -1,8 +1,9 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
+import Link from "next/link";
 import {Col, Row} from "react-bootstrap";
 
-import {fetchBowlerDetails, updateObject, useClientReady} from "../../utils";
+import {devConsoleLog, updateObject, useBowlerCommerce} from "../../utils";
 import {useCommerceContext} from "../../store/CommerceContext";
 import Menu from '../../components/Commerce/Menu';
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
@@ -11,8 +12,7 @@ import CommerceLayout from "../../components/Layout/CommerceLayout/CommerceLayou
 import SuccessAlert from "../../components/common/SuccessAlert";
 import ErrorAlert from "../../components/common/ErrorAlert";
 import TournamentHeader from "../../components/ui/TournamentHeader";
-import Link from "next/link";
-import {bowlerCommerceDetailsMooted} from "../../store/actions/registrationActions";
+import {commerceDetailsRetrieved} from "../../store/actions/registrationActions";
 
 const Page = () => {
   const router = useRouter();
@@ -26,21 +26,26 @@ const Page = () => {
 
   const onFetchFailure = (response) => {
     if (response.status === 404) {
-      dispatch(bowlerCommerceDetailsMooted());
+      // dispatch(bowlerCommerceDetailsMooted());
       router.push('/404');
     }
+    setState({
+      ...state,
+      errorMessage: response,
+    })
   }
 
-  // fetch the bowler details
-  useEffect(() => {
-    if (!identifier || !commerce) {
+  const onFetchSuccess = (response) => {
+    if (!response) {
+      devConsoleLog("No response object in commerce fetch success, for some reason", identifier);
       return;
     }
-
-    if (!commerce.bowler || commerce.bowler.identifier !== identifier) {
-      fetchBowlerDetails(identifier, dispatch, onFetchFailure);
+    // initialize the reducer for this bowler, but only if they aren't in context yet
+    if (commerce && (!commerce.bowler || commerce.bowler.identifier !== identifier)) {
+      devConsoleLog("New bowler for context!", response);
+      dispatch(commerceDetailsRetrieved({...response}));
     }
-  }, [identifier, commerce]);
+  }
 
   useEffect(() => {
     const updatedState = {...state};
@@ -63,13 +68,14 @@ const Page = () => {
     setState(updateObject(state, updatedState));
   }, [success, error]);
 
-  const ready = useClientReady();
-  if (!ready) {
-    return null;
+  const {loading, data} = useBowlerCommerce(identifier, onFetchSuccess, onFetchFailure);
+
+  if (loading) {
+    return <LoadingMessage message={'One moment, please...'}/>;
   }
 
-  if (!commerce) {
-    return <LoadingMessage message={'One moment, please...'}/>;
+  if (!data) {
+    return <LoadingMessage message={'Almost ready...'}/>;
   }
 
   const clearSuccessMessage = () => {
@@ -84,36 +90,36 @@ const Page = () => {
     }));
   }
 
+  const {bowler, team, tournament} = data;
+
   return (
     <div>
-      {commerce.tournament && commerce.bowler && (
-        <Row className={``}>
-          <Col md={{offset: 2, span: 8}} xl={{offset: 3, span: 6}} className={'ps-2'}>
-            <TournamentHeader tournament={commerce.tournament}/>
+      <Row className={``}>
+        <Col md={{offset: 2, span: 8}} xl={{offset: 3, span: 6}} className={'ps-2'}>
+          <TournamentHeader tournament={tournament}/>
 
-            <h3 className={`text-center`}>
-              Bowler: <strong>{commerce.bowler.full_name}</strong>
-            </h3>
-            {commerce.bowler.team_identifier && (
-              <h4 className={`text-center`}>
-                Team:&nbsp;
-                <strong>
-                  <Link href={{
-                    pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/[chosen]',
-                    query: {
-                      identifier: commerce.tournament.identifier,
-                      teamIdentifier: commerce.bowler.team_identifier,
-                      chosen: commerce.bowler.position,
-                    }}}>
-                    {commerce.bowler.team_name}
-                  </Link>
-                </strong>
-              </h4>
-            )}
-            {!commerce.bowler.has_free_entry && <FreeEntryForm/>}
-          </Col>
-        </Row>
-      )}
+          <h3 className={`text-center`}>
+            Bowler: <strong>{bowler.fullName}</strong>
+          </h3>
+          {team && (
+            <h4 className={`text-center`}>
+              Team:&nbsp;
+              <strong>
+                <Link href={{
+                  pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/[chosen]',
+                  query: {
+                    identifier: tournament.identifier,
+                    teamIdentifier: team.identifier,
+                    chosen: bowler.position,
+                  }}}>
+                  {team.name}
+                </Link>
+              </strong>
+            </h4>
+          )}
+          {!bowler.freeEntry && <FreeEntryForm/>}
+        </Col>
+      </Row>
 
       <hr/>
 
@@ -123,8 +129,7 @@ const Page = () => {
       <ErrorAlert className={``}
                   message={state.errorMessage}
                   onClose={clearErrorMessage}/>
-
-      {commerce.bowler && <Menu/>}
+      <Menu/>
 
     </div>
   );

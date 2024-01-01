@@ -1,4 +1,5 @@
 import * as actionTypes from './actionTypes';
+import {devConsoleLog} from "../../utils";
 
 export const reset = () => {
   return {
@@ -75,11 +76,30 @@ export const soloBowlerRegistrationCompleted = () => {
   }
 }
 
-export const bowlerCommerceDetailsRetrieved = (bowler, availableItems) => {
+export const commerceDetailsRetrieved = ({
+                                           bowler,
+                                           freeEntry,
+                                           purchases,
+                                           automaticItems,
+                                           availableItems,
+                                           tournament,
+                                         }) => {
+  devConsoleLog("Handing commerce deets off to the reducer", {
+    bowler,
+    freeEntry,
+    purchases,
+    automaticItems,
+    availableItems,
+    tournament,
+  });
   return {
-    type: actionTypes.BOWLER_DETAILS_RETRIEVED,
+    type: actionTypes.COMMERCE_SESSION_INITIATED,
     bowler: bowler,
+    freeEntry: freeEntry,
     availableItems: availableItems,
+    purchases: purchases,
+    automaticItems: automaticItems,
+    tournament: tournament,
   }
 }
 

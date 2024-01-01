@@ -51,6 +51,7 @@
 //        -> team
 
 import {updateObject} from "../../utils";
+import {id} from "date-fns/locale";
 
 export const itemRemovedFromCart = (currentState, itemToRemove) => {
   switch(itemToRemove.category) {
@@ -145,10 +146,10 @@ const handleAsSingleton = (previousState, itemToRemove) => {
   const updatedCart = previousState.cart.filter(({identifier}) => {
     return identifier !== itemToRemove.identifier
   });
-  const updatedAvailableItems = {
-    ...previousState.availableItems,
-    [itemToRemove.identifier]: updatedItem,
-  }
+  const updatedAvailableItems = [...previousState.availableItems];
+  const itemIndex = updatedAvailableItems.findIndex(({identifier}) => identifier === itemToRemove.identifier);
+  updatedAvailableItems[itemIndex] = updatedItem;
+
   return updateObject(previousState, {
     cart: updatedCart,
     availableItems: updatedAvailableItems,
@@ -174,10 +175,9 @@ const handleAsPossiblyMany = (previousState, itemToRemove) => {
     updatedCart[itemIndex] = updatedItem;
   }
 
-  const updatedAvailableItems = {
-    ...previousState.availableItems,
-    [itemToRemove.identifier]: updatedItem,
-  };
+  const updatedAvailableItems = [...previousState.availableItems];
+  const itemIndex = updatedAvailableItems.findIndex(({identifier}) => identifier === itemToRemove.identifier);
+  updatedAvailableItems[itemIndex] = updatedItem;
 
   return updateObject(previousState, {
     cart: updatedCart,
@@ -186,32 +186,33 @@ const handleAsPossiblyMany = (previousState, itemToRemove) => {
 }
 
 const handleAsDivisionItem = (previousState, itemToRemove) => {
-  const updatedAvailableItems = {...previousState.availableItems};
+  const updatedAvailableItems = [...previousState.availableItems];
   if (itemToRemove.refinement !== 'division') {
     return previousState;
   }
 
-  for (const identifier in updatedAvailableItems) {
+  updatedAvailableItems.forEach((item, index) => {
     // skip it if we're looking in the mirror
     // not technically necessary, but nice to call out, I guess?
-    if (identifier === itemToRemove.identifier) {
-      continue;
+    if (item.identifier === itemToRemove.identifier) {
+      return;
     }
 
     // We're only interested in division things.
     // Technically, single-use as well, but we don't currently support multi-use division items.
     // (Would there be two different kinds of Scratch Masters?)
-    if (updatedAvailableItems[identifier].refinement !== 'division') {
-      continue;
+    if (item.refinement !== 'division') {
+      return;
     }
 
     // Every item with the same name is now considered added-to-cart.
     // Because we differentiate between Division things based on the name.
     // Seems kinda fragile, but it works for now.
-    if (updatedAvailableItems[identifier].name === itemToRemove.name) {
-      updatedAvailableItems[identifier].addedToCart = false;
+    if (item.name === itemToRemove.name) {
+      updatedAvailableItems[index].addedToCart = false;
     }
-  }
+  });
+
   return updateObject(previousState, {
     availableItems: updatedAvailableItems,
   });
