@@ -7,8 +7,6 @@ import {useLoginContext} from "../../../store/LoginContext";
 import {updateObject} from "../../../utils";
 
 const BOOLEAN_CONFIG_ITEMS = [
-  'automatic_discount_voids',
-  'automatic_late_fees',
   'event_selection',
   'publicly_listed',
   'accept_payments',
