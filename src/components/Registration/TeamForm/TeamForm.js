@@ -1,9 +1,10 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import classes from './TeamForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import InclusiveShiftForm from "../InclusiveShiftForm/InclusiveShiftForm";
 import MixAndMatchShiftForm from "../MixAndMatchShiftForm/MixAndMatchShiftForm";
+import {devConsoleLog} from "../../../utils";
 
 const TeamForm = ({tournament, onSubmit}) => {
   const initialFormValues = {
@@ -14,6 +15,18 @@ const TeamForm = ({tournament, onSubmit}) => {
     valid: false,
   }
   const [componentState, setComponentState] = useState(initialFormValues);
+
+  useEffect(() => {
+    if (!tournament) {
+      return;
+    }
+    const tournamentType = tournament.config_items.find(({key}) => key === 'tournament_type').value || 'igbo_standard';
+    if (tournamentType === 'igbo_standard') {
+      const newComponentState = {...componentState };
+      newComponentState.fields.shiftIdentifiers = [tournament.shifts[0].identifier];
+      setComponentState(newComponentState);
+    }
+  }, [tournament]);
 
   const formHandler = (event) => {
     event.preventDefault();
@@ -43,6 +56,7 @@ const TeamForm = ({tournament, onSubmit}) => {
   }
 
   const shiftIdentifiersUpdated = (newShiftIdentifiers) => {
+    devConsoleLog("Shift identifiers updated:", newShiftIdentifiers);
     const newFormValues = {...componentState };
     newFormValues.fields.shiftIdentifiers = newShiftIdentifiers;
     setComponentState(newFormValues);

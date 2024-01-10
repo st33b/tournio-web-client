@@ -32,14 +32,6 @@ const NewTeamReview = ({team, bowler, tournament}) => {
             {team.name}
           </dd>
         </div>
-        <div className={`row g-2`}>
-          <dt className={`col-5`}>
-            # of Bowlers:
-          </dt>
-          <dd className={`col`}>
-            {team.bowlerCount}
-          </dd>
-        </div>
 
         {chosenShifts && (
           <div className={`row g-2`}>
