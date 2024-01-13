@@ -4,26 +4,29 @@ import Item from "./Item/Item";
 
 import classes from './AvailableItems.module.scss';
 import {devConsoleLog} from "../../../utils";
+import Signupable from "./Signupable/Signupable";
 
 const AvailableItems = ({itemAddedToCart}) => {
   const {commerce} = useCommerceContext();
 
-  if (!commerce || !commerce.availableItems) {
+  if (!commerce || !commerce.availableItems || !commerce.signupables) {
     return '';
   }
 
   const sortByOrder = (left, right) => {
-    let leftOrder = left.configuration.order || 100;
-    let rightOrder = right.configuration.order || 100;
+    let leftOrder = left.purchasableItem.configuration.order || 100;
+    let rightOrder = right.purchasableItem.configuration.order || 100;
     return leftOrder - rightOrder;
   }
 
   // Let's separate these out into groups:
-  // category: bowling
+  // category: bowling (signup-able)
   //   determination: event
   //   determination: single_use refinement:division (one group for each name, e.g., Scratch Masters and Optional Scratch)
   //   determination: single_use (no refinement)
   //   determination: multi_use
+
+  // non-signup-able
   // category: product
   //   (non-apparel)
   //   determination: apparel
@@ -33,27 +36,27 @@ const AvailableItems = ({itemAddedToCart}) => {
   // category: raffle
 
   // sort the event items by their order
-  const eventItems = commerce.availableItems.filter(item => {
-    return item.category === 'bowling' && item.determination === 'event';
+  const eventItems = commerce.signupables.filter(signupable => {
+    return signupable.purchasableItem.category === 'bowling' && signupable.purchasableItem.determination === 'event';
   }).sort(sortByOrder);
 
   // sort the division items by name and note
-  const divisionItems = commerce.availableItems.filter(item => {
-    return item.refinement === 'division';
+  const divisionItems = commerce.signupables.filter(signupable => {
+    return signupable.purchasableItem.refinement === 'division';
   }).sort((left, right) => {
-    const leftText = left.name + left.configuration.division;
-    const rightText = right.name + right.configuration.division;
+    const leftText = left.purchasableItem.name + left.purchasableItem.configuration.division;
+    const rightText = right.purchasableItem.name + right.purchasableItem.configuration.division;
     return leftText.localeCompare(rightText);
   });
 
   // sort the single_use items by their order
-  const singleUseItems = commerce.availableItems.filter(item => {
-    return item.determination === 'single_use' && !item.refinement;
+  const singleUseItems = commerce.signupables.filter(signupable => {
+    return signupable.purchasableItem.determination === 'single_use' && !signupable.purchasableItem.refinement;
   }).sort(sortByOrder);
 
   // sort the multi-use items by their order
-  const multiUseItems = commerce.availableItems.filter(item => {
-    return item.determination === 'multi_use';
+  const multiUseItems = commerce.signupables.filter(signupable => {
+    return signupable.purchasableItem.determination === 'multi_use';
   }).sort(sortByOrder);
 
   // Sanction items
@@ -71,8 +74,8 @@ const AvailableItems = ({itemAddedToCart}) => {
   const anyBowlingExtras = (divisionItems.length +
     singleUseItems.length +
     multiUseItems.length) > 0;
-  const anyBowlingItems = anyBowlingExtras || eventItems.length > 0;
-  const bowlingItemsClass = anyBowlingItems ? '' : 'd-none';
+  const anySignupables = anyBowlingExtras || eventItems.length > 0;
+  const bowlingItemsClass = anySignupables ? '' : 'd-none';
 
   const anyOtherExtras = (raffleItems.length +
     commerce.availableApparelItems.length +
@@ -85,7 +88,7 @@ const AvailableItems = ({itemAddedToCart}) => {
 
   let largeWidth = 12;
   let largeClass = `col-lg-7';`
-  if (anyBowlingItems && anyOtherExtras) {
+  if (anySignupables && anyOtherExtras) {
     largeWidth = 6;
     largeClass = `col-lg-8`;
   }
@@ -100,7 +103,7 @@ const AvailableItems = ({itemAddedToCart}) => {
             <p>No other items to show.</p>
           </Col>
         )}
-        {anyBowlingItems && (
+        {anySignupables && (
           <Col lg={largeWidth} className={bowlingItemsClass}>
             {eventItems.length > 0 && (
               <div className={``}>
@@ -108,10 +111,14 @@ const AvailableItems = ({itemAddedToCart}) => {
                   Bowling Events
                 </h5>
                 <Col xs={12}>
-                  {eventItems.map((item) => (
-                    <Item key={item.identifier}
-                          item={item}
-                          added={itemAddedToCart}/>
+                  {eventItems.map((sEvent) => (
+                    <Signupable key={sEvent.identifier}
+                                signupable={sEvent}
+                                added={itemAddedToCart}
+                                />
+                    // <Item key={item.identifier}
+                    //       item={item}
+                    //       added={itemAddedToCart}/>
                   ))}
                 </Col>
               </div>
@@ -125,10 +132,14 @@ const AvailableItems = ({itemAddedToCart}) => {
 
                 {divisionItems.length > 0 && (
                   <Col xs={12}>
-                    {divisionItems.map((item) => (
-                      <Item key={item.identifier}
-                            item={item}
-                            added={itemAddedToCart}/>
+                    {divisionItems.map((sItem) => (
+                      <Signupable key={sItem.identifier}
+                                  signupable={sItem}
+                                  added={itemAddedToCart}
+                      />
+                      // <Item key={item.identifier}
+                      //       item={item}
+                      //       added={itemAddedToCart}/>
                     ))}
                     <hr/>
                   </Col>
@@ -136,10 +147,14 @@ const AvailableItems = ({itemAddedToCart}) => {
 
                 {singleUseItems.length > 0 && (
                   <Col xs={12}>
-                    {singleUseItems.map((item) => (
-                      <Item key={item.identifier}
-                            item={item}
-                            added={itemAddedToCart}/>
+                    {singleUseItems.map((sItem) => (
+                      <Signupable key={sItem.identifier}
+                                  signupable={sItem}
+                                  added={itemAddedToCart}
+                      />
+                      // <Item key={item.identifier}
+                      //       item={item}
+                      //       added={itemAddedToCart}/>
                     ))}
                     <hr/>
                   </Col>

@@ -1,0 +1,59 @@
+.Signupable {
+  border: 1px solid var(--tournio-gray-500);
+  border-radius: 8px;
+
+  p {
+    margin: 0.5rem auto;
+  }
+
+  .SignupLink {
+    font-size: 90%;
+  }
+
+  .AddLink {
+    font-size: 1.75rem;
+    color: var(--tournio-success);
+  }
+
+  .AddDisabled {
+    opacity: .6;
+  }
+
+  .Name {
+    font-size: 120%;
+  }
+
+  .Secondary {
+    font-size: 100%;
+  }
+
+  .Note {
+    font-size: 90%;
+  }
+
+  .Price {
+    font-weight: bold;
+  }
+}
+
+.Selected {
+  color: var(--tournio-gray-600);
+  background-color: var(--tournio-gray-200);
+}
+
+.NotSelected:hover {
+  background-color: var(--tournio-gray-200);
+}
+
+[data-bs-theme="dark"] {
+  .Signupable {
+    border-color: var(--tournio-gray-700)
+  }
+  .Selected {
+    color: var(--tournio-gray-500);
+    background-color: var(--tournio-gray-800);
+  }
+  .NotSelected:hover {
+    background-color: var(--tournio-bookend-bg);
+  }
+}

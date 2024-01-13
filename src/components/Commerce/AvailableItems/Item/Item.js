@@ -97,7 +97,7 @@ const Item = ({item, added, preview}) => {
   if (item.determination === 'event') {
     attachedClasses.push('border-primary', 'border-3');
   }
-  let tooltipText = 'Click the + to select this item';
+  let tooltipText = 'Tap or click the icon link to add this item to your bag';
   if (item.addedToCart) {
     attachedClasses.push(classes.Selected);
     tooltipText = 'This item has been chosen';
@@ -115,7 +115,7 @@ const Item = ({item, added, preview}) => {
         <a href={sizeValid ? '#' : null}
            onClick={sizeValid ? addClickedHandler : () => {}}
            className={`${classes.AddLink} ${!sizeValid ? classes.AddDisabled : ''} pe-3`}>
-          <i className={`bi-plus-square-fill`} />
+          <i className={`bi-bag-plus-fill`} />
           <span className={'visually-hidden'}>Add</span>
         </a>
       </div>
