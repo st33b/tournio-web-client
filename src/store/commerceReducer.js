@@ -50,6 +50,14 @@ export const commerceReducer = (state, action) => {
         freeEntry: {...action.freeEntry},
         tournament: {...action.tournament},
       });
+    case actionTypes.SIGNUPABLE_STATUS_UPDATED:
+      const signupIdentifier = action.identifier;
+      const index = state.signupables.findIndex(s => s.identifier === signupIdentifier);
+      const updatedSignupables = [...state.signupables];
+      updatedSignupables[index].status = action.status;
+      return updateObject(state, {
+        signupables: updatedSignupables,
+      });
     case actionTypes.BOWLER_DETAILS_MOOTED:
       return updateObject(state, {
         tournament: null,
@@ -59,6 +67,7 @@ export const commerceReducer = (state, action) => {
         availableApparelItems: {},
         purchasedItems: [],
         freeEntry: null,
+        signupables: [],
       });
     case actionTypes.ITEM_ADDED_TO_CART:
       return itemAddedToCart(state, action.item, action.sizeIdentifier);

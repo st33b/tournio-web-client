@@ -6,7 +6,7 @@ import classes from './AvailableItems.module.scss';
 import {devConsoleLog} from "../../../utils";
 import Signupable from "./Signupable/Signupable";
 
-const AvailableItems = ({itemAddedToCart}) => {
+const AvailableItems = ({itemAddedToCart, signupChanged}) => {
   const {commerce} = useCommerceContext();
 
   if (!commerce || !commerce.availableItems || !commerce.signupables) {
@@ -115,6 +115,7 @@ const AvailableItems = ({itemAddedToCart}) => {
                     <Signupable key={sEvent.identifier}
                                 signupable={sEvent}
                                 added={itemAddedToCart}
+                                signupChanged={signupChanged}
                                 />
                     // <Item key={item.identifier}
                     //       item={item}
@@ -136,6 +137,7 @@ const AvailableItems = ({itemAddedToCart}) => {
                       <Signupable key={sItem.identifier}
                                   signupable={sItem}
                                   added={itemAddedToCart}
+                                  signupChanged={signupChanged}
                       />
                       // <Item key={item.identifier}
                       //       item={item}
@@ -151,6 +153,7 @@ const AvailableItems = ({itemAddedToCart}) => {
                       <Signupable key={sItem.identifier}
                                   signupable={sItem}
                                   added={itemAddedToCart}
+                                  signupChanged={signupChanged}
                       />
                       // <Item key={item.identifier}
                       //       item={item}

@@ -188,3 +188,11 @@ export const stripeCheckoutSessionCompleted = () => {
     type: actionTypes.STRIPE_CHECKOUT_SESSION_COMPLETED,
   }
 }
+
+export const signupableStatusUpdated = (identifier, status) => {
+  return {
+    type: actionTypes.SIGNUPABLE_STATUS_UPDATED,
+    identifier: identifier,
+    status: status,
+  }
+}

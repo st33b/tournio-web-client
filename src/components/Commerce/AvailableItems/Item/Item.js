@@ -115,7 +115,7 @@ const Item = ({item, added, preview}) => {
         <a href={sizeValid ? '#' : null}
            onClick={sizeValid ? addClickedHandler : () => {}}
            className={`${classes.AddLink} ${!sizeValid ? classes.AddDisabled : ''} pe-3`}>
-          <i className={`bi-bag-plus-fill`} />
+          <i className={`bi-cart-plus-fill`} />
           <span className={'visually-hidden'}>Add</span>
         </a>
       </div>

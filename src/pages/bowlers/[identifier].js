@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import Link from "next/link";
 import {Col, Row} from "react-bootstrap";
 
-import {devConsoleLog, updateObject, useBowlerCommerce} from "../../utils";
+import {apiHost, devConsoleLog, updateObject, useBowlerCommerce} from "../../utils";
 import {useCommerceContext} from "../../store/CommerceContext";
 import Menu from '../../components/Commerce/Menu';
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
@@ -12,7 +12,8 @@ import CommerceLayout from "../../components/Layout/CommerceLayout/CommerceLayou
 import SuccessAlert from "../../components/common/SuccessAlert";
 import ErrorAlert from "../../components/common/ErrorAlert";
 import TournamentHeader from "../../components/ui/TournamentHeader";
-import {commerceDetailsRetrieved} from "../../store/actions/registrationActions";
+import {commerceDetailsRetrieved, signupableStatusUpdated} from "../../store/actions/registrationActions";
+import axios from "axios";
 
 const Page = () => {
   const router = useRouter();
@@ -90,7 +91,37 @@ const Page = () => {
     }));
   }
 
-  const {bowler, team, tournament} = data;
+  const {bowler, team, tournament, commerceUpdated} = data;
+
+  const signupableUpdated = (identifier, event, onSuccess = () => {}, onFailure = () => {}) => {
+    const requestConfig = {
+      method: 'patch',
+      url: `${apiHost}/signups/${identifier}`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      data: {
+        bowler_identifier: bowler.identifier,
+        event: event,
+      },
+      validateStatus: (status) => {
+        return status < 500
+      },
+    }
+    axios(requestConfig)
+      .then(response => {
+        if (response.status >= 200 && response.status < 300) {
+          onSuccess(response.data);
+          dispatch(signupableStatusUpdated(identifier, response.data.status));
+        } else {
+          onFailure(response.data);
+        }
+      })
+      .catch(error => {
+        onFailure({error: error.message});
+      });
+  }
 
   return (
     <div>
@@ -129,7 +160,7 @@ const Page = () => {
       <ErrorAlert className={``}
                   message={state.errorMessage}
                   onClose={clearErrorMessage}/>
-      <Menu/>
+      <Menu signupChanged={signupableUpdated}/>
 
     </div>
   );

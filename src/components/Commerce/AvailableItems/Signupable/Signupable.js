@@ -1,8 +1,11 @@
 import {useState} from "react";
 import classes from "./Signupable.module.scss";
 import ErrorBoundary from "../../../common/ErrorBoundary";
+import {signupableStatusUpdated} from "../../../../store/actions/registrationActions";
 
-const Signupable = ({signupable, added, preview}) => {
+const Signupable = ({signupable, added, preview, signupChanged}) => {
+  const [processing, setProcessing] = useState(false);
+
   const addClickedHandler = (event) => {
     event.preventDefault();
     added(item);
@@ -63,41 +66,109 @@ const Signupable = ({signupable, added, preview}) => {
     attachedClasses.push(classes.NotSelected);
   }
 
+  const changeProcessed = () => {
+    setProcessing(false);
+  }
+
+  const changeFailed = (error) => {
+    setProcessing(false);
+  }
+
+  const signupClicked = (event) => {
+    event.preventDefault();
+    setProcessing(true);
+    signupChanged(signupable.identifier, 'request', changeProcessed, changeFailed);
+  }
+
+  const neverMindClicked = (event) => {
+    event.preventDefault();
+    setProcessing(true);
+    signupChanged(signupable.identifier, 'never_mind', changeProcessed, changeFailed);
+  }
+
   let signupAction = (
-    <div className={`text-center`}>
+    <div className={`form-check`}>
       <input type={'checkbox'}
              aria-label={'Sign up'}
              id={`signupAction_${signupable.identifier}`}
              className={'form-check-input'}
-             onClick={() => {}}
-             />
-      <a href={'#'}
-         className={`d-block ${classes.SignupLink}`}
-         >Sign up</a>
-      {/*<label htmlFor={`signupAction_${signupable.identifier}`}*/}
-      {/*       className={'form-check-label'}*/}
-      {/*       >Sign up</label>*/}
+             onClick={signupClicked}
+      />
+      <label className={`form-check-label ${classes.SignupLink}`}
+             htmlFor={`signupAction_${signupable.identifier}`}
+      >
+        Sign up
+      </label>
+    </div>
+  );
+
+  const neverMindAction = (
+    <div className={`form-check`}>
+      <input type={'checkbox'}
+             aria-label={'Back out'}
+             id={`neverMindAction_${signupable.identifier}`}
+             className={'form-check-input'}
+             checked={true}
+             onClick={neverMindClicked}
+      />
+      <label className={`form-check-label ${classes.SignupLink}`}
+             htmlFor={`neverMindAction_${signupable.identifier}}`}
+      >
+        Sign up
+      </label>
+    </div>
+  );
+
+  const paidDisplay = (
+    <div className={`form-check`}>
+      <input type={'checkbox'}
+             aria-label={'Paid'}
+             id={`paidDisplay_${signupable.identifier}`}
+             className={'form-check-input'}
+             checked={true}
+             disabled={true}
+      />
+      <label className={`form-check-label ${classes.SignupLink}`}
+             htmlFor={`paidDisplay_${signupable.identifier}}`}
+      >
+        Sign up
+      </label>
     </div>
   );
 
   let addLink = '';
-  if (!preview && !item.addedToCart) {
+  if (signupable.status === 'requested') {
     addLink = (
       <a href={'#'}
          onClick={addClickedHandler}
-         className={`${classes.AddLink} d-block`}>
-        <i className={`bi-bag-plus-fill`} />
+         className={`${classes.AddLink} d-block align-self-stretch pe-2`}>
+        <i className={`bi-cart-plus-fill`} />
         <span className={'visually-hidden'}>Add</span>
       </a>
     )
   }
 
-  const actionBlock = (
-    <div className={'ms-auto pe-3'}>
-      {item.status !== 'paid' && signupAction}
-      {item.status === 'requested' && addLink}
+  let actionBlock = (
+    <div className={'spinner-border text-secondary ms-auto align-self-start me-3'} role={'status'}>
+      <span className={'visually-hidden'}>Processing...</span>
     </div>
-  )
+  );
+
+  if (!processing) {
+    const alignClass = signupable.status === 'requested' ? 'justify-content-start' : 'justify-content-between';
+    actionBlock = (
+      <div className={`ms-auto text-end pt-2 pe-2 d-flex flex-column ${alignClass}`}>
+        {signupable.status === 'initial' && signupAction}
+        {signupable.status === 'requested' && neverMindAction}
+        {signupable.status === 'paid' && paidDisplay}
+        {addLink}
+      </div>
+    );
+  }
+
+  if (signupable.status === 'paid') {
+    tooltipText = `You've paid for this, so signing up cannot be undone.`;
+  }
 
   return (
     <ErrorBoundary>
