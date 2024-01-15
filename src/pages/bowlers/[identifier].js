@@ -113,7 +113,7 @@ const Page = () => {
       .then(response => {
         if (response.status >= 200 && response.status < 300) {
           onSuccess(response.data);
-          dispatch(signupableStatusUpdated(identifier, response.data.status));
+          dispatch(signupableStatusUpdated(identifier, response.data.signupStatus));
         } else {
           onFailure(response.data);
         }

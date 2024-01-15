@@ -5,20 +5,24 @@ import {sign} from "chart.js/helpers";
 describe ('action type: signupable status updated', () => {
   const signupables = [
     {
-      identifier: 'one',
-      status: 'initial',
+      identifier: 'uno',
+      signupStatus: 'initial',
+      signupIdentifier: 'one',
     },
     {
-      identifier: 'two',
-      status: 'initial',
+      identifier: 'dos',
+      signupStatus: 'initial',
+      signupIdentifier: 'two',
     },
     {
-      identifier: 'three',
-      status: 'requested',
+      identifier: 'tres',
+      signupStatus: 'requested',
+      signupIdentifier: 'three',
     },
     {
-      identifier: 'four',
-      status: 'paid',
+      identifier: 'cuatro',
+      signupStatus: 'paid',
+      signupIdentifier: 'four',
     },
   ];
   const previousState = {
@@ -32,13 +36,10 @@ describe ('action type: signupable status updated', () => {
     signupables: signupables,
   }
 
-  const modifiedObject = {
-    identifier: 'two',
-    status: 'requested',
-  }
   const action = {
     type: actionTypes.SIGNUPABLE_STATUS_UPDATED,
-    ...modifiedObject,
+    identifier: 'two',
+    status: 'requested',
   }
 
   //
@@ -46,15 +47,15 @@ describe ('action type: signupable status updated', () => {
   //
   it ('includes a signupables property in the return', () => {
     const result = commerceReducer(previousState, action);
-    const changedOne = result.signupables.find(s => s.identifier === 'two')
-    expect(changedOne.status).toStrictEqual('requested');
+    const changedOne = result.signupables.find(s => s.identifier === 'dos')
+    expect(changedOne.signupStatus).toStrictEqual('requested');
   });
 
   // Non-update of the rest
   it ('includes a signupables property in the return', () => {
     const result = commerceReducer(previousState, action);
-    const theRestOriginal = signupables.filter(s => s.identifier !== 'two');
-    const theRestResult = result.signupables.filter(s => s.identifier !== 'two');
+    const theRestOriginal = signupables.filter(s => s.identifier !== 'dos');
+    const theRestResult = result.signupables.filter(s => s.identifier !== 'dos');
     expect(theRestResult).toStrictEqual(theRestOriginal);
   });
 

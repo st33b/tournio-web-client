@@ -14,8 +14,8 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
   }
 
   const sortByOrder = (left, right) => {
-    let leftOrder = left.purchasableItem.configuration.order || 100;
-    let rightOrder = right.purchasableItem.configuration.order || 100;
+    let leftOrder = left.configuration.order || 100;
+    let rightOrder = right.configuration.order || 100;
     return leftOrder - rightOrder;
   }
 
@@ -37,26 +37,26 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
 
   // sort the event items by their order
   const eventItems = commerce.signupables.filter(signupable => {
-    return signupable.purchasableItem.category === 'bowling' && signupable.purchasableItem.determination === 'event';
+    return signupable.category === 'bowling' && signupable.determination === 'event';
   }).sort(sortByOrder);
 
   // sort the division items by name and note
   const divisionItems = commerce.signupables.filter(signupable => {
-    return signupable.purchasableItem.refinement === 'division';
+    return signupable.refinement === 'division';
   }).sort((left, right) => {
-    const leftText = left.purchasableItem.name + left.purchasableItem.configuration.division;
-    const rightText = right.purchasableItem.name + right.purchasableItem.configuration.division;
+    const leftText = left.name + left.configuration.division;
+    const rightText = right.name + right.configuration.division;
     return leftText.localeCompare(rightText);
   });
 
   // sort the single_use items by their order
   const singleUseItems = commerce.signupables.filter(signupable => {
-    return signupable.purchasableItem.determination === 'single_use' && !signupable.purchasableItem.refinement;
+    return signupable.determination === 'single_use' && !signupable.refinement;
   }).sort(sortByOrder);
 
   // sort the multi-use items by their order
   const multiUseItems = commerce.signupables.filter(signupable => {
-    return signupable.purchasableItem.determination === 'multi_use';
+    return signupable.determination === 'multi_use';
   }).sort(sortByOrder);
 
   // Sanction items
@@ -113,7 +113,7 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
                 <Col xs={12}>
                   {eventItems.map((sEvent) => (
                     <Signupable key={sEvent.identifier}
-                                signupable={sEvent}
+                                item={sEvent}
                                 added={itemAddedToCart}
                                 signupChanged={signupChanged}
                                 />
@@ -135,7 +135,7 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
                   <Col xs={12}>
                     {divisionItems.map((sItem) => (
                       <Signupable key={sItem.identifier}
-                                  signupable={sItem}
+                                  item={sItem}
                                   added={itemAddedToCart}
                                   signupChanged={signupChanged}
                       />
@@ -151,7 +151,7 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
                   <Col xs={12}>
                     {singleUseItems.map((sItem) => (
                       <Signupable key={sItem.identifier}
-                                  signupable={sItem}
+                                  item={sItem}
                                   added={itemAddedToCart}
                                   signupChanged={signupChanged}
                       />

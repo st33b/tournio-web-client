@@ -89,9 +89,11 @@ const handleAsBowlingItem = (previousState, itemToAdd) => {
         handleAsDivisionItem(
           handleAsSingleton(
             previousState,
-            itemToAdd
+            itemToAdd,
+            'signupables'
           ),
-          itemToAdd
+          itemToAdd,
+          'signupables',
         ),
         itemToAdd
       ),
@@ -215,7 +217,7 @@ const handleAsPossiblyMany = (previousState, itemToAdd) => {
   })
 }
 
-const handleAsSingleton = (previousState, itemToAdd) => {
+const handleAsSingleton = (previousState, itemToAdd, itemSourceKey = 'availableItems') => {
   const newItemIdentifier = itemToAdd.identifier;
   const cartItemIndex = previousState.cart.findIndex(({identifier}) => identifier === newItemIdentifier);
 
@@ -229,25 +231,28 @@ const handleAsSingleton = (previousState, itemToAdd) => {
     addedToCart: true,
   });
 
-  const updatedAvailableItems = [...previousState.availableItems];
-  const availableItemIndex = updatedAvailableItems.findIndex(({identifier}) => identifier === addedItem.identifier);
-  updatedAvailableItems[availableItemIndex] = addedItem;
+  const source = previousState[itemSourceKey];
+  const updatedSource = [...source];
+  const itemIndex = source.findIndex(({identifier}) => identifier === addedItem.identifier);
+  updatedSource[itemIndex] = addedItem;
 
   const updatedCart = previousState.cart.concat(addedItem);
 
-  return updateObject(previousState, {
+  const stateChanges = {
     cart: updatedCart,
-    availableItems: updatedAvailableItems,
-  });
+  };
+  stateChanges[itemSourceKey] = updatedSource;
+  return updateObject(previousState, stateChanges);
 }
 
-const handleAsDivisionItem = (previousState, itemToAdd) => {
-  const availableItems = [...previousState.availableItems];
+const handleAsDivisionItem = (previousState, itemToAdd, itemSourceKey = 'availableItems') => {
   if (itemToAdd.refinement !== 'division') {
     return previousState;
   }
 
-  availableItems.forEach(item => {
+  const source = previousState[itemSourceKey];
+  const updatedSource = [...source];
+  updatedSource.forEach(item => {
     // skip it if we're looking in the mirror
     if (item.identifier === itemToAdd.identifier) {
       return;
@@ -268,9 +273,10 @@ const handleAsDivisionItem = (previousState, itemToAdd) => {
       item.addedToCart = true;
     }
   });
-  return updateObject(previousState, {
-    availableItems: availableItems,
-  });
+  const stateUpdates = {};
+  stateUpdates[itemSourceKey] = updatedSource;
+
+  return updateObject(previousState, stateUpdates);
 }
 
 const tryAddingBundleDiscount = (previousState, itemToAdd) => {

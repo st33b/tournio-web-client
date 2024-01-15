@@ -3,18 +3,13 @@ import classes from "./Signupable.module.scss";
 import ErrorBoundary from "../../../common/ErrorBoundary";
 import {signupableStatusUpdated} from "../../../../store/actions/registrationActions";
 
-const Signupable = ({signupable, added, preview, signupChanged}) => {
+const Signupable = ({item, added, preview, signupChanged}) => {
   const [processing, setProcessing] = useState(false);
 
   const addClickedHandler = (event) => {
     event.preventDefault();
     added(item);
   }
-
-  if (!signupable.purchasableItem) {
-    return '';
-  }
-  const item = signupable.purchasableItem;
 
   let secondaryText = '';
   if (item.configuration) {
@@ -59,7 +54,7 @@ const Signupable = ({signupable, added, preview, signupChanged}) => {
     attachedClasses.push('border-primary', 'border-3');
   }
   let tooltipText = `Tap or click the icon link to add this item's fee to your bag`;
-  if (item.addedToCart) {
+  if (item.signupStatus === 'paid' || item.addedToCart) {
     attachedClasses.push(classes.Selected);
     tooltipText = 'This item has been chosen';
   } else {
@@ -77,25 +72,25 @@ const Signupable = ({signupable, added, preview, signupChanged}) => {
   const signupClicked = (event) => {
     event.preventDefault();
     setProcessing(true);
-    signupChanged(signupable.identifier, 'request', changeProcessed, changeFailed);
+    signupChanged(item.signupIdentifier, 'request', changeProcessed, changeFailed);
   }
 
   const neverMindClicked = (event) => {
     event.preventDefault();
     setProcessing(true);
-    signupChanged(signupable.identifier, 'never_mind', changeProcessed, changeFailed);
+    signupChanged(item.signupIdentifier, 'never_mind', changeProcessed, changeFailed);
   }
 
   let signupAction = (
     <div className={`form-check`}>
       <input type={'checkbox'}
              aria-label={'Sign up'}
-             id={`signupAction_${signupable.identifier}`}
+             id={`signupAction_${item.identifier}`}
              className={'form-check-input'}
              onClick={signupClicked}
       />
       <label className={`form-check-label ${classes.SignupLink}`}
-             htmlFor={`signupAction_${signupable.identifier}`}
+             htmlFor={`signupAction_${item.identifier}`}
       >
         Sign up
       </label>
@@ -106,13 +101,14 @@ const Signupable = ({signupable, added, preview, signupChanged}) => {
     <div className={`form-check`}>
       <input type={'checkbox'}
              aria-label={'Back out'}
-             id={`neverMindAction_${signupable.identifier}`}
+             id={`neverMindAction_${item.identifier}`}
              className={'form-check-input'}
-             checked={true}
+             defaultChecked={true}
              onClick={neverMindClicked}
+             disabled={!!item.addedToCart}
       />
       <label className={`form-check-label ${classes.SignupLink}`}
-             htmlFor={`neverMindAction_${signupable.identifier}}`}
+             htmlFor={`neverMindAction_${item.identifier}}`}
       >
         Sign up
       </label>
@@ -123,13 +119,14 @@ const Signupable = ({signupable, added, preview, signupChanged}) => {
     <div className={`form-check`}>
       <input type={'checkbox'}
              aria-label={'Paid'}
-             id={`paidDisplay_${signupable.identifier}`}
+             id={`paidDisplay_${item.identifier}`}
              className={'form-check-input'}
-             checked={true}
+             defaultChecked={true}
+             readOnly={true}
              disabled={true}
       />
       <label className={`form-check-label ${classes.SignupLink}`}
-             htmlFor={`paidDisplay_${signupable.identifier}}`}
+             htmlFor={`paidDisplay_${item.identifier}}`}
       >
         Sign up
       </label>
@@ -137,36 +134,18 @@ const Signupable = ({signupable, added, preview, signupChanged}) => {
   );
 
   let addLink = '';
-  if (signupable.status === 'requested') {
+  if (item.signupStatus === 'requested' && !item.addedToCart) {
     addLink = (
       <a href={'#'}
          onClick={addClickedHandler}
-         className={`${classes.AddLink} d-block align-self-stretch pe-2`}>
+         className={`${classes.AddLink} d-block ms-auto my-auto pe-2`}>
         <i className={`bi-cart-plus-fill`} />
         <span className={'visually-hidden'}>Add</span>
       </a>
     )
   }
 
-  let actionBlock = (
-    <div className={'spinner-border text-secondary ms-auto align-self-start me-3'} role={'status'}>
-      <span className={'visually-hidden'}>Processing...</span>
-    </div>
-  );
-
-  if (!processing) {
-    const alignClass = signupable.status === 'requested' ? 'justify-content-start' : 'justify-content-between';
-    actionBlock = (
-      <div className={`ms-auto text-end pt-2 pe-2 d-flex flex-column ${alignClass}`}>
-        {signupable.status === 'initial' && signupAction}
-        {signupable.status === 'requested' && neverMindAction}
-        {signupable.status === 'paid' && paidDisplay}
-        {addLink}
-      </div>
-    );
-  }
-
-  if (signupable.status === 'paid') {
+  if (item.signupStatus === 'paid') {
     tooltipText = `You've paid for this, so signing up cannot be undone.`;
   }
 
@@ -182,8 +161,20 @@ const Signupable = ({signupable, added, preview, signupChanged}) => {
           <p className={classes.Price}>
             ${item.value}
           </p>
+          {!processing && (
+            <div className={'pb-2'}>
+              {item.signupStatus === 'initial' && signupAction}
+              {item.signupStatus === 'requested' && neverMindAction}
+              {item.signupStatus === 'paid' && paidDisplay}
+            </div>
+          )}
+          {processing && (
+            <div className={'spinner-border text-secondary mb-2'} role={'status'}>
+              <span className={'visually-hidden'}>Processing...</span>
+            </div>
+          )}
         </div>
-        {actionBlock}
+        {addLink}
       </div>
     </ErrorBoundary>
   );

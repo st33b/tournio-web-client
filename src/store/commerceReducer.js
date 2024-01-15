@@ -51,10 +51,9 @@ export const commerceReducer = (state, action) => {
         tournament: {...action.tournament},
       });
     case actionTypes.SIGNUPABLE_STATUS_UPDATED:
-      const signupIdentifier = action.identifier;
-      const index = state.signupables.findIndex(s => s.identifier === signupIdentifier);
+      const index = state.signupables.findIndex(s => s.signupIdentifier === action.identifier);
       const updatedSignupables = [...state.signupables];
-      updatedSignupables[index].status = action.status;
+      updatedSignupables[index].signupStatus = action.status;
       return updateObject(state, {
         signupables: updatedSignupables,
       });
