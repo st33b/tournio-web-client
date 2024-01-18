@@ -678,10 +678,6 @@ const BowlerPage = () => {
             {bowler.doubles_partner && <dd className={'col'}>{bowler.doubles_partner.full_name}</dd>}
             {!bowler.doubles_partner && <dd className={'col'}>n/a</dd>}
           </div>
-          <div className={'row'}>
-            <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Fees Paid?</dt>
-            <dd className={'col'}>{bowler.paid ? 'Yes' : 'No'}</dd>
-          </div>
         </dl>
       </Card.Body>
     </Card>
