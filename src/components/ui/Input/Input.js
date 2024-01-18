@@ -57,6 +57,7 @@ const Input = (props) => {
         className={`form-control`}
         maxLength="100"
         {...props.elementConfig}
+        value={props.elementConfig.value || ''}
         onChange={props.changed}
         onBlur={!!props.blurred ? props.blurred : () => {}}
         required={required}

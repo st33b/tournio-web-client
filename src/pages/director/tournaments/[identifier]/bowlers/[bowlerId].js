@@ -493,7 +493,6 @@ const BowlerPage = () => {
     const newBowler = {...bowler};
     newBowler.ledger_entries = bowler.ledger_entries.concat(newEntry);
     newBowler.amount_due = 0;
-    setBowler(newBowler);
     onBowlerUpdate(newBowler);
   }
 
