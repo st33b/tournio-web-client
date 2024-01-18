@@ -21,6 +21,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       basicItem,
     ],
     availableApparelItems: [],
+    signupables: [],
   };
 
   describe('an unknown kind of item', () => {
@@ -86,7 +87,8 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       const myPreviousState = {
         ...previousState,
         cart: [myItem],
-        availableItems: [
+        availableItems: [],
+        signupables: [
           myItem,
         ],
       }
