@@ -4,7 +4,7 @@ const TournioDocument = () => (
   <Html>
     <Head>
       <link
-        href={'https://fonts.googleapis.com/css2?family=Mulish&display=swap'}
+        href={'https://fonts.googleapis.com/css2?family=League+Spartan&display=swap'}
         rel={'stylesheet'}/>
       <link
         href={'https://fonts.googleapis.com/css2?family=Lora&display=swap'}
