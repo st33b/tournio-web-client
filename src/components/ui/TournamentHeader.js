@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const TournamentHeader = ({tournament}) => (
   <>
-    <div className={`display-2 text-center mt-3`}>
+    <div className={`display-4`}>
       <Link className={'icon-link'}
             href={`/tournaments/${tournament.identifier}`}>
         <i className={'bi bi-arrow-left'} aria-hidden={true}/>
@@ -11,7 +11,14 @@ const TournamentHeader = ({tournament}) => (
         </span>
       </Link>
       <span className={'ps-3'}>
-      {tournament.abbreviation} {tournament.year}
+        <span className={'d-none d-md-inline'}>
+          {tournament.name}
+        </span>
+        <span className={'d-md-none'}>
+          {tournament.abbreviation}
+        </span>
+        {' '}
+        {tournament.year}
       </span>
     </div>
 
