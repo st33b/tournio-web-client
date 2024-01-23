@@ -148,13 +148,13 @@ const FreeEntryForm = () => {
   }
 
   return (
-    <div className={`${classes.FreeEntryForm} pt-2`}>
+    <div className={`${classes.FreeEntryForm}`}>
       {appliedCode}
       {declareLink}
       {serverMessage}
       {errorMessage}
       <form onSubmit={formHandler} className={`${formClass} ${classes.CodeForm}`}>
-        <div className={'input-group mt-3'}>
+        <div className={'input-group'}>
           <div className={`form-floating`}>
             <input type={'text'}
                    name={'free_entry_code'}
@@ -166,22 +166,13 @@ const FreeEntryForm = () => {
                    onChange={(event) => inputChangedHandler(event)} />
             <label className={`${classes.FormLabel} col-form-label`}
                    htmlFor={'free_entry_code'}>
-              What&apos;s your free entry code?
+              Free entry code
             </label>
           </div>
           <button className={'btn btn-primary'} type={'submit'} disabled={!freeEntryForm.valid}>
             Submit
           </button>
         </div>
-
-        {/*<div className={classes.ActionRow}>*/}
-        {/*  <button className={'btn btn-outline-secondary me-3'} type={'button'} onClick={cancelClicked}>*/}
-        {/*    Cancel*/}
-        {/*  </button>*/}
-        {/*  <button className={'btn btn-primary'} type={'submit'} disabled={!freeEntryForm.valid}>*/}
-        {/*    Submit*/}
-        {/*  </button>*/}
-        {/*</div>*/}
       </form>
     </div>
   );

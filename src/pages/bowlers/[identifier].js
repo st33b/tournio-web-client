@@ -123,17 +123,30 @@ const Page = () => {
       });
   }
 
+  let displayFreeEntryForm = true;
+  if (!commerce.freeEntry || commerce.freeEntry.uniqueCode) {
+    displayFreeEntryForm = false;
+  }
+  if (commerce.purchasedItems.filter(item => {
+    item.purchasableItem.determination === 'entry_fee'
+  }).length > 0) {
+    displayFreeEntryForm = false;
+  }
+
   return (
     <div>
-      <Row className={``}>
-        <Col md={{offset: 2, span: 8}} xl={{offset: 3, span: 6}} className={'ps-2'}>
+      <Row>
+        <Col>
           <TournamentHeader tournament={tournament}/>
-
-          <h3 className={`text-center`}>
+        </Col>
+      </Row>
+      <Row>
+        <Col >
+          <h3 className={``}>
             Bowler: <strong>{bowler.fullName}</strong>
           </h3>
           {team && (
-            <h4 className={`text-center`}>
+            <h4 className={``}>
               Team:&nbsp;
               <strong>
                 <Link href={{
@@ -148,7 +161,13 @@ const Page = () => {
               </strong>
             </h4>
           )}
-          {!bowler.freeEntry && <FreeEntryForm/>}
+        </Col>
+        <Col md={{offset: 0, span: 5}} lg={{offset: 0, span: 4}}>
+          <div className={'d-flex flex-column h-100 justify-content-center'}>
+            {displayFreeEntryForm && <FreeEntryForm/>}
+            {/* maybe show the free entry code here if they have one? */}
+            {/* paid items go in here */}
+          </div>
         </Col>
       </Row>
 
