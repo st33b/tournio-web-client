@@ -53,11 +53,14 @@ const Signupable = ({item, added, preview, signupChanged}) => {
   if (item.determination === 'event') {
     attachedClasses.push('border-primary', 'border-3');
   }
-  let tooltipText = `Tap or click the icon link to add this item's fee to your bag`;
-  if (item.signupStatus === 'paid' || item.addedToCart) {
+  let tooltipText = `Tap or click the icon link to add this item's fee to your cart`;
+  if (item.disabled) {
+    attachedClasses.push(classes.Selected);
+    tooltipText = 'You have signed up for this item in another division';
+  } else if (item.signupStatus === 'paid' || item.addedToCart) {
     attachedClasses.push(classes.Selected);
     tooltipText = 'This item has been chosen';
-  } else {
+  }  else {
     attachedClasses.push(classes.NotSelected);
   }
 
@@ -133,6 +136,24 @@ const Signupable = ({item, added, preview, signupChanged}) => {
     </div>
   );
 
+  const disabledDisplay = (
+    <div className={`form-check`}>
+      <input type={'checkbox'}
+             aria-label={'Another item in this division was requested'}
+             id={`disabledDisplay_${item.identifier}`}
+             className={'form-check-input'}
+             defaultChecked={false}
+             readOnly={true}
+             disabled={true}
+      />
+      <label className={`form-check-label ${classes.SignupLink}`}
+             htmlFor={`disabledDisplay_${item.identifier}}`}
+      >
+        Sign up
+      </label>
+    </div>
+  );
+
   let addLink = '';
   if (item.signupStatus === 'requested' && !item.addedToCart) {
     addLink = (
@@ -163,8 +184,9 @@ const Signupable = ({item, added, preview, signupChanged}) => {
           </p>
           {!processing && (
             <div className={'pb-2'}>
-              {item.signupStatus === 'initial' && signupAction}
-              {item.signupStatus === 'requested' && neverMindAction}
+              {item.disabled && disabledDisplay}
+              {!item.disabled && item.signupStatus === 'initial' && signupAction}
+              {!item.disabled && item.signupStatus === 'requested' && neverMindAction}
               {item.signupStatus === 'paid' && paidDisplay}
             </div>
           )}

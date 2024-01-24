@@ -54,6 +54,16 @@ export const commerceReducer = (state, action) => {
       const index = state.signupables.findIndex(s => s.signupIdentifier === action.identifier);
       const updatedSignupables = [...state.signupables];
       updatedSignupables[index].signupStatus = action.status;
+
+      // Is this a division item? If so, we need to disable signing up for the sibling items
+      if (updatedSignupables[index].refinement === 'division') {
+        for (let i = 0; i < updatedSignupables.length; i++) {
+          if (i !== index && updatedSignupables[i].name === updatedSignupables[index].name) {
+            updatedSignupables[i].disabled = action.status === 'requested';
+          }
+        }
+      }
+
       return updateObject(state, {
         signupables: updatedSignupables,
       });
