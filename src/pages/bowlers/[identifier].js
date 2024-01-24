@@ -169,8 +169,6 @@ const Page = () => {
         </Col>
       </Row>
 
-      <hr/>
-
       <SuccessAlert className={``}
                     message={state.successMessage}
                     onClose={clearSuccessMessage}/>

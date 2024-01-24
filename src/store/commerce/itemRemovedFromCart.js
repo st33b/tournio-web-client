@@ -90,9 +90,11 @@ const handleAsBowlingItem = (previousState, itemToRemove) => {
         handleAsDivisionItem(
           handleAsSingleton(
             previousState,
-            itemToRemove
+            itemToRemove,
+            'signupables'
           ),
-          itemToRemove
+          itemToRemove,
+          'signupables',
         ),
         itemToRemove
       ),
@@ -137,7 +139,7 @@ const handleAsProductItem = (previousState, itemToRemove) => {
   });
 }
 
-const handleAsSingleton = (previousState, itemToRemove) => {
+const handleAsSingleton = (previousState, itemToRemove, itemSourceKey = 'availableItems') => {
   const updatedItem = {
     ...itemToRemove,
     quantity: 0,
@@ -146,14 +148,18 @@ const handleAsSingleton = (previousState, itemToRemove) => {
   const updatedCart = previousState.cart.filter(({identifier}) => {
     return identifier !== itemToRemove.identifier
   });
-  const updatedAvailableItems = [...previousState.availableItems];
-  const itemIndex = updatedAvailableItems.findIndex(({identifier}) => identifier === itemToRemove.identifier);
-  updatedAvailableItems[itemIndex] = updatedItem;
 
-  return updateObject(previousState, {
+  const source = previousState[itemSourceKey];
+  const updatedSource = [...source];
+  const itemIndex = updatedSource.findIndex(({identifier}) => identifier === itemToRemove.identifier);
+  updatedSource[itemIndex] = updatedItem;
+
+  const stateChanges = {
     cart: updatedCart,
-    availableItems: updatedAvailableItems,
-  });
+  };
+  stateChanges[itemSourceKey] = updatedSource;
+
+  return updateObject(previousState, stateChanges);
 }
 
 const handleAsPossiblyMany = (previousState, itemToRemove) => {
@@ -185,13 +191,14 @@ const handleAsPossiblyMany = (previousState, itemToRemove) => {
   })
 }
 
-const handleAsDivisionItem = (previousState, itemToRemove) => {
-  const updatedAvailableItems = [...previousState.availableItems];
+const handleAsDivisionItem = (previousState, itemToRemove, itemSourceKey = 'availableItems') => {
+  const source = previousState[itemSourceKey];
+  const updatedSource = [...source];
   if (itemToRemove.refinement !== 'division') {
     return previousState;
   }
 
-  updatedAvailableItems.forEach((item, index) => {
+  updatedSource.forEach((item, index) => {
     // skip it if we're looking in the mirror
     // not technically necessary, but nice to call out, I guess?
     if (item.identifier === itemToRemove.identifier) {
@@ -209,13 +216,13 @@ const handleAsDivisionItem = (previousState, itemToRemove) => {
     // Because we differentiate between Division things based on the name.
     // Seems kinda fragile, but it works for now.
     if (item.name === itemToRemove.name) {
-      updatedAvailableItems[index].addedToCart = false;
+      updatedSource[index].addedToCart = false;
     }
   });
+  const stateUpdates = {};
+  stateUpdates[itemSourceKey] = updatedSource;
 
-  return updateObject(previousState, {
-    availableItems: updatedAvailableItems,
-  });
+  return updateObject(previousState, stateUpdates);
 }
 
 const tryRemovingBundleDiscount = (previousState, removedItem) => {

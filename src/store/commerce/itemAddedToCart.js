@@ -7,7 +7,7 @@
 //     -> refinement
 
 //
-// these items cannot be added to the cart; they're automatic
+// ledger items cannot be added to/removed from the cart; they're automatic
 //
 // ledger
 //   -> entry_fee
