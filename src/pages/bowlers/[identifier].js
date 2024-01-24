@@ -124,12 +124,10 @@ const Page = () => {
   }
 
   let displayFreeEntryForm = true;
-  if (!commerce.freeEntry || commerce.freeEntry.uniqueCode) {
+  if (commerce.freeEntry && commerce.freeEntry.uniqueCode) {
     displayFreeEntryForm = false;
   }
-  if (commerce.purchasedItems.filter(item => {
-    item.purchasableItem.determination === 'entry_fee'
-  }).length > 0) {
+  if (commerce.purchasedItems.some(item => item.purchasableItem.determination === 'entry_fee')) {
     displayFreeEntryForm = false;
   }
 
