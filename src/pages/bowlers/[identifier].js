@@ -91,7 +91,7 @@ const Page = () => {
     }));
   }
 
-  const {bowler, team, tournament, commerceUpdated} = data;
+  const {bowler, team, tournament} = data;
 
   const signupableUpdated = (identifier, event, onSuccess = () => {}, onFailure = () => {}) => {
     const requestConfig = {
@@ -138,7 +138,7 @@ const Page = () => {
           <TournamentHeader tournament={tournament}/>
         </Col>
       </Row>
-      <Row>
+      <Row className={`pb-2`}>
         <Col >
           <h3 className={``}>
             Bowler: <strong>{bowler.fullName}</strong>

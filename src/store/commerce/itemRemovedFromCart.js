@@ -51,7 +51,6 @@
 //        -> team
 
 import {updateObject} from "../../utils";
-import {id} from "date-fns/locale";
 
 export const itemRemovedFromCart = (currentState, itemToRemove) => {
   switch(itemToRemove.category) {
@@ -101,7 +100,7 @@ const handleAsBowlingItem = (previousState, itemToRemove) => {
       itemToRemove
     );
   }
-  return handleAsPossiblyMany(previousState, itemToRemove);
+  return handleAsPossiblyMany(previousState, itemToRemove, 'signupables');
 }
 
 const handleAsSanctionItem = (previousState, itemToRemove) => {
@@ -158,11 +157,10 @@ const handleAsSingleton = (previousState, itemToRemove, itemSourceKey = 'availab
     cart: updatedCart,
   };
   stateChanges[itemSourceKey] = updatedSource;
-
   return updateObject(previousState, stateChanges);
 }
 
-const handleAsPossiblyMany = (previousState, itemToRemove) => {
+const handleAsPossiblyMany = (previousState, itemToRemove, itemSourceKey = 'availableItems') => {
   const lastOneStanding = itemToRemove.quantity === 1;
   const updatedItem = {
     ...itemToRemove,
@@ -181,14 +179,16 @@ const handleAsPossiblyMany = (previousState, itemToRemove) => {
     updatedCart[itemIndex] = updatedItem;
   }
 
-  const updatedAvailableItems = [...previousState.availableItems];
-  const itemIndex = updatedAvailableItems.findIndex(({identifier}) => identifier === itemToRemove.identifier);
-  updatedAvailableItems[itemIndex] = updatedItem;
+  const source = previousState[itemSourceKey];
+  const updatedSource = [...source];
+  const itemIndex = updatedSource.findIndex(({identifier}) => identifier === itemToRemove.identifier);
+  updatedSource[itemIndex] = updatedItem;
 
-  return updateObject(previousState, {
+  const stateChanges = {
     cart: updatedCart,
-    availableItems: updatedAvailableItems,
-  })
+  };
+  stateChanges[itemSourceKey] = updatedSource;
+  return updateObject(previousState, stateChanges);
 }
 
 const handleAsDivisionItem = (previousState, itemToRemove, itemSourceKey = 'availableItems') => {

@@ -3,7 +3,6 @@ import {useCommerceContext} from "../../../store/CommerceContext";
 import Item from "./Item/Item";
 
 import classes from './AvailableItems.module.scss';
-import {devConsoleLog} from "../../../utils";
 import Signupable from "./Signupable/Signupable";
 
 const AvailableItems = ({itemAddedToCart, signupChanged}) => {
@@ -84,7 +83,6 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
     sanctionItems.length) > 0;
 
   const anyItemsAtAll = anyBowlingExtras || anyOtherExtras;
-  devConsoleLog("Anything to show?", anyItemsAtAll);
 
   let largeWidth = 12;
   let largeClass = `col-lg-7';`
@@ -166,9 +164,14 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
                 {multiUseItems.length > 0 && (
                   <Col xs={12} className={``}>
                     {multiUseItems.map((item) => (
-                      <Item key={item.identifier}
-                            item={item}
-                            added={itemAddedToCart}/>
+                      <Signupable key={item.identifier}
+                                  item={item}
+                                  added={itemAddedToCart}
+                                  signupChanged={signupChanged}
+                      />
+                      // <Item key={item.identifier}
+                      //       item={item}
+                      //       added={itemAddedToCart}/>
                     ))}
                   </Col>
                 )}

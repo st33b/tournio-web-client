@@ -55,7 +55,6 @@
 
 import {devConsoleLog, updateObject} from "../../utils";
 import {compareAsc} from "date-fns";
-import availableItems from "../../components/Commerce/AvailableItems/AvailableItems";
 
 export const itemAddedToCart = (currentState, itemToAdd, sizeIdentifier = null) => {
   switch(itemToAdd.category) {
@@ -100,7 +99,7 @@ const handleAsBowlingItem = (previousState, itemToAdd) => {
       itemToAdd
     );
   }
-  return handleAsPossiblyMany(previousState, itemToAdd);
+  return handleAsPossiblyMany(previousState, itemToAdd, 'signupables');
 }
 
 const handleAsSanctionItem = (previousState, itemToAdd) => {
@@ -190,7 +189,7 @@ const handleAsRaffle = (previousState, itemToAdd) => {
   return handleAsPossiblyMany(previousState, itemToAdd);
 }
 
-const handleAsPossiblyMany = (previousState, itemToAdd) => {
+const handleAsPossiblyMany = (previousState, itemToAdd, itemSourceKey = 'availableItems') => {
   const newItemIdentifier = itemToAdd.identifier;
   const cartItemIndex = previousState.cart.findIndex(({identifier}) => identifier === newItemIdentifier);
   const prevQuantity = cartItemIndex >= 0 ? previousState.cart[cartItemIndex].quantity : 0;
@@ -201,20 +200,22 @@ const handleAsPossiblyMany = (previousState, itemToAdd) => {
   });
 
   let updatedCart;
-  const updatedAvailableItems = [...previousState.availableItems];
+  const source = previousState[itemSourceKey];
+  const updatedSource = [...source];
   if (newQuantity === 1) {
     updatedCart = previousState.cart.concat(addedItem);
-    const availableItemIndex = updatedAvailableItems.findIndex(({identifier}) => identifier === addedItem.identifier);
-    updatedAvailableItems[availableItemIndex] = addedItem;
+    const sourceItemIndex = updatedSource.findIndex(({identifier}) => identifier === addedItem.identifier);
+    updatedSource[sourceItemIndex] = addedItem;
   } else {
     updatedCart = [...previousState.cart];
     updatedCart[cartItemIndex] = addedItem;
   }
 
-  return updateObject(previousState, {
+  const stateChanges = {
     cart: updatedCart,
-    availableItems: updatedAvailableItems,
-  })
+  };
+  stateChanges[itemSourceKey] = updatedSource;
+  return updateObject(previousState, stateChanges);
 }
 
 const handleAsSingleton = (previousState, itemToAdd, itemSourceKey = 'availableItems') => {
