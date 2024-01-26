@@ -48,6 +48,8 @@ const Page = () => {
     }
   }
 
+  const {loading, data, commerceUpdated} = useBowlerCommerce(identifier, onFetchSuccess, onFetchFailure);
+
   useEffect(() => {
     const updatedState = {...state};
     switch (success) {
@@ -56,6 +58,7 @@ const Page = () => {
         break;
       case '2':
         updatedState.successMessage = 'Your purchase is complete.';
+        commerceUpdated();
         break;
       default:
         break;
@@ -68,8 +71,6 @@ const Page = () => {
 
     setState(updateObject(state, updatedState));
   }, [success, error]);
-
-  const {loading, data} = useBowlerCommerce(identifier, onFetchSuccess, onFetchFailure);
 
   if (loading) {
     return <LoadingMessage message={'One moment, please...'}/>;

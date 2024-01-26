@@ -1,7 +1,6 @@
 import {useState} from "react";
 import classes from "./Signupable.module.scss";
 import ErrorBoundary from "../../../common/ErrorBoundary";
-import {signupableStatusUpdated} from "../../../../store/actions/registrationActions";
 
 const Signupable = ({item, added, preview, signupChanged}) => {
   const [processing, setProcessing] = useState(false);
@@ -54,7 +53,7 @@ const Signupable = ({item, added, preview, signupChanged}) => {
     attachedClasses.push('border-primary', 'border-3');
   }
   let tooltipText = `Tap or click the icon link to add this item's fee to your cart`;
-  if (item.disabled) {
+  if (item.signupStatus === 'inactive') {
     attachedClasses.push(classes.Selected);
     tooltipText = 'You have signed up for this item in another division';
   } else if (item.signupStatus === 'paid' || item.addedToCart) {
@@ -183,12 +182,14 @@ const Signupable = ({item, added, preview, signupChanged}) => {
             ${item.value}
           </p>
           {!processing && (
-            <div className={'pb-2'}>
-              {item.disabled && disabledDisplay}
-              {!item.disabled && item.signupStatus === 'initial' && signupAction}
-              {!item.disabled && item.signupStatus === 'requested' && neverMindAction}
-              {item.signupStatus === 'paid' && paidDisplay}
-            </div>
+            item.enabled && (
+                <div className={'pb-2'}>
+                  {item.signupStatus === 'initial' && signupAction}
+                  {item.signupStatus === 'requested' && neverMindAction}
+                  {item.signupStatus === 'paid' && paidDisplay}
+                  {item.signupStatus === 'inactive' && disabledDisplay}
+                </div>
+              )
           )}
           {processing && (
             <div className={'spinner-border text-secondary mb-2'} role={'status'}>
