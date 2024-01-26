@@ -1,5 +1,5 @@
 .Item {
-  border: 1px solid var(--tournio-gray-500);
+  border: 1px dashed var(--tournio-gray-400);
   border-radius: 8px;
 
   p {
@@ -38,7 +38,8 @@
 }
 
 .NotSelected:hover {
-  background-color: var(--tournio-gray-200);
+  border-color: var(--tournio-gray-600);
+  border-style: solid;
 }
 
 [data-bs-theme="dark"] {
