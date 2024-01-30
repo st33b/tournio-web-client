@@ -52,22 +52,46 @@ const Signupable = ({item, added, preview, signupChanged}) => {
   if (item.determination === 'event') {
     attachedClasses.push('border-primary', 'border-3');
   }
-  let tooltipText = `Tap or click the icon link to add this item's fee to your cart`;
-  if (item.signupStatus === 'inactive') {
-    attachedClasses.push(classes.Selected);
-    tooltipText = 'You have signed up for this item in another division';
-  } else if (item.signupStatus === 'paid' || item.addedToCart) {
-    attachedClasses.push(classes.Selected);
-    tooltipText = 'This item has been chosen';
-  }  else {
-    attachedClasses.push(classes.NotSelected);
+
+  let tooltipText;
+  switch (item.signupStatus) {
+    case 'initial':
+      tooltipText = 'You may sign up for this.';
+      break;
+    case 'paid':
+      tooltipText = `You've paid for this, so signing up cannot be undone.`;
+      break;
+    case 'inactive':
+      attachedClasses.push(classes.Selected);
+      tooltipText = 'You have signed up for this item in another division.';
+      break;
+    case 'requested':
+      tooltipText = `Tap or click the icon link to add this item's fee to your cart.`;
+      if (item.determination === 'multi_use') {
+        if (item.quantity > 0) {
+          tooltipText = 'This item is in your cart.';
+          attachedClasses.push(classes.NotSelected);
+        }
+      } else {
+        if (item.addedToCart) {
+          tooltipText = 'This item is in your cart.';
+          attachedClasses.push(classes.Selected);
+        } else {
+          attachedClasses.push(classes.NotSelected);
+        }
+      }
+      break;
+    default:
+      tooltipText = '?';
+      break;
   }
+
 
   const changeProcessed = () => {
     setProcessing(false);
   }
 
-  const changeFailed = (error) => {
+  const changeFailed = (_) => {
     setProcessing(false);
   }
 
@@ -107,7 +131,7 @@ const Signupable = ({item, added, preview, signupChanged}) => {
              className={'form-check-input'}
              defaultChecked={true}
              onClick={neverMindClicked}
-             disabled={!!item.addedToCart}
+             disabled={!!item.addedToCart || item.quantity > 0}
       />
       <label className={`form-check-label ${classes.SignupLink}`}
              htmlFor={`neverMindAction_${item.identifier}}`}
@@ -154,7 +178,9 @@ const Signupable = ({item, added, preview, signupChanged}) => {
   );
 
   let addLink = '';
-  if (item.signupStatus === 'requested' && !item.addedToCart) {
+  const addLinkEnabled = item.signupStatus === 'requested' && !item.addedToCart ||
+    item.determination === 'multi_use' && ['requested', 'paid'].includes(item.signupStatus);
+  if (addLinkEnabled) {
     addLink = (
       <a href={'#'}
          onClick={addClickedHandler}
@@ -163,10 +189,6 @@ const Signupable = ({item, added, preview, signupChanged}) => {
         <span className={'visually-hidden'}>Add</span>
       </a>
     )
-  }
-
-  if (item.signupStatus === 'paid') {
-    tooltipText = `You've paid for this, so signing up cannot be undone.`;
   }
 
   return (

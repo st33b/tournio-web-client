@@ -115,9 +115,6 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
                                 added={itemAddedToCart}
                                 signupChanged={signupChanged}
                                 />
-                    // <Item key={item.identifier}
-                    //       item={item}
-                    //       added={itemAddedToCart}/>
                   ))}
                 </Col>
               </div>
@@ -137,9 +134,6 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
                                   added={itemAddedToCart}
                                   signupChanged={signupChanged}
                       />
-                      // <Item key={item.identifier}
-                      //       item={item}
-                      //       added={itemAddedToCart}/>
                     ))}
                     <hr/>
                   </Col>
@@ -153,9 +147,6 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
                                   added={itemAddedToCart}
                                   signupChanged={signupChanged}
                       />
-                      // <Item key={item.identifier}
-                      //       item={item}
-                      //       added={itemAddedToCart}/>
                     ))}
                     <hr/>
                   </Col>
@@ -169,9 +160,6 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
                                   added={itemAddedToCart}
                                   signupChanged={signupChanged}
                       />
-                      // <Item key={item.identifier}
-                      //       item={item}
-                      //       added={itemAddedToCart}/>
                     ))}
                   </Col>
                 )}
