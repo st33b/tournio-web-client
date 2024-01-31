@@ -7,8 +7,6 @@ import SuccessAlert from "../../../../components/common/SuccessAlert";
 import UrlShare from "../../../../components/ui/UrlShare/UrlShare";
 import {updateObject, useTeam, useTournament} from "../../../../utils";
 import ErrorAlert from "../../../../components/common/ErrorAlert";
-import RegisteredBowler from "../../../../components/Registration/RegisteredBowler/RegisteredBowler";
-import AddBowler from "../../../../components/Registration/AddBowler/AddBowler";
 import Link from "next/link";
 
 const Page = () => {
@@ -95,7 +93,8 @@ const Page = () => {
           <span className={'d-block'}>
             {bowler.full_name}
           </span>
-          <Link className={`ms-auto`}
+          <hr className={'flex-grow-1 mx-3 d-none d-sm-block'} />
+          <Link className={`ms-auto ms-sm-0`}
                 title={'Pay entry fees, choose extras'}
                 href={`/bowlers/${bowler.identifier}`}>
             Events &amp; Fees
@@ -118,6 +117,7 @@ const Page = () => {
                   }
                 }}
           >
+            <span className={'bi bi-plus pe-1'} aria-hidden={true}/>
             Add Bowler
           </Link>
         </li>
@@ -127,32 +127,30 @@ const Page = () => {
   }
 
   return (
-    <div className={`col-md-8 offset-md-2`}>
+    <div className={`col-lg-8 offset-lg-2`}>
       <TournamentHeader tournament={tournament}/>
 
       {state.successMessage && <SuccessAlert message={state.successMessage} onClose={dropQueryParams}
       />}
 
-      <h3 className={'text-center'}>
+      <h3 className={''}>
         Team: <strong>{team.name}</strong>
       </h3>
 
       {tournamentType === 'igbo_multi_shift' && (
-        <h5 className={'text-center'}>
+        <h5 className={''}>
           Shift Preference: {team.shifts.map(({name}) => name).join(', ')}
         </h5>
       )}
       {tournamentType === 'igbo_mix_and_match' && (
-        <h5 className={'text-center'}>
+        <h5 className={''}>
           Shift Preferences: {team.shifts.map(({name}) => name).join(', ')}
         </h5>
       )}
 
       <UrlShare url={shareUrl}/>
 
-      <hr/>
-
-      <ul className={'list-group-flush ps-0'}>
+      <ul className={'list-group-flush ps-0 teamRoster'}>
         {contentByPosition}
       </ul>
 

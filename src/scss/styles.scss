@@ -61,6 +61,14 @@ html {
   padding-left: 1rem;
 }
 
+.teamRoster {
+  font-size: 110%;
+
+  hr {
+    border-style: dotted;
+  }
+}
+
 [data-bs-theme="dark"] .form-check-input {
   &:checked {
     background-color: var(--tournio-primary-moody);

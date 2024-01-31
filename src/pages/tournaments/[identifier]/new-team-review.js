@@ -49,12 +49,11 @@ const Page = () => {
     dispatch(newTeamEntryCompleted(teamData));
     setProcessing(false);
     router.push({
-      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/[chosen]',
+      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]',
       query: {
         identifier: identifier,
         teamIdentifier: teamData.identifier,
         success: 1,
-        chosen: bowlerPosition,
       }
     });
   }

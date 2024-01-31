@@ -149,11 +149,10 @@ const Page = () => {
               Team:&nbsp;
               <strong>
                 <Link href={{
-                  pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/[chosen]',
+                  pathname: '/tournaments/[identifier]/teams/[teamIdentifier]',
                   query: {
                     identifier: tournament.identifier,
                     teamIdentifier: team.identifier,
-                    chosen: bowler.position,
                   }}}>
                   {team.name}
                 </Link>

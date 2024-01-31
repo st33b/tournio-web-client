@@ -57,11 +57,10 @@ const Page = () => {
     dispatch(existingTeamBowlerSaved(team));
     setProcessing(false);
     router.push({
-      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/[chosen]',
+      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]',
       query: {
         identifier: identifier,
         teamIdentifier: teamIdentifier,
-        chosen: bowlerData.position,
         success: 2,
       }
     });
