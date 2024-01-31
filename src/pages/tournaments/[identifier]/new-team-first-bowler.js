@@ -17,7 +17,7 @@ const Page = () => {
 
   const [chosenPosition, choosePosition] = useState(1);
 
-  const {loading, tournament, error: tournamentError} = useTournament(identifier);
+  const {loading, tournament} = useTournament(identifier);
 
   // If new-team registrations aren't enabled, go back to the tournament home page
   useEffect(() => {

@@ -29,7 +29,7 @@ const Page = () => {
   }, [registration, teamIdentifier, position]);
 
   const {loading, team, error: fetchError } = useTeam(teamIdentifier);
-  const {loading: tournamentLoading, tournament, error: tournamentError} = useTournament(identifier);
+  const {tournament, error: tournamentError} = useTournament(identifier);
 
   if (!registration || !tournament) {
     return '';
