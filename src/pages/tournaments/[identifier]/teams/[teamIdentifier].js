@@ -86,7 +86,7 @@ const Page = () => {
     let content = '';
     if (bowler) {
       content = (
-        <li className={'list-group-item d-flex mb-3'} key={i}>
+        <li className={'list-group-item d-flex mb-4 mb-lg-2'} key={i}>
           <span className={'d-block pe-2'}>
             {bowler.position}.
           </span>
@@ -97,13 +97,13 @@ const Page = () => {
           <Link className={`ms-auto ms-sm-0`}
                 title={'Pay entry fees, choose extras'}
                 href={`/bowlers/${bowler.identifier}`}>
-            Events &amp; Fees
+            Fees &amp; Extras
           </Link>
         </li>
       );
     } else {
       content = (
-        <li className={'list-group-item d-flex mb-3'} key={i}>
+        <li className={'list-group-item d-flex mb-4 mb-lg-2'} key={i}>
           <span className={'d-block pe-2'}>
             {currentPosition}.
           </span>
