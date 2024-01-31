@@ -678,12 +678,13 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     <ErrorBoundary>
       <div className={classes.BowlerForm}>
 
+        {form}
+
         <p className={`${classes.RequiredLabel} text-md-center`}>
           <i className={`align-top bi-asterisk`}/>
           {' '}indicates a required field
         </p>
 
-        {form}
       </div>
     </ErrorBoundary>
   );

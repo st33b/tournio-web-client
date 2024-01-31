@@ -34,7 +34,7 @@ const PositionChooser = ({maxPosition=4, chosen, onChoose, disallowedPositions=[
     radios.push(
       <div key={`positionInput${currentPosition}`}
            title={disallowed ? 'This position is not available' : ''}
-           className={`mx-md-4 ${selected ? 'selected-radio-container' : ''}`}>
+           className={`me-sm-3 `}>
         <input type={'radio'}
                className={'btn-check'}
                name={'position'}
@@ -53,11 +53,11 @@ const PositionChooser = ({maxPosition=4, chosen, onChoose, disallowedPositions=[
   }
 
   return (
-    <div className={classes.PositionChooser}>
-      <h4 className={classes.Title}>
+    <div className={`${classes.PositionChooser} row mb-1`}>
+      <label className={`col-12 col-sm-5 text-sm-end pb-1 align-self-center`}>
         Position
-      </h4>
-      <div className={`d-flex justify-content-evenly justify-content-md-center`}>
+      </label>
+      <div className={`col d-flex justify-content-around justify-content-sm-start`}>
         {radios}
       </div>
     </div>

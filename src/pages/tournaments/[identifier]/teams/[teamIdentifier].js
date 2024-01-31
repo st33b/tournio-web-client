@@ -86,7 +86,7 @@ const Page = () => {
     let content = '';
     if (bowler) {
       content = (
-        <li className={'list-group-item d-flex mb-4 mb-lg-2'} key={i}>
+        <li className={'list-group-item d-flex mb-4'} key={i}>
           <span className={'d-block pe-2'}>
             {bowler.position}.
           </span>
@@ -103,7 +103,7 @@ const Page = () => {
       );
     } else {
       content = (
-        <li className={'list-group-item d-flex mb-4 mb-lg-2'} key={i}>
+        <li className={'list-group-item d-flex mb-4'} key={i}>
           <span className={'d-block pe-2'}>
             {currentPosition}.
           </span>
@@ -127,7 +127,7 @@ const Page = () => {
   }
 
   return (
-    <div className={`col-lg-8 offset-lg-2`}>
+    <div className={`col-lg-8 col-xl-6 offset-lg-2 offset-xl-3`}>
       <TournamentHeader tournament={tournament}/>
 
       {state.successMessage && <SuccessAlert message={state.successMessage} onClose={dropQueryParams}
