@@ -84,7 +84,7 @@ const Page = () => {
     <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
       <TournamentHeader tournament={tournament}/>
 
-      <h2 className={`text-center`}>
+      <h2 className={''}>
         Team:&nbsp;
         <strong>
           <Link href={{
@@ -92,27 +92,24 @@ const Page = () => {
             query: {
               identifier: identifier,
               teamIdentifier: team.identifier,
-            }}}>
+            }
+          }}>
             {team.name}
           </Link>
         </strong>
       </h2>
 
-      <hr />
+      <h3 className={``}>
+        Add a Bowler
+      </h3>
+
+      <hr/>
 
       <PositionChooser maxPosition={tournament.team_size}
                        chosen={chosenPosition}
                        onChoose={choosePosition}
                        disallowedPositions={unavailablePositions}
       />
-
-      <hr />
-
-      <h3 className={`text-center`}>
-        Add a Bowler
-      </h3>
-
-      <hr />
 
       <BowlerForm tournament={tournament}
                   bowlerData={previousBowlerData}
