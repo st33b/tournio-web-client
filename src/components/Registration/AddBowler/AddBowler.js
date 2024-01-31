@@ -5,7 +5,7 @@ const AddBowler = ({tournament, team, position}) => {
 
   return (
     <div className={classes.AddBowler}>
-      <Link className={'btn btn-lg btn-primary'}
+      <Link className={''}
          href={{
            pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/add-bowler',
            query: {
@@ -15,7 +15,7 @@ const AddBowler = ({tournament, team, position}) => {
            }
          }}
       >
-        Add Bowler Details
+        Add Bowler
       </Link>
     </div>
   );
