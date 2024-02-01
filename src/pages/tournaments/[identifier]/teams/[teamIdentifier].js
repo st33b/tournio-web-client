@@ -79,51 +79,54 @@ const Page = () => {
 
   const tournamentType = tournament.config_items.find(({key}) => key === 'tournament_type').value || 'igbo_standard';
 
-  const contentByPosition = Array(tournament.team_size);
+  const rows = Array(tournament.team_size);
   for (let i = 0; i < tournament.team_size; i++) {
     const currentPosition = i + 1;
     const bowler = team.bowlers.find(({position}) => position === currentPosition);
-    let content = '';
+    let row = '';
     if (bowler) {
-      content = (
-        <li className={'list-group-item d-flex mb-4'} key={i}>
-          <span className={'d-block pe-2'}>
+      row = (
+        <tr key={`row${i}`}>
+          <td>
             {bowler.position}.
-          </span>
-          <span className={'d-block'}>
+          </td>
+          <td>
             {bowler.full_name}
-          </span>
-          <hr className={'flex-grow-1 mx-3 d-none d-sm-block'} />
-          <Link className={`ms-auto ms-sm-0`}
-                title={'Pay entry fees, choose extras'}
-                href={`/bowlers/${bowler.identifier}`}>
-            Fees &amp; Extras
-          </Link>
-        </li>
+          </td>
+          <td>
+            <Link className={`ms-auto ms-sm-0`}
+                  title={'Pay entry fees, choose extras'}
+                  href={`/bowlers/${bowler.identifier}`}>
+              Fees&nbsp;&amp;&nbsp;Extras
+            </Link>
+          </td>
+        </tr>
       );
     } else {
-      content = (
-        <li className={'list-group-item d-flex mb-4'} key={i}>
-          <span className={'d-block pe-2'}>
+      row = (
+        <tr key={`row${i}`}>
+          <td>
             {currentPosition}.
-          </span>
-          <Link className={''}
-                href={{
-                  pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/add-bowler',
-                  query: {
-                    identifier: tournament.identifier,
-                    teamIdentifier: team.identifier,
-                    position: currentPosition,
-                  }
-                }}
-          >
-            <span className={'bi bi-plus pe-1'} aria-hidden={true}/>
-            Add Bowler
-          </Link>
-        </li>
-      )
+          </td>
+          <td colSpan={2}>
+            <Link className={''}
+                  href={{
+                    pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/add-bowler',
+                    query: {
+                      identifier: tournament.identifier,
+                      teamIdentifier: team.identifier,
+                      position: currentPosition,
+                    }
+                  }}
+            >
+              <span className={'bi bi-plus pe-1'} aria-hidden={true}/>
+              Add Bowler
+            </Link>
+          </td>
+        </tr>
+      );
     }
-    contentByPosition[i] = content;
+    rows[i] = row;
   }
 
   return (
@@ -148,11 +151,13 @@ const Page = () => {
         </h5>
       )}
 
-      <UrlShare url={shareUrl}/>
+      <table className={'teamRoster table table-responsive table-borderless'}>
+        <tbody>
+          {rows}
+        </tbody>
+      </table>
 
-      <ul className={'list-group-flush ps-0 teamRoster'}>
-        {contentByPosition}
-      </ul>
+      <UrlShare url={shareUrl}/>
 
     </div>
   );
