@@ -59,7 +59,7 @@ export const commerceReducer = (state, action) => {
       if (updatedSignupables[index].refinement === 'division') {
         for (let i = 0; i < updatedSignupables.length; i++) {
           if (i !== index && updatedSignupables[i].name === updatedSignupables[index].name) {
-            updatedSignupables[i].disabled = action.status === 'requested';
+            updatedSignupables[i].siblingSignedUp = action.status === 'requested';
           }
         }
       }
