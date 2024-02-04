@@ -20,6 +20,31 @@
     //margin-left: -0.5rem;
   }
 
+  .PurchasesTable {
+    width: 100%;
+
+    .SignedUp {
+      font-size: 120%;
+    }
+
+    .PaidAmount {
+      font-weight: bold;
+      font-size: 110%;
+    }
+    .AmountBox {
+      width: 20%;
+    }
+  }
+
+  .TotalsTable {
+    width: 100%;
+
+    .Amount {
+      width: 20%;
+      text-align: right;
+    }
+  }
+
   .PurchaseNote {
     display: block;
     font-style: italic;

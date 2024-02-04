@@ -194,3 +194,56 @@ export const useTournament = (onSuccess = () => {}) => {
     tournamentUpdatedQuietly,
   };
 }
+
+export const useModernTournament = (onSuccess = () => {}) => {
+  const router = useRouter();
+  const {identifier} = router.query;
+
+  const {loading, data: tournament, error, onDataUpdate: tournamentUpdated} = useDirectorApi({
+    uri: identifier ? `/tournaments/${identifier}?serializer=modern` : null,
+    onSuccess: onSuccess,
+  });
+
+  const tournamentUpdatedQuietly = (updatedTournament) => {
+    const mutateOptions = {
+      optimisticData: updatedTournament,
+      rollbackOnError: true,
+      populateCache: true,
+    }
+    tournamentUpdated(updatedTournament, mutateOptions);
+  }
+
+  return {
+    loading,
+    error,
+    tournament,
+    tournamentUpdated,
+    tournamentUpdatedQuietly,
+  };
+}
+
+export const useBowler = (onSuccess = () => {}) => {
+  const router = useRouter();
+  const {bowlerId} = router.query;
+  const {loading, data: bowler, error, onDataUpdate: bowlerUpdated} = useDirectorApi({
+    uri: bowlerId ? `/bowlers/${bowlerId}?serializer=modern` : null,
+    onSuccess: onSuccess,
+  });
+
+  const bowlerUpdatedQuietly = (updatedBowler) => {
+    const mutateOptions = {
+      optimisticData: updatedBowler,
+      rollbackOnError: true,
+      populateCache: true,
+    }
+    bowlerUpdated(updatedBowler, mutateOptions);
+  }
+
+  return {
+    loading,
+    error,
+    bowler,
+    bowlerUpdated,
+    bowlerUpdatedQuietly,
+  };
+}

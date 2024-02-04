@@ -333,7 +333,6 @@ const BowlerPage = () => {
       freeEntries: false,
     });
 
-    onBowlerUpdate(bowler);
     onFreeEntryUpdate(data);
 
     // This updates the bowler's ledger entries, so we should also refresh the bowler
