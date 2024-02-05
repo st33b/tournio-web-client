@@ -1,6 +1,5 @@
 import classes from './SignInSheet.module.scss';
 import TournamentLogo from "../../Registration/TournamentLogo/TournamentLogo";
-import {devConsoleLog} from "../../../utils";
 
 const SignInSheet = ({bowler, tournament, showPrintButton}) => {
   if (!bowler || !tournament) {
