@@ -892,6 +892,7 @@ const BowlerPage = () => {
           return (
             <ListGroup.Item key={p.identifier}>
               <span className={`float-end ${p.voided_at ? 'text-decoration-line-through' : ''}`}>
+                {p.determination === 'early_discount' ? '–' : ''}
                 ${p.amount}
               </span>
               <span className={'d-block'}>
@@ -928,10 +929,11 @@ const BowlerPage = () => {
       <ListGroup variant={'flush'}>
         {bowler.ledger_entries && bowler.ledger_entries.map((l, i) => {
           const amountClass = l.credit > 0 ? 'text-success' : 'text-danger';
-          const amount = l.credit - l.debit;
+          const amount = l.credit || l.debit;
           return (
             <ListGroup.Item key={`${l.identifier}-${i}`}>
               <span className={`${amountClass} float-end`}>
+                {!!l.debit ? '–' : ''}
                 ${amount}
               </span>
               <span className={'d-block'}>
@@ -982,6 +984,30 @@ const BowlerPage = () => {
       </Card.Body>
     </Card>
   );
+
+  const signups = bowler.signups.filter(({status}) => ['requested', 'paid'].includes(status));
+  const signedUpEventsCard = (
+    <Card className={'mb-3'}>
+      <Card.Header as={'h6'}>
+        Optional Sign-ups
+      </Card.Header>
+      {signups.length === 0 && <Card.Body>None</Card.Body>}
+      {signups.length > 0 && (
+        <ListGroup variant={'flush'}>
+          {signups.map(s => (
+            <ListGroup.Item key={s.identifier}>
+              {s.purchasableItem.name} ({s.status})
+              {s.purchasableItem.refinement === 'division' && (
+                <em className={'d-block small ps-2'}>
+                  Division: {s.purchasableItem.configuration.division}
+                </em>
+              )}
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
+      )}
+    </Card>
+  )
 
   const resendEmailsCard = (
     <Card className={'mb-3'}>
@@ -1036,6 +1062,7 @@ const BowlerPage = () => {
         </Col>
         <Col md={4}>
           {officeUseOnlyCard}
+          {signedUpEventsCard}
           {resendEmailsCard}
           {freeEntryCard}
           {moveToTeamCard}
