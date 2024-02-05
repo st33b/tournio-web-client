@@ -25,11 +25,15 @@
 
     .SignedUp {
       font-size: 120%;
+      min-width: 1rem;
     }
 
     .PaidAmount {
       font-weight: bold;
       font-size: 110%;
+    }
+    .QuantityBox {
+      width: 15%;
     }
     .AmountBox {
       width: 20%;
@@ -70,7 +74,7 @@
       Lora,
       serif;
     font-size: 90%;
-    line-height: 1.3rem;
+    line-height: 1.2rem;
 
     h2 {
       font-size: 1.7rem;

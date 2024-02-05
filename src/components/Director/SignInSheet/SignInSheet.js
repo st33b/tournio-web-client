@@ -10,13 +10,44 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
   const countsByItemID = {};
   if (bowler.purchases) {
     bowler.purchases.forEach(p => {
-      const piId = p.purchasable_item_identifier;
+      const piId = p.purchasableItem.identifier;
       if (!countsByItemID[piId]) {
         countsByItemID[piId] = 0;
       }
       countsByItemID[piId] += 1;
     });
   }
+
+  const prePurchaseRows = [];
+  {tournament.purchasableItems.filter(pi => pi.category !== 'bowling' && pi.category !== 'ledger').forEach(pi => {
+    // only if the bowler has a purchase for this PI
+    const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === pi.identifier);
+    if (!purchase) {
+      return;
+    }
+
+    prePurchaseRows.push (
+      <tr className={``} key={pi.identifier}>
+        <td className={``}>
+          <p className={`mb-0`}>
+            {pi.name}
+          </p>
+        </td>
+        <td className={`text-center pe-1`}>
+          ${pi.value}
+        </td>
+
+        <td className={`text-center ${classes.QuantityBox}`}>
+          <i className={`bi bi-x`}/>
+          {' '}{countsByItemID[pi.identifier]}
+        </td>
+        <td className={`text-center ${classes.AmountBox} ${classes.PaidAmount}`}>
+          ${pi.value * countsByItemID[pi.identifier]}
+        </td>
+      </tr>
+    );
+  })}
+
 
   return (
     <div className={`${classes.SignInSheetHtml} d-flex flex-column vh-100`}>
@@ -94,14 +125,14 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
         </div>
       </div>
 
-      <div className={`row g-0 py-3 border-bottom border-1`}>
+      <div className={`row py-3 border-bottom border-1`}>
         <div className={'col-5'}>
           <div className={'row'}>
             <div className={'col-8 text-end pe-2'}>
               Tournament Average
             </div>
             <div className={'col fw-bold'}>
-              {bowler.verified_average}
+              {bowler.verifiedAverage}
             </div>
           </div>
           <div className={'row'}>
@@ -114,13 +145,13 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
           </div>
         </div>
         <div className={'col-7'}>
-          {bowler.team && (
+          {bowler.teamName && (
             <div className={'row'}>
               <div className={'col-5 text-end pe-2'}>
                 Team Name
               </div>
               <div className={'col fw-bold'}>
-                {bowler.team.name}
+                {bowler.teamName}
               </div>
             </div>
           )}
@@ -129,43 +160,32 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
               Doubles Partner
             </div>
             <div className={'col fw-bold'}>
-              {!bowler.doubles_partner && 'n/a'}
-              {bowler.doubles_partner && bowler.doubles_partner.full_name}
+              {!bowler.doublesPartner && 'n/a'}
+              {!!bowler.doublesPartner && bowler.doublesPartner}
             </div>
           </div>
         </div>
       </div>
 
-      <div className={`row g-0`}>
+      <div className={`row mt-2`}>
         <div className={`col-7`}>
-          <h4>
-            Fees/Discounts
-          </h4>
-
-          {/* Entry fee, late fees, early discount, (later: event fees, bundle discount) */}
-          {tournament.purchasableItems.filter(pi => pi.category === 'ledger').map(pi => {
-            // only if the bowler has a purchase for this PI
-            const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === pi.identifier);
-            if (purchase) {
-              return (
-                <div className={`row d-flex flex-wrap`} key={pi.identifier}>
-                  <p className={`col-6`}>
-                    {pi.name}
-                  </p>
-                  <p className={`col-2 text-end`}>
-                    {pi.determination === 'early_discount' ? '–' : ''}
-                    ${pi.value}
-                  </p>
-                </div>
-              );
-            }
-          })}
-
           <h4>
             Bowling Extras
           </h4>
 
-          <table className={`table table-sm table-borderless align-middle ${classes.PurchasesTable}`}>
+          <table className={`table table-bordered align-middle ${classes.PurchasesTable}`}>
+            <thead>
+            <tr>
+              <th></th>
+              <th>Item</th>
+              <th className={`text-center`}>
+                Amt.
+              </th>
+              <th className={`text-center`}>
+                Paid
+              </th>
+            </tr>
+            </thead>
             <tbody>
 
             {/* Division items first */}
@@ -178,10 +198,9 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
 
               return (
                 <tr className={``} key={pi.identifier}>
-                  <td className={`${classes.SignedUp}`}>
-                    {signedUp ? <i className={`bi bi-check2-square`}></i> : ''}
-                    {!signedUp && !deactivated ? <i className={`bi bi-square`}></i> : '' }
-                    {deactivated && <i className={`bi bi-x`}></i>}
+                  <td className={`${classes.SignedUp} text-center`}>
+                    {signedUp ? <i className={`bi bi-check2`}></i> : ''}
+                    {deactivated && <i className={`bi bi-dash-lg`}></i>}
                   </td>
                   <td className={``}>
                     <p className={`mb-0`}>
@@ -191,60 +210,80 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
                       Division: {pi.configuration.division}
                     </p>
                   </td>
-                  <td className={`text-end pe-1`}>
+                  <td className={`text-center pe-1`}>
                     ${pi.value}
                   </td>
                   {!!purchase && (
-                    <td className={`text-end ${classes.AmountBox} ${classes.PaidAmount}`}>
+                    <td className={`text-center ${classes.AmountBox} ${classes.PaidAmount}`}>
                       ${pi.value}
                     </td>
                   )}
-                  {!purchase && (
-                    <td className={`text-end border border-1 ${classes.AmountBox}`}>
+                  {deactivated && (
+                    <td className={`text-center ${classes.AmountBox}`}>
+                      &ndash;
+                    </td>
+                  )}
+                  {!purchase && !deactivated && (
+                    <td className={`text-center ${classes.AmountBox}`}>
                     </td>
                   )}
                 </tr>
               );
             })}
 
-          {/* Non-division items, single-use */}
-          {tournament.purchasableItems.filter(pi => pi.category === 'bowling' && pi.determination === 'single_use' && pi.refinement !== 'division').map(pi => {
-            // only if the bowler has a purchase for this PI
-            const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === pi.identifier);
-            const signup = bowler.signups.find(s => s.purchasableItem.identifier === pi.identifier);
-            const signedUp = ['requested', 'paid'].includes(signup.status);
+            {/* Non-division items, single-use */}
+            {tournament.purchasableItems.filter(pi => pi.category === 'bowling' && pi.determination === 'single_use' && pi.refinement !== 'division').map(pi => {
+              // only if the bowler has a purchase for this PI
+              const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === pi.identifier);
+              const signup = bowler.signups.find(s => s.purchasableItem.identifier === pi.identifier);
+              const signedUp = ['requested', 'paid'].includes(signup.status);
 
-            return (
-              <tr className={``} key={pi.identifier}>
-                <td className={`${classes.SignedUp}`}>
-                  {signedUp ? <i className={`bi bi-check2-square`}></i> : ''}
-                  {!signedUp ? <i className={`bi bi-square`}></i> : '' }
-                </td>
-                <td className={``}>
-                  <p className={`mb-0`}>
-                    {pi.name}
-                  </p>
-                  <p className={`ps-1 mb-0 fst-italic small`}>
-                    Division: {pi.configuration.division}
-                  </p>
-                </td>
-                <td className={`text-end pe-1`}>
-                  ${pi.value}
-                </td>
-                {!!purchase && (
-                  <td className={`text-end ${classes.AmountBox} ${classes.PaidAmount}`}>
+              return (
+                <tr className={``} key={pi.identifier}>
+                  <td className={`${classes.SignedUp} text-center`}>
+                    {signedUp ? <i className={`bi bi-check2`}></i> : ''}
+                  </td>
+                  <td className={``}>
+                    <p className={`mb-0`}>
+                      {pi.name}
+                    </p>
+                  </td>
+                  <td className={`text-center pe-1`}>
                     ${pi.value}
                   </td>
-                )}
-                {!purchase && (
-                  <td className={`text-end border border-1 ${classes.AmountBox}`}>
-                  </td>
-                )}
-              </tr>
-            );
-          })}
+                  {!!purchase && (
+                    <td className={`text-center ${classes.AmountBox} ${classes.PaidAmount}`}>
+                      ${pi.value}
+                    </td>
+                  )}
+                  {!purchase && (
+                    <td className={`text-center ${classes.AmountBox}`}>
+                    </td>
+                  )}
+                </tr>
+              );
+            })}
+            </tbody>
+          </table>
 
-          {/* Non-division items, multi-use */}
+          <table className={`table table-bordered align-middle ${classes.PurchasesTable}`}>
+            <thead>
+            <tr>
+              <th></th>
+              <th>Item</th>
+              <th className={`text-center`}>
+                Amt.
+              </th>
+              <th className={`text-center`}>
+                Qty.
+              </th>
+              <th className={`text-center`}>
+                Paid
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            {/* Non-division items, multi-use */}
             {tournament.purchasableItems.filter(pi => pi.category === 'bowling' && pi.determination === 'multi_use').map(pi => {
               // only if the bowler has a purchase for this PI
               const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === pi.identifier);
@@ -253,29 +292,37 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
 
               return (
                 <tr className={``} key={pi.identifier}>
-                  <td className={`${classes.SignedUp}`}>
-                    {signedUp ? <i className={`bi bi-check2-square`}></i> : ''}
-                    {!signedUp ? <i className={`bi bi-square`}></i> : '' }
+                  <td className={`${classes.SignedUp} text-center`}>
+                    {signedUp ? <i className={`bi bi-check2`}></i> : ''}
                   </td>
                   <td className={``}>
                     <p className={`mb-0`}>
                       {pi.name}
                     </p>
-                    <p className={`ps-1 mb-0 fst-italic small`}>
-                      Division: {pi.configuration.division}
-                    </p>
                   </td>
-                  <td className={`text-end pe-1`}>
+                  <td className={`text-center pe-1`}>
                     ${pi.value}
                   </td>
 
                   {!!purchase && (
-                    <td className={`text-end ${classes.AmountBox} ${classes.PaidAmount}`}>
-                      ${pi.value}
+                    <td className={`text-center ${classes.QuantityBox}`}>
+                      <i className={`bi bi-x`}/>
+                      {' '}{countsByItemID[pi.identifier]}
+                    </td>
+                  )}
+                  {!!purchase && (
+                    <td className={`text-center ${classes.AmountBox} ${classes.PaidAmount}`}>
+                      ${pi.value * countsByItemID[pi.identifier]}
+                    </td>
+                  )}
+
+                  {!purchase && (
+                    <td className={`text-start ${classes.QuantityBox}`}>
+                      <i className={`bi bi-x`}/>
                     </td>
                   )}
                   {!purchase && (
-                    <td className={`text-end border border-1 ${classes.AmountBox}`}>
+                    <td className={`text-center ${classes.AmountBox}`}>
                     </td>
                   )}
                 </tr>
@@ -285,35 +332,108 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
             </tbody>
           </table>
 
-          <h4>
-            Other Extras
-          </h4>
-
-          {/* Non-bowling items (for apparel: only pre-purchased ones, not the whole catalog) */}
-
         </div>
 
         <div className={`col-5`}>
-          <table className={`table table-borderless ${classes.TotalsTable}`}>
+          <h4>
+            Fees/Discounts
+          </h4>
+
+          <table className={`${classes.PurchasesTable} table table-bordered align-middle`}>
+            <tbody>
+            {/* Entry fee, late fees, early discount, (later: event fees, bundle discount) */}
+            {tournament.purchasableItems.filter(pi => pi.category === 'ledger').map(pi => {
+              // only if the bowler has a purchase for this PI
+              const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === pi.identifier);
+              if (purchase) {
+                return (
+                  <tr className={``} key={pi.identifier}>
+                    <td className={``}>
+                      {pi.name}
+                      {pi.determination === 'entry_fee' && bowler.freeEntry && (
+                        <p className={`ps-1 mb-0 fst-italic small`}>
+                          Free entry: {bowler.freeEntry.uniqueCode}
+                        </p>
+                      )}
+                    </td>
+                    <td className={`${classes.AmountBox} ${classes.PaidAmount} text-end`}>
+                    {pi.determination === 'early_discount' ? '–' : ''}
+                      ${pi.value}
+                    </td>
+                  </tr>
+                );
+              }
+            })}
+            </tbody>
+          </table>
+
+          <h4>
+            Pre-Purchases
+          </h4>
+          {prePurchaseRows.length === 0 && <p>None</p>}
+          {prePurchaseRows.length > 0 && (
+            <table className={`table table-bordered align-middle ${classes.PurchasesTable}`}>
+              <thead>
+              <tr>
+                <th>Item</th>
+                <th className={`text-center`}>
+                  Amt.
+                </th>
+                <th className={`text-center`}>
+                  Qty.
+                </th>
+                <th className={`text-center`}>
+                  Paid
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+                {prePurchaseRows}
+              </tbody>
+            </table>
+          )}
+
+          <h4>
+            Totals
+          </h4>
+
+          <table className={`table table-bordered ${classes.TotalsTable}`}>
             <tbody>
             <tr>
               <td>
-                Lorem ipsum
+                Total pre-paid
               </td>
               <td className={`${classes.Amount}`}>
-                $125
+                ${bowler.amountPaid}
               </td>
             </tr>
             <tr>
               <td>
-                Lorem ipsum
+                Outstanding charges
               </td>
-              <td className={`${classes.Amount} border`}>
+              <td className={`${classes.Amount}`}>
+
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Charges at Registration
+              </td>
+              <td className={`${classes.AmountBox}`}>
+
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Due at Registration
+              </td>
+              <td className={`${classes.AmountBox}`}>
 
               </td>
             </tr>
             </tbody>
           </table>
+
           {/* Total charges */}
           {/*  Pre-paid*/}
           {/*  Outstanding charges*/}
@@ -321,80 +441,6 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
           {/*  Total due at Registration*/}
         </div>
       </div>
-
-      {/*<div className={`row g-0 py-3 border-bottom border-1`}>*/}
-      {/*  <h4>*/}
-      {/*    Fees &amp; Extras*/}
-      {/*  </h4>*/}
-      {/*  <div className={'col-6'}>*/}
-      {/*    {bowler.purchases && bowler.purchases.map(p => {*/}
-      {/*      const purchasableItem = tournament.purchasable_items.find(({identifier}) => identifier === p.purchasable_item_identifier);*/}
-      {/*      const quantity = countsByItemID[p.purchasable_item_identifier];*/}
-      {/*      if (quantity === 0) {*/}
-      {/*        return '';*/}
-      {/*      }*/}
-      {/*      const multiplier = quantity === 1 ? '' : (*/}
-      {/*        <span>*/}
-      {/*          <i className={'bi-x px-1'} aria-hidden={true}/>*/}
-      {/*          {quantity}*/}
-      {/*          <span className={'visually-hidden'}>*/}
-      {/*            purchased*/}
-      {/*          </span>*/}
-      {/*        </span>*/}
-      {/*      );*/}
-      {/*      countsByItemID[p.purchasable_item_identifier] = 0;*/}
-      {/*      let note = false;*/}
-      {/*      if (purchasableItem.configuration.division) {*/}
-      {/*        note = `Division ${purchasableItem.configuration.division}`;*/}
-      {/*      } else if (purchasableItem.configuration.denomination) {*/}
-      {/*        note = purchasableItem.configuration.denomination;*/}
-      {/*      }*/}
-      {/*      return (*/}
-      {/*        <div className={'row'} key={p.identifier}>*/}
-      {/*          <div className={'col-8 text-end pe-2'}>*/}
-      {/*            {purchasableItem.name}*/}
-      {/*            {note && <span className={classes.PurchaseNote}>{note}</span>}*/}
-      {/*          </div>*/}
-      {/*          <div className={'col fw-bold'}>*/}
-      {/*            ${purchasableItem.value}*/}
-      {/*            {multiplier}*/}
-      {/*          </div>*/}
-      {/*        </div>*/}
-      {/*      );*/}
-      {/*    })}*/}
-      {/*  </div>*/}
-      {/*  <div className={'col'}>*/}
-      {/*    {bowler.free_entry && bowler.free_entry.confirmed && (*/}
-      {/*      <div className={'row my-2'}>*/}
-      {/*        <div className={'col-8 text-end pe-2'}>*/}
-      {/*          Free entry*/}
-      {/*          <span className={classes.PurchaseNote}>{bowler.free_entry.unique_code}</span>*/}
-      {/*        </div>*/}
-      {/*        <div className={'col fw-bold'}>*/}
-      {/*          ${entryFeeItem.value}*/}
-      {/*        </div>*/}
-      {/*      </div>*/}
-      {/*    )}*/}
-
-      {/*    <div className={'row my-2'}>*/}
-      {/*      <div className={'col-8 text-end pe-2'}>*/}
-      {/*        Total prepaid*/}
-      {/*      </div>*/}
-      {/*      <div className={'col fw-bold'}>*/}
-      {/*        ${bowler.amount_paid}*/}
-      {/*      </div>*/}
-      {/*    </div>*/}
-
-      {/*    <div className={'row pt-2'}>*/}
-      {/*      <div className={'col-8 text-end pe-2'}>*/}
-      {/*        Total due at registration*/}
-      {/*      </div>*/}
-      {/*      <div className={'col fw-bold'}>*/}
-      {/*        ${bowler.amount_due}*/}
-      {/*      </div>*/}
-      {/*    </div>*/}
-      {/*  </div>*/}
-      {/*</div>*/}
 
       <div className={`${classes.Agreement} mt-auto`}>
         <div className={'row'}>
