@@ -17,6 +17,31 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
     });
   }
 
+  const paidFeeRows = [];
+  {tournament.purchasableItems.filter(pi => pi.category === 'ledger').forEach(pi => {
+    // only if the bowler has a purchase for this PI
+    const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === pi.identifier);
+    if (purchase) {
+      paidFeeRows.push(
+        <tr className={``} key={pi.identifier}>
+          <td className={``}>
+            {pi.name}
+            {pi.determination === 'entry_fee' && bowler.freeEntry && (
+              <p className={`ps-1 mb-0 fst-italic small`}>
+                Free entry: {bowler.freeEntry.uniqueCode}
+              </p>
+            )}
+          </td>
+          <td className={`${classes.AmountBox} ${classes.PaidAmount} text-end`}>
+            {pi.determination === 'early_discount' ? '–' : ''}
+            ${pi.value}
+          </td>
+        </tr>
+      );
+    }
+  })}
+
+
   const prePurchaseRows = [];
   {tournament.purchasableItems.filter(pi => pi.category !== 'bowling' && pi.category !== 'ledger').forEach(pi => {
     // only if the bowler has a purchase for this PI
@@ -46,7 +71,6 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
       </tr>
     );
   })}
-
 
   return (
     <div className={`${classes.SignInSheetHtml} d-flex flex-column vh-100`}>
@@ -338,33 +362,14 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
             Fees/Discounts
           </h4>
 
-          <table className={`${classes.PurchasesTable} table table-bordered align-middle`}>
-            <tbody>
-            {/* Entry fee, late fees, early discount, (later: event fees, bundle discount) */}
-            {tournament.purchasableItems.filter(pi => pi.category === 'ledger').map(pi => {
-              // only if the bowler has a purchase for this PI
-              const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === pi.identifier);
-              if (purchase) {
-                return (
-                  <tr className={``} key={pi.identifier}>
-                    <td className={``}>
-                      {pi.name}
-                      {pi.determination === 'entry_fee' && bowler.freeEntry && (
-                        <p className={`ps-1 mb-0 fst-italic small`}>
-                          Free entry: {bowler.freeEntry.uniqueCode}
-                        </p>
-                      )}
-                    </td>
-                    <td className={`${classes.AmountBox} ${classes.PaidAmount} text-end`}>
-                    {pi.determination === 'early_discount' ? '–' : ''}
-                      ${pi.value}
-                    </td>
-                  </tr>
-                );
-              }
-            })}
-            </tbody>
-          </table>
+          {paidFeeRows.length === 0 && <p>None</p>}
+          {paidFeeRows.length > 0 && (
+            <table className={`${classes.PurchasesTable} table table-bordered align-middle`}>
+              <tbody>
+              {paidFeeRows}
+              </tbody>
+            </table>
+          )}
 
           <h4>
             Pre-Purchases
@@ -411,7 +416,7 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
                 Outstanding charges
               </td>
               <td className={`${classes.Amount}`}>
-
+                ${bowler.amountOutstanding}
               </td>
             </tr>
             <tr>
