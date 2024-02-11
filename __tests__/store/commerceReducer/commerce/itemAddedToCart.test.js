@@ -7,6 +7,7 @@ describe('itemAddedToCart -- dedicated function', () => {
   //  - availableItems is a map of identifier to item details, possibly empty, and without any apparel items
   //  - apparelItems is a map of any apparel items that are available
   //  - purchasedItems is a list of items, possibly empty -- passed as a function arg when item.determination is 'event'
+  //  - signupables is a list of bowling events for which bowlers may sign up without paying, but for which they may pay after signing up
   // Postrequisites:
   // - The item in the cart contains an updated quantity
   // - The item in "available items" is marked as added to cart -- so that the UI can indicate as much
@@ -17,6 +18,7 @@ describe('itemAddedToCart -- dedicated function', () => {
     availableApparelItems: [],
     purchasedItems: [],
     tournament: {},
+    signupables: [],
   }
 
   describe ('the item is not yet in the cart', () => {
@@ -42,7 +44,7 @@ describe('itemAddedToCart -- dedicated function', () => {
       }
 
       const myPreviousState = {...previousState};
-      myPreviousState.availableItems.push({...itemToAdd});
+      myPreviousState.signupables.push({...itemToAdd});
 
       const result = itemAddedToCart(myPreviousState, itemToAdd);
 
@@ -52,8 +54,8 @@ describe('itemAddedToCart -- dedicated function', () => {
         expect(item.quantity).toStrictEqual(1);
       });
 
-      it ('marks the item in availableItems as added to cart', () => {
-        const item = result.availableItems.find(({identifier}) => identifier === itemToAdd.identifier);
+      it ('marks the item in signupables as added to cart', () => {
+        const item = result.signupables.find(({identifier}) => identifier === itemToAdd.identifier);
         expect(item.addedToCart).toBeDefined();
         expect(item.addedToCart).toBeTruthy();
       });
@@ -101,7 +103,7 @@ describe('itemAddedToCart -- dedicated function', () => {
 
         const myPreviousState = {
           ...previousState,
-          availableItems: previousState.availableItems.concat(divisionItems),
+          signupables: previousState.signupables.concat(divisionItems),
         };
 
         const result = itemAddedToCart(myPreviousState, itemToAdd);
@@ -113,7 +115,7 @@ describe('itemAddedToCart -- dedicated function', () => {
         });
 
         it ('marks the other items in the division as unavailable', () => {
-          const availableDivisionItems = result.availableItems.filter(({name}) => name === 'a division-based item');
+          const availableDivisionItems = result.signupables.filter(({name}) => name === 'a division-based item');
           expect(availableDivisionItems.length).toBe(divisionItems.length);
           const allAddedToCart = availableDivisionItems.every(item => item.addedToCart);
           expect(allAddedToCart).toBeTruthy();

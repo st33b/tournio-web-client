@@ -8,6 +8,7 @@ const initialState = {
   bowler: null,
   bowlerIdentifier: null,
   cart: [],
+  signupables: [],
   availableItems: [],
   availableApparelItems: [],
   purchasedItems: [],
@@ -43,10 +44,28 @@ export const commerceReducer = (state, action) => {
         bowler: action.bowler,
         availableItems: separated.items,
         availableApparelItems: separated.apparelItems,
+        signupables: action.signupables,
         cart: updatedCart,
         purchasedItems: [...action.purchases],
         freeEntry: {...action.freeEntry},
         tournament: {...action.tournament},
+      });
+    case actionTypes.SIGNUPABLE_STATUS_UPDATED:
+      const index = state.signupables.findIndex(s => s.signupIdentifier === action.identifier);
+      const updatedSignupables = [...state.signupables];
+      updatedSignupables[index].signupStatus = action.status;
+
+      // Is this a division item? If so, we need to disable signing up for the sibling items
+      if (updatedSignupables[index].refinement === 'division') {
+        for (let i = 0; i < updatedSignupables.length; i++) {
+          if (i !== index && updatedSignupables[i].name === updatedSignupables[index].name) {
+            updatedSignupables[i].siblingSignedUp = action.status === 'requested';
+          }
+        }
+      }
+
+      return updateObject(state, {
+        signupables: updatedSignupables,
       });
     case actionTypes.BOWLER_DETAILS_MOOTED:
       return updateObject(state, {
@@ -57,6 +76,7 @@ export const commerceReducer = (state, action) => {
         availableApparelItems: {},
         purchasedItems: [],
         freeEntry: null,
+        signupables: [],
       });
     case actionTypes.ITEM_ADDED_TO_CART:
       return itemAddedToCart(state, action.item, action.sizeIdentifier);

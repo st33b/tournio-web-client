@@ -8,7 +8,7 @@ import Cart from "./Cart/Cart";
 
 import classes from './Menu.module.scss';
 
-const Menu = () => {
+const Menu = ({signupChanged}) => {
   const {commerce, dispatch} = useCommerceContext();
 
   if (!commerce || !commerce.bowler) {
@@ -26,7 +26,9 @@ const Menu = () => {
   return (
     <div className={classes.Menu}>
       <div className={`row`}>
-        <AvailableItems itemAddedToCart={itemAdded}/>
+        <AvailableItems itemAddedToCart={itemAdded}
+                        signupChanged={signupChanged}
+        />
         <div className={`col ${classes.CartContainer}`}
              id={'cart'}>
           <Cart itemAddedToCart={itemAdded}

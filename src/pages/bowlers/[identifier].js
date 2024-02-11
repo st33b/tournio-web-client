@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import Link from "next/link";
 import {Col, Row} from "react-bootstrap";
 
-import {devConsoleLog, updateObject, useBowlerCommerce} from "../../utils";
+import {apiHost, devConsoleLog, updateObject, useBowlerCommerce} from "../../utils";
 import {useCommerceContext} from "../../store/CommerceContext";
 import Menu from '../../components/Commerce/Menu';
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
@@ -12,7 +12,8 @@ import CommerceLayout from "../../components/Layout/CommerceLayout/CommerceLayou
 import SuccessAlert from "../../components/common/SuccessAlert";
 import ErrorAlert from "../../components/common/ErrorAlert";
 import TournamentHeader from "../../components/ui/TournamentHeader";
-import {commerceDetailsRetrieved} from "../../store/actions/registrationActions";
+import {commerceDetailsRetrieved, signupableStatusUpdated} from "../../store/actions/registrationActions";
+import axios from "axios";
 
 const Page = () => {
   const router = useRouter();
@@ -47,6 +48,8 @@ const Page = () => {
     }
   }
 
+  const {loading, data, commerceUpdated} = useBowlerCommerce(identifier, onFetchSuccess, onFetchFailure);
+
   useEffect(() => {
     const updatedState = {...state};
     switch (success) {
@@ -55,6 +58,7 @@ const Page = () => {
         break;
       case '2':
         updatedState.successMessage = 'Your purchase is complete.';
+        commerceUpdated();
         break;
       default:
         break;
@@ -67,8 +71,6 @@ const Page = () => {
 
     setState(updateObject(state, updatedState));
   }, [success, error]);
-
-  const {loading, data} = useBowlerCommerce(identifier, onFetchSuccess, onFetchFailure);
 
   if (loading) {
     return <LoadingMessage message={'One moment, please...'}/>;
@@ -92,36 +94,80 @@ const Page = () => {
 
   const {bowler, team, tournament} = data;
 
+  const signupableUpdated = (identifier, event, onSuccess = () => {}, onFailure = () => {}) => {
+    const requestConfig = {
+      method: 'patch',
+      url: `${apiHost}/signups/${identifier}`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      data: {
+        bowler_identifier: bowler.identifier,
+        event: event,
+      },
+      validateStatus: (status) => {
+        return status < 500
+      },
+    }
+    axios(requestConfig)
+      .then(response => {
+        if (response.status >= 200 && response.status < 300) {
+          onSuccess(response.data);
+          dispatch(signupableStatusUpdated(identifier, response.data.signupStatus));
+        } else {
+          onFailure(response.data);
+        }
+      })
+      .catch(error => {
+        onFailure({error: error.message});
+      });
+  }
+
+  let displayFreeEntryForm = true;
+  if (commerce.freeEntry && commerce.freeEntry.uniqueCode) {
+    displayFreeEntryForm = false;
+  }
+  if (commerce.purchasedItems.some(item => item.purchasableItem.determination === 'entry_fee')) {
+    displayFreeEntryForm = false;
+  }
+
   return (
     <div>
-      <Row className={``}>
-        <Col md={{offset: 2, span: 8}} xl={{offset: 3, span: 6}} className={'ps-2'}>
+      <Row>
+        <Col>
           <TournamentHeader tournament={tournament}/>
-
-          <h3 className={`text-center`}>
+        </Col>
+      </Row>
+      <Row className={`pb-2`}>
+        <Col >
+          <h3 className={``}>
             Bowler: <strong>{bowler.fullName}</strong>
           </h3>
           {team && (
-            <h4 className={`text-center`}>
+            <h4 className={``}>
               Team:&nbsp;
               <strong>
                 <Link href={{
-                  pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/[chosen]',
+                  pathname: '/tournaments/[identifier]/teams/[teamIdentifier]',
                   query: {
                     identifier: tournament.identifier,
                     teamIdentifier: team.identifier,
-                    chosen: bowler.position,
                   }}}>
                   {team.name}
                 </Link>
               </strong>
             </h4>
           )}
-          {!bowler.freeEntry && <FreeEntryForm/>}
+        </Col>
+        <Col md={{offset: 0, span: 5}} lg={{offset: 0, span: 4}}>
+          <div className={'d-flex flex-column h-100 justify-content-center'}>
+            {displayFreeEntryForm && <FreeEntryForm/>}
+            {/* maybe show the free entry code here if they have one? */}
+            {/* paid items go in here */}
+          </div>
         </Col>
       </Row>
-
-      <hr/>
 
       <SuccessAlert className={``}
                     message={state.successMessage}
@@ -129,7 +175,7 @@ const Page = () => {
       <ErrorAlert className={``}
                   message={state.errorMessage}
                   onClose={clearErrorMessage}/>
-      <Menu/>
+      <Menu signupChanged={signupableUpdated}/>
 
     </div>
   );

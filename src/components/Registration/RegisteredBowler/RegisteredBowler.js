@@ -1,16 +1,29 @@
 import classes from './RegisteredBowler.module.scss';
-import PayButton from "../TournamentDetails/PayButton";
+import Link from "next/link";
+import {useRouter} from "next/router";
 
 const RegisteredBowler = ({bowler}) => {
 
+  const router = useRouter();
+  let href = `${router.asPath}/bowlers`;
+  if (bowler) {
+    href = `/bowlers/${bowler.identifier}`;
+  }
+
   return (
-    <div className={classes.RegisteredBowler}>
-      <p className={classes.Name}>
+    <li className={'list-group-item d-flex'}>
+      <span className={'d-block'}>
+        {bowler.position} &ndash;&nbsp;
+      </span>
+      <span className={'d-block'}>
         {bowler.full_name}
-      </p>
-      {/* TODO: get the disabled property set */}
-      <PayButton bowler={bowler} disabled={false}/>
-    </div>
+      </span>
+      <Link className={`ms-auto`}
+            title={'Pay entry fees, choose extras'}
+            href={href}>
+        Events &amp; Fees
+      </Link>
+    </li>
   );
 }
 

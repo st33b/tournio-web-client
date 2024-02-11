@@ -7,7 +7,7 @@
 //     -> refinement
 
 //
-// these items cannot be added to the cart; they're automatic
+// ledger items cannot be added to/removed from the cart; they're automatic
 //
 // ledger
 //   -> entry_fee
@@ -55,7 +55,6 @@
 
 import {devConsoleLog, updateObject} from "../../utils";
 import {compareAsc} from "date-fns";
-import availableItems from "../../components/Commerce/AvailableItems/AvailableItems";
 
 export const itemAddedToCart = (currentState, itemToAdd, sizeIdentifier = null) => {
   switch(itemToAdd.category) {
@@ -89,16 +88,18 @@ const handleAsBowlingItem = (previousState, itemToAdd) => {
         handleAsDivisionItem(
           handleAsSingleton(
             previousState,
-            itemToAdd
+            itemToAdd,
+            'signupables'
           ),
-          itemToAdd
+          itemToAdd,
+          'signupables',
         ),
         itemToAdd
       ),
       itemToAdd
     );
   }
-  return handleAsPossiblyMany(previousState, itemToAdd);
+  return handleAsPossiblyMany(previousState, itemToAdd, 'signupables');
 }
 
 const handleAsSanctionItem = (previousState, itemToAdd) => {
@@ -188,7 +189,7 @@ const handleAsRaffle = (previousState, itemToAdd) => {
   return handleAsPossiblyMany(previousState, itemToAdd);
 }
 
-const handleAsPossiblyMany = (previousState, itemToAdd) => {
+const handleAsPossiblyMany = (previousState, itemToAdd, itemSourceKey = 'availableItems') => {
   const newItemIdentifier = itemToAdd.identifier;
   const cartItemIndex = previousState.cart.findIndex(({identifier}) => identifier === newItemIdentifier);
   const prevQuantity = cartItemIndex >= 0 ? previousState.cart[cartItemIndex].quantity : 0;
@@ -199,23 +200,25 @@ const handleAsPossiblyMany = (previousState, itemToAdd) => {
   });
 
   let updatedCart;
-  const updatedAvailableItems = [...previousState.availableItems];
+  const source = previousState[itemSourceKey];
+  const updatedSource = [...source];
   if (newQuantity === 1) {
     updatedCart = previousState.cart.concat(addedItem);
-    const availableItemIndex = updatedAvailableItems.findIndex(({identifier}) => identifier === addedItem.identifier);
-    updatedAvailableItems[availableItemIndex] = addedItem;
+    const sourceItemIndex = updatedSource.findIndex(({identifier}) => identifier === addedItem.identifier);
+    updatedSource[sourceItemIndex] = addedItem;
   } else {
     updatedCart = [...previousState.cart];
     updatedCart[cartItemIndex] = addedItem;
   }
 
-  return updateObject(previousState, {
+  const stateChanges = {
     cart: updatedCart,
-    availableItems: updatedAvailableItems,
-  })
+  };
+  stateChanges[itemSourceKey] = updatedSource;
+  return updateObject(previousState, stateChanges);
 }
 
-const handleAsSingleton = (previousState, itemToAdd) => {
+const handleAsSingleton = (previousState, itemToAdd, itemSourceKey = 'availableItems') => {
   const newItemIdentifier = itemToAdd.identifier;
   const cartItemIndex = previousState.cart.findIndex(({identifier}) => identifier === newItemIdentifier);
 
@@ -229,25 +232,28 @@ const handleAsSingleton = (previousState, itemToAdd) => {
     addedToCart: true,
   });
 
-  const updatedAvailableItems = [...previousState.availableItems];
-  const availableItemIndex = updatedAvailableItems.findIndex(({identifier}) => identifier === addedItem.identifier);
-  updatedAvailableItems[availableItemIndex] = addedItem;
+  const source = previousState[itemSourceKey];
+  const updatedSource = [...source];
+  const itemIndex = source.findIndex(({identifier}) => identifier === addedItem.identifier);
+  updatedSource[itemIndex] = addedItem;
 
   const updatedCart = previousState.cart.concat(addedItem);
 
-  return updateObject(previousState, {
+  const stateChanges = {
     cart: updatedCart,
-    availableItems: updatedAvailableItems,
-  });
+  };
+  stateChanges[itemSourceKey] = updatedSource;
+  return updateObject(previousState, stateChanges);
 }
 
-const handleAsDivisionItem = (previousState, itemToAdd) => {
-  const availableItems = [...previousState.availableItems];
+const handleAsDivisionItem = (previousState, itemToAdd, itemSourceKey = 'availableItems') => {
   if (itemToAdd.refinement !== 'division') {
     return previousState;
   }
 
-  availableItems.forEach(item => {
+  const source = previousState[itemSourceKey];
+  const updatedSource = [...source];
+  updatedSource.forEach(item => {
     // skip it if we're looking in the mirror
     if (item.identifier === itemToAdd.identifier) {
       return;
@@ -268,9 +274,10 @@ const handleAsDivisionItem = (previousState, itemToAdd) => {
       item.addedToCart = true;
     }
   });
-  return updateObject(previousState, {
-    availableItems: availableItems,
-  });
+  const stateUpdates = {};
+  stateUpdates[itemSourceKey] = updatedSource;
+
+  return updateObject(previousState, stateUpdates);
 }
 
 const tryAddingBundleDiscount = (previousState, itemToAdd) => {

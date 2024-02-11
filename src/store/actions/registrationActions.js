@@ -82,6 +82,7 @@ export const commerceDetailsRetrieved = ({
                                            purchases,
                                            automaticItems,
                                            availableItems,
+                                           signupables,
                                            tournament,
                                          }) => {
   devConsoleLog("Handing commerce deets off to the reducer", {
@@ -90,16 +91,18 @@ export const commerceDetailsRetrieved = ({
     purchases,
     automaticItems,
     availableItems,
+    signupables,
     tournament,
   });
   return {
     type: actionTypes.COMMERCE_SESSION_INITIATED,
     bowler: bowler,
+    tournament: tournament,
     freeEntry: freeEntry,
     availableItems: availableItems,
     purchases: purchases,
     automaticItems: automaticItems,
-    tournament: tournament,
+    signupables: signupables,
   }
 }
 
@@ -183,5 +186,13 @@ export const stripeCheckoutSessionInitiated = (sessionId) => {
 export const stripeCheckoutSessionCompleted = () => {
   return {
     type: actionTypes.STRIPE_CHECKOUT_SESSION_COMPLETED,
+  }
+}
+
+export const signupableStatusUpdated = (identifier, status) => {
+  return {
+    type: actionTypes.SIGNUPABLE_STATUS_UPDATED,
+    identifier: identifier,
+    status: status,
   }
 }

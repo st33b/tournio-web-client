@@ -1,5 +1,6 @@
 import {useEffect} from "react";
 import {Analytics} from "@vercel/analytics/react";
+import {SpeedInsights} from "@vercel/speed-insights/next";
 import Cookies from "js-cookie";
 
 import '../scss/styles.scss';
@@ -27,6 +28,7 @@ function MyApp({Component, pageProps}) {
     <ThemeContextProvider>
       {getLayout(<Component {...pageProps} />)}
       <Analytics/>
+      <SpeedInsights/>
     </ThemeContextProvider>
   );
 }

@@ -21,6 +21,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       basicItem,
     ],
     availableApparelItems: [],
+    signupables: [],
   };
 
   describe('an unknown kind of item', () => {
@@ -39,39 +40,6 @@ describe('itemRemovedFromCart -- dedicated function', () => {
     });
   });
 
-  describe('a ledger item', () => {
-    const myBasicItem = {
-      ...basicItem,
-      addedToCart: true,
-      category: 'ledger',
-      quantity: 1,
-    };
-
-    const myPreviousState = {
-      ...previousState,
-      cart: [myBasicItem],
-      availableItems: [
-        myBasicItem,
-      ],
-    }
-
-    const result = itemRemovedFromCart(myPreviousState, myBasicItem);
-
-    it('removes the ledger item', () => {
-      expect(result.cart.length).toStrictEqual(0);
-    });
-
-    it('drops the quantity to zero', () => {
-      const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
-      expect(item.quantity).toStrictEqual(0);
-    });
-
-    it('marks addedToCart as false', () => {
-      const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
-      expect(item.addedToCart).toBeFalsy();
-    });
-  });
-
   describe('a bowling item', () => {
     describe('single-use', () => {
       const myItem = {
@@ -86,7 +54,8 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       const myPreviousState = {
         ...previousState,
         cart: [myItem],
-        availableItems: [
+        availableItems: [],
+        signupables: [
           myItem,
         ],
       }
@@ -98,12 +67,12 @@ describe('itemRemovedFromCart -- dedicated function', () => {
       });
 
       it('drops the quantity to zero', () => {
-        const item = result.availableItems.find(({identifier}) => identifier === myItem.identifier);
+        const item = result.signupables.find(({identifier}) => identifier === myItem.identifier);
         expect(item.quantity).toStrictEqual(0);
       });
 
       it('marks addedToCart as false', () => {
-        const item = result.availableItems.find(({identifier}) => identifier === myItem.identifier);
+        const item = result.signupables.find(({identifier}) => identifier === myItem.identifier);
         expect(item.addedToCart).toBeFalsy();
       });
 
@@ -157,7 +126,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
         const myPreviousState = {
           ...previousState,
           cart: [myDivisionItem],
-          availableItems: previousState.availableItems.concat(divisionItems),
+          signupables: previousState.signupables.concat(divisionItems),
         };
 
         const result = itemRemovedFromCart(myPreviousState, myDivisionItem);
@@ -167,7 +136,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
         });
 
         it ('marks the other items in the division as available', () => {
-          const availableDivisionItems = result.availableItems.filter(({name}) => name === myDivisionItem.name);
+          const availableDivisionItems = result.signupables.filter(({name}) => name === myDivisionItem.name);
           expect(availableDivisionItems.length).toBe(divisionItems.length);
           const allRemovedFromCart = availableDivisionItems.every(item => !item.addedToCart);
           expect(allRemovedFromCart).toBeTruthy();
@@ -280,7 +249,7 @@ describe('itemRemovedFromCart -- dedicated function', () => {
     }
     const myPreviousState = {
       ...previousState,
-      availableItems: [
+      signupables: [
         myBasicItem,
       ],
       cart: [myBasicItem],
@@ -294,12 +263,12 @@ describe('itemRemovedFromCart -- dedicated function', () => {
     });
 
     it('drops the quantity to zero', () => {
-      const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
+      const item = result.signupables.find(({identifier}) => identifier === myBasicItem.identifier);
       expect(item.quantity).toStrictEqual(0);
     });
 
     it('marks addedToCart as false', () => {
-      const item = result.availableItems.find(({identifier}) => identifier === myBasicItem.identifier);
+      const item = result.signupables.find(({identifier}) => identifier === myBasicItem.identifier);
       expect(item.addedToCart).toBeFalsy();
     });
 

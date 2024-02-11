@@ -1,20 +1,14 @@
 import classes from './SignInSheet.module.scss';
-import TournamentLogo from "../../Registration/TournamentLogo/TournamentLogo";
 
-const SignInSheet = ({bowler, showPrintButton}) => {
-  if (!bowler) {
+const SignInSheet = ({bowler, tournament, showPrintButton}) => {
+  if (!bowler || !tournament) {
     return '';
-  }
-
-  let bowlerFirstName = bowler.first_name;
-  if (bowler.preferred_name && bowler.preferred_name.length > 0) {
-    bowlerFirstName = bowler.preferred_name;
   }
 
   const countsByItemID = {};
   if (bowler.purchases) {
     bowler.purchases.forEach(p => {
-      const piId = p.purchasable_item_identifier;
+      const piId = p.purchasableItem.identifier;
       if (!countsByItemID[piId]) {
         countsByItemID[piId] = 0;
       }
@@ -22,73 +16,180 @@ const SignInSheet = ({bowler, showPrintButton}) => {
     });
   }
 
+  const ledgerRows = [];
+  const entryFeeItem = tournament.purchasableItems.find(pi => pi.determination === 'entry_fee');
+  if (entryFeeItem) {
+    const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === entryFeeItem.identifier);
+
+    ledgerRows.push(
+      <tr className={``} key={entryFeeItem.identifier}>
+        <td className={``}>
+          {entryFeeItem.name}
+          {bowler.freeEntry && (
+            <p className={`ps-1 mb-0 fst-italic small`}>
+              Free entry: {bowler.freeEntry.uniqueCode}
+            </p>
+          )}
+        </td>
+        <td className={`${classes.AmountBox} ${classes.PaidAmount} text-center`}>
+          ${entryFeeItem.value}
+        </td>
+        <td className={`text-center`}>
+          <i className={`bi ${!!purchase ? 'bi-check-lg' : 'bi-dash-lg' }`}/>
+        </td>
+      </tr>
+    );
+  }
+  const discountItem = tournament.purchasableItems.find(pi => pi.determination === 'early_discount');
+  if (discountItem) {
+    const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === discountItem.identifier);
+
+    ledgerRows.push(
+      <tr className={``} key={discountItem.identifier}>
+        <td className={``}>
+          {discountItem.name}
+        </td>
+        <td className={`${classes.AmountBox} ${classes.PaidAmount} text-center`}>
+          &ndash;${discountItem.value}
+        </td>
+        <td className={`text-center`}>
+          <i className={`bi ${!!purchase ? 'bi-check-lg' : 'bi-dash-lg'}`}/>
+        </td>
+      </tr>
+    );
+  }
+  const lateFeeItem = tournament.purchasableItems.find(pi => pi.determination === 'late_fee');
+  if (lateFeeItem) {
+    const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === lateFeeItem.identifier);
+
+    ledgerRows.push(
+      <tr className={``} key={lateFeeItem.identifier}>
+        <td className={``}>
+          {lateFeeItem.name}
+        </td>
+        <td className={`${classes.AmountBox} ${classes.PaidAmount} text-center`}>
+          ${lateFeeItem.value}
+        </td>
+        <td className={`text-center`}>
+          <i className={`bi ${!!purchase ? 'bi-check-lg' : 'bi-dash-lg'}`}/>
+        </td>
+      </tr>
+    );
+
+  }
+
+  const tournamentHasExtras = tournament.purchasableItems.some(pi => pi.category === 'bowling');
+
+  const prePurchaseRows = [];
+  {
+    tournament.purchasableItems.filter(pi => pi.category !== 'bowling' && pi.category !== 'ledger').forEach(pi => {
+    // only if the bowler has a purchase for this PI
+    const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === pi.identifier);
+    if (!purchase) {
+      return;
+    }
+
+    prePurchaseRows.push (
+      <tr className={``} key={pi.identifier}>
+        <td className={``}>
+          <p className={`mb-0`}>
+            {pi.name}
+          </p>
+        </td>
+        <td className={`text-center pe-1`}>
+          ${pi.value}
+        </td>
+
+        <td className={`text-center ${classes.QuantityBox}`}>
+          <i className={`bi bi-x`}/>
+          {' '}{countsByItemID[pi.identifier]}
+        </td>
+        <td className={`text-center ${classes.AmountBox} ${classes.PaidAmount}`}>
+          ${pi.value * countsByItemID[pi.identifier]}
+        </td>
+      </tr>
+    );
+  })}
+
   return (
     <div className={`${classes.SignInSheetHtml} d-flex flex-column vh-100`}>
-      <div className={'d-flex align-items-center justify-content-center'}>
-        <TournamentLogo url={bowler.tournament.image_url} additionalClasses={classes.Logo} />
-        <h2 className={'ps-2'}>
-          {bowler.tournament.name} {bowler.tournament.year}
-        </h2>
-      </div>
+      {/*<div className={'d-flex align-items-center justify-content-center'}>*/}
+      {/*  /!*<TournamentLogo url={tournament.imageUrl} additionalClasses={classes.Logo}/>*!/*/}
+      {/*  <h2 className={'ps-2'}>*/}
+      {/*    {tournament.name} {tournament.year}*/}
+      {/*  </h2>*/}
+      {/*</div>*/}
 
       <div className={'d-flex justify-content-end pt-3 pb-2 border-bottom border-1'}>
         <h3 className={'me-auto'}>
-          {bowler.last_name}, {bowlerFirstName}
+          {bowler.listName}
         </h3>
         {showPrintButton && (
           <button className={`${classes.PrintButton} btn btn-sm btn-outline-secondary`}
                   role={'button'}
                   onClick={() => window.print()}>
-            <i className={'bi-printer pe-2'} aria-hidden={true} />
+            <i className={'bi-printer pe-2'} aria-hidden={true}/>
             Print
           </button>
         )}
       </div>
 
-      <div className={'row py-3'}>
-        <div className={'col-6'}>
-          <address className={classes.Address}>
+      <div className={'row g-0 py-3 border-bottom border-1'}>
+        {bowler.address1 && (
+          <div className={'col-5'}>
+            <address className={classes.Address}>
             <span>
               {bowler.address1}
             </span>
-            {bowler.address2 && <span>{bowler.address2}</span>}
-            <span>
+              {bowler.address2 && <span>{bowler.address2}</span>}
+              <span>
               {bowler.city}, {bowler.state}
             </span>
-            <span>
+              <span>
               {bowler.postal_code}
             </span>
-            <span>
+              <span>
               {bowler.country}
             </span>
-          </address>
-        </div>
+            </address>
+          </div>
+        )}
 
-        <div className={'col-6'}>
+        <div className={'col-5'}>
+          {bowler.birthMonth > 0 && (
+            <div>
+              Date of Birth:
+              {' '}
+              <strong>
+                {bowler.birthMonth} / {bowler.birthDay} / {bowler.birthYear}
+              </strong>
+            </div>
+          )}
           <div>
-            Date of Birth: {bowler.birth_month} / {bowler.birth_day} / {bowler.birth_year}
-          </div>
-          <div>
-            Phone: {bowler.phone}
-          </div>
-          <div>
-            Email: {bowler.email}
-          </div>
-          <div>
-            USBC Number: {bowler.usbc_id}
-          </div>
-          <div className={'pt-2'}>
-            IGBO Member:{' '}
+            Phone:
+            {' '}
             <strong>
-              {bowler.igbo_member ? 'Yes' : 'No'}
+              {bowler.phone}
+            </strong>
+          </div>
+          <div>
+            Email:
+            {' '}
+            <strong>
+              {bowler.email}
+            </strong>
+          </div>
+          <div>
+            USBC Number:
+            {' '}
+            <strong>
+              {bowler.usbcId}
             </strong>
           </div>
         </div>
-      </div>
 
-      <div className={`row g-0 pb-3 border-bottom border-1 ${classes.ExtraQuestions}`}>
-        <div className={'col-12'}>
-          {bowler.additional_question_responses && Object.values(bowler.additional_question_responses).map(r => (
+        <div className={'col-7'}>
+          {bowler.additionalQuestionResponses && Object.values(bowler.additionalQuestionResponses).map(r => (
             <div key={r.name}>
               {r.label}: <strong>{r.response}</strong>
             </div>
@@ -96,14 +197,14 @@ const SignInSheet = ({bowler, showPrintButton}) => {
         </div>
       </div>
 
-      <div className={`row g-0 py-3 border-bottom border-1`}>
+      <div className={`row py-3 border-bottom border-1`}>
         <div className={'col-5'}>
           <div className={'row'}>
             <div className={'col-8 text-end pe-2'}>
               Tournament Average
             </div>
             <div className={'col fw-bold'}>
-              {bowler.verified_average}
+              {bowler.verifiedAverage}
             </div>
           </div>
           <div className={'row'}>
@@ -114,15 +215,34 @@ const SignInSheet = ({bowler, showPrintButton}) => {
               {bowler.handicap}
             </div>
           </div>
+          <div className={'row'}>
+            <div className={'col-8 text-end pe-2'}>
+              IGBO Member
+            </div>
+            <div className={'col fw-bold'}>
+              {bowler.igboMember ? 'Yes' : 'No'}
+            </div>
+          </div>
         </div>
+
         <div className={'col-7'}>
-          {bowler.team && (
+          {bowler.teamName && (
             <div className={'row'}>
               <div className={'col-5 text-end pe-2'}>
                 Team Name
               </div>
               <div className={'col fw-bold'}>
-                {bowler.team.name}
+                {bowler.teamName}
+              </div>
+            </div>
+          )}
+          {bowler.position && (
+            <div className={'row'}>
+              <div className={'col-5 text-end pe-2'}>
+                Position
+              </div>
+              <div className={'col fw-bold'}>
+                {bowler.position}
               </div>
             </div>
           )}
@@ -131,92 +251,280 @@ const SignInSheet = ({bowler, showPrintButton}) => {
               Doubles Partner
             </div>
             <div className={'col fw-bold'}>
-              {!bowler.doubles_partner && 'n/a'}
-              {bowler.doubles_partner && bowler.doubles_partner.full_name}
+              {!bowler.doublesPartner && 'n/a'}
+              {!!bowler.doublesPartner && bowler.doublesPartner}
             </div>
           </div>
         </div>
       </div>
 
-      <div className={`row g-0 py-3 border-bottom border-1`}>
-        <h4>
-          Fees &amp; Extras
-        </h4>
-        <div className={'col-6'}>
-          {bowler.purchases && bowler.purchases.map(p => {
-            const quantity = countsByItemID[p.purchasable_item_identifier];
-            if (quantity === 0) {
-              return '';
-            }
-            const multiplier = quantity === 1 ? '' : (
-              <span>
-                <i className={'bi-x px-1'}aria-hidden={true} />
-                {quantity}
-                <span className={'visually-hidden'}>
-                  purchased
-                </span>
-              </span>
-              );
-            countsByItemID[p.purchasable_item_identifier] = 0;
-            let note = false;
-            if (p.configuration.division) {
-              note = `Division ${p.configuration.division}`;
-            } else if (p.configuration.denomination) {
-              note = p.configuration.denomination;
-            }
-            return (
-              <div className={'row'} key={p.identifier}>
-                <div className={'col-8 text-end pe-2'}>
-                  {p.name}
-                  {note && <span className={classes.PurchaseNote}>{note}</span>}
-                </div>
-                <div className={'col fw-bold'}>
-                  ${p.value}
-                  {multiplier}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        <div className={'col'}>
-          <div className={'row'}>
-            <div className={'col-8 text-end pe-2'}>
-              Total paid
-            </div>
-            <div className={'col fw-bold'}>
-              ${bowler.amount_paid}
-            </div>
-          </div>
+      <div className={`row mt-2`}>
+        {tournamentHasExtras &&(
+          <div className={`col-7`}>
+            <h4>
+              Bowling Extras
+            </h4>
 
-          {bowler.free_entry && bowler.free_entry.confirmed && (
-            <div className={'row my-2'}>
-              <div className={'col-8 text-end pe-2'}>
-                Free entry
-                <span className={classes.PurchaseNote}>{bowler.free_entry.unique_code}</span>
-              </div>
-              <div className={'col fw-bold'}>
-                ${bowler.ledger_entries.filter(le => le.source === 'free_entry').reduce((prev, curr) => prev + parseInt(curr.credit), 0)}
-              </div>
-            </div>
+            <table className={`table table-bordered align-middle ${classes.PurchasesTable}`}>
+              <thead>
+              <tr>
+                <th></th>
+                <th>Item</th>
+                <th className={`text-center`}>
+                  Amt.
+                </th>
+                <th className={`text-center`}>
+                  Paid
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+
+              {/* Division items first */}
+              {tournament.purchasableItems.filter(pi => pi.refinement === 'division').map(pi => {
+                // only if the bowler has a purchase for this PI
+                const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === pi.identifier);
+                const signup = bowler.signups.find(s => s.purchasableItem.identifier === pi.identifier);
+                const signedUp = ['requested', 'paid'].includes(signup.status);
+                const deactivated = signup.status === 'inactive';
+
+                return (
+                  <tr className={``} key={pi.identifier}>
+                    <td className={`${classes.SignedUp} text-center`}>
+                      {signedUp ? <i className={`bi bi-check2`}></i> : ''}
+                      {deactivated && <i className={`bi bi-dash-lg`}></i>}
+                    </td>
+                    <td className={``}>
+                      <p className={`mb-0`}>
+                        {pi.name}
+                      </p>
+                      <p className={`ps-1 mb-0 fst-italic small`}>
+                        Division: {pi.configuration.division}
+                      </p>
+                    </td>
+                    <td className={`text-center pe-1`}>
+                      ${pi.value}
+                    </td>
+                    {!!purchase && (
+                      <td className={`text-center ${classes.AmountBox} ${classes.PaidAmount}`}>
+                        ${pi.value}
+                      </td>
+                    )}
+                    {deactivated && (
+                      <td className={`text-center ${classes.AmountBox}`}>
+                        &ndash;
+                      </td>
+                    )}
+                    {!purchase && !deactivated && (
+                      <td className={`text-center ${classes.AmountBox}`}>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })}
+
+              {/* Non-division items, single-use */}
+              {tournament.purchasableItems.filter(pi => pi.category === 'bowling' && pi.determination === 'single_use' && pi.refinement !== 'division').map(pi => {
+                // only if the bowler has a purchase for this PI
+                const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === pi.identifier);
+                const signup = bowler.signups.find(s => s.purchasableItem.identifier === pi.identifier);
+                const signedUp = ['requested', 'paid'].includes(signup.status);
+
+                return (
+                  <tr className={``} key={pi.identifier}>
+                    <td className={`${classes.SignedUp} text-center`}>
+                      {signedUp ? <i className={`bi bi-check2`}></i> : ''}
+                    </td>
+                    <td className={``}>
+                      <p className={`mb-0`}>
+                        {pi.name}
+                      </p>
+                    </td>
+                    <td className={`text-center pe-1`}>
+                      ${pi.value}
+                    </td>
+                    {!!purchase && (
+                      <td className={`text-center ${classes.AmountBox} ${classes.PaidAmount}`}>
+                        ${pi.value}
+                      </td>
+                    )}
+                    {!purchase && (
+                      <td className={`text-center ${classes.AmountBox}`}>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })}
+              </tbody>
+            </table>
+
+            <table className={`table table-bordered align-middle ${classes.PurchasesTable}`}>
+              <thead>
+              <tr>
+                <th></th>
+                <th>Item</th>
+                <th className={`text-center`}>
+                  Amt.
+                </th>
+                <th className={`text-center`}>
+                  Qty.
+                </th>
+                <th className={`text-center`}>
+                  Paid
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              {/* Non-division items, multi-use */}
+              {tournament.purchasableItems.filter(pi => pi.category === 'bowling' && pi.determination === 'multi_use').map(pi => {
+                // only if the bowler has a purchase for this PI
+                const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === pi.identifier);
+                const signup = bowler.signups.find(s => s.purchasableItem.identifier === pi.identifier);
+                const signedUp = ['requested', 'paid'].includes(signup.status);
+
+                return (
+                  <tr className={``} key={pi.identifier}>
+                    <td className={`${classes.SignedUp} text-center`}>
+                      {signedUp ? <i className={`bi bi-check2`}></i> : ''}
+                    </td>
+                    <td className={``}>
+                      <p className={`mb-0`}>
+                        {pi.name}
+                      </p>
+                    </td>
+                    <td className={`text-center pe-1`}>
+                      ${pi.value}
+                    </td>
+
+                    {!!purchase && (
+                      <td className={`text-center ${classes.QuantityBox}`}>
+                        <i className={`bi bi-x`}/>
+                        {' '}{countsByItemID[pi.identifier]}
+                      </td>
+                    )}
+                    {!!purchase && (
+                      <td className={`text-center ${classes.AmountBox} ${classes.PaidAmount}`}>
+                        ${pi.value * countsByItemID[pi.identifier]}
+                      </td>
+                    )}
+
+                    {!purchase && (
+                      <td className={`text-start ${classes.QuantityBox}`}>
+                        <i className={`bi bi-x`}/>
+                      </td>
+                    )}
+                    {!purchase && (
+                      <td className={`text-center ${classes.AmountBox}`}>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })}
+
+              </tbody>
+            </table>
+          </div>
+          // End of tournamentHasExtras
+        )}
+
+        <div className={tournamentHasExtras ? `col-5` : `col-6`}>
+          <h4>
+            Fees/Discounts
+          </h4>
+
+          {ledgerRows.length > 0 && (
+            <table className={`${classes.PurchasesTable} table table-bordered align-middle`}>
+              <thead>
+                <tr className={``} key={'header-row'}>
+                  <th className={``}>
+                    Item
+                  </th>
+                  <th className={`text-center`}>
+                    Amt.
+                  </th>
+                  <th className={`text-center`}>
+                    Paid
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+              {ledgerRows}
+              </tbody>
+            </table>
           )}
 
-          <div className={'row my-2'}>
-            <div className={'col-8 text-end pe-2'}>
-              Total paid
-            </div>
-            <div className={'col fw-bold'}>
-              ${bowler.amount_paid}
-            </div>
-          </div>
+          <h4>
+            Pre-Purchases
+          </h4>
+          {prePurchaseRows.length === 0 && <p>None</p>}
+          {prePurchaseRows.length > 0 && (
+            <table className={`table table-bordered align-middle ${classes.PurchasesTable}`}>
+              <thead>
+              <tr>
+                <th>Item</th>
+                <th className={`text-center`}>
+                  Amt.
+                </th>
+                <th className={`text-center`}>
+                  Qty.
+                </th>
+                <th className={`text-center`}>
+                  Paid
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+                {prePurchaseRows}
+              </tbody>
+            </table>
+          )}
 
-          <div className={'row pt-2'}>
-            <div className={'col-8 text-end pe-2'}>
-              Total outstanding
-            </div>
-            <div className={'col fw-bold'}>
-              ${bowler.amount_due}
-            </div>
-          </div>
+          <h4>
+            Totals
+          </h4>
+
+          <table className={`table table-bordered ${classes.TotalsTable}`}>
+            <tbody>
+            <tr>
+              <td>
+                Total pre-paid
+              </td>
+              <td className={`${classes.Amount}`}>
+                ${bowler.amountPaid}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Outstanding charges
+              </td>
+              <td className={`${classes.Amount}`}>
+                ${bowler.amountOutstanding}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Charges at Registration
+              </td>
+              <td className={`${classes.AmountBox}`}>
+
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Due at Registration
+              </td>
+              <td className={`${classes.AmountBox}`}>
+
+              </td>
+            </tr>
+            </tbody>
+          </table>
+
+          {/* Total charges */}
+          {/*  Pre-paid*/}
+          {/*  Outstanding charges*/}
+          {/*  Charges at Registration*/}
+          {/*  Total due at Registration*/}
         </div>
       </div>
 

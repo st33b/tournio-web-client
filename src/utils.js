@@ -829,15 +829,25 @@ export const useTeam = (teamIdentifier, onSuccess = () => {
 }
 
 export const useBowlerCommerce = (bowlerIdentifier, onSuccess = () => {}, onFailure = () => {}) => {
-  const {loading, data, error} = useApi({
+  const {loading, data, error, onDataUpdate} = useApi({
     uri: bowlerIdentifier ? `/bowlers/${bowlerIdentifier}/commerce` : null,
     onSuccess: onSuccess,
     onFailure: onFailure,
   });
 
+  const commerceUpdated = (updatedCommerceData) => {
+    const mutateOptions = {
+      optimisticData: updatedCommerceData,
+      rollbackOnError: true,
+      populateCache: true,
+    };
+    onDataUpdate(updatedCommerceData, mutateOptions);
+  }
+
   return {
     loading,
     data,
     error,
+    commerceUpdated,
   }
 }

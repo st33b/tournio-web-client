@@ -10,13 +10,12 @@ const Page = () => {
   const teamRetrieved = (team) => {
     const tournamentId = team.tournament.identifier;
 
-    // Redirect to the actual team page, with chosen = 1
+    // Redirect to the actual team page
     router.push({
-          pathname: `/tournaments/[identifier]/teams/[teamIdentifier]/[chosen]`,
+          pathname: `/tournaments/[identifier]/teams/[teamIdentifier]`,
           query: {
             identifier: tournamentId,
             teamIdentifier: identifier,
-            chosen: 1,
           },
         },
         null,

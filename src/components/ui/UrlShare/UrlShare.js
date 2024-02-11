@@ -35,6 +35,7 @@ const UrlShare = ({url}) => {
                         placement="top"
                         overlay={popover}>
           <button className={'btn btn-secondary'}
+                  title={"Click to copy this URL to your clipboard"}
                   onClick={copyClicked}>
             <i className={'bi bi-copy'} aria-hidden={true}/>
             <span className={'visually-hidden'}>

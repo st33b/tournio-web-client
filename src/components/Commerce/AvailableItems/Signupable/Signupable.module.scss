@@ -1,9 +1,13 @@
-.Item {
-  border: 1px dashed var(--tournio-gray-400);
+.Signupable {
+  border: 1px dashed var(--tournio-gray-500);
   border-radius: 8px;
 
   p {
     margin: 0.5rem auto;
+  }
+
+  .SignupLink {
+    font-size: 90%;
   }
 
   .AddLink {
@@ -43,7 +47,7 @@
 }
 
 [data-bs-theme="dark"] {
-  .Item {
+  .Signupable {
     border-color: var(--tournio-gray-700)
   }
   .Selected {

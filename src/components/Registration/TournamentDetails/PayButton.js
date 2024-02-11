@@ -1,8 +1,6 @@
 import {useRouter} from "next/router";
 import Button from "react-bootstrap/Button";
 
-import classes from './TournamentDetails.module.scss';
-
 const PayButton = ({disabled, bowler}) => {
   const router = useRouter();
   let href = `${router.asPath}/bowlers`;
