@@ -8,7 +8,7 @@ import Signupable from "./Signupable/Signupable";
 const AvailableItems = ({itemAddedToCart, signupChanged}) => {
   const {commerce} = useCommerceContext();
 
-  if (!commerce || !commerce.availableItems || !commerce.signupables) {
+  if (!commerce || !commerce.availableItems || !commerce.signupables || !commerce.tournament) {
     return '';
   }
 
@@ -73,7 +73,7 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
   const anyBowlingExtras = (divisionItems.length +
     singleUseItems.length +
     multiUseItems.length) > 0;
-  const anySignupables = anyBowlingExtras || eventItems.length > 0;
+  const anySignupables = commerce.tournament.config.enable_unpaid_signups && (anyBowlingExtras || eventItems.length > 0);
   const bowlingItemsClass = anySignupables ? '' : 'd-none';
 
   const anyOtherExtras = (raffleItems.length +
