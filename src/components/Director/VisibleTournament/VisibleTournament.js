@@ -37,6 +37,7 @@ const VisibleTournament = ({closeTournament}) => {
     "email_in_dev",
     "skip_stripe",
     "stripe_receipts",
+    "enable_unpaid_signups",
   ];
 
   const {loading, tournament} = useTournament();

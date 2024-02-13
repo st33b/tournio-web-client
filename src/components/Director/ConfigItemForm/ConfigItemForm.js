@@ -14,6 +14,7 @@ const BOOLEAN_CONFIG_ITEMS = [
   'email_in_dev',
   'skip_stripe',
   'stripe_receipts',
+  'enable_unpaid_signups',
 ];
 
 const ConfigItemForm = ({item}) => {
