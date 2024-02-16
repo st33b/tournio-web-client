@@ -56,6 +56,11 @@ const Navigation = () => {
 
   if (user.role === 'superuser') {
     links.push({
+      href: '/director/tournament_orgs',
+      text: 'Orgs',
+    });
+
+    links.push({
       href: '/director/users',
       text: 'User Accounts',
     });
