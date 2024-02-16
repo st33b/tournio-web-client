@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import {Nav, Navbar} from "react-bootstrap";
 
-import {useDirectorContext} from "../../../store/DirectorContext";
-
 import classes from './Navigation.module.scss';
 import {useClientReady} from "../../../utils";
 import ColorModeToggler from "../../common/ColorModeToggler/ColorModeToggler";

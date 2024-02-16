@@ -15,7 +15,7 @@ const Page = () => {
     uri: '/tournament_orgs',
   });
 
-  if (loading) {
+  if (loading || !user) {
     return <LoadingMessage message={'Retrieving tournament organizations...'} />;
   }
 
@@ -25,6 +25,11 @@ const Page = () => {
 
   if (error) {
     return <ErrorAlert message={error} />;
+  }
+
+  // Naughty naughty!
+  if (user && user.role !== 'superuser') {
+    router.push('/director/logout');
   }
 
   return (
