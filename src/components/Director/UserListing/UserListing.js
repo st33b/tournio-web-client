@@ -9,7 +9,7 @@ import {tournamentName} from '../../../utils';
 
 import classes from './UserListing.module.scss';
 
-const UserListing = ({users, tournaments}) => {
+const UserListing = ({users, tournamentOrgs}) => {
   const columns = useMemo(() => [
     {
       id: 'last_name',
@@ -39,10 +39,10 @@ const UserListing = ({users, tournaments}) => {
       disableSortBy: true,
     },
     {
-      id: 'tournaments',
-      accessor: 'tournaments',
+      id: 'tournamentOrgs',
+      accessor: 'tournamentOrgs',
       Header: 'Tournament(s)',
-      Cell: ({row}) => row.original.tournaments.map(t => (t.name)).join(', '),
+      Cell: ({row}) => row.original.tournamentOrgs.map(t => (t.name)).join(', '),
       filter: tournamentName,
       disableSortBy: true,
     },
@@ -76,11 +76,11 @@ const UserListing = ({users, tournaments}) => {
 
   const filterThatData = (criteria) => {
     if (criteria.tournament) {
-      setFilter('tournaments', criteria.tournament);
-    } else if (criteria.has_no_tournament) {
-      setFilter('tournaments', '');
+      setFilter('tournamentOrgs', criteria.tournamentOrg);
+    } else if (criteria.has_no_tournament_org) {
+      setFilter('tournamentOrgs', '');
     } else {
-      setFilter('tournaments', undefined);
+      setFilter('tournamentOrgs', undefined);
     }
 
     setFilter('email', criteria.email);
@@ -98,7 +98,7 @@ const UserListing = ({users, tournaments}) => {
 
   //////////////////////////////////////////////////////////////
 
-  if (!users || !tournaments) {
+  if (!users || !tournamentOrgs) {
     return '';
   }
 
@@ -115,7 +115,7 @@ const UserListing = ({users, tournaments}) => {
             <>
               <UserFilterForm onFilterApplication={filterThatData}
                               onFilterReset={resetThoseFilters}
-                              tournaments={tournaments}/>
+                              tournamentOrgs={tournamentOrgs}/>
 
               <div className={'table-responsive'}>
                 <table className={'table table-striped table-hover'} {...getTableProps}>

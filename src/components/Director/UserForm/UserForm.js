@@ -19,7 +19,7 @@ const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
       role: 'director',
       first_name: '',
       last_name: '',
-      tournamentIds: [],
+      tournamentOrgIds: [],
     },
     valid: false,
     touched: false,
@@ -43,12 +43,12 @@ const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
     newUserFormData.fields.role = user.role;
     newUserFormData.fields.first_name = user.first_name || '';
     newUserFormData.fields.last_name = user.last_name || '';
-    newUserFormData.fields.tournamentIds = user.tournaments.map(t => t.id);
+    newUserFormData.fields.tournamentOrgIds = user.tournaments.map(t => t.id);
 
     const isSelf = user.identifier === loggedInUser.identifier;
     if (isSelf) {
       delete newUserFormData.fields.role;
-      delete newUserFormData.fields.tournamentIds;
+      delete newUserFormData.fields.tournamentOrgIds;
     }
 
     newUserFormData.valid = true;
@@ -163,12 +163,12 @@ const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
     }
 
     if (!isSelf) {
-      const tournamentIds = [];
-      for (const option of userFormData.fields.tournamentIds) {
-        tournamentIds.push(option);
+      const tournamentOrgIds = [];
+      for (const option of userFormData.fields.tournamentOrgIds) {
+        tournamentOrgIds.push(option);
       }
       userData.role = userFormData.fields.role;
-      userData.tournament_ids = tournamentIds;
+      userData.tournament_ids = tournamentOrgIds;
     }
 
     const requestConfig = {
@@ -203,12 +203,12 @@ const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
     }
 
     // Value of Tournament IDs element is handled differently than the others
-    if (elementId === 'tournamentIds') {
-      const tournamentIds = [];
+    if (elementId === 'tournamentOrgIds') {
+      const tournamentOrgIds = [];
       for (const option of event.target.selectedOptions) {
-        tournamentIds.push(option.value);
+        tournamentOrgIds.push(option.value);
       }
-      updatedForm.fields.tournamentIds = tournamentIds;
+      updatedForm.fields.tournamentOrgIds = tournamentOrgIds;
     } else {
       updatedForm.fields[elementId] = newValue;
     }
@@ -281,15 +281,15 @@ const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
               </FormGroup>
             )}
             {!isSelf && (
-              <FormGroup controlId={'tournamentIds'}>
+              <FormGroup controlId={'tournamentOrgIds'}>
                 <Form.Label>
-                  Tournament(s)
+                  Tournament Org(s)
                 </Form.Label>
-                <Form.Select name={'tournamentIds'}
+                <Form.Select name={'tournamentOrgIds'}
                              multiple
                              htmlSize={Math.min(10, tournaments.length)}
-                             onChange={(event) => inputChangedHandler(event, 'tournamentIds')}
-                             value={userFormData.fields.tournamentIds}>
+                             onChange={(event) => inputChangedHandler(event, 'tournamentOrgIds')}
+                             value={userFormData.fields.tournamentOrgIds}>
                   {tournaments.map((t) => {
                     return (
                       <option key={t.id} value={t.id}>

@@ -1,6 +1,5 @@
 import React from "react";
 import {useRouter} from "next/router";
-import Link from 'next/link';
 
 import {Col, Row} from "react-bootstrap";
 
@@ -21,8 +20,8 @@ const Page = () => {
     uri: '/users',
   });
 
-  const {loading: tournamentsLoading, data: tournaments, error: tournamnentsError} = useDirectorApi({
-    uri: '/tournaments',
+  const {loading: tournamentOrgsLoading, data: tournamentOrgs, error: tournamentOrgsError} = useDirectorApi({
+    uri: '/tournament_orgs',
   });
 
   const userAdded = (user) => {
@@ -30,13 +29,13 @@ const Page = () => {
     onDataUpdate(newUsers);
   }
 
-  const userUpdated = (user) => {
+  const userUpdated = (users) => {
     onDataUpdate(users);
   }
 
   //////////////////////////////////////////////////////////////////////////
 
-  if (usersLoading || tournamentsLoading) {
+  if (usersLoading || tournamentOrgsLoading) {
     return <LoadingMessage message={'Retrieving users, gimme a sec...'} />
   }
 
@@ -53,12 +52,12 @@ const Page = () => {
           )}
           <ErrorAlert message={usersError}
                       className={``}/>
-          <ErrorAlert message={tournamnentsError}
+          <ErrorAlert message={tournamentOrgsError}
                       className={``}/>
-          <UserListing users={users} tournaments={tournaments}/>
+          <UserListing users={users} tournamentOrgs={tournamentOrgs}/>
         </Col>
         <Col>
-          <UserForm tournaments={tournaments}
+          <UserForm tournamentOrgs={tournamentOrgs}
                     onUserAdded={userAdded}
                     onUserUpdated={userUpdated}
           />

@@ -6,6 +6,8 @@ import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage
 import {useDirectorApi} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 import ErrorAlert from "../../../components/common/ErrorAlert";
+import TournamentOrgForm from "../../../components/Director/TournamentOrgForm/TournamentOrgForm";
+import {devConsoleLog} from "../../../utils";
 
 const Page = () => {
   const router = useRouter();
@@ -32,9 +34,13 @@ const Page = () => {
     router.push('/director/logout');
   }
 
+  const newOrgFormSubmitted = (orgName, onSuccess = () => {}, onFailure = () => {}) => {
+    devConsoleLog("Creating a new org with name", orgName);
+  }
+
   return (
-    <>
-      <table className={`table table-striped`}>
+    <div className={'row'}>
+      <table className={`table table-striped col`}>
         <thead>
           <tr>
             <th>
@@ -81,7 +87,11 @@ const Page = () => {
           ))}
         </tbody>
       </table>
-    </>
+
+      <div className={'col-12 col-sm-7 col-md-5 col-lg-4 col-xl-3'}>
+        <TournamentOrgForm onSubmit={newOrgFormSubmitted}/>
+      </div>
+    </div>
   );
 }
 
