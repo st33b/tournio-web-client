@@ -1,5 +1,6 @@
 import classes from './TournamentOrgForm.module.scss';
 import {useState} from "react";
+import ErrorAlert from "../../common/ErrorAlert";
 
 const TournamentOrgForm = ({existingOrg, onSubmit}) => {
 
@@ -12,6 +13,7 @@ const TournamentOrgForm = ({existingOrg, onSubmit}) => {
   }
 
   const [orgFormData, setOrgFormData] = useState(initialState);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   // Placeholder: populating form with edit data
 
@@ -28,9 +30,13 @@ const TournamentOrgForm = ({existingOrg, onSubmit}) => {
     setOrgFormData(updatedFormData);
   }
 
+  const resetForm = () => {
+    setOrgFormData(initialState);
+  }
+
   const submitClicked = (event) => {
     event.preventDefault();
-    onSubmit(orgFormData.fields.name);
+    onSubmit(orgFormData.fields.name, resetForm);
   }
 
   return (
@@ -58,6 +64,9 @@ const TournamentOrgForm = ({existingOrg, onSubmit}) => {
                      disabled={!orgFormData.valid}
                      value={'Create'}/>
             </div>
+            {errorMsg && <ErrorAlert message={errorMsg}
+                                     className={`mt-3 mb-0`}
+                                     onClose={() => setErrorMsg(null)}/> }
           </form>
         </div>
       </div>

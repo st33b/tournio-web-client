@@ -3,17 +3,18 @@ import Link from 'next/link';
 
 import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import {useDirectorApi} from "../../../director";
+import {directorApiRequest, useDirectorApi} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 import TournamentOrgForm from "../../../components/Director/TournamentOrgForm/TournamentOrgForm";
-import {devConsoleLog} from "../../../utils";
+import {useState} from "react";
 
 const Page = () => {
   const router = useRouter();
-  const {user} = useLoginContext();
+  const {user, authToken} = useLoginContext();
 
-  const {loading, data: tournamentOrgs, error} = useDirectorApi({
+  const [creationInProgress, setCreationInProgress] = useState(false);
+  const {loading, data: tournamentOrgs, error, onDataUpdate} = useDirectorApi({
     uri: '/tournament_orgs',
   });
 
@@ -34,8 +35,39 @@ const Page = () => {
     router.push('/director/logout');
   }
 
+  const orgCreated = (org) => {
+    const newOrgs = tournamentOrgs.concat(org);
+    onDataUpdate(newOrgs);
+    setCreationInProgress(false);
+  }
+
   const newOrgFormSubmitted = (orgName, onSuccess = () => {}, onFailure = () => {}) => {
-    devConsoleLog("Creating a new org with name", orgName);
+    const uri = '/tournament_orgs';
+    const method = 'post';
+    const postData = {
+      name: orgName,
+    }
+    const requestConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: method,
+      data: {
+        tournament_org: postData,
+      }
+    }
+
+    setCreationInProgress(true);
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      authToken: authToken,
+      onSuccess: (data) => {
+        orgCreated(data);
+        onSuccess();
+      },
+      onFailure: onFailure(),
+    });
   }
 
   return (
@@ -89,7 +121,8 @@ const Page = () => {
       </table>
 
       <div className={'col-12 col-sm-7 col-md-5 col-lg-4 col-xl-3'}>
-        <TournamentOrgForm onSubmit={newOrgFormSubmitted}/>
+        {creationInProgress && <LoadingMessage message={'Working...'}/>}
+        {!creationInProgress && <TournamentOrgForm onSubmit={newOrgFormSubmitted}/>}
       </div>
     </div>
   );
