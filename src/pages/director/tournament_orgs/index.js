@@ -94,6 +94,14 @@ const Page = () => {
             <tr key={org.identifier}>
               <td>
                 {org.name}
+                {/*<Link href={{*/}
+                {/*  pathname: `/director/tournament_orgs/[identifier]`,*/}
+                {/*  query: {*/}
+                {/*    identifier: org.identifier,*/}
+                {/*  },*/}
+                {/*}}>*/}
+                {/*  {org.name}*/}
+                {/*</Link>*/}
               </td>
               <td>
                 {org.identifier}
