@@ -12,13 +12,13 @@ import classes from './UserListing.module.scss';
 const UserListing = ({users, tournamentOrgs}) => {
   const columns = useMemo(() => [
     {
-      id: 'last_name',
+      id: 'lastName',
       Header: ({column}) => <SortableTableHeader text={'Last Name'} column={column}/>,
-      accessor: 'last_name',
+      accessor: 'lastName',
     },
     {
-      id: 'first_name',
-      accessor: 'first_name',
+      id: 'firstName',
+      accessor: 'firstName',
       Header: 'First Name',
       disableSortBy: true,
     },
@@ -41,14 +41,14 @@ const UserListing = ({users, tournamentOrgs}) => {
     {
       id: 'tournamentOrgs',
       accessor: 'tournamentOrgs',
-      Header: 'Tournament(s)',
-      Cell: ({row}) => row.original.tournamentOrgs.map(t => (t.name)).join(', '),
+      Header: 'Org(s)',
+      Cell: ({row}) => row.original.tournamentOrgs.length > 0 ? row.original.tournamentOrgs.map(t => (t.identifier)).join(', ') : 'n/a',
       filter: tournamentName,
       disableSortBy: true,
     },
     {
-      id: 'last_sign_in_at',
-      accessor: 'last_sign_in_at',
+      id: 'lastSignInAt',
+      accessor: 'lastSignInAt',
       Header: ({column}) => <SortableTableHeader text={'Last Signed In'} column={column}/>,
     },
   ], [users]);
@@ -75,8 +75,8 @@ const UserListing = ({users, tournamentOrgs}) => {
   );
 
   const filterThatData = (criteria) => {
-    if (criteria.tournament) {
-      setFilter('tournamentOrgs', criteria.tournamentOrg);
+    if (criteria.tournamentOrgId) {
+      setFilter('tournamentOrgId', criteria.tournamentOrgId);
     } else if (criteria.has_no_tournament_org) {
       setFilter('tournamentOrgs', '');
     } else {

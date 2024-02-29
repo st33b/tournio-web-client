@@ -9,7 +9,7 @@ import classes from './UserFilterForm.module.scss';
 const UserFilterForm = ({onFilterApplication, onFilterReset, tournamentOrgs}) => {
   const initialState = {
     email: '',
-    tournament: '',
+    tournamentOrgId: '',
     has_no_tournament_org: false,
     has_not_signed_in: false,
   }
@@ -33,7 +33,7 @@ const UserFilterForm = ({onFilterApplication, onFilterReset, tournamentOrgs}) =>
 
     switch (inputIdentifier) {
       case 'email':
-      case 'tournament':
+      case 'tournamentOrgId':
         updatedForm[inputIdentifier] = event.target.value;
         if (event.target.value.length > 0) {
           updatedForm['has_no_tournament_org'] = false;
@@ -45,7 +45,7 @@ const UserFilterForm = ({onFilterApplication, onFilterReset, tournamentOrgs}) =>
         const newValue = !oldValue;
         updatedForm[inputIdentifier] = newValue;
         if (inputIdentifier === 'has_no_tournament_org' && newValue) {
-          updatedForm['tournament'] = '';
+          updatedForm['tournamentOrgId'] = '';
         }
         break;
       default:
@@ -64,17 +64,17 @@ const UserFilterForm = ({onFilterApplication, onFilterReset, tournamentOrgs}) =>
 
   const form = (
     <Form onSubmit={formHandler} className={'p-3 col-md-10 offset-md-1'} >
-      <Form.Group controlId={'tournament'}
+      <Form.Group controlId={'tournamentOrgId'}
                   as={Row}
                   className={'mb-3'}>
         <Form.Label column sm={4} className={'d-none d-sm-block text-end'}>
-          Tournament
+          Tournament Org
         </Form.Label>
         <Col>
-          <Form.Select value={filterForm.tournament}
-                       onChange={(event) => inputChangedHandler(event, 'tournament')}>
+          <Form.Select value={filterForm.tournamentOrgId}
+                       onChange={(event) => inputChangedHandler(event, 'tournamentOrgId')}>
             <option value={''}>--</option>
-            {tournamentOrgs.map(t => <option key={t.identifier} value={t.name}>{t.name}</option>)}
+            {tournamentOrgs.map(t => <option key={t.identifier} value={t.id}>{t.name}</option>)}
           </Form.Select>
         </Col>
       </Form.Group>

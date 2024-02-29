@@ -9,7 +9,7 @@ import {useLoginContext} from "../../../store/LoginContext";
 import SuccessAlert from "../../common/SuccessAlert";
 import ErrorAlert from "../../common/ErrorAlert";
 
-const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
+const UserForm = ({user, tournamentOrgs = [], onUserAdded, onUserUpdated}) => {
   const {user: loggedInUser, authToken} = useLoginContext();
   const router = useRouter();
 
@@ -17,8 +17,8 @@ const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
     fields: {
       email: '',
       role: 'director',
-      first_name: '',
-      last_name: '',
+      firstName: '',
+      lastName: '',
       tournamentOrgIds: [],
     },
     valid: false,
@@ -41,9 +41,9 @@ const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
 
     newUserFormData.fields.email = user.email;
     newUserFormData.fields.role = user.role;
-    newUserFormData.fields.first_name = user.first_name || '';
-    newUserFormData.fields.last_name = user.last_name || '';
-    newUserFormData.fields.tournamentOrgIds = user.tournaments.map(t => t.id);
+    newUserFormData.fields.firstName = user.firstName || '';
+    newUserFormData.fields.lastName = user.lastName || '';
+    newUserFormData.fields.tournamentOrgIds = user.tournamentOrgs.map(o => o.id);
 
     const isSelf = user.identifier === loggedInUser.identifier;
     if (isSelf) {
@@ -58,7 +58,7 @@ const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
 
   ///////////////////////////////////////////////////////////////////////////
 
-  if (!tournaments) {
+  if (!tournamentOrgs) {
     return '';
   }
 
@@ -153,8 +153,8 @@ const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
     let method = 'post';
     const userData = {
       email: userFormData.fields.email,
-      first_name: userFormData.fields.first_name,
-      last_name: userFormData.fields.last_name,
+      first_name: userFormData.fields.firstName,
+      last_name: userFormData.fields.lastName,
     }
 
     if (!areWeCreating) {
@@ -168,7 +168,7 @@ const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
         tournamentOrgIds.push(option);
       }
       userData.role = userFormData.fields.role;
-      userData.tournament_ids = tournamentOrgIds;
+      userData.tournament_org_ids = tournamentOrgIds;
     }
 
     const requestConfig = {
@@ -249,8 +249,8 @@ const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
                 First Name
               </Form.Label>
               <Form.Control type={'text'}
-                            value={userFormData.fields.first_name}
-                            onChange={(event) => inputChangedHandler(event, 'first_name')}
+                            value={userFormData.fields.firstName}
+                            onChange={(event) => inputChangedHandler(event, 'firstName')}
               />
             </FormGroup>
             <FormGroup controlId={'lastName'} className={'mb-3'}>
@@ -258,8 +258,8 @@ const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
                 Last Name
               </Form.Label>
               <Form.Control type={'text'}
-                            value={userFormData.fields.last_name}
-                            onChange={(event) => inputChangedHandler(event, 'last_name')}
+                            value={userFormData.fields.lastName}
+                            onChange={(event) => inputChangedHandler(event, 'lastName')}
               />
             </FormGroup>
             {!isSelf && (
@@ -287,13 +287,13 @@ const UserForm = ({user, tournaments, onUserAdded, onUserUpdated}) => {
                 </Form.Label>
                 <Form.Select name={'tournamentOrgIds'}
                              multiple
-                             htmlSize={Math.min(10, tournaments.length)}
+                             htmlSize={Math.min(10, tournamentOrgs.length)}
                              onChange={(event) => inputChangedHandler(event, 'tournamentOrgIds')}
                              value={userFormData.fields.tournamentOrgIds}>
-                  {tournaments.map((t) => {
+                  {tournamentOrgs.map((org) => {
                     return (
-                      <option key={t.id} value={t.id}>
-                        {t.name} ({t.year})
+                      <option key={org.id} value={org.id}>
+                        {org.name}
                       </option>
                     );
                   })}
