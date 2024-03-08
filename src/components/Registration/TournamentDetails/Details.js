@@ -1,5 +1,3 @@
-import {formatInTimeZone} from 'date-fns-tz';
-
 import classes from './TournamentDetails.module.scss';
 import TraditionalPriceBreakdown from "./TraditionalPriceBreakdown";
 import EventPriceBreakdown from "./EventPriceBreakdown";
