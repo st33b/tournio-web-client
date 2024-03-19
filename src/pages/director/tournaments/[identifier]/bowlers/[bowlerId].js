@@ -46,6 +46,7 @@ const BowlerPage = () => {
     updateBowler: null,
     addLedgerEntry: null,
     setTournamentData: null,
+    waiveFee: null,
   })
   const [errors, setErrors] = useState({
     deleteBowler: null,
@@ -55,6 +56,7 @@ const BowlerPage = () => {
     updateBowler: null,
     addLedgerEntry: null,
     setTournamentData: null,
+    waiveFee: null,
   });
   const [loadingParts, setLoadingParts] = useState({
     deleteBowler: false,
@@ -64,6 +66,7 @@ const BowlerPage = () => {
     updateBowler: false,
     addLedgerEntry: false,
     setTournamentData: false,
+    waiveFee: false,
   });
 
   const updateStateForBowler = (data) => {
@@ -627,6 +630,52 @@ const BowlerPage = () => {
     })
   }
 
+  const waiveFeeSuccess = (newWaiver) => {
+    setLoadingParts({
+      ...loadingParts,
+      waiveFee: false,
+    });
+    setSuccess({
+      ...success,
+      waiveFee: 'Late fee waived',
+    });
+
+    const newBowler = {...bowler};
+    newBowler.waivers = [newWaiver];
+    onBowlerUpdate(newBowler);
+  }
+
+  const waiveFeeFailure = (error) => {
+    setLoadingParts({
+      ...loadingParts,
+      waiveFee: false,
+    });
+    setErrors({
+      ...errors,
+      waiveFee: error,
+    });
+  }
+
+  const waiveClicked = (event) => {
+    event.preventDefault();
+    if (confirm('Confirm: waive late fee for this bowler')) {
+      const uri = `/bowlers/${bowlerId}/waivers`;
+      const requestConfig = {
+        method: 'post',
+      }
+      setLoadingParts({
+        ...loadingParts,
+        waiveFee: true,
+      });
+      directorApiRequest({
+        uri: uri,
+        requestConfig: requestConfig,
+        authToken: authToken,
+        onSuccess: waiveFeeSuccess,
+        onFailure: waiveFeeFailure,
+      });
+    }
+  }
   //////////////////////////////////////////////////////////////////////
 
   if (bowlerLoading || !tournament || !bowler) {
@@ -956,6 +1005,48 @@ const BowlerPage = () => {
     </Card>
   );
 
+  const showWaivers = tournament.hasLateFee;
+  const waivers = showWaivers ? '' : (
+    <Card className={'mb-3'}>
+      <Card.Header as={'h6'} className={'fw-light'}>
+        Fee Waivers
+      </Card.Header>
+
+      <ListGroup variant={'flush'}>
+        {bowler.waivers.map((w, i) => {
+          return (
+            <ListGroup.Item key={`${w.identifier}-${i}`}>
+              <span className={`float-end`}>
+                &ndash;${w.amount}
+              </span>
+              <span className={'d-block'}>
+                {w.name}
+              </span>
+              <small className={'d-block fst-italic'}>
+                Waived by {w.created_by}
+              </small>
+            </ListGroup.Item>
+          );
+        })}
+        {bowler.waivers.length === 0 && (
+          <ListGroup.Item className={`p-0`}>
+            <div className={'my-3'}>
+              <div className={'d-flex justify-content-center'}>
+                <Button type={'button'}
+                        variant={'outline-success'}
+                        size={'sm'}
+                        onClick={waiveClicked}>
+                  <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
+                  Waive Late Fee
+                </Button>
+              </div>
+            </div>
+          </ListGroup.Item>
+        )}
+      </ListGroup>
+    </Card>
+  );
+
   const officeUseOnlyCard = (
     <Card className={'mb-3'}>
       <Card.Header as={'h6'}>
@@ -1068,6 +1159,7 @@ const BowlerPage = () => {
           {moveToTeamCard}
           {assignPartnerCard}
           {bowler.purchases && bowler.purchases.length > 0 && purchases}
+          {waivers}
           {ledgerEntries}
           <hr/>
           {deleteBowlerCard}
