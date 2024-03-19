@@ -28,7 +28,7 @@ const StatusAndCounts = () => {
   const [testEnvFormData, setTestEnvFormData] = useState(testEnvFormInitialData);
   const [testEnvSuccessMessage, setTestEnvSuccessMessage] = useState(null);
 
-  const {loading: tournamentLoading, tournament, error, tournamentUpdatedQuietly} = useTournament();
+  const {loading: tournamentLoading, tournament, tournamentUpdatedQuietly} = useTournament();
 
   // Update the state of testEnvFormData
   useEffect(() => {
@@ -158,6 +158,12 @@ const StatusAndCounts = () => {
                  onClick={(event) => downloadClicked(event, `/tournaments/${tournament.identifier}/csv_download`, 'bowlers.csv')}
       >
         CSV
+      </Card.Link>
+      <Card.Link className={'btn btn-sm btn-outline-primary'}
+                 href={'#'}
+                 onClick={(event) => downloadClicked(event, `/tournaments/${tournament.identifier}/financial_csv_download`, 'bowlers_financial.csv')}
+      >
+        Financial CSV
       </Card.Link>
       <Card.Link className={'btn btn-sm btn-outline-primary'}
                  href={'#'}
