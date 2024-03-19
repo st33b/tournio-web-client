@@ -1005,8 +1005,7 @@ const BowlerPage = () => {
     </Card>
   );
 
-  const showWaivers = tournament.hasLateFee;
-  const waivers = showWaivers ? '' : (
+  const waivers = tournament.waivable_fees.length === 0 ? '' : (
     <Card className={'mb-3'}>
       <Card.Header as={'h6'} className={'fw-light'}>
         Fee Waivers
