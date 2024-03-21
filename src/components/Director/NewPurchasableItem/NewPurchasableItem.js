@@ -82,28 +82,29 @@ const NewPurchasableItem = () => {
         availableTypes: availableLedgerTypes,
       },
     },
-    {
-      key: 'event',
-      label: 'Core Event',
-      title: '',
-      component: EventForm,
-    },
+    // Holding this one back until we need to support non-standard tournaments again
+    // {
+    //   key: 'event',
+    //   label: 'Core Event',
+    //   title: '',
+    //   component: EventForm,
+    // },
     {
       key: 'division',
-      label: 'Division Extra',
+      label: 'Bowling Extra (division)',
       title: `Something like Scratch Masters, with different prices per division`,
       component: DivisionForm,
     },
     {
       key: 'single_use',
       label: 'Bowling Extra (one-time)',
-      title: '',
+      title: 'Single-use extras, like Side Pots',
       component: SingleUseForm,
     },
     {
       key: 'multi_use',
       label: 'Bowling Extra (multi)',
-      title: '',
+      title: 'Something a bowler may enter multiple times, such as Mystery Doubles',
       component: MultiUseForm,
     },
     {
