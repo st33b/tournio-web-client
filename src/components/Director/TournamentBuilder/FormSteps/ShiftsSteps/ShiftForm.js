@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 
 import classes from '../../TournamentBuilder.module.scss';
 
-const ShiftForm = ({shift, onShiftUpdated, withDetails, onShiftDeleted}) => {
+const ShiftForm = ({shift, allEvents, onShiftUpdated, withDetails, onShiftDeleted}) => {
   const areAllValid = (fields) => {
     return fields.capacity.value > 0
       && fields.display_order.value > 0
@@ -11,6 +11,18 @@ const ShiftForm = ({shift, onShiftUpdated, withDetails, onShiftDeleted}) => {
 
   const initialFormData = {
     fields: {
+      event_ids: {
+        value: [],
+        valid: false,
+        validation: {
+          required: true,
+        },
+        validityErrors: [
+          'valueMissing',
+        ],
+        validated: false,
+        touched: false,
+      },
       name: {
         value: '',
         valid: false,
@@ -68,6 +80,7 @@ const ShiftForm = ({shift, onShiftUpdated, withDetails, onShiftDeleted}) => {
       return;
     }
     const newFormData = {...formData};
+    newFormData.fields.event_ids.value = shift.event_ids;
     newFormData.fields.name.value = shift.name;
     newFormData.fields.description.value = shift.description;
     newFormData.fields.capacity.value = shift.capacity;
@@ -92,6 +105,15 @@ const ShiftForm = ({shift, onShiftUpdated, withDetails, onShiftDeleted}) => {
       case 'name':
       case 'description':
         newValue = event.target.value;
+        break;
+      case 'event_ids':
+        const eventId = parseInt(event.target.value);
+        const selected = event.target.checked;
+        if (selected) {
+          newValue = formData.fields.event_ids.value.concat([eventId]);
+        } else {
+          newValue = formData.fields.event_ids.value.filter(id => id !== eventId);
+        }
         break;
       default:
         break;
@@ -140,6 +162,46 @@ const ShiftForm = ({shift, onShiftUpdated, withDetails, onShiftDeleted}) => {
               Delete
             </span>
             </button>
+          </div>
+        )}
+
+        {withDetails && allEvents && (
+          <div className={`row ${classes.FieldRow}`}>
+            <label htmlFor={'name'}
+                   className={'col-form-label mb-1 col-12 col-sm-3'}>
+              Events in Shift
+              <div className="d-inline">
+                <i className={`${classes.RequiredLabel} align-top bi-asterisk`}/>
+                <span className="visually-hidden">
+                  The shift needs events.
+                </span>
+              </div>
+
+            </label>
+            <div className={`col col-sm-8 ${formData.fields.event_ids.touched ? 'was-validated' : ''}`}>
+              {allEvents.map(e => (
+                <div className={'form-check'} key={e.id}>
+                    <input className="form-check-input"
+                           type="checkbox"
+                           value={e.id}
+                           name={`event_ids`}
+                           onChange={inputChanged}
+                           id={`check-${e.id}`}/>
+                    <label className="form-check-label"
+                           htmlFor={`check-{${e.id}`}>
+                      {e.name}
+                    </label>
+                </div>
+              ))}
+              <div className="invalid-feedback">
+                <div>
+                  <i className="bi-x" aria-hidden="true"/>
+                  <span className={classes.InvalidFeedback}>
+                    The shift needs events.
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

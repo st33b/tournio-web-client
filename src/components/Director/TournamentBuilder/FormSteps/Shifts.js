@@ -4,8 +4,7 @@ import {devConsoleLog, updateObject} from "../../../../utils";
 import {directorApiRequest} from "../../../../director";
 import {
   newTournamentCompleted,
-  newTournamentSaved,
-  newTournamentStepCompleted
+  newTournamentSaved
 } from "../../../../store/actions/directorActions";
 import {useDirectorContext} from "../../../../store/DirectorContext";
 import Style from "./ShiftsSteps/Style";
@@ -14,7 +13,6 @@ import ShiftForm from "./ShiftsSteps/ShiftForm";
 import classes from '../TournamentBuilder.module.scss';
 import {useLoginContext} from "../../../../store/LoginContext";
 import {useRouter} from "next/router";
-import chosen from "../../../../pages/tournaments/[identifier]/teams/[teamIdentifier]/[chosen]";
 
 const Shifts = ({substep}) => {
   const {state, dispatch} = useDirectorContext();
@@ -22,6 +20,7 @@ const Shifts = ({substep}) => {
   const router = useRouter();
 
   const INITIAL_SHIFT_STATE = {
+    event_ids: [],
     name: '',
     description: '',
     capacity: '',
@@ -68,6 +67,7 @@ const Shifts = ({substep}) => {
         break;
       case 'mix_and_match':
         // Set substep to shifts, and require all data for 2+ shifts, including event selection
+        setDisplayedSubstep('shift_forms');
         break;
       default:
         // uhh, that's nice...
@@ -172,7 +172,13 @@ const Shifts = ({substep}) => {
                                                           onShiftUpdated={(newShift) => shiftUpdated(newShift, i)}/>);
     }
     else if (chosenStyle === 'mix_and_match') {
-
+      formContent = shiftSet.map((shift, i) => <ShiftForm key={i}
+                                                          index={i}
+                                                          withDetails={true}
+                                                          allEvents={state.builder.tournament.events}
+                                                          shift={shift}
+                                                          onShiftDeleted={i > 1 ? () => shiftDeleted(i) : undefined}
+                                                          onShiftUpdated={(newShift) => shiftUpdated(newShift, i)}/>);
     }
   }
 

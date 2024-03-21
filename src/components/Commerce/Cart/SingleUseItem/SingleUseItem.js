@@ -44,6 +44,7 @@ const SingleUseItem = ({item, removed}) => {
     'd-flex',
   ];
 
+  let sign = '';
   if (item.category === 'ledger') {
     outerClasses.push(classes.Sticky);
     if (item.refinement === 'event_linked') {
@@ -64,6 +65,9 @@ const SingleUseItem = ({item, removed}) => {
       });
       note = `Events: ${matchingEvents.map(event => event.name).join(', ')}`;
     }
+    if (item.determination.includes('discount')) {
+      sign = '–';
+    }
   }
 
   return (
@@ -79,7 +83,7 @@ const SingleUseItem = ({item, removed}) => {
             </p>
           )}
           <p>
-            ${value}
+            {sign}${value}
           </p>
         </div>
         {removeLink}
