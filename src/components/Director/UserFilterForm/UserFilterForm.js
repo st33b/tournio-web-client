@@ -6,17 +6,17 @@ import {Col, Row} from "react-bootstrap";
 
 import classes from './UserFilterForm.module.scss';
 
-const UserFilterForm = ({onFilterApplication, onFilterReset, tournaments}) => {
+const UserFilterForm = ({onFilterApplication, onFilterReset, tournamentOrgs}) => {
   const initialState = {
     email: '',
-    tournament: '',
-    has_no_tournament: false,
+    tournamentOrgId: '',
+    has_no_tournament_org: false,
     has_not_signed_in: false,
   }
 
   const [filterForm, setFilterForm] = useState(initialState);
 
-  if (!tournaments) {
+  if (!tournamentOrgs) {
     return '';
   }
 
@@ -33,19 +33,19 @@ const UserFilterForm = ({onFilterApplication, onFilterReset, tournaments}) => {
 
     switch (inputIdentifier) {
       case 'email':
-      case 'tournament':
+      case 'tournamentOrgId':
         updatedForm[inputIdentifier] = event.target.value;
         if (event.target.value.length > 0) {
-          updatedForm['has_no_tournament'] = false;
+          updatedForm['has_no_tournament_org'] = false;
         }
         break;
-      case 'has_no_tournament':
+      case 'has_no_tournament_org':
       case 'has_not_signed_in':
         const oldValue = filterForm[inputIdentifier];
         const newValue = !oldValue;
         updatedForm[inputIdentifier] = newValue;
-        if (inputIdentifier === 'has_no_tournament' && newValue) {
-          updatedForm['tournament'] = '';
+        if (inputIdentifier === 'has_no_tournament_org' && newValue) {
+          updatedForm['tournamentOrgId'] = '';
         }
         break;
       default:
@@ -64,17 +64,17 @@ const UserFilterForm = ({onFilterApplication, onFilterReset, tournaments}) => {
 
   const form = (
     <Form onSubmit={formHandler} className={'p-3 col-md-10 offset-md-1'} >
-      <Form.Group controlId={'tournament'}
+      <Form.Group controlId={'tournamentOrgId'}
                   as={Row}
                   className={'mb-3'}>
         <Form.Label column sm={4} className={'d-none d-sm-block text-end'}>
-          Tournament
+          Tournament Org
         </Form.Label>
         <Col>
-          <Form.Select value={filterForm.tournament}
-                       onChange={(event) => inputChangedHandler(event, 'tournament')}>
+          <Form.Select value={filterForm.tournamentOrgId}
+                       onChange={(event) => inputChangedHandler(event, 'tournamentOrgId')}>
             <option value={''}>--</option>
-            {tournaments.map(t => <option key={t.identifier} value={t.name}>{t.name}</option>)}
+            {tournamentOrgs.map(t => <option key={t.identifier} value={t.id}>{t.name}</option>)}
           </Form.Select>
         </Col>
       </Form.Group>
@@ -94,14 +94,14 @@ const UserFilterForm = ({onFilterApplication, onFilterReset, tournaments}) => {
       </Form.Group>
       <Row>
         <Col>
-          <Form.Group controlId={'has_no_tournament'}
+          <Form.Group controlId={'has_no_tournament_org'}
                       as={Row}
                       className={'mb-3'}>
             <Col sm={{span: 8, offset: 4}}>
               <Form.Check type={'checkbox'}
                           label={'No tournament associated'}
-                          checked={filterForm.has_no_tournament}
-                          onChange={(event) => inputChangedHandler(event, 'has_no_tournament')}
+                          checked={filterForm.has_no_tournament_org}
+                          onChange={(event) => inputChangedHandler(event, 'has_no_tournament_org')}
               />
             </Col>
           </Form.Group>

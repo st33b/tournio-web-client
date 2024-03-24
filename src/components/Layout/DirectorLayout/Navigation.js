@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import {Nav, Navbar} from "react-bootstrap";
 
-import {useDirectorContext} from "../../../store/DirectorContext";
-
 import classes from './Navigation.module.scss';
 import {useClientReady} from "../../../utils";
 import ColorModeToggler from "../../common/ColorModeToggler/ColorModeToggler";
@@ -55,6 +53,11 @@ const Navigation = () => {
   });
 
   if (user.role === 'superuser') {
+    links.push({
+      href: '/director/tournament_orgs',
+      text: 'Orgs',
+    });
+
     links.push({
       href: '/director/users',
       text: 'User Accounts',

@@ -9,16 +9,16 @@ import {tournamentName} from '../../../utils';
 
 import classes from './UserListing.module.scss';
 
-const UserListing = ({users, tournaments}) => {
+const UserListing = ({users, tournamentOrgs}) => {
   const columns = useMemo(() => [
     {
-      id: 'last_name',
+      id: 'lastName',
       Header: ({column}) => <SortableTableHeader text={'Last Name'} column={column}/>,
-      accessor: 'last_name',
+      accessor: 'lastName',
     },
     {
-      id: 'first_name',
-      accessor: 'first_name',
+      id: 'firstName',
+      accessor: 'firstName',
       Header: 'First Name',
       disableSortBy: true,
     },
@@ -39,16 +39,16 @@ const UserListing = ({users, tournaments}) => {
       disableSortBy: true,
     },
     {
-      id: 'tournaments',
-      accessor: 'tournaments',
-      Header: 'Tournament(s)',
-      Cell: ({row}) => row.original.tournaments.map(t => (t.name)).join(', '),
+      id: 'tournamentOrgs',
+      accessor: 'tournamentOrgs',
+      Header: 'Org(s)',
+      Cell: ({row}) => row.original.tournamentOrgs.length > 0 ? row.original.tournamentOrgs.map(t => (t.identifier)).join(', ') : 'n/a',
       filter: tournamentName,
       disableSortBy: true,
     },
     {
-      id: 'last_sign_in_at',
-      accessor: 'last_sign_in_at',
+      id: 'lastSignInAt',
+      accessor: 'lastSignInAt',
       Header: ({column}) => <SortableTableHeader text={'Last Signed In'} column={column}/>,
     },
   ], [users]);
@@ -75,12 +75,12 @@ const UserListing = ({users, tournaments}) => {
   );
 
   const filterThatData = (criteria) => {
-    if (criteria.tournament) {
-      setFilter('tournaments', criteria.tournament);
-    } else if (criteria.has_no_tournament) {
-      setFilter('tournaments', '');
+    if (criteria.tournamentOrgId) {
+      setFilter('tournamentOrgId', criteria.tournamentOrgId);
+    } else if (criteria.has_no_tournament_org) {
+      setFilter('tournamentOrgs', '');
     } else {
-      setFilter('tournaments', undefined);
+      setFilter('tournamentOrgs', undefined);
     }
 
     setFilter('email', criteria.email);
@@ -98,7 +98,7 @@ const UserListing = ({users, tournaments}) => {
 
   //////////////////////////////////////////////////////////////
 
-  if (!users || !tournaments) {
+  if (!users || !tournamentOrgs) {
     return '';
   }
 
@@ -115,7 +115,7 @@ const UserListing = ({users, tournaments}) => {
             <>
               <UserFilterForm onFilterApplication={filterThatData}
                               onFilterReset={resetThoseFilters}
-                              tournaments={tournaments}/>
+                              tournamentOrgs={tournamentOrgs}/>
 
               <div className={'table-responsive'}>
                 <table className={'table table-striped table-hover'} {...getTableProps}>

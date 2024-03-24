@@ -3,7 +3,7 @@ import chars from 'voca/chars';
 import isUpperCase from 'voca/is_upper_case';
 import {useDirectorContext} from "../../../../store/DirectorContext";
 import {devConsoleLog} from "../../../../utils";
-import {directorApiRequest} from "../../../../director";
+import {directorApiRequest, useDirectorApi} from "../../../../director";
 
 import classes from '../TournamentBuilder.module.scss';
 import {newTournamentSaved, newTournamentStepCompleted} from "../../../../store/actions/directorActions";
@@ -20,6 +20,7 @@ const Name = () => {
       name: '',
       abbreviation: '',
       year: currentYear,
+      tournamentOrgId: '',
     },
     valid: false,
   }
@@ -35,10 +36,28 @@ const Name = () => {
       newFormData.fields.name = state.builder.tournament.name;
       newFormData.fields.abbreviation = state.builder.tournament.abbreviation;
       newFormData.fields.year = state.builder.tournament.year;
+      newFormData.fields.tournamentOrgId = state.builder.tournament.tournament_org_id,
       newFormData.valid = isValid(newFormData.fields);
       setFormData(newFormData);
     }
-  }, [state, state.builder])
+  }, [state, state.builder]);
+
+  const orgsRetrieved = (orgs) => {
+    const firstOne = orgs[0];
+    const updatedFormData = {
+      fields: {
+        ...formData.fields,
+        tournamentOrgId: firstOne.id,
+      },
+      valid: formData.valid,
+    }
+    setFormData(updatedFormData);
+    devConsoleLog("Finished setting org id to the first one retrieved");
+  }
+  const {data: tournamentOrgs} = useDirectorApi({
+    uri: '/tournament_orgs',
+    onSuccess: orgsRetrieved,
+  });
 
   const yearOptions = [];
   for (let i = 0; i < 3; i++) {
@@ -53,7 +72,7 @@ const Name = () => {
     const changedData = {...formData};
     let newValue = event.target.value;
     const fieldName = event.target.name;
-    if (fieldName === 'year') {
+    if (fieldName === 'year' || fieldName === 'tournamentOrgId') {
       newValue = parseInt(newValue);
     }
     changedData.fields[fieldName] = newValue;
@@ -84,9 +103,10 @@ const Name = () => {
       data: {
         tournament: {
           name: formData.fields.name,
-            abbreviation: formData.fields.abbreviation,
-            year: formData.fields.year,
-            identifier: `${formData.fields.abbreviation.toLocaleLowerCase()}-${formData.fields.year}`,
+          abbreviation: formData.fields.abbreviation,
+          year: formData.fields.year,
+          identifier: `${formData.fields.abbreviation.toLocaleLowerCase()}-${formData.fields.year}`,
+          tournament_org_id: formData.fields.tournamentOrgId,
         },
       },
     };
@@ -106,6 +126,12 @@ const Name = () => {
       onFailure: (err) => devConsoleLog("Failed to save tournament.", err),
     });
   }
+
+  if (!tournamentOrgs) {
+    return '';
+  }
+
+  //////////////////
 
   return (
     <div>
@@ -154,6 +180,22 @@ const Name = () => {
                   value={formData.fields.year}
                   onChange={inputChanged}>
             {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div className={`row ${classes.FieldRow}`}>
+        <label htmlFor={'tournamentOrgId'}
+               className={'col-12 col-md-3 col-form-label'}>
+          Organization
+        </label>
+        <div className={'col'}>
+          <select name={'tournamentOrgId'}
+                  id={'tournamentOrgId'}
+                  className={'form-select'}
+                  value={formData.fields.tournamentOrgId}
+                  onChange={inputChanged}>
+            {tournamentOrgs.map(org => <option key={org.identifier} value={org.id}>{org.name}</option>)}
           </select>
         </div>
       </div>

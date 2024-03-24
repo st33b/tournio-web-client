@@ -5,7 +5,6 @@ import {Col, Row} from "react-bootstrap";
 import {useDirectorApi} from "../../../director";
 import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import UserForm from '../../../components/Director/UserForm/UserForm';
-import {useLoginContext} from "../../../store/LoginContext";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
@@ -16,17 +15,16 @@ const Page = () => {
     uri: identifier ? `/users/${identifier}` : null,
   });
 
-  const {loading: tournamentsLoading, data: tournaments} = useDirectorApi({
-    uri: '/tournaments',
+  const {loading: tournamentOrgsLoading, data: tournamentOrgs} = useDirectorApi({
+    uri: '/tournament_orgs',
   });
 
   const userUpdated = (user) => {
     onDataUpdate(user);
   }
-
   //////////////////////////////////////////////////////////////////////////
 
-  if (userLoading || tournamentsLoading) {
+  if (userLoading || tournamentOrgsLoading) {
     return <LoadingMessage message={'Retrieving user details...'}/>
   }
 
@@ -35,7 +33,7 @@ const Page = () => {
       <Row>
         <Col sm={{span: 8, offset: 2}} md={{span: 6, offset: 3}}>
           <UserForm user={user}
-                    tournaments={tournaments}
+                    tournamentOrgs={tournamentOrgs}
                     onUserUpdated={userUpdated}
           />
         </Col>

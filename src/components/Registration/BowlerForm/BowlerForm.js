@@ -3,7 +3,6 @@ import {CountryDropdown} from "react-country-region-selector";
 
 import Input from "../../ui/Input/Input";
 import ErrorBoundary from "../../common/ErrorBoundary";
-import {devConsoleLog, validateEmail} from "../../../utils";
 
 import classes from './BowlerForm.module.scss';
 
@@ -554,53 +553,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     setBowlerForm(updatedBowlerForm);
   }
 
-  const bonusValidityCheck = (inputName, inputElement, value) => {
-    // Doing this specifically for email addresses rather than opting for a generic
-    // approach, since emails are, so far, the only input field for which we want
-    // validation beyond the Validation API
-
-    // Only do this on active tournaments
-    if (['demo', 'testing', 'active'].includes(tournament.state) && inputName === 'email') {
-      const newFormData = {...bowlerForm};
-      newFormData.formFields[inputName].bonusCheckUnderway = true;
-
-      devConsoleLog("Let's validate an email!");
-      validateEmail(value).then(result => {
-        if (!result.checked) {
-          devConsoleLog("I did not actually check it.");
-        }
-
-        if (result.error) {
-          // Right now, we don't care if it returns an error; this is an enhancement,
-          // not a requisite check.
-        } else {
-          const whoopsies = [];
-
-          // result.rejected will be true if Verifalia's check bame back as Undeliverable.
-          if (result.rejected) {
-            // This is for the Input component
-            whoopsies.push('undeliverable');
-
-            // This is for the Constraint Validation API (which sets the :invalid pseudo-class)
-            inputElement.setCustomValidity('undeliverable');
-          } else {
-            inputElement.setCustomValidity('');
-          }
-
-          newFormData.formFields[inputName] = {
-            ...newFormData.formFields[inputName],
-            ...validityForField(whoopsies),
-          }
-        }
-      }).catch(error => {
-        devConsoleLog("Unexpected error: ", error);
-      }).then(() => {
-        newFormData.formFields[inputName].bonusCheckUnderway = false;
-        setBowlerForm(newFormData);
-      });
-    }
-  }
-
   const fieldBlurred = (event, inputName) => {
     const newFormData = {...bowlerForm}
     const fieldIsChanged = newFormData.formFields[inputName].touched;
@@ -613,11 +565,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
 
     const {validity} = event !== null ? event.target : {};
     const failedChecks = checksToRun.filter(c => validity[c]);
-
-    // If everything in the Validation API passed, then run any bonus checks
-    if (failedChecks.length === 0) {
-      bonusValidityCheck(inputName, event.target, newFormData.formFields[inputName].elementConfig.value);
-    }
 
     newFormData.formFields[inputName] = {
       ...newFormData.formFields[inputName],

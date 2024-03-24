@@ -247,3 +247,29 @@ export const useBowler = (onSuccess = () => {}) => {
     bowlerUpdatedQuietly,
   };
 }
+
+export const useTournamentOrg = (onSuccess = () => {}) => {
+  const router = useRouter();
+  const {identifier} = router.query;
+
+  const {loading, data: tournamentOrg, error, onDataUpdate} = useDirectorApi({
+    uri: identifier ? `/tournament_orgs/${identifier}` : null,
+    onSuccess: onSuccess,
+  });
+
+  const orgUpdated = (updatedOrg) => {
+    const mutateOptions = {
+      optimisticData: updatedOrg,
+      rollbackOnError: true,
+      populateCache: true,
+    }
+    onDataUpdate(tournamentOrg, mutateOptions);
+  }
+
+  return {
+    loading,
+    error,
+    tournamentOrg,
+    orgUpdated,
+  };
+}
