@@ -300,7 +300,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
   }
 
   const [bowlerForm, setBowlerForm] = useState();
-  const [fieldsToUse, setFieldsToUse] = useState(Object.keys(minimumFormFields));
+  const [fieldsToUse, setFieldsToUse] = useState(new Set(Object.keys(minimumFormFields)));
 
   // Because this may be used by registering bowlers or by an admin adding a bowler
   const [buttonText, setButtonText] = useState(nextButtonText ? nextButtonText : 'Review');
@@ -356,7 +356,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         valid: true,
         touched: false,
       }
-      listOfFieldsToUse.push('doubles_partner');
+      listOfFieldsToUse.add('doubles_partner');
     }
 
     setFieldsToUse(listOfFieldsToUse);
@@ -400,7 +400,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     const bowlerFieldsItem = tournament.config_items.find(({key}) => key === 'bowler_form_fields');
     const optionalFields = !!bowlerFieldsItem ? bowlerFieldsItem.value : [];
 
-    const updatedFields = fieldsToUse.concat(optionalFields).concat(Object.keys(tournament.additional_questions));
+    const updatedFields = new Set(fieldsToUse);
+    optionalFields.concat(Object.keys(tournament.additional_questions)).forEach(field => updatedFields.add(field));
 
     const initialFormData = getInitialFormData(updatedFields);
 
@@ -436,7 +437,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     }
 
     // add the date-of-birth combo elements
-    if (fieldsToUse.includes('date_of_birth')) {
+    if (fieldsToUse.has('date_of_birth')) {
       bowlerForm.formFields.date_of_birth.elementConfig.elements.forEach(elem => {
         const key = `birth_${elem.identifier}`;
         theBowlerData[key] = elem.elementConfig.value;
