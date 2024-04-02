@@ -151,7 +151,7 @@ const Page = () => {
         </h5>
       )}
 
-      <table className={'teamRoster table table-responsive table-borderless'}>
+      <table className={'teamRoster table table-responsive table-striped'}>
         <tbody>
           {rows}
         </tbody>
