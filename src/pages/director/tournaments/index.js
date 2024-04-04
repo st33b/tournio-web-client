@@ -54,7 +54,7 @@ const Page = () => {
             <Link href={"/director/tournaments/new"}
                className={"btn btn-sm btn-outline-success mx-2"}
                onClick={newTournamentClicked}>
-              Create a Tournament
+              Create an Event
             </Link>
           </Col>
         </Row>

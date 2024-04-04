@@ -27,8 +27,6 @@ const Shifts = ({substep}) => {
     display_order: 1,
   };
 
-  {/* Decide how to handle mix-and-match when we get there. */}
-
   const [displayedSubstep, setDisplayedSubstep] = useState();
   const [chosenStyle, setChosenStyle] = useState();
   const [singleShift, setSingleShift] = useState(INITIAL_SHIFT_STATE);
@@ -44,7 +42,7 @@ const Shifts = ({substep}) => {
   }, [substep]);
 
   useEffect(() => {
-    if (!chosenStyle) {
+    if (!state.builder) {
       return;
     }
     if (chosenStyle === 'one') {
@@ -52,7 +50,7 @@ const Shifts = ({substep}) => {
     } else if (chosenStyle === 'multi_inclusive') {
       setValid(shiftSet.every(isValid));
     }
-  }, [chosenStyle]);
+  }, [chosenStyle, state.builder]);
 
   const handleStyleSelection = (style) => {
     setChosenStyle(style);
