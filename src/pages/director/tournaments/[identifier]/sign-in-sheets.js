@@ -1,19 +1,13 @@
 import React from "react";
-import {useRouter} from "next/router";
 
 import SignInSheet from "../../../../components/Director/SignInSheet/SignInSheet";
-import {useDirectorApi, useModernTournament} from "../../../../director";
+import {useModernTournament, useBowlers} from "../../../../director";
 import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorBoundary from "../../../../components/common/ErrorBoundary";
 import {LoginContextProvider} from "../../../../store/LoginContext";
 
 const Page = () => {
-  const router = useRouter();
-  const {identifier} = router.query;
-
-  const {loading, data: bowlers} = useDirectorApi( {
-    uri: identifier ? `/tournaments/${identifier}/bowlers?include_details=true` : null,
-  });
+  const {loading, bowlers} = useBowlers();
   const {loading: tournamentLoading, tournament} = useModernTournament();
 
   if (tournamentLoading) {
