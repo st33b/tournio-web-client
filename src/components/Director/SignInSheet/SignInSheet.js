@@ -111,6 +111,8 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
     );
   })}
 
+  const multiUseBowlingItems = tournament.purchasableItems.filter(pi => pi.category === 'bowling' && pi.determination === 'multi_use');
+
   return (
     <div className={`${classes.SignInSheetHtml} d-flex flex-column vh-100`}>
       {/*<div className={'d-flex align-items-center justify-content-center'}>*/}
@@ -358,71 +360,72 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
               </tbody>
             </table>
 
-            <table className={`table table-bordered align-middle ${classes.PurchasesTable}`}>
-              <thead>
-              <tr>
-                <th></th>
-                <th>Item</th>
-                <th className={`text-center`}>
-                  Amt.
-                </th>
-                <th className={`text-center`}>
-                  Qty.
-                </th>
-                <th className={`text-center`}>
-                  Paid
-                </th>
-              </tr>
-              </thead>
-              <tbody>
-              {/* Non-division items, multi-use */}
-              {tournament.purchasableItems.filter(pi => pi.category === 'bowling' && pi.determination === 'multi_use').map(pi => {
-                // only if the bowler has a purchase for this PI
-                const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === pi.identifier);
-                const signup = bowler.signups.find(s => s.purchasableItem.identifier === pi.identifier);
-                const signedUp = ['requested', 'paid'].includes(signup.status);
+            {/* multi-use bowling items */}
+            {multiUseBowlingItems.length > 0 && (
+              <table className={`table table-bordered align-middle ${classes.PurchasesTable}`}>
+                <thead>
+                <tr>
+                  <th></th>
+                  <th>Item</th>
+                  <th className={`text-center`}>
+                    Amt.
+                  </th>
+                  <th className={`text-center`}>
+                    Qty.
+                  </th>
+                  <th className={`text-center`}>
+                    Paid
+                  </th>
+                </tr>
+                </thead>
+                <tbody>
+                {multiUseBowlingItems.map(pi => {
+                  // only if the bowler has a purchase for this PI
+                  const purchase = bowler.purchases.find(p => p.purchasableItem.identifier === pi.identifier);
+                  const signup = bowler.signups.find(s => s.purchasableItem.identifier === pi.identifier);
+                  const signedUp = ['requested', 'paid'].includes(signup.status);
 
-                return (
-                  <tr className={``} key={pi.identifier}>
-                    <td className={`${classes.SignedUp} text-center`}>
-                      {signedUp ? <i className={`bi bi-check2`}></i> : ''}
-                    </td>
-                    <td className={``}>
-                      <p className={`mb-0`}>
-                        {pi.name}
-                      </p>
-                    </td>
-                    <td className={`text-center pe-1`}>
-                      ${pi.value}
-                    </td>
+                  return (
+                    <tr className={``} key={pi.identifier}>
+                      <td className={`${classes.SignedUp} text-center`}>
+                        {signedUp ? <i className={`bi bi-check2`}></i> : ''}
+                      </td>
+                      <td className={``}>
+                        <p className={`mb-0`}>
+                          {pi.name}
+                        </p>
+                      </td>
+                      <td className={`text-center pe-1`}>
+                        ${pi.value}
+                      </td>
 
-                    {!!purchase && (
-                      <td className={`text-center ${classes.QuantityBox}`}>
-                        <i className={`bi bi-x`}/>
-                        {' '}{countsByItemID[pi.identifier]}
-                      </td>
-                    )}
-                    {!!purchase && (
-                      <td className={`text-center ${classes.AmountBox} ${classes.PaidAmount}`}>
-                        ${pi.value * countsByItemID[pi.identifier]}
-                      </td>
-                    )}
+                      {!!purchase && (
+                        <td className={`text-center ${classes.QuantityBox}`}>
+                          <i className={`bi bi-x`}/>
+                          {' '}{countsByItemID[pi.identifier]}
+                        </td>
+                      )}
+                      {!!purchase && (
+                        <td className={`text-center ${classes.AmountBox} ${classes.PaidAmount}`}>
+                          ${pi.value * countsByItemID[pi.identifier]}
+                        </td>
+                      )}
 
-                    {!purchase && (
-                      <td className={`text-start ${classes.QuantityBox}`}>
-                        <i className={`bi bi-x`}/>
-                      </td>
-                    )}
-                    {!purchase && (
-                      <td className={`text-center ${classes.AmountBox}`}>
-                      </td>
-                    )}
-                  </tr>
-                );
-              })}
-
-              </tbody>
-            </table>
+                      {!purchase && (
+                        <td className={`text-start ${classes.QuantityBox}`}>
+                          <i className={`bi bi-x`}/>
+                        </td>
+                      )}
+                      {!purchase && (
+                        <td className={`text-center ${classes.AmountBox}`}>
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })}
+                </tbody>
+              </table>
+            )}
           </div>
           // End of tournamentHasExtras
         )}
@@ -435,17 +438,17 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
           {ledgerRows.length > 0 && (
             <table className={`${classes.PurchasesTable} table table-bordered align-middle`}>
               <thead>
-                <tr className={``} key={'header-row'}>
-                  <th className={``}>
-                    Item
-                  </th>
-                  <th className={`text-center`}>
-                    Amt.
-                  </th>
-                  <th className={`text-center`}>
-                    Paid
-                  </th>
-                </tr>
+              <tr className={``} key={'header-row'}>
+                <th className={``}>
+                  Item
+                </th>
+                <th className={`text-center`}>
+                  Amt.
+                </th>
+                <th className={`text-center`}>
+                  Paid
+                </th>
+              </tr>
               </thead>
               <tbody>
               {ledgerRows}
@@ -474,7 +477,7 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
               </tr>
               </thead>
               <tbody>
-                {prePurchaseRows}
+              {prePurchaseRows}
               </tbody>
             </table>
           )}
