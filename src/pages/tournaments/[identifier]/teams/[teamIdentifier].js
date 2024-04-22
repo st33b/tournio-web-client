@@ -136,7 +136,7 @@ const Page = () => {
       {state.successMessage && <SuccessAlert message={state.successMessage} onClose={dropQueryParams}
       />}
 
-      <h3 className={''}>
+      <h3 className={'pb-3'}>
         Team: <strong>{team.name}</strong>
       </h3>
 

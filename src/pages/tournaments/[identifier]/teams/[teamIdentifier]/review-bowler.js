@@ -20,7 +20,7 @@ const Page = () => {
   const [error, setError] = useState();
 
   const {loading, team, error: fetchError, teamHasChanged } = useTeam(teamIdentifier);
-  const {loading: tournamentLoading, tournament, error: tournamentError} = useTournament(identifier);
+  const {tournament, error: tournamentError} = useTournament(identifier);
 
   if (!registration || !tournament || !registration.bowler) {
     return '';
@@ -94,19 +94,28 @@ const Page = () => {
     <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
       <TournamentHeader tournament={tournament}/>
 
-      <h2 className={`text-center`}>
-        Review Bowler Details
+      <h2 className={``}>
+        Team:&nbsp;
+        <strong>
+          {team.name}
+        </strong>
       </h2>
+
+      <hr/>
+
+      <h3 className={``}>
+        Review Bowler Details
+      </h3>
 
       <hr/>
 
       <BowlerSummary bowler={registration.bowler}
                      tournament={tournament}
-                     partner={doublesPartner} />
+                     partner={doublesPartner}/>
 
-      <hr />
+      <hr/>
 
-      {error && <ErrorAlert message={error}/> }
+      {error && <ErrorAlert message={error}/>}
 
       <div className={`d-flex justify-content-between`}>
         <Link href={{
@@ -132,7 +141,7 @@ const Page = () => {
         </button>
       </div>
 
-      {processing && <LoadingMessage message={'Submitting registration...'} />}
+      {processing && <LoadingMessage message={'Submitting registration...'}/>}
     </div>
   );
 }
