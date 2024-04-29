@@ -1,0 +1,19 @@
+.Select {
+  .RequiredLabel {
+    margin-left: 5px;
+    font-size: 60%;
+    color: var(--tournio-danger);
+    filter: brightness(80%);
+  }
+
+  .InvalidFeedback,
+  &:invalid {
+    color: var(--tournio-form-invalid-color);
+    font-size: 90%;
+    margin-top: 0.25rem;
+  }
+
+  .ExternalLink {
+    font-size: 80%;
+  }
+}
