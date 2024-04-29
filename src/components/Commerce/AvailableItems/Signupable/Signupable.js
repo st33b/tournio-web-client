@@ -2,7 +2,7 @@ import {useState} from "react";
 import classes from "./Signupable.module.scss";
 import ErrorBoundary from "../../../common/ErrorBoundary";
 
-const Signupable = ({item, added, signupChanged}) => {
+const Signupable = ({item, disableUnpaidSignup, added, signupChanged}) => {
   const [processing, setProcessing] = useState(false);
 
   const addClickedHandler = (event) => {
@@ -54,40 +54,79 @@ const Signupable = ({item, added, signupChanged}) => {
   }
 
   let tooltipText;
+
   if (item.siblingSignedUp) {
     attachedClasses.push(classes.Selected);
     tooltipText = 'You have signed up for this item in another division.';
   } else {
-    switch (item.signupStatus) {
-      case 'initial':
-        tooltipText = 'You may sign up for this.';
-        break;
-      case 'paid':
-        tooltipText = `You've paid for this, so signing up cannot be undone.`;
-        break;
-      case 'inactive':
-        attachedClasses.push(classes.Selected);
-        tooltipText = 'You have signed up for this item in another division.';
-        break;
-      case 'requested':
-        tooltipText = `Tap or click the icon link to add this item's fee to your cart.`;
-        if (item.determination === 'multi_use') {
-          if (item.quantity > 0) {
-            tooltipText = 'This item is in your cart.';
-            attachedClasses.push(classes.NotSelected);
-          }
-        } else {
-          if (item.addedToCart) {
-            tooltipText = 'This item is in your cart.';
-            attachedClasses.push(classes.Selected);
+    if (disableUnpaidSignup) {
+      switch (item.signupStatus) {
+        case 'initial':
+        case 'requested': // This shouldn't normally happen, but it could happen in testing/setup
+          tooltipText = `Tap or click the icon link to add this item's fee to your cart.`;
+          if (item.determination === 'multi_use') {
+            if (item.quantity > 0) {
+              tooltipText = 'This item is in your cart.';
+              attachedClasses.push(classes.NotSelected);
+            }
           } else {
-            attachedClasses.push(classes.NotSelected);
+            if (item.addedToCart) {
+              tooltipText = 'This item is in your cart.';
+              attachedClasses.push(classes.Selected);
+            } else {
+              attachedClasses.push(classes.NotSelected);
+            }
           }
-        }
-        break;
-      default:
-        tooltipText = '?';
-        break;
+          break;
+        case 'paid':
+          tooltipText = `You've paid for this, hooray!`;
+          if (item.determination === 'single_use') {
+            attachedClasses.push(classes.Selected);
+          }
+          break;
+        case 'inactive':
+          attachedClasses.push(classes.Selected);
+          tooltipText = 'You have purchased this item in another division.';
+          break;
+        default:
+          tooltipText = '?';
+          break;
+      }
+    } else {
+      switch (item.signupStatus) {
+        case 'initial':
+          tooltipText = 'You may sign up for this.';
+          break;
+        case 'paid':
+          tooltipText = `You've paid for this, so signing up cannot be undone.`;
+          if (item.determination === 'single_use') {
+            attachedClasses.push(classes.Selected);
+          }
+          break;
+        case 'inactive':
+          attachedClasses.push(classes.Selected);
+          tooltipText = 'You have signed up for this item in another division.';
+          break;
+        case 'requested':
+          tooltipText = `Tap or click the icon link to add this item's fee to your cart.`;
+          if (item.determination === 'multi_use') {
+            if (item.quantity > 0) {
+              tooltipText = 'This item is in your cart.';
+              attachedClasses.push(classes.NotSelected);
+            }
+          } else {
+            if (item.addedToCart) {
+              tooltipText = 'This item is in your cart.';
+              attachedClasses.push(classes.Selected);
+            } else {
+              attachedClasses.push(classes.NotSelected);
+            }
+          }
+          break;
+        default:
+          tooltipText = '?';
+          break;
+      }
     }
   }
 
@@ -182,8 +221,16 @@ const Signupable = ({item, added, signupChanged}) => {
   );
 
   let addLink = '';
-  const addLinkEnabled = item.signupStatus === 'requested' && !item.addedToCart ||
+  let addLinkEnabled = item.signupStatus === 'requested' && !item.addedToCart ||
     item.determination === 'multi_use' && ['requested', 'paid'].includes(item.signupStatus);
+  if (disableUnpaidSignup) {
+    // Different conditions apply.
+    addLinkEnabled = item.determination === 'single_use' && // one-time only, AND
+      !item.addedToCart && // not already in the cart, AND
+      !['inactive', 'paid'].includes(item.signupStatus) // not already paid (or rendered inactive)
+      || // OR
+      item.determination === 'multi_use'; // can have many
+  }
   if (addLinkEnabled) {
     addLink = (
       <a href={'#'}
@@ -208,7 +255,7 @@ const Signupable = ({item, added, signupChanged}) => {
             ${item.value}
           </p>
           {!processing && (
-            item.enabled && (
+            item.enabled && !disableUnpaidSignup && (
                 <div className={'pb-2'}>
                   {!!item.siblingSignedUp && disabledDisplay}
                   {item.signupStatus === 'initial' && !item.siblingSignedUp && signupAction}
