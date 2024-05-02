@@ -1,7 +1,7 @@
 import axios from "axios";
 import {useRouter} from "next/router";
 import useSWR from "swr";
-import {apiHost, devConsoleLog, useLocalStorage} from "./utils";
+import {apiHost, devConsoleLog} from "./utils";
 import {useLoginContext} from "./store/LoginContext";
 
 const handleSuccess = (response, onSuccess, onFailure) => {
@@ -245,6 +245,22 @@ export const useBowler = (onSuccess = () => {}) => {
     bowler,
     bowlerUpdated,
     bowlerUpdatedQuietly,
+  };
+}
+
+export const useBowlers = (onSuccess = () => {}) => {
+  const router = useRouter();
+  const {identifier} = router.query;
+  const {loading, data: bowlers, error, onDataUpdate: bowlersUpdated} = useDirectorApi({
+    uri: identifier ? `/tournaments/${identifier}/bowlers?serializer=modern` : null,
+    onSuccess: onSuccess,
+  });
+
+  return {
+    loading,
+    error,
+    bowlers,
+    bowlersUpdated,
   };
 }
 

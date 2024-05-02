@@ -73,7 +73,7 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
   const anyBowlingExtras = (divisionItems.length +
     singleUseItems.length +
     multiUseItems.length) > 0;
-  const anySignupables = commerce.tournament.config.enable_unpaid_signups && (anyBowlingExtras || eventItems.length > 0);
+  const anySignupables = anyBowlingExtras || eventItems.length > 0;
   const bowlingItemsClass = anySignupables ? '' : 'd-none';
 
   const anyOtherExtras = (raffleItems.length +
@@ -114,6 +114,7 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
                                 item={sEvent}
                                 added={itemAddedToCart}
                                 signupChanged={signupChanged}
+                                disableUnpaidSignup={!commerce.tournament.config.enable_unpaid_signups}
                                 />
                   ))}
                 </Col>
@@ -133,6 +134,7 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
                                   item={sItem}
                                   added={itemAddedToCart}
                                   signupChanged={signupChanged}
+                                  disableUnpaidSignup={!commerce.tournament.config.enable_unpaid_signups}
                       />
                     ))}
                     <hr/>
@@ -146,6 +148,7 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
                                   item={sItem}
                                   added={itemAddedToCart}
                                   signupChanged={signupChanged}
+                                  disableUnpaidSignup={!commerce.tournament.config.enable_unpaid_signups}
                       />
                     ))}
                     <hr/>
@@ -159,6 +162,7 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
                                   item={item}
                                   added={itemAddedToCart}
                                   signupChanged={signupChanged}
+                                  disableUnpaidSignup={!commerce.tournament.config.enable_unpaid_signups}
                       />
                     ))}
                   </Col>

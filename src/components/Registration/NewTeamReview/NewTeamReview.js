@@ -17,22 +17,20 @@ const NewTeamReview = ({team, bowler, tournament}) => {
 
   return (
     <div className={classes.NewTeamReview}>
-      <h2 className={`text-center`}>
-        Review
+      <h2 className={``}>
+        Team:&nbsp;
+        <strong>
+          {team.name}
+        </strong>
       </h2>
 
-      <hr/>
+      <hr />
+
+      <h3 className={``}>
+        First Bowler - Review
+      </h3>
 
       <dl className={classes.TeamDetails}>
-        <div className={`row g-2`}>
-          <dt className={`col-5`}>
-            Team Name:
-          </dt>
-          <dd className={`col`}>
-            {team.name}
-          </dd>
-        </div>
-
         {chosenShifts && (
           <div className={`row g-2`}>
             <dt className={`col-5`}>

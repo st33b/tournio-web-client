@@ -70,11 +70,11 @@ const Page = () => {
         </strong>
       </h2>
 
+      <hr/>
+
       <h3 className={``}>
         First Bowler
       </h3>
-
-      <hr/>
 
       <PositionChooser maxPosition={tournament.team_size}
                        chosen={chosenPosition}
