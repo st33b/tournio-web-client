@@ -53,7 +53,7 @@ const Page = () => {
     <div className={classes.TournamentDetails}>
       <Row>
         <Col xs={12}>
-          <StateBanners tournament={tournament}/>
+          <StateBanners tournament={tourn}/>
         </Col>
       </Row>
       <Row>

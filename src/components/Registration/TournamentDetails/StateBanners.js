@@ -59,9 +59,9 @@ const StateBanners = ({tournament}) => {
       <div className={`${classes.TestingEnvironment} mb-3`}>
         <h4 className={'p-2 mb-0'}>
           <i className={'bi-search pe-3'} aria-hidden={true}/>
-          {tournament.testing_environment.settings.registration_period.display_name}:{' '}
+          Registration period:{' '}
           <strong>
-            {tournament.testing_environment.settings.registration_period.display_value}
+            {tournament.testingEnvironment.registration_period}
           </strong>
         </h4>
       </div>
