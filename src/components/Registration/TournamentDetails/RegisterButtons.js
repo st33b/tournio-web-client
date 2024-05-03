@@ -1,45 +1,38 @@
 import classes from './TournamentDetails.module.scss';
-import {ListGroup} from "react-bootstrap";
 import {useRouter} from "next/router";
 import Button from "react-bootstrap/Button";
 
 const RegisterButtons = ({tournament}) => {
   const router = useRouter();
-
   if (!tournament) {
     return '';
   }
 
-  let registrationOptions = '';
-  if (tournament.state === 'testing' || tournament.state === 'active' || tournament.state === 'demo') {
-    const optionTypes = [
-      {
-        name: 'solo',
-        path: 'solo-bowler',
-        linkText: 'Register Solo',
-      },
-      {
-        name: 'new_team',
-        path: 'new-team',
-        linkText: 'Register a New Team',
-      },
-      {
-        name: 'partner',
-        path: 'partner-up',
-        linkText: 'Partner Up With Someone',
-      },
-      {
-        name: 'new_pair',
-        path: 'new-pair',
-        linkText: 'Register a Pair',
-      },
-    ]
-    const eventSelectionEnabled = tournament.event_items && tournament.event_items.event.length > 0;
+  const optionTypes = [
+    {
+      name: 'solo',
+      path: 'solo-bowler',
+      linkText: 'Register Solo',
+    },
+    {
+      name: 'new_team',
+      path: 'new-team',
+      linkText: 'Register a Team',
+    },
+    {
+      name: 'new_pair',
+      path: 'new-pair',
+      linkText: 'Register a Pair',
+    },
+  ];
 
-    if (eventSelectionEnabled) {
+  let registrationOptions = '';
+  if (['testing', 'active', 'demo'].includes(tournament.state)) {
+    if (['single_event', 'igbo_non_standard'].includes(tournament.config.tournament_type)) {
+      // Includes fundraisers, mixers, and unique tournaments like DAMIT
       // only show what's enabled
       registrationOptions = optionTypes.map(({name, path, linkText}) => {
-        if (!tournament.registration_options[name]) {
+        if (!tournament.registrationOptions[name]) {
           return '';
         }
         return (
@@ -52,13 +45,12 @@ const RegisterButtons = ({tournament}) => {
         );
       });
     } else {
-      // show the standard ways
       registrationOptions = optionTypes.map(({name, path, linkText}) => {
-        // partnering and a new pair aren't part of a standard tournament
-        if (name === 'partner' || name === 'new_pair') {
+        // No new_pair for a standard tournament
+        if (name === 'new_pair') {
           return '';
         }
-        const enableLink = tournament.registration_options[name];
+        const enableLink = tournament.registrationOptions[name];
         return (
           <Button key={name}
                   className={`col-8 col-lg-auto mx-auto mx-lg-0 my-2 my-lg-0 ${classes.Action} ${enableLink ? '' : 'text-decoration-line-through'}`}

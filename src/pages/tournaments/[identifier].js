@@ -1,7 +1,7 @@
 import {useRouter} from "next/router";
 import {Row, Col} from "react-bootstrap";
 
-import {devConsoleLog, useTournament} from "../../utils";
+import {devConsoleLog, useTheTournament, useTournament} from "../../utils";
 import {useRegistrationContext} from "../../store/RegistrationContext";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
@@ -10,7 +10,6 @@ import Contacts from "../../components/Registration/Contacts/Contacts";
 import classes from "../../components/Registration/TournamentDetails/TournamentDetails.module.scss";
 import {tournamentDetailsRetrieved} from "../../store/actions/registrationActions";
 import Heading from "../../components/Registration/TournamentDetails/Heading";
-import Details from "../../components/Registration/TournamentDetails/Details";
 import RegisterButtons from "../../components/Registration/TournamentDetails/RegisterButtons";
 import PayButton from "../../components/Registration/TournamentDetails/PayButton";
 import Shifts from "../../components/Registration/TournamentDetails/Shifts";
@@ -18,6 +17,8 @@ import YouWillNeed from "../../components/Registration/TournamentDetails/YouWill
 import StateBanners from "../../components/Registration/TournamentDetails/StateBanners";
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorAlert from "../../components/common/ErrorAlert";
+import TraditionalPriceBreakdown from "../../components/Registration/TournamentDetails/TraditionalPriceBreakdown";
+import EventPriceBreakdown from "../../components/Registration/TournamentDetails/EventPriceBreakdown";
 
 const Page = () => {
   const router = useRouter();
@@ -30,8 +31,9 @@ const Page = () => {
   }
 
   const {tournament, loading, error} = useTournament(identifier, onFetchSuccess)
+  const {tournament: tourn} = useTheTournament(identifier);
 
-  if (loading || !tournament) {
+  if (loading || !tournament || !tourn) {
     return (
       <div>
         <LoadingMessage message={'Loading the tournament'}/>
@@ -57,20 +59,23 @@ const Page = () => {
       <Row>
         <Col xs={{order: 2}} md={{span: 4, order: 1}}>
           <div className={'d-none d-md-flex justify-content-center'}>
-            <TournamentLogo url={tournament.image_url}/>
+            <TournamentLogo url={tourn.imageUrl}/>
           </div>
           <Contacts tournament={tournament}/>
         </Col>
         <Col xs={{order: 1}} md={{span: 8, order: 2}}>
           <div className={'d-flex justify-content-start align-items-start'}>
-            <TournamentLogo url={tournament.image_url}
+            <TournamentLogo url={tourn.imageUrl}
                             additionalClasses={'col-4 pe-2 d-md-none'}/>
-            <Heading tournament={tournament}/>
+            <Heading tournament={tourn}/>
           </div>
 
           <div className={'d-flex'}>
             <div className={'flex-fill w-100'}>
-              <Details tournament={tournament}/>
+              <div className={classes.Details}>
+                <TraditionalPriceBreakdown tournament={tourn}/>
+                {/*<EventPriceBreakdown tournament={tournament}/>*/}
+              </div>
             </div>
             <div className={'d-none d-xl-block flex-shrink-1'}>
               <YouWillNeed tournament={tournament}/>
@@ -78,7 +83,7 @@ const Page = () => {
           </div>
 
           <PayButton disabled={!!tournament.config_items.find(({key, value}) => key === 'accept_payments' && !value)} />
-          <RegisterButtons tournament={tournament}/>
+          <RegisterButtons tournament={tourn}/>
 
           <div className={'d-xl-none'}>
             <YouWillNeed tournament={tournament}/>

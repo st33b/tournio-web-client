@@ -804,6 +804,30 @@ export const useTournament = (identifier, onSuccess = () => {
   }
 }
 
+export const useTheTournament = (identifier, onSuccess = () => {
+}, onFailure = () => {}) => {
+  const {loading, data: tournament, error, onDataUpdate} = useApi({
+    uri: identifier ? `/tournaments/${identifier}?serializer=modern` : null,
+    onSuccess: onSuccess,
+  });
+
+  const tournamentHasChanged = (updatedTournament) => {
+    const mutateOptions = {
+      optimisticData: updatedTournament,
+      rollbackOnError: true,
+      populateCache: true,
+    };
+    onDataUpdate(updatedTournament, mutateOptions);
+  }
+
+  return {
+    loading,
+    error,
+    tournament,
+    tournamentHasChanged,
+  }
+}
+
 export const useTeam = (teamIdentifier, onSuccess = () => {
 }) => {
   const {loading, data: team, error, onDataUpdate} = useApi({

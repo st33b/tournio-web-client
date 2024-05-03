@@ -2,6 +2,9 @@ import {formatInTimeZone} from 'date-fns-tz';
 
 import classes from './TournamentDetails.module.scss';
 
+// @serializer
+// This file has not been updated to use the modern serializer from the back end.
+// We'll need to update it if we intend to support tournaments with a la carte events, like DAMIT did
 const EventPriceBreakdown = ({tournament}) => {
   if (!tournament) {
     return;
