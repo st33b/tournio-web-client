@@ -61,7 +61,7 @@ const Page = () => {
           <div className={'d-none d-md-flex justify-content-center'}>
             <TournamentLogo url={tourn.imageUrl}/>
           </div>
-          <Contacts tournament={tournament}/>
+          <Contacts tournament={tourn}/>
         </Col>
         <Col xs={{order: 1}} md={{span: 8, order: 2}}>
           <div className={'d-flex justify-content-start align-items-start'}>
@@ -86,10 +86,10 @@ const Page = () => {
           <RegisterButtons tournament={tourn}/>
 
           <div className={'d-xl-none'}>
-            <YouWillNeed tournament={tournament}/>
+            <YouWillNeed tournament={tourn}/>
           </div>
           <div className={'mt-4'}>
-            <Shifts tournament={tournament}/>
+            <Shifts tournament={tourn}/>
           </div>
         </Col>
       </Row>

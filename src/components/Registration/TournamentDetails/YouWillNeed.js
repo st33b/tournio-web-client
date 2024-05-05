@@ -15,14 +15,14 @@ const YouWillNeed = ({tournament}) => {
   return (
     <div className={classes.YouWillNeed}>
       <p className={'lead'}>
-        For each bowler, you&apos;ll need:
+        For each bowler, you may need:
       </p>
       <ul>
         <li>
           Names and contact information (email, phone, address)
         </li>
         <li>
-          Birthdates (mm/dd)
+          Birthdates (mm/dd/yyyy)
         </li>
         <li>
           {/*USBC and IGBO identifiers*/}
@@ -36,7 +36,6 @@ const YouWillNeed = ({tournament}) => {
           </a>
         </li>
         <li>
-          You may also need your{' '}
           <a href={IGBO_ID_LOOKUP_URL}
              target={'_blank'}
              rel={'noreferrer'}>

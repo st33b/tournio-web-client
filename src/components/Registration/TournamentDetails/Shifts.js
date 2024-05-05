@@ -8,7 +8,7 @@ const Shifts = ({tournament}) => {
   }
 
   let shiftContent = '';
-  const displayCapacity = tournament.display_capacity;
+  const displayCapacity = tournament.config['display_capacity'];
   if (tournament.shifts.length > 1) {
     shiftContent = (
       <div className={`${classes.Shifts}`}>
