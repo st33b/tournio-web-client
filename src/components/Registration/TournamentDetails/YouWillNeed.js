@@ -1,16 +1,8 @@
 import classes from './TournamentDetails.module.scss';
 
-const YouWillNeed = ({tournament}) => {
+const YouWillNeed = () => {
   const USBC_ID_LOOKUP_URL = 'https://webapps.bowl.com/USBCFindA/Home/Member';
   const IGBO_ID_LOOKUP_URL = 'https://tad.igbo.org/';
-
-  if (!tournament) {
-    return '';
-  }
-
-  if (!['testing', 'active', 'demo'].includes(tournament.state)) {
-    return '';
-  }
 
   return (
     <div className={classes.YouWillNeed}>
