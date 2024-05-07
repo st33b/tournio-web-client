@@ -1,7 +1,4 @@
 import axios from "axios";
-import {
-  bowlerCommerceDetailsRetrieved,
-} from "./store/actions/registrationActions";
 import {useEffect, useState} from "react";
 import useSWR from "swr";
 
@@ -228,27 +225,6 @@ export const fetchTournamentList = (onSuccess, onFailure) => {
       onFailure({error: error.message});
     });
 
-}
-
-export const fetchTournamentDetails = (identifier, onSuccess, onFailure) => {
-  const requestConfig = {
-    method: 'get',
-    url: `${apiHost}/tournaments/${identifier}`,
-    headers: {
-      'Accept': 'application/json',
-    }
-  }
-  axios(requestConfig)
-    .then(response => {
-      if (response.status >= 200 && response.status < 400) {
-        onSuccess(response.data);
-      } else {
-        onFailure(response.data);
-      }
-    })
-    .catch(error => {
-      onFailure({error: 'Tournament not found'});
-    });
 }
 
 export const fetchTeamList = ({tournamentIdentifier, dispatch, onSuccess, onFailure, incomplete = false}) => {
@@ -693,22 +669,25 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
 }
 
 /////////////////////////////////////////////////////
-
-export const validateEmail = async function(emailAddress) {
-  const response = await fetch('/api/email_check', {
-    method: 'POST',
-    mode: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    redirect: 'follow',
-    body: JSON.stringify({email: emailAddress}),
-  }).catch((error) => {
-    return {error: error};
-  });
-  return await response.json();
-}
-
+//
+// Maybe we'll get back to a point where we'd like to validate email addresses
+// not just for format but for existence and likelihood of a successful send.
+//
+// export const validateEmail = async function(emailAddress) {
+//   const response = await fetch('/api/email_check', {
+//     method: 'POST',
+//     mode: 'same-origin',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     redirect: 'follow',
+//     body: JSON.stringify({email: emailAddress}),
+//   }).catch((error) => {
+//     return {error: error};
+//   });
+//   return await response.json();
+// }
+//
 /////////////////////////////////////////////////////
 
 // We can use this for fetching data from the API required by a component, but that's it.
@@ -801,6 +780,20 @@ export const useTournament = (identifier, onSuccess = () => {
     error,
     tournament,
     tournamentHasChanged,
+  }
+}
+
+export const useTournaments = (onSuccess = () => {}, onFailure = () => {}) => {
+  const {loading, data: tournaments, error} = useApi({
+    uri: `/tournaments`,
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+  });
+
+  return {
+    loading,
+    error,
+    tournaments,
   }
 }
 

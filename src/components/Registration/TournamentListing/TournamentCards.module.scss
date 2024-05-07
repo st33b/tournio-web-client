@@ -1,15 +1,9 @@
 .TournamentCards {
-  .Active {
-    background-color: var(--tournio-success-bg-subtle);
+  .setupState {
+    background-color: var(--tournio-info-bg-subtle);
 
   }
-
-  .Closed {
-    background-color: var(--tournio-secondary-bg-subtle);
-  }
-}
-[data-bs-theme="dark"] .TournamentCards {
-  .Closed {
-    background-color: var(--tournio-secondary-bg);
+  .testingState {
+    background-color: var(--tournio-primary-bg-subtle);
   }
 }
