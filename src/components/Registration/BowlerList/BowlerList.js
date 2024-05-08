@@ -9,14 +9,15 @@ import {
 } from "@tanstack/react-table";
 import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {devConsoleLog} from "../../../utils";
 
 //
 // @early-discount
 // I'd like not to use ReactTable anymore, since bowlers are now displayed in a list
 //
 
-const BowlerList = ({bowlers = [], action = 'bowlerDetail'}) => {
+const BowlerList = ({tournament, bowlers = [], action = 'bowlerDetail'}) => {
+  const router = useRouter();
+  const {dispatch} = useRegistrationContext();
   const columnHelper = createColumnHelper();
 
   const LIST_HIDE_THRESHOLD = 5;
@@ -77,11 +78,22 @@ const BowlerList = ({bowlers = [], action = 'bowlerDetail'}) => {
 
   const matchingBowlerCount = theTable.getRowModel().rows.length;
 
+  const confirmPartnerUp = (event, targetPartner) => {
+    event.preventDefault();
+    if (confirm(`By proceeding, I affirm that ${targetPartner.fullName} knows that I am partnering up with them.`)) {
+      dispatch(partnerUpRegistrationInitiated(targetPartner));
+      router.push(`/tournaments/${tournament.identifier}/partner-up-bowler`);
+    }
+  }
+
   const displayBowlers = bowlers.length < LIST_HIDE_THRESHOLD && bowlers.length > 0 || matchingBowlerCount < bowlers.length;
 
   return (
     <div className={classes.BowlerList}>
-      <form noValidate onSubmit={(e) => {devConsoleLog("Submit event fired"); }}>
+      <form noValidate onSubmit={(e) => {
+        // Ignore the Enter/Return key
+        e.preventDefault();
+      }}>
         <div className={`mb-3 d-flex flex-wrap`}>
           <label className={`col-form-label pe-2`} htmlFor={`searchField`}>
             Find&nbsp;by:
