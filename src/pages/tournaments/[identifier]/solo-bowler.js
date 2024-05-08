@@ -6,7 +6,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {
   soloBowlerInfoAdded
 } from "../../../store/actions/registrationActions";
-import {useTournament} from "../../../utils";
+import {useTheTournament} from "../../../utils";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import TournamentHeader from "../../../components/ui/TournamentHeader";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
@@ -16,13 +16,13 @@ const Page = () => {
   const router = useRouter();
   const {identifier} = router.query;
 
-  const {loading, tournament, error: tournamentError} = useTournament(identifier);
+  const {loading, tournament} = useTheTournament(identifier);
 
   useEffect(() => {
     if (!identifier || !tournament) {
       return;
     }
-    if (!tournament.registration_options.solo) {
+    if (!tournament.registrationOptions.solo) {
       router.push(`/tournaments/${identifier}`);
     }
   }, [tournament]);

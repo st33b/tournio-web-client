@@ -5,6 +5,7 @@ import Input from "../../ui/Input/Input";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './BowlerForm.module.scss';
+import {devConsoleLog} from "../../../utils";
 
 const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = [], nextButtonText}) => {
   const DATE_OF_BIRTH_FIELDS = [
@@ -308,8 +309,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
   const additionalFormFields = () => {
     const formFields = {};
 
-    for (let key in tournament.additional_questions) {
-      const q = tournament.additional_questions[key];
+    tournament.additionalQuestions.forEach(q => {
+      const key = q.name;
       formFields[key] = {...q}
       if (q.validation.required) {
         formFields[key].validityErrors = ['valueMissing'];
@@ -319,7 +320,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       }
       formFields[key].touched = false;
       formFields[key].elementConfig = {...q.elementConfig}
-    }
+    });
     return formFields;
   }
 
@@ -397,11 +398,10 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       return;
     }
 
-    const bowlerFieldsItem = tournament.config_items.find(({key}) => key === 'bowler_form_fields');
-    const optionalFields = !!bowlerFieldsItem ? bowlerFieldsItem.value : [];
+    const optionalFields = tournament.config.bowler_form_fields.split(' ');
 
     const updatedFields = new Set(fieldsToUse);
-    optionalFields.concat(Object.keys(tournament.additional_questions)).forEach(field => updatedFields.add(field));
+    optionalFields.concat(tournament.additionalQuestions.map(aq => aq.name)).forEach(field => updatedFields.add(field));
 
     const initialFormData = getInitialFormData(updatedFields);
 
