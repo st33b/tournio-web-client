@@ -15,7 +15,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 // I'd like not to use ReactTable anymore, since bowlers are now displayed in a list
 //
 
-const BowlerList = ({tournament, bowlers = [], action = 'bowlerDetail'}) => {
+const BowlerList = ({bowlers = [], action = 'bowlerDetail'}) => {
   const router = useRouter();
   const {dispatch} = useRegistrationContext();
   const columnHelper = createColumnHelper();
@@ -77,14 +77,6 @@ const BowlerList = ({tournament, bowlers = [], action = 'bowlerDetail'}) => {
   });
 
   const matchingBowlerCount = theTable.getRowModel().rows.length;
-
-  const confirmPartnerUp = (event, targetPartner) => {
-    event.preventDefault();
-    if (confirm(`By proceeding, I affirm that ${targetPartner.fullName} knows that I am partnering up with them.`)) {
-      dispatch(partnerUpRegistrationInitiated(targetPartner));
-      router.push(`/tournaments/${tournament.identifier}/partner-up-bowler`);
-    }
-  }
 
   const displayBowlers = bowlers.length < LIST_HIDE_THRESHOLD && bowlers.length > 0 || matchingBowlerCount < bowlers.length;
 
