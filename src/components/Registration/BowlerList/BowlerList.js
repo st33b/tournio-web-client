@@ -90,7 +90,10 @@ const BowlerList = ({tournament, bowlers = [], action = 'bowlerDetail'}) => {
 
   return (
     <div className={classes.BowlerList}>
-      <form noValidate>
+      <form noValidate onSubmit={(e) => {
+        // Ignore the Enter/Return key
+        e.preventDefault();
+      }}>
         <div className={`mb-3 d-flex flex-wrap`}>
           <label className={`col-form-label pe-2`} htmlFor={`searchField`}>
             Find&nbsp;by:
