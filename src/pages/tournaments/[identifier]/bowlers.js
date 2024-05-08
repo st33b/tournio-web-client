@@ -1,115 +1,44 @@
-import {useEffect, useState} from "react";
-import {Alert} from "react-bootstrap";
 import {useRouter} from "next/router";
 
-import {fetchBowlerList, fetchTournamentDetails, useClientReady} from "../../../utils";
-import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {devConsoleLog, useBowlers, useTheTournament} from "../../../utils";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import {tournamentDetailsRetrieved} from "../../../store/actions/registrationActions";
 import BowlerList from "../../../components/Registration/BowlerList/BowlerList";
+import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Page = () => {
   const router = useRouter();
-  const {registration, dispatch} = useRegistrationContext();
-  const { identifier, success } = router.query;
+  const { identifier } = router.query;
 
-  const [loading, setLoading] = useState(false);
-  const [bowlers, setBowlers] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-
-  const onBowlerListRetrieved = (data) => {
+  const onBowlersRetrieved = (data) => {
     const bowlerComparison = (left, right) => {
       return left.listName.toLocaleLowerCase().localeCompare(right.listName.toLocaleLowerCase());
     }
-    setBowlers(data.sort(bowlerComparison)); // sort this!
-    setLoading(false);
+    // data.sort(bowlerComparison);
   }
 
-  const onBowlerListFailed = (data) => {
-    setLoading(false);
-    setBowlers([]);
-    setErrorMessage(data.error);
-  }
+  const {tournament, loading: tournamentLoading, error: tournamentError} = useTheTournament(identifier);
+  const {bowlers, loading: bowlersLoading, error} = useBowlers(identifier, onBowlersRetrieved);
 
-  const onTournamentFetchSuccess = (data) => {
-    dispatch(tournamentDetailsRetrieved(data));
-  }
-
-  // fetch the list of bowlers
-  useEffect(() => {
-    if (!registration || !identifier) {
-      return;
-    }
-    const tournamentIdentifier = identifier;
-    if (!registration.tournament || registration.tournament.identifier !== tournamentIdentifier) {
-      fetchTournamentDetails(
-        tournamentIdentifier,
-        onTournamentFetchSuccess,
-        (data) => { console.log("Failed to load tournament", data)}
-      );
-      setLoading(true);
-      return;
-    }
-    setLoading(true);
-    fetchBowlerList({
-      tournamentIdentifier: tournamentIdentifier,
-      onSuccess: onBowlerListRetrieved,
-      onFailure: onBowlerListFailed,
-    });
-  }, [identifier, registration]);
-
-  useEffect(() => {
-    if (success === 'new_pair') {
-      setSuccessMessage('Your pair registration was received! You may now select events pay entry fees.');
-    }
-  }, [success]);
-
-  const ready = useClientReady();
-  if (!ready) {
-    return null;
-  }
-
-  if (loading) {
+  if (bowlersLoading || tournamentLoading) {
     return <LoadingMessage message={'Retrieving list of bowlers...'}/>
   }
 
-  if (!bowlers || !registration || !registration.tournament) {
-    return <LoadingMessage message={'Retrieving list of bowlers...'}/>
-  }
-
-  // @refactor once the other branches are merged, use SuccessAlert and ErrorAlert here
-  let error = '';
-  if (errorMessage) {
-    error = (
-      <Alert variant={'danger'}>
-        <h3 className={'display-6 text-center text-danger'}>Uh oh...</h3>
-        <p className={'text-center'}>{errorMessage}</p>
-      </Alert>
-    );
-  }
-  let successMsg = '';
-  if (successMessage) {
-    successMsg = (
-      <Alert variant={'success'}>
-        <h3 className={'display-6 text-center text-success'}>Success</h3>
-        <p className={'text-center'}>{successMessage}</p>
-      </Alert>
-    );
+  if (!bowlers) {
+    return <LoadingMessage message={'No bowlers yet...'}/>
   }
 
   return (
     <div>
       <div className={`row`}>
         <div className={'col-4 d-md-none'}>
-          <TournamentLogo url={registration.tournament.image_url}/>
+          <TournamentLogo url={tournament.imageUrl}/>
         </div>
         <div className={`col-8 d-md-none d-flex flex-column justify-content-around`}>
           <h4 className={'text-start'}>
-            <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
-              {registration.tournament.name}
+            <a href={`/tournaments/${identifier}`} title={'To tournament page'}>
+              {tournament.name}
             </a>
           </h4>
           <h5 className={`m-0`}>
@@ -117,19 +46,19 @@ const Page = () => {
           </h5>
         </div>
         <div className={'col-4 d-none d-md-block'}>
-          <a href={`/tournaments/${registration.tournament.identifier}`} title={'To tournament page'}>
-            <TournamentLogo url={registration.tournament.image_url}/>
-            <h4 className={'text-center py-3'}>{registration.tournament.name}</h4>
+          <a href={`/tournaments/${identifier}`} title={'To tournament page'}>
+            <TournamentLogo url={tournament.imageUrl}/>
+            <h4 className={'text-center py-3'}>{tournament.name}</h4>
           </a>
         </div>
         <div className={`col`}>
           <h5 className={`d-none d-md-block`}>
             Registered Bowlers
           </h5>
-          {error}
-          {successMsg}
-          <BowlerList tournament={registration.tournament}
-                      bowlers={bowlers}
+          {tournamentError && <ErrorAlert message={tournamentError} className={``}/>}
+          {error && <ErrorAlert message={error} className={``}/>}
+          <ErrorAlert message={'I have yet to display the list of bowlers.'} className={``}/>
+          <BowlerList bowlers={bowlers}
           />
         </div>
       </div>

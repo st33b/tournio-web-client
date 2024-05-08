@@ -759,6 +759,7 @@ export const useApi = ({
   }
 }
 
+// @modern This is being replaced by useTheTournament, which uses the modern serializer
 export const useTournament = (identifier, onSuccess = () => {
 }, onFailure = () => {}) => {
   const {loading, data: tournament, error, onDataUpdate} = useApi({
@@ -802,6 +803,7 @@ export const useTheTournament = (identifier, onSuccess = () => {
   const {loading, data: tournament, error, onDataUpdate} = useApi({
     uri: identifier ? `/tournaments/${identifier}?serializer=modern` : null,
     onSuccess: onSuccess,
+    onFailure: onFailure,
   });
 
   const tournamentHasChanged = (updatedTournament) => {
@@ -818,6 +820,20 @@ export const useTheTournament = (identifier, onSuccess = () => {
     error,
     tournament,
     tournamentHasChanged,
+  }
+}
+
+export const useBowlers = (identifier, onSuccess = () => {}, onFailure = () => {}) => {
+  const {data: bowlers, loading, error} = useApi({
+    uri: identifier ? `/tournaments/${identifier}/bowlers` : null,
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+  });
+
+  return {
+    loading,
+    error,
+    bowlers,
   }
 }
 

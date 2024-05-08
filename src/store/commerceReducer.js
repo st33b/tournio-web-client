@@ -25,11 +25,6 @@ export const commerceReducer = (state, action) => {
   switch (action.type) {
     case actionTypes.RESET:
       return commerceReducerInit();
-    case actionTypes.TOURNAMENT_DETAILS_RETRIEVED:
-      return updateObject(state, {
-        tournament: action.tournament,
-        error: null,
-      });
     case actionTypes.COMMERCE_SESSION_INITIATED:
       // Separate apparel items from the rest (ooh, maybe separate out by categories/determinations entirely...)
       const separated = extractApparelFromItems(action.availableItems);

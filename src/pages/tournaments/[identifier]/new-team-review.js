@@ -90,7 +90,7 @@ const Page = () => {
     // Upon success, redirect to the team's page, which will
     // present its options.
     submitNewTeamWithPlaceholders({
-      tournament: registration.tournament,
+      tournament: tournament,
       team: registration.team,
       bowler: registration.bowler,
       onSuccess: newTeamRegistrationSuccess,
@@ -101,7 +101,7 @@ const Page = () => {
 
   return (
     <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
-      <TournamentHeader tournament={registration.tournament}/>
+      <TournamentHeader tournament={tournament}/>
 
       <NewTeamReview team={registration.team}
                      bowler={registration.bowler}
