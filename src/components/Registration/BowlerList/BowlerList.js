@@ -1,5 +1,5 @@
 import classes from "./BowlerList.module.scss";
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {
   createColumnHelper,
   flexRender,
@@ -7,17 +7,10 @@ import {
   getFilteredRowModel,
   useReactTable
 } from "@tanstack/react-table";
-import {useRouter} from "next/router";
-import {useRegistrationContext} from "../../../store/RegistrationContext";
 
-//
-// @early-discount
-// I'd like not to use ReactTable anymore, since bowlers are now displayed in a list
-//
-
-const BowlerList = ({bowlers = [], action = 'bowlerDetail'}) => {
-  const router = useRouter();
-  const {dispatch} = useRegistrationContext();
+// @tournament Used only to determine whether to display team name and/or doubles partner
+// @bowlers List of bowlers
+const BowlerList = ({tournament, bowlers = [], action = 'bowlerDetail'}) => {
   const columnHelper = createColumnHelper();
 
   const LIST_HIDE_THRESHOLD = 5;
@@ -29,11 +22,6 @@ const BowlerList = ({bowlers = [], action = 'bowlerDetail'}) => {
       enableGlobalFilter: false,
       enableHiding: true,
     }),
-    columnHelper.accessor('firstName', {
-      header: 'First Name',
-      enableGlobalFilter: true,
-      enableHiding: true,
-    }),
     columnHelper.accessor('listName', {
       header: 'Name',
       enableGlobalFilter: true,
@@ -43,25 +31,27 @@ const BowlerList = ({bowlers = [], action = 'bowlerDetail'}) => {
       header: 'USBC ID',
       enableGlobalFilter: true,
     }),
-    // Do we want a link to the team page?
-    columnHelper.accessor('teamName', {
+    columnHelper.accessor(row => row.team ? row.team.name : null, {
       cell: info => info.getValue() ? info.getValue() : 'n/a',
+      id: 'teamName',
       header: 'Team Name',
       enableGlobalFilter: true,
     }),
     columnHelper.accessor(row => row.doublesPartner ? row.doublesPartner.listName : null, {
       cell: info => info.getValue() ? info.getValue() : 'n/a',
+      id: 'doublesPartner',
       header: 'Doubles Partner',
-      enableGlobalFilter: false,
-    }),
-    columnHelper.accessor('registeredOn', {
-      header: 'Date Registered',
       enableGlobalFilter: false,
     }),
   ];
 
   const [globalFilter, setGlobalFilter] = useState('');
-  const [columnVisibility, setColumnVisibility] = useState({ identifier: false, name: false })
+  const [columnVisibility, setColumnVisibility] = useState({
+    identifier: false,
+    listName: false, // we display this as a heading, so no need to display it in the property list
+    teamName: false,
+    doublesPartner: false,
+  });
 
   const theTable = useReactTable({
     data: bowlers,
@@ -75,6 +65,22 @@ const BowlerList = ({bowlers = [], action = 'bowlerDetail'}) => {
     onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
   });
+
+  useEffect(() => {
+    if (!tournament) {
+      return;
+    }
+
+    // Hide these columns if the tournament doesn't have corresponding events
+    const cvControls = {...columnVisibility};
+    if (!tournament.events.find(event => event.rosterType === 'double')) {
+      cvControls.doublesPartner = false;
+    }
+    if (!tournament.events.find(event => event.rosterType === 'team')) {
+      cvControls.teamName = false;
+    }
+    setColumnVisibility(cvControls);
+  }, [tournament]);
 
   const matchingBowlerCount = theTable.getRowModel().rows.length;
 
@@ -143,17 +149,6 @@ const BowlerList = ({bowlers = [], action = 'bowlerDetail'}) => {
                        role={'button'}
                     >
                       Fees &amp; Extras
-                      <i className={`bi bi-arrow-right ps-2`}
-                         aria-hidden={true} />
-                    </a>
-                  )}
-                  {action === 'partnerUp' && (
-                    <a href={`/bowlers/${row.getValue('identifier')}`}
-                       onClick={(e) => confirmPartnerUp(e, row.original)}
-                       className={`btn btn-primary`}
-                       role={'button'}
-                    >
-                      Partner Up
                       <i className={`bi bi-arrow-right ps-2`}
                          aria-hidden={true} />
                     </a>

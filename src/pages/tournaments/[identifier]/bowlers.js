@@ -1,6 +1,6 @@
 import {useRouter} from "next/router";
 
-import {devConsoleLog, useBowlers, useTheTournament} from "../../../utils";
+import {useBowlers, useTheTournament} from "../../../utils";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
@@ -11,11 +11,12 @@ const Page = () => {
   const router = useRouter();
   const { identifier } = router.query;
 
+  // We pass this as a callback to useBowlers so that we can sort the list by last name
   const onBowlersRetrieved = (data) => {
     const bowlerComparison = (left, right) => {
       return left.listName.toLocaleLowerCase().localeCompare(right.listName.toLocaleLowerCase());
     }
-    // data.sort(bowlerComparison);
+    data.sort(bowlerComparison);
   }
 
   const {tournament, loading: tournamentLoading, error: tournamentError} = useTheTournament(identifier);
@@ -26,7 +27,7 @@ const Page = () => {
   }
 
   if (!bowlers) {
-    return <LoadingMessage message={'No bowlers yet...'}/>
+    return <LoadingMessage message={'Building a searchable list...'}/>
   }
 
   return (
@@ -57,8 +58,7 @@ const Page = () => {
           </h5>
           {tournamentError && <ErrorAlert message={tournamentError} className={``}/>}
           {error && <ErrorAlert message={error} className={``}/>}
-          <ErrorAlert message={'I have yet to display the list of bowlers.'} className={``}/>
-          <BowlerList bowlers={bowlers}
+          <BowlerList tournament={tournament} bowlers={bowlers}
           />
         </div>
       </div>

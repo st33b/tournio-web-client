@@ -257,31 +257,6 @@ export const fetchTeamList = ({tournamentIdentifier, dispatch, onSuccess, onFail
     });
 }
 
-export const fetchBowlerList = ({tournamentIdentifier, onSuccess, onFailure, unpartneredOnly}) => {
-  const queryString = unpartneredOnly ? '?unpartnered=true' : '';
-  const requestConfig = {
-    method: 'get',
-    url: `${apiHost}/tournaments/${tournamentIdentifier}/bowlers${queryString}`,
-    headers: {
-      'Accept': 'application/json',
-    },
-    validateStatus: status => {
-      return status < 500
-    },
-  };
-  axios(requestConfig)
-    .then(response => {
-      if (response.status >= 200 && response.status < 400) {
-        onSuccess(response.data);
-      } else {
-        onFailure(response.data);
-      }
-    })
-    .catch(error => {
-      onFailure({error: `Unexpected error from the server: ${error}`});
-    });
-}
-
 ////////////////////////////////////////////////////
 
 export const submitNewTeamRegistration = (tournament, team, onSuccess, onFailure) => {
