@@ -12,7 +12,6 @@ import {devConsoleLog} from "../../../../../../utils";
 
 const Page = () => {
   const router = useRouter();
-  const {identifier, bowlerId} = router.query;
 
   const {bowler, loading, error} = useBowler();
   const {tournament, loading: tournamentLoading, error: tournamentError} = useModernTournament();

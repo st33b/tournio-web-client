@@ -195,13 +195,14 @@ export const useTournament = (onSuccess = () => {}) => {
   };
 }
 
-export const useModernTournament = (onSuccess = () => {}) => {
+export const useModernTournament = (onSuccess = () => {}, onFailure = () => {}) => {
   const router = useRouter();
   const {identifier} = router.query;
 
   const {loading, data: tournament, error, onDataUpdate: tournamentUpdated} = useDirectorApi({
     uri: identifier ? `/tournaments/${identifier}?serializer=modern` : null,
     onSuccess: onSuccess,
+    onFailure: onFailure,
   });
 
   const tournamentUpdatedQuietly = (updatedTournament) => {

@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import Link from 'next/link';
 import {Card, Button, Row, Col, ListGroup, Alert} from "react-bootstrap";
 
-import {directorApiRequest, useDirectorApi, useTournament} from "../../../../../director";
+import {directorApiRequest, useDirectorApi, useModernTournament} from "../../../../../director";
 import DirectorLayout from "../../../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../../../components/Director/Breadcrumbs/Breadcrumbs";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
@@ -80,7 +80,7 @@ const BowlerPage = () => {
     // any other state data the bowler needs...
   }
 
-  const {tournament, tournamentUpdatedQuietly} = useTournament();
+  const {tournament, tournamentUpdatedQuietly} = useModernTournament();
 
   const {loading: bowlerLoading, data: bowler, error: bowlerError, onDataUpdate: onBowlerUpdate} = useDirectorApi({
     uri: bowlerId ? `/bowlers/${bowlerId}` : null,
@@ -152,7 +152,7 @@ const BowlerPage = () => {
 
   const deleteBowlerSuccess = (_) => {
     const modifiedTournament = updateObject(tournament, {
-      bowler_count: tournament.bowler_count - 1,
+      bowlerCount: tournament.bowlerCount.length - 1,
     });
     tournamentUpdatedQuietly(modifiedTournament);
     router.push(`/director/tournaments/${identifier}/bowlers?deleteSuccess=true`);
@@ -807,9 +807,8 @@ const BowlerPage = () => {
 
   let assignPartnerCard = '';
   const tournamentHasDoublesEvent = ['testing', 'active', 'demo'].includes(tournament.state) &&
-    tournament.event_items.event.some(pi => (
-      pi.refinement === 'double'
-  ));
+    tournament.events.some(({rosterType}) => rosterType === 'double'
+  );
   if (tournamentHasDoublesEvent && unpartneredBowlers.length > 0) {
     let bowlerPartnerId = '';
     if (bowler.doubles_partner) {

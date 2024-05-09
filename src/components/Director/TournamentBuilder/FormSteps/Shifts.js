@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 
 import {devConsoleLog, updateObject} from "../../../../utils";
-import {directorApiRequest} from "../../../../director";
+import {directorApiRequest, useModernTournament} from "../../../../director";
 import {
   newTournamentCompleted,
   newTournamentSaved
@@ -46,8 +46,18 @@ const Shifts = ({substep}) => {
       return;
     }
     if (chosenStyle === 'one') {
+      setSingleShift(updateObject(singleShift, {
+        event_ids: state.builder.tournament.events.map(({id}) => id),
+      }));
       setValid(isValid(singleShift));
     } else if (chosenStyle === 'multi_inclusive') {
+      const updatedSet = [];
+      shiftSet.forEach(s => {
+        updatedSet.push(updateObject(s, {
+          event_ids: state.builder.tournament.events.map(({id}) => id),
+        }));
+      });
+      setShiftSet(updatedSet);
       setValid(shiftSet.every(isValid));
     }
   }, [chosenStyle, state.builder]);
