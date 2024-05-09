@@ -25,17 +25,17 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
     postal_code: 'Postal/ZIP Code',
   };
 
-  const bowlerFieldsItem = tournament.config_items.find(({key}) => key === 'bowler_form_fields');
-  const optionalFields = !!bowlerFieldsItem ? bowlerFieldsItem.value : [];
+  const optionalFields = tournament.config.bowler_form_fields.split(' ');
 
   const aqLabels = {};
 
   // Get labels and responses for additional questions, if any
   const aqResponses = {};
-  for (let key in tournament.additional_questions) {
-    aqLabels[key] = tournament.additional_questions[key].label;
+  tournament.additionalQuestions.forEach(aq => {
+    const key = aq.name;
+    aqLabels[key] = aq.label;
     aqResponses[key] = bowler[key];
-  }
+  })
 
   return (
     <div className={classes.BowlerSummary}>
