@@ -62,7 +62,7 @@ const Page = () => {
           </div>
 
           <div className={'d-flex'}>
-            <div className={'flex-fill w-100'}>
+            <div className={'flex-fill w-100 me-3'}>
               <div className={classes.Details}>
                 <TraditionalPriceBreakdown tournament={tournament}/>
                 {/*<EventPriceBreakdown tournament={tournament}/>*/}
