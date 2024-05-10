@@ -48,6 +48,7 @@ const Page = () => {
   }
 
   const previousBowlerData = registration.bowler ? registration.bowler : null;
+  const askBowlerAboutShifts = tournament.config['tournament_type'] === 'single_event' && tournament.shifts.length > 1;
 
   return (
     <div>
@@ -61,7 +62,9 @@ const Page = () => {
 
       <BowlerForm tournament={tournament}
                   bowlerData={previousBowlerData}
-                  bowlerInfoSaved={bowlerInfoSaved}/>
+                  bowlerInfoSaved={bowlerInfoSaved}
+                  showShifts={askBowlerAboutShifts}
+      />
 
     </div>
   );

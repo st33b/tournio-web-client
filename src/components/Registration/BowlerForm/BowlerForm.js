@@ -7,7 +7,7 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 import classes from './BowlerForm.module.scss';
 import {devConsoleLog} from "../../../utils";
 
-const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = [], nextButtonText}) => {
+const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = [], nextButtonText, showShifts = false}) => {
   const DATE_OF_BIRTH_FIELDS = [
     'birth_month',
     'birth_day',
@@ -298,6 +298,19 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       valid: true,
       touched: false,
     },
+    shift_identifiers: {
+      elementType: 'select',
+      elementConfig: {
+        options: [], // Pull these from the tournament in an effect
+        value: '',
+      },
+      label: 'Shift Preference',
+      validityErrors: [
+        'valueMissing',
+      ],
+      valid: true,
+      touched: false,
+    }
   }
 
   const [bowlerForm, setBowlerForm] = useState();
@@ -403,7 +416,19 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     const updatedFields = new Set(fieldsToUse);
     optionalFields.concat(tournament.additionalQuestions.map(aq => aq.name)).forEach(field => updatedFields.add(field));
 
+    if (showShifts) {
+      updatedFields.add('shift_identifiers');
+    }
+
     const initialFormData = getInitialFormData(updatedFields);
+
+    // Make sure we populate the shift options only once.
+    if (showShifts && initialFormData.formFields.shift_identifiers.elementConfig.options.length === 0) {
+      initialFormData.formFields.shift_identifiers.elementConfig.value = tournament.shifts[0].identifier;
+      tournament.shifts.forEach((shift) => {
+        initialFormData.formFields.shift_identifiers.elementConfig.options.push({value: shift.identifier, label: shift.name});
+      });
+    }
 
     if (bowlerData) {
       const populatedFormData = getPopulatedFormData(initialFormData);
@@ -613,6 +638,11 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         />
       ))}
 
+      <p className={`${classes.RequiredLabel} text-md-center`}>
+        <i className={`align-top bi-asterisk`}/>
+        {' '}indicates a required field
+      </p>
+
       <div className="d-flex flex-row-reverse justify-content-between pt-2">
         <button className="btn btn-primary btn-lg" type="submit" disabled={!bowlerForm.valid}>
           {buttonText}{' '}
@@ -625,14 +655,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
   return (
     <ErrorBoundary>
       <div className={classes.BowlerForm}>
-
         {form}
-
-        <p className={`${classes.RequiredLabel} text-md-center`}>
-          <i className={`align-top bi-asterisk`}/>
-          {' '}indicates a required field
-        </p>
-
       </div>
     </ErrorBoundary>
   );
