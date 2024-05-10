@@ -76,7 +76,7 @@ const Page = () => {
           <PayButton disabled={!tournament.config.accept_payments} />
           <RegisterButtons tournament={tournament}/>
 
-          <div className={'d-xl-none'}>
+          <div className={'d-xl-none mt-3'}>
             <YouWillNeed tournament={tournament}/>
           </div>
           <div className={'mt-4'}>
