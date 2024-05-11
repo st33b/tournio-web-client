@@ -5,7 +5,6 @@ import Input from "../../ui/Input/Input";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './BowlerForm.module.scss';
-import {devConsoleLog} from "../../../utils";
 
 const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = [], nextButtonText, showShifts = false}) => {
   const DATE_OF_BIRTH_FIELDS = [
@@ -298,7 +297,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       valid: true,
       touched: false,
     },
-    shift_identifiers: {
+    shift_identifier: {
       elementType: 'select',
       elementConfig: {
         options: [], // Pull these from the tournament in an effect
@@ -405,7 +404,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     return updatedBowlerForm;
   }
 
-  // set up the form to reflect any optional fields and additional questions
+  // set up the form to reflect any optional fields and additional questions,
+  // plus shifts on a non-standard tournament, if applicable
   useEffect(() => {
     if (!tournament) {
       return;
@@ -417,16 +417,19 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     optionalFields.concat(tournament.additionalQuestions.map(aq => aq.name)).forEach(field => updatedFields.add(field));
 
     if (showShifts) {
-      updatedFields.add('shift_identifiers');
+      updatedFields.add('shift_identifier');
     }
 
     const initialFormData = getInitialFormData(updatedFields);
 
     // Make sure we populate the shift options only once.
-    if (showShifts && initialFormData.formFields.shift_identifiers.elementConfig.options.length === 0) {
-      initialFormData.formFields.shift_identifiers.elementConfig.value = tournament.shifts[0].identifier;
+    if (showShifts && initialFormData.formFields.shift_identifier.elementConfig.options.length === 0) {
+      const firstAvailableShift = tournament.shifts.find(({isFull}) => !isFull);
+      initialFormData.formFields.shift_identifier.elementConfig.value = firstAvailableShift.identifier;
       tournament.shifts.forEach((shift) => {
-        initialFormData.formFields.shift_identifiers.elementConfig.options.push({value: shift.identifier, label: shift.name});
+        if (!shift.isFull) {
+          initialFormData.formFields.shift_identifier.elementConfig.options.push({value: shift.identifier, label: shift.name});
+        }
       });
     }
 

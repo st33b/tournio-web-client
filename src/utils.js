@@ -437,6 +437,9 @@ const convertBowlerDataForPost = (tournament, bowler) => {
   if (bowler.doubles_partner) {
     bowlerObj.doubles_partner_identifier = bowler.doubles_partner;
   }
+  if (bowler.shift_identifier) {
+    bowlerObj.shift_identifiers = [bowler.shift_identifier];
+  }
   return bowlerObj;
 }
 

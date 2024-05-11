@@ -35,7 +35,13 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
     const key = aq.name;
     aqLabels[key] = aq.label;
     aqResponses[key] = bowler[key];
-  })
+  });
+
+  // Solo registrations may have a shift identifier.
+  let shiftName = '';
+  if (bowler.shift_identifier) {
+    shiftName = tournament.shifts.find(({identifier}) => identifier === bowler.shift_identifier).name;
+  }
 
   return (
     <div className={classes.BowlerSummary}>
@@ -109,6 +115,17 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
             </dt>
             <dd className={'col ps-2 value'}>
               {partner.full_name}
+            </dd>
+          </Row>
+        )}
+
+        {shiftName && (
+          <Row key={'shift'}>
+            <dt className={'col-5 pe-2 label'}>
+              Shift Preference
+            </dt>
+            <dd className={'col ps-2 value'}>
+              {shiftName}
             </dd>
           </Row>
         )}

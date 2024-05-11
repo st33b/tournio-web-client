@@ -20,8 +20,8 @@ const Shifts = ({tournament}) => {
             <div key={i} className={`${classes.ShiftInfo} border rounded-2`}>
               <div className={'row'}>
                 <div className={'col'}>
-                  <h5 className={shift.is_full ? classes.Full : ''}>
-                    {shift.is_full && (
+                  <h5 className={shift.isFull ? classes.Full : ''}>
+                    {shift.isFull && (
                         <span className={classes.Indicator}>
                         [FULL]&nbsp;
                       </span>
