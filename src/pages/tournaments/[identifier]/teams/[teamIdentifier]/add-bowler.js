@@ -1,7 +1,7 @@
 import {useRegistrationContext} from "../../../../../store/RegistrationContext";
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
-import {useTeam, useTournament} from "../../../../../utils";
+import {useTeam, useTheTournament} from "../../../../../utils";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import RegistrationLayout from "../../../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentHeader from "../../../../../components/ui/TournamentHeader";
@@ -29,10 +29,10 @@ const Page = () => {
   }, [registration, teamIdentifier, position]);
 
   const {loading, team, error: fetchError } = useTeam(teamIdentifier);
-  const {tournament, error: tournamentError} = useTournament(identifier);
+  const {tournament, error: tournamentError} = useTheTournament(identifier);
 
   if (!registration || !tournament) {
-    return '';
+    return <LoadingMessage message={'Getting things ready...'}/>
   }
 
   if (loading) {
@@ -105,7 +105,7 @@ const Page = () => {
         Add a Bowler
       </h3>
 
-      <PositionChooser maxPosition={tournament.team_size}
+      <PositionChooser maxPosition={tournament.config['team_size']}
                        chosen={chosenPosition}
                        onChoose={choosePosition}
                        disallowedPositions={unavailablePositions}
