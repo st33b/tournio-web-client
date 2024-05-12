@@ -4,7 +4,7 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamBowlerInfoAdded} from "../../../store/actions/registrationActions";
-import {devConsoleLog, useTournament} from "../../../utils";
+import {devConsoleLog, useTheTournament} from "../../../utils";
 import {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import PositionChooser from "../../../components/common/formElements/PositionChooser/PositionChooser";
@@ -17,14 +17,14 @@ const Page = () => {
 
   const [chosenPosition, choosePosition] = useState(1);
 
-  const {loading, tournament} = useTournament(identifier);
+  const {loading, tournament} = useTheTournament(identifier);
 
   // If new-team registrations aren't enabled, go back to the tournament home page
   useEffect(() => {
     if (!identifier || !tournament || !registration) {
       return;
     }
-    if (!tournament.registration_options.new_team) {
+    if (!tournament.registrationOptions.new_team) {
       router.push(`/tournaments/${identifier}`);
     }
     if (edit) {

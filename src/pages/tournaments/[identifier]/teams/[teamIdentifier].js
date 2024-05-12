@@ -5,7 +5,7 @@ import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMess
 import TournamentHeader from "../../../../components/ui/TournamentHeader";
 import SuccessAlert from "../../../../components/common/SuccessAlert";
 import UrlShare from "../../../../components/ui/UrlShare/UrlShare";
-import {updateObject, useTeam, useTournament} from "../../../../utils";
+import {updateObject, useTeam, useTheTournament} from "../../../../utils";
 import ErrorAlert from "../../../../components/common/ErrorAlert";
 import Link from "next/link";
 
@@ -22,7 +22,7 @@ const Page = () => {
     let newSuccessMessage = state.successMessage;
     switch (success) {
       case '1':
-        newSuccessMessage = 'Team and bowler created.';
+        newSuccessMessage = 'Team created! You may add the remaining bowlers at any time.';
         break;
       case '2':
         newSuccessMessage = 'Bowler added to team.';
@@ -37,7 +37,7 @@ const Page = () => {
   }, [success]);
 
   const {loading: teamLoading, team, error: fetchError} = useTeam(teamIdentifier);
-  const {loading: tournamentLoading, tournament, error: tournamentError} = useTournament(identifier);
+  const {loading: tournamentLoading, tournament, error: tournamentError} = useTheTournament(identifier);
 
   if (teamLoading || tournamentLoading) {
     return (
@@ -70,17 +70,17 @@ const Page = () => {
         },
       },
       null,
-      { shallow: true },
+      {shallow: true},
     );
   }
 
   const port = process.env.NODE_ENV === 'development' ? `:${state.currentLocation.port}` : '';
   const shareUrl = `${state.currentLocation.protocol}//${state.currentLocation.hostname}${port}/teams/${teamIdentifier}`;
 
-  const tournamentType = tournament.config_items.find(({key}) => key === 'tournament_type').value || 'igbo_standard';
+  const tournamentType = tournament.config['tournament_type'];
 
-  const rows = Array(tournament.team_size);
-  for (let i = 0; i < tournament.team_size; i++) {
+  const rows = Array(tournament.config['team_size']);
+  for (let i = 0; i < tournament.config['team_size']; i++) {
     const currentPosition = i + 1;
     const bowler = team.bowlers.find(({position}) => position === currentPosition);
     let row = '';
@@ -129,36 +129,43 @@ const Page = () => {
     rows[i] = row;
   }
 
+  const showPreferredShift = tournamentType === 'igbo_multi_shift' || tournamentType === 'single_event' && tournament.shifts.length > 1;
+  const showMultipleShifts = tournamentType === 'igbo_mix_and_match';
+
   return (
-    <div className={`col-lg-8 col-xl-6 offset-lg-2 offset-xl-3`}>
-      <TournamentHeader tournament={tournament}/>
+    <div className={`row`}>
+      <div className={`col-12`}>
+        <TournamentHeader tournament={tournament}/>
+      </div>
 
-      {state.successMessage && <SuccessAlert message={state.successMessage} onClose={dropQueryParams}
-      />}
+      <div className={`col-lg-8 col-xl-6 offset-lg-2 offset-xl-3`}>
+        {state.successMessage && <SuccessAlert message={state.successMessage} onClose={dropQueryParams}
+        />}
 
-      <h3 className={'pb-3'}>
-        Team: <strong>{team.name}</strong>
-      </h3>
+        <h3 className={'pb-3'}>
+          Team: <strong>{team.name}</strong>
+        </h3>
 
-      {tournamentType === 'igbo_multi_shift' && (
-        <h5 className={''}>
-          Shift Preference: {team.shifts.map(({name}) => name).join(', ')}
-        </h5>
-      )}
-      {tournamentType === 'igbo_mix_and_match' && (
-        <h5 className={''}>
-          Shift Preferences: {team.shifts.map(({name}) => name).join(', ')}
-        </h5>
-      )}
+        {showPreferredShift && (
+          <h4 className={'pb-2'}>
+            Shift Preference: {team.shifts[0].name}
+          </h4>
+        )}
+        {showMultipleShifts && (
+          <h4 className={'pb-2'}>
+            Shift Preferences: {team.shifts.map(({name}) => name).join(', ')}
+          </h4>
+        )}
 
-      <table className={'teamRoster table table-responsive table-striped'}>
-        <tbody>
+        <table className={'teamRoster table table-responsive table-striped w-100'}>
+          <tbody>
           {rows}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
 
-      <UrlShare url={shareUrl}/>
+        <UrlShare url={shareUrl}/>
 
+      </div>
     </div>
   );
 }

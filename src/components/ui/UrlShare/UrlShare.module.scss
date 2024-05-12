@@ -1,3 +1,18 @@
 .UrlShare {
   margin: 1rem 0 1.25rem;
+
+  .Label {
+    font-weight: bold;
+  }
+  .Url {
+    font-family: monospace;
+    font-size: 90%;
+  }
+  .CopyButton {
+
+  }
+  .Instructions {
+    font-size: 90%;
+    color: var(--tournio-secondary-color);
+  }
 }
