@@ -68,10 +68,6 @@ const TeamForm = ({tournament, onSubmit}) => {
   return (
     <ErrorBoundary>
       <div className={`${classes.TeamForm}`}>
-        <p className={`text-center`}>
-          All fields are required.
-        </p>
-
         {/* team name */}
         <div className={`${classes.FormElement}`}>
           <label className={'col-form-label-lg'}

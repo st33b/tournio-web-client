@@ -91,35 +91,45 @@ const Page = () => {
   }
 
   return (
-    <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
-      <TournamentHeader tournament={tournament}/>
+    <div className={'row'}>
+      <div className={'col-12'}>
+        <TournamentHeader tournament={tournament}/>
 
-      <NewTeamReview team={registration.team}
-                     bowler={registration.bowler}
-                     tournament={tournament}
-                     onEdit={editBowlerClicked}
-                     onSave={saveClicked}/>
+        <h2 className={``}>
+          Initial Review
+        </h2>
 
-      <hr />
-
-      <div className={`d-flex justify-content-between`}>
-        <Link href={`/tournaments/${identifier}/new-team-first-bowler?edit=true`}
-              className={`btn btn-lg btn-outline-primary d-block ${processing && 'invisible'}`}>
-          <i className={'bi bi-chevron-double-left pe-2'}
-             aria-hidden={true}/>
-          Make Changes
-        </Link>
-
-        <button className={`btn btn-lg btn-primary`}
-                disabled={processing}
-                onClick={saveClicked}>
-          Save
-          <i className={'bi bi-chevron-double-right ps-2'}
-             aria-hidden={true}/>
-        </button>
+        <hr/>
       </div>
 
-      {processing && <LoadingMessage message={'Submitting registration...'} />}
+      <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
+      <NewTeamReview team={registration.team}
+                       bowler={registration.bowler}
+                       tournament={tournament}
+                       onEdit={editBowlerClicked}
+                       onSave={saveClicked}/>
+
+        <hr/>
+
+        <div className={`d-flex justify-content-between`}>
+          <Link href={`/tournaments/${identifier}/new-team-first-bowler?edit=true`}
+                className={`btn btn-lg btn-outline-primary d-block ${processing && 'invisible'}`}>
+            <i className={'bi bi-chevron-double-left pe-2'}
+               aria-hidden={true}/>
+            Make Changes
+          </Link>
+
+          <button className={`btn btn-lg btn-primary`}
+                  disabled={processing}
+                  onClick={saveClicked}>
+            Save
+            <i className={'bi bi-chevron-double-right ps-2'}
+               aria-hidden={true}/>
+          </button>
+        </div>
+
+        {processing && <LoadingMessage message={'Submitting registration...'}/>}
+      </div>
     </div>
   );
 }

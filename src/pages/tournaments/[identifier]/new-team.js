@@ -77,25 +77,26 @@ const Page = () => {
   }
 
   return (
-    <div className={`col-md-8 offset-md-2`}>
-      <TournamentHeader tournament={tournament}/>
+    <div className={`row`}>
+      <div className={'col-12'}>
+        <TournamentHeader tournament={tournament}/>
 
-      <h2 className={`text-center flex-grow-1`}>
-        Create a Team
-      </h2>
+        <h2 className={``}>
+          Create a Team
+        </h2>
+      </div>
 
-      <hr />
-
-      {errorMessage && (
+      <div className={`col-md-8 offset-md-2`}>
+        {errorMessage && (
           <>
-            <ErrorAlert message={errorMessage} onClose={() => setErrorMessage(null)} />
-            <hr/>
-          </>
-      )}
+              <ErrorAlert message={errorMessage} onClose={() => setErrorMessage(null)} />
+              <hr/>
+            </>
+        )}
 
-      <TeamForm tournament={tournament}
-                onSubmit={teamFormCompleted} />
-
+        <TeamForm tournament={tournament}
+                  onSubmit={teamFormCompleted} />
+      </div>
     </div>
   );
 }

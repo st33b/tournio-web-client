@@ -60,30 +60,34 @@ const Page = () => {
   const previousBowlerData = edit ? registration.bowler : null;
 
   return (
-    <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
-      <TournamentHeader tournament={tournament}/>
+    <div className={'row'}>
+      <div className={'col-12'}>
+        <TournamentHeader tournament={tournament}/>
+      </div>
 
-      <h2 className={``}>
-        Team:&nbsp;
-        <strong>
-          {registration.team.name}
-        </strong>
-      </h2>
+      <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
+        <h2 className={``}>
+          Team:&nbsp;
+          <strong>
+            {registration.team.name}
+          </strong>
+        </h2>
 
-      <hr/>
+        <hr/>
 
-      <h3 className={``}>
-        First Bowler
-      </h3>
+        <h3 className={``}>
+          First Bowler
+        </h3>
 
-      <PositionChooser maxPosition={tournament.team_size}
-                       chosen={chosenPosition}
-                       onChoose={positionChosen}/>
+        <PositionChooser maxPosition={tournament.team_size}
+                         chosen={chosenPosition}
+                         onChoose={positionChosen}/>
 
-      <BowlerForm tournament={tournament}
-                  bowlerData={previousBowlerData}
-                  bowlerInfoSaved={newBowlerAdded}/>
+        <BowlerForm tournament={tournament}
+                    bowlerData={previousBowlerData}
+                    bowlerInfoSaved={newBowlerAdded}/>
 
+      </div>
     </div>
   );
 }
