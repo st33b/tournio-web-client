@@ -1,8 +1,7 @@
 import classes from "./BowlerList.module.scss";
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import {
   createColumnHelper,
-  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   useReactTable
@@ -10,10 +9,10 @@ import {
 
 // @tournament Used only to determine whether to display team name and/or doubles partner
 // @bowlers List of bowlers
-const BowlerList = ({tournament, bowlers = [], action = 'bowlerDetail'}) => {
+const BowlerList = ({bowlers = [], action = 'bowlerDetail'}) => {
   const columnHelper = createColumnHelper();
 
-  const LIST_HIDE_THRESHOLD = 5;
+  const LIST_HIDE_THRESHOLD = 10;
 
   const columns = [
     // We want the name to be linked, using the identifier
@@ -31,26 +30,12 @@ const BowlerList = ({tournament, bowlers = [], action = 'bowlerDetail'}) => {
       header: 'USBC ID',
       enableGlobalFilter: true,
     }),
-    columnHelper.accessor(row => row.team ? row.team.name : null, {
-      cell: info => info.getValue() ? info.getValue() : 'n/a',
-      id: 'teamName',
-      header: 'Team Name',
-      enableGlobalFilter: true,
-    }),
-    columnHelper.accessor(row => row.doublesPartner ? row.doublesPartner.listName : null, {
-      cell: info => info.getValue() ? info.getValue() : 'n/a',
-      id: 'doublesPartner',
-      header: 'Doubles Partner',
-      enableGlobalFilter: false,
-    }),
   ];
 
   const [globalFilter, setGlobalFilter] = useState('');
   const [columnVisibility, setColumnVisibility] = useState({
     identifier: false,
     listName: false, // we display this as a heading, so no need to display it in the property list
-    teamName: false,
-    doublesPartner: false,
   });
 
   const theTable = useReactTable({
@@ -65,22 +50,6 @@ const BowlerList = ({tournament, bowlers = [], action = 'bowlerDetail'}) => {
     onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
   });
-
-  useEffect(() => {
-    if (!tournament) {
-      return;
-    }
-
-    // Hide these columns if the tournament doesn't have corresponding events
-    const cvControls = {...columnVisibility};
-    if (!tournament.events.find(event => event.rosterType === 'double')) {
-      cvControls.doublesPartner = false;
-    }
-    if (!tournament.events.find(event => event.rosterType === 'team')) {
-      cvControls.teamName = false;
-    }
-    setColumnVisibility(cvControls);
-  }, [tournament]);
 
   const matchingBowlerCount = theTable.getRowModel().rows.length;
 
@@ -121,36 +90,29 @@ const BowlerList = ({tournament, bowlers = [], action = 'bowlerDetail'}) => {
 
           <ul className={`list-group list-group-flush ${classes.Bowlers}`}>
             {theTable.getRowModel().rows.map(row => (
-              <li className={`list-group-item ${classes.Bowler}`} key={row.id}>
-                <p className={` ${classes.Name}`}>
+              <li className={`row d-flex align-items-lg-center mb-2 mb-lg-0 py-lg-3 ${classes.Bowler}`} key={row.id}>
+                <div className={`col-12 col-lg-5 overflow-x-hidden ${classes.Name}`}>
                   {action === 'bowlerDetail' && (
                     <a href={`/bowlers/${row.getValue('identifier')}`}>
                       {row.getValue('listName')}
                     </a>
                   )}
                   {action !== 'bowlerDetail' && row.getValue('listName')}
-                </p>
-                <dl className={`mb-1`}>
-                  {row.getVisibleCells().map(cell => (
-                    <div className={`row g-3`} key={cell.id}>
-                      <dt className={`col-5 col-sm-6 text-end ps-0`}>
-                        {cell.column.columnDef.header}
-                      </dt>
-                      <dd className={`col pe-0`}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-                <div className={`d-flex justify-content-end pb-2`}>
+                </div>
+                <div className={`col-12 col-lg-3 my-2`}>
+                  <span className={`fw-bold pe-1`}>
+                    USBC ID:
+                  </span>
+                  {row.getValue('usbcId')}
+                </div>
+                <div className={`col-12 col-lg-4 text-lg-end pb-2 pb-lg-0`}>
                   {action === 'bowlerDetail' && (
                     <a href={`/bowlers/${row.getValue('identifier')}`}
                        className={`btn btn-success`}
                        role={'button'}
                     >
                       Fees &amp; Extras
-                      <i className={`bi bi-arrow-right ps-2`}
-                         aria-hidden={true} />
+                      <i className={`bi bi-arrow-right ps-2`} aria-hidden={true}/>
                     </a>
                   )}
                 </div>
