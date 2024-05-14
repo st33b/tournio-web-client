@@ -63,9 +63,7 @@ const Page = () => {
     <div className={'row'}>
       <div className={'col-12'}>
         <TournamentHeader tournament={tournament}/>
-      </div>
 
-      <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
         <h2 className={``}>
           Team:&nbsp;
           <strong>
@@ -78,7 +76,9 @@ const Page = () => {
         <h3 className={``}>
           First Bowler
         </h3>
+      </div>
 
+      <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
         <PositionChooser maxPosition={tournament.team_size}
                          chosen={chosenPosition}
                          onChoose={positionChosen}/>
