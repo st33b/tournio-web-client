@@ -58,7 +58,7 @@ const Page = () => {
           </h5>
           {tournamentError && <ErrorAlert message={tournamentError} className={``}/>}
           {error && <ErrorAlert message={error} className={``}/>}
-          <BowlerList tournament={tournament} bowlers={bowlers}
+          <BowlerList bowlers={bowlers}
           />
         </div>
       </div>
