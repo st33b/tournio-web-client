@@ -54,11 +54,9 @@ const Page = () => {
     <div>
       <TournamentHeader tournament={tournament}/>
 
-      <h3 className={`text-center`}>
+      <h3 className={``}>
         Solo Registration
       </h3>
-
-      <hr />
 
       <BowlerForm tournament={tournament}
                   bowlerData={previousBowlerData}
