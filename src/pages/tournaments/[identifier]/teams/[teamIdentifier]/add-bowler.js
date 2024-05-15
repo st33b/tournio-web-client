@@ -81,7 +81,7 @@ const Page = () => {
   ));
 
   return (
-    <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
+    <div>
       <TournamentHeader tournament={tournament}/>
 
       <h2 className={''}>
@@ -105,17 +105,18 @@ const Page = () => {
         Add a Bowler
       </h3>
 
-      <PositionChooser maxPosition={tournament.config['team_size']}
-                       chosen={chosenPosition}
-                       onChoose={choosePosition}
-                       disallowedPositions={unavailablePositions}
-      />
+      <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
+        <PositionChooser maxPosition={tournament.config['team_size']}
+                         chosen={chosenPosition}
+                         onChoose={choosePosition}
+                         disallowedPositions={unavailablePositions}
+        />
 
-      <BowlerForm tournament={tournament}
-                  bowlerData={previousBowlerData}
-                  availablePartners={availableDoublesPartners}
-                  bowlerInfoSaved={bowlerInfoSaved}/>
-
+        <BowlerForm tournament={tournament}
+                    bowlerData={previousBowlerData}
+                    availablePartners={availableDoublesPartners}
+                    bowlerInfoSaved={bowlerInfoSaved}/>
+      </div>
     </div>
   );
 }

@@ -70,7 +70,7 @@ const Page = () => {
     <div>
       <TournamentHeader tournament={tournament}/>
 
-      <h2 className={`text-center`}>
+      <h2 className={``}>
         Review Bowler Details
       </h2>
 
