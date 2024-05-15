@@ -109,12 +109,14 @@ const Item = ({item, added, preview}) => {
   if (!sizeValid) {
     tooltipText = 'Select a size to add';
   }
+  // PICK UP HERE: disabling purchase of items that say it should not be enabled.
   if (!preview && !item.addedToCart) {
+    const addDisabled = !sizeValid || !item.enabled ? classes.AddDisabled : '';
     addLink = (
       <div className={'ms-auto align-self-center'}>
         <a href={sizeValid ? '#' : null}
            onClick={sizeValid ? addClickedHandler : () => {}}
-           className={`${classes.AddLink} ${!sizeValid ? classes.AddDisabled : ''} pe-3`}>
+           className={`${classes.AddLink} ${addDisabled} pe-3`}>
           <i className={`bi-cart-plus-fill`} />
           <span className={'visually-hidden'}>Add</span>
         </a>
