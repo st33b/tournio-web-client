@@ -79,7 +79,7 @@ const Page = () => {
       </div>
 
       <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
-        <PositionChooser maxPosition={tournament.team_size}
+        <PositionChooser maxPosition={tournament.teamSize}
                          chosen={chosenPosition}
                          onChoose={positionChosen}/>
 

@@ -347,8 +347,9 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       touched: false,
     }
 
-    // add doubles partner if there are any available
-    if (availablePartners.length > 0) {
+    // add doubles partner if there are any available (and if the tournament has a doubles event)
+    const hasDoublesEvent = tournament.events.some(({rosterType}) => rosterType === 'double');
+    if (hasDoublesEvent && availablePartners.length > 0) {
       const partnerChoices = availablePartners.map(partner => ({
         value: partner.identifier,
         label: partner.full_name,
