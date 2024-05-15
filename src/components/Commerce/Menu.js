@@ -1,4 +1,3 @@
-import {Col, Row} from "react-bootstrap";
 import {useCommerceContext} from "../../store/CommerceContext";
 import {itemAddedToCart, itemRemovedFromCart} from "../../store/actions/registrationActions";
 
