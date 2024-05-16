@@ -7,6 +7,11 @@ const Shifts = ({tournament}) => {
     return '';
   }
 
+  let capacityNoun = 'teams';
+  if (!tournament.events.some(({rosterType}) => rosterType === 'team')) {
+    capacityNoun = 'bowlers';
+  }
+
   let shiftContent = '';
   const displayCapacity = tournament.config['display_capacity'];
   if (tournament.shifts.length > 1) {
@@ -31,9 +36,14 @@ const Shifts = ({tournament}) => {
                     </span>
                   </h5>
                   {!!shift.description && (
-                    <p className={'fw-light mb-0'}>
+                    <p className={`fw-light ${!displayCapacity ? 'mb-0' : ''}`}>
                         {shift.description}
                       </p>
+                  )}
+                  {displayCapacity && (
+                    <p className={`fw-light mb-0`}>
+                      This shift can accommodate up to {shift.capacity} {capacityNoun}.
+                    </p>
                   )}
                 </div>
               </div>
@@ -54,7 +64,7 @@ const Shifts = ({tournament}) => {
           <div className={`${classes.ShiftInfo} border rounded-2`}>
             <div>
               <p>
-                The tournament can accommodate up to {shift.capacity} teams.
+                The tournament can accommodate up to {shift.capacity} {capacityNoun}.
               </p>
 
               <ShiftCapacity shift={shift}/>
