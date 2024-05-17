@@ -427,12 +427,12 @@ const BowlerPage = () => {
 
   const convertAdditionalQuestionResponsesForPatch = (bowlerData) => {
     const responses = [];
-    for (const questionKey in tournament.additional_questions) {
+    tournament.additionalQuestions.forEach(aq => {
       responses.push({
-        name: questionKey,
-        response: bowlerData[questionKey] || '',
+        name: aq.name,
+        response: bowlerData[aq.name] || '',
       });
-    }
+    });
     return responses;
   }
 
