@@ -805,51 +805,55 @@ const BowlerPage = () => {
     );
   }
 
+  // In non-standard tournaments, or tournaments where doubles is the only event, permit partner reassignment.
   let assignPartnerCard = '';
-  const tournamentHasDoublesEvent = ['testing', 'active', 'demo'].includes(tournament.state) &&
-    tournament.events.some(({rosterType}) => rosterType === 'double'
-  );
-  if (tournamentHasDoublesEvent && unpartneredBowlers.length > 0) {
-    let bowlerPartnerId = '';
-    if (bowler.doubles_partner) {
-      bowlerPartnerId = bowler.doubles_partner.identifier;
-    }
-    const options = unpartneredBowlers.filter(t => t.identifier !== bowlerPartnerId);
+  const tournamentType = tournament.config['tournament_type'];
+  if (tournamentType === 'single_event' || tournamentType === 'igbo_non_standard') {
+    const tournamentHasDoublesEvent = ['testing', 'active', 'demo'].includes(tournament.state) &&
+      tournament.events.some(({rosterType}) => rosterType === 'double'
+      );
+    if (tournamentHasDoublesEvent && unpartneredBowlers.length > 0) {
+      let bowlerPartnerId = '';
+      if (bowler.doubles_partner) {
+        bowlerPartnerId = bowler.doubles_partner.identifier;
+      }
+      const options = unpartneredBowlers.filter(t => t.identifier !== bowlerPartnerId);
 
-    assignPartnerCard = (
-      <Card className={'mb-3'}>
-        <Card.Header as={'h6'} className={'fw-light'}>
-          Assign Doubles Partner
-        </Card.Header>
-        <Card.Body>
-          <form className={'text-center'} onSubmit={newPartnerSubmitHandler}>
-            <select className={'form-select'} name={'partner'} onChange={partnerOptionChanged}>
-              <option value={''}>Choose their new partner</option>
-              {options.map(t => <option key={t.identifier} value={t.identifier}>{t.full_name}</option>)}
-            </select>
-            <Button variant={'primary'}
-                    size={'sm'}
-                    className={'mt-3'}
-                    disabled={newPartnerFormData.partner === ''}
-                    type={'submit'}>
-              Assign Partner
-            </Button>
-          </form>
-          {errors.unpartneredBowlers || unpartneredError && (
-            <Alert variant={'danger'}
-                   dismissible={true}
-                   closeLabel={'Close'}>
+      assignPartnerCard = (
+        <Card className={'mb-3'}>
+          <Card.Header as={'h6'} className={'fw-light'}>
+            Assign Doubles Partner
+          </Card.Header>
+          <Card.Body>
+            <form className={'text-center'} onSubmit={newPartnerSubmitHandler}>
+              <select className={'form-select'} name={'partner'} onChange={partnerOptionChanged}>
+                <option value={''}>Choose their new partner</option>
+                {options.map(t => <option key={t.identifier} value={t.identifier}>{t.full_name}</option>)}
+              </select>
+              <Button variant={'primary'}
+                      size={'sm'}
+                      className={'mt-3'}
+                      disabled={newPartnerFormData.partner === ''}
+                      type={'submit'}>
+                Assign Partner
+              </Button>
+            </form>
+            {errors.unpartneredBowlers || unpartneredError && (
+              <Alert variant={'danger'}
+                     dismissible={true}
+                     closeLabel={'Close'}>
               <span>
                 <i className={'bi bi-exclamation-circle-fill pe-2'} aria-hidden={true}/>
                 <strong>Error.</strong>{' '}
                 {errors.unpartneredBowlers}
                 {unpartneredError.message}
               </span>
-            </Alert>
-          )}
-        </Card.Body>
-      </Card>
-    );
+              </Alert>
+            )}
+          </Card.Body>
+        </Card>
+      );
+    }
   }
 
   let freeEntryCard = '';
@@ -1004,7 +1008,7 @@ const BowlerPage = () => {
     </Card>
   );
 
-  const waivers = tournament.waivable_fees.length === 0 ? '' : (
+  const waivers = !tournament.purchasableItems.some(({determination}) => determination === 'late_fee') ? '' : (
     <Card className={'mb-3'}>
       <Card.Header as={'h6'} className={'fw-light'}>
         Fee Waivers
