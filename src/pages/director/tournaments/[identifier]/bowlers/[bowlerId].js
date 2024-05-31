@@ -1138,16 +1138,21 @@ const BowlerPage = () => {
     bowler[questionKey] = bowler.additional_question_responses[questionKey].response;
   }
 
+  const showShifts = bowler.shifts.length > 0;
+
   return (
     <ErrorBoundary>
       <Breadcrumbs ladder={ladder} activeText={bowler.display_name}/>
       <Row>
         <Col md={8}>
           {bowlerSummary}
+          {/* @modern switch bowler to come from useBowler, and add whatever we need to the serializer for that. */}
+          {/* @modern Also: maybe extract just the bowler data needed by BowlerForm? */}
           <BowlerForm tournament={tournament}
                       bowlerInfoSaved={updateSubmitHandler}
                       bowlerData={bowler}
                       nextButtonText={'Update Bowler'}
+                      showShifts={showShifts}
           />
           <SuccessAlert message={success.updateBowler}/>
           <ErrorAlert message={bowlerError}/>

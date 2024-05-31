@@ -48,7 +48,7 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
       <dl>
         {bowler.position && (
           <Row className={classes.Position}>
-            <dt className={`col-4 pe-2 label`}>
+            <dt className={`col-5 pe-2 label`}>
               Position
             </dt>
             <dd className={`col ps-2 value`}>
@@ -64,7 +64,7 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
           }
           return (
             <Row key={`${key}`}>
-              <dt className={'col-4 pe-2 label'}>
+              <dt className={'col-5 pe-2 label'}>
                 {minimumLabels[key]}
               </dt>
               <dd className={'col ps-2 value'}>
@@ -81,7 +81,7 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
           }
           return (
             <Row key={`${key}`}>
-              <dt className={'col-4 pe-2 label'}>
+              <dt className={'col-5 pe-2 label'}>
                 {potentialLabels[key]}
               </dt>
               <dd className={'col ps-2 value'}>
