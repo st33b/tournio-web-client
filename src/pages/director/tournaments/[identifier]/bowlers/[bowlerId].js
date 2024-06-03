@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import Link from 'next/link';
 import {Card, Button, Row, Col, ListGroup, Alert} from "react-bootstrap";
 
-import {directorApiRequest, useDirectorApi, useModernTournament} from "../../../../../director";
+import {directorApiRequest, useDirectorApi, useModernTournament, useBowler} from "../../../../../director";
 import DirectorLayout from "../../../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../../../components/Director/Breadcrumbs/Breadcrumbs";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
@@ -16,6 +16,7 @@ import ErrorAlert from "../../../../../components/common/ErrorAlert";
 import EmailButton from "../../../../../components/Director/BowlerDetails/EmailButton";
 import {updateObject} from "../../../../../utils";
 import BowlerForm from "../../../../../components/Registration/BowlerForm/BowlerForm";
+import {format} from "date-fns";
 
 const BowlerPage = () => {
   const router = useRouter();
@@ -82,10 +83,11 @@ const BowlerPage = () => {
 
   const {tournament, tournamentUpdatedQuietly} = useModernTournament();
 
-  const {loading: bowlerLoading, data: bowler, error: bowlerError, onDataUpdate: onBowlerUpdate} = useDirectorApi({
-    uri: bowlerId ? `/bowlers/${bowlerId}` : null,
-    onSuccess: updateStateForBowler,
-  });
+  const {loading: bowlerLoading, bowler, error: bowlerError, bowlerUpdated} = useBowler();
+  // const {loading: bowlerLoading, data: bowler, error: bowlerError, onDataUpdate: onBowlerUpdate} = useDirectorApi({
+  //   uri: bowlerId ? `/bowlers/${bowlerId}` : null,
+  //   onSuccess: updateStateForBowler,
+  // });
 
   const {data: availableTeams, error: teamsError, onDataUpdate: onAvailableTeamsUpdate} = useDirectorApi({
     uri: identifier ? `/tournaments/${identifier}/teams?partial=true` : null,
@@ -195,7 +197,7 @@ const BowlerPage = () => {
     setNewTeamFormData(newFormData);
   }
 
-  const moveBowlerSuccess = (data) => {
+  const moveBowlerSuccess = () => {
     setLoadingParts({
       ...loadingParts,
       moveBowler: false,
@@ -203,7 +205,7 @@ const BowlerPage = () => {
 
     // This triggers a re-fetch of the bowler and then a re-render of the bowler summary,
     // but not the other objects populated by calls to the useDirectorApi hook.
-    onBowlerUpdate(data);
+    bowlerUpdated();
 
     // retrieve the new list of available teams
     onAvailableTeamsUpdate(availableTeams);
@@ -260,7 +262,7 @@ const BowlerPage = () => {
     setNewPartnerFormData(newFormData);
   }
 
-  const newPartnerSuccess = (data) => {
+  const newPartnerSuccess = () => {
     setLoadingParts({
       ...loadingParts,
       unpartneredBowlers: false,
@@ -268,7 +270,7 @@ const BowlerPage = () => {
 
     // This triggers a re-fetch of the bowler and then a re-render of the bowler summary,
     // but not the other objects populated by calls to the useDirectorApi hook.
-    onBowlerUpdate(data);
+    bowlerUpdated();
 
     // retrieve the new list of unpartnered bowlers
     onDoublesPartnerUpdate(unpartneredBowlers);
@@ -339,7 +341,7 @@ const BowlerPage = () => {
     onFreeEntryUpdate(data);
 
     // This updates the bowler's ledger entries, so we should also refresh the bowler
-    onBowlerUpdate(bowler);
+    bowlerUpdated();
 
     setSuccess({
       ...success,
@@ -436,12 +438,12 @@ const BowlerPage = () => {
     return responses;
   }
 
-  const bowlerUpdateSuccess = (data) => {
+  const bowlerUpdateSuccess = () => {
     setLoadingParts({
       ...loadingParts,
       updateBowler: false,
     });
-    onBowlerUpdate(data);
+    bowlerUpdated();
     setSuccess({
       ...success,
       updateBowler: 'Bowler details updated.',
@@ -482,7 +484,7 @@ const BowlerPage = () => {
     });
   }
 
-  const addLedgerEntrySuccess = (newEntry) => {
+  const addLedgerEntrySuccess = () => {
     setLoadingParts({
       ...loadingParts,
       addLedgerEntry: false,
@@ -492,10 +494,7 @@ const BowlerPage = () => {
       addLedgerEntry: 'Manual payment added',
     });
 
-    const newBowler = {...bowler};
-    newBowler.ledger_entries = bowler.ledger_entries.concat(newEntry);
-    newBowler.amount_due = 0;
-    onBowlerUpdate(newBowler);
+    bowlerUpdated();
   }
 
   const addLedgerEntryFailure = (error) => {
@@ -538,12 +537,12 @@ const BowlerPage = () => {
     });
   }
 
-  const submitTournamentDataSuccess = (data) => {
+  const submitTournamentDataSuccess = () => {
     setLoadingParts({
       ...loadingParts,
       setTournamentData: false,
     });
-    onBowlerUpdate(data);
+    bowlerUpdated();
     setSuccess({
       ...success,
       setTournamentData: 'Data saved.',
@@ -630,7 +629,7 @@ const BowlerPage = () => {
     })
   }
 
-  const waiveFeeSuccess = (newWaiver) => {
+  const waiveFeeSuccess = () => {
     setLoadingParts({
       ...loadingParts,
       waiveFee: false,
@@ -640,9 +639,7 @@ const BowlerPage = () => {
       waiveFee: 'Late fee waived',
     });
 
-    const newBowler = {...bowler};
-    newBowler.waivers = [newWaiver];
-    onBowlerUpdate(newBowler);
+    bowlerUpdated();
   }
 
   const waiveFeeFailure = (error) => {
@@ -682,54 +679,57 @@ const BowlerPage = () => {
     return <LoadingMessage message={'Retrieving bowler details...'}/>
   }
 
-  const bowlerSummary = (
-    <Card className={'mb-2'}>
-      <Card.Header as={'h3'}>
-        {bowler.display_name}
-      </Card.Header>
-      <Card.Body>
-        <dl className={'mb-0'}>
-          {!!bowler.team && (
-            <>
-              <div className={'row'}>
-                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
-                <dd className={'col'}>
-                  <Link href={{
-                    pathname: '/director/tournaments/[identifier]/teams/[teamId]',
-                    query: {
-                      identifier: identifier,
-                      teamId: bowler.team.identifier,
+  let bowlerSummary = <h5>{bowler.fullName}</h5>;
+  if (tournament.events.some(({rosterType}) => rosterType === 'team')) {
+    bowlerSummary = (
+      <Card className={'mb-2'}>
+        <Card.Header as={'h3'}>
+          {bowler.fullName}
+        </Card.Header>
+        <Card.Body>
+          <dl className={'mb-0'}>
+            {bowler.team && (
+              <>
+                <div className={'row'}>
+                  <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
+                  <dd className={'col'}>
+                    <Link href={{
+                      pathname: '/director/tournaments/[identifier]/teams/[teamId]',
+                      query: {
+                        identifier: identifier,
+                        teamId: bowler.team.identifier,
                   }}}
-                  >
-                    {bowler.team.name}
-                  </Link>
-                </dd>
-              </div>
-              <div className={'row'}>
-                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team position</dt>
-                <dd className={'col'}>{bowler.position}</dd>
-              </div>
-            </>
-          )}
-          {!bowler.team && (
-            <>
-              <div className={'row'}>
-                <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
-                <dd className={'col'}>
-                  n/a
-                </dd>
-              </div>
-            </>
-          )}
-          <div className={'row'}>
-            <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Doubles partner</dt>
-            {bowler.doubles_partner && <dd className={'col'}>{bowler.doubles_partner.full_name}</dd>}
-            {!bowler.doubles_partner && <dd className={'col'}>n/a</dd>}
-          </div>
-        </dl>
-      </Card.Body>
-    </Card>
-  );
+                    >
+                      {bowler.team.name}
+                    </Link>
+                  </dd>
+                </div>
+                <div className={'row'}>
+                  <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team position</dt>
+                  <dd className={'col'}>{bowler.position}</dd>
+                </div>
+              </>
+            )}
+            {!bowler.team && (
+              <>
+                <div className={'row'}>
+                  <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Team name</dt>
+                  <dd className={'col'}>
+                    n/a
+                  </dd>
+                </div>
+              </>
+            )}
+            <div className={'row'}>
+              <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Doubles partner</dt>
+              {bowler.doublesPartner && <dd className={'col'}>{bowler.doublesPartner.name}</dd>}
+              {!bowler.doublesPartner && <dd className={'col'}>n/a</dd>}
+            </div>
+          </dl>
+        </Card.Body>
+      </Card>
+    )
+  }
 
   const deleteBowlerCard = (
     <Card className={'mb-3'}>
@@ -814,8 +814,8 @@ const BowlerPage = () => {
       );
     if (tournamentHasDoublesEvent && unpartneredBowlers.length > 0) {
       let bowlerPartnerId = '';
-      if (bowler.doubles_partner) {
-        bowlerPartnerId = bowler.doubles_partner.identifier;
+      if (bowler.doublesPartner) {
+        bowlerPartnerId = bowler.doublesPartner.identifier;
       }
       const options = unpartneredBowlers.filter(t => t.identifier !== bowlerPartnerId);
 
@@ -857,14 +857,14 @@ const BowlerPage = () => {
   }
 
   let freeEntryCard = '';
-  if (bowler.free_entry || availableFreeEntries.length > 0) {
+  if (bowler.freeEntry || availableFreeEntries.length > 0) {
     freeEntryCard = (
       <Card className={'mb-3'}>
         <Card.Header as={'h6'} className={'fw-light'}>
           Free Entry
         </Card.Header>
         <Card.Body>
-          {bowler.free_entry && bowler.free_entry.confirmed && (
+          {bowler.freeEntry && bowler.freeEntry.confirmed && (
             <div className={`text-center`}>
               <span className={`font-monospace me-2`}>
                 {bowler.free_entry.unique_code}
@@ -872,10 +872,10 @@ const BowlerPage = () => {
               (confirmed)
             </div>
           )}
-          {bowler.free_entry && !bowler.free_entry.confirmed && (
+          {bowler.freeEntry && !bowler.freeEntry.confirmed && (
             <div className={`d-flex justify-content-end align-items-center`}>
               <span className={`font-monospace me-auto`}>
-                {bowler.free_entry.unique_code}
+                {bowler.freeEntry.uniqueCode}
               </span>
               <Button variant={'outline-danger'}
                       size={'sm'}
@@ -890,7 +890,7 @@ const BowlerPage = () => {
               </Button>
             </div>
           )}
-          {!bowler.free_entry && (
+          {!bowler.freeEntry && (
             <form onSubmit={linkFreeEntrySubmitHandler}>
               <select className={'form-select'} name={'destinationTeam'} onChange={linkFreeEntryOptionChanged}>
                 <option value={''}>Choose a free entry code</option>
@@ -943,27 +943,27 @@ const BowlerPage = () => {
         {bowler.purchases && bowler.purchases.map(p => {
           return (
             <ListGroup.Item key={p.identifier}>
-              <span className={`float-end ${p.voided_at ? 'text-decoration-line-through' : ''}`}>
+              <span className={`float-end ${p.voidedAt ? 'text-decoration-line-through' : ''}`}>
                 {p.determination === 'early_discount' ? '–' : ''}
                 ${p.amount}
               </span>
               <span className={'d-block'}>
-                {p.name}
+                {p.purchasableItem.name}
               </span>
-              {p.paid_at && (
+              {p.paidAt && (
                 <small className={'d-block fst-italic'}>
                   <strong>
                     Paid:{' '}
                   </strong>
-                  {p.paid_at}
+                  {format(new Date(p.paidAt), 'Pp')}
                 </small>
               )}
-              {p.voided_at && (
+              {p.voidedAt && (
                 <small className={'d-block fst-italic'}>
                   <strong>
                     Voided:{' '}
                   </strong>
-                  {p.voided_at}
+                  {format(new Date(p.voidedAt), 'Pp')}
                 </small>
               )}
             </ListGroup.Item>
@@ -979,7 +979,7 @@ const BowlerPage = () => {
         Ledger Entries
       </Card.Header>
       <ListGroup variant={'flush'}>
-        {bowler.ledger_entries && bowler.ledger_entries.map((l, i) => {
+        {bowler.ledgerEntries && bowler.ledgerEntries.map((l, i) => {
           const amountClass = l.credit > 0 ? 'text-success' : 'text-danger';
           const amount = l.credit || l.debit;
           return (
@@ -992,7 +992,7 @@ const BowlerPage = () => {
                 {l.identifier}
               </span>
               <small className={'d-block fst-italic'}>
-                {l.created_at}
+                {format(new Date(l.createdAt), 'Pp')}
               </small>
             </ListGroup.Item>
           );
@@ -1114,7 +1114,7 @@ const BowlerPage = () => {
                        onClick={resendEmailButtonClicked}
           />
         </ListGroup.Item>
-        {bowler.ledger_entries.filter(entry => entry.source === 'stripe').map((entry, i) => (
+        {bowler.ledgerEntries.filter(entry => entry.source === 'stripe').map((entry, i) => (
           <ListGroup.Item key={i}>
             <EmailButton emailType={'payment_receipt'}
                          bowlerIdentifier={bowlerId}
@@ -1134,27 +1134,52 @@ const BowlerPage = () => {
   ];
 
   // Put the additional question responses at the top level of bowler data, for the form
-  for (const questionKey in bowler.additional_question_responses) {
-    bowler[questionKey] = bowler.additional_question_responses[questionKey].response;
+  for (const questionKey in bowler.additionalQuestionResponses) {
+    bowler[questionKey] = bowler.additionalQuestionResponses[questionKey].response;
   }
 
   const showShifts = bowler.shifts.length > 0;
 
+  const bowlerFormData = {
+    first_name: bowler.firstName,
+    last_name: bowler.lastName,
+    nickname: bowler.preferredName,
+    email: bowler.email,
+    phone: bowler.phone,
+    usbc_id: bowler.usbcId,
+    birth_month: bowler.birthMonth,
+    birth_day: bowler.birthDay,
+    birth_year: bowler.birthYear,
+    address1: bowler.address1,
+    city: bowler.city,
+    state: bowler.state,
+    country: bowler.country,
+    postal_code: bowler.postalCode,
+  };
+  if (bowler.shifts.length > 0) {
+    bowlerFormData.shift_identifier = bowler.shifts[0].identifier;
+  }
+  tournament.additionalQuestions.forEach(aq => {
+    const name = aq.name;
+    const obj = bowler.additionalQuestionResponses.find(aqr => aqr.name === name);
+    if (obj) {
+      bowlerFormData[name] = obj.response;
+    }
+  });
+
   return (
     <ErrorBoundary>
-      <Breadcrumbs ladder={ladder} activeText={bowler.display_name}/>
+      <Breadcrumbs ladder={ladder} activeText={bowler.fullName}/>
       <Row>
         <Col md={8}>
           {bowlerSummary}
-          {/* @modern switch bowler to come from useBowler, and add whatever we need to the serializer for that. */}
-          {/* @modern Also: maybe extract just the bowler data needed by BowlerForm? */}
           <BowlerForm tournament={tournament}
                       bowlerInfoSaved={updateSubmitHandler}
-                      bowlerData={bowler}
+                      bowlerData={bowlerFormData}
                       nextButtonText={'Update Bowler'}
                       showShifts={showShifts}
           />
-          <SuccessAlert message={success.updateBowler}/>
+          <SuccessAlert message={success.updateBowler} className={'mt-3'}/>
           <ErrorAlert message={bowlerError}/>
           <ErrorAlert message={errors.updateBowler}/>
         </Col>

@@ -5,6 +5,7 @@ import Input from "../../ui/Input/Input";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './BowlerForm.module.scss';
+import {devConsoleLog} from "../../../utils";
 
 const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = [], nextButtonText, showShifts = false}) => {
   const DATE_OF_BIRTH_FIELDS = [
@@ -472,6 +473,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         theBowlerData[key] = elem.elementConfig.value;
       });
     }
+
+    devConsoleLog("Bowler data:", theBowlerData);
 
     bowlerInfoSaved(theBowlerData);
   }
