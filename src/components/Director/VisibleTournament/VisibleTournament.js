@@ -2,7 +2,6 @@ import {Accordion, Card} from "react-bootstrap";
 import Link from "next/link";
 
 import Basics from './Basics';
-import Configuration from "./Configuration";
 import AdditionalQuestions from "./AdditionalQuestions";
 import Capacity from './Capacity';
 import CloseTournament from "./CloseTournament";
@@ -79,8 +78,6 @@ const VisibleTournament = ({closeTournament}) => {
       <Downloads/>
       <Accordion className={'mb-3'}>
         <Basics eventKey={'0'}/>
-        <Configuration eventKey={'1'}
-                       excludedKeys={EDITABLE_CONFIG_ITEMS} />
         <AdditionalQuestions eventKey={'2'}/>
         <PurchasableItems eventKey={'3'}/>
       </Accordion>

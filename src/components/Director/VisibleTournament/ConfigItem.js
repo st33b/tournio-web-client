@@ -1,5 +1,3 @@
-import {format, formatISO} from "date-fns";
-
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './VisibleTournament.module.scss';
@@ -9,7 +7,7 @@ const ConfigItem = ({item}) => {
     return '';
   }
 
-    let displayedValue = '';
+    let displayedValue;
     switch (item.key) {
       case 'website':
         displayedValue = (
@@ -20,6 +18,9 @@ const ConfigItem = ({item}) => {
             <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden={true} />
           </a>
         );
+        break;
+      case 'bowler_form_fields':
+        displayedValue = item.value.split(' ').map(field => <span key={field} className={'line'}>{field}</span>);
         break;
       default:
         displayedValue = item.value;
