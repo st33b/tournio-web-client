@@ -70,17 +70,6 @@ const BowlerPage = () => {
     waiveFee: false,
   });
 
-  const updateStateForBowler = (data) => {
-    if (data.free_entry) {
-      const newFreeEntryForm = {...linkFreeEntryFormData};
-      newFreeEntryForm.identifier = data.free_entry.identifier;
-      newFreeEntryForm.confirm = data.free_entry.confirmed;
-      setLinkFreeEntryFormData(newFreeEntryForm);
-    }
-
-    // any other state data the bowler needs...
-  }
-
   const {tournament, tournamentUpdatedQuietly} = useModernTournament();
 
   const {loading: bowlerLoading, bowler, error: bowlerError, bowlerUpdated} = useBowler();
@@ -203,10 +192,6 @@ const BowlerPage = () => {
       moveBowler: false,
     });
 
-    // This triggers a re-fetch of the bowler and then a re-render of the bowler summary,
-    // but not the other objects populated by calls to the useDirectorApi hook.
-    bowlerUpdated();
-
     // retrieve the new list of available teams
     onAvailableTeamsUpdate(availableTeams);
 
@@ -267,10 +252,6 @@ const BowlerPage = () => {
       ...loadingParts,
       unpartneredBowlers: false,
     });
-
-    // This triggers a re-fetch of the bowler and then a re-render of the bowler summary,
-    // but not the other objects populated by calls to the useDirectorApi hook.
-    bowlerUpdated();
 
     // retrieve the new list of unpartnered bowlers
     onDoublesPartnerUpdate(unpartneredBowlers);
@@ -341,7 +322,10 @@ const BowlerPage = () => {
     onFreeEntryUpdate(data);
 
     // This updates the bowler's ledger entries, so we should also refresh the bowler
-    bowlerUpdated();
+    bowlerUpdated({
+      ...bowler,
+      freeEntry: data,
+    });
 
     setSuccess({
       ...success,
@@ -443,7 +427,6 @@ const BowlerPage = () => {
       ...loadingParts,
       updateBowler: false,
     });
-    bowlerUpdated();
     setSuccess({
       ...success,
       updateBowler: 'Bowler details updated.',
@@ -493,8 +476,6 @@ const BowlerPage = () => {
       ...success,
       addLedgerEntry: 'Manual payment added',
     });
-
-    bowlerUpdated();
   }
 
   const addLedgerEntryFailure = (error) => {
@@ -542,7 +523,6 @@ const BowlerPage = () => {
       ...loadingParts,
       setTournamentData: false,
     });
-    bowlerUpdated();
     setSuccess({
       ...success,
       setTournamentData: 'Data saved.',
@@ -638,8 +618,6 @@ const BowlerPage = () => {
       ...success,
       waiveFee: 'Late fee waived',
     });
-
-    bowlerUpdated();
   }
 
   const waiveFeeFailure = (error) => {
@@ -867,7 +845,7 @@ const BowlerPage = () => {
           {bowler.freeEntry && bowler.freeEntry.confirmed && (
             <div className={`text-center`}>
               <span className={`font-monospace me-2`}>
-                {bowler.free_entry.unique_code}
+                {bowler.freeEntry.uniqueCode}
               </span>
               (confirmed)
             </div>

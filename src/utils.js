@@ -445,10 +445,10 @@ const convertBowlerDataForPost = (tournament, bowler) => {
 
 const convertAdditionalQuestionResponsesForPost = (tournament, bowler) => {
   const responses = [];
-  for (let key in tournament.additional_questions) {
+  for (const question of tournament.additionalQuestions) {
     responses.push({
-      name: key,
-      response: bowler[key] || '',
+      name: question.name,
+      response: bowler[question.name] || '',
     });
   }
   return responses;
