@@ -411,7 +411,7 @@ const teamDataForBowler = (bowler) => {
   };
 }
 
-const convertBowlerDataForPost = (tournament, bowler) => {
+export const convertBowlerDataForPost = (tournament, bowler) => {
   const additionalQuestionResponses = convertAdditionalQuestionResponsesForPost(tournament, bowler);
 
   const bowlerObj = {

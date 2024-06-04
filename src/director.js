@@ -290,3 +290,18 @@ export const useTournamentOrg = (onSuccess = () => {}) => {
     orgUpdated,
   };
 }
+
+export const useTeam = (onSuccess = () => {}) => {
+  const router = useRouter();
+  const {teamId} = router.query;
+  const {loading, data: team, error} = useDirectorApi({
+    uri: teamId ? `/teams/${teamId}` : null,
+    onSuccess: onSuccess,
+  });
+
+  return {
+    loading,
+    error,
+    team,
+  };
+}

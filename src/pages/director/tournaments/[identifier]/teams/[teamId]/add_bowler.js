@@ -1,7 +1,7 @@
 import {useRouter} from "next/router";
-import {directorApiRequest, useDirectorApi, useTournament} from "../../../../../../director";
+import {directorApiRequest, useModernTournament, useTeam} from "../../../../../../director";
 import DirectorLayout from "../../../../../../components/Layout/DirectorLayout/DirectorLayout";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import ErrorBoundary from "../../../../../../components/common/ErrorBoundary";
 import LoadingMessage from "../../../../../../components/ui/LoadingMessage/LoadingMessage";
 import Breadcrumbs from "../../../../../../components/Director/Breadcrumbs/Breadcrumbs";
@@ -9,50 +9,27 @@ import ErrorAlert from "../../../../../../components/common/ErrorAlert";
 import PositionChooser from "../../../../../../components/common/formElements/PositionChooser/PositionChooser";
 import BowlerForm from "../../../../../../components/Registration/BowlerForm/BowlerForm";
 import {useLoginContext} from "../../../../../../store/LoginContext";
-import {devConsoleLog} from "../../../../../../utils";
+import {convertBowlerDataForPost} from "../../../../../../utils";
 
 const Page = () => {
   const router = useRouter();
   const {identifier: tournamentId, teamId} = router.query;
   const {authToken} = useLoginContext();
 
-  const {loading: tournamentLoading, tournament} = useTournament();
-  const {loading: teamLoading, data: team, error: teamError, onDataUpdate: teamChanged} = useDirectorApi({
-    uri: teamId ? `/teams/${teamId}` : null,
-  });
+  const {loading: tournamentLoading, tournament} = useModernTournament();
+  const {loading: teamLoading, team, error: teamError} = useTeam();
 
   const [chosenPosition, choosePosition] = useState();
-  const [occupiedPositions, setOccupiedPositions] = useState([]);
   const [processing, setProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
   const [bowlerData, setBowlerData] = useState(null);
-
-  useEffect(() => {
-    if (!tournament || !team || chosenPosition > 0) {
-      return;
-    }
-    const occupied = team.bowlers.map(({position}) => position).sort();
-    for (let i = 0; i < parseInt(tournament.team_size); i++) {
-      if (occupied[i] !== i + 1) {
-        // We've found the first unoccupied position
-        choosePosition(i + 1);
-        setOccupiedPositions(occupied);
-        break;
-      }
-    }
-  }, [tournament, team]);
 
   const anotherPositionClicked = (otherPosition) => {
     choosePosition(otherPosition);
   }
 
   const bowlerSubmitSuccess = (bowlerDeets) => {
-    const changedTeam = {
-      ...team,
-      bowlers: team.bowlers.concat(bowlerDeets),
-    }
     setProcessing(false);
-    teamChanged(changedTeam);
     router.push({
       pathname: '/director/tournaments/[identifier]/teams/[teamId]',
       query: {
@@ -72,7 +49,7 @@ const Page = () => {
     setProcessing(true);
     setBowlerData(bowlerDeets);
 
-    const postData = convertBowlerDataForPost(bowlerDeets);
+    const postData = convertBowlerDataForPost(tournament, bowlerDeets);
 
     const uri = `/tournaments/${tournamentId}/bowlers`;
     const requestConfig = {
@@ -100,45 +77,6 @@ const Page = () => {
     });
   }
 
-  // @refactor This is virtually identical to what's on the registration side.
-  // The difference is getting through the additional questions.
-  // (On registration, they're indexed by name; on director, they're an array.)
-  const convertBowlerDataForPost = (bowlerData) => {
-    devConsoleLog("Bowler data:", bowlerData);
-    return {
-      person_attributes: {
-        first_name: bowlerData.first_name,
-        last_name: bowlerData.last_name,
-        usbc_id: bowlerData.usbc_id,
-        birth_month: bowlerData.birth_month,
-        birth_day: bowlerData.birth_day,
-        birth_year: bowlerData.birth_year,
-        nickname: bowlerData.nickname,
-        phone: bowlerData.phone,
-        email: bowlerData.email,
-        address1: bowlerData.address1,
-        address2: bowlerData.address2,
-        city: bowlerData.city,
-        state: bowlerData.state,
-        country: bowlerData.country,
-        postal_code: bowlerData.postal_code,
-      },
-      additional_question_responses: convertAdditionalQuestionResponsesForPost(bowlerData),
-    };
-  }
-
-  const convertAdditionalQuestionResponsesForPost = (bowlerData) => {
-    const responses = [];
-    for (const questionKey in tournament.additional_questions) {
-      responses.push({
-        name: questionKey,
-        response: bowlerData[questionKey] || '',
-      });
-    }
-    return responses;
-  }
-  ////////////////////////////////////////////////////////////////////
-
   if (teamError) {
     return (
       <div>
@@ -147,7 +85,11 @@ const Page = () => {
     );
   }
 
-  if (tournamentLoading || teamLoading || !team) {
+  if (teamLoading || !team) {
+    return <LoadingMessage message={'Getting the team ready...'}/>
+  }
+
+  if (tournamentLoading || !tournament) {
     return <LoadingMessage message={'Retrieving bowler registration form...'}/>
   }
 
@@ -155,7 +97,17 @@ const Page = () => {
     return <LoadingMessage message={'Adding bowler...'}/>
   }
 
-  const maxPosition = parseInt(tournament.team_size);
+  const maxPosition = parseInt(tournament.teamSize);
+
+  let chosen;
+  const occupied = team.bowlers.map(({position}) => position);
+  for (let i = 0; i < tournament.teamSize; i++) {
+    if (occupied[i] !== i + 1) {
+      // We've found the first unoccupied position
+      chosen = i + 1;
+      break;
+    }
+  }
 
   const ladder = [
     {text: 'Tournaments', path: '/director/tournaments'},
@@ -184,9 +136,9 @@ const Page = () => {
       <hr />
 
       <PositionChooser maxPosition={maxPosition}
-                       chosen={chosenPosition}
+                       chosen={chosen}
                        onChoose={anotherPositionClicked}
-                       disallowedPositions={occupiedPositions}
+                       disallowedPositions={occupied}
       />
 
       <hr />
