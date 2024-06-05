@@ -5,7 +5,7 @@ import {Map} from 'immutable';
 import {directorApiRequest, useTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 import ErrorAlert from "../../common/ErrorAlert";
-import {devConsoleLog, updateObject} from "../../../utils";
+import {updateObject} from "../../../utils";
 
 const RegistrationOptions = () => {
   const {authToken} = useLoginContext();
@@ -64,7 +64,6 @@ const RegistrationOptions = () => {
       allowedOptionSet.push('new_team');
       break;
   }
-  devConsoleLog("Allowed options:", allowedOptionSet);
 
   const optionToggled = (event) => {
     const inputName = event.target.name;
