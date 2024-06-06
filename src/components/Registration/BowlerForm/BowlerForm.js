@@ -310,6 +310,83 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       ],
       valid: true,
       touched: false,
+    },
+    payment_app: {
+      elementType: 'combo',
+      elementConfig: {
+        elements: [
+          {
+            // App name
+            identifier: 'app_name',
+            elementType: 'select',
+            elementConfig: {
+              options: [
+                {
+                  value: 'paypal',
+                  label: 'PayPal',
+                },
+                {
+                  value: 'venmo',
+                  label: 'Venmo',
+                },
+                {
+                  value: 'zelle',
+                  label: 'Zelle',
+                },
+                {
+                  value: 'cashapp',
+                  label: 'CashApp',
+                },
+                {
+                  value: 'googlepay',
+                  label: 'Google Pay',
+                },
+                {
+                  value: 'applepay',
+                  label: 'Apple Pay',
+                },
+                {
+                  value: 'samsungpay',
+                  label: 'Samsung Pay',
+                },
+              ],
+              value: 'paypal',
+              labelClasses: ['visually-hidden'],
+              layoutClass: 'col-5 col-md-4 col-xl-3',
+            },
+            label: 'App Name',
+            validityErrors: [
+            ],
+            valid: true,
+            touched: false,
+          },
+          {
+            // Account name
+            identifier: 'account_name',
+            elementType: 'input',
+            elementConfig: {
+              type: 'text',
+              value: '',
+              layoutClass: 'col',
+              placeholder: '@username / email / phone',
+            },
+            label: 'Account Name',
+            labelClasses: ['visually-hidden'],
+            validityErrors: [
+              // 'valueMissing',
+            ],
+            valid: true,
+            touched: false,
+          }
+        ],
+      },
+      label: 'Payment App',
+      helper: {
+        text: 'The tournament will try to pay you this way, rather than mail a check',
+      },
+      validityErrors: [''],
+      valid: true,
+      touched: false,
     }
   }
 
@@ -390,7 +467,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
 
     // fill most of the form data
     for (const inputName in formData.formFields) {
-      // skip the DOB fields, do them separately
+      // skip the DOB and payment app fields, do them separately
       if (!DATE_OF_BIRTH_FIELDS.includes(inputName)) {
         updatedBowlerForm.formFields[inputName].elementConfig.value = bowlerData[inputName];
       }
@@ -403,6 +480,13 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       dobObj.elementConfig.elements[index].elementConfig.value = bowlerData[key];
     });
 
+    // and now do the payment app fields
+    const paymentObj = updatedBowlerForm.formFields.payment_app;
+    formData.formFields.payment_app.elementConfig.elements.forEach((elem, index) => {
+      const key = `payment_app--${elem.identifier}`;
+      paymentObj.elementConfig.elements[index].elementConfig.value = bowlerData[key];
+    });
+
     return updatedBowlerForm;
   }
 
@@ -413,7 +497,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       return;
     }
 
-    const optionalFields = tournament.config.bowler_form_fields.split(' ');
+    const optionalFields = tournament.config.bowler_form_fields.split(' ').concat(['payment_app']);
 
     const updatedFields = new Set(fieldsToUse);
     optionalFields.concat(tournament.additionalQuestions.map(aq => aq.name)).forEach(field => updatedFields.add(field));
@@ -474,6 +558,16 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       });
     }
 
+    // add the payment app combo elements
+    if (fieldsToUse.has('payment_app')) {
+      // only two elements, and the order should be consistent, but
+      // perhaps it's better not to rely on the element order
+      theBowlerData.payment_app = {};
+      bowlerForm.formFields.payment_app.elementConfig.elements.forEach(elem => {
+        theBowlerData.payment_app[elem.identifier] = elem.elementConfig.value;
+      });
+    }
+
     devConsoleLog("Bowler data:", theBowlerData);
 
     bowlerInfoSaved(theBowlerData);
@@ -524,16 +618,15 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       case 'date_of_birth:month':
       case 'date_of_birth:day':
       case 'date_of_birth:year':
-        const [comboIdentifier, elemIdentifier] = inputName.split(':');
+        const elemIdentifier = inputName.split(':')[1];
 
-        // month or day
         const elems = [
           'month',
           'day',
           'year',
         ];
         const index = elems.findIndex(e => e === elemIdentifier);
-        const dobElem = bowlerForm.formFields[comboIdentifier].elementConfig.elements[index];
+        const dobElem = bowlerForm.formFields.date_of_birth.elementConfig.elements[index];
 
         updatedFormElement = {
           ...dobElem,
@@ -544,7 +637,29 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
           touched: true,
         }
 
-        updatedBowlerForm.formFields[comboIdentifier].elementConfig.elements[index] = updatedFormElement;
+        updatedBowlerForm.formFields.date_of_birth.elementConfig.elements[index] = updatedFormElement;
+        break;
+      case 'payment_app:app_name':
+      case 'payment_app:account_name':
+        const paymentElemIdentifier = inputName.split(':')[1];
+
+        const elements = [
+          'app_name',
+          'account_name',
+        ];
+        const elemIndex = elements.findIndex(e => e === paymentElemIdentifier);
+        const paymentElem = bowlerForm.formFields.payment_app.elementConfig.elements[elemIndex];
+
+        updatedFormElement = {
+          ...paymentElem,
+          elementConfig: {
+            ...paymentElem.elementConfig,
+            value: event.target.value,
+          },
+          touched: true,
+        }
+
+        updatedBowlerForm.formFields.payment_app.elementConfig.elements[elemIndex] = updatedFormElement;
         break;
       default:
         checksToRun = bowlerForm.formFields[inputName].validityErrors;

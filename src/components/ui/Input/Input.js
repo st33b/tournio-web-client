@@ -51,6 +51,9 @@ const Input = (props) => {
   switch (props.elementType) {
     case('input'):
       outerLabelClasses.push("col-form-label");
+      if (props.labelClasses) {
+        outerLabelClasses.push(...props.labelClasses);
+      }
       inputElement = <input
         id={props.identifier}
         name={props.identifier}
@@ -110,6 +113,7 @@ const Input = (props) => {
                 elementConfig={elem.elementConfig}
                 changed={props.changed}
                 label={elem.label}
+                labelClasses={elem.labelClasses}
                 helper={''}
                 validityErrors={elem.validityErrors}
                 errorMessages={elem.errorMessages}
