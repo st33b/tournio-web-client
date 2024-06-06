@@ -39,6 +39,10 @@ const BowlerFormFields = () => {
       label: 'Date of Birth',
       required: false,
     },
+    payment_app: {
+      label: 'Payment App',
+      required: false,
+    },
   }
 
   const [configItemId, setConfigItemId] = useState();
@@ -121,7 +125,7 @@ const BowlerFormFields = () => {
           </Accordion.Header>
           <Accordion.Body>
             <p>
-              The registration form will require that bowlers enter this information.
+              The registration form will require bowlers to enter this information (Payment App will be optional).
             </p>
             {Object.keys(formData).map(key => (
               <div className={'form-check form-switch'} key={key}>

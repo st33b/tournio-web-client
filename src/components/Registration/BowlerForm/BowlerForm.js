@@ -169,9 +169,9 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
                 },
               ],
               value: 1,
-              labelClasses: ['visually-hidden'],
-              layoutClass: 'col-4 col-xl-3',
             },
+            labelClasses: ['visually-hidden'],
+            layoutClass: 'col-4 col-xl-3',
             label: 'Month',
             validityErrors: [
               'valueMissing',
@@ -189,9 +189,9 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
                 max: 31,
               },
               value: 1,
-              labelClasses: ['visually-hidden'],
-              layoutClass: 'col-4 col-xl-3',
             },
+            labelClasses: ['visually-hidden'],
+            layoutClass: 'col-4 col-xl-3',
             label: 'Day',
             validityErrors: [
               // 'valueMissing',
@@ -209,9 +209,9 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
                 max: 2010,
               },
               value: 1976,
-              labelClasses: ['visually-hidden'],
-              layoutClass: 'col-4 col-xl-3',
             },
+            labelClasses: ['visually-hidden'],
+            layoutClass: 'col-4 col-xl-3',
             label: 'Year',
             validityErrors: [
               // 'valueMissing',
@@ -322,38 +322,38 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
             elementConfig: {
               options: [
                 {
-                  value: 'paypal',
+                  value: 'PayPal',
                   label: 'PayPal',
                 },
                 {
-                  value: 'venmo',
+                  value: 'Venmo',
                   label: 'Venmo',
                 },
                 {
-                  value: 'zelle',
+                  value: 'Zelle',
                   label: 'Zelle',
                 },
-                {
-                  value: 'cashapp',
-                  label: 'CashApp',
-                },
-                {
-                  value: 'googlepay',
-                  label: 'Google Pay',
-                },
-                {
-                  value: 'applepay',
-                  label: 'Apple Pay',
-                },
-                {
-                  value: 'samsungpay',
-                  label: 'Samsung Pay',
-                },
+                // {
+                //   value: 'cashapp',
+                //   label: 'CashApp',
+                // },
+                // {
+                //   value: 'googlepay',
+                //   label: 'Google Pay',
+                // },
+                // {
+                //   value: 'applepay',
+                //   label: 'Apple Pay',
+                // },
+                // {
+                //   value: 'samsungpay',
+                //   label: 'Samsung Pay',
+                // },
               ],
               value: 'paypal',
-              labelClasses: ['visually-hidden'],
-              layoutClass: 'col-5 col-md-4 col-xl-3',
             },
+            labelClasses: ['visually-hidden'],
+            layoutClass: 'col-5 col-md-4 col-xl-3',
             label: 'App Name',
             validityErrors: [
             ],
@@ -367,11 +367,11 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
             elementConfig: {
               type: 'text',
               value: '',
-              layoutClass: 'col',
               placeholder: '@username / email / phone',
             },
-            label: 'Account Name',
+            layoutClass: 'col',
             labelClasses: ['visually-hidden'],
+            label: 'Account Name',
             validityErrors: [
               // 'valueMissing',
             ],
@@ -384,7 +384,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       helper: {
         text: 'The tournament will try to pay you this way, rather than mail a check',
       },
-      validityErrors: [''],
+      validityErrors: [],
       valid: true,
       touched: false,
     }
@@ -483,8 +483,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     // and now do the payment app fields
     const paymentObj = updatedBowlerForm.formFields.payment_app;
     formData.formFields.payment_app.elementConfig.elements.forEach((elem, index) => {
-      const key = `payment_app--${elem.identifier}`;
-      paymentObj.elementConfig.elements[index].elementConfig.value = bowlerData[key];
+      paymentObj.elementConfig.elements[index].elementConfig.value = bowlerData.payment_app[elem.identifier];
     });
 
     return updatedBowlerForm;
@@ -497,7 +496,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       return;
     }
 
-    const optionalFields = tournament.config.bowler_form_fields.split(' ').concat(['payment_app']);
+    const optionalFields = tournament.config.bowler_form_fields.split(' ');
 
     const updatedFields = new Set(fieldsToUse);
     optionalFields.concat(tournament.additionalQuestions.map(aq => aq.name)).forEach(field => updatedFields.add(field));
@@ -684,7 +683,14 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
 
     // put the updated form element in the updated form
     // if it's not one of the combo elements
-    if (!['date_of_birth:month', 'date_of_birth:day', 'date_of_birth:year'].includes(inputName)) {
+    const comboInputs = [
+      'date_of_birth:month',
+      'date_of_birth:day',
+      'date_of_birth:year',
+      'payment_app:app_name',
+      'payment_app:account_name',
+    ];
+    if (!comboInputs.includes(inputName)) {
       updatedBowlerForm.formFields[inputName] = updatedFormElement;
     }
 
@@ -749,6 +755,8 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
           elementConfig={formElement.setup.elementConfig}
           changed={inputChangedHandler}
           label={formElement.setup.label}
+          labelClasses={formElement.setup.labelClasses}
+          layoutClass={formElement.setup.layoutClass}
           helper={formElement.setup.helper}
           validityErrors={formElement.setup.validityErrors}
           errorMessages={formElement.setup.errorMessages}

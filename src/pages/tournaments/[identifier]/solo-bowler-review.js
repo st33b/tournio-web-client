@@ -10,6 +10,7 @@ import ErrorAlert from "../../../components/common/ErrorAlert";
 import Link from "next/link";
 import TournamentHeader from "../../../components/ui/TournamentHeader";
 import BowlerSummary from "../../../components/Registration/ReviewEntries/BowlerSummary";
+import ErrorBoundary from "../../../components/common/ErrorBoundary";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
@@ -84,13 +85,14 @@ const Page = () => {
       {tournamentError && <ErrorAlert message={tournamentError}/> }
 
       <div className={`d-flex justify-content-between`}>
-        <Link href={{
-          pathname: '/tournaments/[identifier]/solo-bowler',
-          query: {
-            identifier: identifier
-          }
-        }}
-              className={`btn btn-lg btn-outline-primary d-block ${processing && 'invisible'}`}>
+        <Link
+          href={{
+              pathname: '/tournaments/[identifier]/solo-bowler',
+              query: {
+                identifier: identifier
+              }
+            }}
+          className={`btn btn-lg btn-outline-primary d-block ${processing && 'invisible'}`}>
           <i className={'bi bi-chevron-double-left pe-2'}
              aria-hidden={true}/>
           Make Changes

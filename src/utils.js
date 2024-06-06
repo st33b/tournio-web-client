@@ -440,6 +440,9 @@ export const convertBowlerDataForPost = (tournament, bowler) => {
   if (bowler.shift_identifier) {
     bowlerObj.shift_identifiers = [bowler.shift_identifier];
   }
+  if (bowler.payment_app) {
+    bowlerObj.person_attributes.payment_app = `${bowler.payment_app.app_name}: ${bowler.payment_app.account_name}`;
+  }
   return bowlerObj;
 }
 

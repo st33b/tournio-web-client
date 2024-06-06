@@ -389,7 +389,7 @@ const BowlerPage = () => {
   }
 
   const convertBowlerDataForPatch = (bowlerData) => {
-    return {
+    const bowlerObj = {
       person_attributes: {
         first_name: bowlerData.first_name,
         last_name: bowlerData.last_name,
@@ -409,6 +409,10 @@ const BowlerPage = () => {
       },
       additional_question_responses: convertAdditionalQuestionResponsesForPatch(bowlerData),
     };
+    if (bowlerData.payment_app) {
+      bowlerObj.person_attributes.payment_app = `${bowlerData.payment_app.app_name}: ${bowlerData.payment_app.account_name}`;
+    }
+    return bowlerObj;
   }
 
   const convertAdditionalQuestionResponsesForPatch = (bowlerData) => {
@@ -1134,6 +1138,13 @@ const BowlerPage = () => {
     country: bowler.country,
     postal_code: bowler.postalCode,
   };
+  if (bowler.paymentApp) {
+    const parts = bowler.paymentApp.split(': ');
+    bowlerFormData.payment_app = {
+      app_name: parts[0],
+      account_name: parts[1],
+    };
+  }
   if (bowler.shifts.length > 0) {
     bowlerFormData.shift_identifier = bowler.shifts[0].identifier;
   }

@@ -1,6 +1,7 @@
 import {Row} from "react-bootstrap";
 
 import classes from './BowlerSummary.module.scss';
+import {devConsoleLog} from "../../../utils";
 
 const BowlerSummary = ({bowler, tournament, partner = null}) => {
   if (!bowler) {
@@ -23,6 +24,7 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
     state: 'State',
     country: 'Country',
     postal_code: 'Postal/ZIP Code',
+    payment_app: 'Payment App',
   };
 
   const optionalFields = tournament.config.bowler_form_fields.split(' ');
@@ -39,7 +41,7 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
 
   // Solo registrations may have a shift identifier.
   let shiftName = '';
-  if (bowler.shift_identifier) {
+  if (tournament.shifts.length > 1 && bowler.shift_identifier) {
     shiftName = tournament.shifts.find(({identifier}) => identifier === bowler.shift_identifier).name;
   }
 
@@ -78,6 +80,8 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
           let displayedValue = bowler[key];
           if (key === 'date_of_birth') {
             displayedValue = `${bowler.birth_month} / ${bowler.birth_day} / ${bowler.birth_year}`;
+          } else if (key === 'payment_app') {
+            displayedValue = `${bowler.payment_app.account_name} (${bowler.payment_app.app_name})`;
           }
           return (
             <Row key={`${key}`}>
