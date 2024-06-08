@@ -186,7 +186,7 @@ const BowlerPage = () => {
     setNewTeamFormData(newFormData);
   }
 
-  const moveBowlerSuccess = () => {
+  const moveBowlerSuccess = (data) => {
     setLoadingParts({
       ...loadingParts,
       moveBowler: false,
@@ -194,6 +194,7 @@ const BowlerPage = () => {
 
     // retrieve the new list of available teams
     onAvailableTeamsUpdate(availableTeams);
+    bowlerUpdated(data);
 
     setSuccess({
       ...success,
@@ -426,7 +427,7 @@ const BowlerPage = () => {
     return responses;
   }
 
-  const bowlerUpdateSuccess = () => {
+  const bowlerUpdateSuccess = (data) => {
     setLoadingParts({
       ...loadingParts,
       updateBowler: false,
@@ -435,6 +436,7 @@ const BowlerPage = () => {
       ...success,
       updateBowler: 'Bowler details updated.',
     });
+    bowlerUpdated(data);
   }
   const bowlerUpdateFailure = (message) => {
     setLoadingParts({
@@ -480,6 +482,7 @@ const BowlerPage = () => {
       ...success,
       addLedgerEntry: 'Manual payment added',
     });
+    bowlerUpdated(bowler);
   }
 
   const addLedgerEntryFailure = (error) => {
@@ -622,6 +625,7 @@ const BowlerPage = () => {
       ...success,
       waiveFee: 'Late fee waived',
     });
+    bowlerUpdated(bowler);
   }
 
   const waiveFeeFailure = (error) => {
@@ -1007,7 +1011,7 @@ const BowlerPage = () => {
                 {w.name}
               </span>
               <small className={'d-block fst-italic'}>
-                Waived by {w.created_by}
+                Waived by {w.createdBy}
               </small>
             </ListGroup.Item>
           );
@@ -1143,6 +1147,11 @@ const BowlerPage = () => {
     bowlerFormData.payment_app = {
       app_name: parts[0],
       account_name: parts[1],
+    };
+  } else {
+    bowlerFormData.payment_app = {
+      app_name: '',
+      account_name: '',
     };
   }
   if (bowler.shifts.length > 0) {
