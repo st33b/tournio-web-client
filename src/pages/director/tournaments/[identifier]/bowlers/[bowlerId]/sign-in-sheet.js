@@ -1,19 +1,14 @@
 import React from "react";
-import {useRouter} from "next/router";
 
 import {Col, Row} from "react-bootstrap";
 
-import {useBowler, useModernTournament, useTournament} from "../../../../../../director";
+import {useBowler, useModernTournament} from "../../../../../../director";
 import SignInSheet from "../../../../../../components/Director/SignInSheet/SignInSheet";
 import {LoginContextProvider} from "../../../../../../store/LoginContext";
 import LoadingMessage from "../../../../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorAlert from "../../../../../../components/common/ErrorAlert";
-import {devConsoleLog} from "../../../../../../utils";
 
 const Page = () => {
-  const router = useRouter();
-  const {identifier, bowlerId} = router.query;
-
   const {bowler, loading, error} = useBowler();
   const {tournament, loading: tournamentLoading, error: tournamentError} = useModernTournament();
 

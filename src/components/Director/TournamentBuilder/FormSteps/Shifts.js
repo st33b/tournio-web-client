@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 
 import {devConsoleLog, updateObject} from "../../../../utils";
-import {directorApiRequest} from "../../../../director";
+import {directorApiRequest, useModernTournament} from "../../../../director";
 import {
   newTournamentCompleted,
   newTournamentSaved
@@ -27,8 +27,6 @@ const Shifts = ({substep}) => {
     display_order: 1,
   };
 
-  {/* Decide how to handle mix-and-match when we get there. */}
-
   const [displayedSubstep, setDisplayedSubstep] = useState();
   const [chosenStyle, setChosenStyle] = useState();
   const [singleShift, setSingleShift] = useState(INITIAL_SHIFT_STATE);
@@ -44,15 +42,25 @@ const Shifts = ({substep}) => {
   }, [substep]);
 
   useEffect(() => {
-    if (!chosenStyle) {
+    if (!state.builder) {
       return;
     }
     if (chosenStyle === 'one') {
+      setSingleShift(updateObject(singleShift, {
+        event_ids: state.builder.tournament.events.map(({id}) => id),
+      }));
       setValid(isValid(singleShift));
     } else if (chosenStyle === 'multi_inclusive') {
+      const updatedSet = [];
+      shiftSet.forEach(s => {
+        updatedSet.push(updateObject(s, {
+          event_ids: state.builder.tournament.events.map(({id}) => id),
+        }));
+      });
+      setShiftSet(updatedSet);
       setValid(shiftSet.every(isValid));
     }
-  }, [chosenStyle]);
+  }, [chosenStyle, state.builder]);
 
   const handleStyleSelection = (style) => {
     setChosenStyle(style);

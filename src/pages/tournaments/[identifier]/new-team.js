@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamRegistrationInitiated, newTeamRegistrationUpdated} from "../../../store/actions/registrationActions";
 import {useEffect, useState} from "react";
-import {useTournament} from "../../../utils";
+import {useTheTournament} from "../../../utils";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import TournamentHeader from "../../../components/ui/TournamentHeader";
 import ErrorAlert from "../../../components/common/ErrorAlert";
@@ -20,7 +20,7 @@ const Page = () => {
   const router = useRouter();
   const {identifier, message} = router.query;
 
-  const {tournament, loading, error} = useTournament(identifier);
+  const {tournament, loading, error} = useTheTournament(identifier);
   const [errorMessage, setErrorMessage] = useState();
 
   // If new-team registrations aren't enabled, go back to the tournament home page
@@ -28,7 +28,7 @@ const Page = () => {
     if (!tournament) {
       return;
     }
-    if (!tournament.registration_options.new_team) {
+    if (!tournament.registrationOptions.new_team) {
       router.push(`/tournaments/${tournament.identifier}`);
     }
 
@@ -77,25 +77,26 @@ const Page = () => {
   }
 
   return (
-    <div className={`col-md-8 offset-md-2`}>
-      <TournamentHeader tournament={tournament}/>
+    <div className={`row`}>
+      <div className={'col-12'}>
+        <TournamentHeader tournament={tournament}/>
 
-      <h2 className={`text-center flex-grow-1`}>
-        Create a Team
-      </h2>
+        <h2 className={``}>
+          Create a Team
+        </h2>
+      </div>
 
-      <hr />
-
-      {errorMessage && (
+      <div className={`col-md-8 offset-md-2`}>
+        {errorMessage && (
           <>
-            <ErrorAlert message={errorMessage} onClose={() => setErrorMessage(null)} />
-            <hr/>
-          </>
-      )}
+              <ErrorAlert message={errorMessage} onClose={() => setErrorMessage(null)} />
+              <hr/>
+            </>
+        )}
 
-      <TeamForm tournament={tournament}
-                onSubmit={teamFormCompleted} />
-
+        <TeamForm tournament={tournament}
+                  onSubmit={teamFormCompleted} />
+      </div>
     </div>
   );
 }

@@ -17,33 +17,30 @@ const NewTeamReview = ({team, bowler, tournament}) => {
 
   return (
     <div className={classes.NewTeamReview}>
-      <h2 className={``}>
-        Team:&nbsp;
-        <strong>
-          {team.name}
-        </strong>
-      </h2>
-
-      <hr />
-
-      <h3 className={``}>
-        First Bowler - Review
-      </h3>
-
-      <dl className={classes.TeamDetails}>
-        {chosenShifts && (
-          <div className={`row g-2`}>
-            <dt className={`col-5`}>
-              Shift Preference:
+      <div className={classes.TeamDetails}>
+        <dl>
+          <div className={'row'}>
+            <dt className={`col-4 pe-2`}>
+              Team Name
             </dt>
-            <dd className={`col`}>
-              {chosenShifts.map(({name}) => name).join(', ')}
+            <dd className={`col ps-2 value`}>
+              {team.name}
             </dd>
           </div>
-        )}
-      </dl>
 
-      <hr/>
+          {chosenShifts && (
+            <div className={`row g-2`}>
+              <dt className={`col-4 pe-2`}>
+                Shift Preference
+              </dt>
+              <dd className={`col`}>
+                {chosenShifts.map(({name}) => name).join(', ')}
+              </dd>
+            </div>
+          )}
+        </dl>
+      </div>
+
 
       <BowlerSummary bowler={bowler} tournament={tournament}/>
     </div>

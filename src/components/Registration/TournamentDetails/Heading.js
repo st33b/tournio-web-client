@@ -11,21 +11,27 @@ const Heading = ({tournament}) => {
    * @hack To get dates to seem like they're behaving. But they're actually not.
    * @todo Use a JS library for date/time handling that can properly distinguish dates from timestamps
    */
-  const start = new Date(`${tournament.start_date}T12:00:00-04:00`);
-  const end = new Date(`${tournament.end_date}T12:00:00-04:00`);
-  const startMonth = format(start, 'LLLL');
-  const endMonth = format(end, 'LLLL');
-  const startYear = start.getFullYear();
-  const endYear = end.getFullYear();
-  const startDisplayYear = startYear === endYear ? '' : `, ${startYear}`;
-  const endDisplayYear = endYear;
   let datesString = '';
-  if (startMonth === endMonth) {
-    datesString = `${startMonth} ${start.getDate()}${startDisplayYear}-${end.getDate()}, ${endDisplayYear}`;
+  const start = new Date(`${tournament.startDate}T12:00:00-04:00`);
+  if (tournament.startDate === tournament.endDate) {
+    // it's one day
+    datesString = format(start, 'PPP');
   } else {
-    datesString = `${startMonth} ${start.getDate()}${startDisplayYear}-${endMonth} ${end.getDate()}, ${endDisplayYear}`;
+    const end = new Date(`${tournament.endDate}T12:00:00-04:00`);
+    const startMonth = format(start, 'LLLL');
+    const endMonth = format(end, 'LLLL');
+    const startYear = start.getFullYear();
+    const endYear = end.getFullYear();
+    const startDisplayYear = startYear === endYear ? '' : `, ${startYear}`;
+    const endDisplayYear = endYear;
+    if (startMonth === endMonth) {
+      datesString = `${startMonth} ${start.getDate()}${startDisplayYear}-${end.getDate()}, ${endDisplayYear}`;
+    } else {
+      datesString = `${startMonth} ${start.getDate()}${startDisplayYear}-${endMonth} ${end.getDate()}, ${endDisplayYear}`;
+    }
   }
-  const formattedDeadline = formatInTimeZone(new Date(tournament.entry_deadline), tournament.timezone,'PP p z');
+
+  const formattedDeadline = formatInTimeZone(new Date(tournament.entryDeadline), tournament.timezone,'PP p z');
 
 
   return (
@@ -37,9 +43,10 @@ const Heading = ({tournament}) => {
         {datesString}
       </h4>
 
-      {tournament.website && (
+      {tournament.config.website && (
         <p className={`mb-0 ${classes.WebsiteLink}`}>
-          <a href={tournament.website}>
+          {/* @serializer */}
+          <a href={tournament.config.website}>
             tournament website
             <i className={`${classes.ExternalLink} bi-box-arrow-up-right`} aria-hidden="true"/>
           </a>

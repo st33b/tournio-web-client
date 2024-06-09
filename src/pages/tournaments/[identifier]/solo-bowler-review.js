@@ -4,12 +4,13 @@ import {useRouter} from "next/router";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {soloBowlerRegistrationCompleted} from "../../../store/actions/registrationActions";
-import {submitSoloRegistration, useTournament} from "../../../utils";
+import {submitSoloRegistration, useTheTournament} from "../../../utils";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 import Link from "next/link";
 import TournamentHeader from "../../../components/ui/TournamentHeader";
 import BowlerSummary from "../../../components/Registration/ReviewEntries/BowlerSummary";
+import ErrorBoundary from "../../../components/common/ErrorBoundary";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
@@ -19,13 +20,13 @@ const Page = () => {
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
 
-  const {loading, tournament, error: tournamentError} = useTournament(identifier);
+  const {loading, tournament, error: tournamentError} = useTheTournament(identifier);
 
   useEffect(() => {
     if (!identifier || !tournament) {
       return;
     }
-    if (!tournament.registration_options.solo) {
+    if (!tournament.registrationOptions.solo) {
       router.push(`/tournaments/${identifier}`);
     }
   }, [registration]);
@@ -70,7 +71,7 @@ const Page = () => {
     <div>
       <TournamentHeader tournament={tournament}/>
 
-      <h2 className={`text-center`}>
+      <h2 className={``}>
         Review Bowler Details
       </h2>
 
@@ -81,15 +82,17 @@ const Page = () => {
       <hr />
 
       {error && <ErrorAlert message={error}/> }
+      {tournamentError && <ErrorAlert message={tournamentError}/> }
 
       <div className={`d-flex justify-content-between`}>
-        <Link href={{
-          pathname: '/tournaments/[identifier]/solo-bowler',
-          query: {
-            identifier: identifier
-          }
-        }}
-              className={`btn btn-lg btn-outline-primary d-block ${processing && 'invisible'}`}>
+        <Link
+          href={{
+              pathname: '/tournaments/[identifier]/solo-bowler',
+              query: {
+                identifier: identifier
+              }
+            }}
+          className={`btn btn-lg btn-outline-primary d-block ${processing && 'invisible'}`}>
           <i className={'bi bi-chevron-double-left pe-2'}
              aria-hidden={true}/>
           Make Changes

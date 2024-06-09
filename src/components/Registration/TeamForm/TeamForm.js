@@ -20,7 +20,7 @@ const TeamForm = ({tournament, onSubmit}) => {
     if (!tournament) {
       return;
     }
-    const tournamentType = tournament.config_items.find(({key}) => key === 'tournament_type').value || 'igbo_standard';
+    const tournamentType = tournament.config['tournament_type'] || 'igbo_standard';
     if (tournamentType === 'igbo_standard') {
       const newComponentState = {...componentState };
       newComponentState.fields.shiftIdentifiers = [tournament.shifts[0].identifier];
@@ -62,15 +62,13 @@ const TeamForm = ({tournament, onSubmit}) => {
     setComponentState(newFormValues);
   }
 
-  const tournamentType = tournament.config_items.find(({key}) => key === 'tournament_type').value || 'igbo_standard';
+  const tournamentType = tournament.config['tournament_type'];
+  const useInclusiveShifts = tournamentType === 'igbo_multi_shift' || tournament.config['tournament_type'] === 'single_event' && tournament.shifts.length > 1;
+  const useMixAndMatchShifts = tournamentType === 'igbo_mix_and_match';
 
   return (
     <ErrorBoundary>
       <div className={`${classes.TeamForm}`}>
-        <p className={`text-center`}>
-          All fields are required.
-        </p>
-
         {/* team name */}
         <div className={`${classes.FormElement}`}>
           <label className={'col-form-label-lg'}
@@ -88,15 +86,15 @@ const TeamForm = ({tournament, onSubmit}) => {
           />
         </div>
 
-        {/* No shift form for single-shift standard tournaments */}
+        {/* No shift form for single-shift tournaments */}
 
-        {tournamentType === 'igbo_multi_shift' && (
+        {useInclusiveShifts && (
           <InclusiveShiftForm shifts={tournament.shifts}
                               onUpdate={shiftIdentifiersUpdated}/>
         )}
 
-        {tournamentType === 'igbo_mix_and_match' && (
-          <MixAndMatchShiftForm shiftsByEvent={tournament.shifts_by_event}
+        {useMixAndMatchShifts && (
+          <MixAndMatchShiftForm shifts={tournament.shifts}
                                 onUpdate={shiftIdentifiersUpdated}/>
         )}
 

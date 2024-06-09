@@ -15,10 +15,6 @@ export const registrationReducer = (state, action) => {
   switch (action.type) {
     case actionTypes.RESET:
       return registrationReducerInit();
-    case actionTypes.TOURNAMENT_DETAILS_RETRIEVED:
-      return updateObject(state, {
-        tournament: action.tournament,
-      });
     case actionTypes.NEW_TEAM_REGISTRATION_INITIATED:
       return updateObject(state, {
         team: {

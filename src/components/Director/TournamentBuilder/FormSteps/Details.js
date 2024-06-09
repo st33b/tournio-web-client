@@ -11,12 +11,75 @@ const Details = () => {
   const {state, dispatch} = useDirectorContext();
   const {authToken} = useLoginContext();
 
+  const STANDARD_EVENTS = [
+    {
+      name: 'Singles',
+      roster_type: 'single',
+      // game_count: 3,
+    },
+    {
+      name: 'Doubles',
+      roster_type: 'double',
+      // game_count: 3,
+    },
+    {
+      name: 'Team',
+      roster_type: 'team',
+      // game_count: 3,
+    },
+  ];
+
+  const ROSTER_TYPES = [
+    {
+      name: 'Singles',
+      roster_type: 'single',
+    },
+    {
+      name: 'Doubles',
+      roster_type: 'double',
+    },
+    {
+      name: 'Trios',
+      roster_type: 'trio',
+    },
+    {
+      name: 'Team',
+      roster_type: 'team',
+    },
+  ]
+
+  const tournamentTypes = {
+    'igbo_standard': {
+      key: 'igbo_standard',
+      display: 'IGBO Standard',
+    },
+    'igbo_multi_shift': {
+      key: 'igbo_multi_shift',
+      display: 'IGBO Multi-shift',
+    },
+    'igbo_mix_and_match': {
+      key: 'igbo_mix_and_match',
+      display: 'IGBO Mix and Match',
+    },
+    'igbo_non_standard': {
+      key: 'igbo_non_standard',
+      display: 'IGBO Non-standard',
+    },
+    'single_event': {
+      key: 'single_event',
+      display: 'Single Event',
+    },
+  }
+
   const initialState = {
     fields: {
       location: '',
       timezone: '',
       website: '',
       website_config_item_id: null,
+      tournament_type: 'igbo_standard',
+      tournament_type_config_item_id: null,
+      events: [...STANDARD_EVENTS],
     },
     valid: false,
   }
@@ -31,11 +94,20 @@ const Details = () => {
       const newFormData = {...formData};
       newFormData.fields.location = state.builder.tournament.location || '';
       newFormData.fields.timezone = state.builder.tournament.timezone || '';
-      newFormData.fields.website = state.builder.tournament.website || '';
+
       const websiteConfigItem = state.builder.tournament.config_items.find(({key}) => key === 'website');
       if (websiteConfigItem) {
-        newFormData.fields.website_config_item_id = websiteConfigItem.id
+        newFormData.fields.website = websiteConfigItem.value;
+        newFormData.fields.website_config_item_id = websiteConfigItem.id;
       }
+
+      const typeConfigItem = state.builder.tournament.config_items.find(({key}) => key === 'tournament_type');
+      if (typeConfigItem) {
+        newFormData.fields.tournament_type = typeConfigItem.value;
+        newFormData.fields.tournament_type_config_item_id = typeConfigItem.id;
+      }
+
+      newFormData.fields.events = [...state.builder.tournament.events];
 
       newFormData.valid = isValid(newFormData.fields);
       setFormData(newFormData);
@@ -48,9 +120,26 @@ const Details = () => {
 
   const inputChanged = (event) => {
     const changedData = {...formData};
-    const newValue = event.target.value;
     const fieldName = event.target.name;
-    changedData.fields[fieldName] = newValue;
+
+    let newValue = event.target.value;
+    if (fieldName === 'events') {
+      const previousEvents = formData.fields.events;
+      const whichEvent = newValue;
+      changedData.fields.events = event.target.checked
+        ? previousEvents.concat(ROSTER_TYPES.find(({roster_type}) => roster_type === whichEvent)) // add to the list
+        : previousEvents.filter(({roster_type}) => roster_type !== whichEvent); // everything but the checked one
+    } else if (fieldName === 'tournament_type') {
+      changedData.fields.tournament_type = newValue;
+      if (['igbo_non_standard', 'single_event'].includes(formData.fields.tournament_type)) {
+        changedData.fields.events = [];
+      } else {
+        changedData.fields.events = [...STANDARD_EVENTS];
+      }
+    } else {
+      changedData.fields[fieldName] = newValue;
+    }
+
     changedData.valid = isValid(changedData.fields);
     setFormData(changedData);
   }
@@ -68,13 +157,21 @@ const Details = () => {
   const nextClicked = () => {
     const identifier = state.builder.tournament.identifier;
     const uri = `/tournaments/${identifier}`;
-    const configItemAttributes = {
+    const websiteItemAttributes = {
       key: 'website',
       value: formData.fields.website,
     }
     if (formData.fields.website_config_item_id) {
-      configItemAttributes.id = formData.fields.website_config_item_id;
+      websiteItemAttributes.id = formData.fields.website_config_item_id;
     }
+    const typeItemAttributes = {
+      key: 'tournament_type',
+      value: formData.fields.tournament_type,
+    }
+    if (formData.fields.tournament_type_config_item_id) {
+      typeItemAttributes.id = formData.fields.tournament_type_config_item_id;
+    }
+
     const requestConfig = {
       method: 'patch',
       data: {
@@ -82,8 +179,10 @@ const Details = () => {
           location: formData.fields.location,
           timezone: formData.fields.timezone,
           config_items_attributes: [
-            configItemAttributes,
+            websiteItemAttributes,
+            typeItemAttributes,
           ],
+          events_attributes: formData.fields.events,
         },
       },
     };
@@ -95,6 +194,8 @@ const Details = () => {
       onFailure: (err) => devConsoleLog("Failed to update tournament.", err),
     });
   }
+
+  const showEventsField = ['igbo_non_standard', 'single_event'].includes(formData.fields.tournament_type);
 
   return (
     <div>
@@ -151,6 +252,54 @@ const Details = () => {
                  onChange={inputChanged}/>
         </div>
       </div>
+
+      <div className={`row ${classes.FieldRow}`}>
+        <label htmlFor={'tournament_type'}
+               className={'col-12 col-md-3 col-form-label'}>
+          Type
+        </label>
+        <div className={'col'}>
+          <select name={'tournament_type'}
+                  id={'tournament_type'}
+                  className={'form-select'}
+                  onChange={inputChanged}
+                  value={formData.fields.tournament_type}>
+            <option value={''}>--</option>
+            {Object.values(tournamentTypes).map(({key, display}) => (
+              <option value={key} key={key}>{display}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {showEventsField && (
+        <div className={`row ${classes.FieldRow}`}>
+          <label htmlFor={'events'}
+                 className={'col-12 col-md-3 col-form-label'}>
+            Event(s)
+          </label>
+          <div className={'col'}>
+            {ROSTER_TYPES.map(({name, roster_type}) => {
+              return (
+                <div key={roster_type} className="form-check">
+                  <input className="form-check-input"
+                         type="checkbox"
+                         value={roster_type}
+                         checked={formData.fields.events.some(e => e.roster_type === roster_type)}
+                         onChange={inputChanged}
+                         name={`events`}
+                         id={`event-${roster_type}`}/>
+                  <label className="form-check-label"
+                         htmlFor={`event-${roster_type}`}>
+                    {name}
+                  </label>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+      )}
 
       <div className={`row ${classes.ButtonRow}`}>
         <div className={'col-12 d-flex justify-content-end'}>

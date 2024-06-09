@@ -193,6 +193,7 @@ const ConfigItemForm = ({item}) => {
           <option key={'igbo_standard'} value={'igbo_standard'}>IGBO Standard</option>,
           <option key={'igbo_multi_shift'} value={'igbo_multi_shift'}>IGBO Standard (multi-shift)</option>,
           <option key={'igbo_mix_and_match'} value={'igbo_mix_and_match'}>IGBO Standard (mix and match)</option>,
+          <option key={'single_event'} value={'single_event'}>Single Event</option>,
         ];
         break;
       default:

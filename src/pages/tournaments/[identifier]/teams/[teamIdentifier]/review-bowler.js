@@ -6,7 +6,7 @@ import {useState} from "react";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import Link from "next/link";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
-import {submitAddBowler, useTeam, useTournament} from "../../../../../utils";
+import {submitAddBowler, useTeam, useTheTournament} from "../../../../../utils";
 import TournamentHeader from "../../../../../components/ui/TournamentHeader";
 import BowlerSummary from "../../../../../components/Registration/ReviewEntries/BowlerSummary";
 import {existingTeamBowlerSaved} from "../../../../../store/actions/registrationActions";
@@ -20,10 +20,10 @@ const Page = () => {
   const [error, setError] = useState();
 
   const {loading, team, error: fetchError, teamHasChanged } = useTeam(teamIdentifier);
-  const {tournament, error: tournamentError} = useTournament(identifier);
+  const {tournament, error: tournamentError} = useTheTournament(identifier);
 
   if (!registration || !tournament || !registration.bowler) {
-    return '';
+    return <LoadingMessage message={'Getting things ready...'}/>
   }
 
   if (loading) {
@@ -91,7 +91,7 @@ const Page = () => {
   }
 
   return (
-    <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
+    <div>
       <TournamentHeader tournament={tournament}/>
 
       <h2 className={``}>
@@ -109,39 +109,41 @@ const Page = () => {
 
       <hr/>
 
-      <BowlerSummary bowler={registration.bowler}
-                     tournament={tournament}
-                     partner={doublesPartner}/>
+      <div className={''}>
+        <BowlerSummary bowler={registration.bowler}
+                       tournament={tournament}
+                       partner={doublesPartner}/>
 
-      <hr/>
+        <hr/>
 
-      {error && <ErrorAlert message={error}/>}
+        {error && <ErrorAlert message={error}/>}
 
-      <div className={`d-flex justify-content-between`}>
-        <Link href={{
-          pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/add-bowler',
-          query: {
-            identifier: identifier,
-            teamIdentifier: teamIdentifier,
-            edit: true,
-          }
-        }}
-              className={`btn btn-lg btn-outline-primary d-block ${processing && 'invisible'}`}>
-          <i className={'bi bi-chevron-double-left pe-2'}
-             aria-hidden={true}/>
-          Make Changes
-        </Link>
+        <div className={`d-flex justify-content-between`}>
+          <Link href={{
+            pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/add-bowler',
+            query: {
+              identifier: identifier,
+              teamIdentifier: teamIdentifier,
+              edit: true,
+            }
+          }}
+                className={`btn btn-lg btn-outline-primary d-block ${processing && 'invisible'}`}>
+            <i className={'bi bi-chevron-double-left pe-2'}
+               aria-hidden={true}/>
+            Make Changes
+          </Link>
 
-        <button className={`btn btn-lg btn-primary`}
-                disabled={processing}
-                onClick={saveClicked}>
-          Save
-          <i className={'bi bi-chevron-double-right ps-2'}
-             aria-hidden={true}/>
-        </button>
+          <button className={`btn btn-lg btn-primary`}
+                  disabled={processing}
+                  onClick={saveClicked}>
+            Save
+            <i className={'bi bi-chevron-double-right ps-2'}
+               aria-hidden={true}/>
+          </button>
+        </div>
+
+        {processing && <LoadingMessage message={'Submitting registration...'}/>}
       </div>
-
-      {processing && <LoadingMessage message={'Submitting registration...'}/>}
     </div>
   );
 }

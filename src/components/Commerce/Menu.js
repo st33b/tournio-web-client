@@ -1,4 +1,3 @@
-import {Col, Row} from "react-bootstrap";
 import {useCommerceContext} from "../../store/CommerceContext";
 import {itemAddedToCart, itemRemovedFromCart} from "../../store/actions/registrationActions";
 
@@ -32,11 +31,17 @@ const Menu = ({signupChanged}) => {
         <div className={`col ${classes.CartContainer}`}
              id={'cart'}>
           <Cart itemAddedToCart={itemAdded}
-                itemRemovedFromCart={itemRemoved} />
+                itemRemovedFromCart={itemRemoved}/>
 
-          <hr className={`mt-0 mb-3 mt-md-3`} />
+          <hr className={`mt-0 mb-3 mt-md-3`}/>
 
           <PreviousPurchases/>
+
+          <p className={`d-md-none mt-5`}>
+            Looking for your cart? It&apos;s up at the top right
+            <i className={'bi bi-arrow-up ps-2'} aria-hidden={true}/>
+          </p>
+
         </div>
       </div>
     </div>

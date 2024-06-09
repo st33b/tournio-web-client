@@ -109,12 +109,19 @@ const Item = ({item, added, preview}) => {
   if (!sizeValid) {
     tooltipText = 'Select a size to add';
   }
-  if (!preview && !item.addedToCart) {
+
+  if (!item.enabled) {
+    tooltipText = 'This item cannot be added at this time.';
+    attachedClasses.push(classes.Selected);
+  }
+
+  if (!preview && !item.addedToCart && item.enabled) {
+    const addDisabled = !sizeValid ? classes.AddDisabled : '';
     addLink = (
       <div className={'ms-auto align-self-center'}>
         <a href={sizeValid ? '#' : null}
            onClick={sizeValid ? addClickedHandler : () => {}}
-           className={`${classes.AddLink} ${!sizeValid ? classes.AddDisabled : ''} pe-3`}>
+           className={`${classes.AddLink} ${addDisabled} pe-3`}>
           <i className={`bi-cart-plus-fill`} />
           <span className={'visually-hidden'}>Add</span>
         </a>

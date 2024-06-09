@@ -1,18 +1,31 @@
 import classes from './MixAndMatchShiftForm.module.scss';
 import React, {useEffect, useState} from "react";
-import {devConsoleLog, updateObject} from "../../../utils";
+import {updateObject} from "../../../utils";
+import ErrorBoundary from "../../common/ErrorBoundary";
 
-const MixAndMatchShiftForm = ({shiftsByEvent, onUpdate}) => {
+const MixAndMatchShiftForm = ({shifts, onUpdate}) => {
   const initialFormValues = {
     fields: {},
+    shiftsByEvent: {},
   }
 
   const [componentState, setComponentState] = useState(initialFormValues);
 
   useEffect(() => {
-    if (!shiftsByEvent) {
+    if (!shifts || shifts.length === 0) {
       return;
     }
+
+    // Organize the shifts by their event string
+    const shiftsByEvent = {};
+    shifts.forEach(shift => {
+      const eventString = shift.eventString;
+      if (!shiftsByEvent[eventString]) {
+        shiftsByEvent[eventString] = [];
+      }
+      shiftsByEvent[eventString].push(shift);
+    });
+
     // Set the form to select the first (not full) shift in each group
     const formValues = {...initialFormValues}
     for (const eventStr in shiftsByEvent) {
@@ -22,13 +35,11 @@ const MixAndMatchShiftForm = ({shiftsByEvent, onUpdate}) => {
     setComponentState(updateObject(componentState, {
         fields: {
           ...formValues.fields,
-        }
+        },
+        shiftsByEvent: shiftsByEvent,
       }));
-
-    // Now convey that to our parent
-    devConsoleLog("Telling parent about selected fields: ", Object.values(formValues.fields));
     onUpdate(Object.values(formValues.fields));
-  }, [shiftsByEvent]);
+  }, [shifts]);
 
   /////////////////////////////
 
@@ -47,14 +58,14 @@ const MixAndMatchShiftForm = ({shiftsByEvent, onUpdate}) => {
 
   {/* A set of radios for each event set */}
   const groups = [];
-  for (const eventGroup in shiftsByEvent) {
+  for (const eventGroup in componentState.shiftsByEvent) {
     groups.push(
       <div className={classes.EventGroup} key={eventGroup}>
         <h4>
-          {shiftsByEvent[eventGroup][0].group_title}
+          {componentState.shiftsByEvent[eventGroup][0].group_title}
         </h4>
 
-        {shiftsByEvent[eventGroup].map(({identifier, name, description, is_full}) => {
+        {componentState.shiftsByEvent[eventGroup].map(({identifier, name, description, is_full}) => {
           const selected = componentState.fields[eventGroup] === identifier;
 
           return (
@@ -84,7 +95,9 @@ const MixAndMatchShiftForm = ({shiftsByEvent, onUpdate}) => {
       <h3>
         Shift Preferences
       </h3>
-      {groups}
+      <ErrorBoundary>
+        {groups}
+      </ErrorBoundary>
     </div>
   );
 }

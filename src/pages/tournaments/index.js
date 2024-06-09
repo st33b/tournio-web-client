@@ -1,30 +1,23 @@
-import {useEffect} from "react";
-
-import {useClientReady} from "../../utils";
-import {useRegistrationContext} from "../../store/RegistrationContext";
-import {reset} from "../../store/actions/registrationActions";
+import {useTournaments} from "../../utils";
 
 import RegistrationLayout from '../../components/Layout/RegistrationLayout/RegistrationLayout';
 import TournamentCards from "../../components/Registration/TournamentListing/TournamentCards";
+import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
+import ErrorAlert from "../../components/common/ErrorAlert";
 
 const Page = () => {
-  const registrationContext = useRegistrationContext();
-
-  useEffect(() => {
-    registrationContext.dispatch(reset());
-  });
-
-  const ready = useClientReady();
-  if (!ready) {
-    return null;
-  }
+  const {loading, error, tournaments} = useTournaments();
 
   return (
     <div>
-      <h2 className={'mt-1 mb-3 text-center'}>
+      <h2 className={'mt-3 mb-3'}>
         Upcoming Tournaments
       </h2>
-      <TournamentCards/>
+      {loading && <LoadingMessage message={`Retrieving tournaments...`}/>}
+      {error && <ErrorAlert className={``}
+                            message={`Error while fetching the list of tournaments. ${error}`} />
+      }
+      {tournaments && <TournamentCards tournaments={tournaments} />}
     </div>
   );
 }

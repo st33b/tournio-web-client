@@ -1,16 +1,13 @@
 import {useRouter} from "next/router";
 import {Row, Col} from "react-bootstrap";
 
-import {devConsoleLog, useTournament} from "../../utils";
-import {useRegistrationContext} from "../../store/RegistrationContext";
+import {useTheTournament} from "../../utils";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import Contacts from "../../components/Registration/Contacts/Contacts";
 
 import classes from "../../components/Registration/TournamentDetails/TournamentDetails.module.scss";
-import {tournamentDetailsRetrieved} from "../../store/actions/registrationActions";
 import Heading from "../../components/Registration/TournamentDetails/Heading";
-import Details from "../../components/Registration/TournamentDetails/Details";
 import RegisterButtons from "../../components/Registration/TournamentDetails/RegisterButtons";
 import PayButton from "../../components/Registration/TournamentDetails/PayButton";
 import Shifts from "../../components/Registration/TournamentDetails/Shifts";
@@ -18,26 +15,14 @@ import YouWillNeed from "../../components/Registration/TournamentDetails/YouWill
 import StateBanners from "../../components/Registration/TournamentDetails/StateBanners";
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorAlert from "../../components/common/ErrorAlert";
+import TraditionalPriceBreakdown from "../../components/Registration/TournamentDetails/TraditionalPriceBreakdown";
+// import EventPriceBreakdown from "../../components/Registration/TournamentDetails/EventPriceBreakdown";
 
 const Page = () => {
   const router = useRouter();
   const { identifier } = router.query;
-  const registrationContext = useRegistrationContext();
 
-  const onFetchSuccess = (data) => {
-    devConsoleLog("Success. Dispatching to context. But we won't need to for long.");
-    registrationContext.dispatch(tournamentDetailsRetrieved(data));
-  }
-
-  const {tournament, loading, error} = useTournament(identifier, onFetchSuccess)
-
-  if (loading || !tournament) {
-    return (
-      <div>
-        <LoadingMessage message={'Loading the tournament'}/>
-      </div>
-    )
-  }
+  const {tournament, loading, error} = useTheTournament(identifier);
 
   if (error) {
     return (
@@ -45,6 +30,14 @@ const Page = () => {
         <ErrorAlert message={error}/>
       </div>
     );
+  }
+
+  if (loading || !tournament) {
+    return (
+      <div>
+        <LoadingMessage message={'Loading the tournament'}/>
+      </div>
+    )
   }
 
   return (
@@ -57,30 +50,33 @@ const Page = () => {
       <Row>
         <Col xs={{order: 2}} md={{span: 4, order: 1}}>
           <div className={'d-none d-md-flex justify-content-center'}>
-            <TournamentLogo url={tournament.image_url}/>
+            <TournamentLogo url={tournament.imageUrl}/>
           </div>
           <Contacts tournament={tournament}/>
         </Col>
         <Col xs={{order: 1}} md={{span: 8, order: 2}}>
           <div className={'d-flex justify-content-start align-items-start'}>
-            <TournamentLogo url={tournament.image_url}
+            <TournamentLogo url={tournament.imageUrl}
                             additionalClasses={'col-4 pe-2 d-md-none'}/>
             <Heading tournament={tournament}/>
           </div>
 
           <div className={'d-flex'}>
-            <div className={'flex-fill w-100'}>
-              <Details tournament={tournament}/>
+            <div className={'flex-fill w-100 me-3'}>
+              <div className={classes.Details}>
+                <TraditionalPriceBreakdown tournament={tournament}/>
+                {/*<EventPriceBreakdown tournament={tournament}/>*/}
+              </div>
             </div>
             <div className={'d-none d-xl-block flex-shrink-1'}>
-              <YouWillNeed tournament={tournament}/>
+              <YouWillNeed/>
             </div>
           </div>
 
-          <PayButton disabled={!!tournament.config_items.find(({key, value}) => key === 'accept_payments' && !value)} />
+          <PayButton disabled={!tournament.config.accept_payments} />
           <RegisterButtons tournament={tournament}/>
 
-          <div className={'d-xl-none'}>
+          <div className={'d-xl-none mt-3'}>
             <YouWillNeed tournament={tournament}/>
           </div>
           <div className={'mt-4'}>

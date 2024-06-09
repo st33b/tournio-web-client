@@ -23,7 +23,7 @@ const StripeCheckout = () => {
 
   ///////////////////////////////////////////////////////
 
-  if (!commerce || !commerce.bowler || !identifier) {
+  if (!commerce || !commerce.bowler || !commerce.tournament || !identifier) {
     return '';
   }
 
@@ -56,13 +56,22 @@ const StripeCheckout = () => {
     );
   }
 
+  const acceptingPayments = commerce.tournament.config.accept_payments;
+
   const sum = (runningTotal, currentValue) => runningTotal + currentValue.value * (currentValue.quantity || 1);
   const totalFees = commerce.cart.reduce(sum, 0);
-  const checkoutDisabled = totalFees === 0;
+  const checkoutDisabled = totalFees === 0 || !acceptingPayments;
+
+  let tooltipText = '';
+  if (!acceptingPayments) {
+    tooltipText = 'The tournament is not accepting payments at this time.';
+  } else if (totalFees === 0) {
+    tooltipText = 'Cannot check out with an empty cart.';
+  }
 
   return (
     <div className={classes.StripeCheckout}>
-      <div className={`d-flex flex-row-reverse pb-3 pb-md-0`}>
+      <div className={`d-flex flex-row-reverse pb-3 pb-md-0`} title={tooltipText}>
         {!requestInProgress && (
           <button className={'btn btn-lg btn-success'}
                   disabled={checkoutDisabled}

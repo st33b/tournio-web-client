@@ -6,7 +6,7 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {
   soloBowlerInfoAdded
 } from "../../../store/actions/registrationActions";
-import {useTournament} from "../../../utils";
+import {useTheTournament} from "../../../utils";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import TournamentHeader from "../../../components/ui/TournamentHeader";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
@@ -16,13 +16,13 @@ const Page = () => {
   const router = useRouter();
   const {identifier} = router.query;
 
-  const {loading, tournament, error: tournamentError} = useTournament(identifier);
+  const {loading, tournament} = useTheTournament(identifier);
 
   useEffect(() => {
     if (!identifier || !tournament) {
       return;
     }
-    if (!tournament.registration_options.solo) {
+    if (!tournament.registrationOptions.solo) {
       router.push(`/tournaments/${identifier}`);
     }
   }, [tournament]);
@@ -48,20 +48,21 @@ const Page = () => {
   }
 
   const previousBowlerData = registration.bowler ? registration.bowler : null;
+  const askBowlerAboutShifts = tournament.shifts.length > 1;
 
   return (
     <div>
       <TournamentHeader tournament={tournament}/>
 
-      <h3 className={`text-center`}>
+      <h3 className={``}>
         Solo Registration
       </h3>
 
-      <hr />
-
       <BowlerForm tournament={tournament}
                   bowlerData={previousBowlerData}
-                  bowlerInfoSaved={bowlerInfoSaved}/>
+                  bowlerInfoSaved={bowlerInfoSaved}
+                  showShifts={askBowlerAboutShifts}
+      />
 
     </div>
   );

@@ -1,7 +1,4 @@
 import axios from "axios";
-import {
-  bowlerCommerceDetailsRetrieved,
-} from "./store/actions/registrationActions";
 import {useEffect, useState} from "react";
 import useSWR from "swr";
 
@@ -230,27 +227,6 @@ export const fetchTournamentList = (onSuccess, onFailure) => {
 
 }
 
-export const fetchTournamentDetails = (identifier, onSuccess, onFailure) => {
-  const requestConfig = {
-    method: 'get',
-    url: `${apiHost}/tournaments/${identifier}`,
-    headers: {
-      'Accept': 'application/json',
-    }
-  }
-  axios(requestConfig)
-    .then(response => {
-      if (response.status >= 200 && response.status < 400) {
-        onSuccess(response.data);
-      } else {
-        onFailure(response.data);
-      }
-    })
-    .catch(error => {
-      onFailure({error: 'Tournament not found'});
-    });
-}
-
 export const fetchTeamList = ({tournamentIdentifier, dispatch, onSuccess, onFailure, incomplete = false}) => {
   const queryParams = {};
   if (incomplete) {
@@ -271,31 +247,6 @@ export const fetchTeamList = ({tournamentIdentifier, dispatch, onSuccess, onFail
     .then(response => {
       if (response.status >= 200 && response.status < 300) {
         dispatch(teamListRetrieved());
-        onSuccess(response.data);
-      } else {
-        onFailure(response.data);
-      }
-    })
-    .catch(error => {
-      onFailure({error: `Unexpected error from the server: ${error}`});
-    });
-}
-
-export const fetchBowlerList = ({tournamentIdentifier, onSuccess, onFailure, unpartneredOnly}) => {
-  const queryString = unpartneredOnly ? '?unpartnered=true' : '';
-  const requestConfig = {
-    method: 'get',
-    url: `${apiHost}/tournaments/${tournamentIdentifier}/bowlers${queryString}`,
-    headers: {
-      'Accept': 'application/json',
-    },
-    validateStatus: status => {
-      return status < 500
-    },
-  };
-  axios(requestConfig)
-    .then(response => {
-      if (response.status >= 200 && response.status < 400) {
         onSuccess(response.data);
       } else {
         onFailure(response.data);
@@ -460,7 +411,7 @@ const teamDataForBowler = (bowler) => {
   };
 }
 
-const convertBowlerDataForPost = (tournament, bowler) => {
+export const convertBowlerDataForPost = (tournament, bowler) => {
   const additionalQuestionResponses = convertAdditionalQuestionResponsesForPost(tournament, bowler);
 
   const bowlerObj = {
@@ -486,15 +437,21 @@ const convertBowlerDataForPost = (tournament, bowler) => {
   if (bowler.doubles_partner) {
     bowlerObj.doubles_partner_identifier = bowler.doubles_partner;
   }
+  if (bowler.shift_identifier) {
+    bowlerObj.shift_identifiers = [bowler.shift_identifier];
+  }
+  if (bowler.payment_app && bowler.payment_app.app_name) {
+    bowlerObj.person_attributes.payment_app = `${bowler.payment_app.app_name}: ${bowler.payment_app.account_name}`;
+  }
   return bowlerObj;
 }
 
 const convertAdditionalQuestionResponsesForPost = (tournament, bowler) => {
   const responses = [];
-  for (let key in tournament.additional_questions) {
+  for (const question of tournament.additionalQuestions) {
     responses.push({
-      name: key,
-      response: bowler[key] || '',
+      name: question.name,
+      response: bowler[question.name] || '',
     });
   }
   return responses;
@@ -693,22 +650,25 @@ export const directorResetPasswordRequest = (postData, onSuccess, onFailure) => 
 }
 
 /////////////////////////////////////////////////////
-
-export const validateEmail = async function(emailAddress) {
-  const response = await fetch('/api/email_check', {
-    method: 'POST',
-    mode: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    redirect: 'follow',
-    body: JSON.stringify({email: emailAddress}),
-  }).catch((error) => {
-    return {error: error};
-  });
-  return await response.json();
-}
-
+//
+// Maybe we'll get back to a point where we'd like to validate email addresses
+// not just for format but for existence and likelihood of a successful send.
+//
+// export const validateEmail = async function(emailAddress) {
+//   const response = await fetch('/api/email_check', {
+//     method: 'POST',
+//     mode: 'same-origin',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     redirect: 'follow',
+//     body: JSON.stringify({email: emailAddress}),
+//   }).catch((error) => {
+//     return {error: error};
+//   });
+//   return await response.json();
+// }
+//
 /////////////////////////////////////////////////////
 
 // We can use this for fetching data from the API required by a component, but that's it.
@@ -780,6 +740,7 @@ export const useApi = ({
   }
 }
 
+// @modern This is being replaced by useTheTournament, which uses the modern serializer
 export const useTournament = (identifier, onSuccess = () => {
 }, onFailure = () => {}) => {
   const {loading, data: tournament, error, onDataUpdate} = useApi({
@@ -801,6 +762,59 @@ export const useTournament = (identifier, onSuccess = () => {
     error,
     tournament,
     tournamentHasChanged,
+  }
+}
+
+export const useTournaments = (onSuccess = () => {}, onFailure = () => {}) => {
+  const {loading, data: tournaments, error} = useApi({
+    uri: `/tournaments`,
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+  });
+
+  return {
+    loading,
+    error,
+    tournaments,
+  }
+}
+
+export const useTheTournament = (identifier, onSuccess = () => {
+}, onFailure = () => {}) => {
+  const {loading, data: tournament, error, onDataUpdate} = useApi({
+    uri: identifier ? `/tournaments/${identifier}?serializer=modern` : null,
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+  });
+
+  const tournamentHasChanged = (updatedTournament) => {
+    const mutateOptions = {
+      optimisticData: updatedTournament,
+      rollbackOnError: true,
+      populateCache: true,
+    };
+    onDataUpdate(updatedTournament, mutateOptions);
+  }
+
+  return {
+    loading,
+    error,
+    tournament,
+    tournamentHasChanged,
+  }
+}
+
+export const useBowlers = (identifier, onSuccess = () => {}, onFailure = () => {}) => {
+  const {data: bowlers, loading, error} = useApi({
+    uri: identifier ? `/tournaments/${identifier}/bowlers` : null,
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+  });
+
+  return {
+    loading,
+    error,
+    bowlers,
   }
 }
 
