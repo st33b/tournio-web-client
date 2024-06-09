@@ -32,7 +32,6 @@ const BowlerPage = () => {
   }
   const linkFreeEntryInitialState = {
     identifier: null,
-    confirm: false,
   }
 
   const [newTeamFormData, setNewTeamFormData] = useState(newTeamFormInitialState);
@@ -73,10 +72,6 @@ const BowlerPage = () => {
   const {tournament, tournamentUpdatedQuietly} = useModernTournament();
 
   const {loading: bowlerLoading, bowler, error: bowlerError, bowlerUpdated} = useBowler();
-  // const {loading: bowlerLoading, data: bowler, error: bowlerError, onDataUpdate: onBowlerUpdate} = useDirectorApi({
-  //   uri: bowlerId ? `/bowlers/${bowlerId}` : null,
-  //   onSuccess: updateStateForBowler,
-  // });
 
   const {data: availableTeams, error: teamsError, onDataUpdate: onAvailableTeamsUpdate} = useDirectorApi({
     uri: identifier ? `/tournaments/${identifier}/teams?partial=true` : null,
@@ -349,8 +344,8 @@ const BowlerPage = () => {
   //
   // Updating with false is a denial -- so force the bowler_identifier to null
   // (this will unlink an entry that's already linked but unconfirmed)
-  const updateFreeEntry = (isConfirmed, bowlerIdentifier=null) => {
-    const uri = `/free_entries/${linkFreeEntryFormData.identifier}`;
+  const updateFreeEntry = (isConfirmed, freeEntryIdentifier=null) => {
+    const uri = `/free_entries/${freeEntryIdentifier}`;
     const requestConfig = {
       method: 'patch',
       headers: {
@@ -358,7 +353,7 @@ const BowlerPage = () => {
       },
       data: {
         confirm: !!isConfirmed,
-        bowler_identifier: bowlerIdentifier,
+        bowler_identifier: !!isConfirmed ? bowler.identifier : null,
       },
     }
     setLoadingParts({
@@ -376,17 +371,17 @@ const BowlerPage = () => {
 
   const linkFreeEntrySubmitHandler = (event) => {
     event.preventDefault();
-    updateFreeEntry(linkFreeEntryFormData.confirm, bowlerId);
+    updateFreeEntry(true, linkFreeEntryFormData.identifier);
   }
 
   const confirmFreeEntryClicked = (event) => {
     event.preventDefault();
-    updateFreeEntry(true, bowlerId);
+    updateFreeEntry(true, bowler.freeEntry.identifier);
   }
 
   const denyFreeEntryClicked = (event) => {
     event.preventDefault();
-    updateFreeEntry(false);
+    updateFreeEntry(false, bowler.freeEntry.identifier);
   }
 
   const convertBowlerDataForPatch = (bowlerData) => {
@@ -410,7 +405,7 @@ const BowlerPage = () => {
       },
       additional_question_responses: convertAdditionalQuestionResponsesForPatch(bowlerData),
     };
-    if (bowlerData.payment_app) {
+    if (bowlerData.payment_app && bowlerData.payment_app.app_name) {
       bowlerObj.person_attributes.payment_app = `${bowlerData.payment_app.app_name}: ${bowlerData.payment_app.account_name}`;
     }
     return bowlerObj;
@@ -871,7 +866,7 @@ const BowlerPage = () => {
               </Button>
               <Button variant={'outline-success'}
                       size={'sm'}
-                      onClick={confirmFreeEntryClicked}>
+                      onClick={(e) => confirmFreeEntryClicked(e, bowler.freeEntry.identifier)}>
                 Confirm
               </Button>
             </div>
@@ -883,16 +878,6 @@ const BowlerPage = () => {
                 {availableFreeEntries.map(fe => <option key={fe.identifier}
                                                         value={fe.identifier}>{fe.unique_code}</option>)}
               </select>
-              <div className={'form-check pt-3'}>
-                <input className={'form-check-input'}
-                       type={'checkbox'}
-                       value={'1'}
-                       onChange={confirmFreeEntryChanged}
-                       id={'confirm'}/>
-                <label className={'form-check-label'} htmlFor={'confirm'}>
-                  Confirm it, too.
-                </label>
-              </div>
               <div className={'text-center'}>
                 <Button variant={'primary'}
                         size={'sm'}

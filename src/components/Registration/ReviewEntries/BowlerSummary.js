@@ -81,7 +81,7 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
           if (key === 'date_of_birth') {
             displayedValue = `${bowler.birth_month} / ${bowler.birth_day} / ${bowler.birth_year}`;
           } else if (key === 'payment_app') {
-            displayedValue = `${bowler.payment_app.account_name} (${bowler.payment_app.app_name})`;
+            displayedValue = bowler.payment_app.app_name ? `${bowler.payment_app.account_name} (${bowler.payment_app.app_name})` : 'n/a';
           }
           return (
             <Row key={`${key}`}>

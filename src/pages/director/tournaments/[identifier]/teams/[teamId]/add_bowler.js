@@ -1,7 +1,7 @@
 import {useRouter} from "next/router";
 import {directorApiRequest, useModernTournament, useTeam} from "../../../../../../director";
 import DirectorLayout from "../../../../../../components/Layout/DirectorLayout/DirectorLayout";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import ErrorBoundary from "../../../../../../components/common/ErrorBoundary";
 import LoadingMessage from "../../../../../../components/ui/LoadingMessage/LoadingMessage";
 import Breadcrumbs from "../../../../../../components/Director/Breadcrumbs/Breadcrumbs";
@@ -19,10 +19,26 @@ const Page = () => {
   const {loading: tournamentLoading, tournament} = useModernTournament();
   const {loading: teamLoading, team, error: teamError} = useTeam();
 
+  const [occupiedPositions, setOccupiedPositions] = useState([]);
   const [chosenPosition, choosePosition] = useState();
   const [processing, setProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
   const [bowlerData, setBowlerData] = useState(null);
+
+  useEffect(() => {
+    if (!team) {
+      return;
+    }
+    const occupied = team.bowlers.map(({position}) => position);
+    for (let i = 0; i < tournament.teamSize; i++) {
+      if (occupied[i] !== i + 1) {
+        // We've found the first unoccupied position
+        choosePosition(i + 1);
+        break;
+      }
+    }
+    setOccupiedPositions(occupied);
+  }, [team]);
 
   const anotherPositionClicked = (otherPosition) => {
     choosePosition(otherPosition);
@@ -99,16 +115,6 @@ const Page = () => {
 
   const maxPosition = parseInt(tournament.teamSize);
 
-  let chosen;
-  const occupied = team.bowlers.map(({position}) => position);
-  for (let i = 0; i < tournament.teamSize; i++) {
-    if (occupied[i] !== i + 1) {
-      // We've found the first unoccupied position
-      chosen = i + 1;
-      break;
-    }
-  }
-
   const ladder = [
     {text: 'Tournaments', path: '/director/tournaments'},
     {text: tournament.name, path: `/director/tournaments/${tournamentId}`},
@@ -136,9 +142,9 @@ const Page = () => {
       <hr />
 
       <PositionChooser maxPosition={maxPosition}
-                       chosen={chosen}
+                       chosen={chosenPosition}
                        onChoose={anotherPositionClicked}
-                       disallowedPositions={occupied}
+                       disallowedPositions={occupiedPositions}
       />
 
       <hr />

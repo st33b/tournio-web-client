@@ -322,6 +322,10 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
             elementConfig: {
               options: [
                 {
+                  value: '',
+                  label: ' --',
+                },
+                {
                   value: 'PayPal',
                   label: 'PayPal',
                 },
