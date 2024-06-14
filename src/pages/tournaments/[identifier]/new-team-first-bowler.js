@@ -4,7 +4,7 @@ import RegistrationLayout from "../../../components/Layout/RegistrationLayout/Re
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamBowlerInfoAdded} from "../../../store/actions/registrationActions";
-import {devConsoleLog, useTournament} from "../../../utils";
+import {devConsoleLog, useTheTournament} from "../../../utils";
 import {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import PositionChooser from "../../../components/common/formElements/PositionChooser/PositionChooser";
@@ -17,14 +17,14 @@ const Page = () => {
 
   const [chosenPosition, choosePosition] = useState(1);
 
-  const {loading, tournament} = useTournament(identifier);
+  const {loading, tournament} = useTheTournament(identifier);
 
   // If new-team registrations aren't enabled, go back to the tournament home page
   useEffect(() => {
     if (!identifier || !tournament || !registration) {
       return;
     }
-    if (!tournament.registration_options.new_team) {
+    if (!tournament.registrationOptions.new_team) {
       router.push(`/tournaments/${identifier}`);
     }
     if (edit) {
@@ -60,30 +60,34 @@ const Page = () => {
   const previousBowlerData = edit ? registration.bowler : null;
 
   return (
-    <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
-      <TournamentHeader tournament={tournament}/>
+    <div className={'row'}>
+      <div className={'col-12'}>
+        <TournamentHeader tournament={tournament}/>
 
-      <h2 className={``}>
-        Team:&nbsp;
-        <strong>
-          {registration.team.name}
-        </strong>
-      </h2>
+        <h2 className={``}>
+          Team:&nbsp;
+          <strong>
+            {registration.team.name}
+          </strong>
+        </h2>
 
-      <hr/>
+        <hr/>
 
-      <h3 className={``}>
-        First Bowler
-      </h3>
+        <h3 className={``}>
+          First Bowler
+        </h3>
+      </div>
 
-      <PositionChooser maxPosition={tournament.team_size}
-                       chosen={chosenPosition}
-                       onChoose={positionChosen}/>
+      <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
+        <PositionChooser maxPosition={tournament.teamSize}
+                         chosen={chosenPosition}
+                         onChoose={positionChosen}/>
 
-      <BowlerForm tournament={tournament}
-                  bowlerData={previousBowlerData}
-                  bowlerInfoSaved={newBowlerAdded}/>
+        <BowlerForm tournament={tournament}
+                    bowlerData={previousBowlerData}
+                    bowlerInfoSaved={newBowlerAdded}/>
 
+      </div>
     </div>
   );
 }

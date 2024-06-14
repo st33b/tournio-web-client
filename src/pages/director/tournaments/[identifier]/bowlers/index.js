@@ -2,7 +2,7 @@ import React from "react";
 import {useRouter} from "next/router";
 import {Col, Row} from "react-bootstrap";
 
-import {useDirectorApi, useTournament} from "../../../../../director";
+import {useDirectorApi, useModernTournament, useTournament} from "../../../../../director";
 import DirectorLayout from "../../../../../components/Layout/DirectorLayout/DirectorLayout";
 import BowlerListing from "../../../../../components/Director/BowlerListing/BowlerListing";
 import Breadcrumbs from "../../../../../components/Director/Breadcrumbs/Breadcrumbs";
@@ -15,7 +15,7 @@ const BowlersIndex = () => {
   const router = useRouter();
   const {identifier, deleteSuccess} = router.query;
 
-  const {loading: tournamentLoading, tournament} = useTournament();
+  const {loading: tournamentLoading, tournament} = useModernTournament();
   const {loading: bowlersLoading, data: bowlers, error, onDataUpdate: onBowlerUpdate} = useDirectorApi({
     uri: identifier ? `/tournaments/${identifier}/bowlers` : null,
   });
@@ -40,7 +40,7 @@ const BowlersIndex = () => {
   const ladder = [{text: 'Tournaments', path: '/director'}];
   ladder.push({text: tournament.name, path: `/director/tournaments/${identifier}`});
 
-  const showTeams = tournament.event_items.event.length === 0;
+  const showTeams = tournament.events.some(({rosterType}) => rosterType === 'team');
 
   return (
     <ErrorBoundary>

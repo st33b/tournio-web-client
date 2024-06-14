@@ -40,13 +40,6 @@ const TeamListing = ({tournament, teams, shiftCount = 1}) => {
         disableSortBy: true,
         filter: lessThan,
       },
-      {
-        Header: 'Reserved Slots',
-        accessor: 'initial_size',
-        // Cell: ({row, value}) => Math.max(0, value - row.original.size),
-        disableSortBy: true,
-        filter: lessThan,
-      },
     ], []);
 
   let data = [];
@@ -70,7 +63,7 @@ const TeamListing = ({tournament, teams, shiftCount = 1}) => {
     useSortBy,
   );
 
-  let list = '';
+  let list;
   if (data.length === 0) {
     list = (
       <div className={'display-6 text-center'}>

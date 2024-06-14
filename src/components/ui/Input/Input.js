@@ -46,11 +46,14 @@ const Input = (props) => {
   const columnClasses = [];
 
   // Class(es) to drive layout. Allows child Input elements to be arranged differently
-  const layoutClass = props.elementConfig.layoutClass ? props.elementConfig.layoutClass : 'row';
+  const layoutClass = props.layoutClass ? props.layoutClass : 'row';
 
   switch (props.elementType) {
     case('input'):
       outerLabelClasses.push("col-form-label");
+      if (props.labelClasses) {
+        outerLabelClasses.push(...props.labelClasses);
+      }
       inputElement = <input
         id={props.identifier}
         name={props.identifier}
@@ -65,8 +68,8 @@ const Input = (props) => {
       break;
     case('select'):
       outerLabelClasses.push("col-form-label");
-      if (props.elementConfig.labelClasses) {
-        outerLabelClasses.push(...props.elementConfig.labelClasses);
+      if (props.labelClasses) {
+        outerLabelClasses.push(...props.labelClasses);
       }
       let optionText;
       if (props.elementConfig.optionRange) {
@@ -110,6 +113,8 @@ const Input = (props) => {
                 elementConfig={elem.elementConfig}
                 changed={props.changed}
                 label={elem.label}
+                labelClasses={elem.labelClasses}
+                layoutClass={elem.layoutClass}
                 helper={''}
                 validityErrors={elem.validityErrors}
                 errorMessages={elem.errorMessages}

@@ -261,13 +261,13 @@ const ShiftForm = ({shift}) => {
                 Capacity
               </dt>
               <dd className={ddClass}>
-                {shift.capacity} teams
+                {shift.capacity} spots
               </dd>
               <dt className={dtClass}>
                 Requested
               </dt>
               <dd className={ddClass}>
-                {shift.team_count}
+                {shift.tally}
               </dd>
                 <dt className={dtClass}>
                     Marked as Full?

@@ -31,7 +31,7 @@ const PurchasableItem = ({item, onEnableToggle}) => {
   return (
     <ListGroupItem className={classes.PurchasableItem}>
       <div className={'d-flex w-100 justify-content-start'}>
-        {!['ledger', 'bowling', 'event'].includes(item.category) && (
+        {item.category !== 'ledger' && (
           <div className={'form-check form-switch'}
                title={item.enabled ? 'Disable purchase of this' : 'Enable purchase of this'}>
             <input type={'checkbox'}

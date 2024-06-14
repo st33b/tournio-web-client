@@ -21,31 +21,31 @@ const UrlShare = ({url}) => {
 
   return (
     <div className={classes.UrlShare}>
-
-      <div className={'input-group'}>
-        <span className={'input-group-text d-none d-md-inline'}>
-          Team URL
-        </span>
-        <input type={'text'}
-               className={'form-control'}
-               value={url}
-               readOnly={true}
-        />
-        <OverlayTrigger trigger="click"
-                        placement="top"
-                        overlay={popover}>
-          <button className={'btn btn-secondary'}
-                  title={"Click to copy this URL to your clipboard"}
-                  onClick={copyClicked}>
-            <i className={'bi bi-copy'} aria-hidden={true}/>
-            <span className={'visually-hidden'}>
-            Copy
-          </span>
-          </button>
-        </OverlayTrigger>
+      <div className={'d-block d-md-flex align-items-center'}>
+        <p className={`${classes.Label}`}>
+          Team URL:
+        </p>
+        <p className={`ps-2 flex-grow-1 ${classes.Url}`}>
+          {url}
+        </p>
+        <p className={`${classes.CopyButton}`}>
+          <OverlayTrigger trigger="click"
+                          placement="top"
+                          overlay={popover}>
+            <button className={'btn btn-secondary'}
+                    title={"Click to copy this URL to your clipboard"}
+                    onClick={copyClicked}>
+              <i className={'bi bi-copy'} aria-hidden={true}/>
+              <span className={'ps-2'}>
+                Copy
+              </span>
+            </button>
+          </OverlayTrigger>
+        </p>
       </div>
-      <p className={'form-text'}>
-        Share this URL with teammates so they can join the team and provide their information.
+
+      <p className={`${classes.Instructions}`}>
+        Use this URL to add your teammates later, or share it with them so they can add their information themselves.
       </p>
     </div>
   );

@@ -36,7 +36,7 @@
   }
 }
 
-.Selected {
+.Selected, .Unavailable {
   color: var(--tournio-gray-600);
   background-color: var(--tournio-gray-200);
 }
@@ -50,7 +50,7 @@
   .Signupable {
     border-color: var(--tournio-gray-700)
   }
-  .Selected {
+  .Selected, .Unavailable {
     color: var(--tournio-gray-500);
     background-color: var(--tournio-gray-800);
   }

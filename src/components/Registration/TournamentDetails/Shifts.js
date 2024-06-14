@@ -7,8 +7,13 @@ const Shifts = ({tournament}) => {
     return '';
   }
 
+  let capacityNoun = 'teams';
+  if (!tournament.events.some(({rosterType}) => rosterType === 'team')) {
+    capacityNoun = 'bowlers';
+  }
+
   let shiftContent = '';
-  const displayCapacity = tournament.display_capacity;
+  const displayCapacity = tournament.config['display_capacity'];
   if (tournament.shifts.length > 1) {
     shiftContent = (
       <div className={`${classes.Shifts}`}>
@@ -20,8 +25,8 @@ const Shifts = ({tournament}) => {
             <div key={i} className={`${classes.ShiftInfo} border rounded-2`}>
               <div className={'row'}>
                 <div className={'col'}>
-                  <h5 className={shift.is_full ? classes.Full : ''}>
-                    {shift.is_full && (
+                  <h5 className={shift.isFull ? classes.Full : ''}>
+                    {shift.isFull && (
                         <span className={classes.Indicator}>
                         [FULL]&nbsp;
                       </span>
@@ -31,9 +36,14 @@ const Shifts = ({tournament}) => {
                     </span>
                   </h5>
                   {!!shift.description && (
-                    <p className={'fw-light mb-0'}>
+                    <p className={`fw-light ${!displayCapacity ? 'mb-0' : ''}`}>
                         {shift.description}
                       </p>
+                  )}
+                  {displayCapacity && (
+                    <p className={`fw-light mb-0`}>
+                      This shift can accommodate up to {shift.capacity} {capacityNoun}.
+                    </p>
                   )}
                 </div>
               </div>
@@ -54,7 +64,7 @@ const Shifts = ({tournament}) => {
           <div className={`${classes.ShiftInfo} border rounded-2`}>
             <div>
               <p>
-                The tournament can accommodate up to {shift.capacity} teams.
+                The tournament can accommodate up to {shift.capacity} {capacityNoun}.
               </p>
 
               <ShiftCapacity shift={shift}/>

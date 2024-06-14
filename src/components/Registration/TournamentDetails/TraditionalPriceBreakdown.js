@@ -1,12 +1,18 @@
+import {format} from "date-fns";
 import classes from './TournamentDetails.module.scss';
 
 const TraditionalPriceBreakdown = ({tournament}) => {
-  if (!tournament || !tournament.registration_fee) {
+  if (!tournament || !tournament.feesAndDiscounts) {
     return '';
   }
 
-  const earlyRegEnds = tournament.early_registration_ends;
-  const lateRegStarts = tournament.late_fee_applies_at;
+  const entryFee = tournament.feesAndDiscounts.find(({determination}) => determination === 'entry_fee');
+  const earlyDiscount = tournament.feesAndDiscounts.find(({determination}) => determination === 'early_discount');
+  const earlyRegEnds = earlyDiscount ? format(Date.parse(earlyDiscount.configuration.valid_until), 'PPp') : false;
+
+  const lateFee = tournament.feesAndDiscounts.find(({determination}) => determination === 'late_fee');
+  let lateRegStarts = lateFee ? format(Date.parse(lateFee.configuration.applies_at), 'PPp') : false;
+
   const noFeeChanges = !earlyRegEnds && !lateRegStarts;
 
   return (
@@ -16,7 +22,7 @@ const TraditionalPriceBreakdown = ({tournament}) => {
           <strong>
             Entry Fee:{' '}
           </strong>
-          ${tournament.registration_fee}
+          ${entryFee.value}
         </p>
       )}
       {!noFeeChanges && (
@@ -30,7 +36,7 @@ const TraditionalPriceBreakdown = ({tournament}) => {
               {earlyRegEnds && (
                 <tr className={`${classes.Early}`}>
                   <td>
-                    ${tournament.registration_fee - tournament.early_registration_discount}
+                    ${entryFee.value - earlyDiscount.value}
                   </td>
                   <td>
                     Until{' '}
@@ -42,7 +48,7 @@ const TraditionalPriceBreakdown = ({tournament}) => {
               )}
               <tr className={`${classes.Regular}`}>
                 <td>
-                  ${tournament.registration_fee}
+                  ${entryFee.value}
                 </td>
                 {earlyRegEnds && lateRegStarts && (
                   <td>
@@ -76,7 +82,7 @@ const TraditionalPriceBreakdown = ({tournament}) => {
               {lateRegStarts && (
                 <tr className={`${classes.Late}`}>
                   <td>
-                    ${tournament.registration_fee + tournament.late_registration_fee}
+                    ${entryFee.value + lateFee.value}
                   </td>
                   <td>
                     After{' '}

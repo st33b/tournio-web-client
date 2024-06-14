@@ -8,27 +8,15 @@ import ErrorAlert from "../../common/ErrorAlert";
 import {updateObject} from "../../../utils";
 
 const RegistrationOptions = () => {
-  const { authToken } = useLoginContext();
+  const {authToken} = useLoginContext();
   const {tournament, tournamentUpdatedQuietly} = useTournament();
 
-  const REGISTRATION_TYPES = ['new_team', 'solo', 'new_pair'];
-  const REGISTRATION_TYPE_LABELS = [
-    {key: 'new_team', label: 'New Teams'},
-    {key: 'solo', label: 'Solo Entries'},
-    {key: 'new_pair', label: 'New Doubles Pair'},
-  ];
-  const TYPE_OPTIONS = {
-    traditional: {
-      new_team: true,
-      solo: true,
-      new_pair: false,
-    },
-    eventsSelectable: {
-      new_team: false,
-      solo: true,
-      new_pair: true,
-    },
-  }
+  const REGISTRATION_TYPES = ['new_team', 'new_pair', 'solo'];
+  const REGISTRATION_TYPE_LABELS = {
+    new_team: 'New Teams',
+    new_pair: 'New Doubles Pair',
+    solo: 'Solo Entries',
+  };
 
   const initialFormData = Map({
     new_team: false,
@@ -49,12 +37,6 @@ const RegistrationOptions = () => {
       REGISTRATION_TYPES.forEach(rType => {
         map.set(rType, tournament.registration_options[rType]);
       });
-      if (tournament.event_items.event.length > 0) {
-        map.set('new_team', false);
-      }
-      else {
-        map.set('new_pair', false);
-      }
     });
     setFormData(Map(newFormData));
   }, [tournament]);
@@ -63,7 +45,25 @@ const RegistrationOptions = () => {
     return '';
   }
 
-  const allowedOptionSet = tournament.event_items.event.length > 0 ? TYPE_OPTIONS.eventsSelectable : TYPE_OPTIONS.traditional;
+  const tournType = tournament.config_items.find(({key}) => key === 'tournament_type').value;
+  let allowedOptionSet = ['solo'];
+  switch(tournType) {
+    case 'single_event':
+    case 'igbo_non_standard':
+      tournament.events.forEach(event => {
+        if (['team', 'trio'].includes(event.roster_type)) {
+          allowedOptionSet.push('new_team');
+        }
+
+        if (event.roster_type === 'double') {
+          allowedOptionSet.push('new_pair');
+        }
+      });
+      break;
+    default:
+      allowedOptionSet.push('new_team');
+      break;
+  }
 
   const optionToggled = (event) => {
     const inputName = event.target.name;
@@ -113,22 +113,39 @@ const RegistrationOptions = () => {
         Registration Options
       </Card.Header>
       <Card.Body>
-        {REGISTRATION_TYPE_LABELS.map(kind => {
-            return !allowedOptionSet[kind.key] ? '' :
-              <div className={'form-check form-switch'} key={kind.key}>
-                <input type={'checkbox'}
-                       className={'form-check-input'}
-                       role={'switch'}
-                       id={kind.key}
-                       name={kind.key}
-                       checked={formData.get(kind.key)}
-                       onChange={optionToggled}/>
-                <label htmlFor={kind.key}
-                       className={'form-check-label'}>
-                  {kind.label}
-                </label>
-              </div>
-          })}
+        {allowedOptionSet.map(kind => {
+          return (
+            <div className={'form-check form-switch'} key={kind}>
+              <input type={'checkbox'}
+                     className={'form-check-input'}
+                     role={'switch'}
+                     id={kind}
+                     name={kind}
+                     checked={formData.get(kind)}
+                     onChange={optionToggled}/>
+              <label htmlFor={kind}
+                     className={'form-check-label'}>
+                {REGISTRATION_TYPE_LABELS[kind]}
+              </label>
+            </div>
+          )
+        })}
+        {/*{REGISTRATION_TYPE_LABELS.map(kind => {*/}
+        {/*    return !allowedOptionSet[kind.key] ? '' :*/}
+        {/*      <div className={'form-check form-switch'} key={kind.key}>*/}
+        {/*        <input type={'checkbox'}*/}
+        {/*               className={'form-check-input'}*/}
+        {/*               role={'switch'}*/}
+        {/*               id={kind.key}*/}
+        {/*               name={kind.key}*/}
+        {/*               checked={formData.get(kind.key)}*/}
+        {/*               onChange={optionToggled}/>*/}
+        {/*        <label htmlFor={kind.key}*/}
+        {/*               className={'form-check-label'}>*/}
+        {/*          {kind.label}*/}
+        {/*        </label>*/}
+        {/*      </div>*/}
+        {/*  })}*/}
 
       </Card.Body>
       <ErrorAlert message={errorMessage}

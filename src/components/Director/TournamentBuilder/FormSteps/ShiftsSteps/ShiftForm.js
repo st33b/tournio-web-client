@@ -262,7 +262,7 @@ const ShiftForm = ({shift, allEvents, onShiftUpdated, withDetails, onShiftDelete
 
         <div className={`row ${classes.FieldRow}`}>
           <label htmlFor={'capacity'} className={'col-form-label col-7 col-sm-3'}>
-            Capacity (teams)
+            Capacity
             <div className="d-inline">
               <i className={`${classes.RequiredLabel} align-top bi-asterisk`}/>
               <span className="visually-hidden">

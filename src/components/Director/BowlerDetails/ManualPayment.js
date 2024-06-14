@@ -21,7 +21,7 @@ const ManualPayment = ({bowler, onSubmit, loading = false}) => {
       return;
     }
     const newFormData = {...formData};
-    newFormData.amount = bowler.amount_due;
+    newFormData.amount = bowler.amountDue;
     newFormData.valid = isFormValid(newFormData);
     setFormData(newFormData);
   }, [bowler]);

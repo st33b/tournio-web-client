@@ -51,7 +51,11 @@ const Basics = () => {
           </div>
           <div className={'row'}>
             <dt className={'col-4'}>Ends</dt>
-            <dd className={'col mb-0'}>{tournament.end_date}</dd>
+            <dd className={'col'}>{tournament.end_date}</dd>
+          </div>
+          <div className={'row'}>
+            <dt className={'col-4'}>Events</dt>
+            <dd className={'col mb-0'}>{tournament.events.map(({name}) => name).join(', ')}</dd>
           </div>
         </dl>
       </Card.Body>

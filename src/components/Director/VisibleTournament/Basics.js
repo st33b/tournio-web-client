@@ -65,6 +65,12 @@ const Basics = ({eventKey}) => {
           </strong>
           {tournament.entry_deadline}
         </p>
+        <p>
+          <strong>
+            Events:{' '}
+          </strong>
+          {tournament.events.map(({name}) => name).join(', ')}
+        </p>
       </Accordion.Body>
     );
   }

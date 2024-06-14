@@ -195,13 +195,14 @@ export const useTournament = (onSuccess = () => {}) => {
   };
 }
 
-export const useModernTournament = (onSuccess = () => {}) => {
+export const useModernTournament = (onSuccess = () => {}, onFailure = () => {}) => {
   const router = useRouter();
   const {identifier} = router.query;
 
   const {loading, data: tournament, error, onDataUpdate: tournamentUpdated} = useDirectorApi({
     uri: identifier ? `/tournaments/${identifier}?serializer=modern` : null,
     onSuccess: onSuccess,
+    onFailure: onFailure,
   });
 
   const tournamentUpdatedQuietly = (updatedTournament) => {
@@ -287,5 +288,20 @@ export const useTournamentOrg = (onSuccess = () => {}) => {
     error,
     tournamentOrg,
     orgUpdated,
+  };
+}
+
+export const useTeam = (onSuccess = () => {}) => {
+  const router = useRouter();
+  const {teamId} = router.query;
+  const {loading, data: team, error} = useDirectorApi({
+    uri: teamId ? `/teams/${teamId}` : null,
+    onSuccess: onSuccess,
+  });
+
+  return {
+    loading,
+    error,
+    team,
   };
 }

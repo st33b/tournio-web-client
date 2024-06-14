@@ -320,6 +320,8 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
     </div>
   );
 
+  const showInclusiveShifts = tournamentType === 'igbo_multi_shift' || tournamentType === 'single_event' && tournament.shifts.length > 1;
+
   return (
     <ErrorBoundary>
       <div className={classes.TeamDetails}>
@@ -338,29 +340,29 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
             />
           </div>
         </div>
-        <div className={'row mb-2'}>
-          <label htmlFor={'initial_size'}
-                 className={'col-form-label col-form-label-lg text-sm-end col-12 col-sm-4'}>
-            Joinable Positions
-          </label>
-          <div className={'col-sm-4'}>
-            <input type={'number'}
-                   min={1}
-                   max={tournament.team_size}
-                   onChange={(event) => inputChangedHandler(event, 'initial_size')}
-                   className={'form-control'}
-                   id={'initial_size'}
-                   value={teamForm.fields.initial_size}
-            />
-          </div>
-        </div>
+        {/*<div className={'row mb-2'}>*/}
+        {/*  <label htmlFor={'initial_size'}*/}
+        {/*         className={'col-form-label col-form-label-lg text-sm-end col-12 col-sm-4'}>*/}
+        {/*    Joinable Positions*/}
+        {/*  </label>*/}
+        {/*  <div className={'col-sm-4'}>*/}
+        {/*    <input type={'number'}*/}
+        {/*           min={1}*/}
+        {/*           max={tournament.team_size}*/}
+        {/*           onChange={(event) => inputChangedHandler(event, 'initial_size')}*/}
+        {/*           className={'form-control'}*/}
+        {/*           id={'initial_size'}*/}
+        {/*           value={teamForm.fields.initial_size}*/}
+        {/*    />*/}
+        {/*  </div>*/}
+        {/*</div>*/}
 
         {tournamentType === 'igbo_mix_and_match' && (
           <MixAndMatchShiftForm shiftsByEvent={tournament.shifts_by_event}
                                 currentShifts={team.shifts}
                                 onUpdate={updateShiftIdentifiers}/>
         )}
-        {tournamentType === 'igbo_multi_shift' && (
+        {showInclusiveShifts && (
           <div className={'row mb-2'}>
             <label htmlFor={'shift_identifier'}
                    className={'col-form-label col-form-label-lg text-sm-end col-12 col-sm-4'}>

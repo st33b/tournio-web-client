@@ -36,7 +36,7 @@ const Name = () => {
       newFormData.fields.name = state.builder.tournament.name;
       newFormData.fields.abbreviation = state.builder.tournament.abbreviation;
       newFormData.fields.year = state.builder.tournament.year;
-      newFormData.fields.tournamentOrgId = state.builder.tournament.tournament_org_id,
+      newFormData.fields.tournamentOrgId = state.builder.tournament.tournament_org_id;
       newFormData.valid = isValid(newFormData.fields);
       setFormData(newFormData);
     }
@@ -135,7 +135,7 @@ const Name = () => {
 
   return (
     <div>
-      <h2>New Tournament: Basics</h2>
+      <h2>New Occasion: Basics</h2>
 
       <div className={`row ${classes.FieldRow}`}>
         <label htmlFor={'name'}

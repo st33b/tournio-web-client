@@ -94,6 +94,8 @@ const Page = () => {
 
   const {bowler, team, tournament} = data;
 
+  // @refactor This should make use of useApi, or a wrapper function, rather than making the request
+  // using Axios directly.
   const signupableUpdated = (identifier, event, onSuccess = () => {}, onFailure = () => {}) => {
     const requestConfig = {
       method: 'patch',

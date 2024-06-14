@@ -5,13 +5,13 @@ import Badge from "react-bootstrap/Badge";
 
 import classes from './VisibleTournament.module.scss';
 import {Placeholder} from "react-bootstrap";
-import {useTournament} from "../../../director";
+import {useModernTournament} from "../../../director";
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 
 const Counts = () => {
   const router = useRouter();
-  const {loading, tournament} = useTournament();
+  const {loading, tournament} = useModernTournament();
   const [currentPath, setCurrentPath] = useState();
 
   useEffect(() => {
@@ -39,6 +39,8 @@ const Counts = () => {
     );
   }
 
+  const hasTeamEvent = tournament.events.some(({rosterType}) => rosterType === 'team')
+
   return (
     <div className={classes.Counts}>
       <Card>
@@ -50,19 +52,21 @@ const Counts = () => {
                           href={`${currentPath}/bowlers`}>
             Bowlers
             <Badge pill={true}>
-              {tournament.bowler_count}
+              {tournament.bowlerCount}
             </Badge>
           </ListGroup.Item>
-          <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
-                          variant={'primary'}
-                          action={true}
-                          as={Link}
-                          href={`${currentPath}/teams`}>
-            Teams
-            <Badge pill={true}>
-              {tournament.team_count}
-            </Badge>
-          </ListGroup.Item>
+          {hasTeamEvent && (
+            <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
+                            variant={'primary'}
+                            action={true}
+                            as={Link}
+                            href={`${currentPath}/teams`}>
+              Teams
+              <Badge pill={true}>
+                {tournament.teamCount}
+              </Badge>
+            </ListGroup.Item>
+          )}
           <ListGroup.Item className={'d-flex justify-content-between align-items-center'}
                           variant={'primary'}
                           action={true}
@@ -70,7 +74,7 @@ const Counts = () => {
                           href={`${currentPath}/free_entries`}>
             Free Entries
             <Badge pill={true}>
-              {tournament.free_entry_count}
+              {tournament.freeEntryCount}
             </Badge>
           </ListGroup.Item>
         </ListGroup>

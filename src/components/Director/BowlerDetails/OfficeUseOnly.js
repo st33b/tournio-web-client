@@ -19,13 +19,13 @@ const OfficeUseOnly = ({bowler, onSubmit, loading = false}) => {
       return;
     }
     const newFormData = formData.withMutations(map => {
-      if (bowler.verified_average) {
-        map.set('verified_average', bowler.verified_average);
+      if (bowler.verifiedAverage) {
+        map.set('verified_average', bowler.verifiedAverage);
       }
       if (bowler.handicap) {
         map.set('handicap', bowler.handicap);
       }
-      map.set('igbo_member', bowler.igbo_member)
+      map.set('igbo_member', bowler.igboMember)
     });
     newFormData.set('valid', isValid(newFormData));
     setFormData(newFormData);
