@@ -58,7 +58,7 @@ const Input = (props) => {
         id={props.identifier}
         name={props.identifier}
         className={`form-control`}
-        maxLength="100"
+        maxLength="1000"
         {...props.elementConfig}
         value={props.elementConfig.value || ''}
         onChange={props.changed}
