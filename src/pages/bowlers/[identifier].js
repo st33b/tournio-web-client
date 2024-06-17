@@ -126,7 +126,7 @@ const Page = () => {
       });
   }
 
-  let displayFreeEntryForm = true;
+  let displayFreeEntryForm = tournament.config.enable_free_entries;
   if (commerce.freeEntry && commerce.freeEntry.uniqueCode) {
     displayFreeEntryForm = false;
   }

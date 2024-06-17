@@ -37,6 +37,7 @@ const VisibleTournament = ({closeTournament}) => {
     "skip_stripe",
     "stripe_receipts",
     "enable_unpaid_signups",
+    "enable_free_entries",
   ];
 
   const {loading, tournament} = useTournament();
