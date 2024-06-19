@@ -3,7 +3,6 @@ import RegistrationLayout from "../../../../components/Layout/RegistrationLayout
 import {useEffect, useState} from "react";
 import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
 import TournamentHeader from "../../../../components/ui/TournamentHeader";
-import SuccessAlert from "../../../../components/common/SuccessAlert";
 import UrlShare from "../../../../components/ui/UrlShare/UrlShare";
 import {updateObject, useTeam, useTheTournament} from "../../../../utils";
 import ErrorAlert from "../../../../components/common/ErrorAlert";
@@ -47,19 +46,6 @@ const Page = () => {
   }
 
   //////////////////////////
-
-  const dropQueryParams = () => {
-    router.replace({
-        pathname: `/tournaments/[identifier]/teams/[teamIdentifier]`,
-        query: {
-          identifier: identifier,
-          teamIdentifier: teamIdentifier,
-        },
-      },
-      null,
-      {shallow: true},
-    );
-  }
 
   const port = process.env.NODE_ENV === 'development' ? `:${state.currentLocation.port}` : '';
   const shareUrl = `${state.currentLocation.protocol}//${state.currentLocation.hostname}${port}/teams/${teamIdentifier}`;
@@ -133,7 +119,8 @@ const Page = () => {
 
       <div className={`col-lg-8 col-xl-6 offset-lg-2 offset-xl-3`}>
         <div className={`display-6 pt-2 py-3 bg-primary-subtle`}>
-          Team Registration
+          {firstAvailablePosition > 0 && 'Team Registration'}
+          {firstAvailablePosition === 0 && 'Team Details'}
         </div>
 
         <h3 className={'py-3'}>
