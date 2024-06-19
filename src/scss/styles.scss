@@ -16,6 +16,12 @@ html {
   &[data-bs-theme="dark"] {
     background-color: var(--tournio-body-bg);
   }
+
+  .tournio-striped-list {
+    .tournio-striped-list-item:nth-child(odd) {
+      background-color: var(--tournio-secondary-bg-subtle);
+    }
+  }
 }
 
 .line {

@@ -71,7 +71,7 @@ const Page = () => {
     <div>
       <TournamentHeader tournament={tournament}/>
 
-      <h2 className={``}>
+      <h2 className={`bg-primary-subtle py-3`}>
         Review Bowler Details
       </h2>
 

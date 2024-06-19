@@ -11,30 +11,17 @@ import Link from "next/link";
 
 const Page = () => {
   const router = useRouter();
-  const {identifier, teamIdentifier, success} = router.query;
+  const {identifier, teamIdentifier} = router.query;
 
   const [state, setState] = useState({
-    successMessage: null,
     currentLocation: null,
   });
 
   useEffect(() => {
-    let newSuccessMessage = state.successMessage;
-    switch (success) {
-      case '1':
-        newSuccessMessage = 'Team created! You may add the remaining bowlers at any time.';
-        break;
-      case '2':
-        newSuccessMessage = 'Bowler added to team.';
-        break;
-      default:
-        break;
-    }
     setState(updateObject(state, {
-      successMessage: newSuccessMessage,
       currentLocation: window.location,
     }));
-  }, [success]);
+  }, []);
 
   const {loading: teamLoading, team, error: fetchError} = useTeam(teamIdentifier);
   const {loading: tournamentLoading, tournament, error: tournamentError} = useTheTournament(identifier);
@@ -80,35 +67,39 @@ const Page = () => {
   const tournamentType = tournament.config['tournament_type'];
 
   const rows = Array(tournament.config['team_size']);
+  let firstAvailablePosition = 0;
   for (let i = 0; i < tournament.config['team_size']; i++) {
     const currentPosition = i + 1;
     const bowler = team.bowlers.find(({position}) => position === currentPosition);
     let row = '';
     if (bowler) {
       row = (
-        <tr key={`row${i}`}>
-          <td>
+        <div className={'d-flex align-items-center py-2 tournio-striped-list-item'} key={`row${i}`}>
+          <div className={'ps-2'}>
             {bowler.position}.
-          </td>
-          <td>
+          </div>
+          <div className={'ps-3'}>
             {bowler.full_name}
-          </td>
-          <td>
-            <Link className={`ms-auto ms-sm-0`}
+          </div>
+          <div className={'ms-auto pe-2'}>
+            <Link className={`btn btn-sm btn-success`}
                   title={'Pay entry fees, choose extras'}
                   href={`/bowlers/${bowler.identifier}`}>
               Fees&nbsp;&amp;&nbsp;Extras
             </Link>
-          </td>
-        </tr>
+          </div>
+        </div>
       );
     } else {
+      if (firstAvailablePosition === 0) {
+        firstAvailablePosition = currentPosition;
+      }
       row = (
-        <tr key={`row${i}`}>
-          <td>
+        <div className={'d-flex align-items-center py-2 tournio-striped-list-item'} key={`row${i}`}>
+          <div className={'ps-2'}>
             {currentPosition}.
-          </td>
-          <td colSpan={2}>
+          </div>
+          <div className={'ms-auto pe-2'}>
             <Link className={''}
                   href={{
                     pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/add-bowler',
@@ -119,11 +110,13 @@ const Page = () => {
                     }
                   }}
             >
-              <span className={'bi bi-plus pe-1'} aria-hidden={true}/>
-              Add Bowler
+              <span className={'bi bi-plus-lg'} aria-hidden={true}/>
+              <span className={'visually-hidden'}>
+                  Add a Bowler
+                </span>
             </Link>
-          </td>
-        </tr>
+          </div>
+        </div>
       );
     }
     rows[i] = row;
@@ -139,11 +132,12 @@ const Page = () => {
       </div>
 
       <div className={`col-lg-8 col-xl-6 offset-lg-2 offset-xl-3`}>
-        {state.successMessage && <SuccessAlert message={state.successMessage} onClose={dropQueryParams}
-        />}
+        <div className={`display-6 pt-2 py-3 bg-primary-subtle`}>
+          Team Registration
+        </div>
 
-        <h3 className={'pb-3'}>
-          Team: <strong>{team.name}</strong>
+        <h3 className={'py-3'}>
+          Name: <strong>{team.name}</strong>
         </h3>
 
         {showPreferredShift && (
@@ -157,11 +151,30 @@ const Page = () => {
           </h4>
         )}
 
-        <table className={'teamRoster table table-responsive table-striped w-100'}>
-          <tbody>
+        <h5 className={'pb-2'}>
+          Bowlers:
+        </h5>
+        <div className={'tournio-striped-list'}>
           {rows}
-          </tbody>
-        </table>
+        </div>
+
+        {firstAvailablePosition > 0 && (
+          <div className={'text-end'}>
+            <Link className={'btn btn-primary my-3'}
+                  href={{
+                    pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/add-bowler',
+                    query: {
+                      identifier: tournament.identifier,
+                      teamIdentifier: team.identifier,
+                      position: firstAvailablePosition,
+                    }
+                  }}
+            >
+              <span className={''}>Next Bowler</span>
+              <span className={'bi bi-chevron-double-right ps-2'} aria-hidden={true}/>
+            </Link>
+          </div>
+        )}
 
         <UrlShare url={shareUrl}/>
 

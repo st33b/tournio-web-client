@@ -61,7 +61,6 @@ const Page = () => {
       query: {
         identifier: identifier,
         teamIdentifier: teamIdentifier,
-        success: 2,
       }
     });
   }
@@ -94,18 +93,16 @@ const Page = () => {
     <div>
       <TournamentHeader tournament={tournament}/>
 
-      <h2 className={``}>
+      <h2 className={`bg-primary-subtle py-3`}>
+        Review Bowler Details
+      </h2>
+
+      <h4 className={``}>
         Team:&nbsp;
         <strong>
           {team.name}
         </strong>
-      </h2>
-
-      <hr/>
-
-      <h3 className={``}>
-        Review Bowler Details
-      </h3>
+      </h4>
 
       <hr/>
 

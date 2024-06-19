@@ -44,7 +44,6 @@ const Page = () => {
       query: {
         identifier: identifier,
         teamIdentifier: teamData.identifier,
-        success: 1,
       }
     });
   }
@@ -95,11 +94,10 @@ const Page = () => {
       <div className={'col-12'}>
         <TournamentHeader tournament={tournament}/>
 
-        <h2 className={``}>
+        <h3 className={`bg-primary-subtle py-3`}>
           Initial Review
-        </h2>
+        </h3>
 
-        <hr/>
       </div>
 
       <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
