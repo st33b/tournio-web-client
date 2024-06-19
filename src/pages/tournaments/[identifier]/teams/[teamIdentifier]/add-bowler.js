@@ -84,7 +84,11 @@ const Page = () => {
     <div>
       <TournamentHeader tournament={tournament}/>
 
-      <h2 className={''}>
+      <h2 className={`bg-primary-subtle py-3`}>
+        Add a Bowler
+      </h2>
+
+      <h3 className={''}>
         Team:&nbsp;
         <strong>
           <Link href={{
@@ -97,12 +101,6 @@ const Page = () => {
             {team.name}
           </Link>
         </strong>
-      </h2>
-
-      <hr />
-
-      <h3 className={``}>
-        Add a Bowler
       </h3>
 
       <div className={''}>

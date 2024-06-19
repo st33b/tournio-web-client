@@ -54,9 +54,9 @@ const Page = () => {
     <div>
       <TournamentHeader tournament={tournament}/>
 
-      <h3 className={``}>
+      <h2 className={`bg-primary-subtle py-3`}>
         Solo Registration
-      </h3>
+      </h2>
 
       <BowlerForm tournament={tournament}
                   bowlerData={previousBowlerData}

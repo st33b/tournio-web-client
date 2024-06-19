@@ -64,18 +64,17 @@ const Page = () => {
       <div className={'col-12'}>
         <TournamentHeader tournament={tournament}/>
 
-        <h2 className={``}>
+        <h2 className={`bg-primary-subtle py-3`}>
+          First Bowler
+        </h2>
+
+        <h4 className={``}>
           Team:&nbsp;
           <strong>
             {registration.team.name}
           </strong>
-        </h2>
+        </h4>
 
-        <hr/>
-
-        <h3 className={``}>
-          First Bowler
-        </h3>
       </div>
 
       <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>

@@ -20,7 +20,7 @@ const NewTeamReview = ({team, bowler, tournament}) => {
       <div className={classes.TeamDetails}>
         <dl>
           <div className={'row'}>
-            <dt className={`col-4 pe-2`}>
+            <dt className={`col-5 pe-2`}>
               Team Name
             </dt>
             <dd className={`col ps-2 value`}>
@@ -30,7 +30,7 @@ const NewTeamReview = ({team, bowler, tournament}) => {
 
           {chosenShifts && (
             <div className={`row g-2`}>
-              <dt className={`col-4 pe-2`}>
+              <dt className={`col-5 pe-2`}>
                 Shift Preference
               </dt>
               <dd className={`col`}>

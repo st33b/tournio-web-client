@@ -81,7 +81,7 @@ const Page = () => {
       <div className={'col-12'}>
         <TournamentHeader tournament={tournament}/>
 
-        <h2 className={``}>
+        <h2 className={`bg-primary-subtle py-3`}>
           Create a Team
         </h2>
       </div>
