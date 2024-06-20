@@ -13,7 +13,6 @@ const BOOLEAN_CONFIG_ITEMS = [
   'display_capacity',
   'email_in_dev',
   'skip_stripe',
-  'stripe_receipts',
   'enable_unpaid_signups',
   'enable_free_entries',
 ];
