@@ -774,12 +774,23 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     }
   });
 
+  const theme = {
+    variables: {
+      // We can use our values here. Can we use CSS variables to hook into light/dark mode?
+      // fontFamily: 'Mulish, sans-serif',
+      // unit: '14px',
+      // padding: '0.5em',
+      // borderRadius: '0',
+      // boxShadow: '0 0 0 1px silver',
+    }
+  };
+
   let form = (
     <form onSubmit={formHandler}>
       {formElements.map(formElement => {
         if (formElement.id === 'address1') {
           return (
-            <AddressAutofill key={'address-autofill'} accessToken={'pk.eyJ1IjoidG91cm5pbyIsImEiOiJjbHhtZXh4ZDIwMnI5MmlwdGo4aW5rdXk2In0.DR6SCOSPoaXUIXfondtzfA'}>
+            <AddressAutofill key={'address-autofill'} accessToken={'pk.eyJ1IjoidG91cm5pbyIsImEiOiJjbHhtZXh4ZDIwMnI5MmlwdGo4aW5rdXk2In0.DR6SCOSPoaXUIXfondtzfA'} theme={theme}>
               <Input
                 identifier={formElement.id}
                 elementType={formElement.setup.elementType}
