@@ -15,6 +15,7 @@ const Configuration = () => {
   // Exclude these from the Configuration panel
   const SKIPPABLE_ITEMS = [
     'bowler_form_fields',
+    'stripe_receipts',
   ]
 
   return (

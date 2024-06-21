@@ -35,7 +35,6 @@ const VisibleTournament = ({closeTournament}) => {
     "automatic_late_fees",
     "email_in_dev",
     "skip_stripe",
-    "stripe_receipts",
     "enable_unpaid_signups",
     "enable_free_entries",
   ];
