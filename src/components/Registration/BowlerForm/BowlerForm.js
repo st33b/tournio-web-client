@@ -776,12 +776,10 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
 
   const theme = {
     variables: {
-      // We can use our values here. Can we use CSS variables to hook into light/dark mode?
-      // fontFamily: 'Mulish, sans-serif',
-      // unit: '14px',
-      // padding: '0.5em',
-      // borderRadius: '0',
-      // boxShadow: '0 0 0 1px silver',
+      fontFamily: "var(--tournio-font-sans-serif)",
+      colorBackground: "var(--tournio-body-bg)",
+      colorBackgroundHover: "var(--tournio-secondary-bg-subtle)",
+      colorText: "var(--tournio-body-color)",
     }
   };
 
