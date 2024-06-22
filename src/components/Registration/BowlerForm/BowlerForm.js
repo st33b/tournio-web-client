@@ -788,7 +788,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       {formElements.map(formElement => {
         if (formElement.id === 'address1') {
           return (
-            <AddressAutofill key={'address-autofill'} accessToken={'pk.eyJ1IjoidG91cm5pbyIsImEiOiJjbHhtZXh4ZDIwMnI5MmlwdGo4aW5rdXk2In0.DR6SCOSPoaXUIXfondtzfA'} theme={theme}>
+            <AddressAutofill key={'address-autofill'} accessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN} theme={theme}>
               <Input
                 identifier={formElement.id}
                 elementType={formElement.setup.elementType}
