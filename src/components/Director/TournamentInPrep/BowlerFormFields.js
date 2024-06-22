@@ -15,6 +15,10 @@ const BowlerFormFields = () => {
       label: 'Street Address',
       required: false,
     },
+    address2: {
+      label: 'Unit/Apt No.',
+      required: false,
+    },
     city: {
       label: 'City',
       required: false,
@@ -36,7 +40,7 @@ const BowlerFormFields = () => {
       required: false,
     },
     date_of_birth: {
-      label: 'Date of Birth',
+      label: 'Date of Birth (mm/dd/yyyy)',
       required: false,
     },
     payment_app: {
@@ -125,7 +129,7 @@ const BowlerFormFields = () => {
           </Accordion.Header>
           <Accordion.Body>
             <p>
-              The registration form will require bowlers to enter this information (Payment App will be optional).
+              The registration form will require bowlers to enter this information (Unit/Apt and Payment App will be optional).
             </p>
             {Object.keys(formData).map(key => (
               <div className={'form-check form-switch'} key={key}>

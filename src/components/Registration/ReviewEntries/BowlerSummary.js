@@ -1,7 +1,6 @@
 import {Row} from "react-bootstrap";
 
 import classes from './BowlerSummary.module.scss';
-import {devConsoleLog} from "../../../utils";
 
 const BowlerSummary = ({bowler, tournament, partner = null}) => {
   if (!bowler) {
@@ -20,6 +19,7 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
     usbc_id: 'USBC ID',
     date_of_birth: 'Date of Birth',
     address1: 'Mailing Address',
+    address2: 'Unit/Apt No.',
     city: 'City',
     state: 'State',
     country: 'Country',

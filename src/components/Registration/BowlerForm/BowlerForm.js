@@ -1,11 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {CountryDropdown} from "react-country-region-selector";
-
 import Input from "../../ui/Input/Input";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './BowlerForm.module.scss';
-import {devConsoleLog} from "../../../utils";
+
+import dynamic from 'next/dynamic';
+const AddressAutofill = dynamic(
+  () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
+  { ssr: false }
+);
 
 const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = [], nextButtonText, showShifts = false}) => {
   const DATE_OF_BIRTH_FIELDS = [
@@ -231,10 +235,25 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       elementConfig: {
         type: 'text',
         value: '',
+        autoComplete: 'address-line1',
       },
       label: 'Mailing Address',
       validityErrors: [
         'valueMissing',
+      ],
+      valid: true,
+      touched: false,
+    },
+    address2: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'text',
+        value: '',
+        autoComplete: 'address-line2',
+      },
+      label: 'Unit / Apt No.',
+      validityErrors: [
+        '',
       ],
       valid: true,
       touched: false,
@@ -244,6 +263,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       elementConfig: {
         type: 'text',
         value: '',
+        autoComplete: 'address-level2',
       },
       label: 'City',
       validityErrors: [
@@ -257,6 +277,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       elementConfig: {
         type: 'text',
         value: '',
+        autoComplete: 'address-level1',
       },
       label: 'State/Province',
       validityErrors: [
@@ -269,7 +290,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       elementType: 'component',
       elementConfig: {
         component: CountryDropdown,
-        value: '',
+        value: 'US',
         classNames: ['form-select'],
         props: {
           name: 'country',
@@ -290,6 +311,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       elementConfig: {
         type: 'text',
         value: '',
+        autoComplete: 'postal-code',
       },
       label: 'ZIP/Postal Code',
       validityErrors: [
@@ -472,7 +494,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     // fill most of the form data
     for (const inputName in formData.formFields) {
       // skip the DOB and payment app fields, do them separately
-      if (!DATE_OF_BIRTH_FIELDS.includes(inputName)) {
+      if (!DATE_OF_BIRTH_FIELDS.includes(inputName) && !['payment_app:app_name', 'payment_app:account_name'].includes(inputName)) {
         updatedBowlerForm.formFields[inputName].elementConfig.value = bowlerData[inputName];
       }
     }
@@ -485,10 +507,12 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     });
 
     // and now do the payment app fields
-    const paymentObj = updatedBowlerForm.formFields.payment_app;
-    formData.formFields.payment_app.elementConfig.elements.forEach((elem, index) => {
-      paymentObj.elementConfig.elements[index].elementConfig.value = bowlerData.payment_app[elem.identifier];
-    });
+    if (bowlerData.payment_app) {
+      const paymentObj = updatedBowlerForm.formFields.payment_app;
+      formData.formFields.payment_app.elementConfig.elements.forEach((elem, index) => {
+        paymentObj.elementConfig.elements[index].elementConfig.value = bowlerData.payment_app[elem.identifier];
+      });
+    }
 
     return updatedBowlerForm;
   }
@@ -571,8 +595,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
       });
     }
 
-    devConsoleLog("Bowler data:", theBowlerData);
-
     bowlerInfoSaved(theBowlerData);
   }
 
@@ -587,7 +609,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
   const inputChangedHandler = (event) => {
     let inputName;
     if (event.target) {
-      inputName = event.target.name;
+      inputName = event.target.name.split(' ')[0];
     } else {
       inputName = 'country';
     }
@@ -749,28 +771,63 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     }
   });
 
+  const theme = {
+    variables: {
+      fontFamily: "var(--tournio-font-sans-serif)",
+      colorBackground: "var(--tournio-body-bg)",
+      colorBackgroundHover: "var(--tournio-secondary-bg-subtle)",
+      colorText: "var(--tournio-body-color)",
+    }
+  };
+
   let form = (
     <form onSubmit={formHandler}>
-      {formElements.map(formElement => (
-        <Input
-          key={formElement.id}
-          identifier={formElement.id}
-          elementType={formElement.setup.elementType}
-          elementConfig={formElement.setup.elementConfig}
-          changed={inputChangedHandler}
-          label={formElement.setup.label}
-          labelClasses={formElement.setup.labelClasses}
-          layoutClass={formElement.setup.layoutClass}
-          helper={formElement.setup.helper}
-          validityErrors={formElement.setup.validityErrors}
-          errorMessages={formElement.setup.errorMessages}
-          // For <select> elements, onBlur is redundant to onChange
-          blurred={formElement.validateOnBlur ? (event) => fieldBlurred(event, formElement.id) : false}
-          failedValidations={typeof formElement.setup.validityFailures !== 'undefined' ? formElement.setup.validityFailures : []}
-          wasValidated={formElement.setup.validated}
-          loading={!!formElement.setup.bonusCheckUnderway}
-        />
-      ))}
+      {formElements.map(formElement => {
+        if (formElement.id === 'address1') {
+          return (
+            <AddressAutofill key={'address-autofill'} accessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN} theme={theme}>
+              <Input
+                identifier={formElement.id}
+                elementType={formElement.setup.elementType}
+                elementConfig={formElement.setup.elementConfig}
+                changed={inputChangedHandler}
+                label={formElement.setup.label}
+                labelClasses={formElement.setup.labelClasses}
+                layoutClass={formElement.setup.layoutClass}
+                helper={formElement.setup.helper}
+                validityErrors={formElement.setup.validityErrors}
+                errorMessages={formElement.setup.errorMessages}
+                // For <select> elements, onBlur is redundant to onChange
+                blurred={formElement.validateOnBlur ? (event) => fieldBlurred(event, formElement.id) : false}
+                failedValidations={typeof formElement.setup.validityFailures !== 'undefined' ? formElement.setup.validityFailures : []}
+                wasValidated={formElement.setup.validated}
+                loading={!!formElement.setup.bonusCheckUnderway}
+              />
+            </AddressAutofill>
+          )
+        } else {
+          return (
+            <Input
+              key={formElement.id}
+              identifier={formElement.id}
+              elementType={formElement.setup.elementType}
+              elementConfig={formElement.setup.elementConfig}
+              changed={inputChangedHandler}
+              label={formElement.setup.label}
+              labelClasses={formElement.setup.labelClasses}
+              layoutClass={formElement.setup.layoutClass}
+              helper={formElement.setup.helper}
+              validityErrors={formElement.setup.validityErrors}
+              errorMessages={formElement.setup.errorMessages}
+              // For <select> elements, onBlur is redundant to onChange
+              blurred={formElement.validateOnBlur ? (event) => fieldBlurred(event, formElement.id) : false}
+              failedValidations={typeof formElement.setup.validityFailures !== 'undefined' ? formElement.setup.validityFailures : []}
+              wasValidated={formElement.setup.validated}
+              loading={!!formElement.setup.bonusCheckUnderway}
+            />
+          )
+        }
+      })}
 
       <p className={`${classes.RequiredLabel} text-md-center`}>
         <i className={`align-top bi-asterisk`}/>
