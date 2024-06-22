@@ -1,12 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {CountryDropdown} from "react-country-region-selector";
-// import { AddressAutofill } from '@mapbox/search-js-react';
-
 import Input from "../../ui/Input/Input";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 import classes from './BowlerForm.module.scss';
-import {devConsoleLog} from "../../../utils";
 
 import dynamic from 'next/dynamic';
 const AddressAutofill = dynamic(
@@ -497,7 +494,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     // fill most of the form data
     for (const inputName in formData.formFields) {
       // skip the DOB and payment app fields, do them separately
-      if (!DATE_OF_BIRTH_FIELDS.includes(inputName)) {
+      if (!DATE_OF_BIRTH_FIELDS.includes(inputName) && !['payment_app:app_name', 'payment_app:account_name'].includes(inputName)) {
         updatedBowlerForm.formFields[inputName].elementConfig.value = bowlerData[inputName];
       }
     }
@@ -510,10 +507,12 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     });
 
     // and now do the payment app fields
-    const paymentObj = updatedBowlerForm.formFields.payment_app;
-    formData.formFields.payment_app.elementConfig.elements.forEach((elem, index) => {
-      paymentObj.elementConfig.elements[index].elementConfig.value = bowlerData.payment_app[elem.identifier];
-    });
+    if (bowlerData.payment_app) {
+      const paymentObj = updatedBowlerForm.formFields.payment_app;
+      formData.formFields.payment_app.elementConfig.elements.forEach((elem, index) => {
+        paymentObj.elementConfig.elements[index].elementConfig.value = bowlerData.payment_app[elem.identifier];
+      });
+    }
 
     return updatedBowlerForm;
   }
@@ -595,8 +594,6 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
         theBowlerData.payment_app[elem.identifier] = elem.elementConfig.value;
       });
     }
-
-    devConsoleLog("Bowler data:", theBowlerData);
 
     bowlerInfoSaved(theBowlerData);
   }
