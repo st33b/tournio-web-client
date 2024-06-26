@@ -303,12 +303,6 @@ const BowlerPage = () => {
     setLinkFreeEntryFormData(newFormData);
   }
 
-  const confirmFreeEntryChanged = (event) => {
-    const newFormData = {...linkFreeEntryFormData}
-    newFormData.confirm = event.target.checked;
-    setLinkFreeEntryFormData(newFormData);
-  }
-
   const linkFreeEntrySuccess = (data) => {
     setLoadingParts({
       ...loadingParts,
@@ -965,6 +959,11 @@ const BowlerPage = () => {
               <small className={'d-block fst-italic'}>
                 {format(new Date(l.createdAt), 'Pp')}
               </small>
+              {l.notes && (
+                <small className={'d-block'}>
+                  {l.notes}
+                </small>
+              )}
             </ListGroup.Item>
           );
         })}
@@ -1076,7 +1075,7 @@ const BowlerPage = () => {
   const resendEmailsCard = (
     <Card className={'mb-3'}>
       <Card.Header as={'h6'} className={'fw-light'}>
-        Re-send Emails
+        Re-send Email
       </Card.Header>
       <ListGroup variant={'flush'}>
         <ListGroup.Item>
@@ -1085,15 +1084,6 @@ const BowlerPage = () => {
                        onClick={resendEmailButtonClicked}
           />
         </ListGroup.Item>
-        {bowler.ledgerEntries.filter(entry => entry.source === 'stripe').map((entry, i) => (
-          <ListGroup.Item key={i}>
-            <EmailButton emailType={'payment_receipt'}
-                         bowlerIdentifier={bowlerId}
-                         onClick={resendEmailButtonClicked}
-                         orderIdentifier={entry.identifier}
-                         orderCredit={entry.credit}/>
-          </ListGroup.Item>
-        ))}
       </ListGroup>
     </Card>
   );
