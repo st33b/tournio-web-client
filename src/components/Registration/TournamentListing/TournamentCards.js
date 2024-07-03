@@ -1,4 +1,3 @@
-import {format} from "date-fns";
 import {Card, Col, Row} from "react-bootstrap";
 import TournamentLogo from "../TournamentLogo/TournamentLogo";
 
@@ -36,7 +35,7 @@ const TournamentCards = ({tournaments}) => (
                         {t.location}
                       </Card.Text>
                       <Card.Text>
-                        {format(new Date(t.startDate), 'PPP')}
+                        {t.startingDate}
                       </Card.Text>
                       {t.state === 'closed' && (
                         <Card.Text className={`fst-italic`}>
