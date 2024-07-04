@@ -103,15 +103,16 @@ const TeamForm = ({tournament, team, onSubmit}) => {
 
         {useMixAndMatchShifts && (
           <MixAndMatchShiftForm shifts={tournament.shifts}
+
                                 onUpdate={shiftIdentifiersUpdated}/>
         )}
 
         <div className={`${classes.Submit}`}>
-          <button className={`btn btn-lg btn-success`}
+          <button className={`btn btn-lg btn-primary`}
                   onClick={formHandler}
                   disabled={!componentState.valid}
                   role={'button'}>
-            Go
+            {team ? 'Save' : 'Next: Bowlers'}
             <i className={'bi bi-arrow-right ps-2'} aria-hidden={true}/>
           </button>
         </div>
