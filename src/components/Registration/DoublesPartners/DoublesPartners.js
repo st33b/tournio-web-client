@@ -1,8 +1,10 @@
 import PartnerSelectionRow from "./PartnerSelectionRow";
 
 import classes from './DoublesPartners.module.scss';
+import {devConsoleLog} from "../../../utils";
 
 const DoublesPartners = ({team, partnersChosen}) => {
+  devConsoleLog("------------ component untouched in team restoration");
   if (!team) {
     return '';
   }

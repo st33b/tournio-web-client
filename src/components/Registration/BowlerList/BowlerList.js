@@ -6,10 +6,12 @@ import {
   getFilteredRowModel,
   useReactTable
 } from "@tanstack/react-table";
+import {devConsoleLog} from "../../../utils";
 
 // @tournament Used only to determine whether to display team name and/or doubles partner
 // @bowlers List of bowlers
 const BowlerList = ({bowlers = [], action = 'bowlerDetail'}) => {
+  devConsoleLog("------------ component untouched in team restoration");
   const columnHelper = createColumnHelper();
 
   const LIST_HIDE_THRESHOLD = 10;

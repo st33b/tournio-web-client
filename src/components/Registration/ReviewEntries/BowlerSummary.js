@@ -1,11 +1,13 @@
 import {Row} from "react-bootstrap";
 
 import classes from './BowlerSummary.module.scss';
+import {devConsoleLog} from "../../../utils";
 
 const BowlerSummary = ({bowler, tournament, partner = null}) => {
   if (!bowler) {
     return '';
   }
+  devConsoleLog("------------ component untouched in team restoration");
 
   const minimumLabels = {
     first_name: 'First Name',

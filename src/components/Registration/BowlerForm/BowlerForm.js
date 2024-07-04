@@ -6,12 +6,14 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 import classes from './BowlerForm.module.scss';
 
 import dynamic from 'next/dynamic';
+import {devConsoleLog} from "../../../utils";
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
   { ssr: false }
 );
 
 const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = [], nextButtonText, showShifts = false}) => {
+  devConsoleLog("------------ component untouched in team restoration");
   const DATE_OF_BIRTH_FIELDS = [
     'birth_month',
     'birth_day',

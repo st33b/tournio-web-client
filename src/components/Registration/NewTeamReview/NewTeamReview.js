@@ -1,10 +1,12 @@
 import classes from "./NewTeamReview.module.scss";
 import BowlerSummary from "../ReviewEntries/BowlerSummary";
+import {devConsoleLog} from "../../../utils";
 
 const NewTeamReview = ({team, bowler, tournament}) => {
   if (!tournament) {
     return '';
   }
+  devConsoleLog("------------ component untouched in team restoration");
 
   const shiftIdentifiers = team.shiftIdentifiers || [];
   const chosenShifts = tournament.shifts.length === 1

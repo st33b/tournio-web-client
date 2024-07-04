@@ -1,9 +1,10 @@
 import classes from './MixAndMatchShiftForm.module.scss';
 import React, {useEffect, useState} from "react";
-import {updateObject} from "../../../utils";
+import {devConsoleLog, updateObject} from "../../../utils";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 const MixAndMatchShiftForm = ({shifts, onUpdate}) => {
+  devConsoleLog("------------ component untouched in team restoration");
   const initialFormValues = {
     fields: {},
     shiftsByEvent: {},

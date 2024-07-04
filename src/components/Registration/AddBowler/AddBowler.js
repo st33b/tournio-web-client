@@ -1,7 +1,9 @@
 import classes from './AddBowler.module.scss';
 import Link from "next/link";
+import {devConsoleLog} from "../../../utils";
 
 const AddBowler = ({tournament, team, position}) => {
+  devConsoleLog("------------ component untouched in team restoration");
 
   return (
     <div className={classes.AddBowler}>

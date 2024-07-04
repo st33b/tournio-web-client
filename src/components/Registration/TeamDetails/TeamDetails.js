@@ -1,10 +1,12 @@
 import classes from './TeamDetails.module.scss';
 import Link from "next/link";
+import {devConsoleLog} from "../../../utils";
 
 const TeamDetails = ({tournament, team, successType, context}) => {
   if (!tournament || !team) {
     return '';
   }
+  devConsoleLog("------------ component untouched in team restoration");
 
   let successBanner = '';
   if (successType) {

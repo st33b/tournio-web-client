@@ -1,10 +1,12 @@
 import classes from './TeamListing.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {devConsoleLog} from "../../../utils";
 
 const TeamListing = ({teams, caption, includeShift, context}) => {
   if (!teams) {
     return '';
   }
+  devConsoleLog("------------ component untouched in team restoration");
 
   if (teams.length === 0) {
     return (

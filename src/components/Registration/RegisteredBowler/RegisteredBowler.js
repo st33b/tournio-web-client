@@ -1,8 +1,10 @@
 import classes from './RegisteredBowler.module.scss';
 import Link from "next/link";
 import {useRouter} from "next/router";
+import {devConsoleLog} from "../../../utils";
 
 const RegisteredBowler = ({bowler}) => {
+  devConsoleLog("------------ component untouched in team restoration");
 
   const router = useRouter();
   let href = `${router.asPath}/bowlers`;

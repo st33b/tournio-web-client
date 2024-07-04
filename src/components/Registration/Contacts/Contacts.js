@@ -1,8 +1,10 @@
 import {ListGroup} from "react-bootstrap";
 
 import classes from './Contacts.module.scss';
+import {devConsoleLog} from "../../../utils";
 
 const Contacts = ({tournament}) => {
+  devConsoleLog("------------ component untouched in team restoration");
   if (!tournament) {
     return '';
   }
