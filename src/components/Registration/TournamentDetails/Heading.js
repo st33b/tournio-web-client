@@ -11,11 +11,11 @@ const Heading = ({tournament}) => {
    * @hack To get dates to seem like they're behaving. But they're actually not.
    * @todo Use a JS library for date/time handling that can properly distinguish dates from timestamps
    */
-  let datesString = '';
+  let datesString;
   const start = new Date(`${tournament.startDate}T12:00:00-04:00`);
-  if (tournament.startDate === tournament.endDate) {
+  if (tournament.startingDate === tournament.endingDate) {
     // it's one day
-    datesString = format(start, 'PPP');
+    datesString = tournament.startingDate;
   } else {
     const end = new Date(`${tournament.endDate}T12:00:00-04:00`);
     const startMonth = format(start, 'LLLL');
