@@ -1,9 +1,11 @@
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
+import {devConsoleLog} from "../../../utils";
 
 // NOTE: This file is no longer used. I'm keeping it around to preserve the automatic
 // assignment function.
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   return '';
 
   // When a doubles partner is clicked, what needs to happen:

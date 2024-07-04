@@ -11,6 +11,7 @@ import PositionChooser from "../../../components/common/formElements/PositionCho
 import TournamentHeader from "../../../components/ui/TournamentHeader";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
   const {identifier, edit} = router.query;

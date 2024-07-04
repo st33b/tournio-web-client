@@ -6,12 +6,13 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {
   soloBowlerInfoAdded
 } from "../../../store/actions/registrationActions";
-import {useTheTournament} from "../../../utils";
+import {devConsoleLog, useTheTournament} from "../../../utils";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import TournamentHeader from "../../../components/ui/TournamentHeader";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
   const {identifier} = router.query;

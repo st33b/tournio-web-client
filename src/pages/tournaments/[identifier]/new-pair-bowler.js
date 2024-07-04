@@ -8,8 +8,10 @@ import ProgressIndicator from "../../../components/Registration/ProgressIndicato
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newPairBowlerAdded} from "../../../store/actions/registrationActions";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
+import {devConsoleLog} from "../../../utils";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
 

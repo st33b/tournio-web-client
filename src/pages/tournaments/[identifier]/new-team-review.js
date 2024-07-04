@@ -2,7 +2,7 @@ import {useRouter} from "next/router";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {submitNewTeamWithPlaceholders, useTheTournament} from "../../../utils";
+import {devConsoleLog, submitNewTeamWithPlaceholders, useTheTournament} from "../../../utils";
 import {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import NewTeamReview from "../../../components/Registration/NewTeamReview/NewTeamReview";
@@ -11,6 +11,7 @@ import {newTeamEntryCompleted} from "../../../store/actions/registrationActions"
 import TournamentHeader from "../../../components/ui/TournamentHeader";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
   const {identifier} = router.query;

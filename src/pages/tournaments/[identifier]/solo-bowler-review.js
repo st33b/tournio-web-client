@@ -4,15 +4,15 @@ import {useRouter} from "next/router";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {soloBowlerRegistrationCompleted} from "../../../store/actions/registrationActions";
-import {submitSoloRegistration, useTheTournament} from "../../../utils";
+import {devConsoleLog, submitSoloRegistration, useTheTournament} from "../../../utils";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 import Link from "next/link";
 import TournamentHeader from "../../../components/ui/TournamentHeader";
 import BowlerSummary from "../../../components/Registration/ReviewEntries/BowlerSummary";
-import ErrorBoundary from "../../../components/common/ErrorBoundary";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
   const {identifier} = router.query;

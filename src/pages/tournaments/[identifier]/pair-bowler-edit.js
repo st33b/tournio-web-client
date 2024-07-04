@@ -7,8 +7,10 @@ import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newPairBowlerUpdated} from "../../../store/actions/registrationActions";
 import {useEffect, useState} from "react";
+import {devConsoleLog} from "../../../utils";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
   const { index } = router.query;

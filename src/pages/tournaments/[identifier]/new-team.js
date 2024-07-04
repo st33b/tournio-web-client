@@ -4,12 +4,13 @@ import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamRegistrationInitiated, newTeamRegistrationUpdated} from "../../../store/actions/registrationActions";
 import {useEffect, useState} from "react";
-import {useTheTournament} from "../../../utils";
+import {devConsoleLog, useTheTournament} from "../../../utils";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import TournamentHeader from "../../../components/ui/TournamentHeader";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const ERRORS = [
     '',
     'Please name your team!',

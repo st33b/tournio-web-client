@@ -1,6 +1,6 @@
 import {useRouter} from "next/router";
 
-import {useBowlers, useTheTournament} from "../../../utils";
+import {devConsoleLog, useBowlers, useTheTournament} from "../../../utils";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
@@ -8,6 +8,7 @@ import BowlerList from "../../../components/Registration/BowlerList/BowlerList";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const router = useRouter();
   const { identifier } = router.query;
 

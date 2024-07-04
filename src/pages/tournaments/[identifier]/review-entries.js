@@ -7,11 +7,12 @@ import Summary from "../../../components/Registration/Summary/Summary";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import ReviewEntries from "../../../components/Registration/ReviewEntries/ReviewEntries";
-import {submitNewTeamRegistration, useClientReady, useTournament} from "../../../utils";
+import {devConsoleLog, submitNewTeamRegistration, useClientReady, useTournament} from "../../../utils";
 import {newTeamEntryCompleted} from "../../../store/actions/registrationActions";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
   const {identifier} = router.query;
