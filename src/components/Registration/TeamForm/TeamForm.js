@@ -6,7 +6,8 @@ import InclusiveShiftForm from "../InclusiveShiftForm/InclusiveShiftForm";
 import MixAndMatchShiftForm from "../MixAndMatchShiftForm/MixAndMatchShiftForm";
 import {devConsoleLog} from "../../../utils";
 
-const TeamForm = ({tournament, onSubmit}) => {
+const TeamForm = ({tournament, team, onSubmit}) => {
+  devConsoleLog("------------ component untouched in team restoration");
   const initialFormValues = {
     fields: {
       name: '',
@@ -21,12 +22,19 @@ const TeamForm = ({tournament, onSubmit}) => {
       return;
     }
     const tournamentType = tournament.config['tournament_type'] || 'igbo_standard';
-    if (tournamentType === 'igbo_standard') {
-      const newComponentState = {...componentState };
+    const newComponentState = {...componentState };
+
+    if (team) {
+      // we're editing the team, so let's populate the form with what we've been passed as a prop
+      newComponentState.fields.name = team.name;
+      newComponentState.fields.shiftIdentifiers = [...team.shiftIdentifiers];
+      newComponentState.valid = true;
+    } else if (tournamentType === 'igbo_standard') {
       newComponentState.fields.shiftIdentifiers = [tournament.shifts[0].identifier];
-      setComponentState(newComponentState);
     }
-  }, [tournament]);
+
+    setComponentState(newComponentState);
+  }, [tournament, team]);
 
   const formHandler = (event) => {
     event.preventDefault();
@@ -82,7 +90,6 @@ const TeamForm = ({tournament, onSubmit}) => {
                  onChange={inputChanged}
                  aria-label={'Team Name'}
                  className={`form-control form-control-lg`}
-                 placeholder={'... name ...'}
           />
         </div>
 
@@ -90,6 +97,7 @@ const TeamForm = ({tournament, onSubmit}) => {
 
         {useInclusiveShifts && (
           <InclusiveShiftForm shifts={tournament.shifts}
+                              value={team ? team.shiftIdentifiers[0] : null}
                               onUpdate={shiftIdentifiersUpdated}/>
         )}
 

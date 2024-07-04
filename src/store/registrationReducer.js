@@ -2,11 +2,8 @@ import * as actionTypes from './actions/actionTypes';
 import {updateObject} from "../utils";
 
 const initialState = {
-  tournament: null,
   team: null,
   bowler: null,
-  bowlers: null,
-  partner: null,
 }
 
 export const registrationReducerInit = (initial = initialState) => initial;
@@ -15,16 +12,7 @@ export const registrationReducer = (state, action) => {
   switch (action.type) {
     case actionTypes.RESET:
       return registrationReducerInit();
-    case actionTypes.NEW_TEAM_REGISTRATION_INITIATED:
-      return updateObject(state, {
-        team: {
-          ...action.team,
-          bowler: {},
-        },
-      });
-    case actionTypes.NEW_TEAM_REGISTRATION_UPDATED:
-      // Same as the above, but don't reset the bowler data. We had to update
-      // the team info due to validation failure.
+    case actionTypes.NEW_TEAM_REGISTRATION_SAVED:
       return updateObject(state, {
         team: {
           ...action.team,
@@ -48,25 +36,6 @@ export const registrationReducer = (state, action) => {
       return updateObject(state, {
         team: action.team,
         bowler: null,
-      });
-    case actionTypes.NEW_PAIR_REGISTRATION_INITIATED:
-      return updateObject(state, {
-        bowlers: [],
-      });
-    case actionTypes.NEW_PAIR_BOWLER_INFO_ADDED:
-      const theBowler = {...action.bowler};
-      return updateObject(state, {
-        bowlers: state.bowlers.concat(theBowler),
-      });
-    case actionTypes.NEW_PAIR_BOWLER_UPDATED:
-      const newBowlers = [...state.bowlers];
-      newBowlers[action.index] = {...state.bowlers[action.index], ...action.bowler};
-      return updateObject(state, {
-        bowlers: newBowlers,
-      });
-    case actionTypes.NEW_PAIR_REGISTRATION_COMPLETED:
-      return updateObject(state, {
-        bowlers: null,
       });
     case actionTypes.NEW_SOLO_REGISTRATION_INITIATED:
       return updateObject(state, {

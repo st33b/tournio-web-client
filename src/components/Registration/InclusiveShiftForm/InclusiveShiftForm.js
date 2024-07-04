@@ -1,38 +1,31 @@
 import classes from './InclusiveShiftForm.module.scss';
 import React, {useEffect, useState} from "react";
 
-const InclusiveShiftForm = ({shifts, onUpdate}) => {
-  const initialFormValues = {
-    fields: {
-      preferredShift: '',
-    },
+const InclusiveShiftForm = ({shifts, value, onUpdate}) => {
+  const initialState = {
+    preferredShift: '',
   }
-  const [componentState, setComponentState] = useState(initialFormValues);
+  const [componentState, setComponentState] = useState(initialState);
 
   useEffect(() => {
     if (!shifts) {
       return;
     }
-    // Default the form's preferredShift value to the first shift
+    // Default the form's preferredShift value to the first shift, unless one was passed in
     const newFormValues = {...componentState };
+
     const availableShifts = shifts.filter(({is_full}) => !is_full)
-    newFormValues.fields.preferredShift = availableShifts[0].identifier;
+    newFormValues.preferredShift = value ? value : availableShifts[0].identifier;
     setComponentState(newFormValues);
-    onUpdate([newFormValues.fields.preferredShift]);
-  }, [shifts]);
+    onUpdate([newFormValues.preferredShift]);
+  }, [shifts, value]);
 
   const inputChanged = (element) => {
     const newFormValues = {...componentState };
-    switch (element.target.name) {
-      case 'preferredShift':
-        newFormValues.fields[element.target.name] = element.target.value;
-        break;
-      default:
-        return;
-    }
+    newFormValues.preferredShift = element.target.value;
     setComponentState(newFormValues);
 
-    onUpdate([newFormValues.fields.preferredShift]);
+    onUpdate([newFormValues.preferredShift]);
   }
 
   return (
@@ -43,7 +36,7 @@ const InclusiveShiftForm = ({shifts, onUpdate}) => {
         </label>
         <div className={`d-flex justify-content-evenly justify-content-lg-center`}>
           {shifts.map((shift, i) => {
-            const selected = componentState.fields.preferredShift === shift.identifier;
+            const selected = componentState.preferredShift === shift.identifier;
             return (
               <div key={`preferredShiftInput${i}`}
                    className={`mx-lg-4 ${selected ? 'selected-radio-container' : ''}`}>
