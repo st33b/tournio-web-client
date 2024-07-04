@@ -103,7 +103,7 @@ const TeamForm = ({tournament, team, onSubmit}) => {
 
         {useMixAndMatchShifts && (
           <MixAndMatchShiftForm shifts={tournament.shifts}
-
+                                values={team ? team.shiftIdentifiers : null}
                                 onUpdate={shiftIdentifiersUpdated}/>
         )}
 
