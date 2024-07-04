@@ -1,7 +1,7 @@
 import {useRegistrationContext} from "../../../../../store/RegistrationContext";
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
-import {useTeam, useTheTournament} from "../../../../../utils";
+import {devConsoleLog, useTeam, useTheTournament} from "../../../../../utils";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import RegistrationLayout from "../../../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import TournamentHeader from "../../../../../components/ui/TournamentHeader";
@@ -12,6 +12,7 @@ import {existingTeamBowlerInfoAdded} from "../../../../../store/actions/registra
 import Link from "next/link";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
   const {identifier, teamIdentifier, position = 1, edit} = router.query;

@@ -1,9 +1,10 @@
 import {useRouter} from "next/router";
 import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
-import {useTeam} from "../../utils";
+import {devConsoleLog, useTeam} from "../../utils";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const router = useRouter();
   const {identifier} = router.query;
 

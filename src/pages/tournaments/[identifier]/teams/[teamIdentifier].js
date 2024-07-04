@@ -4,11 +4,12 @@ import {useEffect, useState} from "react";
 import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
 import TournamentHeader from "../../../../components/ui/TournamentHeader";
 import UrlShare from "../../../../components/ui/UrlShare/UrlShare";
-import {updateObject, useTeam, useTheTournament} from "../../../../utils";
+import {devConsoleLog, updateObject, useTeam, useTheTournament} from "../../../../utils";
 import ErrorAlert from "../../../../components/common/ErrorAlert";
 import Link from "next/link";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const router = useRouter();
   const {identifier, teamIdentifier} = router.query;
 

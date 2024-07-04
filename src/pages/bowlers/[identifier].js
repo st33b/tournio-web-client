@@ -16,6 +16,7 @@ import {commerceDetailsRetrieved, signupableStatusUpdated} from "../../store/act
 import axios from "axios";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const router = useRouter();
   const {identifier, success, error} = router.query;
   const {commerce, dispatch} = useCommerceContext();
