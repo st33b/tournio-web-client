@@ -1,6 +1,12 @@
 import * as actionTypes from './actionTypes';
 import {devConsoleLog} from "../../utils";
 
+export const resetRegistration = () => {
+  return {
+    type: actionTypes.RESET,
+  };
+}
+
 export const newTeamRegistrationSaved = (team) => {
   return {
     type: actionTypes.NEW_TEAM_REGISTRATION_SAVED,

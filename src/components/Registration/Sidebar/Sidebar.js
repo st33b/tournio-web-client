@@ -1,10 +1,34 @@
+
+import {useRegistrationContext} from "../../../store/RegistrationContext";
+import {resetRegistration} from "../../../store/actions/registrationActions";
+import {useRouter} from "next/router";
+
 const Sidebar = ({
                    shiftPreferences = [],
                    bowlers = [],
                  }) => {
+  const {dispatch} = useRegistrationContext();
+  const router = useRouter();
+  const {identifier} = router.query
+
+  const resetClicked = (event) => {
+    event.preventDefault();
+    if (confirm('This will clear out all entered data, are you sure?')) {
+      dispatch(resetRegistration());
+      router.push(`/tournaments/${identifier}`);
+    }
+  }
 
   return (
     <div className={''}>
+      <p className={'text-center'}>
+        <a href={'#'}
+           onClick={resetClicked}>
+          Start over
+          <span className={'bi bi-arrow-counterclockwise ps-2'}></span>
+        </a>
+      </p>
+
       {shiftPreferences.length > 1 && (
         <div>
           <p>Shift Preferences:</p>
