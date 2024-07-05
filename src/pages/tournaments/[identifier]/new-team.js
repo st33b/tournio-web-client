@@ -1,4 +1,4 @@
-import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
+import InformationLayout from "../../../components/Layout/InformationLayout/InformationLayout";
 import TeamForm from "../../../components/Registration/TeamForm/TeamForm";
 import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
@@ -109,9 +109,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout>
+    <InformationLayout>
       {page}
-    </RegistrationLayout>
+    </InformationLayout>
   );
 }
 

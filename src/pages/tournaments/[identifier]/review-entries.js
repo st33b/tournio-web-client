@@ -2,7 +2,7 @@ import {useState} from "react";
 import {useRouter} from "next/router";
 import {Alert, Col, Row} from "react-bootstrap";
 
-import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
+import InformationLayout from "../../../components/Layout/InformationLayout/InformationLayout";
 import Summary from "../../../components/Registration/Summary/Summary";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
@@ -99,9 +99,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout>
+    <InformationLayout>
       {page}
-    </RegistrationLayout>
+    </InformationLayout>
   );
 }
 

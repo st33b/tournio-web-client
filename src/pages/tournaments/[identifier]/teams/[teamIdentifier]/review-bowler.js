@@ -1,6 +1,6 @@
 import {useRouter} from "next/router";
 
-import RegistrationLayout from "../../../../../components/Layout/RegistrationLayout/RegistrationLayout";
+import InformationLayout from "../../../../../components/Layout/InformationLayout/InformationLayout";
 import {useRegistrationContext} from "../../../../../store/RegistrationContext";
 import {useState} from "react";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
@@ -148,9 +148,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout>
+    <InformationLayout>
       {page}
-    </RegistrationLayout>
+    </InformationLayout>
   );
 }
 

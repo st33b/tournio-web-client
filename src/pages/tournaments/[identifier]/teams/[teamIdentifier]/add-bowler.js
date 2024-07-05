@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import {devConsoleLog, useTeam, useTheTournament} from "../../../../../utils";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
-import RegistrationLayout from "../../../../../components/Layout/RegistrationLayout/RegistrationLayout";
+import InformationLayout from "../../../../../components/Layout/InformationLayout/InformationLayout";
 import TournamentHeader from "../../../../../components/ui/TournamentHeader";
 import PositionChooser from "../../../../../components/common/formElements/PositionChooser/PositionChooser";
 import BowlerForm from "../../../../../components/Registration/BowlerForm/BowlerForm";
@@ -122,9 +122,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout>
+    <InformationLayout>
       {page}
-    </RegistrationLayout>
+    </InformationLayout>
   );
 }
 

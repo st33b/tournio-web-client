@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 import {useRouter} from "next/router";
 
-import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
+import InformationLayout from "../../../components/Layout/InformationLayout/InformationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {
   soloBowlerInfoAdded
@@ -71,9 +71,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout>
+    <InformationLayout>
       {page}
-    </RegistrationLayout>
+    </InformationLayout>
   );
 }
 

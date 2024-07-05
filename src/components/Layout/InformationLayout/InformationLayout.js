@@ -3,11 +3,11 @@ import {Container} from "react-bootstrap";
 import SiteHeader from './SiteHeader';
 import Navigation from './Navigation';
 import Footer from './Footer';
-import classes from './RegistrationLayout.module.scss';
+import classes from './InformationLayout.module.scss';
 import MaintenanceAnnouncement from "../../common/MaintenanceAnnouncement/MaintenanceAnnouncement";
 import {RegistrationContextProvider} from "../../../store/RegistrationContext";
 
-const RegistrationLayout = ({children, showCart}) => {
+const InformationLayout = ({children, showCart}) => {
   return (
     <RegistrationContextProvider>
       <div className={classes.RegistrationLayout}>
@@ -35,4 +35,4 @@ const RegistrationLayout = ({children, showCart}) => {
   )
 }
 
-export default RegistrationLayout;
+export default InformationLayout;

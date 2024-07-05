@@ -1,7 +1,7 @@
 import {useRouter} from "next/router";
 
 import {devConsoleLog, useBowlers, useTheTournament} from "../../../utils";
-import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
+import InformationLayout from "../../../components/Layout/InformationLayout/InformationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import BowlerList from "../../../components/Registration/BowlerList/BowlerList";
@@ -69,9 +69,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout>
+    <InformationLayout>
       {page}
-    </RegistrationLayout>
+    </InformationLayout>
   );
 }
 

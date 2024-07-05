@@ -1,4 +1,4 @@
-import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
+import InformationLayout from "../../../components/Layout/InformationLayout/InformationLayout";
 import {devConsoleLog} from "../../../utils";
 
 // NOTE: This file is no longer used. I'm keeping it around to preserve the automatic
@@ -49,9 +49,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout>
+    <InformationLayout>
       {page}
-    </RegistrationLayout>
+    </InformationLayout>
   );
 }
 

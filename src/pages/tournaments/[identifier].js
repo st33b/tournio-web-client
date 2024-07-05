@@ -2,7 +2,7 @@ import {useRouter} from "next/router";
 import {Row, Col} from "react-bootstrap";
 
 import {useTheTournament} from "../../utils";
-import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
+import InformationLayout from "../../components/Layout/InformationLayout/InformationLayout";
 import TournamentLogo from "../../components/Registration/TournamentLogo/TournamentLogo";
 import Contacts from "../../components/Registration/Contacts/Contacts";
 
@@ -90,9 +90,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout>
+    <InformationLayout>
       {page}
-    </RegistrationLayout>
+    </InformationLayout>
   );
 }
 
