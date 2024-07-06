@@ -1,9 +1,11 @@
-
+import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {resetRegistration} from "../../../store/actions/registrationActions";
-import {useRouter} from "next/router";
+
+import classes from './Sidebar.module.scss';
 
 const Sidebar = ({
+                   teamName,
                    shiftPreferences = [],
                    bowlers = [],
                  }) => {
@@ -14,13 +16,13 @@ const Sidebar = ({
   const resetClicked = (event) => {
     event.preventDefault();
     if (confirm('This will clear out all entered data, are you sure?')) {
-      dispatch(resetRegistration());
       router.push(`/tournaments/${identifier}`);
+      dispatch(resetRegistration());
     }
   }
 
   return (
-    <div className={''}>
+    <div className={classes.Sidebar}>
       <p className={'text-center'}>
         <a href={'#'}
            onClick={resetClicked}>
@@ -28,6 +30,17 @@ const Sidebar = ({
           <span className={'bi bi-arrow-counterclockwise ps-2'}></span>
         </a>
       </p>
+
+      {teamName && (
+        <p>
+          <span className={classes.Label}>
+            Team Name:
+          </span>
+          <span className={classes.Value}>
+            {teamName}
+          </span>
+        </p>
+      )}
 
       {shiftPreferences.length > 1 && (
         <div>

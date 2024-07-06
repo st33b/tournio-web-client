@@ -1,19 +1,16 @@
 import {useRouter} from "next/router";
 
-import InformationLayout from "../../../components/Layout/InformationLayout/InformationLayout";
+import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamBowlerInfoAdded} from "../../../store/actions/registrationActions";
 import {devConsoleLog, useTheTournament} from "../../../utils";
 import {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import PositionChooser from "../../../components/common/formElements/PositionChooser/PositionChooser";
-import TournamentHeader from "../../../components/ui/TournamentHeader";
 import Link from "next/link";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import Sidebar from "../../../components/Registration/Sidebar/Sidebar";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
-import TeamForm from "../../../components/Registration/TeamForm/TeamForm";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
@@ -46,17 +43,12 @@ const Page = () => {
     );
   }
 
-  // const newBowlerAdded = (bowlerInfo) => {
-  //   // put the chosen position into the bowler info
-  //   const bowlerData = {
-  //     ...bowlerInfo,
-  //     position: chosenPosition,
-  //   }
-  //
-  //   dispatch(newTeamBowlerInfoAdded(bowlerData));
-  //
-  //   router.push(`/tournaments/${identifier}/new-team-review`);
-  // }
+  const newBowlerAdded = (bowlerInfo) => {
+    devConsoleLog("Want to save. Then what?");
+    // dispatch(newTeamBowlerInfoAdded(bowlerData));
+    //
+    // router.push(`/tournaments/${identifier}/new-team-review`);
+  }
 
   // const positionChosen = (position) => {
   //   choosePosition(position);
@@ -65,6 +57,7 @@ const Page = () => {
   // const previousBowlerData = edit ? registration.bowler : null;
 
   const titleText = edit ? 'Make Changes' : 'Add Bowler Details';
+  const buttonText = edit ? 'Save Changes' : 'Next';
 
   return (
     // <div className={'row'}>
@@ -100,9 +93,7 @@ const Page = () => {
     <>
       <div className={'row d-md-none'}>
         <div className={'col-5'}>
-          <Link href={`/tournaments/${identifier}`}>
-            <TournamentLogo url={tournament.imageUrl} additionalClasses={'mb-2'}/>
-          </Link>
+          <TournamentLogo url={tournament.imageUrl} additionalClasses={'mb-2'}/>
         </div>
         <p className={'col display-4'}>
           {titleText}
@@ -122,14 +113,17 @@ const Page = () => {
           </div>
 
           <Sidebar tournament={tournament}
+                   teamName={registration.team.name}
                    isTeam={true}/>
         </div>
 
         <div className={'col-12 col-md-8'}>
-          <ProgressIndicator active={'team'}/>
-          <TeamForm tournament={tournament}
-                    team={registration.team}
-                    onSubmit={teamFormCompleted} />
+          <ProgressIndicator completed={['team']} active={'bowlers'}/>
+          <BowlerForm tournament={tournament}
+                      showShifts={false}
+                      bowlerInfoSaved={newBowlerAdded}
+                      bowlerData={null} // Update this for the editing case
+                      nextButtonText={buttonText}/>
         </div>
       </div>
     </>
@@ -138,9 +132,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <InformationLayout>
+    <RegistrationLayout>
       {page}
-    </InformationLayout>
+    </RegistrationLayout>
   );
 }
 

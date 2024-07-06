@@ -24,6 +24,10 @@ const ProgressIndicator = ({
         const containerClasses = [classes.Step];
         if (active === step) {
           containerClasses.push(classes.Active);
+        } else if (completed.includes(step)) {
+          containerClasses.push(classes.Completed);
+        } else {
+          containerClasses.push(classes.NotYet);
         }
         return (
           <Col className={containerClasses.join(' ')} key={step}>

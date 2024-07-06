@@ -9,14 +9,22 @@
     @media (min-device-width: 576px) {
       font-size: 120%
     }
-
-    background-color: var(--tournio-secondary-bg);
-    color: var(--tournio-secondary-text-emphasis);
+    border-left: 1px solid var(--tournio-secondary-bg);
+  }
+  .Step:first-child {
+    border-left: none;
   }
   .Active {
     background-color: var(--tournio-primary-bg-subtle);
     p {
       font-weight: bold;
     }
+  }
+  .Completed {
+    background-color: var(--tournio-secondary-bg);
+    color: var(--tournio-secondary-text);
+  }
+  .NotYet {
+    color: var(--tournio-secondary-text-emphasis);
   }
 }
