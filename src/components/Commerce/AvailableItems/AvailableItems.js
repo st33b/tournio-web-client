@@ -200,19 +200,6 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
               </div>
             )}
 
-            {productItems.length > 0 && (
-              <div className={``}>
-                <h5 className={``}>
-                  Memorabilia
-                </h5>
-                {productItems.map((item) => (
-                  <Item key={item.identifier}
-                        item={item}
-                        added={itemAddedToCart}/>
-                ))}
-              </div>
-            )}
-
             {banquetItems.length > 0 && (
               <div className={``}>
                 <h5 className={``}>
@@ -238,6 +225,19 @@ const AvailableItems = ({itemAddedToCart, signupChanged}) => {
                         added={itemAddedToCart}/>
                 ))}
 
+              </div>
+            )}
+
+            {productItems.length > 0 && (
+              <div className={``}>
+                <h5 className={``}>
+                  Other Stuff
+                </h5>
+                {productItems.map((item) => (
+                  <Item key={item.identifier}
+                        item={item}
+                        added={itemAddedToCart}/>
+                ))}
               </div>
             )}
           </Col>
