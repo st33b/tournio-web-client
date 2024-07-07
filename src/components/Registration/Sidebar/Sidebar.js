@@ -44,10 +44,12 @@ const Sidebar = ({
 
       {shiftPreferences.length > 1 && (
         <div>
-          <p>Shift Preferences:</p>
+          <span className={classes.Label}>
+            Shift Preferences:
+          </span>
           <ul>
             {shiftPreferences.map(shift => (
-              <li key={shift}>
+              <li key={shift} className={classes.Value}>
                 {shift}
               </li>
             ))}
@@ -56,16 +58,30 @@ const Sidebar = ({
       )}
 
       {shiftPreferences.length === 1 && (
-        <p>Shift Preference: {shiftPreferences[0]}</p>
+        <p>
+          <span className={classes.Label}>
+            Preferred Shift:
+          </span>
+          <span className={classes.Value}>
+            {shiftPreferences[0]}
+          </span>
+        </p>
       )}
 
       {bowlers.length > 0 && (
         <div>
-          <p>Bowlers:</p>
+          <span className={classes.Label}>
+            Bowlers:
+          </span>
           <ul>
             {bowlers.map(bowler => (
               <li
-                key={bowler.position}>{bowler.position}. {bowler.preferredName ? bowler.preferredName : bowler.firstName} {bowler.lastName}</li>
+                key={bowler.position}
+                className={classes.Value}>
+                {bowler.position}.{' '}
+                {bowler.preferredName ? bowler.preferredName : bowler.firstName}{' '}
+                {bowler.lastName}
+              </li>
             ))}
           </ul>
         </div>

@@ -59,6 +59,15 @@ const Page = () => {
   const titleText = edit ? 'Make Changes' : 'Add Bowler Details';
   const buttonText = edit ? 'Save Changes' : 'Next';
 
+  devConsoleLog("Shift identifiers:", registration.team.shiftIdentifiers);
+  devConsoleLog("Shifts:", tournament.shifts);
+  let preferredShiftNames = [];
+  if (registration.team.shiftIdentifiers) {
+    preferredShiftNames = registration.team.shiftIdentifiers.map(identifier =>
+      tournament.shifts.find(shift => shift.identifier === identifier).name
+    );
+  }
+
   return (
     // <div className={'row'}>
     //   <div className={'col-12'}>
@@ -91,11 +100,11 @@ const Page = () => {
 
 
     <>
-      <div className={'row d-md-none'}>
+      <div className={'row d-flex d-md-none'}>
         <div className={'col-5'}>
           <TournamentLogo url={tournament.imageUrl} additionalClasses={'mb-2'}/>
         </div>
-        <p className={'col display-4'}>
+        <p className={'col-7 display-4 align-self-center'}>
           {titleText}
         </p>
       </div>
@@ -114,6 +123,7 @@ const Page = () => {
 
           <Sidebar tournament={tournament}
                    teamName={registration.team.name}
+                   shiftPreferences={preferredShiftNames}
                    isTeam={true}/>
         </div>
 

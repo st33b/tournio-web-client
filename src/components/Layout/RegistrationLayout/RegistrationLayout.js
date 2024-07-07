@@ -13,20 +13,20 @@ const RegistrationLayout = ({children}) => {
       <div className={classes.RegistrationLayout}>
         <SiteHeader/>
         <header>
-          <Container fluid={'md'}>
+          <Container fluid={'lg'}>
             <Navigation/>
           </Container>
         </header>
 
         <main>
-          <Container fluid={'md'}>
+          <Container fluid={'lg'}>
             <MaintenanceAnnouncement/>
             {children}
           </Container>
         </main>
 
         <footer>
-          <Container fluid={'md'}>
+          <Container fluid={'lg'}>
             <Footer/>
           </Container>
         </footer>
