@@ -59,8 +59,6 @@ const Page = () => {
   const titleText = edit ? 'Make Changes' : 'Add Bowler Details';
   const buttonText = edit ? 'Save Changes' : 'Next';
 
-  devConsoleLog("Shift identifiers:", registration.team.shiftIdentifiers);
-  devConsoleLog("Shifts:", tournament.shifts);
   let preferredShiftNames = [];
   if (registration.team.shiftIdentifiers) {
     preferredShiftNames = registration.team.shiftIdentifiers.map(identifier =>
@@ -130,7 +128,7 @@ const Page = () => {
         <div className={'col-12 col-md-8'}>
           <ProgressIndicator completed={['team']} active={'bowlers'}/>
           <BowlerForm tournament={tournament}
-                      showShifts={false}
+                      takenPositions={[]}
                       bowlerInfoSaved={newBowlerAdded}
                       bowlerData={null} // Update this for the editing case
                       nextButtonText={buttonText}/>

@@ -25,10 +25,7 @@
 
   .LimitedSetRadio {
     div {
-      margin: 1rem 3rem;
-      @media (min-width: 768px) {
-        margin: 0.5rem 0;
-      }
+      margin-right: 1.5rem;
 
       input {
         font-size: 110%;

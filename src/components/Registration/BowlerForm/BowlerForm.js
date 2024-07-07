@@ -12,8 +12,7 @@ const AddressAutofill = dynamic(
   { ssr: false }
 );
 
-const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners = [], nextButtonText, showShifts = false}) => {
-  devConsoleLog("------------ component untouched in team restoration");
+const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, nextButtonText, solo = false, takenPositions = []}) => {
   const DATE_OF_BIRTH_FIELDS = [
     'birth_month',
     'birth_day',
@@ -90,7 +89,25 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     },
   }
 
-  // These are configurable by the tournament
+  // Fields that may or may not be displayed depending on context, e.g.,
+  // position is used on team registrations, but not on solo, nor on admin
+  // update of bowler details
+  const otherFormFields = {
+    position: {
+      elementType: 'radio',
+      elementConfig: {
+        choices: [], // Filled by useEffect
+      },
+      label: 'Position',
+      validityErrors: [
+        'valueMissing',
+      ],
+      valid: true,
+      touched: false,
+    }
+  }
+
+  // These are configurable by the tournament (except for position, which we don't include for solo bowlers)
   const potentialFormFields = {
     usbc_id: {
       elementType: 'input',
@@ -424,6 +441,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
   // Because this may be used by registering bowlers or by an admin adding a bowler
   const [buttonText, setButtonText] = useState(nextButtonText ? nextButtonText : 'Review');
 
+  // get the configs for the relevant additional questions
   const additionalFormFields = () => {
     const formFields = {};
 
@@ -445,39 +463,40 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
   const getInitialFormData = (listOfFieldsToUse) => {
     const formData = {
       formFields: {
+        ...otherFormFields,
         ...minimumFormFields, // our minimum
-        ...potentialFormFields, // plus any that the tournament enables
-        ...additionalFormFields(), // plus any extras
+        ...potentialFormFields, // plus any that the tournament enables via toggle
+        ...additionalFormFields(), // plus any additional questions
       },
       valid: false,
       touched: false,
     }
 
     // add doubles partner if there are any available (and if the tournament has a doubles event)
-    const hasDoublesEvent = tournament.events.some(({rosterType}) => rosterType === 'double');
-    if (hasDoublesEvent && availablePartners.length > 0) {
-      const partnerChoices = availablePartners.map(partner => ({
-        value: partner.identifier,
-        label: partner.full_name,
-      }));
-      formData.formFields.doubles_partner = {
-        elementType: 'radio-limited-set',
-        elementConfig: {
-          choices: [
-            {
-              value: '',
-              label: 'unspecified',
-
-            },
-          ].concat(partnerChoices),
-          value: '',
-        },
-        label: 'Doubles Partner',
-        valid: true,
-        touched: false,
-      }
-      listOfFieldsToUse.add('doubles_partner');
-    }
+    // const hasDoublesEvent = tournament.events.some(({rosterType}) => rosterType === 'double');
+    // if (hasDoublesEvent && availablePartners.length > 0) {
+    //   const partnerChoices = availablePartners.map(partner => ({
+    //     value: partner.identifier,
+    //     label: partner.full_name,
+    //   }));
+    //   formData.formFields.doubles_partner = {
+    //     elementType: 'radio-limited-set',
+    //     elementConfig: {
+    //       choices: [
+    //         {
+    //           value: '',
+    //           label: 'unspecified',
+    //
+    //         },
+    //       ].concat(partnerChoices),
+    //       value: '',
+    //     },
+    //     label: 'Doubles Partner',
+    //     valid: true,
+    //     touched: false,
+    //   }
+    //   listOfFieldsToUse.add('doubles_partner');
+    // }
 
     setFieldsToUse(listOfFieldsToUse);
 
@@ -521,16 +540,45 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
 
   // set up the form to reflect any optional fields and additional questions,
   // plus shifts on a non-standard tournament, if applicable
+  // also: add position if we're in the middle of team registration
   useEffect(() => {
     if (!tournament) {
       return;
     }
 
     const optionalFields = tournament.config.bowler_form_fields.split(' ');
+    const updatedFields = new Set();
 
-    const updatedFields = new Set(fieldsToUse);
+    if (!solo) {
+      // put team position at the front
+      updatedFields.add('position');
+
+      // populate the position options, ensuring we do so only once.
+      if (otherFormFields.position.elementConfig.choices.length === 0) {
+        otherFormFields.position.elementConfig.value = 0;
+
+        // populate its options, and set the value to the first available choice
+        for (let i = 0; i < tournament.config.team_size; i++) {
+          const currentPosition = i + 1;
+          const positionIsTaken = takenPositions.includes(currentPosition);
+          const choice = {
+            value: currentPosition,
+            label: currentPosition,
+            disabled: positionIsTaken,
+          }
+          otherFormFields.position.elementConfig.choices.push(choice);
+          if (!positionIsTaken && otherFormFields.position.elementConfig.value === 0) {
+            otherFormFields.position.elementConfig.value = currentPosition;
+          }
+        }
+      }
+    }
+
+    fieldsToUse.forEach(field => updatedFields.add(field));
+
     optionalFields.concat(tournament.additionalQuestions.map(aq => aq.name)).forEach(field => updatedFields.add(field));
 
+    const showShifts = solo && tournament.shifts.length > 1;
     if (showShifts) {
       updatedFields.add('shift_identifier');
     }
@@ -538,7 +586,7 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, availablePartners 
     const initialFormData = getInitialFormData(updatedFields);
 
     // Make sure we populate the shift options only once.
-    if (showShifts && initialFormData.formFields.shift_identifier.elementConfig.options.length === 0) {
+    if (solo && initialFormData.formFields.shift_identifier.elementConfig.options.length === 0) {
       const firstAvailableShift = tournament.shifts.find(({isFull}) => !isFull);
       initialFormData.formFields.shift_identifier.elementConfig.value = firstAvailableShift.identifier;
       tournament.shifts.forEach((shift) => {

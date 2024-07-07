@@ -172,6 +172,7 @@ const Input = (props) => {
                  className={'form-check-input'}
                  required={required}
                  value={choice.value}
+                 disabled={choice.disabled}
                  onChange={props.changed}
                  checked={props.elementConfig.value === choice.value}
                  id={`${props.identifier}_${choice.value}`}
