@@ -749,7 +749,9 @@ const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, nextButtonText, so
         }
         if (bowlerForm.formFields[inputName].elementType === 'checkbox') {
           updatedFormElement.elementConfig.value = event.target.checked ? 'yes' : 'no';
-        }  else {
+        } else if (inputName === 'position') {
+          updatedFormElement.elementConfig.value = parseInt(event.target.value);
+        } else {
           updatedFormElement.elementConfig.value = event.target.value;
         }
         break;
