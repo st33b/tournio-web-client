@@ -8,6 +8,7 @@ const Sidebar = ({
                    teamName,
                    shiftPreferences = [],
                    bowlers = [],
+                   bowler = null
                  }) => {
   const {dispatch} = useRegistrationContext();
   const router = useRouter();
@@ -38,6 +39,17 @@ const Sidebar = ({
           </span>
           <span className={classes.Value}>
             {teamName}
+          </span>
+        </p>
+      )}
+
+      {bowler && (
+        <p>
+          <span className={classes.Label}>
+            Bowler:
+          </span>
+          <span className={classes.Value}>
+            {bowler.first_name} {bowler.nickname ? `"${bowler.nickname}"` : ''} {bowler.last_name}
           </span>
         </p>
       )}

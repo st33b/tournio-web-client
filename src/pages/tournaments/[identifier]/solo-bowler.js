@@ -6,18 +6,21 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {
   soloBowlerInfoAdded
 } from "../../../store/actions/registrationActions";
-import {devConsoleLog, useTheTournament} from "../../../utils";
+import {useTheTournament} from "../../../utils";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
-import TournamentHeader from "../../../components/ui/TournamentHeader";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import ErrorAlert from "../../../components/common/ErrorAlert";
+import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
+import Link from "next/link";
+import Sidebar from "../../../components/Registration/Sidebar/Sidebar";
+import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 
 const Page = () => {
-  devConsoleLog("------------ page untouched in team restoration");
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
-  const {identifier} = router.query;
+  const {identifier, edit} = router.query;
 
-  const {loading, tournament} = useTheTournament(identifier);
+  const {loading, tournament, error} = useTheTournament(identifier);
 
   useEffect(() => {
     if (!identifier || !tournament) {
@@ -27,6 +30,14 @@ const Page = () => {
       router.push(`/tournaments/${identifier}`);
     }
   }, [tournament]);
+
+  if (error) {
+    return (
+      <div>
+        <ErrorAlert message={error}/>
+      </div>
+    );
+  }
 
   if (loading || !tournament) {
     return (
@@ -48,24 +59,71 @@ const Page = () => {
     });
   }
 
-  const previousBowlerData = registration.bowler ? registration.bowler : null;
-  const askBowlerAboutShifts = tournament.shifts.length > 1;
+  const bowlerData = registration.bowler ? registration.bowler : null;
+  const titleText = edit ? 'Edit Bowler Details' : 'Bowler Registration';
+  const buttonText = edit ? 'Save Changes' : 'Next';
+
+  let preferredShiftNames = [];
+  if (registration.bowler && registration.bowler.shiftIdentifiers) {
+    preferredShiftNames = registration.bowler.shiftIdentifiers.map(identifier =>
+      tournament.shifts.find(shift => shift.identifier === identifier).name
+    );
+  }
 
   return (
-    <div>
-      <TournamentHeader tournament={tournament}/>
+    <>
+      <div className={'row d-flex d-md-none'}>
+        <div className={'col-5'}>
+          <TournamentLogo url={tournament.imageUrl} additionalClasses={'mb-2'}/>
+        </div>
+        <p className={'col-7 display-4 align-self-center'}>
+          {titleText}
+        </p>
+      </div>
 
-      <h2 className={`bg-primary-subtle py-3`}>
-        Solo Registration
-      </h2>
+      <div className={'row'}>
+        <div className={'col-12 col-md-4'}>
 
-      <BowlerForm tournament={tournament}
-                  bowlerData={previousBowlerData}
-                  bowlerInfoSaved={bowlerInfoSaved}
-                  showShifts={askBowlerAboutShifts}
-      />
+          <div className={'d-none d-md-block'}>
+            <Link href={`/tournaments/${identifier}`}>
+              <TournamentLogo url={tournament.imageUrl}/>
+            </Link>
+            <p className={'col display-5'}>
+              {titleText}
+            </p>
+          </div>
 
-    </div>
+          <Sidebar tournament={tournament}
+                   shiftPreferences={preferredShiftNames}
+                   bowler={bowlerData}
+                   />
+        </div>
+
+        <div className={'col-12 col-md-8'}>
+          <ProgressIndicator steps={['bowler', 'review']}
+                             active={'bowler'}/>
+          <BowlerForm tournament={tournament}
+                      bowlerInfoSaved={bowlerInfoSaved}
+                      bowlerData={bowlerData}
+                      solo={true}
+                      nextButtonText={buttonText}/>
+        </div>
+      </div>
+    </>
+    // <div>
+    //   <TournamentHeader tournament={tournament}/>
+    //
+    //   <h2 className={`bg-primary-subtle py-3`}>
+    //     Solo Registration
+    //   </h2>
+    //
+    //   <BowlerForm tournament={tournament}
+    //               bowlerData={previousBowlerData}
+    //               bowlerInfoSaved={bowlerInfoSaved}
+    //               solo={true}
+    //   />
+    //
+    // </div>
   );
 }
 

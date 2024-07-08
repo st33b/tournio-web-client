@@ -82,36 +82,6 @@ const Page = () => {
   }
 
   return (
-    // <div className={'row'}>
-    //   <div className={'col-12'}>
-    //     <TournamentHeader tournament={tournament}/>
-    //
-    //     <h2 className={`bg-primary-subtle py-3`}>
-    //       First Bowler
-    //     </h2>
-    //
-    //     <h4 className={``}>
-    //       Team:&nbsp;
-    //       <strong>
-    //         {registration.team.name}
-    //       </strong>
-    //     </h4>
-    //
-    //   </div>
-    //
-    //   <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
-    //     <PositionChooser maxPosition={tournament.teamSize}
-    //                      chosen={chosenPosition}
-    //                      onChoose={positionChosen}/>
-    //
-    //     <BowlerForm tournament={tournament}
-    //                 bowlerData={previousBowlerData}
-    //                 bowlerInfoSaved={newBowlerAdded}/>
-    //
-    //   </div>
-    // </div>
-
-
     <>
       <div className={'row d-flex d-md-none'}>
         <div className={'col-5'}>
@@ -136,8 +106,7 @@ const Page = () => {
 
           <Sidebar tournament={tournament}
                    teamName={registration.team.name}
-                   shiftPreferences={preferredShiftNames}
-                   isTeam={true}/>
+                   shiftPreferences={preferredShiftNames}/>
         </div>
 
         <div className={'col-12 col-md-8'}>

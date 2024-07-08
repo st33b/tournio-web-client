@@ -6,8 +6,7 @@ import InclusiveShiftForm from "../InclusiveShiftForm/InclusiveShiftForm";
 import MixAndMatchShiftForm from "../MixAndMatchShiftForm/MixAndMatchShiftForm";
 import {devConsoleLog} from "../../../utils";
 
-const TeamForm = ({tournament, team, onSubmit}) => {
-  devConsoleLog("------------ component untouched in team restoration");
+const TeamForm = ({tournament, team, onSubmit, submitButtonText}) => {
   const initialFormValues = {
     fields: {
       name: '',
@@ -112,8 +111,8 @@ const TeamForm = ({tournament, team, onSubmit}) => {
                   onClick={formHandler}
                   disabled={!componentState.valid}
                   role={'button'}>
-            {team ? 'Save' : 'Next: Bowlers'}
-            <i className={'bi bi-arrow-right ps-2'} aria-hidden={true}/>
+            {submitButtonText}
+            <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
           </button>
         </div>
       </div>

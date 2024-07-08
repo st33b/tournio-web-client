@@ -29,20 +29,20 @@ const Page = () => {
     }
   }, [tournament, identifier]);
 
-  if (loading || !tournament) {
-    return (
-      <div>
-        <LoadingMessage message={'Loading the tournament'}/>
-      </div>
-    )
-  }
-
   if (error) {
     return (
       <div>
         <ErrorAlert message={error}/>
       </div>
     );
+  }
+
+  if (loading || !tournament) {
+    return (
+      <div>
+        <LoadingMessage message={'Loading the tournament'}/>
+      </div>
+    )
   }
 
   ///////////////////////////////////////////
@@ -73,6 +73,7 @@ const Page = () => {
   }
 
   const titleText = edit ? 'Edit Team Details' : 'Team Registration';
+  const teamName = edit ? registration.team.name : '';
 
   return (
     <>
@@ -100,13 +101,15 @@ const Page = () => {
           </div>
 
           <Sidebar tournament={tournament}
-                   isTeam={true}/>
+                   teamName={teamName}
+                   />
         </div>
 
         <div className={'col-12 col-md-8'}>
           <ProgressIndicator active={'team'}/>
           <TeamForm tournament={tournament}
                     team={registration.team}
+                    submitButtonText={edit? 'Save' : 'Next: Bowlers'}
                     onSubmit={teamFormCompleted} />
         </div>
       </div>
