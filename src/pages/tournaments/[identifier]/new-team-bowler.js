@@ -17,7 +17,8 @@ const Page = () => {
   const router = useRouter();
   const {identifier, edit} = router.query;
 
-  const [chosenPosition, choosePosition] = useState(1);
+  const [bowlerData, setBowlerData] = useState();
+  const [takenPositions, setTakenPositions] = useState([]);
 
   const {loading, tournament} = useTheTournament(identifier);
 
@@ -31,7 +32,6 @@ const Page = () => {
     }
     if (edit) {
       devConsoleLog("Edit is true.");
-      choosePosition(registration.bowler.position);
     }
   }, [edit, tournament, registration]);
 
@@ -45,9 +45,24 @@ const Page = () => {
 
   const newBowlerAdded = (bowlerInfo) => {
     devConsoleLog("Want to save. Then what?");
-    // dispatch(newTeamBowlerInfoAdded(bowlerData));
-    //
+    devConsoleLog("Here's the bowler info:", bowlerInfo);
+
+    // dispatch it
+
+    // hmm how do we reset the form?
+    // let's have BowlerForm reset itself on submit, after calling this function
+    // (which it receives as bowlerInfoSaved)
+
+    dispatch(newTeamBowlerInfoAdded(bowlerInfo));
+
+    // Once we have all our bowlers, we can push to the next page.
     // router.push(`/tournaments/${identifier}/new-team-review`);
+  }
+
+  // some guards
+  if (!registration.team) {
+    // This happens when we're starting over, as part of a re-render that happens before the redirection.
+    return '';
   }
 
   // const positionChosen = (position) => {
@@ -128,9 +143,9 @@ const Page = () => {
         <div className={'col-12 col-md-8'}>
           <ProgressIndicator completed={['team']} active={'bowlers'}/>
           <BowlerForm tournament={tournament}
-                      takenPositions={[]}
+                      takenPositions={takenPositions}
                       bowlerInfoSaved={newBowlerAdded}
-                      bowlerData={null} // Update this for the editing case
+                      bowlerData={bowlerData} // Update this for the editing case
                       nextButtonText={buttonText}/>
         </div>
       </div>

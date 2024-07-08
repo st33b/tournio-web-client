@@ -48,15 +48,22 @@ const Page = () => {
   ///////////////////////////////////////////
 
   const teamFormCompleted = (formData) => {
-    dispatch(newTeamRegistrationSaved(formData));
-
     if (edit) {
+      // dispatch and push to review
+      dispatch(newTeamRegistrationSaved(formData));
       devConsoleLog("Team data updated, pushing to review.");
       router.push({
         pathname: '/tournaments/[identifier]/new-team-review',
         query: { identifier: identifier },
       });
     } else {
+      // Add a bowlers property, since the team form doesn't
+      const withBowlers = {
+        ...formData,
+        bowlers: [],
+      }
+      // then dispatch and push to the bowler intake
+      dispatch(newTeamRegistrationSaved(withBowlers));
       devConsoleLog("Team data saved, moving on to bowler entry.");
       router.push({
         pathname: '/tournaments/[identifier]/new-team-bowler',

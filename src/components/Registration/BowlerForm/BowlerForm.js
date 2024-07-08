@@ -12,6 +12,34 @@ const AddressAutofill = dynamic(
   { ssr: false }
 );
 
+/**
+ * Use cases for this form:
+ *  - New bowler registration
+ *    - starts empty
+ *    - takenPositions has list of positions that are taken by other bowlers on the team
+ *    - when solo is true, exclude positions, and show shifts, if applicable to the tournament
+ *  - Edit bowler during registration
+ *    - starts with values from bowlerData, including position
+ *    - takenPositions has list of positions that are taken by other bowlers on the team
+ *    - when solo is true, exclude positions, and show shifts, if applicable to the tournament
+ *  - View/edit bowler data on admin (identifier will be present)
+ *    - starts with values from bowlerData
+ *    - bowlerData includes identifier; should be included in the form as a hidden input
+ *    - no positions
+ *    - no shifts
+ *  - Add bowler on admin
+ *    - starts empty
+ *    - takenPositions has list of positions that are taken by other bowlers on the team
+ *    - when solo is true, exclude positions, and show shifts, if applicable to the tournament
+ * @param tournament
+ * @param bowlerInfoSaved
+ * @param bowlerData
+ * @param nextButtonText
+ * @param solo
+ * @param takenPositions
+ * @returns {React.JSX.Element|string}
+ * @constructor
+ */
 const BowlerForm = ({tournament, bowlerInfoSaved, bowlerData, nextButtonText, solo = false, takenPositions = []}) => {
   const DATE_OF_BIRTH_FIELDS = [
     'birth_month',
