@@ -85,14 +85,16 @@ const Sidebar = ({
           <span className={classes.Label}>
             Bowlers:
           </span>
-          <ul>
+          <ul className={'list-group list-group-flush'}>
             {bowlers.map(bowler => (
               <li
                 key={bowler.position}
-                className={classes.Value}>
-                {bowler.position}.{' '}
-                {bowler.preferredName ? bowler.preferredName : bowler.firstName}{' '}
-                {bowler.lastName}
+                className={`list-group-item ${classes.Value}`}>
+                <span className={'pe-2'}>
+                  {bowler.position}.
+                </span>
+                {bowler.nickname ? bowler.nickname : bowler.first_name}{' '}
+                {bowler.last_name}
               </li>
             ))}
           </ul>

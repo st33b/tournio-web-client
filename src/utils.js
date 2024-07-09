@@ -350,38 +350,6 @@ export const submitAddBowler = ({tournament, team, bowler, onSuccess, onFailure}
     });
 }
 
-export const submitDoublesRegistration = (tournament, bowlers, onSuccess, onFailure) => {
-  // make the post
-  const bowlerData = {bowlers: bowlers.map(bowler => convertBowlerDataForPost(tournament, bowler))};
-  axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, bowlerData)
-    .then(response => {
-      const newBowlers = response.data;
-      onSuccess(newBowlers);
-    })
-    .catch(error => {
-      console.log(error);
-      console.log(error.response);
-      onFailure(error.response.status);
-    });
-}
-
-export const submitPartnerRegistration = (tournament, bowler, partner, onSuccess, onFailure) => {
-  // make the post
-  const bowlerData = {bowlers: [convertBowlerDataForPost(tournament, bowler)]};
-  bowlerData.bowlers[0].doubles_partner_identifier = partner.identifier;
-
-  axios.post(`${apiHost}/tournaments/${tournament.identifier}/bowlers`, bowlerData)
-    .then(response => {
-      const newBowler = response.data[0];
-      onSuccess(newBowler);
-    })
-    .catch(error => {
-      console.log(error);
-      console.log(error.response);
-      onFailure(error.response.status);
-    });
-}
-
 const convertTeamDataForServer = (tournament, team) => {
   let postData = {
     team: {

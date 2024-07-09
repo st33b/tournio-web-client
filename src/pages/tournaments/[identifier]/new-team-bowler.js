@@ -44,19 +44,16 @@ const Page = () => {
   }
 
   const newBowlerAdded = (bowlerInfo) => {
-    devConsoleLog("Want to save. Then what?");
-    devConsoleLog("Here's the bowler info:", bowlerInfo);
-
-    // dispatch it
-
-    // hmm how do we reset the form?
-    // let's have BowlerForm reset itself on submit, after calling this function
-    // (which it receives as bowlerInfoSaved)
-
     dispatch(newTeamBowlerInfoAdded(bowlerInfo));
 
-    // Once we have all our bowlers, we can push to the next page.
-    // router.push(`/tournaments/${identifier}/new-team-review`);
+    setTakenPositions(takenPositions.concat(bowlerInfo.position).sort());
+
+    // If that's the last one, then move along!
+    if (takenPositions.length === tournament.config.team_size) {
+      router.push(`/tournaments/${identifier}/new-team-review`);
+    }
+
+    // Otherwise, we're good as we are.
   }
 
   // some guards
@@ -106,6 +103,7 @@ const Page = () => {
 
           <Sidebar tournament={tournament}
                    teamName={registration.team.name}
+                   bowlers={registration.team.bowlers}
                    shiftPreferences={preferredShiftNames}/>
         </div>
 

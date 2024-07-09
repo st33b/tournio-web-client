@@ -9,6 +9,10 @@ const initialState = {
 export const registrationReducerInit = (initial = initialState) => initial;
 
 export const registrationReducer = (state, action) => {
+  const compareBowlers = (left, right) => {
+    return left.position - right.position;
+  }
+
   switch (action.type) {
     case actionTypes.RESET:
       return registrationReducerInit();
@@ -20,7 +24,10 @@ export const registrationReducer = (state, action) => {
       });
     case actionTypes.NEW_TEAM_BOWLER_INFO_ADDED:
       return updateObject(state, {
-        bowler: {...action.bowler},
+        team: {
+          ...state.team,
+          bowlers: state.team.bowlers.concat(action.bowler).sort(compareBowlers),
+        },
       });
     case actionTypes.NEW_TEAM_ENTRY_COMPLETED:
       return updateObject(state, {

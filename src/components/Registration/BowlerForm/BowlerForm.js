@@ -6,6 +6,7 @@ import ErrorBoundary from "../../common/ErrorBoundary";
 import classes from './BowlerForm.module.scss';
 
 import dynamic from 'next/dynamic';
+import {devConsoleLog} from "../../../utils";
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
   { ssr: false }
@@ -497,6 +498,7 @@ const BowlerForm = ({
   }
 
   const getInitialFormData = () => {
+    devConsoleLog("getInitialFormData");
     const formData = {
       formFields: {
         ...otherFormFields, // fields that may need to go at the front
@@ -529,7 +531,7 @@ const BowlerForm = ({
     } else {
       // Not a solo registration, so we need position.
 
-      // Set up the position configuration
+      // // Set up the position configuration
       const positionElementConfig = {
         choices: [],
         value: 0,
@@ -639,7 +641,7 @@ const BowlerForm = ({
       setBowlerForm(initialFormData);
     }
     setFieldsToUse(updatedFields);
-  }, [tournament]);
+  }, [tournament, takenPositions]);
 
   if (!tournament || !bowlerForm) {
     return '';
@@ -679,6 +681,10 @@ const BowlerForm = ({
     }
 
     bowlerInfoSaved(theBowlerData);
+
+    // Reset our form for the next bowler.
+    devConsoleLog("Bowler data saved, resetting form");
+    setBowlerForm(getInitialFormData);
   }
 
   const validityForField = (failedChecks = []) => {
