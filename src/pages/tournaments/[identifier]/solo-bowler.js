@@ -110,20 +110,6 @@ const Page = () => {
         </div>
       </div>
     </>
-    // <div>
-    //   <TournamentHeader tournament={tournament}/>
-    //
-    //   <h2 className={`bg-primary-subtle py-3`}>
-    //     Solo Registration
-    //   </h2>
-    //
-    //   <BowlerForm tournament={tournament}
-    //               bowlerData={previousBowlerData}
-    //               bowlerInfoSaved={bowlerInfoSaved}
-    //               solo={true}
-    //   />
-    //
-    // </div>
   );
 }
 

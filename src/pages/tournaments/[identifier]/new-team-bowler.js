@@ -5,7 +5,7 @@ import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamBowlerInfoAdded} from "../../../store/actions/registrationActions";
 import {devConsoleLog, useTheTournament} from "../../../utils";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import Link from "next/link";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
@@ -33,6 +33,10 @@ const Page = () => {
     if (edit) {
       devConsoleLog("Edit is true.");
     }
+    if (registration.team) {
+      const newTakenPositions = registration.team.bowlers.map(({position}) => position);
+      setTakenPositions(newTakenPositions);
+    }
   }, [edit, tournament, registration]);
 
   if (loading || !tournament) {
@@ -46,14 +50,24 @@ const Page = () => {
   const newBowlerAdded = (bowlerInfo) => {
     dispatch(newTeamBowlerInfoAdded(bowlerInfo));
 
-    setTakenPositions(takenPositions.concat(bowlerInfo.position).sort());
+    const newTakenPositions = takenPositions.concat(bowlerInfo.position).sort();
+    setTakenPositions(newTakenPositions);
 
     // If that's the last one, then move along!
-    if (takenPositions.length === tournament.config.team_size) {
-      router.push(`/tournaments/${identifier}/new-team-review`);
+    if (newTakenPositions.length === tournament.config.team_size) {
+      router.push(`/tournaments/${identifier}/doubles-partners`);
     }
 
     // Otherwise, we're good as we are.
+  }
+
+  const finishedWithBowlersClicked = () => {
+    // They've chosen not to fill the team up just yet, so let's move on
+    if (tournament.events.some(({rosterType}) => rosterType === 'double')) {
+      router.push(`/tournaments/${identifier}/doubles-partners`);
+    } else {
+      router.push(`/tournaments/${identifier}/new-team-review`);
+    }
   }
 
   // some guards
@@ -62,14 +76,8 @@ const Page = () => {
     return '';
   }
 
-  // const positionChosen = (position) => {
-  //   choosePosition(position);
-  // }
-  //
-  // const previousBowlerData = edit ? registration.bowler : null;
-
   const titleText = edit ? 'Make Changes' : 'Add Bowler Details';
-  const buttonText = edit ? 'Save Changes' : 'Next';
+  const buttonText = edit ? 'Save Changes' : 'Save Bowler';
 
   let preferredShiftNames = [];
   if (registration.team.shiftIdentifiers) {
@@ -81,12 +89,10 @@ const Page = () => {
   return (
     <>
       <div className={'row d-flex d-md-none'}>
-        <div className={'col-5'}>
-          <TournamentLogo url={tournament.imageUrl} additionalClasses={'mb-2'}/>
-        </div>
-        <p className={'col-7 display-4 align-self-center'}>
-          {titleText}
+        <p className={'display-3'}>
+          {tournament.abbreviation} {tournament.year}
         </p>
+        <ProgressIndicator completed={['team']} active={'bowlers'}/>
       </div>
 
       <div className={'row'}>
@@ -96,19 +102,46 @@ const Page = () => {
             <Link href={`/tournaments/${identifier}`}>
               <TournamentLogo url={tournament.imageUrl}/>
             </Link>
-            <p className={'col display-5'}>
-              {titleText}
-            </p>
           </div>
 
           <Sidebar tournament={tournament}
                    teamName={registration.team.name}
                    bowlers={registration.team.bowlers}
                    shiftPreferences={preferredShiftNames}/>
+
+          {takenPositions.length > 1 && (
+            <div className={'text-end'}>
+              <p className={'my-3'}>
+                Finished with bowlers?
+              </p>
+              <p>
+                <Link href={{
+                  pathname: '/tournaments/[identifier]/doubles-partners',
+                  query: {
+                    identifier: identifier,
+                  }
+                }}
+                      className={'btn btn-outline-success'}>
+                  Next Step
+                  <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
+                </Link>
+              </p>
+            </div>
+          )}
+
+          <hr className={'d-md-none'}/>
         </div>
 
         <div className={'col-12 col-md-8'}>
-          <ProgressIndicator completed={['team']} active={'bowlers'}/>
+          <div className={'d-none d-md-block'}>
+            <ProgressIndicator completed={['team']} active={'bowlers'}/>
+          </div>
+          <p className={'d-md-none display-5'}>
+            {titleText}
+          </p>
+          <p className={'d-none d-md-block display-6'}>
+            {titleText}
+          </p>
           <BowlerForm tournament={tournament}
                       takenPositions={takenPositions}
                       bowlerInfoSaved={newBowlerAdded}
