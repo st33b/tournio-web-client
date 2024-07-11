@@ -1,5 +1,6 @@
 import * as actionTypes from './actionTypes';
 import {devConsoleLog} from "../../utils";
+import {NEW_TEAM_DOUBLES_PARTNERS_SAVED} from "./actionTypes";
 
 export const resetRegistration = () => {
   return {
@@ -18,6 +19,13 @@ export const newTeamBowlerInfoAdded = (bowlerInfo) => {
   return {
     type: actionTypes.NEW_TEAM_BOWLER_INFO_ADDED,
     bowler: bowlerInfo,
+  }
+}
+
+export const newTeamDoublesPartnersSaved = (bowlers) => {
+  return {
+    type: actionTypes.NEW_TEAM_DOUBLES_PARTNERS_SAVED,
+    bowlers: bowlers,
   }
 }
 

@@ -29,6 +29,13 @@ export const registrationReducer = (state, action) => {
           bowlers: state.team.bowlers.concat(action.bowler).sort(compareBowlers),
         },
       });
+    case actionTypes.NEW_TEAM_DOUBLES_PARTNERS_SAVED:
+      return updateObject(state, {
+        team: {
+          ...state.team,
+          bowlers: [...action.bowlers],
+        },
+      });
     case actionTypes.NEW_TEAM_ENTRY_COMPLETED:
       return updateObject(state, {
         team: action.team,

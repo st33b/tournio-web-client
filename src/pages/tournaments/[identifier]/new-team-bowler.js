@@ -33,7 +33,15 @@ const Page = () => {
     if (edit) {
       devConsoleLog("Edit is true.");
     }
+
     if (registration.team) {
+      if (registration.team.bowlers.length === tournament.config.team_size) {
+        if (tournament.events.some(({rosterType}) => rosterType === 'double')) {
+          router.push(`/tournaments/${identifier}/doubles-partners`);
+        } else {
+          router.push(`/tournaments/${identifier}/new-team-review`);
+        }
+      }
       const newTakenPositions = registration.team.bowlers.map(({position}) => position);
       setTakenPositions(newTakenPositions);
     }

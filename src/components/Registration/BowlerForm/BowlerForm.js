@@ -498,7 +498,6 @@ const BowlerForm = ({
   }
 
   const getInitialFormData = () => {
-    devConsoleLog("getInitialFormData");
     const formData = {
       formFields: {
         ...otherFormFields, // fields that may need to go at the front
