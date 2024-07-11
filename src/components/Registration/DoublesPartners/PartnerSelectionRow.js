@@ -1,5 +1,4 @@
 import classes from './PartnerSelectionRow.module.scss';
-import {devConsoleLog} from "../../../utils";
 
 // Props I want:
 // bowler -- the bowler for whom we are selecting a partner
@@ -7,7 +6,6 @@ import {devConsoleLog} from "../../../utils";
 // onPartnerSelected -- function to call when a partner has been clicked. It will automatically determine the rest of the assignments
 
 const PartnerSelectionRow = ({bowler, bowlerIndex, teammates, onPartnerSelected}) => {
-  devConsoleLog("------------ component untouched in team restoration");
   return (
     <tr className={classes.PartnerSelectionRow}>
       <td className={classes.ChoosingBowler}>

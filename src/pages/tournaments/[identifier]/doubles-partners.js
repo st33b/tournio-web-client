@@ -5,7 +5,6 @@ import React, {useEffect, useState} from "react";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {useRouter} from "next/router";
 import {newTeamDoublesPartnersSaved} from "../../../store/actions/registrationActions";
-import PartnerSelectionRow from "../../../components/Registration/DoublesPartners/PartnerSelectionRow";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
