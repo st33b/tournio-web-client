@@ -5,6 +5,7 @@ import {resetRegistration} from "../../../store/actions/registrationActions";
 import classes from './Sidebar.module.scss';
 
 const Sidebar = ({
+                   tournament,
                    teamName,
                    shiftPreferences = [],
                    bowlers = [],
@@ -22,9 +23,13 @@ const Sidebar = ({
     }
   }
 
+  if (!tournament) {
+    return '';
+  }
+
   return (
     <div className={classes.Sidebar}>
-      <p className={'text-center'}>
+      <p className={`text-center ${classes.StartOver}`}>
         <a href={'#'}
            onClick={resetClicked}>
           Start over
@@ -54,6 +59,7 @@ const Sidebar = ({
         </p>
       )}
 
+      {/* mix-and-match style, usually */}
       {shiftPreferences.length > 1 && (
         <div>
           <span className={classes.Label}>
@@ -69,7 +75,8 @@ const Sidebar = ({
         </div>
       )}
 
-      {shiftPreferences.length === 1 && (
+      {/* standard multi-shift, usually */}
+      {tournament.shifts.length > 1 && shiftPreferences.length === 1 && (
         <p>
           <span className={classes.Label}>
             Preferred Shift:

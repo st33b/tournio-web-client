@@ -20,7 +20,7 @@ const TeamForm = ({tournament, team, onSubmit, submitButtonText}) => {
     if (!tournament) {
       return;
     }
-    const tournamentType = tournament.config['tournament_type'] || 'igbo_standard';
+    const tournamentType = tournament.config.tournament_type || 'igbo_standard';
     const newComponentState = {...componentState };
 
     if (team) {
@@ -69,8 +69,17 @@ const TeamForm = ({tournament, team, onSubmit, submitButtonText}) => {
     setComponentState(newFormValues);
   }
 
-  const tournamentType = tournament.config['tournament_type'];
-  const useInclusiveShifts = tournamentType === 'igbo_multi_shift' || tournament.config['tournament_type'] === 'single_event' && tournament.shifts.length > 1;
+  ///////////////////////////////
+
+  // make sure we can render; return right away if we can't
+  if (!tournament) {
+    return '';
+  }
+
+  ///////////////////////////////
+
+  const tournamentType = tournament.config.tournament_type;
+  const useInclusiveShifts = tournamentType === 'igbo_multi_shift' || tournament.config.tournament_type === 'single_event' && tournament.shifts.length > 1;
   const useMixAndMatchShifts = tournamentType === 'igbo_mix_and_match';
 
   return (
