@@ -1,21 +1,15 @@
+import Link from "next/link";
 import classes from "./NewTeamReview.module.scss";
-import BowlerSummary from "../ReviewEntries/BowlerSummary";
-import {devConsoleLog} from "../../../utils";
 
-const NewTeamReview = ({team, bowler, tournament}) => {
-  if (!tournament) {
+const NewTeamReview = ({tournament, team}) => {
+  if (!tournament || !team) {
     return '';
   }
-  devConsoleLog("------------ component untouched in team restoration");
 
   const shiftIdentifiers = team.shiftIdentifiers || [];
   const chosenShifts = tournament.shifts.length === 1
     ? ''
     : tournament.shifts.filter(({identifier}) => shiftIdentifiers.includes(identifier));
-
-  if (!team || !bowler) {
-    return '';
-  }
 
   return (
     <div className={classes.NewTeamReview}>
@@ -33,18 +27,33 @@ const NewTeamReview = ({team, bowler, tournament}) => {
           {chosenShifts && (
             <div className={`row g-2`}>
               <dt className={`col-5 pe-2`}>
-                Shift Preference
+                Shift Preference{chosenShifts.length === 1 ? '' : 's'}
               </dt>
               <dd className={`col`}>
-                {chosenShifts.map(({name}) => name).join(', ')}
+                {chosenShifts.length === 1 && chosenShifts[0].name}
+                {chosenShifts.length > 1 && (
+                  <ul className={'list-group list-group-flush'}>
+                    {chosenShifts.map(({identifier, name}) => (
+                      <li key={identifier}
+                      className={'list-group-item'}>
+                        {name}
+                      </li>
+                      ))}
+                  </ul>
+                )}
               </dd>
             </div>
           )}
         </dl>
+
+        <div className={'row g-2'}>
+          <p className={'offset-5 col'}>
+            <Link href={`/tournaments/${tournament.identifier}/new-team?edit=true`}>
+              Make a change
+            </Link>
+          </p>
+        </div>
       </div>
-
-
-      <BowlerSummary bowler={bowler} tournament={tournament}/>
     </div>
   );
 }

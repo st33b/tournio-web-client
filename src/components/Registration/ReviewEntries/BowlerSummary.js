@@ -3,11 +3,10 @@ import {Row} from "react-bootstrap";
 import classes from './BowlerSummary.module.scss';
 import {devConsoleLog} from "../../../utils";
 
-const BowlerSummary = ({bowler, tournament, partner = null}) => {
+const BowlerSummary = ({tournament, bowler, partner = null}) => {
   if (!bowler) {
     return '';
   }
-  devConsoleLog("------------ component untouched in team restoration");
 
   const minimumLabels = {
     first_name: 'First Name',
@@ -27,6 +26,9 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
     country: 'Country',
     postal_code: 'Postal/ZIP Code',
     payment_app: 'Payment App',
+    doubles_partners: 'Doubles Partner',
+    position: 'Position',
+    shift_identifier: 'Shift Preference',
   };
 
   const optionalFields = tournament.config.bowler_form_fields.split(' ');
@@ -47,20 +49,14 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
     shiftName = tournament.shifts.find(({identifier}) => identifier === bowler.shift_identifier).name;
   }
 
+  let partnerFullName;
+  if (partner) {
+    partnerFullName = (partner.nickname ? partner.nickname : partner.first_name) + ' ' + partner.last_name;
+  }
+
   return (
     <div className={classes.BowlerSummary}>
       <dl>
-        {bowler.position && (
-          <Row className={classes.Position}>
-            <dt className={`col-5 pe-2 label`}>
-              Position
-            </dt>
-            <dd className={`col ps-2 value`}>
-              {bowler.position}
-            </dd>
-          </Row>
-        )}
-
         {Object.keys(minimumLabels).map(key => {
           let value = bowler[key];
           if (value === null || typeof value ==='undefined') {
@@ -68,7 +64,7 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
           }
           return (
             <Row key={`${key}`}>
-              <dt className={'col-5 pe-2 label'}>
+              <dt className={'col-5 col-md-3 pe-2 label'}>
                 {minimumLabels[key]}
               </dt>
               <dd className={'col ps-2 value'}>
@@ -87,7 +83,7 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
           }
           return (
             <Row key={`${key}`}>
-              <dt className={'col-5 pe-2 label'}>
+              <dt className={'col-5 col-md-3 pe-2 label'}>
                 {potentialLabels[key]}
               </dt>
               <dd className={'col ps-2 value'}>
@@ -104,7 +100,7 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
           }
           return (
             <Row key={`${key}`}>
-              <dt className={'col-5 pe-2 label'}>
+              <dt className={'col-5 col-md-3 pe-2 label'}>
                 {aqLabels[key]}
               </dt>
               <dd className={'col ps-2 value'}>
@@ -114,20 +110,20 @@ const BowlerSummary = ({bowler, tournament, partner = null}) => {
           );
         })}
 
-        {partner && (
-          <Row key={`${bowler.doubles_partner}`}>
-            <dt className={'col-5 pe-2 label'}>
+        {partnerFullName && (
+          <Row key={`partner`}>
+            <dt className={'col-5 col-md-3 pe-2 label'}>
               Doubles Partner
             </dt>
             <dd className={'col ps-2 value'}>
-              {partner.full_name}
+              {partnerFullName}
             </dd>
           </Row>
         )}
 
         {shiftName && (
           <Row key={'shift'}>
-            <dt className={'col-5 pe-2 label'}>
+            <dt className={'col-5 col-md-3 pe-2 label'}>
               Shift Preference
             </dt>
             <dd className={'col ps-2 value'}>

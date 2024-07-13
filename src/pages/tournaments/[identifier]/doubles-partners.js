@@ -137,27 +137,6 @@ const Page = () => {
                    shiftPreferences={preferredShiftNames}/>
 
           <hr className={'d-md-none'}/>
-
-          <div className={'text-end'}>
-            <p className={'my-3'}>
-              Prefer to skip this step?
-              <br />
-              <span className={'small'}>(Doubles partners will not be assigned.)</span>
-            </p>
-            <p>
-              <Link href={{
-                pathname: '/tournaments/[identifier]/new-team-review',
-                query: {
-                  identifier: identifier,
-                }
-              }}
-                    className={'btn btn-outline-success'}>
-                Go to Review
-                <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
-              </Link>
-            </p>
-          </div>
-
         </div>
 
         <div className={'col-12 col-md-8'}>
@@ -181,12 +160,33 @@ const Page = () => {
                   identifier: identifier,
                 },
               }}
-                    className={`btn btn-primary ${nextStepDisabled ? 'disabled': ''}`}
+                    className={`btn btn-primary ${nextStepDisabled ? 'disabled' : ''}`}
                     aria-disabled={nextStepDisabled}
                     tabIndex={nextStepDisabled ? -1 : 0}
                     onChange={savePartnersClicked}
               >
                 Next Step
+                <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
+              </Link>
+            </p>
+          </div>
+
+          <div className={'text-end'}>
+            <hr />
+            <p className={'my-3'}>
+              Prefer to skip this step?
+              <br/>
+              <span className={'small'}>(Doubles partners will not be assigned.)</span>
+            </p>
+            <p>
+              <Link href={{
+                pathname: '/tournaments/[identifier]/new-team-review',
+                query: {
+                  identifier: identifier,
+                }
+              }}
+                    className={'btn btn-outline-primary'}>
+                Go to Review
                 <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
               </Link>
             </p>
