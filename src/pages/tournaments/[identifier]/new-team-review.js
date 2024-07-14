@@ -2,17 +2,14 @@ import {useRouter} from "next/router";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {devConsoleLog, submitNewTeamWithPlaceholders, useTheTournament} from "../../../utils";
+import {submitNewTeamWithPlaceholders, useTheTournament} from "../../../utils";
 import React, {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import NewTeamReview from "../../../components/Registration/NewTeamReview/NewTeamReview";
 import Link from "next/link";
 import {newTeamEntryCompleted} from "../../../store/actions/registrationActions";
-import TournamentHeader from "../../../components/ui/TournamentHeader";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
-import Sidebar from "../../../components/Registration/Sidebar/Sidebar";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
-import TeamForm from "../../../components/Registration/TeamForm/TeamForm";
 import BowlerSummary from "../../../components/Registration/ReviewEntries/BowlerSummary";
 
 const Page = () => {
@@ -20,7 +17,7 @@ const Page = () => {
   const router = useRouter();
   const {identifier} = router.query;
 
-  const [processing, setProcessing] = useState(false);
+  const [processing, setProcessing] = useState(true);
   const {loading: tournamentLoading, tournament, error: tournamentError} = useTheTournament(identifier);
 
   // If new-team registrations isn't enabled, go back to the tournament home page
@@ -84,13 +81,13 @@ const Page = () => {
     // Write the team to the backend, with the single bowler.
     // Upon success, redirect to the team's page, which will
     // present its options.
-    submitNewTeamWithPlaceholders({
-      tournament: tournament,
-      team: registration.team,
-      bowler: registration.bowler,
-      onSuccess: newTeamRegistrationSuccess,
-      onFailure: newTeamRegistrationFailure,
-    });
+    // submitNewTeamWithPlaceholders({
+    //   tournament: tournament,
+    //   team: registration.team,
+    //   bowler: registration.bowler,
+    //   onSuccess: newTeamRegistrationSuccess,
+    //   onFailure: newTeamRegistrationFailure,
+    // });
     setProcessing(true);
   }
 
@@ -151,14 +148,28 @@ const Page = () => {
           <NewTeamReview tournament={tournament} team={registration.team}/>
 
           {/* bowler details */}
-          {registration.team.bowlers.map(bowler => {
+          {registration.team.bowlers.map((bowler, i) => {
             const index = bowler.doublesPartnerIndex;
             const partner = index >= 0 ? registration.team.bowlers[index] : null;
             return (
-              <div>
-                <h5>
-                  Bowler {bowler.position}
-                </h5>
+              <div key={`summary_${i}`} className={'mb-4'}>
+                <div className={'d-flex align-items-baseline'}>
+                  <h5>
+                    Bowler {bowler.position}
+                  </h5>
+                  <Link href={
+                    {
+                      pathname: '/tournaments/[identifier]/new-team-bowler',
+                      query: {
+                        identifier: identifier,
+                        edit: true,
+                        index: i,
+                      },
+                    }}
+                        className={'d-block ps-3'}>
+                    (edit)
+                  </Link>
+                </div>
                 <BowlerSummary tournament={tournament}
                                bowler={bowler}
                                partner={partner}/>
@@ -166,6 +177,13 @@ const Page = () => {
             )
           })}
 
+          <div className={'text-end'}>
+            <button className={'btn btn-lg btn-primary'}
+                    onClick={saveClicked}
+                    disabled={processing}>
+              Submit Registration
+            </button>
+          </div>
         </div>
       </div>
     </>

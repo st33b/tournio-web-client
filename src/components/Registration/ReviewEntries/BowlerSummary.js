@@ -1,7 +1,6 @@
 import {Row} from "react-bootstrap";
 
 import classes from './BowlerSummary.module.scss';
-import {devConsoleLog} from "../../../utils";
 
 const BowlerSummary = ({tournament, bowler, partner = null}) => {
   if (!bowler) {
@@ -64,10 +63,10 @@ const BowlerSummary = ({tournament, bowler, partner = null}) => {
           }
           return (
             <Row key={`${key}`}>
-              <dt className={'col-5 col-md-3 pe-2 label'}>
+              <dt className={'col-5 col-md-3'}>
                 {minimumLabels[key]}
               </dt>
-              <dd className={'col ps-2 value'}>
+              <dd className={'col'}>
                 {value || 'n/a'}
               </dd>
             </Row>
@@ -83,10 +82,10 @@ const BowlerSummary = ({tournament, bowler, partner = null}) => {
           }
           return (
             <Row key={`${key}`}>
-              <dt className={'col-5 col-md-3 pe-2 label'}>
+              <dt className={'col-5 col-md-3'}>
                 {potentialLabels[key]}
               </dt>
-              <dd className={'col ps-2 value'}>
+              <dd className={'col'}>
                 {displayedValue || 'n/a'}
               </dd>
             </Row>
@@ -100,10 +99,10 @@ const BowlerSummary = ({tournament, bowler, partner = null}) => {
           }
           return (
             <Row key={`${key}`}>
-              <dt className={'col-5 col-md-3 pe-2 label'}>
+              <dt className={'col-5 col-md-3'}>
                 {aqLabels[key]}
               </dt>
-              <dd className={'col ps-2 value'}>
+              <dd className={'col'}>
                 {value}
               </dd>
             </Row>
@@ -111,22 +110,22 @@ const BowlerSummary = ({tournament, bowler, partner = null}) => {
         })}
 
         {partnerFullName && (
-          <Row key={`partner`}>
-            <dt className={'col-5 col-md-3 pe-2 label'}>
+          <Row>
+            <dt className={'col-5 col-md-3'}>
               Doubles Partner
             </dt>
-            <dd className={'col ps-2 value'}>
+            <dd className={'col'}>
               {partnerFullName}
             </dd>
           </Row>
         )}
 
         {shiftName && (
-          <Row key={'shift'}>
-            <dt className={'col-5 col-md-3 pe-2 label'}>
+          <Row>
+            <dt className={'col-5 col-md-3'}>
               Shift Preference
             </dt>
-            <dd className={'col ps-2 value'}>
+            <dd className={'col'}>
               {shiftName}
             </dd>
           </Row>
