@@ -36,6 +36,15 @@ export const registrationReducer = (state, action) => {
           bowlers: [...action.bowlers],
         },
       });
+    case actionTypes.NEW_TEAM_BOWLER_INFO_UPDATED:
+      const updatedBowlers = [...state.team.bowlers];
+      updatedBowlers[action.index] = action.bowler;
+      return updateObject(state, {
+        team: {
+          ...state.team,
+          bowlers: updatedBowlers,
+        },
+      });
     case actionTypes.NEW_TEAM_ENTRY_COMPLETED:
       return updateObject(state, {
         team: action.team,

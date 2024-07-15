@@ -3,21 +3,21 @@ import {useRouter} from "next/router";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {newTeamBowlerInfoAdded} from "../../../store/actions/registrationActions";
-import {devConsoleLog, useTheTournament} from "../../../utils";
+import {newTeamBowlerInfoAdded, newTeamBowlerInfoUpdated} from "../../../store/actions/registrationActions";
+import {useTheTournament} from "../../../utils";
 import React, {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import Link from "next/link";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import Sidebar from "../../../components/Registration/Sidebar/Sidebar";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
+import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
-  const {identifier, edit} = router.query;
+  const {identifier, edit, index} = router.query;
 
-  const [bowlerData, setBowlerData] = useState();
   const [takenPositions, setTakenPositions] = useState([]);
 
   const {loading, tournament} = useTheTournament(identifier);
@@ -30,20 +30,25 @@ const Page = () => {
     if (!tournament.registrationOptions.new_team) {
       router.push(`/tournaments/${identifier}`);
     }
-    if (edit) {
-      devConsoleLog("Edit is true.");
-    }
 
     if (registration.team) {
-      if (registration.team.bowlers.length === tournament.config.team_size) {
-        if (tournament.events.some(({rosterType}) => rosterType === 'double')) {
-          router.push(`/tournaments/${identifier}/doubles-partners`);
-        } else {
-          router.push(`/tournaments/${identifier}/new-team-review`);
+      if (!edit) {
+        // Have we reached team capacity? If so, let's move to the next step,
+        // whichever that step may be.
+        if (registration.team.bowlers.length === tournament.config.team_size) {
+          if (tournament.events.some(({rosterType}) => rosterType === 'double')) {
+            router.push(`/tournaments/${identifier}/doubles-partners`);
+          } else {
+            router.push(`/tournaments/${identifier}/new-team-review`);
+          }
         }
       }
+
       const newTakenPositions = registration.team.bowlers.map(({position}) => position);
       setTakenPositions(newTakenPositions);
+    }
+
+    if (!edit && registration.team) {
     }
   }, [edit, tournament, registration]);
 
@@ -69,7 +74,15 @@ const Page = () => {
     // Otherwise, we're good as we are.
   }
 
-  const finishedWithBowlersClicked = () => {
+  const bowlerUpdated = (bowlerInfo) => {
+    dispatch(newTeamBowlerInfoUpdated(bowlerInfo, index));
+
+    router.push(`/tournaments/${identifier}/new-team-review`);
+  }
+
+  const finishedWithBowlersClicked = (e) => {
+    e.preventDefault();
+
     // They've chosen not to fill the team up just yet, so let's move on
     if (tournament.events.some(({rosterType}) => rosterType === 'double')) {
       router.push(`/tournaments/${identifier}/doubles-partners`);
@@ -92,6 +105,16 @@ const Page = () => {
     preferredShiftNames = registration.team.shiftIdentifiers.map(identifier =>
       tournament.shifts.find(shift => shift.identifier === identifier).name
     );
+  }
+
+  let bowlerData, error;
+  if (edit) {
+    const parsed = parseInt(index);
+    if (parsed >= 0 && parsed < registration.team.bowlers.length) {
+      bowlerData = registration.team.bowlers[parsed];
+    } else {
+      error = 'Bowler data not found.';
+    }
   }
 
   return (
@@ -117,7 +140,7 @@ const Page = () => {
                    bowlers={registration.team.bowlers}
                    shiftPreferences={preferredShiftNames}/>
 
-          {takenPositions.length > 1 && (
+          {!edit && takenPositions.length > 1 && (
             <div className={'text-end'}>
               <p className={'my-3'}>
                 Finished with bowlers?
@@ -129,9 +152,26 @@ const Page = () => {
                     identifier: identifier,
                   }
                 }}
-                      className={'btn btn-outline-success'}>
+                      className={'btn btn-outline-primary'}
+                      onClick={finishedWithBowlersClicked}>
                   Next Step
                   <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
+                </Link>
+              </p>
+            </div>
+          )}
+          {edit && (
+            <div className={'text-start'}>
+              <p className={'my-3'}>
+                <Link href={{
+                  pathname: '/tournaments/[identifier]/new-team-review',
+                  query: {
+                    identifier: identifier,
+                  }
+                }}
+                      className={'btn btn-outline-primary'}>
+                  <i className="bi bi-chevron-double-left pe-1" aria-hidden="true"/>
+                  Cancel Changes
                 </Link>
               </p>
             </div>
@@ -150,11 +190,16 @@ const Page = () => {
           <p className={'d-none d-md-block display-6'}>
             {titleText}
           </p>
-          <BowlerForm tournament={tournament}
-                      takenPositions={takenPositions}
-                      bowlerInfoSaved={newBowlerAdded}
-                      bowlerData={bowlerData} // Update this for the editing case
-                      nextButtonText={buttonText}/>
+          {error && (
+            <ErrorAlert message={error}/>
+          )}
+          {!error && (
+            <BowlerForm tournament={tournament}
+                        takenPositions={takenPositions}
+                        bowlerInfoSaved={edit ? bowlerUpdated : newBowlerAdded}
+                        bowlerData={bowlerData} // Update this for the editing case
+                        nextButtonText={buttonText}/>
+          )}
         </div>
       </div>
     </>
