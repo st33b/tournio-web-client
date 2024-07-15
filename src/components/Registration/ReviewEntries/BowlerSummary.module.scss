@@ -6,15 +6,18 @@
   dl > *:nth-child(odd) {
     background-color: var(--tournio-secondary-bg-subtle);
   }
-  dt {
-    text-align: right;
-    margin-top: 0.25rem;
+  dl {
     margin-bottom: 0.5rem;
-  }
-  dd {
-    text-align: left;
-    margin-top: 0.25rem;
-    margin-bottom: 0.5rem;
-    overflow-x: auto;
+    dt {
+      text-align: right;
+      margin-top: 0.25rem;
+      margin-bottom: 0.5rem;
+    }
+    dd {
+      text-align: left;
+      margin-top: 0.25rem;
+      margin-bottom: 0.5rem;
+      overflow-x: auto;
+    }
   }
 }

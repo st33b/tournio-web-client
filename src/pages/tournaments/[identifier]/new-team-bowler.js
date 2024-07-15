@@ -77,7 +77,7 @@ const Page = () => {
   const bowlerUpdated = (bowlerInfo) => {
     dispatch(newTeamBowlerInfoUpdated(bowlerInfo, index));
 
-    router.push(`/tournaments/${identifier}/new-team-review`);
+    router.push(`/tournaments/${identifier}/new-team-review?successIndex=${index}`);
   }
 
   const finishedWithBowlersClicked = (e) => {

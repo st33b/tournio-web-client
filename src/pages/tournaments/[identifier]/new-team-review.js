@@ -2,7 +2,7 @@ import {useRouter} from "next/router";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {submitNewTeamWithPlaceholders, useTheTournament} from "../../../utils";
+import {devConsoleLog, submitNewTeamWithPlaceholders, useTheTournament} from "../../../utils";
 import React, {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import NewTeamReview from "../../../components/Registration/NewTeamReview/NewTeamReview";
@@ -11,11 +11,12 @@ import {newTeamEntryCompleted} from "../../../store/actions/registrationActions"
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import BowlerSummary from "../../../components/Registration/ReviewEntries/BowlerSummary";
+import SuccessAlert from "../../../components/common/SuccessAlert";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
-  const {identifier} = router.query;
+  const {identifier, successIndex} = router.query;
 
   const [processing, setProcessing] = useState(true);
   const {loading: tournamentLoading, tournament, error: tournamentError} = useTheTournament(identifier);
@@ -73,10 +74,6 @@ const Page = () => {
     }
   }
 
-  const editBowlerClicked = () => {
-    router.push(`/tournaments/${identifier}/new-team-first-bowler`);
-  }
-
   const saveClicked = () => {
     // Write the team to the backend, with the single bowler.
     // Upon success, redirect to the team's page, which will
@@ -107,6 +104,8 @@ const Page = () => {
     );
   }
 
+devConsoleLog("Success index:", successIndex);
+
   return (
     <>
       <div className={'row d-md-none'}>
@@ -127,8 +126,6 @@ const Page = () => {
               <TournamentLogo url={tournament.imageUrl}/>
             </Link>
           </div>
-
-          {/*<Sidebar tournament={tournament}/>*/}
         </div>
 
         <div className={'col-12 col-md-10'}>
@@ -173,6 +170,10 @@ const Page = () => {
                 <BowlerSummary tournament={tournament}
                                bowler={bowler}
                                partner={partner}/>
+
+                {successIndex == i && (
+                  <SuccessAlert message={'Bowler details updated!'}/>
+                )}
               </div>
             )
           })}
