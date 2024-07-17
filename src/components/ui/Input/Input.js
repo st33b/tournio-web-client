@@ -185,6 +185,8 @@ const Input = (props) => {
         </div>
       ));
       break;
+    case('none'):
+      return null;
     default:
       console.log("I don't recognize that element type: " + props.elementType);
       return null;

@@ -35,10 +35,10 @@ const NewTeamReview = ({tournament, team}) => {
                   <ul className={'list-group list-group-flush'}>
                     {chosenShifts.map(({identifier, name}) => (
                       <li key={identifier}
-                      className={'list-group-item'}>
+                          className={'list-group-item'}>
                         {name}
                       </li>
-                      ))}
+                    ))}
                   </ul>
                 )}
               </dd>

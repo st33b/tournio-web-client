@@ -134,7 +134,8 @@ devConsoleLog("Success index:", successIndex);
             Let&apos;s Review...
           </p>
           <div className={'alert alert-warning'}>
-            Please check everything to make sure it&apos;s correct, and make any necessary changes. If everything looks good, hit the big{' '}
+            Please check everything to make sure it&apos;s correct, and make any necessary changes. If everything looks
+            good, hit the big{' '}
             <span className={'fw-bolder'}>
               Submit Registration
             </span>
@@ -178,11 +179,22 @@ devConsoleLog("Success index:", successIndex);
             )
           })}
 
+          <div className={'row'}>
+            <p>
+              <Link href={`/tournaments/${tournament.identifier}/doubles-partners?edit=true`}
+                    className={'btn btn-secondary'}>
+                <i className="bi bi-chevron-double-left pe-1" aria-hidden="true"/>
+                Change doubles partners
+              </Link>
+            </p>
+          </div>
+
           <div className={'text-end'}>
             <button className={'btn btn-lg btn-primary'}
                     onClick={saveClicked}
                     disabled={processing}>
               Submit Registration
+              <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
             </button>
           </div>
         </div>

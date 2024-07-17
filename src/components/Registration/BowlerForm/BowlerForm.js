@@ -144,6 +144,16 @@ const BowlerForm = ({
       ],
       valid: true,
       touched: false,
+    },
+    // Having this allows us to hang on to the doubles partner assignment across edits
+    doublesPartnerIndex: {
+      elementType: 'none',
+      elementConfig: {
+        value: null,
+      },
+      label: 'Doubles Partner',
+      valid: true,
+      touched: false,
     }
   }
 

@@ -16,7 +16,7 @@ import DoublesPartners from "../../../components/Registration/DoublesPartners/Do
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
-  const {identifier} = router.query;
+  const {identifier, edit} = router.query;
   const {tournament, loading, error} = useTheTournament(identifier);
   const [bowlers, setBowlers] = useState([]);
   const [nextStepDisabled, setNextStepDisabled] = useState(true);
@@ -176,7 +176,7 @@ const Page = () => {
             <p className={'my-3'}>
               Prefer to skip this step?
               <br/>
-              <span className={'small'}>(Doubles partners will not be assigned.)</span>
+              <span className={'small'}>({edit ? 'Changes will not be saved' : 'Doubles partners will not be assigned'}.)</span>
             </p>
             <p>
               <Link href={{
