@@ -2,11 +2,11 @@ import React, {useEffect, useState} from "react";
 import {CountryDropdown} from "react-country-region-selector";
 import Input from "../../ui/Input/Input";
 import ErrorBoundary from "../../common/ErrorBoundary";
+import {devConsoleLog} from "../../../utils";
 
 import classes from './BowlerForm.module.scss';
 
 import dynamic from 'next/dynamic';
-import {devConsoleLog} from "../../../utils";
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
   { ssr: false }
@@ -485,7 +485,11 @@ const BowlerForm = ({
     }
   }
 
-  const [bowlerForm, setBowlerForm] = useState();
+  const [bowlerForm, setBowlerForm] = useState({
+    formFields: {},
+    valid: false,
+    touched: false,
+  });
   const [fieldsToUse, setFieldsToUse] = useState(new Set(Object.keys(minimumFormFields)));
 
   // get the configs for the relevant additional questions
@@ -615,44 +619,52 @@ const BowlerForm = ({
       return;
     }
 
-    const optionalFields = tournament.config.bowler_form_fields.split(' ');
-    const updatedFields = new Set();
+    // const optionalFields = tournament.config.bowler_form_fields.split(' ');
+    // const updatedFields = new Set();
+    //
+    // if (!solo) {
+    //   // put team position at the front
+    //   updatedFields.add('position');
+    // }
+    //
+    // // Add the minimum fields
+    // fieldsToUse.forEach(field => updatedFields.add(field));
+    //
+    // // Add optional (toggle) fields, and each additional question
+    // optionalFields.concat(tournament.additionalQuestions.map(aq => aq.name)).forEach(field => updatedFields.add(field));
+    //
+    // const showShifts = solo && tournament.shifts.length > 1;
+    // if (showShifts) {
+    //   updatedFields.add('shift_identifier');
+    // }
 
-    if (!solo) {
-      // put team position at the front
-      updatedFields.add('position');
-    }
 
-    // Add the minimum fields
-    fieldsToUse.forEach(field => updatedFields.add(field));
 
-    // Add optional (toggle) fields, and each additional question
-    optionalFields.concat(tournament.additionalQuestions.map(aq => aq.name)).forEach(field => updatedFields.add(field));
 
-    const showShifts = solo && tournament.shifts.length > 1;
-    if (showShifts) {
-      updatedFields.add('shift_identifier');
-    }
+    // const initialFormData = getInitialFormData();
+    //
+    // // Do we need to populate the form? Needed for:
+    // //  - edit
+    // //  - admin viewing/updating
+    // if (bowlerData) {
+    //   // Fill it in
+    //   const populatedFormData = getPopulatedFormData(initialFormData);
+    //
+    //   // Start the form state with the filled-in data
+    //   setBowlerForm(populatedFormData);
+    // } else {
+    //   // if not, then the result of getInitialFormData is what we want to start the form state with
+    //   setBowlerForm(initialFormData);
+    // }
 
-    const initialFormData = getInitialFormData();
 
-    // Do we need to populate the form? Needed for:
-    //  - edit
-    //  - admin viewing/updating
-    if (bowlerData) {
-      // Fill it in
-      const populatedFormData = getPopulatedFormData(initialFormData);
 
-      // Start the form state with the filled-in data
-      setBowlerForm(populatedFormData);
-    } else {
-      // if not, then the result of getInitialFormData is what we want to start the form state with
-      setBowlerForm(initialFormData);
-    }
-    setFieldsToUse(updatedFields);
+
+    // setFieldsToUse(updatedFields);
   }, [tournament, bowlerData, takenPositions]);
 
-  if (!tournament || !bowlerForm) {
+  if (!tournament) {
+  // if (!tournament || !bowlerForm) {
     return '';
   }
 
@@ -858,6 +870,31 @@ const BowlerForm = ({
 
     setBowlerForm(newFormData);
   }
+
+  const determineFieldsToUse = () => {
+    // Trying to move some state-setting out of useEffect.
+    const optionalFields = tournament.config.bowler_form_fields.split(' ');
+    const updatedFields = new Set();
+
+    if (!solo) {
+      // put team position at the front
+      updatedFields.add('position');
+    }
+
+    // Add the minimum fields
+    fieldsToUse.forEach(field => updatedFields.add(field));
+
+    // Add optional (toggle) fields, and each additional question
+    optionalFields.concat(tournament.additionalQuestions.map(aq => aq.name)).forEach(field => updatedFields.add(field));
+
+    const showShifts = solo && tournament.shifts.length > 1;
+    if (showShifts) {
+      updatedFields.add('shift_identifier');
+    }
+    setFieldsToUse(updatedFields);
+  }
+
+  determineFieldsToUse();
 
   const formElements = [];
   fieldsToUse.forEach(key => {

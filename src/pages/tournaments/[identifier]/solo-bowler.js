@@ -14,6 +14,7 @@ import TournamentLogo from "../../../components/Registration/TournamentLogo/Tour
 import Link from "next/link";
 import Sidebar from "../../../components/Registration/Sidebar/Sidebar";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
+import DumbBowlerForm from "../../../components/Registration/DumbBowlerForm/DumbBowlerForm";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
@@ -70,6 +71,47 @@ const Page = () => {
     );
   }
 
+  const fieldNames = [
+    'firstName',
+    'lastName',
+    'nickname',
+    'email',
+    'phone',
+  ].concat(tournament.config['bowler_form_fields'].split(' ').map(serverField => {
+    switch (serverField) {
+      case 'postal_code':
+        return 'postalCode';
+      case 'usbc_id':
+        return 'usbcId';
+      case 'date_of_birth':
+        return 'dateOfBirth';
+      case 'payment_app':
+        return 'paymentApp';
+      default:
+        return serverField;
+    }
+  }));
+
+  // Future improvement: merge the concepts of "bowler form fields" and "additional questions"
+
+  const fieldData = {
+    shiftIdentifiers: {
+      value: [],
+      options: [],
+    },
+  }
+  if (tournament.shifts.length === 1) {
+    fieldData.shiftIdentifiers.value = [tournament.shifts[0].identifier];
+  } else {
+    fieldNames.push('shiftIdentifiers');
+    fieldData.shiftIdentifiers.options = tournament.shifts.map(({identifier, name, description}) => {
+      return {
+        value: identifier,
+        label: `${name} (${description}`,
+      };
+    });
+  }
+
   return (
     <>
       <div className={'row d-flex d-md-none'}>
@@ -102,11 +144,18 @@ const Page = () => {
         <div className={'col-12 col-md-8'}>
           <ProgressIndicator steps={['bowler', 'review']}
                              active={'bowler'}/>
-          <BowlerForm tournament={tournament}
-                      bowlerInfoSaved={bowlerInfoSaved}
-                      bowlerData={bowlerData}
-                      solo={true}
-                      nextButtonText={buttonText}/>
+          <DumbBowlerForm tournament={tournament}
+                          bowler={bowlerData}
+                          solo={true}
+                          onBowlerSave={bowlerInfoSaved}
+                          submitButtonText={buttonText}
+                          fieldNames={fieldNames}
+                          fieldData={fieldData}/>
+          {/*<BowlerForm tournament={tournament}*/}
+          {/*            bowlerInfoSaved={bowlerInfoSaved}*/}
+          {/*            bowlerData={bowlerData}*/}
+          {/*            solo={true}*/}
+          {/*            nextButtonText={buttonText}/>*/}
         </div>
       </div>
     </>
