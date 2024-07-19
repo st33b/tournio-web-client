@@ -650,7 +650,7 @@ const BowlerForm = ({
       setBowlerForm(initialFormData);
     }
     setFieldsToUse(updatedFields);
-  }, [tournament, takenPositions]);
+  }, [tournament, bowlerData, takenPositions]);
 
   if (!tournament || !bowlerForm) {
     return '';

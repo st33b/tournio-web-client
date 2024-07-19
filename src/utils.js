@@ -259,7 +259,7 @@ export const fetchTeamList = ({tournamentIdentifier, dispatch, onSuccess, onFail
 
 ////////////////////////////////////////////////////
 
-export const submitNewTeamRegistration = (tournament, team, onSuccess, onFailure) => {
+export const submitNewTeamRegistration = ({tournament, team, onSuccess, onFailure}) => {
   const postData = convertTeamDataForServer(tournament, team);
 
   const requestConfig = {
@@ -354,7 +354,7 @@ const convertTeamDataForServer = (tournament, team) => {
   let postData = {
     team: {
       name: team.name,
-      initial_size: team.bowlerCount,
+      shift_identifiers: [...team.shiftIdentifiers],
       bowlers_attributes: [],
     },
   };

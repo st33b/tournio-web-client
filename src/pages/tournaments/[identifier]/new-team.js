@@ -57,7 +57,8 @@ const Page = () => {
         query: { identifier: identifier },
       });
     } else {
-      // Add a bowlers property, since the team form doesn't
+      // Add a bowlers property, since the team form doesn't. Make sure it's
+      // the bowlers the team already has, if any
       const withBowlers = {
         ...formData,
         bowlers: [],

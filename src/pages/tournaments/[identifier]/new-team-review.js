@@ -2,7 +2,12 @@ import {useRouter} from "next/router";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {devConsoleLog, submitNewTeamWithPlaceholders, useTheTournament} from "../../../utils";
+import {
+  devConsoleLog,
+  submitNewTeamRegistration,
+  submitNewTeamWithPlaceholders,
+  useTheTournament
+} from "../../../utils";
 import React, {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import NewTeamReview from "../../../components/Registration/NewTeamReview/NewTeamReview";
@@ -18,7 +23,7 @@ const Page = () => {
   const router = useRouter();
   const {identifier, successIndex} = router.query;
 
-  const [processing, setProcessing] = useState(true);
+  const [processing, setProcessing] = useState(false);
   const {loading: tournamentLoading, tournament, error: tournamentError} = useTheTournament(identifier);
 
   // If new-team registrations isn't enabled, go back to the tournament home page
@@ -78,13 +83,12 @@ const Page = () => {
     // Write the team to the backend, with the single bowler.
     // Upon success, redirect to the team's page, which will
     // present its options.
-    // submitNewTeamWithPlaceholders({
-    //   tournament: tournament,
-    //   team: registration.team,
-    //   bowler: registration.bowler,
-    //   onSuccess: newTeamRegistrationSuccess,
-    //   onFailure: newTeamRegistrationFailure,
-    // });
+    submitNewTeamRegistration({
+      tournament: tournament,
+      team: registration.team,
+      onSuccess: newTeamRegistrationSuccess,
+      onFailure: newTeamRegistrationFailure,
+    });
     setProcessing(true);
   }
 
@@ -200,45 +204,6 @@ devConsoleLog("Success index:", successIndex);
         </div>
       </div>
     </>
-    // <div className={'row'}>
-    //   <div className={'col-12'}>
-    //     <TournamentHeader tournament={tournament}/>
-    //
-    //     <h3 className={`bg-primary-subtle py-3`}>
-    //       Initial Review
-    //     </h3>
-    //
-    //   </div>
-    //
-    //   <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
-    //   <NewTeamReview team={registration.team}
-    //                    bowler={registration.bowler}
-    //                    tournament={tournament}
-    //                    onEdit={editBowlerClicked}
-    //                    onSave={saveClicked}/>
-    //
-    //     <hr/>
-    //
-    //     <div className={`d-flex justify-content-between`}>
-    //       <Link href={`/tournaments/${identifier}/new-team-first-bowler?edit=true`}
-    //             className={`btn btn-lg btn-outline-primary d-block ${processing && 'invisible'}`}>
-    //         <i className={'bi bi-chevron-double-left pe-2'}
-    //            aria-hidden={true}/>
-    //         Make Changes
-    //       </Link>
-    //
-    //       <button className={`btn btn-lg btn-primary`}
-    //               disabled={processing}
-    //               onClick={saveClicked}>
-    //         Save
-    //         <i className={'bi bi-chevron-double-right ps-2'}
-    //            aria-hidden={true}/>
-    //       </button>
-    //     </div>
-    //
-    //     {processing && <LoadingMessage message={'Submitting registration...'}/>}
-    //   </div>
-    // </div>
   );
 }
 

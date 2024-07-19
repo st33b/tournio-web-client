@@ -25,8 +25,9 @@ const TeamForm = ({tournament, team, onSubmit, submitButtonText}) => {
 
     if (team) {
       // we're editing the team, so let's populate the form with what we've been passed as a prop
-      newComponentState.fields.name = team.name;
-      newComponentState.fields.shiftIdentifiers = [...team.shiftIdentifiers];
+      newComponentState.fields = {
+        ...team,
+      }
       newComponentState.valid = true;
     } else if (tournamentType === 'igbo_standard') {
       newComponentState.fields.shiftIdentifiers = [tournament.shifts[0].identifier];

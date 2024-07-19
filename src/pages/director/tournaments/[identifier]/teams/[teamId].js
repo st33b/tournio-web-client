@@ -140,12 +140,10 @@ const Page = () => {
   }
 
   const formChangedHandler = (newTeamData) => {
-    // devConsoleLog("Data sent to page:", newTeamData);
     const updatedTeamData = {
       ...teamData,
       ...newTeamData,
     }
-    // devConsoleLog("Updated team data:", updatedTeamData);
     setTeamData(updatedTeamData);
   }
 
@@ -233,7 +231,7 @@ const Page = () => {
 
 
           <div className={'mt-4'}>
-            <UrlShare url={shareUrl}/>
+            <UrlShare url={shareUrl} admin={true}/>
           </div>
         </Col>
 

@@ -1,7 +1,7 @@
 import classes from './UrlShare.module.scss';
 import {Popover, OverlayTrigger} from "react-bootstrap";
 
-const UrlShare = ({url}) => {
+const UrlShare = ({url, fullTeam = false, admin = false}) => {
   const copyClicked = () => {
     navigator.clipboard.writeText(url).then(
       () => {
@@ -45,7 +45,15 @@ const UrlShare = ({url}) => {
       </div>
 
       <p className={`${classes.Instructions}`}>
-        Use this URL to add your teammates later, or share it with them so they can add their information themselves.
+        {!admin && fullTeam && (
+          'You and your teammates can use this URL to come back later and pay your entry fees.'
+        )}
+        {!admin && !fullTeam && (
+          'Use this URL to add your teammates later, or share it with them so they can add their information themselves.'
+        )}
+        {admin && (
+          'Team members can use this URL to join the team (if applicable) or pay their entry fees.'
+        )}
       </p>
     </div>
   );
