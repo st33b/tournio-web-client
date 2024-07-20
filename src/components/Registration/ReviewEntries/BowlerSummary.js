@@ -50,7 +50,7 @@ const BowlerSummary = ({tournament, bowler, partner = null}) => {
 
   let partnerFullName;
   if (partner) {
-    partnerFullName = (partner.nickname ? partner.nickname : partner.first_name) + ' ' + partner.last_name;
+    partnerFullName = (partner.nickname ? partner.nickname : partner.firstName) + ' ' + partner.lastName;
   }
 
   return (
@@ -76,9 +76,9 @@ const BowlerSummary = ({tournament, bowler, partner = null}) => {
         {optionalFields.map(key => {
           let displayedValue = bowler[key];
           if (key === 'date_of_birth') {
-            displayedValue = `${bowler.birth_month} / ${bowler.birth_day} / ${bowler.birth_year}`;
+            displayedValue = `${bowler.birthMonth} / ${bowler.birthDay} / ${bowler.birthYear}`;
           } else if (key === 'payment_app') {
-            displayedValue = bowler.payment_app.app_name ? `${bowler.payment_app.account_name} (${bowler.payment_app.app_name})` : 'n/a';
+            displayedValue = bowler.paymentApp ? `${bowler.paymentAccount} (${bowler.paymentApp})` : 'n/a';
           }
           return (
             <Row key={`${key}`}>

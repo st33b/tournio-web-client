@@ -1,11 +1,12 @@
 import Input from "../../ui/Input/Input";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {CountryDropdown} from "react-country-region-selector";
+import titleCase from "voca/title_case";
 
 import classes from './DumbBowlerForm.module.scss';
 
 import dynamic from 'next/dynamic';
-import {devConsoleLog} from "../../../utils";
+import {devConsoleLog, updateObject} from "../../../utils";
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
   { ssr: false }
@@ -20,50 +21,62 @@ const DumbBowlerForm = ({
   fieldNames = ['firstName', 'lastName', 'nickname', 'email', 'phone'], // specifies which of the fields we know about to use
   fieldData = {}, // things that cannot be known at compile time, such as taken positions or values/labels for shifts
                         }) => {
+  const valueForField = (field, defaultValue = '') => {
+    if (!bowler) {
+      return defaultValue;
+    }
+    if (typeof bowler[field] === 'undefined' || bowler[field] === null) {
+      devConsoleLog('Accessing a null or undefined bowler property:', field);
+      return defaultValue;
+    }
+    return bowler[field];
+  }
+
   const initialFormData = {
     fields: {
       firstName: {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          value: '',
+          value: valueForField('firstName'),
         },
         label: 'First name',
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: bowler ? true : false,
         touched: false,
       },
       lastName: {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          value: '',
+          value: valueForField('lastName'),
         },
         label: 'Last name',
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: bowler ? true : false,
         touched: false,
       },
       nickname: {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          value: '',
+          value: valueForField('nickname'),
           placeholder: 'if different from first name',
         },
         label: 'Preferred Name',
         validityErrors: [],
+        valid: true,
         touched: false,
       },
       email: {
         elementType: 'input',
         elementConfig: {
           type: 'email',
-          value: '',
+          value: valueForField('email'),
         },
         label: 'Email address',
         validityErrors: [
@@ -73,20 +86,20 @@ const DumbBowlerForm = ({
         errorMessages: {
           typeMismatch: "That's not a valid email address",
         },
-        valid: false,
+        valid: bowler ? true : false,
         touched: false,
       },
       phone: {
         elementType: 'input',
         elementConfig: {
           type: 'tel',
-          value: '',
+          value: valueForField('phone'),
         },
         label: 'Phone number',
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: bowler ? true : false,
         touched: false,
       },
 
@@ -94,7 +107,7 @@ const DumbBowlerForm = ({
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          value: '',
+          value: valueForField('usbcId'),
           pattern: "\\d+-\\d+",
           placeholder: 'including the hyphen',
         },
@@ -110,7 +123,7 @@ const DumbBowlerForm = ({
           url: 'https://webapps.bowl.com/USBCFindA/Home/Member',
           text: 'Look up your USBC ID',
         },
-        valid: false,
+        valid: bowler ? true : false,
         touched: false,
       },
       dateOfBirth: {
@@ -172,7 +185,7 @@ const DumbBowlerForm = ({
                     label: 'Dec'
                   },
                 ],
-                value: 1,
+                value: valueForField('birthMonth', 1),
               },
               labelClasses: ['visually-hidden'],
               layoutClass: 'col-4 col-xl-3',
@@ -192,7 +205,7 @@ const DumbBowlerForm = ({
                   min: 1,
                   max: 31,
                 },
-                value: 1,
+                value: valueForField('birthDay', 1),
               },
               labelClasses: ['visually-hidden'],
               layoutClass: 'col-4 col-xl-3',
@@ -212,7 +225,7 @@ const DumbBowlerForm = ({
                   min: 1900,
                   max: 2010,
                 },
-                value: 1976,
+                value: valueForField('birthYear', 1976),
               },
               labelClasses: ['visually-hidden'],
               layoutClass: 'col-4 col-xl-3',
@@ -220,7 +233,7 @@ const DumbBowlerForm = ({
               validityErrors: [
                 // 'valueMissing',
               ],
-              valid: false,
+              valid: true,
               touched: false,
             }
           ],
@@ -234,54 +247,54 @@ const DumbBowlerForm = ({
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          value: '',
+          value: valueForField('address1'),
           autoComplete: 'address-line1',
         },
         label: 'Mailing Address',
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: bowler ? true : false,
         touched: false,
       },
       address2: {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          value: '',
+          value: valueForField('address2'),
           autoComplete: 'address-line2',
         },
         label: 'Unit / Apt No.',
         validityErrors: [],
-        valid: false,
+        valid: true,
         touched: false,
       },
       city: {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          value: '',
+          value: valueForField('city'),
           autoComplete: 'address-level2',
         },
         label: 'City/Town',
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: bowler ? true : false,
         touched: false,
       },
       state: {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          value: '',
+          value: valueForField('state'),
           autoComplete: 'address-level1',
         },
         label: 'State/Province',
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: bowler ? true : false,
         touched: false,
       },
       country: {
@@ -289,7 +302,7 @@ const DumbBowlerForm = ({
         elementConfig: {
           // autoComplete: 'country', // (this component is not compatible with autoComplete)
           component: CountryDropdown,
-          value: 'US',
+          value: valueForField('country', 'US'),
           classNames: ['form-select'],
           props: {
             name: 'country',
@@ -302,21 +315,21 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: bowler ? true : false,
         touched: false,
       },
       postalCode: {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          value: '',
+          value: valueForField('postalCode'),
           autoComplete: 'postal-code',
         },
         label: 'ZIP/Postal Code',
         validityErrors: [
           'valueMissing',
         ],
-        valid: false,
+        valid: bowler ? true : false,
         touched: false,
       },
       paymentApp: {
@@ -325,7 +338,7 @@ const DumbBowlerForm = ({
           elements: [
             {
               // App name
-              identifier: 'appName',
+              identifier: 'app',
               elementType: 'select',
               elementConfig: {
                 options: [
@@ -345,48 +358,29 @@ const DumbBowlerForm = ({
                     value: 'Zelle',
                     label: 'Zelle',
                   },
-                  // {
-                  //   value: 'cashapp',
-                  //   label: 'CashApp',
-                  // },
-                  // {
-                  //   value: 'googlepay',
-                  //   label: 'Google Pay',
-                  // },
-                  // {
-                  //   value: 'applepay',
-                  //   label: 'Apple Pay',
-                  // },
-                  // {
-                  //   value: 'samsungpay',
-                  //   label: 'Samsung Pay',
-                  // },
                 ],
-                value: 'paypal',
+                value: valueForField('paymentApp'),
               },
               labelClasses: ['visually-hidden'],
               layoutClass: 'col-5 col-md-4 col-xl-3',
               label: 'App Name',
-              validityErrors: [
-              ],
+              validityErrors: [],
               valid: true,
               touched: false,
             },
             {
               // Account name
-              identifier: 'accountName',
+              identifier: 'account',
               elementType: 'input',
               elementConfig: {
                 type: 'text',
-                value: '',
+                value: valueForField('paymentAccount'),
                 placeholder: '@username / email / phone',
               },
               layoutClass: 'col',
               labelClasses: ['visually-hidden'],
               label: 'Account Name',
-              validityErrors: [
-                // 'valueMissing',
-              ],
+              validityErrors: [],
               valid: true,
               touched: false,
             }
@@ -445,18 +439,64 @@ const DumbBowlerForm = ({
         touched: false,
       }
     },
-    valid: false,
+    valid: bowler ? true : false,
     touched: false,
   }
   const [formData, setFormData] = useState(initialFormData);
 
-  // Ok, now how to handle editing a bowler? Does it make sense for that to happen in useEffect?
+  const getAdditionalQuestionFields = () => {
+    const newFormFields = {};
+    tournament.additionalQuestions.forEach(q => {
+      const key = q.name;
+      const field = {
+        ...q,
+        elementConfig: {
+          ...q.elementConfig,
+          value: valueForField(key),
+        },
+        validityErrors: [],
+        valid: true,
+        touched: false,
+      };
+      if (q.validation.required) {
+        field.validityErrors = ['valueMissing'];
+        field.valid = false;
+      }
+      newFormFields[key] = field;
+    });
+    return newFormFields;
+  }
+
+  useEffect(() => {
+    if (!tournament) {
+      return;
+    }
+    setFormData(updateObject(formData, {
+      fields: {
+        ...formData.fields,
+        ...getAdditionalQuestionFields(),
+      },
+    }));
+  }, [tournament]);
 
   if (!tournament) {
     return '';
   }
 
   ////////////////////////
+
+  // Resets all values in the form data.
+  const clearFormData = () => {
+    const newFormData = {
+      fields: {
+        ...initialFormData.fields,
+        ...getAdditionalQuestionFields(),
+      },
+      valid: false,
+      touched: false,
+    }
+    setFormData(newFormData);
+  }
 
   const validityForField = (failedChecks = []) => {
     return {
@@ -522,13 +562,13 @@ const DumbBowlerForm = ({
 
         updatedBowlerForm.fields.dateOfBirth.elementConfig.elements[index] = updatedFormElement;
         break;
-      case 'paymentApp:appName':
-      case 'paymentApp:accountName':
+      case 'paymentApp:app':
+      case 'paymentApp:account':
         const paymentElemIdentifier = inputName.split(':')[1];
 
         const elements = [
-          'appName',
-          'accountName',
+          'app',
+          'account',
         ];
         const elemIndex = elements.findIndex(e => e === paymentElemIdentifier);
         const paymentElem = formData.fields.paymentApp.elementConfig.elements[elemIndex];
@@ -573,8 +613,8 @@ const DumbBowlerForm = ({
       'dateOfBirth:month',
       'dateOfBirth:day',
       'dateOfBirth:year',
-      'paymentApp:appName',
-      'paymentApp:accountName',
+      'paymentApp:app',
+      'paymentApp:account',
     ];
     if (!comboInputs.includes(inputName)) {
       updatedBowlerForm.fields[inputName] = updatedFormElement;
@@ -584,6 +624,9 @@ const DumbBowlerForm = ({
 
     // Is the whole form valid?
     updatedBowlerForm.valid = fieldNames.every(fieldName => updatedBowlerForm.fields[fieldName].valid);
+    if (!updatedBowlerForm.valid) {
+      devConsoleLog("Something is invalid.", fieldNames.map(fname => `${fname}: ${updatedBowlerForm.fields[fname].valid}`));
+    }
 
     setFormData(updatedBowlerForm);
   }
@@ -612,6 +655,44 @@ const DumbBowlerForm = ({
     setFormData(newFormData);
   }
 
+  const formSubmitted = (event) => {
+    event.preventDefault();
+
+    if (!formData.valid) {
+      return;
+    }
+
+    const bowlerData = {};
+    for (let identifier in formData.fields) {
+      // Pull in everything where the value is not undefined.
+      // This gets everything except what's in combo elements.
+      if (typeof formData.fields[identifier].elementConfig.value !== 'undefined') {
+        bowlerData[identifier] = formData.fields[identifier].elementConfig.value;
+      }
+
+      // Now get the fields in combo elements, if needed.
+      if (fieldNames.includes('dateOfBirth')) {
+        formData.fields.dateOfBirth.elementConfig.elements.forEach(elem => {
+          const key = 'birth' + titleCase(elem.identifier);
+          bowlerData[key] = elem.elementConfig.value;
+        });
+      }
+
+      // And payment app
+      if (fieldNames.includes('paymentApp')) {
+        formData.fields.paymentApp.elementConfig.elements.forEach(elem => {
+          const key = 'payment' + titleCase(elem.identifier);
+          bowlerData[key] = elem.elementConfig.value;
+        });
+      }
+    }
+
+    onBowlerSave(bowlerData);
+
+    // Now, clear the form out to make room for the next bowler.
+    clearFormData();
+  }
+
   const mapboxTheme = {
     variables: {
       fontFamily: "var(--tournio-font-sans-serif)",
@@ -622,6 +703,12 @@ const DumbBowlerForm = ({
   };
 
   const inputElementForField = (fieldName) => {
+    // On first render, the additional questions aren't there, so guard against there
+    // being no field for the named field
+    if (!formData.fields[fieldName]) {
+      return null;
+    }
+
     const formElement = formData.fields[fieldName];
     const validateOnBlur = formData.fields[fieldName].elementType !== 'select' && formData.fields[fieldName].validityErrors.length > 0;
 
@@ -649,7 +736,7 @@ const DumbBowlerForm = ({
 
   return (
     <div className={classes.DumbBowlerForm}>
-      <form onSubmit={onBowlerSave}>
+      <form onSubmit={formSubmitted}>
         {fieldNames.map(fieldName => {
           if (fieldName === 'address1') {
             return (

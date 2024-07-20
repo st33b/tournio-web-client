@@ -12,7 +12,6 @@ import TournamentHeader from "../../../components/ui/TournamentHeader";
 import BowlerSummary from "../../../components/Registration/ReviewEntries/BowlerSummary";
 
 const Page = () => {
-  devConsoleLog("------------ page untouched in team restoration");
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
   const {identifier} = router.query;
@@ -89,7 +88,8 @@ const Page = () => {
           href={{
               pathname: '/tournaments/[identifier]/solo-bowler',
               query: {
-                identifier: identifier
+                identifier: identifier,
+                edit: true,
               }
             }}
           className={`btn btn-lg btn-outline-primary d-block ${processing && 'invisible'}`}>

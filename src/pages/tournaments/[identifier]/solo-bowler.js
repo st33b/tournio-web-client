@@ -7,7 +7,6 @@ import {
   soloBowlerInfoAdded
 } from "../../../store/actions/registrationActions";
 import {useTheTournament} from "../../../utils";
-import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
@@ -60,7 +59,7 @@ const Page = () => {
     });
   }
 
-  const bowlerData = registration.bowler ? registration.bowler : null;
+  const bowlerData = edit && registration.bowler ? registration.bowler : null;
   const titleText = edit ? 'Edit Bowler Details' : 'Bowler Registration';
   const buttonText = edit ? 'Save Changes' : 'Next';
 
@@ -90,7 +89,7 @@ const Page = () => {
       default:
         return serverField;
     }
-  }));
+  })).concat(tournament.additionalQuestions.map(q => q.name));
 
   // Future improvement: merge the concepts of "bowler form fields" and "additional questions"
 
