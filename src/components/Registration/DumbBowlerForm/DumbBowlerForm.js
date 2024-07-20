@@ -5,6 +5,7 @@ import {CountryDropdown} from "react-country-region-selector";
 import classes from './DumbBowlerForm.module.scss';
 
 import dynamic from 'next/dynamic';
+import {devConsoleLog} from "../../../utils";
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
   { ssr: false }
@@ -31,7 +32,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
       lastName: {
@@ -44,7 +45,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
       nickname: {
@@ -55,6 +56,7 @@ const DumbBowlerForm = ({
           placeholder: 'if different from first name',
         },
         label: 'Preferred Name',
+        validityErrors: [],
         touched: false,
       },
       email: {
@@ -71,7 +73,7 @@ const DumbBowlerForm = ({
         errorMessages: {
           typeMismatch: "That's not a valid email address",
         },
-        valid: true,
+        valid: false,
         touched: false,
       },
       phone: {
@@ -84,7 +86,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
 
@@ -108,7 +110,7 @@ const DumbBowlerForm = ({
           url: 'https://webapps.bowl.com/USBCFindA/Home/Member',
           text: 'Look up your USBC ID',
         },
-        valid: true,
+        valid: false,
         touched: false,
       },
       dateOfBirth: {
@@ -239,7 +241,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
       address2: {
@@ -250,10 +252,8 @@ const DumbBowlerForm = ({
           autoComplete: 'address-line2',
         },
         label: 'Unit / Apt No.',
-        validityErrors: [
-          '',
-        ],
-        valid: true,
+        validityErrors: [],
+        valid: false,
         touched: false,
       },
       city: {
@@ -267,7 +267,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
       state: {
@@ -281,12 +281,13 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
       country: {
         elementType: 'component',
         elementConfig: {
+          // autoComplete: 'country', // (this component is not compatible with autoComplete)
           component: CountryDropdown,
           value: 'US',
           classNames: ['form-select'],
@@ -301,7 +302,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
       postalCode: {
@@ -315,7 +316,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: true,
+        valid: false,
         touched: false,
       },
       paymentApp: {
@@ -416,20 +417,21 @@ const DumbBowlerForm = ({
         valid: true,
         touched: false,
       },
-      shiftIdentifiers: {
-        elementType: 'select',
-        elementConfig: {
-          // Filled by data in fieldData
-          options: [],
-          value: [],
-        },
-        label: 'Shift Preference',
-        validityErrors: [
-          'valueMissing',
-        ],
-        valid: true,
-        touched: false,
-      },
+      // TODO: use the two shift forms for shift identifier(s)
+      // shiftIdentifiers: {
+      //   elementType: 'select',
+      //   elementConfig: {
+      //     // Filled by data in fieldData
+      //     options: [],
+      //     value: [],
+      //   },
+      //   label: 'Shift Preference',
+      //   validityErrors: [
+      //     'valueMissing',
+      //   ],
+      //   valid: true,
+      //   touched: false,
+      // },
 
       // Having this allows us to hang on to the doubles partner assignment across edits
       doublesPartnerIndex: {
@@ -438,6 +440,7 @@ const DumbBowlerForm = ({
           value: null,
         },
         label: 'Doubles Partner',
+        validityErrors: [],
         valid: true,
         touched: false,
       }
@@ -517,7 +520,7 @@ const DumbBowlerForm = ({
           touched: true,
         }
 
-        updatedBowlerForm.formFields.dateOfBirth.elementConfig.elements[index] = updatedFormElement;
+        updatedBowlerForm.fields.dateOfBirth.elementConfig.elements[index] = updatedFormElement;
         break;
       case 'paymentApp:appName':
       case 'paymentApp:accountName':
@@ -539,20 +542,20 @@ const DumbBowlerForm = ({
           touched: true,
         }
 
-        updatedBowlerForm.formFields.payment_app.elementConfig.elements[elemIndex] = updatedFormElement;
+        updatedBowlerForm.fields.paymentApp.elementConfig.elements[elemIndex] = updatedFormElement;
         break;
       default:
-        checksToRun = bowlerForm.formFields[inputName].validityErrors;
+        checksToRun = formData.fields[inputName].validityErrors;
         validity = !!checksToRun ? event.target.validity : {};
         failedChecks = !!checksToRun ? checksToRun.filter(c => validity[c]) : [];
 
         updatedFormElement = {
-          ...bowlerForm.formFields[inputName],
-          elementConfig: {...bowlerForm.formFields[inputName].elementConfig},
+          ...formData.fields[inputName],
+          elementConfig: {...formData.fields[inputName].elementConfig},
           validated: false,
           ...validityForField(failedChecks)
         }
-        if (bowlerForm.fields[inputName].elementType === 'checkbox') {
+        if (formData.fields[inputName].elementType === 'checkbox') {
           updatedFormElement.elementConfig.value = event.target.checked ? 'yes' : 'no';
         } else if (inputName === 'position') {
           updatedFormElement.elementConfig.value = parseInt(event.target.value);
@@ -579,21 +582,86 @@ const DumbBowlerForm = ({
 
     updatedBowlerForm.touched = true;
 
-    // Now, determine whether the whole form is valid
-    updatedBowlerForm.valid = Object.values(updatedBowlerForm.fields).every(
-      formField => {
-        return formField === null || typeof formField.valid === 'undefined' || formField.valid
-      }
-    );
+    // Is the whole form valid?
+    updatedBowlerForm.valid = fieldNames.every(fieldName => updatedBowlerForm.fields[fieldName].valid);
 
-    // Replace the form in state, to reflect changes based on the value that changed, and resulting validity
     setFormData(updatedBowlerForm);
   }
 
+  const fieldBlurred = (event, inputName) => {
+    const newFormData = {...formData}
+    const fieldIsChanged = formData.fields[inputName].touched;
+
+    const checksToRun = formData.fields[inputName].validityErrors;
+    if (!checksToRun || !fieldIsChanged) {
+      // Don't update validations if we've blurred but the input was never changed
+      return;
+    }
+
+    const {validity} = event !== null ? event.target : {};
+    const failedChecks = checksToRun.filter(c => validity[c]);
+
+    newFormData.fields[inputName] = {
+      ...newFormData.fields[inputName],
+      ...validityForField(failedChecks),
+    };
+
+    // Now, determine whether the whole form is valid
+    newFormData.valid = fieldNames.every(fieldName => newFormData.fields[fieldName].valid);
+
+    setFormData(newFormData);
+  }
+
+  const mapboxTheme = {
+    variables: {
+      fontFamily: "var(--tournio-font-sans-serif)",
+      colorBackground: "var(--tournio-body-bg)",
+      colorBackgroundHover: "var(--tournio-secondary-bg-subtle)",
+      colorText: "var(--tournio-body-color)",
+    }
+  };
+
+  const inputElementForField = (fieldName) => {
+    const formElement = formData.fields[fieldName];
+    const validateOnBlur = formData.fields[fieldName].elementType !== 'select' && formData.fields[fieldName].validityErrors.length > 0;
+
+    return (
+      <Input
+        key={`input_${fieldName}`}
+        identifier={fieldName}
+        elementType={formElement.elementType}
+        elementConfig={formElement.elementConfig}
+        changed={inputChangedHandler}
+        label={formElement.label}
+        labelClasses={formElement.labelClasses}
+        layoutClass={formElement.layoutClass}
+        helper={formElement.helper}
+        validityErrors={formElement.validityErrors}
+        errorMessages={formElement.errorMessages}
+        // For <select> elements, onBlur is redundant to onChange
+        blurred={validateOnBlur ? (event) => fieldBlurred(event, fieldName) : false}
+        // formElement.validityFailures is added by validityForField
+        failedValidations={typeof formElement.validityFailures !== 'undefined' ? formElement.validityFailures : []}
+        wasValidated={formElement.validated}
+      />
+    );
+  }
 
   return (
     <div className={classes.DumbBowlerForm}>
       <form onSubmit={onBowlerSave}>
+        {fieldNames.map(fieldName => {
+          if (fieldName === 'address1') {
+            return (
+              <AddressAutofill key={'address-autofill'}
+                               accessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN}
+                               theme={mapboxTheme}>
+                {inputElementForField(fieldName)}
+              </AddressAutofill>
+            )
+          }
+          return inputElementForField(fieldName);
+        })}
 
         <p className={`${classes.RequiredLabel} text-md-center`}>
           <i className={`align-top bi-asterisk pe-1`}/>

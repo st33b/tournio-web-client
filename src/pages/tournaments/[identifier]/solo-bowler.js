@@ -103,7 +103,7 @@ const Page = () => {
   if (tournament.shifts.length === 1) {
     fieldData.shiftIdentifiers.value = [tournament.shifts[0].identifier];
   } else {
-    fieldNames.push('shiftIdentifiers');
+    // fieldNames.push('shiftIdentifiers');
     fieldData.shiftIdentifiers.options = tournament.shifts.map(({identifier, name, description}) => {
       return {
         value: identifier,
@@ -151,6 +151,7 @@ const Page = () => {
                           submitButtonText={buttonText}
                           fieldNames={fieldNames}
                           fieldData={fieldData}/>
+
           {/*<BowlerForm tournament={tournament}*/}
           {/*            bowlerInfoSaved={bowlerInfoSaved}*/}
           {/*            bowlerData={bowlerData}*/}
