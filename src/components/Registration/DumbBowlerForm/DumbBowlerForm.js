@@ -44,7 +44,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: bowler ? true : false,
+        valid: !!bowler,
         touched: false,
       },
       lastName: {
@@ -57,7 +57,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: bowler ? true : false,
+        valid: !!bowler,
         touched: false,
       },
       nickname: {
@@ -86,7 +86,7 @@ const DumbBowlerForm = ({
         errorMessages: {
           typeMismatch: "That's not a valid email address",
         },
-        valid: bowler ? true : false,
+        valid: !!bowler,
         touched: false,
       },
       phone: {
@@ -99,7 +99,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: bowler ? true : false,
+        valid: !!bowler,
         touched: false,
       },
 
@@ -123,7 +123,7 @@ const DumbBowlerForm = ({
           url: 'https://webapps.bowl.com/USBCFindA/Home/Member',
           text: 'Look up your USBC ID',
         },
-        valid: bowler ? true : false,
+        valid: !!bowler,
         touched: false,
       },
       dateOfBirth: {
@@ -254,7 +254,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: bowler ? true : false,
+        valid: !!bowler,
         touched: false,
       },
       address2: {
@@ -280,7 +280,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: bowler ? true : false,
+        valid: !!bowler,
         touched: false,
       },
       state: {
@@ -294,7 +294,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: bowler ? true : false,
+        valid: !!bowler,
         touched: false,
       },
       country: {
@@ -315,7 +315,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: bowler ? true : false,
+        valid: !!bowler,
         touched: false,
       },
       postalCode: {
@@ -329,7 +329,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: bowler ? true : false,
+        valid: !!bowler,
         touched: false,
       },
       paymentApp: {
@@ -439,7 +439,7 @@ const DumbBowlerForm = ({
         touched: false,
       }
     },
-    valid: bowler ? true : false,
+    valid: !!bowler,
     touched: false,
   }
   const [formData, setFormData] = useState(initialFormData);
@@ -460,7 +460,7 @@ const DumbBowlerForm = ({
       };
       if (q.validation.required) {
         field.validityErrors = ['valueMissing'];
-        field.valid = false;
+        field.valid = !!bowler;
       }
       newFormFields[key] = field;
     });
@@ -687,6 +687,7 @@ const DumbBowlerForm = ({
       }
     }
 
+    devConsoleLog("Saving bowler data:", bowlerData);
     onBowlerSave(bowlerData);
 
     // Now, clear the form out to make room for the next bowler.

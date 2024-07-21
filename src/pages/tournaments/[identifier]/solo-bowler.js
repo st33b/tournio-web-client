@@ -76,20 +76,7 @@ const Page = () => {
     'nickname',
     'email',
     'phone',
-  ].concat(tournament.config['bowler_form_fields'].split(' ').map(serverField => {
-    switch (serverField) {
-      case 'postal_code':
-        return 'postalCode';
-      case 'usbc_id':
-        return 'usbcId';
-      case 'date_of_birth':
-        return 'dateOfBirth';
-      case 'payment_app':
-        return 'paymentApp';
-      default:
-        return serverField;
-    }
-  })).concat(tournament.additionalQuestions.map(q => q.name));
+  ].concat(tournament.config['bowler_form_fields'].split(' ')).concat(tournament.additionalQuestions.map(q => q.name));
 
   // Future improvement: merge the concepts of "bowler form fields" and "additional questions"
 
