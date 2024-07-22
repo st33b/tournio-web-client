@@ -381,12 +381,12 @@ export const convertBowlerDataForPost = (tournament, bowler) => {
 
   const bowlerObj = {
     person_attributes: {
-      first_name: bowler.first_name,
-      last_name: bowler.last_name,
-      usbc_id: bowler.usbc_id,
-      birth_month: bowler.birth_month,
-      birth_day: bowler.birth_day,
-      birth_year: bowler.birth_year,
+      first_name: bowler.firstName,
+      last_name: bowler.lastName,
+      usbc_id: bowler.usbcId,
+      birth_month: bowler.birthMonth,
+      birth_day: bowler.birthDay,
+      birth_year: bowler.birthYear,
       nickname: bowler.nickname,
       phone: bowler.phone,
       email: bowler.email,
@@ -395,18 +395,18 @@ export const convertBowlerDataForPost = (tournament, bowler) => {
       city: bowler.city,
       state: bowler.state,
       country: bowler.country,
-      postal_code: bowler.postal_code,
+      postal_code: bowler.postalCode,
     },
     additional_question_responses: additionalQuestionResponses,
   };
-  if (bowler.doubles_partner) {
-    bowlerObj.doubles_partner_identifier = bowler.doubles_partner;
+  if (bowler.doublesPartner) {
+    bowlerObj.doubles_partner_identifier = bowler.doublesPartner;
   }
-  if (bowler.shift_identifier) {
-    bowlerObj.shift_identifiers = [bowler.shift_identifier];
+  if (bowler.shiftIdentifiers) {
+    bowlerObj.shift_identifiers = bowler.shiftIdentifiers;
   }
-  if (bowler.payment_app && bowler.payment_app.app_name) {
-    bowlerObj.person_attributes.payment_app = `${bowler.payment_app.app_name}: ${bowler.payment_app.account_name}`;
+  if (bowler.paymentApp && bowler.paymentAccount) {
+    bowlerObj.person_attributes.payment_app = `${bowler.paymentApp}: ${bowler.paymentAccount}`;
   }
   return bowlerObj;
 }
