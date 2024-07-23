@@ -72,8 +72,8 @@ const Page = () => {
 
   const fieldNames = [
     'firstName',
-    'lastName',
     'nickname',
+    'lastName',
     'email',
     'phone',
   ].concat(tournament.config['bowler_form_fields'].split(' ')).concat(tournament.additionalQuestions.map(q => q.name));

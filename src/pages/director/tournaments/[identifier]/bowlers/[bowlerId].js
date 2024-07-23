@@ -14,8 +14,7 @@ import ErrorBoundary from "../../../../../components/common/ErrorBoundary";
 import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
 import EmailButton from "../../../../../components/Director/BowlerDetails/EmailButton";
-import {devConsoleLog, updateObject} from "../../../../../utils";
-import BowlerForm from "../../../../../components/Registration/BowlerForm/BowlerForm";
+import {updateObject} from "../../../../../utils";
 import {format} from "date-fns";
 import DumbBowlerForm from "../../../../../components/Registration/DumbBowlerForm/DumbBowlerForm";
 
@@ -1103,8 +1102,6 @@ const BowlerPage = () => {
   const bowlerFormData = {
     ...bowler,
     nickname: bowler.preferredName,
-    paymentApp: null,
-    paymentAccount: null,
   };
   if (bowler.paymentApp) {
     const parts = bowler.paymentApp.split(': ');
