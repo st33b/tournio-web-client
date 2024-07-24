@@ -1138,12 +1138,6 @@ const BowlerPage = () => {
                           submitButtonText={'Update Bowler'}
                           onBowlerSave={updateSubmitHandler}
                           fieldNames={fieldNames}/>
-          {/*<BowlerForm tournament={tournament}*/}
-          {/*            bowlerInfoSaved={updateSubmitHandler}*/}
-          {/*            bowlerData={bowlerFormData}*/}
-          {/*            nextButtonText={'Update Bowler'}*/}
-          {/*            showShifts={showShifts}*/}
-          {/*/>*/}
           <SuccessAlert message={success.updateBowler} className={'mt-3'}/>
           <ErrorAlert message={bowlerError}/>
           <ErrorAlert message={errors.updateBowler}/>

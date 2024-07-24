@@ -137,12 +137,6 @@ const Page = () => {
                           submitButtonText={buttonText}
                           fieldNames={fieldNames}
                           fieldData={fieldData}/>
-
-          {/*<BowlerForm tournament={tournament}*/}
-          {/*            bowlerInfoSaved={bowlerInfoSaved}*/}
-          {/*            bowlerData={bowlerData}*/}
-          {/*            solo={true}*/}
-          {/*            nextButtonText={buttonText}/>*/}
         </div>
       </div>
     </>

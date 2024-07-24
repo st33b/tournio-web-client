@@ -700,15 +700,15 @@ const DumbBowlerForm = ({
         switch(fieldName) {
           case 'dateOfBirth':
           case 'paymentApp':
-            modifiedFormData.fields[fieldName].elementConfig.elements = [];
-            // push a copy of the initial elements, this time containing a value for each
-            initialFormData.fields[fieldName].elementConfig.elements.forEach(elem => {
-              modifiedFormData.fields[fieldName].elementConfig.elements.push({
+            formData.fields[fieldName].elementConfig.elementOrder.forEach(identifier => {
+              const elem = initialFormData.fields[fieldName].elementConfig.elements[identifier];
+              modifiedFormData.fields[fieldName].elementConfig.elements[identifier] = {
                 ...elem,
-                elementConfig: updateObject(elem.elementConfig, {
-                  value: bowler[elem.identifier]
-                }),
-              });
+                elementConfig: {
+                  ...elem.elementConfig,
+                  value: bowler[identifier],
+                },
+              };
             });
             break;
           default:
@@ -747,7 +747,6 @@ const DumbBowlerForm = ({
     } else {
       inputName = 'country';
     }
-    devConsoleLog("change handler:", inputName);
 
     // Create a copy of the bowler form; this is where we'll make updates
     const updatedBowlerForm = {
@@ -838,8 +837,6 @@ const DumbBowlerForm = ({
   }
 
   const fieldBlurred = (event, inputName) => {
-    devConsoleLog("Field blurred:", inputName)
-  //
   //   const newFormData = {...formData}
   //   const fieldIsChanged = formData.fields[inputName].touched;
   //
@@ -895,7 +892,6 @@ const DumbBowlerForm = ({
 
     onBowlerSave(bowlerData);
 
-    // Now, clear the form out to make room for the next bowler.
     clearFormData();
   }
 
