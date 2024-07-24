@@ -1,12 +1,10 @@
 import Input from "../../ui/Input/Input";
 import React, {useState, useEffect} from "react";
 import {CountryDropdown} from "react-country-region-selector";
-import titleCase from "voca/title_case";
 
 import classes from './DumbBowlerForm.module.scss';
 
 import dynamic from 'next/dynamic';
-import {devConsoleLog, updateObject} from "../../../utils";
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
   { ssr: false }
@@ -306,7 +304,7 @@ const DumbBowlerForm = ({
         validityErrors: [
           'valueMissing',
         ],
-        valid: !!bowler,
+        valid: true,
         touched: false,
       },
       postalCode: {
@@ -731,15 +729,7 @@ const DumbBowlerForm = ({
 
   // Resets all values in the form data.
   const clearFormData = () => {
-    const newFormData = {
-      fields: {
-        ...initialFormData.fields,
-        ...getAdditionalQuestionFields(),
-      },
-      valid: false,
-      touched: false,
-    }
-    setFormData(newFormData);
+    setFormData(initialFormData);
   }
 
   const validityForField = (failedChecks = []) => {
@@ -781,7 +771,9 @@ const DumbBowlerForm = ({
             value: event,
           },
           ...validityForField(failedChecks),
+          touched: true,
         }
+        updatedBowlerForm.fields.country = updatedFormElement;
         break;
       case 'birthMonth':
       case 'birthDay':
@@ -823,7 +815,8 @@ const DumbBowlerForm = ({
           ...formData.fields[inputName],
           elementConfig: {...formData.fields[inputName].elementConfig},
           validated: false,
-          ...validityForField(failedChecks)
+          ...validityForField(failedChecks),
+          touched: true,
         }
         if (formData.fields[inputName].elementType === 'checkbox') {
           updatedFormElement.elementConfig.value = event.target.checked ? 'yes' : 'no';
@@ -832,22 +825,8 @@ const DumbBowlerForm = ({
         } else {
           updatedFormElement.elementConfig.value = event.target.value;
         }
+        updatedBowlerForm.fields[inputName] = updatedFormElement;
         break;
-    }
-
-    updatedFormElement.touched = true;
-
-    // put the updated form element in the updated form
-    // if it's not one of the combo elements
-    const comboInputs = [
-      'dateOfBirth:month',
-      'dateOfBirth:day',
-      'dateOfBirth:year',
-      'paymentApp:app',
-      'paymentApp:account',
-    ];
-    if (!comboInputs.includes(inputName)) {
-      updatedBowlerForm.fields[inputName] = updatedFormElement;
     }
 
     updatedBowlerForm.touched = true;
@@ -901,22 +880,19 @@ const DumbBowlerForm = ({
 
       // Now get the fields in combo elements, if needed.
       if (fieldNames.includes('dateOfBirth')) {
-        formData.fields.dateOfBirth.elementConfig.elements.forEach(elem => {
-          const key = 'birth' + titleCase(elem.identifier);
-          bowlerData[key] = elem.elementConfig.value;
-        });
+        for (const key in formData.fields.dateOfBirth.elementConfig.elements) {
+          bowlerData[key] = formData.fields.dateOfBirth.elementConfig.elements[key].elementConfig.value;
+        }
       }
 
       // And payment app
       if (fieldNames.includes('paymentApp')) {
-        formData.fields.paymentApp.elementConfig.elements.forEach(elem => {
-          const key = 'payment' + titleCase(elem.identifier);
-          bowlerData[key] = elem.elementConfig.value;
-        });
+        for (const key in formData.fields.paymentApp.elementConfig.elements) {
+          bowlerData[key] = formData.fields.paymentApp.elementConfig.elements[key].elementConfig.value;
+        }
       }
     }
 
-    devConsoleLog("Saving bowler data:", bowlerData);
     onBowlerSave(bowlerData);
 
     // Now, clear the form out to make room for the next bowler.
