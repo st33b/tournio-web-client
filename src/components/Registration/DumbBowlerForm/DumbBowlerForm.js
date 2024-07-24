@@ -119,10 +119,14 @@ const DumbBowlerForm = ({
         elementType: 'combo',
         identifier: 'dateOfBirth',
         elementConfig: {
-          elements: [
-            {
+          elementOrder: [
+            'birthMonth',
+            'birthDay',
+            'birthYear',
+          ],
+          elements: {
+            birthMonth: {
               // Month
-              identifier: 'birthMonth',
               elementType: 'select',
               elementConfig: {
                 options: [
@@ -186,9 +190,8 @@ const DumbBowlerForm = ({
               valid: true,
               touched: false,
             },
-            {
+            birthDay: {
               // Day
-              identifier: 'birthDay',
               elementType: 'select',
               elementConfig: {
                 optionRange: {
@@ -201,14 +204,12 @@ const DumbBowlerForm = ({
               layoutClass: 'col-4 col-xl-3',
               label: 'Day',
               validityErrors: [
-                // 'valueMissing',
               ],
               valid: true,
               touched: false,
             },
-            {
+            birthYear: {
               // Year
-              identifier: 'birthYear',
               elementType: 'select',
               elementConfig: {
                 optionRange: {
@@ -225,8 +226,8 @@ const DumbBowlerForm = ({
               ],
               valid: true,
               touched: false,
-            }
-          ],
+            },
+          },
         },
         label: 'Date of Birth',
         validityErrors: ['valueMissing'],
@@ -325,10 +326,13 @@ const DumbBowlerForm = ({
       paymentApp: {
         elementType: 'combo',
         elementConfig: {
-          elements: [
-            {
+          elementOrder: [
+            'paymentApp',
+            'paymentAccount',
+          ],
+          elements: {
+            paymentApp: {
               // App name
-              identifier: 'paymentApp',
               elementType: 'select',
               elementConfig: {
                 options: [
@@ -358,9 +362,8 @@ const DumbBowlerForm = ({
               valid: true,
               touched: false,
             },
-            {
+            paymentAccount: {
               // Account name
-              identifier: 'paymentAccount',
               elementType: 'input',
               elementConfig: {
                 type: 'text',
@@ -373,8 +376,8 @@ const DumbBowlerForm = ({
               validityErrors: [],
               valid: true,
               touched: false,
-            }
-          ],
+            },
+          },
         },
         label: 'Payment App',
         helper: {
@@ -419,6 +422,252 @@ const DumbBowlerForm = ({
       //   touched: false,
       // },
 
+      pronouns: {
+        elementType: 'select',
+        elementConfig: {
+          value: '',
+          placeholder: '',
+          options: [
+            {label: "-- Indicate your pronouns", value: ""},
+            {label: "he/him", value: "he/him"},
+            {label: "she/her", value: "she/her"},
+            {label: "they/them", value: "they/them"},
+            {label: "something else (let us know!)", value: "something else"},
+          ],
+        },
+        label: 'Personal Pronouns',
+        validityErrors: [],
+        valid: !!bowler,
+        touched: false,
+      },
+      dietary: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          value: '',
+        },
+        label: 'Any dietary restrictions we should know about?',
+        helper: {
+          url: '',
+          text: 'vegetarian / vegan / allergies / etc.',
+        },
+        validityErrors: [],
+        valid: true,
+        touched: false,
+      },
+      comment: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          value: '',
+        },
+        label: 'Anything else we should know?',
+        validityErrors: [],
+        valid: !!bowler,
+        touched: false,
+      },
+      standingsLink: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'url',
+          value: '',
+          placeholder: '',
+        },
+        label: 'URL of current league standing sheet',
+        helper: {
+          url: '',
+          text: '',
+        },
+        validityErrors: [],
+        valid: !!bowler,
+        touched: false,
+      },
+      enteringAverage: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'number',
+          value: '',
+          min: 0,
+          max: 300,
+        },
+        label: 'Entering Average',
+        helper: {
+          url: '',
+          text: 'See tournament rules for details',
+        },
+        validityErrors: [],
+        valid: !!bowler,
+        touched: false,
+      },
+      shirtSize: {
+        elementType: 'select',
+        elementConfig: {
+          value: '',
+          placeholder: '',
+          options: [
+            {label: "-- Indicate your shirt size", value: ""},
+            {label: "Men's XS", value: "men's xs"},
+            {label: "Men's S", value: "men's s"},
+            {label: "Men's M", value: "men's m"},
+            {label: "Men's L", value: "men's l"},
+            {label: "Men's XL", value: "men's xl"},
+            {label: "Men's 2XL", value: "men's 2xl"},
+            {label: "Men's 3XL", value: "men's 3xl"},
+            {label: "Men's 4XL", value: "men's 4xl"},
+            {label: "Women's XS", value: "women's xs"},
+            {label: "Women's S", value: "women's s"},
+            {label: "Women's M", value: "women's m"},
+            {label: "Women's L", value: "women's l"},
+            {label: "Women's XL", value: "women's xl"},
+            {label: "Women's 2XL", value: "women's 2xl"},
+            {label: "Women's 3XL", value: "women's 3xl"},
+            {label: "Women's 4XL", value: "women's 4xl"},
+            {label: "Other (please let us know!)", value: "other"}
+          ],
+        },
+        label: 'Shirt Size',
+        helper: {
+          url: '',
+          text: '',
+        },
+        validityErrors: [],
+        valid: !!bowler,
+        touched: false,
+      },
+      shirtSizeUnisex: {
+        elementType: 'select',
+        elementConfig: {
+          value: '',
+          placeholder: '',
+          options: [
+            {label: "-- Indicate your shirt size", value: ""},
+            {label: "XS", value: "xs"},
+            {label: "S", value: "s"},
+            {label: "M", value: "m"},
+            {label: "L", value: "l"},
+            {label: "XL", value: "xl"},
+            {label: "2XL", value: "2xl"},
+            {label: "3XL", value: "3xl"},
+            {label: "4XL", value: "4xl"},
+            {label: "Other (please let us know!)", value: "other"}
+          ],
+        },
+        label: 'Shirt Size (Unisex)',
+        helper: {
+          url: '',
+          text: '',
+        },
+        validityErrors: [],
+        valid: !!bowler,
+        touched: false,
+      },
+      volunteerWhileNotBowling: {
+        elementType: 'checkbox',
+        elementConfig: {
+          label: 'Yes',
+          value: 'no'
+        },
+        label: "Are you able to volunteer when you're not bowling?",
+        helper: {
+          url: '',
+          text: '',
+        },
+        validityErrors: [],
+        valid: true,
+        touched: false,
+      },
+      stayingAtHostHotel: {
+        elementType: 'checkbox',
+        elementConfig: {
+          label: 'Yes',
+          value: 'no'
+        },
+        label: "Do you plan to stay at the host hotel?",
+        helper: {
+          url: '',
+          text: '',
+        },
+        validityErrors: [],
+        valid: true,
+        touched: false,
+      },
+      igboRep: {
+        elementType: 'checkbox',
+        elementConfig: {
+          label: 'Yes',
+          value: 'no'
+        },
+        label: "Are you an IGBO Representative for a league or tournament?",
+        validityErrors: [],
+        valid: true,
+        touched: false,
+      },
+      nonparticipantNames: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          value: '',
+        },
+        label: 'Names of any non-bowlers coming with you',
+        helper: {
+          url: '',
+          text: '(attending the banquet, etc.)',
+        },
+        validityErrors: [],
+        valid: true,
+        touched: false,
+      },
+      igboTadAverage: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'number',
+          value: '',
+          min: 0,
+          max: 300,
+        },
+        label: 'IGBO TAD Average',
+        helper: {
+          url: '',
+          text: 'See tournament rules for details',
+        },
+        validityErrors: [],
+        valid: !!bowler,
+        touched: false,
+      },
+      hasFreeEntry: {
+        elementType: 'checkbox',
+        elementConfig: {
+          label: '',
+          value: 'no',
+        },
+        label: 'I have a free entry',
+        validityErrors: [],
+        valid: true,
+        touched: false,
+      },
+      firstTime: {
+        elementType: 'checkbox',
+        elementConfig: {
+          label: 'Yes',
+          value: 'no',
+        },
+        label: 'Is this your first time attending this tournament?',
+        validityErrors: [],
+        valid: true,
+        touched: false,
+      },
+      igboLeagueAndState: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          value: '',
+        },
+        label: 'Name and state of IGBO league, if any',
+        validityErrors: [],
+        valid: true,
+        touched: false,
+      },
+
       // Having this allows us to hang on to the doubles partner assignment across edits
       doublesPartnerIndex: {
         elementType: 'none',
@@ -436,41 +685,15 @@ const DumbBowlerForm = ({
   }
   const [formData, setFormData] = useState(initialFormData);
 
-  const getAdditionalQuestionFields = () => {
-    const newFormFields = {};
-    tournament.additionalQuestions.forEach(q => {
-      const key = q.name;
-      const field = {
-        ...q,
-        elementConfig: {
-          ...q.elementConfig,
-          value: '',
-        },
-        validityErrors: [],
-        valid: true,
-        touched: false,
-      };
-      if (q.validation.required) {
-        field.validityErrors = ['valueMissing'];
-        field.valid = !!bowler;
-      }
-      newFormFields[key] = field;
-    });
-    return newFormFields;
-  }
-
+  // populate the form with bowler data, if there is one.
   useEffect(() => {
-    if (!tournament) {
-      return;
-    }
     const modifiedFormData = {
       fields: {
         ...formData.fields,
-        ...getAdditionalQuestionFields(),
       },
-      valid: false,
+      valid: true,
       touched: false,
-    };
+    }
 
     // a bowler making changes, or an admin viewing a bowler's data, so populate the form
     // with values from the bowler prop
@@ -498,7 +721,7 @@ const DumbBowlerForm = ({
     }
 
     setFormData(modifiedFormData);
-  }, [tournament, bowler]);
+  }, [bowler]);
 
   if (!tournament) {
     return '';
@@ -534,6 +757,7 @@ const DumbBowlerForm = ({
     } else {
       inputName = 'country';
     }
+    devConsoleLog("change handler:", inputName);
 
     // Create a copy of the bowler form; this is where we'll make updates
     const updatedBowlerForm = {
@@ -559,18 +783,10 @@ const DumbBowlerForm = ({
           ...validityForField(failedChecks),
         }
         break;
-      case 'dateOfBirth:month':
-      case 'dateOfBirth:day':
-      case 'dateOfBirth:year':
-        const elemIdentifier = inputName.split(':')[1];
-
-        const elems = [
-          'month',
-          'day',
-          'year',
-        ];
-        const index = elems.findIndex(e => e === elemIdentifier);
-        const dobElem = formData.fields.dateOfBirth.elementConfig.elements[index];
+      case 'birthMonth':
+      case 'birthDay':
+      case 'birthYear':
+        const dobElem = formData.fields.dateOfBirth.elementConfig.elements[inputName];
 
         updatedFormElement = {
           ...dobElem,
@@ -581,18 +797,11 @@ const DumbBowlerForm = ({
           touched: true,
         }
 
-        updatedBowlerForm.fields.dateOfBirth.elementConfig.elements[index] = updatedFormElement;
+        updatedBowlerForm.fields.dateOfBirth.elementConfig.elements[inputName] = updatedFormElement;
         break;
-      case 'paymentApp:app':
-      case 'paymentApp:account':
-        const paymentElemIdentifier = inputName.split(':')[1];
-
-        const elements = [
-          'app',
-          'account',
-        ];
-        const elemIndex = elements.findIndex(e => e === paymentElemIdentifier);
-        const paymentElem = formData.fields.paymentApp.elementConfig.elements[elemIndex];
+      case 'paymentApp':
+      case 'paymentAccount':
+        const paymentElem = formData.fields.paymentApp.elementConfig.elements[inputName];
 
         updatedFormElement = {
           ...paymentElem,
@@ -603,7 +812,7 @@ const DumbBowlerForm = ({
           touched: true,
         }
 
-        updatedBowlerForm.fields.paymentApp.elementConfig.elements[elemIndex] = updatedFormElement;
+        updatedBowlerForm.fields.paymentApp.elementConfig.elements[inputName] = updatedFormElement;
         break;
       default:
         checksToRun = formData.fields[inputName].validityErrors;
@@ -650,27 +859,29 @@ const DumbBowlerForm = ({
   }
 
   const fieldBlurred = (event, inputName) => {
-    const newFormData = {...formData}
-    const fieldIsChanged = formData.fields[inputName].touched;
-
-    const checksToRun = formData.fields[inputName].validityErrors;
-    if (!checksToRun || !fieldIsChanged) {
-      // Don't update validations if we've blurred but the input was never changed
-      return;
-    }
-
-    const {validity} = event !== null ? event.target : {};
-    const failedChecks = checksToRun.filter(c => validity[c]);
-
-    newFormData.fields[inputName] = {
-      ...newFormData.fields[inputName],
-      ...validityForField(failedChecks),
-    };
-
-    // Now, determine whether the whole form is valid
-    newFormData.valid = fieldNames.every(fieldName => newFormData.fields[fieldName].valid);
-
-    setFormData(newFormData);
+    devConsoleLog("Field blurred:", inputName)
+  //
+  //   const newFormData = {...formData}
+  //   const fieldIsChanged = formData.fields[inputName].touched;
+  //
+  //   const checksToRun = formData.fields[inputName].validityErrors;
+  //   if (!checksToRun || !fieldIsChanged) {
+  //     // Don't update validations if we've blurred but the input was never changed
+  //     return;
+  //   }
+  //
+  //   const {validity} = event !== null ? event.target : {};
+  //   const failedChecks = checksToRun.filter(c => validity[c]);
+  //
+  //   newFormData.fields[inputName] = {
+  //     ...newFormData.fields[inputName],
+  //     ...validityForField(failedChecks),
+  //   };
+  //
+  //   // Now, determine whether the whole form is valid
+  //   newFormData.valid = fieldNames.every(fieldName => newFormData.fields[fieldName].valid);
+  //
+  //   setFormData(newFormData);
   }
 
   const formSubmitted = (event) => {

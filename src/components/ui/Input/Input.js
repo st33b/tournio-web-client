@@ -103,11 +103,11 @@ const Input = (props) => {
       outerLabelClasses.push("col-form-label");
       inputElement = (
         <div className={`row g-1`}>
-          {props.elementConfig.elements.map((elem, i) => {
-            const elemIdentifier = `${props.identifier}:${elem.identifier}`;
+          {props.elementConfig.elementOrder.map(elemIdentifier => {
+            const elem = props.elementConfig.elements[elemIdentifier];
             return (
               <Input
-                key={i}
+                key={`${props.identifier}-${elemIdentifier}`}
                 identifier={elemIdentifier}
                 elementType={elem.elementType}
                 elementConfig={elem.elementConfig}
@@ -118,8 +118,6 @@ const Input = (props) => {
                 helper={''}
                 validityErrors={elem.validityErrors}
                 errorMessages={elem.errorMessages}
-                // For <select> elements, onBlur is redundant to onChange
-                blurred={false}
                 failedValidations={typeof elem.validityFailures !== 'undefined' ? elem.validityFailures : []}
                 wasValidated={elem.validated}
                 loading={false}
