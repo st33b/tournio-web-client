@@ -14,13 +14,32 @@ const DumbBowlerForm = ({
   tournament,
   bowler,
   onBowlerSave,
-  solo = false,
   submitButtonText = 'Next',
   fieldNames = ['firstName', 'lastName', 'nickname', 'email', 'phone'], // specifies which of the fields we know about to use
-  fieldData = {}, // things that cannot be known at compile time, such as taken positions or values/labels for shifts
+  fieldData, // things that cannot be known at compile time, such as taken positions or values/labels for shifts
+  solo = false
                         }) => {
   const initialFormData = {
     fields: {
+      position: {
+        elementType: 'radio',
+        elementConfig: {
+          // Filled by data in fieldData
+          // choices: [],
+
+          // Filled by data in fieldData (or bowler, which takes precedence for edits)
+          // value: 0,
+
+          value: '',
+        },
+        label: 'Position',
+        validityErrors: [
+          'valueMissing',
+        ],
+        valid: true,
+        touched: false,
+      },
+
       firstName: {
         elementType: 'input',
         elementConfig: {
@@ -386,40 +405,6 @@ const DumbBowlerForm = ({
         touched: false,
       },
 
-      position: {
-        elementType: 'radio',
-        elementConfig: {
-          // Filled by data in fieldData
-          // choices: [],
-
-          // Filled by data in fieldData (or bowler, which takes precedence for edits)
-          // value: 0,
-
-          value: '',
-        },
-        label: 'Position',
-        validityErrors: [
-          'valueMissing',
-        ],
-        valid: true,
-        touched: false,
-      },
-      // TODO: use the two shift forms for shift identifier(s)
-      // shiftIdentifiers: {
-      //   elementType: 'select',
-      //   elementConfig: {
-      //     // Filled by data in fieldData
-      //     options: [],
-      //     value: [],
-      //   },
-      //   label: 'Shift Preference',
-      //   validityErrors: [
-      //     'valueMissing',
-      //   ],
-      //   valid: true,
-      //   touched: false,
-      // },
-
       pronouns: {
         elementType: 'select',
         elementConfig: {
@@ -676,7 +661,31 @@ const DumbBowlerForm = ({
         validityErrors: [],
         valid: true,
         touched: false,
-      }
+      },
+
+      // Ditto for the shift identifiers
+      shiftIdentifier: {
+        elementType: 'radio-limited-set',
+        elementConfig: {
+          value: '',
+          choices: [],
+        },
+        label: 'Preferred Shift',
+        validityErrors: [],
+        valid: true,
+        touched: false,
+      },
+      // shiftIdentifiers: {
+      //   elementType: 'radio-limited-set',
+      //   elementConfig: {
+      //     value: [],
+      //     choices: [],
+      //   },
+      //   label: 'Shift Preference',
+      //   validityErrors: [],
+      //   valid: true,
+      //   touched: false,
+      // },
     },
     valid: !!bowler,
     touched: false,
@@ -720,6 +729,31 @@ const DumbBowlerForm = ({
 
     setFormData(modifiedFormData);
   }, [bowler]);
+
+  useEffect(() => {
+    if (!fieldData) {
+      return;
+    }
+    if (fieldData.shiftIdentifier) {
+      const modifiedFormData = {
+        fields: {
+          ...formData.fields,
+        },
+        valid: formData.valid,
+        touched: formData.touched,
+      }
+      // Populate the choices
+      modifiedFormData.fields.shiftIdentifier.elementConfig.choices = [...fieldData.shiftIdentifier.choices];
+
+      // Set a default value if there is one to set, and we haven't already set it
+      const choicesPresent = fieldData.shiftIdentifier.choices.length > 0;
+      if (!formData.fields.shiftIdentifier.elementConfig.value.length && choicesPresent) {
+        // choose the first available one
+        modifiedFormData.fields.shiftIdentifier.elementConfig.value = fieldData.shiftIdentifier.choices.find(({disabled}) => !disabled).value;
+      }
+      setFormData(modifiedFormData);
+    }
+  }, [fieldData]);
 
   if (!tournament) {
     return '';
@@ -888,11 +922,16 @@ const DumbBowlerForm = ({
           bowlerData[key] = formData.fields.paymentApp.elementConfig.elements[key].elementConfig.value;
         }
       }
+
+      // And the shift identifier (pluralize it)
+      bowlerData.shiftIdentifiers = [formData.fields.shiftIdentifier.elementConfig.value];
     }
 
     onBowlerSave(bowlerData);
 
-    clearFormData();
+    if (!solo) {
+      clearFormData();
+    }
   }
 
   const mapboxTheme = {

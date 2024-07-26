@@ -31,19 +31,19 @@ const BowlerFormFields = () => {
       label: 'Country',
       required: false,
     },
-    postal_code: {
+    postalCode: {
       label: 'Postal Code',
       required: false,
     },
-    usbc_id: {
+    usbcId: {
       label: 'USBC ID',
       required: false,
     },
-    date_of_birth: {
+    dateOfBirth: {
       label: 'Date of Birth (mm/dd/yyyy)',
       required: false,
     },
-    payment_app: {
+    paymentApp: {
       label: 'Payment App',
       required: false,
     },

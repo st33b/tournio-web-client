@@ -81,21 +81,33 @@ const Page = () => {
   // Future improvement: merge the concepts of "bowler form fields" and "additional questions"
 
   const fieldData = {
-    shiftIdentifiers: {
-      value: [],
-      options: [],
+    shiftIdentifier: {
+      choices: [],
     },
+    shiftIdentifiers: {
+      choices: [],
+    },
+    position: {},
   }
-  if (tournament.shifts.length === 1) {
-    fieldData.shiftIdentifiers.value = [tournament.shifts[0].identifier];
+
+  const tournamentType = tournament.config.tournament_type;
+  const useInclusiveShifts = tournamentType === 'igbo_multi_shift' || tournamentType === 'single_event' && tournament.shifts.length > 1;
+  const useMixAndMatchShifts = tournamentType === 'igbo_mix_and_match';
+
+  if (useInclusiveShifts) {
+    fieldNames.unshift('shiftIdentifier');
+    fieldData.shiftIdentifier.choices = tournament.shifts.map(s => (
+      {
+        value: s.identifier,
+        disabled: s.isFull,
+        label: `${s.name} (${s.description}`,
+      }
+    ));
+  } else if (useMixAndMatchShifts) {
+    // figure this out next
+    // @mixAndMatchShifts
   } else {
-    // fieldNames.push('shiftIdentifiers');
-    fieldData.shiftIdentifiers.options = tournament.shifts.map(({identifier, name, description}) => {
-      return {
-        value: identifier,
-        label: `${name} (${description}`,
-      };
-    });
+    // nothing to do, right?
   }
 
   return (

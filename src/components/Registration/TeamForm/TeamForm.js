@@ -4,7 +4,6 @@ import classes from './TeamForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import InclusiveShiftForm from "../InclusiveShiftForm/InclusiveShiftForm";
 import MixAndMatchShiftForm from "../MixAndMatchShiftForm/MixAndMatchShiftForm";
-import {devConsoleLog} from "../../../utils";
 
 const TeamForm = ({tournament, team, onSubmit, submitButtonText}) => {
   const initialFormValues = {
@@ -64,7 +63,6 @@ const TeamForm = ({tournament, team, onSubmit, submitButtonText}) => {
   }
 
   const shiftIdentifiersUpdated = (newShiftIdentifiers) => {
-    devConsoleLog("Shift identifiers updated:", newShiftIdentifiers);
     const newFormValues = {...componentState };
     newFormValues.fields.shiftIdentifiers = newShiftIdentifiers;
     setComponentState(newFormValues);

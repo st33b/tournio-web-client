@@ -405,6 +405,9 @@ const BowlerPage = () => {
     if (bowlerData.paymentApp && bowlerData.paymentAccount) {
       bowlerObj.person_attributes.payment_app = `${bowlerData.paymentApp}: ${bowlerData.paymentAccount}`;
     }
+    if (bowlerData.shiftIdentifier) {
+      bowlerObj.shift_identifiers = bowlerData.shiftIdentifiers;
+    }
     return bowlerObj;
   }
 
@@ -1097,8 +1100,6 @@ const BowlerPage = () => {
     {text: 'Bowlers', path: `/director/tournaments/${identifier}/bowlers`},
   ];
 
-  const showShifts = bowler.shifts.length > 0;
-
   const bowlerFormData = {
     ...bowler,
     nickname: bowler.preferredName,
@@ -1108,9 +1109,7 @@ const BowlerPage = () => {
     bowlerFormData.paymentApp = parts[0];
     bowlerFormData.paymentAccount = parts[1];
   }
-  // if (bowler.shifts.length > 0) {
-  //   bowlerFormData.shift_identifier = bowler.shifts[0].identifier;
-  // }
+
   tournament.additionalQuestions.forEach(aq => {
     const name = aq.name;
     const obj = bowler.additionalQuestionResponses.find(aqr => aqr.name === name);
@@ -1121,11 +1120,41 @@ const BowlerPage = () => {
 
   const fieldNames = [
     'firstName',
-    'lastName',
     'nickname',
+    'lastName',
     'email',
     'phone',
   ].concat(tournament.config['bowler_form_fields'].split(' ')).concat(tournament.additionalQuestions.map(q => q.name));
+
+  const fieldData = {
+    shiftIdentifier: {
+      choices: [],
+    },
+    shiftIdentifiers: {
+      choices: [],
+    },
+    position: {},
+  }
+
+  const useInclusiveShifts = tournamentType === 'igbo_multi_shift' || tournamentType === 'single_event' && tournament.shifts.length > 1;
+  const useMixAndMatchShifts = tournamentType === 'igbo_mix_and_match';
+
+  if (useInclusiveShifts) {
+    fieldNames.unshift('shiftIdentifier');
+    fieldData.shiftIdentifier.choices = tournament.shifts.map(s => (
+      {
+        value: s.identifier,
+        disabled: s.isFull,
+        label: `${s.name} (${s.description}`,
+      }
+    ));
+    bowlerFormData.shiftIdentifier = bowler.shifts[0].identifier;
+  } else if (useMixAndMatchShifts) {
+    // figure this out next
+    // @mixAndMatchShifts
+  } else {
+    // nothing to do, right?
+  }
 
   return (
     <ErrorBoundary>
@@ -1137,7 +1166,9 @@ const BowlerPage = () => {
                           bowler={bowlerFormData}
                           submitButtonText={'Update Bowler'}
                           onBowlerSave={updateSubmitHandler}
-                          fieldNames={fieldNames}/>
+                          fieldNames={fieldNames}
+                          fieldData={fieldData}
+          />
           <SuccessAlert message={success.updateBowler} className={'mt-3'}/>
           <ErrorAlert message={bowlerError}/>
           <ErrorAlert message={errors.updateBowler}/>

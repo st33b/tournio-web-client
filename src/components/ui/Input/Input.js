@@ -162,7 +162,6 @@ const Input = (props) => {
     case('radio'):
       columnClasses.push('d-flex', 'align-items-center'); // vertically center the radio button
     case('radio-limited-set'):
-      outerLabelClasses.push("col-form-label");
       columnClasses.push(classes.LimitedSetRadio);
       inputElement = props.elementConfig.choices.map((choice, i) => (
         <div className={`form-check`} key={i}>

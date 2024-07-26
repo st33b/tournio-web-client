@@ -57,6 +57,7 @@ const Page = () => {
   }
 
   const saveClicked = () => {
+    setProcessing(true);
     // Write the bowler to the backend.
     // Upon success, redirect to the bowler's page, which will
     // present its payment/extras button
@@ -64,7 +65,6 @@ const Page = () => {
       registration.bowler,
       soloRegistrationSuccess,
       soloRegistrationFailure);
-    setProcessing(true);
   }
 
   const fieldNames = [
@@ -139,20 +139,19 @@ const Page = () => {
                       onClick={saveClicked}
                       disabled={processing}>
                 Submit Registration
-                <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
-              </button>
-              {processing && (
-                <button className={'btn btn-lg btn-outline-primary'}
-                        onClick={() => {
-                        }}
-                        disabled={true}>
-                  Submitting...
+                {!processing && (
                   <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
-                </button>
-              )}
+                )}
+                {processing && (
+                  <span className={`spinner-border spinner-border-sm ms-2`}
+                        aria-hidden={true}
+                        role={'status'}>
+                  </span>
+                )}
+              </button>
             </div>
 
-            {error && <ErrorAlert message={error}/> }
+            {error && <ErrorAlert message={error}/>}
           </div>
         </div>
       </div>
