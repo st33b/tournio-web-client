@@ -1,10 +1,9 @@
 import {useRouter} from "next/router";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
-import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamBowlerInfoAdded, newTeamBowlerInfoUpdated} from "../../../store/actions/registrationActions";
-import {useTheTournament} from "../../../utils";
+import {devConsoleLog, useTheTournament} from "../../../utils";
 import React, {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import Link from "next/link";
@@ -12,6 +11,7 @@ import TournamentLogo from "../../../components/Registration/TournamentLogo/Tour
 import Sidebar from "../../../components/Registration/Sidebar/Sidebar";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import ErrorAlert from "../../../components/common/ErrorAlert";
+import DumbBowlerForm from "../../../components/Registration/DumbBowlerForm/DumbBowlerForm";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
@@ -60,7 +60,15 @@ const Page = () => {
     );
   }
 
+  if (!registration.team) {
+    // This happens when we're starting over, as part of a re-render that happens before the redirection.
+    return '';
+  }
+
+  ////////////////////////////////
+
   const newBowlerAdded = (bowlerInfo) => {
+    devConsoleLog("New bowler deets:", bowlerInfo);
     dispatch(newTeamBowlerInfoAdded(bowlerInfo));
 
     const newTakenPositions = takenPositions.concat(bowlerInfo.position).sort();
@@ -91,15 +99,10 @@ const Page = () => {
     }
   }
 
-  // some guards
-  if (!registration.team) {
-    // This happens when we're starting over, as part of a re-render that happens before the redirection.
-    return '';
-  }
-
   const titleText = edit ? 'Make Changes' : 'Add Bowler Details';
   const buttonText = edit ? 'Save Changes' : 'Save Bowler';
 
+  // for the sidebar
   let preferredShiftNames = [];
   if (registration.team.shiftIdentifiers) {
     preferredShiftNames = registration.team.shiftIdentifiers.map(identifier =>
@@ -107,6 +110,7 @@ const Page = () => {
     );
   }
 
+  // for making changes
   let bowlerData, error;
   if (edit) {
     const parsed = parseInt(index);
@@ -115,6 +119,31 @@ const Page = () => {
     } else {
       error = 'Bowler data not found.';
     }
+  }
+
+  // for the form
+  const fieldNames = [
+    'position',
+    'firstName',
+    'nickname',
+    'lastName',
+    'email',
+    'phone',
+  ].concat(tournament.config['bowler_form_fields'].split(' ')).concat(tournament.additionalQuestions.map(q => q.name));
+
+  // Future improvement: merge the concepts of "bowler form fields" and "additional questions"
+
+  const fieldData = {
+    position: {
+      choices: [],
+    }
+  }
+  for (let p = 1; p <= tournament.config['team_size']; p++) {
+    fieldData.position.choices.push({
+      value: p,
+      label: p,
+      disabled: takenPositions.includes(p),
+    });
   }
 
   return (
@@ -194,11 +223,17 @@ const Page = () => {
             <ErrorAlert message={error}/>
           )}
           {!error && (
-            <BowlerForm tournament={tournament}
-                        takenPositions={takenPositions}
-                        bowlerInfoSaved={edit ? bowlerUpdated : newBowlerAdded}
-                        bowlerData={bowlerData} // Update this for the editing case
-                        nextButtonText={buttonText}/>
+            // <BowlerForm tournament={tournament}
+            //             takenPositions={takenPositions}
+            //             bowlerInfoSaved={edit ? bowlerUpdated : newBowlerAdded}
+            //             bowlerData={bowlerData} // Update this for the editing case
+            //             nextButtonText={buttonText}/>
+            <DumbBowlerForm tournament={tournament}
+                            bowler={bowlerData}
+                            onBowlerSave={edit ? bowlerUpdated : newBowlerAdded}
+                            submitButtonText={buttonText}
+                            fieldNames={fieldNames}
+                            fieldData={fieldData}/>
           )}
         </div>
       </div>

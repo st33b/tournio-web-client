@@ -108,7 +108,13 @@ const Page = () => {
     );
   }
 
-devConsoleLog("Success index:", successIndex);
+  const fieldNames = [
+    'firstName',
+    'lastName',
+    'nickname',
+    'email',
+    'phone',
+  ].concat(tournament.config['bowler_form_fields'].split(' '));
 
   return (
     <>
@@ -173,6 +179,7 @@ devConsoleLog("Success index:", successIndex);
                   </Link>
                 </div>
                 <BowlerSummary tournament={tournament}
+                               fieldNames={fieldNames}
                                bowler={bowler}
                                partner={partner}/>
 

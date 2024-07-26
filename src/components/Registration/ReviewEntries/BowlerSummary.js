@@ -39,7 +39,7 @@ const BowlerSummary = ({tournament, bowler, fieldNames, partner = null, labelCla
 
   // Solo registrations may have a shift identifier.
   let shiftNames = '';
-  if (tournament.shifts.length > 1) {
+  if (bowler.shiftIdentifiers && tournament.shifts.length > 1) {
     const shifts = bowler.shiftIdentifiers.map(sId => tournament.shifts.find(({identifier}) => identifier === sId));
     shiftNames = shifts.map(shift => `${shift.name} (${shift.description})`);
   }

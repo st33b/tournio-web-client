@@ -5,6 +5,7 @@ import {CountryDropdown} from "react-country-region-selector";
 import classes from './DumbBowlerForm.module.scss';
 
 import dynamic from 'next/dynamic';
+import {devConsoleLog} from "../../../utils";
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
   { ssr: false }
@@ -25,11 +26,8 @@ const DumbBowlerForm = ({
         elementType: 'radio',
         elementConfig: {
           // Filled by data in fieldData
-          // choices: [],
-
+          choices: [],
           // Filled by data in fieldData (or bowler, which takes precedence for edits)
-          // value: 0,
-
           value: '',
         },
         label: 'Position',
@@ -752,6 +750,27 @@ const DumbBowlerForm = ({
         modifiedFormData.fields.shiftIdentifier.elementConfig.value = fieldData.shiftIdentifier.choices.find(({disabled}) => !disabled).value;
       }
       setFormData(modifiedFormData);
+    } else if (fieldData.position) {
+      const modifiedFormData = {
+        fields: {
+          ...formData.fields,
+        },
+        valid: formData.valid,
+        touched: formData.touched,
+      }
+      // populate choices (including disabling any that are taken)
+      modifiedFormData.fields.position.elementConfig.choices = [...fieldData.position.choices];
+
+      const choicesPresent = fieldData.position.choices && fieldData.position.choices.length > 0;
+      if (choicesPresent) {
+        // choose the first available one
+        const firstAvailable = fieldData.position.choices.find(({disabled}) => !disabled);
+        // we might be re-rendering after the last bowler registered, but before the push to the
+        // next step is complete.
+        if (firstAvailable) {
+          modifiedFormData.fields.position.elementConfig.value = firstAvailable.value;
+        }
+      }
     }
   }, [fieldData]);
 
@@ -924,7 +943,9 @@ const DumbBowlerForm = ({
       }
 
       // And the shift identifier (pluralize it)
-      bowlerData.shiftIdentifiers = [formData.fields.shiftIdentifier.elementConfig.value];
+      if (formData.fields.shiftIdentifier.elementConfig.value) {
+        bowlerData.shiftIdentifiers = [formData.fields.shiftIdentifier.elementConfig.value];
+      }
     }
 
     onBowlerSave(bowlerData);

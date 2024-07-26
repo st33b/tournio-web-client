@@ -54,7 +54,7 @@ const Sidebar = ({
             Bowler:
           </span>
           <span className={classes.Value}>
-            {bowler.first_name} {bowler.nickname ? `"${bowler.nickname}"` : ''} {bowler.last_name}
+            {bowler.firstName} {bowler.nickname ? `"${bowler.nickname}"` : ''} {bowler.lastName}
           </span>
         </p>
       )}
@@ -100,8 +100,8 @@ const Sidebar = ({
                 <span className={'pe-2'}>
                   {bowler.position}.
                 </span>
-                {bowler.nickname ? bowler.nickname : bowler.first_name}{' '}
-                {bowler.last_name}
+                {bowler.nickname ? bowler.nickname : bowler.firstName}{' '}
+                {bowler.lastName}
               </li>
             ))}
           </ul>
