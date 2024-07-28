@@ -142,6 +142,7 @@ const Page = () => {
           <TournamentHeader tournament={tournament}/>
         </Col>
       </Row>
+
       <Row className={`pb-2`}>
         <Col >
           <h3 className={``}>
@@ -163,8 +164,9 @@ const Page = () => {
             </h4>
           )}
         </Col>
+
         <Col md={{offset: 0, span: 5}} lg={{offset: 0, span: 4}}>
-          <div className={'d-flex flex-column h-100 justify-content-center'}>
+          <div className={'d-flex flex-column h-100 justify-content-center mb-3'}>
             {displayFreeEntryForm && <FreeEntryForm/>}
             {/* maybe show the free entry code here if they have one? */}
             {/* paid items go in here */}

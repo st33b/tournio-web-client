@@ -5,7 +5,6 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {
   devConsoleLog,
   submitNewTeamRegistration,
-  submitNewTeamWithPlaceholders,
   useTheTournament
 } from "../../../utils";
 import React, {useEffect, useState} from "react";
@@ -16,15 +15,16 @@ import {newTeamEntryCompleted} from "../../../store/actions/registrationActions"
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
 import BowlerSummary from "../../../components/Registration/ReviewEntries/BowlerSummary";
-import SuccessAlert from "../../../components/common/SuccessAlert";
+import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
-  const {identifier, successIndex} = router.query;
+  const {identifier} = router.query;
 
+  const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const {loading: tournamentLoading, tournament, error: tournamentError} = useTheTournament(identifier);
+  const {loading: tournamentLoading, tournament} = useTheTournament(identifier);
 
   // If new-team registrations isn't enabled, go back to the tournament home page
   useEffect(() => {
@@ -56,27 +56,10 @@ const Page = () => {
     });
   }
 
-  const newTeamRegistrationFailure = (errorMessage) => {
+  const newTeamRegistrationFailure = (errorMsg) => {
     setProcessing(false);
-    if (errorMessage.team) {
-      // back to team info
-      router.push({
-        pathname: '/tournaments/[identifier]/new-team',
-        query: {
-          identifier: identifier,
-          message: 2,
-        }
-      });
-    } else if (errorMessage.bowler) {
-      // back to bowler info
-      router.push({
-        pathname: '/tournaments/[identifier]/new-team-first-bowler',
-        query: {
-          identifier: identifier,
-          edit: true,
-        }
-      });
-    }
+    setError('Submission failed.');
+    devConsoleLog("Submission failed. Details:", errorMsg);
   }
 
   const saveClicked = () => {
@@ -99,13 +82,6 @@ const Page = () => {
   const completedSteps = ['team', 'bowlers'];
   if (tournament.events.some(({rosterType}) => rosterType === 'double')) {
     completedSteps.push('doubles');
-  }
-
-  let preferredShiftNames = [];
-  if (registration.team.shiftIdentifiers) {
-    preferredShiftNames = registration.team.shiftIdentifiers.map(identifier =>
-      tournament.shifts.find(shift => shift.identifier === identifier).name
-    );
   }
 
   const fieldNames = [
@@ -182,31 +158,37 @@ const Page = () => {
                                fieldNames={fieldNames}
                                bowler={bowler}
                                partner={partner}/>
-
-                {successIndex == i && (
-                  <SuccessAlert message={'Bowler details updated!'}/>
-                )}
               </div>
             )
           })}
 
           <div className={'row'}>
-            <p>
+            <div className={'col-12 col-md-6 mb-3'}>
               <Link href={`/tournaments/${tournament.identifier}/doubles-partners?edit=true`}
                     className={'btn btn-secondary'}>
                 <i className="bi bi-chevron-double-left pe-1" aria-hidden="true"/>
                 Change doubles partners
               </Link>
-            </p>
-          </div>
+            </div>
 
-          <div className={'text-end'}>
-            <button className={'btn btn-lg btn-primary'}
-                    onClick={saveClicked}
-                    disabled={processing}>
-              Submit Registration
-              <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
-            </button>
+            <div className={'col-12 col-md-6 text-end'}>
+              <button className={'btn btn-lg btn-primary'}
+                      onClick={saveClicked}
+                      disabled={processing}>
+                Submit Registration
+                {!processing && (
+                  <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
+                )}
+                {processing && (
+                  <span className={`spinner-border spinner-border-sm ms-2`}
+                        aria-hidden={true}
+                        role={'status'}>
+                  </span>
+                )}
+              </button>
+            </div>
+
+            {error && <ErrorAlert message={error}/>}
           </div>
         </div>
       </div>

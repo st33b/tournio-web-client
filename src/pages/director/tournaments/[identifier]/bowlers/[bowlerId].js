@@ -1127,33 +1127,34 @@ const BowlerPage = () => {
   ].concat(tournament.config['bowler_form_fields'].split(' ')).concat(tournament.additionalQuestions.map(q => q.name));
 
   const fieldData = {
-    shiftIdentifier: {
-      choices: [],
-    },
-    shiftIdentifiers: {
-      choices: [],
-    },
-    position: {},
+    // shiftIdentifiers: {
+    //   choices: [],
+    // },
   }
 
-  const useInclusiveShifts = tournamentType === 'igbo_multi_shift' || tournamentType === 'single_event' && tournament.shifts.length > 1;
-  const useMixAndMatchShifts = tournamentType === 'igbo_mix_and_match';
+  if (!bowler.team) {
+    const useInclusiveShifts = tournamentType === 'igbo_multi_shift' || tournamentType === 'single_event' && tournament.shifts.length > 1;
+    const useMixAndMatchShifts = tournamentType === 'igbo_mix_and_match';
 
-  if (useInclusiveShifts) {
-    fieldNames.unshift('shiftIdentifier');
-    fieldData.shiftIdentifier.choices = tournament.shifts.map(s => (
-      {
-        value: s.identifier,
-        disabled: s.isFull,
-        label: `${s.name} (${s.description}`,
-      }
-    ));
-    bowlerFormData.shiftIdentifier = bowler.shifts[0].identifier;
-  } else if (useMixAndMatchShifts) {
-    // figure this out next
-    // @mixAndMatchShifts
-  } else {
-    // nothing to do, right?
+    fieldData.shiftIdentifier = {
+      choices: [],
+    };
+    if (useInclusiveShifts) {
+      fieldNames.unshift('shiftIdentifier');
+      fieldData.shiftIdentifier.choices = tournament.shifts.map(s => (
+        {
+          value: s.identifier,
+          disabled: s.isFull,
+          label: `${s.name} (${s.description}`,
+        }
+      ));
+      bowlerFormData.shiftIdentifier = bowler.shifts[0].identifier;
+    } else if (useMixAndMatchShifts) {
+      // figure this out next
+      // @mixAndMatchShifts
+    } else {
+      // nothing to do, right?
+    }
   }
 
   return (
