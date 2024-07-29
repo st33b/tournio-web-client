@@ -41,14 +41,12 @@ const Page = () => {
           } else {
             router.push(`/tournaments/${identifier}/new-team-review`);
           }
+        } else {
+          // otherwise, update our array of taken positions
+          const newTakenPositions = registration.team.bowlers.map(({position}) => position);
+          setTakenPositions(newTakenPositions);
         }
       }
-
-      const newTakenPositions = registration.team.bowlers.map(({position}) => position);
-      setTakenPositions(newTakenPositions);
-    }
-
-    if (!edit && registration.team) {
     }
   }, [edit, tournament, registration]);
 
@@ -123,13 +121,18 @@ const Page = () => {
 
   // for the form
   const fieldNames = [
-    'position',
     'firstName',
     'nickname',
     'lastName',
     'email',
     'phone',
   ].concat(tournament.config['bowler_form_fields'].split(' ')).concat(tournament.additionalQuestions.map(q => q.name));
+
+  // Only display the position field for new bowler intake; editing with position
+  // creates a race condition in the form component (setup vs. bowler data population)
+  if (!edit) {
+    fieldNames.unshift('position');
+  }
 
   // Future improvement: merge the concepts of "bowler form fields" and "additional questions"
 

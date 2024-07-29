@@ -5,7 +5,6 @@ import {CountryDropdown} from "react-country-region-selector";
 import classes from './DumbBowlerForm.module.scss';
 
 import dynamic from 'next/dynamic';
-import {devConsoleLog} from "../../../utils";
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
   { ssr: false }
@@ -27,13 +26,11 @@ const DumbBowlerForm = ({
         elementConfig: {
           // Filled by data in fieldData
           choices: [],
-          // Filled by data in fieldData (or bowler, which takes precedence for edits)
+          // Filled by data in fieldData
           value: '',
         },
         label: 'Position',
-        validityErrors: [
-          'valueMissing',
-        ],
+        validityErrors: [],
         valid: true,
         touched: false,
       },
@@ -761,12 +758,9 @@ const DumbBowlerForm = ({
       // populate choices (including disabling any that are taken)
       modifiedFormData.fields.position.elementConfig.choices = [...fieldData.position.choices];
 
-      const choicesPresent = fieldData.position.choices && fieldData.position.choices.length > 0;
-      if (choicesPresent) {
+      if (!modifiedFormData.fields.position.elementConfig.value) {
         // choose the first available one
         const firstAvailable = fieldData.position.choices.find(({disabled}) => !disabled);
-        // we might be re-rendering after the last bowler registered, but before the push to the
-        // next step is complete.
         if (firstAvailable) {
           modifiedFormData.fields.position.elementConfig.value = firstAvailable.value;
         }

@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamRegistrationSaved} from "../../../store/actions/registrationActions";
 import {useEffect} from "react";
-import {devConsoleLog, useTheTournament} from "../../../utils";
+import {useTheTournament} from "../../../utils";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 import Sidebar from "../../../components/Registration/Sidebar/Sidebar";
@@ -51,7 +51,6 @@ const Page = () => {
     if (edit) {
       // dispatch and push to review
       dispatch(newTeamRegistrationSaved(formData));
-      devConsoleLog("Team data updated, pushing to review.");
       router.push({
         pathname: '/tournaments/[identifier]/new-team-review',
         query: { identifier: identifier },
@@ -65,7 +64,6 @@ const Page = () => {
       }
       // then dispatch and push to the bowler intake
       dispatch(newTeamRegistrationSaved(withBowlers));
-      devConsoleLog("Team data saved, moving on to bowler entry.");
       router.push({
         pathname: '/tournaments/[identifier]/new-team-bowler',
         query: { identifier: identifier},
@@ -75,6 +73,7 @@ const Page = () => {
 
   const titleText = edit ? 'Edit Team Details' : 'Team Registration';
   const teamName = edit ? registration.team.name : '';
+  const sidebarBowlers = edit ? registration.team.bowlers : [];
 
   return (
     <>
@@ -103,6 +102,7 @@ const Page = () => {
 
           <Sidebar tournament={tournament}
                    teamName={teamName}
+                   bowlers={sidebarBowlers}
                    />
         </div>
 
