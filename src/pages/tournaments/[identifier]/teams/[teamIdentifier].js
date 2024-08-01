@@ -52,6 +52,7 @@ const Page = () => {
 
   const tournamentType = tournament.config['tournament_type'];
 
+  devConsoleLog("Bowlers", team.bowlers);
   const rows = Array(tournament.config['team_size']);
   let firstAvailablePosition = 0;
   for (let i = 0; i < tournament.config['team_size']; i++) {
@@ -65,7 +66,7 @@ const Page = () => {
             {bowler.position}.
           </div>
           <div className={'ps-3'}>
-            {bowler.full_name}
+            {bowler.fullName}
           </div>
           <div className={'ms-auto pe-2'}>
             <Link className={`btn btn-sm btn-success`}

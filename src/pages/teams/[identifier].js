@@ -9,6 +9,7 @@ const Page = () => {
   const {identifier} = router.query;
 
   const teamRetrieved = (team) => {
+    devConsoleLog("Team:", team);
     const tournamentId = team.tournament.identifier;
 
     // Redirect to the actual team page

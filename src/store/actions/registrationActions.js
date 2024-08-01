@@ -43,10 +43,11 @@ export const newTeamEntryCompleted = (newTeam) => {
   }
 }
 
-export const existingTeamBowlerInfoAdded = (bowlerInfo) => {
+export const existingTeamBowlerInfoAdded = (team, bowlerInfo) => {
   return {
-    type: actionTypes.NEW_TEAM_BOWLER_INFO_ADDED,
+    type: actionTypes.EXISTING_TEAM_BOWLER_INFO_ADDED,
     bowler: bowlerInfo,
+    team: team,
   }
 }
 

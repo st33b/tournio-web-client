@@ -5,6 +5,7 @@ import {CountryDropdown} from "react-country-region-selector";
 import classes from './DumbBowlerForm.module.scss';
 
 import dynamic from 'next/dynamic';
+import {devConsoleLog} from "../../../utils";
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
   { ssr: false }
@@ -755,8 +756,14 @@ const DumbBowlerForm = ({
         valid: formData.valid,
         touched: formData.touched,
       }
-      // populate choices (including disabling any that are taken)
-      modifiedFormData.fields.position.elementConfig.choices = [...fieldData.position.choices];
+
+      // populate the position form data with what we got from fieldData
+      modifiedFormData.fields.position = {
+        ...modifiedFormData.fields.position,
+        ...fieldData.position,
+      }
+
+      devConsoleLog("Field Data contents:", fieldData.position);
 
       if (!modifiedFormData.fields.position.elementConfig.value) {
         // choose the first available one
@@ -765,6 +772,8 @@ const DumbBowlerForm = ({
           modifiedFormData.fields.position.elementConfig.value = firstAvailable.value;
         }
       }
+
+      setFormData(modifiedFormData);
     }
   }, [fieldData]);
 

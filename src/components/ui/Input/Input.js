@@ -49,6 +49,17 @@ const Input = (props) => {
   const layoutClass = props.layoutClass ? props.layoutClass : 'row';
 
   switch (props.elementType) {
+    case('readonly'):
+      outerLabelClasses.push("col-form-label");
+      inputElement = <input
+        id={props.identifier}
+        name={props.identifier}
+        type={'text'}
+        readOnly={true}
+        className={`form-control-plaintext`}
+        value={props.elementConfig.value}
+      />
+      break;
     case('input'):
       outerLabelClasses.push("col-form-label");
       if (props.labelClasses) {

@@ -66,7 +66,6 @@ const Page = () => {
   ////////////////////////////////
 
   const newBowlerAdded = (bowlerInfo) => {
-    devConsoleLog("New bowler deets:", bowlerInfo);
     dispatch(newTeamBowlerInfoAdded(bowlerInfo));
 
     const newTakenPositions = takenPositions.concat(bowlerInfo.position).sort();

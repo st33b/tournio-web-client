@@ -48,7 +48,7 @@ const Sidebar = ({
         </p>
       )}
 
-      {bowler && (
+      {bowler && !bowlers && (
         <p>
           <span className={classes.Label}>
             Bowler:
