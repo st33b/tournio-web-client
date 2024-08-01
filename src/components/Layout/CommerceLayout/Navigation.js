@@ -3,19 +3,19 @@ import Image from "next/image";
 
 import {useCommerceContext} from "../../../store/CommerceContext";
 import {useThemeContext} from "../../../store/ThemeContext";
-import {useClientReady} from "../../../utils";
 
 import TournioLogoLight from '../../../images/tournio-logo.png';
 import TournioLogoDark from '../../../images/tournio-logo-inverted-gray.png';
 import ColorModeToggler from "../../common/ColorModeToggler/ColorModeToggler";
 
 import classes from './Navigation.module.scss';
+import {useClientReady} from "../../../utils";
 
 const Navigation = () => {
   const {commerce} = useCommerceContext();
   const {theme} = useThemeContext();
-
   const ready = useClientReady();
+
   if (!ready) {
     return null;
   }

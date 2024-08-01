@@ -7,14 +7,14 @@ import classes from './InformationLayout.module.scss';
 import MaintenanceAnnouncement from "../../common/MaintenanceAnnouncement/MaintenanceAnnouncement";
 import {RegistrationContextProvider} from "../../../store/RegistrationContext";
 
-const InformationLayout = ({children, showCart}) => {
+const InformationLayout = ({children}) => {
   return (
     <RegistrationContextProvider>
-      <div className={classes.RegistrationLayout}>
+      <div className={classes.InformationLayout}>
         <SiteHeader/>
         <header>
           <Container fluid={'md'}>
-            <Navigation showCart={showCart}/>
+            <Navigation/>
           </Container>
         </header>
 

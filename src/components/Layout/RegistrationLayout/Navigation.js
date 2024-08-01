@@ -1,44 +1,21 @@
 import {Row} from "react-bootstrap";
 import Image from "next/image";
 
-import {useCommerceContext} from "../../../store/CommerceContext";
 import {useThemeContext} from "../../../store/ThemeContext";
-import {useClientReady} from "../../../utils";
 
 import TournioLogoLight from '../../../images/tournio-logo.png';
 import TournioLogoDark from '../../../images/tournio-logo-inverted-gray.png';
 import ColorModeToggler from "../../common/ColorModeToggler/ColorModeToggler";
 
 import classes from './Navigation.module.scss';
+import {useClientReady} from "../../../utils";
 
-const Navigation = ({showCart}) => {
-  const {commerce} = useCommerceContext();
+const Navigation = () => {
   const {theme} = useThemeContext();
-
   const ready = useClientReady();
+
   if (!ready) {
     return null;
-  }
-
-  let cartText = '';
-  if (showCart && commerce && commerce.cart) {
-    cartText = (
-      <a href={'#mobile_cart'}
-         title={'Cart'}
-         data-bs-toggle={'offcanvas'}
-         data-bs-target={'#offcanvasCart'}
-         aria-controls={'offcanvasCart'}
-         // aria-expanded={false}
-         className={`${classes.Bag} ms-auto d-md-none`}>
-        <span className={'visually-hidden'}>Cart</span>
-        <i className={'bi-cart position-relative'} aria-hidden={true}>
-          {/*Cart*/}
-          <span className={`${classes.Badge} position-absolute top-0 start-50 badge rounded-pill bg-danger`}>
-            {commerce.cart.length}
-          </span>
-        </i>
-      </a>
-    );
   }
 
   const activeTheme = theme.active;
