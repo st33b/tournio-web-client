@@ -29,12 +29,8 @@ const BowlerSummary = ({tournament, bowler, fieldNames, partner = null, labelCla
   };
 
   // Get labels and responses for additional questions, if any
-  const aqLabels = {};
-  const aqResponses = {};
   tournament.additionalQuestions.forEach(aq => {
-    const key = aq.name;
-    aqLabels[key] = aq.label;
-    aqResponses[key] = bowler[key];
+    labels[aq.name] = aq.label;
   });
 
   // Solo registrations may have a shift identifier.
@@ -82,23 +78,6 @@ const BowlerSummary = ({tournament, bowler, fieldNames, partner = null, labelCla
             </Row>
           );
 
-        })}
-
-        {Object.keys(aqLabels).map(key => {
-          let value = aqResponses[key];
-          if (!value) {
-            return null;
-          }
-          return (
-            <Row key={`${key}`}>
-              <dt className={labelClass}>
-                {aqLabels[key]}
-              </dt>
-              <dd className={'col'}>
-                {value}
-              </dd>
-            </Row>
-          );
         })}
 
         {partnerFullName && (

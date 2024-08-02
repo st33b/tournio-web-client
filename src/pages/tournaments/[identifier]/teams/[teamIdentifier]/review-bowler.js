@@ -6,14 +6,12 @@ import React, {useState} from "react";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import Link from "next/link";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
-import {devConsoleLog, submitAddBowler, useTeam, useTheTournament} from "../../../../../utils";
-import TournamentHeader from "../../../../../components/ui/TournamentHeader";
+import {devConsoleLog, submitAddBowler, useTheTournament} from "../../../../../utils";
 import BowlerSummary from "../../../../../components/Registration/ReviewEntries/BowlerSummary";
 import {existingTeamBowlerSaved} from "../../../../../store/actions/registrationActions";
 import TournamentLogo from "../../../../../components/Registration/TournamentLogo/TournamentLogo";
 import Sidebar from "../../../../../components/Registration/Sidebar/Sidebar";
 import ProgressIndicator from "../../../../../components/Registration/ProgressIndicator/ProgressIndicator";
-import DumbBowlerForm from "../../../../../components/Registration/DumbBowlerForm/DumbBowlerForm";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
@@ -140,21 +138,34 @@ const Page = () => {
                          // partner={partner}
           />
 
-          <div className={'d-flex align-items-baseline py-3'}>
-            <Link href={
-              {
-                pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/add-bowler',
-                query: {
-                  identifier: identifier,
-                  teamIdentifier: teamIdentifier,
-                  edit: true,
-                  position: registration.bowler.position,
-                },
-              }}
-                  className={'btn btn-secondary'}>
-              Make Changes
-            </Link>
+          <div className={'d-flex justify-content-between py-3'}>
+            <div className={'text-start'}>
+              <Link href={
+                {
+                  pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/add-bowler',
+                  query: {
+                    identifier: identifier,
+                    teamIdentifier: teamIdentifier,
+                    edit: true,
+                    position: registration.bowler.position,
+                  },
+                }}
+                    className={'btn btn-secondary'}>
+                <i className={'bi bi-chevron-double-left pe-2'} aria-hidden={true} />
+                Make Changes
+              </Link>
+            </div>
+            <div className={'text-end'}>
+              <button className={'d-block btn btn-lg btn-primary'}
+                      disabled={processing}
+                      onClick={saveClicked}
+              >
+                Finish
+                <i className={'bi bi-chevron-double-right ps-2'} aria-hidden={true}/>
+              </button>
+            </div>
           </div>
+
 
         </div>
       </div>
