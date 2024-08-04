@@ -53,10 +53,7 @@ export const registrationReducer = (state, action) => {
         team: {...action.team},
       });
     case actionTypes.EXISTING_TEAM_BOWLER_SAVED:
-      return updateObject(state, {
-        team: action.team,
-        bowler: null,
-      });
+      return registrationReducerInit();
     case actionTypes.NEW_SOLO_REGISTRATION_INITIATED:
       return updateObject(state, {
         bowler: {},

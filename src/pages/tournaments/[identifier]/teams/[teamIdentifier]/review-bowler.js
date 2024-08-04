@@ -18,6 +18,7 @@ const Page = () => {
   const router = useRouter();
   const {identifier, teamIdentifier} = router.query;
 
+  const [errMsg, setErrMsg] = useState('');
   const [processing, setProcessing] = useState(false);
 
   const {loading, tournament, error} = useTheTournament(identifier);
@@ -30,11 +31,12 @@ const Page = () => {
     return <LoadingMessage message={'Getting things ready...'}/>
   }
 
-  if (error) {
+  if (error || errMsg) {
     devConsoleLog("Error:", error);
+    devConsoleLog("Error:", errMsg);
     return (
       <div>
-        <ErrorAlert message={'Something went wrong.'}/>
+        <ErrorAlert message={'Something went wrong. ' + errMsg}/>
       </div>
     );
   }
@@ -43,36 +45,34 @@ const Page = () => {
 
   const addBowlerSuccess = (bowlerData) => {
     // add the bowler to the team's bowlers, then call teamHasChanged and dispatch.
-    team.bowlers = team.bowlers.concat(bowlerData);
-    teamHasChanged(team);
-    dispatch(existingTeamBowlerSaved(team));
+    dispatch(existingTeamBowlerSaved(bowlerData));
     setProcessing(false);
     router.push({
-      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]',
+      pathname: '/bowlers/[identifier]',
       query: {
-        identifier: identifier,
-        teamIdentifier: teamIdentifier,
+        identifier: bowlerData.identifier,
+        success: 1,
       }
     });
   }
 
   const addBowlerFailure = (errorMessage) => {
     setProcessing(false);
-    setError(errorMessage);
+    setErrMsg(errorMessage);
   }
 
   const saveClicked = () => {
     // Write the bowler to the backend, with the single bowler.
     // Upon success, redirect to the team's page, which will
     // present its options.
-    // submitAddBowler({
-    //   tournament: tournament,
-    //   team: team,
-    //   bowler: registration.bowler,
-    //   onSuccess: addBowlerSuccess,
-    //   onFailure: addBowlerFailure,
-    // });
-    // setProcessing(true);
+    setProcessing(true);
+    submitAddBowler({
+      tournament: tournament,
+      team: registration.team,
+      bowler: registration.bowler,
+      onSuccess: addBowlerSuccess,
+      onFailure: addBowlerFailure,
+    });
   }
 
   // let doublesPartner = null;
