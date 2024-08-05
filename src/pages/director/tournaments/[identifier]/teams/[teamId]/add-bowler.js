@@ -1,15 +1,14 @@
 import {useRouter} from "next/router";
 import {directorApiRequest, useModernTournament, useTeam} from "../../../../../../director";
 import DirectorLayout from "../../../../../../components/Layout/DirectorLayout/DirectorLayout";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import ErrorBoundary from "../../../../../../components/common/ErrorBoundary";
 import LoadingMessage from "../../../../../../components/ui/LoadingMessage/LoadingMessage";
 import Breadcrumbs from "../../../../../../components/Director/Breadcrumbs/Breadcrumbs";
 import ErrorAlert from "../../../../../../components/common/ErrorAlert";
-import PositionChooser from "../../../../../../components/common/formElements/PositionChooser/PositionChooser";
-import BowlerForm from "../../../../../../components/Registration/BowlerForm/BowlerForm";
 import {useLoginContext} from "../../../../../../store/LoginContext";
 import {convertBowlerDataForPost} from "../../../../../../utils";
+import DumbBowlerForm from "../../../../../../components/Registration/DumbBowlerForm/DumbBowlerForm";
 
 const Page = () => {
   const router = useRouter();
@@ -19,32 +18,10 @@ const Page = () => {
   const {loading: tournamentLoading, tournament} = useModernTournament();
   const {loading: teamLoading, team, error: teamError} = useTeam();
 
-  const [occupiedPositions, setOccupiedPositions] = useState([]);
-  const [chosenPosition, choosePosition] = useState();
   const [processing, setProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
-  const [bowlerData, setBowlerData] = useState(null);
 
-  useEffect(() => {
-    if (!team) {
-      return;
-    }
-    const occupied = team.bowlers.map(({position}) => position);
-    for (let i = 0; i < tournament.teamSize; i++) {
-      if (occupied[i] !== i + 1) {
-        // We've found the first unoccupied position
-        choosePosition(i + 1);
-        break;
-      }
-    }
-    setOccupiedPositions(occupied);
-  }, [team]);
-
-  const anotherPositionClicked = (otherPosition) => {
-    choosePosition(otherPosition);
-  }
-
-  const bowlerSubmitSuccess = (bowlerDeets) => {
+  const bowlerSubmitSuccess = () => {
     setProcessing(false);
     router.push({
       pathname: '/director/tournaments/[identifier]/teams/[teamId]',
@@ -61,9 +38,8 @@ const Page = () => {
     setErrorMessage(error);
   }
 
-  const formCompleted = (bowlerDeets) => {
+  const bowlerInfoSaved = (bowlerDeets) => {
     setProcessing(true);
-    setBowlerData(bowlerDeets);
 
     const postData = convertBowlerDataForPost(tournament, bowlerDeets);
 
@@ -76,7 +52,7 @@ const Page = () => {
       data: {
         bowler: {
           ...postData,
-          position: chosenPosition,
+          position: position,
           team: {
             identifier: teamId,
           },
@@ -113,14 +89,31 @@ const Page = () => {
     return <LoadingMessage message={'Adding bowler...'}/>
   }
 
-  const maxPosition = parseInt(tournament.teamSize);
-
   const ladder = [
     {text: 'Tournaments', path: '/director/tournaments'},
     {text: tournament.name, path: `/director/tournaments/${tournamentId}`},
     {text: 'Teams', path: `/director/tournaments/${tournamentId}/teams`},
     {text: team.name, path: `/director/tournaments/${tournamentId}/teams/${teamId}`},
   ];
+
+  const fieldNames = [
+    'position',
+    'firstName',
+    'nickname',
+    'lastName',
+    'email',
+    'phone',
+  ].concat(tournament.config['bowler_form_fields'].split(' ')).concat(tournament.additionalQuestions.map(q => q.name));
+
+  const fieldData = {
+    position: {
+      elementType: 'readonly',
+      elementConfig: {
+        value: position,
+        choices: [],
+      }
+    }
+  }
 
   return (
     <ErrorBoundary>
@@ -141,18 +134,11 @@ const Page = () => {
 
       <hr />
 
-      <PositionChooser maxPosition={maxPosition}
-                       chosen={chosenPosition}
-                       onChoose={anotherPositionClicked}
-                       disallowedPositions={occupiedPositions}
-      />
-
-      <hr />
-
-      <BowlerForm tournament={tournament}
-                  bowlerInfoSaved={formCompleted}
-                  bowlerData={bowlerData}
-                  nextButtonText={'Save Bowler'}
+      <DumbBowlerForm tournament={tournament}
+                      onBowlerSave={bowlerInfoSaved}
+                      submitButtonText={'Save'}
+                      fieldNames={fieldNames}
+                      fieldData={fieldData}
       />
 
       {errorMessage && <ErrorAlert message={errorMessage}

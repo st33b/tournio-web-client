@@ -193,6 +193,13 @@ const Page = () => {
       <Breadcrumbs ladder={ladder} activeText={team.name}/>
       <Row>
         <Col md={8}>
+          <SuccessAlert message={success.update}
+                        onClose={() => setSuccess({
+                          ...success,
+                          update: null,
+                        })}
+          />
+
           <TeamDetails tournament={tournament}
                        team={team}
                        teamUpdated={formChangedHandler}
@@ -214,13 +221,6 @@ const Page = () => {
             </button>
           </div>
 
-          <SuccessAlert message={success.update}
-                        className={`mt-3`}
-                        onClose={() => setSuccess({
-                          ...success,
-                          update: null,
-                        })}
-          />
           <ErrorAlert message={errors.update}
                       className={`mt-3`}
                       onClose={() => setErrors({

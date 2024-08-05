@@ -250,13 +250,13 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
               pathname: '/director/tournaments/[identifier]/teams/[teamId]/add-bowler',
               query: {
                 identifier: tournament.identifier,
-                teamIdentifier: team.identifier,
+                teamId: team.identifier,
                 position: position,
               }
             }}
             >
               <span className={'bi bi-plus-lg pe-2'} aria-hidden={true}/>
-              Add Bowler
+              New Bowler
             </Link>
           </div>
         </div>
