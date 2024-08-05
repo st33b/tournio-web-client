@@ -42,7 +42,7 @@ const Shifts = ({tournament}) => {
                   )}
                   {displayCapacity && (
                     <p className={`fw-light mb-0`}>
-                      This shift can accommodate up to {shift.capacity} {capacityNoun}.
+                      This shift has a maximum capacity of {shift.capacity} {capacityNoun}.
                     </p>
                   )}
                 </div>
@@ -64,7 +64,7 @@ const Shifts = ({tournament}) => {
           <div className={`${classes.ShiftInfo} border rounded-2`}>
             <div>
               <p>
-                The tournament can accommodate up to {shift.capacity} {capacityNoun}.
+                The tournament has a maximum capacity of {shift.capacity} {capacityNoun}.
               </p>
 
               <ShiftCapacity shift={shift}/>

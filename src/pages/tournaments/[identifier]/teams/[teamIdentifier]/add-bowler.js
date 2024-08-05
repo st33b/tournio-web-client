@@ -1,12 +1,8 @@
 import {useRegistrationContext} from "../../../../../store/RegistrationContext";
 import {useRouter} from "next/router";
-import {useEffect, useState} from "react";
-import {devConsoleLog, useTeam, useTheTournament} from "../../../../../utils";
+import {useTeam, useTheTournament} from "../../../../../utils";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import InformationLayout from "../../../../../components/Layout/InformationLayout/InformationLayout";
-import TournamentHeader from "../../../../../components/ui/TournamentHeader";
-import PositionChooser from "../../../../../components/common/formElements/PositionChooser/PositionChooser";
-import BowlerForm from "../../../../../components/Registration/BowlerForm/BowlerForm";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
 import {existingTeamBowlerInfoAdded} from "../../../../../store/actions/registrationActions";
 import Link from "next/link";
@@ -128,41 +124,6 @@ const Page = () => {
         </div>
       </div>
     </>
-    // <div>
-    //   <TournamentHeader tournament={tournament}/>
-    //
-    //   <h2 className={`bg-primary-subtle py-3`}>
-    //     Add a Bowler
-    //   </h2>
-    //
-    //   <h3 className={''}>
-    //     Team:&nbsp;
-    //     <strong>
-    //       <Link href={{
-    //         pathname: '/tournaments/[identifier]/teams/[teamIdentifier]',
-    //         query: {
-    //           identifier: identifier,
-    //           teamIdentifier: team.identifier,
-    //         }
-    //       }}>
-    //         {team.name}
-    //       </Link>
-    //     </strong>
-    //   </h3>
-    //
-    //   <div className={''}>
-    //     <PositionChooser maxPosition={tournament.config['team_size']}
-    //                      chosen={chosenPosition}
-    //                      onChoose={choosePosition}
-    //                      disallowedPositions={unavailablePositions}
-    //     />
-    //
-    //     <BowlerForm tournament={tournament}
-    //                 bowlerData={previousBowlerData}
-    //                 availablePartners={availableDoublesPartners}
-    //                 bowlerInfoSaved={bowlerInfoSaved}/>
-    //   </div>
-    // </div>
   );
 }
 
