@@ -3,7 +3,7 @@ import InformationLayout from "../../../../components/Layout/InformationLayout/I
 import {useEffect, useState} from "react";
 import LoadingMessage from "../../../../components/ui/LoadingMessage/LoadingMessage";
 import UrlShare from "../../../../components/ui/UrlShare/UrlShare";
-import {devConsoleLog, updateObject, useTeam, useTheTournament} from "../../../../utils";
+import {updateObject, useTeam, useTheTournament} from "../../../../utils";
 import ErrorAlert from "../../../../components/common/ErrorAlert";
 import Link from "next/link";
 import TournamentLogo from "../../../../components/Registration/TournamentLogo/TournamentLogo";
@@ -52,7 +52,6 @@ const Page = () => {
 
   const tournamentType = tournament.config['tournament_type'];
 
-  devConsoleLog("Bowlers", team.bowlers);
   const rows = Array(tournament.config['team_size']);
   let firstAvailablePosition = 0;
   for (let i = 0; i < tournament.config['team_size']; i++) {
@@ -162,24 +161,7 @@ const Page = () => {
             {rows}
           </div>
 
-          {firstAvailablePosition > 0 && (
-            <div className={'text-end'}>
-              <Link className={'btn btn-primary my-3'}
-                    href={{
-                      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/add-bowler',
-                      query: {
-                        identifier: tournament.identifier,
-                        teamIdentifier: team.identifier,
-                        position: firstAvailablePosition,
-                      }
-                    }}
-              >
-                <span className={''}>Next Bowler</span>
-                <span className={'bi bi-chevron-double-right ps-2'} aria-hidden={true}/>
-              </Link>
-            </div>
-          )}
-
+          <hr />
           <UrlShare url={shareUrl} fullTeam={firstAvailablePosition === 0}/>
         </div>
       </div>

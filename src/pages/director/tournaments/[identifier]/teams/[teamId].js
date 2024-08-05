@@ -5,7 +5,7 @@ import {Card, Button, Row, Col} from "react-bootstrap";
 import DirectorLayout from "../../../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../../../components/Director/Breadcrumbs/Breadcrumbs";
 import TeamDetails from "../../../../../components/Director/TeamDetails/TeamDetails";
-import {directorApiRequest, useDirectorApi, useTournament} from "../../../../../director";
+import {directorApiRequest, useDirectorApi, useModernTournament} from "../../../../../director";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import {useLoginContext} from "../../../../../store/LoginContext";
 import SuccessAlert from "../../../../../components/common/SuccessAlert";
@@ -18,8 +18,8 @@ const Page = () => {
   const {authToken} = useLoginContext();
   const {identifier: tournamentId, teamId, successCode} = router.query;
 
-  const {loading: tournamentLoading, tournament, tournamentUpdatedQuietly} = useTournament();
-  const {loading: teamLoading, data: team, error: teamError, onDataUpdate: onTeamUpdate} = useDirectorApi({
+  const {loading: tournamentLoading, tournament, tournamentUpdatedQuietly} = useModernTournament();
+  const {loading: teamLoading, data: team, onDataUpdate: onTeamUpdate} = useDirectorApi({
     uri: teamId ? `/teams/${teamId}` : null,
   });
 

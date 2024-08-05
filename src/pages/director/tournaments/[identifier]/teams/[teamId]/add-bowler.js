@@ -13,7 +13,7 @@ import {convertBowlerDataForPost} from "../../../../../../utils";
 
 const Page = () => {
   const router = useRouter();
-  const {identifier: tournamentId, teamId} = router.query;
+  const {identifier: tournamentId, teamId, position} = router.query;
   const {authToken} = useLoginContext();
 
   const {loading: tournamentLoading, tournament} = useModernTournament();
