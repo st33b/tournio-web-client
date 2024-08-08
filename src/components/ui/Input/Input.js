@@ -105,7 +105,7 @@ const Input = (props) => {
         className={`form-select`}
         onChange={props.changed}
         required={required}
-        value={props.elementConfig.value}
+        value={props.elementConfig.value || ''}
       >
         {optionText}
       </select>

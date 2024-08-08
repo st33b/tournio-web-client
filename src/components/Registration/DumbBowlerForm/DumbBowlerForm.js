@@ -716,6 +716,12 @@ const DumbBowlerForm = ({
               };
             });
             break;
+          case 'shiftIdentifier':
+            // populate this one only if we're supposed to.
+            if (fieldNames.includes('shiftIdentifier')) {
+              modifiedFormData.fields.shiftIdentifier.elementConfig.value = bowler.shiftIdentifier;
+            }
+            break;
           default:
             modifiedFormData.fields[fieldName].elementConfig.value = bowler[fieldName];
             break;
