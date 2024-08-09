@@ -10,7 +10,6 @@ import Button from "react-bootstrap/Button";
 const TeamFilterForm = (props) => {
   const initialState = {
     incomplete: false,
-    place_with_others: false,
   }
 
   const [filterForm, setFilterForm] = useState(initialState);

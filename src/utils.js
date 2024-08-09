@@ -386,11 +386,7 @@ const convertTeamDataForServer = (tournament, team) => {
   let postData = {
     team: {
       name: team.name,
-      initial_size: team.bowlerCount,
       bowlers_attributes: [],
-      options: {
-        place_with_others: !!team.placeWithOthers,
-      }
     },
   };
   for (const bowler of team.bowlers) {

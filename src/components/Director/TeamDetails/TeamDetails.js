@@ -17,7 +17,6 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
   let initialFormData = {
     fields: {
       name: '',
-      initial_size: 4,
       bowlers_attributes: [],
       shift_identifiers: [],
     },
@@ -34,7 +33,6 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
     }
     const newFormData = {...teamForm}
     newFormData.fields.name = team.name;
-    newFormData.fields.initial_size = team.initial_size;
     newFormData.fields.bowlers_attributes = team.bowlers.map((b) => {
       return {
         id: b.id,
@@ -165,11 +163,6 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
       messages.push('Team needs a name');
     }
 
-    const sizeIsValid = fields.initial_size > 0 && fields.initial_size <= tournament.team_size;
-    if (!sizeIsValid) {
-      messages.push(`Joinable positions must be 1 - ${tournament.team_size}`);
-    }
-
     return messages;
   }
 
@@ -182,9 +175,6 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
     switch (inputName) {
       case 'name':
         updatedTeamForm.fields.name = event.target.value;
-        break;
-      case 'initial_size':
-        updatedTeamForm.fields.initial_size = parseInt(event.target.value);
         break;
       case 'position':
         updatedTeamForm.fields.bowlers_attributes[index].position = parseInt(event.target.value);
@@ -340,22 +330,6 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
             />
           </div>
         </div>
-        {/*<div className={'row mb-2'}>*/}
-        {/*  <label htmlFor={'initial_size'}*/}
-        {/*         className={'col-form-label col-form-label-lg text-sm-end col-12 col-sm-4'}>*/}
-        {/*    Joinable Positions*/}
-        {/*  </label>*/}
-        {/*  <div className={'col-sm-4'}>*/}
-        {/*    <input type={'number'}*/}
-        {/*           min={1}*/}
-        {/*           max={tournament.team_size}*/}
-        {/*           onChange={(event) => inputChangedHandler(event, 'initial_size')}*/}
-        {/*           className={'form-control'}*/}
-        {/*           id={'initial_size'}*/}
-        {/*           value={teamForm.fields.initial_size}*/}
-        {/*    />*/}
-        {/*  </div>*/}
-        {/*</div>*/}
 
         {tournamentType === 'igbo_mix_and_match' && (
           <MixAndMatchShiftForm shiftsByEvent={tournament.shifts_by_event}
