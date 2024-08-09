@@ -1099,7 +1099,7 @@ const BowlerPage = () => {
     bowler[questionKey] = bowler.additionalQuestionResponses[questionKey].response;
   }
 
-  const showShifts = bowler.shifts.length > 0;
+  const showShifts = !bowler.team && tournament.shifts.length > 1;
 
   const bowlerFormData = {
     first_name: bowler.firstName,
