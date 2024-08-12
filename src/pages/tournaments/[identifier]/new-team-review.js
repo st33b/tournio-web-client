@@ -90,7 +90,7 @@ const Page = () => {
     'nickname',
     'email',
     'phone',
-  ].concat(tournament.config['bowler_form_fields'].split(' '));
+  ].concat(tournament.config['bowler_form_fields'].split(' ')).concat(tournament.additionalQuestions.map(q => q.name));
 
   return (
     <>

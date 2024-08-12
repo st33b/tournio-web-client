@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {newTeamBowlerInfoAdded, newTeamBowlerInfoUpdated} from "../../../store/actions/registrationActions";
-import {devConsoleLog, useTheTournament} from "../../../utils";
+import {useTheTournament} from "../../../utils";
 import React, {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import Link from "next/link";
@@ -171,7 +171,7 @@ const Page = () => {
                    bowlers={registration.team.bowlers}
                    shiftPreferences={preferredShiftNames}/>
 
-          {!edit && takenPositions.length > 1 && (
+          {!edit && takenPositions.length > 0 && (
             <div className={'text-end'}>
               <p className={'my-3'}>
                 Finished with bowlers?
