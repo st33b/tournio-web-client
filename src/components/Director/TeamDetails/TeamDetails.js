@@ -36,7 +36,7 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
       return {
         id: b.id,
         position: b.position,
-        doubles_partner_id: b.doubles_partner_id,
+        doubles_partner_id: b.doublesPartner ? b.doublesPartner.id : null,
       }
     }, [team]);
     newFormData.fields.shift_identifiers = team.shifts.map(({identifier}) => identifier);
@@ -129,7 +129,7 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
 
     // update the bowlers on the team, so that the partner selection rows get presented correctly
     updatedTeamForm.fields.bowlers_attributes.forEach((bowlerAttributeRow, index) => {
-      team.bowlers[index].doubles_partner_id = bowlerAttributeRow.doubles_partner_id;
+      team.bowlers[index].doublesPartnerId = bowlerAttributeRow.doubles_partner_id;
     });
 
     // Send update notification
@@ -154,10 +154,11 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
         </thead>
         <tbody>
         {team.bowlers.map(bowler => {
-          // Need the bowler to reflect the current state of doubles assignment in the form
+          const teammates = team.bowlers.filter(({id}) => id !== bowler.id);
           return <PartnerSelectionRow key={bowler.identifier}
                                       bowler={bowler}
-                                      allBowlers={team.bowlers}
+                                      activeId={bowler.doublesPartnerId}
+                                      teammates={teammates}
                                       onPartnerSelected={gimmeNewDoublesPartners}
           />
         })}
@@ -232,7 +233,7 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
               }
             }}
             >
-              {bowler.full_name}
+              {bowler.fullName}
             </Link>
           </div>
         </div>
