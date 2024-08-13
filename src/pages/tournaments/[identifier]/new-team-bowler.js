@@ -119,6 +119,7 @@ const Page = () => {
   }
 
   // for the form
+  const fieldData = {};
   const fieldNames = [
     'firstName',
     'nickname',
@@ -131,22 +132,22 @@ const Page = () => {
   // creates a race condition in the form component (setup vs. bowler data population)
   if (!edit) {
     fieldNames.unshift('position');
+
+    fieldData.position = {
+      elementConfig: {
+        choices: [],
+      }
+    }
+    for (let p = 1; p <= tournament.config['team_size']; p++) {
+      fieldData.position.elementConfig.choices.push({
+        value: p,
+        label: p,
+        disabled: takenPositions.includes(p),
+      });
+    }
   }
 
   // Future improvement: merge the concepts of "bowler form fields" and "additional questions"
-
-  const fieldData = {
-    position: {
-      choices: [],
-    }
-  }
-  for (let p = 1; p <= tournament.config['team_size']; p++) {
-    fieldData.position.choices.push({
-      value: p,
-      label: p,
-      disabled: takenPositions.includes(p),
-    });
-  }
 
   return (
     <>

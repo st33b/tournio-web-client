@@ -164,7 +164,7 @@ const Input = (props) => {
             {...props.elementConfig}
             checked={props.elementConfig.value === 'yes' || props.elementConfig.value === true}
           />
-          <label className={'form-check-label'}>
+          <label className={'form-check-label'} htmlFor={props.identifier}>
             {props.elementConfig.label}
           </label>
         </div>
