@@ -415,7 +415,7 @@ const DumbBowlerForm = ({
         },
         label: 'Personal Pronouns',
         validityErrors: [],
-        valid: !!bowler,
+        valid: true,
         touched: false,
       },
       dietary: {
@@ -430,7 +430,7 @@ const DumbBowlerForm = ({
           text: 'vegetarian / vegan / allergies / etc.',
         },
         validityErrors: [],
-        valid: true,
+        valid: !bowler,
         touched: false,
       },
       comment: {
@@ -441,7 +441,7 @@ const DumbBowlerForm = ({
         },
         label: 'Anything else we should know?',
         validityErrors: [],
-        valid: !!bowler,
+        valid: true,
         touched: false,
       },
       standingsLink: {
@@ -457,7 +457,7 @@ const DumbBowlerForm = ({
           text: '',
         },
         validityErrors: [],
-        valid: !!bowler,
+        valid: true,
         touched: false,
       },
       enteringAverage: {
@@ -474,7 +474,7 @@ const DumbBowlerForm = ({
           text: 'See tournament rules for details',
         },
         validityErrors: [],
-        valid: !!bowler,
+        valid: true,
         touched: false,
       },
       shirtSize: {
@@ -509,7 +509,7 @@ const DumbBowlerForm = ({
           text: '',
         },
         validityErrors: [],
-        valid: !!bowler,
+        valid: true,
         touched: false,
       },
       shirtSizeUnisex: {
@@ -536,7 +536,7 @@ const DumbBowlerForm = ({
           text: '',
         },
         validityErrors: [],
-        valid: !!bowler,
+        valid: true,
         touched: false,
       },
       volunteerWhileNotBowling: {
