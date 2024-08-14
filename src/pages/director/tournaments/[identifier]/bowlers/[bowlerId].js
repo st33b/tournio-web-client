@@ -192,7 +192,7 @@ const BowlerPage = () => {
 
     // retrieve the new list of available teams
     onAvailableTeamsUpdate(availableTeams);
-    bowlerUpdated(data);
+    bowlerUpdatedQuietly(data);
 
     setSuccess({
       ...success,
@@ -315,7 +315,7 @@ const BowlerPage = () => {
     onFreeEntryUpdate(data);
 
     // This updates the bowler's ledger entries, so we should also refresh the bowler
-    bowlerUpdated({
+    bowlerUpdatedQuietly({
       ...bowler,
       freeEntry: data,
     });
@@ -477,7 +477,7 @@ const BowlerPage = () => {
       ...success,
       addLedgerEntry: 'Manual payment added',
     });
-    bowlerUpdated(bowler);
+    bowlerUpdatedQuietly(bowler);
   }
 
   const addLedgerEntryFailure = (error) => {
@@ -620,7 +620,7 @@ const BowlerPage = () => {
       ...success,
       waiveFee: 'Late fee waived',
     });
-    bowlerUpdated(bowler);
+    bowlerUpdatedQuietly(bowler);
   }
 
   const waiveFeeFailure = (error) => {
@@ -703,7 +703,7 @@ const BowlerPage = () => {
             )}
             <div className={'row'}>
               <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Doubles partner</dt>
-              {bowler.doublesPartner && <dd className={'col'}>{bowler.doublesPartner.name}</dd>}
+              {bowler.doublesPartner && <dd className={'col'}>{bowler.doublesPartner.fullName}</dd>}
               {!bowler.doublesPartner && <dd className={'col'}>n/a</dd>}
             </div>
           </dl>

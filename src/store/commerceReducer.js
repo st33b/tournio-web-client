@@ -1,5 +1,5 @@
 import * as actionTypes from './actions/actionTypes';
-import {apparelSizeMapping, devConsoleLog, updateObject} from "../utils";
+import {apparelSizeMapping, updateObject} from "../utils";
 import {itemAddedToCart} from "./commerce/itemAddedToCart";
 import {itemRemovedFromCart} from "./commerce/itemRemovedFromCart";
 
@@ -19,9 +19,6 @@ const initialState = {
 export const commerceReducerInit = (initial = initialState) => initial;
 
 export const commerceReducer = (state, action) => {
-  devConsoleLog("Commerce reducer action type:", action.type);
-  devConsoleLog("Commerce reducer existing state:", state);
-
   switch (action.type) {
     case actionTypes.RESET:
       return commerceReducerInit();
