@@ -254,7 +254,7 @@ const SignInSheet = ({bowler, tournament, showPrintButton}) => {
             </div>
             <div className={'col fw-bold'}>
               {!bowler.doublesPartner && 'n/a'}
-              {!!bowler.doublesPartner && bowler.doublesPartner.name}
+              {!!bowler.doublesPartner && bowler.doublesPartner.fullName}
             </div>
           </div>
         </div>
