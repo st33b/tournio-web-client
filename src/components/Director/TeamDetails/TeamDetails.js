@@ -193,6 +193,7 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
 
   const maxTeamSize = parseInt(tournament.config['team_size']);
   const tournamentType = tournament.config['tournament_type'] || 'igbo_standard';
+  const hasDoublesEvent = tournament.events.some(({rosterType}) => rosterType === 'doubles');
 
   const showInclusiveShifts = tournamentType === 'igbo_multi_shift' || tournamentType === 'single_event' && tournament.shifts.length > 1;
 
@@ -309,7 +310,7 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
           {bowlerRows}
         </div>
 
-        {team.size > 1 && (
+        {hasDoublesEvent && team.size > 1 && (
           <div className={'row mb-2'}>
             {doublesPartnerSelection}
           </div>
