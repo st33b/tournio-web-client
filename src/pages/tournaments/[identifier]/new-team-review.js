@@ -92,6 +92,13 @@ const Page = () => {
     'phone',
   ].concat(tournament.config['bowler_form_fields'].split(' ')).concat(tournament.additionalQuestions.map(q => q.name));
 
+  const hasDoublesEvent = tournament.events.some(event => event.rosterType === 'double');
+  const progressSteps = ['team', 'bowlers'];
+  if (hasDoublesEvent) {
+    progressSteps.push('doubles');
+  }
+  progressSteps.push('review');
+
   return (
     <>
       <div className={'row d-md-none'}>
@@ -115,7 +122,7 @@ const Page = () => {
         </div>
 
         <div className={'col-12 col-md-10'}>
-          <ProgressIndicator completed={completedSteps} active={'review'}/>
+          <ProgressIndicator completed={completedSteps} steps={progressSteps} active={'review'}/>
           <p className={'d-none d-md-block display-5'}>
             Let&apos;s Review...
           </p>
@@ -163,15 +170,18 @@ const Page = () => {
           })}
 
           <div className={'row'}>
-            <div className={'col-12 col-md-6 mb-3'}>
-              <Link href={`/tournaments/${tournament.identifier}/doubles-partners?edit=true`}
-                    className={'btn btn-secondary'}>
-                <i className="bi bi-chevron-double-left pe-1" aria-hidden="true"/>
-                Change doubles partners
-              </Link>
-            </div>
 
-            <div className={'col-12 col-md-6 text-end'}>
+            {hasDoublesEvent && (
+              <div className={'col-12 col-md-6 mb-3'}>
+                <Link href={`/tournaments/${tournament.identifier}/doubles-partners?edit=true`}
+                      className={'btn btn-secondary'}>
+                  <i className="bi bi-chevron-double-left pe-1" aria-hidden="true"/>
+                  Change doubles partners
+                </Link>
+              </div>
+            )}
+
+            <div className={`col-12 text-end ${hasDoublesEvent ? 'col-md-6' : ''}`}>
               <button className={'btn btn-lg btn-primary'}
                       onClick={saveClicked}
                       disabled={processing}>

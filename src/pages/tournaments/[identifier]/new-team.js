@@ -75,6 +75,13 @@ const Page = () => {
   const teamName = edit ? registration.team.name : '';
   const sidebarBowlers = edit ? registration.team.bowlers : [];
 
+  const hasDoublesEvent = tournament.events.some(event => event.rosterType === 'double');
+  const progressSteps = ['team', 'bowlers'];
+  if (hasDoublesEvent) {
+    progressSteps.push('doubles');
+  }
+  progressSteps.push('review');
+
   return (
     <>
       <div className={'row d-md-none'}>
@@ -107,7 +114,7 @@ const Page = () => {
         </div>
 
         <div className={'col-12 col-md-8'}>
-          <ProgressIndicator active={'team'}/>
+          <ProgressIndicator active={'team'} steps={progressSteps}/>
           <TeamForm tournament={tournament}
                     team={registration.team}
                     submitButtonText={edit? 'Save' : 'Next: Bowlers'}

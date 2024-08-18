@@ -110,7 +110,6 @@ const Page = () => {
 
   const showPreferredShift = tournamentType === 'igbo_multi_shift' || tournamentType === 'single_event' && tournament.shifts.length > 1;
   const showMultipleShifts = tournamentType === 'igbo_mix_and_match';
-  const titleText = firstAvailablePosition > 0 ? 'Team Registration' : 'Team Details';
 
   return (
     <>
@@ -121,7 +120,7 @@ const Page = () => {
           </Link>
         </div>
         <p className={'col display-4'}>
-          {titleText}
+          Team Details
         </p>
       </div>
 
@@ -136,7 +135,7 @@ const Page = () => {
 
         <div className={'col-12 col-md-8'}>
           <h1 className={'d-none d-md-block display-5 ps-1 pt-2 py-3 bg-primary-subtle'}>
-            {titleText}
+            Team Details
           </h1>
 
           <h3 className={'py-3'}>

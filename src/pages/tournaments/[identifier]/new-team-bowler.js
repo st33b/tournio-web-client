@@ -147,6 +147,12 @@ const Page = () => {
     }
   }
 
+  const progressSteps = ['team', 'bowlers'];
+  if (tournament.events.some(({rosterType}) => rosterType === 'double')) {
+    progressSteps.push('doubles');
+  }
+  progressSteps.push('review');
+
   // Future improvement: merge the concepts of "bowler form fields" and "additional questions"
 
   return (
@@ -155,7 +161,7 @@ const Page = () => {
         <p className={'display-3'}>
           {tournament.abbreviation} {tournament.year}
         </p>
-        <ProgressIndicator completed={['team']} active={'bowlers'}/>
+        <ProgressIndicator completed={['team']} steps={progressSteps} active={'bowlers'}/>
       </div>
 
       <div className={'row'}>
@@ -214,7 +220,7 @@ const Page = () => {
 
         <div className={'col-12 col-md-8'}>
           <div className={'d-none d-md-block'}>
-            <ProgressIndicator completed={['team']} active={'bowlers'}/>
+            <ProgressIndicator completed={['team']} steps={progressSteps} active={'bowlers'}/>
           </div>
           <p className={'d-md-none display-5'}>
             {titleText}

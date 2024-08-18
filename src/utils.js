@@ -370,10 +370,13 @@ const convertTeamDataForServer = (tournament, team) => {
 }
 
 const teamDataForBowler = (bowler) => {
-  return {
+  const data = {
     position: bowler.position,
-    doubles_partner_index: bowler.doublesPartnerIndex,
-  };
+  }
+  if (bowler.doublesPartnerIndex >= 0) {
+    data.doubles_partner_index = bowler.doublesPartnerIndex;
+  }
+  return data;
 }
 
 export const convertBowlerDataForPost = (tournament, bowler) => {
