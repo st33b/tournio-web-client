@@ -1,49 +1,42 @@
 import {useRouter} from "next/router";
 
-import RegistrationLayout from "../../../../../components/Layout/RegistrationLayout/RegistrationLayout";
+import InformationLayout from "../../../../../components/Layout/InformationLayout/InformationLayout";
 import {useRegistrationContext} from "../../../../../store/RegistrationContext";
-import {useState} from "react";
+import React, {useState} from "react";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import Link from "next/link";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
-import {submitAddBowler, useTeam, useTheTournament} from "../../../../../utils";
-import TournamentHeader from "../../../../../components/ui/TournamentHeader";
+import {devConsoleLog, submitAddBowler, useTheTournament} from "../../../../../utils";
 import BowlerSummary from "../../../../../components/Registration/ReviewEntries/BowlerSummary";
 import {existingTeamBowlerSaved} from "../../../../../store/actions/registrationActions";
+import TournamentLogo from "../../../../../components/Registration/TournamentLogo/TournamentLogo";
+import Sidebar from "../../../../../components/Registration/Sidebar/Sidebar";
+import ProgressIndicator from "../../../../../components/Registration/ProgressIndicator/ProgressIndicator";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
   const {identifier, teamIdentifier} = router.query;
 
+  const [errMsg, setErrMsg] = useState('');
   const [processing, setProcessing] = useState(false);
-  const [error, setError] = useState();
 
-  const {loading, team, error: fetchError, teamHasChanged } = useTeam(teamIdentifier);
-  const {tournament, error: tournamentError} = useTheTournament(identifier);
+  const {loading, tournament, error} = useTheTournament(identifier);
 
-  if (!registration || !tournament || !registration.bowler) {
+  if (!registration || !tournament || !registration.bowler || !registration.team) {
     return <LoadingMessage message={'Getting things ready...'}/>
   }
 
   if (loading) {
     return <LoadingMessage message={'Getting things ready...'}/>
   }
-  if (!team) {
-    return '';
-  }
 
-  if (fetchError) {
+  if (error || errMsg) {
+    devConsoleLog("Error:", error);
+    devConsoleLog("Error:", errMsg);
     return (
       <div>
-        <ErrorAlert message={'Failed to load team.'}/>
-      </div>
-    );
-  }
-  if (tournamentError) {
-    return (
-      <div>
-        <ErrorAlert message={'Failed to load tournament.'}/>
+        <ErrorAlert message={'Something went wrong. ' + errMsg}/>
       </div>
     );
   }
@@ -52,104 +45,191 @@ const Page = () => {
 
   const addBowlerSuccess = (bowlerData) => {
     // add the bowler to the team's bowlers, then call teamHasChanged and dispatch.
-    team.bowlers = team.bowlers.concat(bowlerData);
-    teamHasChanged(team);
-    dispatch(existingTeamBowlerSaved(team));
+    dispatch(existingTeamBowlerSaved(bowlerData));
     setProcessing(false);
     router.push({
-      pathname: '/tournaments/[identifier]/teams/[teamIdentifier]',
+      pathname: '/bowlers/[identifier]',
       query: {
-        identifier: identifier,
-        teamIdentifier: teamIdentifier,
+        identifier: bowlerData.identifier,
+        success: 1,
       }
     });
   }
 
   const addBowlerFailure = (errorMessage) => {
     setProcessing(false);
-    setError(errorMessage);
+    setErrMsg(errorMessage);
   }
 
   const saveClicked = () => {
     // Write the bowler to the backend, with the single bowler.
     // Upon success, redirect to the team's page, which will
     // present its options.
+    setProcessing(true);
     submitAddBowler({
       tournament: tournament,
-      team: team,
+      team: registration.team,
       bowler: registration.bowler,
       onSuccess: addBowlerSuccess,
       onFailure: addBowlerFailure,
     });
-    setProcessing(true);
   }
 
-  let doublesPartner = null;
-  if (registration.bowler.doubles_partner) {
-    doublesPartner = team.bowlers.find(bowler => registration.bowler.doubles_partner === bowler.identifier);
-  }
+  // let doublesPartner = null;
+  // if (registration.bowler.doubles_partner) {
+  //   doublesPartner = team.bowlers.find(bowler => registration.bowler.doubles_partner === bowler.identifier);
+  // }
+
+  const fieldNames = [
+    'position',
+    'firstName',
+    'nickname',
+    'lastName',
+    'email',
+    'phone',
+  ].concat(tournament.config['bowler_form_fields'].split(' ')).concat(tournament.additionalQuestions.map(q => q.name));
 
   return (
-    <div>
-      <TournamentHeader tournament={tournament}/>
+    <>
+      <div className={'row d-flex d-md-none'}>
+        <div className={'col-5'}>
+          <TournamentLogo url={tournament.imageUrl} additionalClasses={'mb-2'}/>
+        </div>
+        <p className={'col-7 display-4 align-self-center'}>
+          Review Bowler Details
+        </p>
+      </div>
 
-      <h2 className={`bg-primary-subtle py-3`}>
-        Review Bowler Details
-      </h2>
+      <div className={'row'}>
+        <div className={'col-12 col-md-4'}>
 
-      <h4 className={``}>
-        Team:&nbsp;
-        <strong>
-          {team.name}
-        </strong>
-      </h4>
+          <div className={'d-none d-md-block'}>
+            <Link href={`/tournaments/${identifier}`}>
+              <TournamentLogo url={tournament.imageUrl}/>
+            </Link>
+            <p className={'col display-5'}>
+              Review Bowler Details
+            </p>
+          </div>
 
-      <hr/>
-
-      <div className={''}>
-        <BowlerSummary bowler={registration.bowler}
-                       tournament={tournament}
-                       partner={doublesPartner}/>
-
-        <hr/>
-
-        {error && <ErrorAlert message={error}/>}
-
-        <div className={`d-flex justify-content-between`}>
-          <Link href={{
-            pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/add-bowler',
-            query: {
-              identifier: identifier,
-              teamIdentifier: teamIdentifier,
-              edit: true,
-            }
-          }}
-                className={`btn btn-lg btn-outline-primary d-block ${processing && 'invisible'}`}>
-            <i className={'bi bi-chevron-double-left pe-2'}
-               aria-hidden={true}/>
-            Make Changes
-          </Link>
-
-          <button className={`btn btn-lg btn-primary`}
-                  disabled={processing}
-                  onClick={saveClicked}>
-            Save
-            <i className={'bi bi-chevron-double-right ps-2'}
-               aria-hidden={true}/>
-          </button>
+          <Sidebar tournament={tournament}
+                   teamName={registration.team.name}
+                   bowlers={registration.team.bowlers}
+          />
         </div>
 
-        {processing && <LoadingMessage message={'Submitting registration...'}/>}
+        <div className={'col-12 col-md-8'}>
+          <ProgressIndicator steps={['bowler', 'review']}
+                             completed={['bowler']}
+                             active={'review'}/>
+
+          <div className={'alert alert-warning'}>
+            Please check everything to make sure it&apos;s correct, and make any necessary changes. If everything looks
+            good, hit the big{' '}
+            <span className={'fw-bolder'}>
+              Finish
+            </span>
+            {' '}button at the bottom.
+          </div>
+
+          <BowlerSummary tournament={tournament}
+                         fieldNames={fieldNames}
+                         bowler={registration.bowler}
+                         // partner={partner}
+          />
+
+          <div className={'d-flex justify-content-between py-3'}>
+            <div className={'text-start'}>
+              <Link href={
+                {
+                  pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/add-bowler',
+                  query: {
+                    identifier: identifier,
+                    teamIdentifier: teamIdentifier,
+                    edit: true,
+                    position: registration.bowler.position,
+                  },
+                }}
+                    className={'btn btn-secondary'}>
+                <i className={'bi bi-chevron-double-left pe-2'} aria-hidden={true} />
+                Make Changes
+              </Link>
+            </div>
+            <div className={'text-end'}>
+              <button className={'d-block btn btn-lg btn-primary'}
+                      disabled={processing}
+                      onClick={saveClicked}
+              >
+                Finish
+                <i className={'bi bi-chevron-double-right ps-2'} aria-hidden={true}/>
+              </button>
+            </div>
+          </div>
+
+
+        </div>
       </div>
-    </div>
+    </>
+    // <div>
+    //   <TournamentHeader tournament={tournament}/>
+    //
+    //   <h2 className={`bg-primary-subtle py-3`}>
+    //     Review Bowler Details
+    //   </h2>
+    //
+    //   <h4 className={``}>
+    //     Team:&nbsp;
+    //     <strong>
+    //       {team.name}
+    //     </strong>
+    //   </h4>
+    //
+    //   <hr/>
+    //
+    //   <div className={''}>
+    //     <BowlerSummary bowler={registration.bowler}
+    //                    tournament={tournament}
+    //                    partner={doublesPartner}/>
+    //
+    //     <hr/>
+    //
+    //     {error && <ErrorAlert message={error}/>}
+    //
+    //     <div className={`d-flex justify-content-between`}>
+    //       <Link href={{
+    //         pathname: '/tournaments/[identifier]/teams/[teamIdentifier]/add-bowler',
+    //         query: {
+    //           identifier: identifier,
+    //           teamIdentifier: teamIdentifier,
+    //           edit: true,
+    //         }
+    //       }}
+    //             className={`btn btn-lg btn-outline-primary d-block ${processing && 'invisible'}`}>
+    //         <i className={'bi bi-chevron-double-left pe-2'}
+    //            aria-hidden={true}/>
+    //         Make Changes
+    //       </Link>
+    //
+    //       <button className={`btn btn-lg btn-primary`}
+    //               disabled={processing}
+    //               onClick={saveClicked}>
+    //         Save
+    //         <i className={'bi bi-chevron-double-right ps-2'}
+    //            aria-hidden={true}/>
+    //       </button>
+    //     </div>
+    //
+    //     {processing && <LoadingMessage message={'Submitting registration...'}/>}
+    //   </div>
+    // </div>
   );
 }
 
 Page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout>
+    <InformationLayout>
       {page}
-    </RegistrationLayout>
+    </InformationLayout>
   );
 }
 

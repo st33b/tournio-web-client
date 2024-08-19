@@ -1,5 +1,4 @@
-import React, {useState, useEffect, useMemo} from "react";
-import {useTable} from "react-table";
+import React, {useState, useEffect} from "react";
 import Link from 'next/link';
 
 import PartnerSelectionRow from "./PartnerSelectionRow";
@@ -12,7 +11,7 @@ import MixAndMatchShiftForm from "./MixAndMatchShiftForm";
 
 const TeamDetails = ({tournament, team, teamUpdated}) => {
   const router = useRouter();
-  const {identifier: tournamentId, teamId} = router.query;
+  const {identifier: tournamentId} = router.query;
 
   let initialFormData = {
     fields: {
@@ -37,7 +36,7 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
       return {
         id: b.id,
         position: b.position,
-        doubles_partner_id: b.doubles_partner_id,
+        doubles_partner_id: b.doublesPartner ? b.doublesPartner.id : null,
       }
     }, [team]);
     newFormData.fields.shift_identifiers = team.shifts.map(({identifier}) => identifier);
@@ -45,112 +44,11 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
     teamUpdated(newFormData);
   }, [team]);
 
-  let data = [];
-  if (team) {
-    data = team.bowlers;
-  }
-  // columns
-  const columns = useMemo(() => [
-    {
-      Header: 'Position',
-      accessor: 'position',
-      Cell: ({row}) => {
-        const index = row.index;
-        if (!teamForm.fields.bowlers_attributes[index]) {
-          return '';
-        }
-        return (
-          <>
-            <input type={'number'}
-                   min={1}
-                   max={4}
-                   value={teamForm.fields.bowlers_attributes[index].position}
-                   className={[classes.PositionInput, 'form-control'].join(' ')}
-                   name={'team[bowlers_attributes][' + index + '][position]'}
-                   id={'team_bowlers_attributes_' + index + '_position'}
-                   onChange={(event) => inputChangedHandler(event, 'position', index)}
-            />
-            <input type={'hidden'}
-                   value={row.original.id}
-                   name={'team[bowlers_attributes][' + index + '][id]'}
-                   id={'team_bowlers_attributes_' + index + '_id'}
-            />
-          </>
-        );
-      }
-    },
-    {
-      Header: 'Name',
-      accessor: 'name',
-      Cell: ({row, value}) => (
-        <Link href={{
-          pathname: '/director/tournaments/[identifier]/bowlers/[bowlerId]',
-          query: {
-            identifier: row.original.tournament.identifier,
-            bowlerId: row.original.identifier,
-          }
-        }}
-          // href={`/director/bowlers/${row.original.identifier}`}
-        >
-          {value}
-        </Link>
-      )
-    },
-    // {
-    //   Header: 'Amount Due',
-    //   accessor: 'amount_due',
-    //   Cell: ({value}) => `$${value}`,
-    // },
-    {
-      id: 'free_entry',
-      Header: 'Free Entry',
-      accessor: 'free_entry',
-      Cell: ({value}) => {
-        if (value === null) {
-          return '--';
-        }
-        if (value.confirmed) {
-          return value.unique_code;
-        }
-        return (
-          <span title="Free entry is not yet confirmed">
-            {value.unique_code} *
-          </span>
-        )
-      }
-    },
-    {
-      Header: 'Fees Paid?',
-      accessor: 'paid',
-      Cell: ({value}) => {
-        const className = value ? 'bi-check-lg text-success' : 'bi-dash-circle text-danger';
-        return (
-          <span>
-            <i className={className} aria-hidden={true}/>
-            <span className={'visually-hidden'}>{value ? 'Paid' : 'Unpaid'}</span>
-          </span>
-        )
-      }
-    }
-  ], [teamForm]);
-
-  // tell react-table which things we want to use
-  // and retrieve properties/functions they let us hook into
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable(
-    {columns, data},
-  );
-
   const errorMessages = (fields) => {
     const messages = [];
 
     // an array of flags, where the 0th element is ignored
-    const markedPositions = Array(tournament.team_size + 1).fill(false);
+    const markedPositions = Array(tournament.config['team_size'] + 1).fill(false);
     // mark the chosen positions as true
     fields.bowlers_attributes.forEach(bowler => markedPositions[bowler.position] = true);
     // filtering by marked positions, does its size match the number of bowlers we have?
@@ -231,7 +129,7 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
 
     // update the bowlers on the team, so that the partner selection rows get presented correctly
     updatedTeamForm.fields.bowlers_attributes.forEach((bowlerAttributeRow, index) => {
-      team.bowlers[index].doubles_partner_id = bowlerAttributeRow.doubles_partner_id;
+      team.bowlers[index].doublesPartnerId = bowlerAttributeRow.doubles_partner_id;
     });
 
     // Send update notification
@@ -256,10 +154,11 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
         </thead>
         <tbody>
         {team.bowlers.map(bowler => {
-          // Need the bowler to reflect the current state of doubles assignment in the form
+          const teammates = team.bowlers.filter(({id}) => id !== bowler.id);
           return <PartnerSelectionRow key={bowler.identifier}
                                       bowler={bowler}
-                                      allBowlers={team.bowlers}
+                                      activeId={bowler.doublesPartnerId}
+                                      teammates={teammates}
                                       onPartnerSelected={gimmeNewDoublesPartners}
           />
         })}
@@ -292,37 +191,93 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
     return '';
   }
 
-  const maxTeamSize = parseInt(tournament.team_size);
-  const tournamentType = tournament.config_items.find(({key}) => key === 'tournament_type').value || 'igbo_standard';
-
-  const addBowlerLink = (
-    <div className={'text-end'}>
-      <Link href={{
-        pathname: `/director/tournaments/[identifier]/teams/[teamId]/add_bowler`,
-        query: {
-          identifier: tournamentId,
-          teamId: teamId,
-        }
-      }}>
-        <i className={'bi bi-plus-lg pe-2'} aria-hidden={true}/>
-        Add a Bowler
-      </Link>
-    </div>
-  );
+  const maxTeamSize = parseInt(tournament.config['team_size']);
+  const tournamentType = tournament.config['tournament_type'] || 'igbo_standard';
+  const hasDoublesEvent = tournament.events.some(({rosterType}) => rosterType === 'doubles');
 
   const showInclusiveShifts = tournamentType === 'igbo_multi_shift' || tournamentType === 'single_event' && tournament.shifts.length > 1;
+
+  const bowlerRows = [];
+  for (let i = 0; i < maxTeamSize; i++) {
+    const position = i + 1;
+    const index = team.bowlers.findIndex(b => b.position === position);
+    const bowler = team.bowlers[index];
+    let row = '';
+    if (bowler) {
+      const inputValue = !!teamForm.fields.bowlers_attributes[index] ? teamForm.fields.bowlers_attributes[index].position : position;
+      row = (
+        <div className={'d-flex align-items-center py-2 tournio-striped-list-item'}
+             key={`bowler-at-position-${position}`}>
+          <input type={'hidden'}
+                 value={bowler.id}
+                 name={`team[bowlers_attributes][${index}][id]`}
+                 id={`team_bowlers_attributes_${index}_id`}
+          />
+          <div>
+            <input type={'number'}
+                   min={1}
+                   max={maxTeamSize}
+                   value={inputValue}
+                   className={[classes.PositionInput, 'form-control', 'ms-2'].join(' ')}
+                   name={`team[bowlers_attributes][${index}][position]`}
+                   id={`team_bowlers_attributes_${index}_position`}
+                   onChange={(event) => inputChangedHandler(event, 'position', index)}
+            />
+          </div>
+
+          <div className={'ps-3'}>
+            <Link href={{
+              pathname: '/director/tournaments/[identifier]/bowlers/[bowlerId]',
+              query: {
+                identifier: tournamentId,
+                bowlerId: bowler.identifier,
+              }
+            }}
+            >
+              {bowler.fullName}
+            </Link>
+          </div>
+        </div>
+      );
+    } else {
+      row = (
+        <div className={'d-flex align-items-center py-2 tournio-striped-list-item'}
+             key={`bowler-at-position-${position}`}>
+          <div className={'ps-4'}>
+            {position}
+          </div>
+
+          <div className={'ms-auto pe-2'}>
+            <Link href={{
+              pathname: '/director/tournaments/[identifier]/teams/[teamId]/add-bowler',
+              query: {
+                identifier: tournament.identifier,
+                teamId: team.identifier,
+                position: position,
+              }
+            }}
+            >
+              <span className={'bi bi-plus-lg pe-2'} aria-hidden={true}/>
+              New Bowler
+            </Link>
+          </div>
+        </div>
+      );
+    }
+    bowlerRows.push(row);
+  }
 
   return (
     <ErrorBoundary>
       <div className={classes.TeamDetails}>
-        <div className={'row mb-2'}>
+        <div className={'row mb-3'}>
           <label htmlFor={'team_name'}
                  className={'col-form-label col-form-label-lg text-sm-end col-12 col-sm-4'}>
             Team Name
           </label>
           <div className={'col'}>
             <input type={'text'}
-                   className={'form-control'}
+                   className={'form-control form-control-lg'}
                    name={'name'}
                    id={'name'}
                    value={teamForm.fields.name}
@@ -344,64 +299,24 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
             </label>
             <div className={'col-sm-4'} id={'shift_identifier'}>
               <TeamShiftForm allShifts={tournament.shifts}
-                           team={team}
-                           shift={team.shifts[0]}
-                           onShiftChange={multiShiftChangeHandler}/>
+                             team={team}
+                             shift={team.shifts[0]}
+                             onShiftChange={multiShiftChangeHandler}/>
             </div>
           </div>
         )}
 
-        {team.size === 0 && (
-          <div className={'border-top border-1 mt-3'}>
-            <p className={'lead text-center mt-3'}>
-              No bowlers on this team.
-            </p>
-            {addBowlerLink}
-          </div>
-        )}
-        {team.size > 0 && (
-          <>
-            <div className={'table-responsive'}>
-              <table className={'table table-striped caption-top align-middle'} {...getTableProps}>
-                <caption className={classes.Caption}>
-                  Roster
-                </caption>
-                <thead>
-                {headerGroups.map((headerGroup, i) => (
-                  <tr key={i} {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map((column, j) => (
-                      <th key={j} {...column.getHeaderProps()}>
-                        {column.render('Header')}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                {rows.map((row, i) => {
-                  prepareRow(row);
-                  return (
-                    <tr key={i} {...row.getRowProps()}>
-                      {row.cells.map((cell, j) => (
-                        <td key={j} {...cell.getCellProps()}>
-                          {cell.render('Cell')}
-                        </td>
-                      ))}
-                    </tr>
-                  )
-                })}
-                </tbody>
-              </table>
-            </div>
+        <div className={'tournio-striped-list'}>
+          {bowlerRows}
+        </div>
 
-            {team.size < maxTeamSize && addBowlerLink}
-
+        {hasDoublesEvent && team.size > 1 && (
+          <div className={'row mb-2'}>
             {doublesPartnerSelection}
-          </>
+          </div>
         )}
       </div>
     </ErrorBoundary>
-
   );
 }
 

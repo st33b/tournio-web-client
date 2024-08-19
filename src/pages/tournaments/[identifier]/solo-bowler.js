@@ -1,22 +1,26 @@
 import {useEffect} from "react";
 import {useRouter} from "next/router";
 
-import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
+import InformationLayout from "../../../components/Layout/InformationLayout/InformationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
 import {
   soloBowlerInfoAdded
 } from "../../../store/actions/registrationActions";
 import {useTheTournament} from "../../../utils";
-import BowlerForm from "../../../components/Registration/BowlerForm/BowlerForm";
-import TournamentHeader from "../../../components/ui/TournamentHeader";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
+import ErrorAlert from "../../../components/common/ErrorAlert";
+import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
+import Link from "next/link";
+import Sidebar from "../../../components/Registration/Sidebar/Sidebar";
+import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
+import DumbBowlerForm from "../../../components/Registration/DumbBowlerForm/DumbBowlerForm";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
-  const {identifier} = router.query;
+  const {identifier, edit} = router.query;
 
-  const {loading, tournament} = useTheTournament(identifier);
+  const {loading, tournament, error} = useTheTournament(identifier);
 
   useEffect(() => {
     if (!identifier || !tournament) {
@@ -26,6 +30,14 @@ const Page = () => {
       router.push(`/tournaments/${identifier}`);
     }
   }, [tournament]);
+
+  if (error) {
+    return (
+      <div>
+        <ErrorAlert message={error}/>
+      </div>
+    );
+  }
 
   if (loading || !tournament) {
     return (
@@ -47,32 +59,107 @@ const Page = () => {
     });
   }
 
-  const previousBowlerData = registration.bowler ? registration.bowler : null;
-  const askBowlerAboutShifts = tournament.shifts.length > 1;
+  const bowlerData = edit && registration.bowler ? registration.bowler : null;
+  const titleText = edit ? 'Edit Bowler Details' : 'Bowler Registration';
+  const buttonText = edit ? 'Save Changes' : 'Next';
+
+  let preferredShiftNames = [];
+  if (registration.bowler && registration.bowler.shiftIdentifiers) {
+    preferredShiftNames = registration.bowler.shiftIdentifiers.map(identifier =>
+      tournament.shifts.find(shift => shift.identifier === identifier).name
+    );
+  }
+
+  const fieldNames = [
+    'firstName',
+    'nickname',
+    'lastName',
+    'email',
+    'phone',
+  ].concat(tournament.config['bowler_form_fields'].split(' ')).concat(tournament.additionalQuestions.map(q => q.name));
+
+  // Future improvement: merge the concepts of "bowler form fields" and "additional questions"
+
+  const fieldData = {
+    shiftIdentifier: {
+      choices: [],
+    },
+    shiftIdentifiers: {
+      choices: [],
+    },
+    position: {},
+  }
+
+  const tournamentType = tournament.config.tournament_type;
+  const useInclusiveShifts = tournamentType === 'igbo_multi_shift' || tournamentType === 'single_event' && tournament.shifts.length > 1;
+  const useMixAndMatchShifts = tournamentType === 'igbo_mix_and_match';
+
+  if (useInclusiveShifts) {
+    fieldNames.unshift('shiftIdentifier');
+    fieldData.shiftIdentifier.choices = tournament.shifts.map(s => (
+      {
+        value: s.identifier,
+        disabled: s.isFull,
+        label: `${s.name} (${s.description}`,
+      }
+    ));
+  } else if (useMixAndMatchShifts) {
+    // figure this out next
+    // @mixAndMatchShifts
+  } else {
+    // nothing to do, right?
+  }
 
   return (
-    <div>
-      <TournamentHeader tournament={tournament}/>
+    <>
+      <div className={'row d-flex d-md-none'}>
+        <div className={'col-5'}>
+          <TournamentLogo url={tournament.imageUrl} additionalClasses={'mb-2'}/>
+        </div>
+        <p className={'col-7 display-4 align-self-center'}>
+          {titleText}
+        </p>
+      </div>
 
-      <h2 className={`bg-primary-subtle py-3`}>
-        Solo Registration
-      </h2>
+      <div className={'row'}>
+        <div className={'col-12 col-md-4'}>
 
-      <BowlerForm tournament={tournament}
-                  bowlerData={previousBowlerData}
-                  bowlerInfoSaved={bowlerInfoSaved}
-                  showShifts={askBowlerAboutShifts}
-      />
+          <div className={'d-none d-md-block'}>
+            <Link href={`/tournaments/${identifier}`}>
+              <TournamentLogo url={tournament.imageUrl}/>
+            </Link>
+            <p className={'col display-5'}>
+              {titleText}
+            </p>
+          </div>
 
-    </div>
+          <Sidebar tournament={tournament}
+                   shiftPreferences={preferredShiftNames}
+                   bowler={bowlerData}
+                   />
+        </div>
+
+        <div className={'col-12 col-md-8'}>
+          <ProgressIndicator steps={['bowler', 'review']}
+                             active={'bowler'}/>
+          <DumbBowlerForm tournament={tournament}
+                          bowler={bowlerData}
+                          solo={true}
+                          onBowlerSave={bowlerInfoSaved}
+                          submitButtonText={buttonText}
+                          fieldNames={fieldNames}
+                          fieldData={fieldData}/>
+        </div>
+      </div>
+    </>
   );
 }
 
 Page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout>
+    <InformationLayout>
       {page}
-    </RegistrationLayout>
+    </InformationLayout>
   );
 }
 

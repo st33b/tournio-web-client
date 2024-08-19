@@ -3,30 +3,30 @@ import {Container} from "react-bootstrap";
 import SiteHeader from './SiteHeader';
 import Navigation from './Navigation';
 import Footer from './Footer';
-import classes from './RegistrationLayout.module.scss';
+import classes from './InformationLayout.module.scss';
 import MaintenanceAnnouncement from "../../common/MaintenanceAnnouncement/MaintenanceAnnouncement";
 import {RegistrationContextProvider} from "../../../store/RegistrationContext";
 
-const RegistrationLayout = ({children}) => {
+const InformationLayout = ({children}) => {
   return (
     <RegistrationContextProvider>
-      <div className={classes.RegistrationLayout}>
+      <div className={classes.InformationLayout}>
         <SiteHeader/>
         <header>
-          <Container fluid={'lg'}>
+          <Container fluid={'md'}>
             <Navigation/>
           </Container>
         </header>
 
         <main>
-          <Container fluid={'lg'}>
+          <Container fluid={'md'}>
             <MaintenanceAnnouncement/>
             {children}
           </Container>
         </main>
 
         <footer>
-          <Container fluid={'lg'}>
+          <Container fluid={'md'}>
             <Footer/>
           </Container>
         </footer>
@@ -35,4 +35,4 @@ const RegistrationLayout = ({children}) => {
   )
 }
 
-export default RegistrationLayout;
+export default InformationLayout;

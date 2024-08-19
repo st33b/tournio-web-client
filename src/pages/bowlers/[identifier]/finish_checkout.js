@@ -7,6 +7,7 @@ import {stripeCheckoutSessionCompleted} from '../../../store/actions/registratio
 import CommerceLayout from "../../../components/Layout/CommerceLayout/CommerceLayout";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const router = useRouter();
   const {commerce, dispatch} = useCommerceContext();
   const {identifier} = router.query;

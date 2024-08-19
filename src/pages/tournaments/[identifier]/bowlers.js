@@ -1,13 +1,14 @@
 import {useRouter} from "next/router";
 
-import {useBowlers, useTheTournament} from "../../../utils";
-import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
+import {devConsoleLog, useBowlers, useTheTournament} from "../../../utils";
+import InformationLayout from "../../../components/Layout/InformationLayout/InformationLayout";
 import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import BowlerList from "../../../components/Registration/BowlerList/BowlerList";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const router = useRouter();
   const { identifier } = router.query;
 
@@ -68,9 +69,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout>
+    <InformationLayout>
       {page}
-    </RegistrationLayout>
+    </InformationLayout>
   );
 }
 

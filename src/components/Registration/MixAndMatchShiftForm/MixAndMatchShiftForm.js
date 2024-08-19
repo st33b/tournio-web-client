@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {updateObject} from "../../../utils";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
-const MixAndMatchShiftForm = ({shifts, onUpdate}) => {
+const MixAndMatchShiftForm = ({shifts, values, onUpdate}) => {
   const initialFormValues = {
     fields: {},
     shiftsByEvent: {},
@@ -16,6 +16,8 @@ const MixAndMatchShiftForm = ({shifts, onUpdate}) => {
       return;
     }
 
+    const formValues = {...initialFormValues}
+
     // Organize the shifts by their event string
     const shiftsByEvent = {};
     shifts.forEach(shift => {
@@ -24,14 +26,21 @@ const MixAndMatchShiftForm = ({shifts, onUpdate}) => {
         shiftsByEvent[eventString] = [];
       }
       shiftsByEvent[eventString].push(shift);
+      if (values) {
+        if (values.includes(shift.identifier)) {
+          formValues.fields[eventString] = shift.identifier;
+        }
+      }
     });
 
-    // Set the form to select the first (not full) shift in each group
-    const formValues = {...initialFormValues}
-    for (const eventStr in shiftsByEvent) {
-      const availableShifts = shiftsByEvent[eventStr].filter(({is_full}) => !is_full)
-      formValues.fields[eventStr] = availableShifts[0].identifier;
+    if (!values) {
+      // Set the form to select the first (not full) shift in each group
+      for (const eventStr in shiftsByEvent) {
+        const availableShifts = shiftsByEvent[eventStr].filter(({is_full}) => !is_full)
+        formValues.fields[eventStr] = availableShifts[0].identifier;
+      }
     }
+
     setComponentState(updateObject(componentState, {
         fields: {
           ...formValues.fields,
@@ -39,7 +48,7 @@ const MixAndMatchShiftForm = ({shifts, onUpdate}) => {
         shiftsByEvent: shiftsByEvent,
       }));
     onUpdate(Object.values(formValues.fields));
-  }, [shifts]);
+  }, [shifts, values]);
 
   /////////////////////////////
 

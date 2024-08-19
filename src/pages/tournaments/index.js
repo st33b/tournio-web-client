@@ -1,6 +1,6 @@
 import {useTournaments} from "../../utils";
 
-import RegistrationLayout from '../../components/Layout/RegistrationLayout/RegistrationLayout';
+import InformationLayout from '../../components/Layout/InformationLayout/InformationLayout';
 import TournamentCards from "../../components/Registration/TournamentListing/TournamentCards";
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorAlert from "../../components/common/ErrorAlert";
@@ -24,9 +24,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout>
+    <InformationLayout>
       {page}
-    </RegistrationLayout>
+    </InformationLayout>
   );
 }
 

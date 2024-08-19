@@ -1,13 +1,15 @@
 import {useRouter} from "next/router";
-import RegistrationLayout from "../../components/Layout/RegistrationLayout/RegistrationLayout";
+import InformationLayout from "../../components/Layout/InformationLayout/InformationLayout";
 import LoadingMessage from "../../components/ui/LoadingMessage/LoadingMessage";
-import {useTeam} from "../../utils";
+import {devConsoleLog, useTeam} from "../../utils";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const router = useRouter();
   const {identifier} = router.query;
 
   const teamRetrieved = (team) => {
+    devConsoleLog("Team:", team);
     const tournamentId = team.tournament.identifier;
 
     // Redirect to the actual team page
@@ -34,9 +36,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-      <RegistrationLayout>
+      <InformationLayout>
         {page}
-      </RegistrationLayout>
+      </InformationLayout>
   );
 }
 

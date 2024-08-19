@@ -15,8 +15,8 @@ import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
 import EmailButton from "../../../../../components/Director/BowlerDetails/EmailButton";
 import {updateObject} from "../../../../../utils";
-import BowlerForm from "../../../../../components/Registration/BowlerForm/BowlerForm";
 import {format} from "date-fns";
+import DumbBowlerForm from "../../../../../components/Registration/DumbBowlerForm/DumbBowlerForm";
 
 const BowlerPage = () => {
   const router = useRouter();
@@ -71,7 +71,10 @@ const BowlerPage = () => {
 
   const {tournament, tournamentUpdatedQuietly} = useModernTournament();
 
-  const {loading: bowlerLoading, bowler, error: bowlerError, bowlerUpdated} = useBowler();
+  // I think I'm incorrectly using this hook's approach to data updates. I want the
+  // bowler object to update when bowler data changes, so that the updated bowler
+  // gets sent as a prop to DumbBowlerForm...
+  const {loading: bowlerLoading, bowler, error: bowlerError, bowlerUpdatedQuietly} = useBowler();
 
   const {data: availableTeams, error: teamsError, onDataUpdate: onAvailableTeamsUpdate} = useDirectorApi({
     uri: identifier ? `/tournaments/${identifier}/teams?partial=true` : null,
@@ -189,7 +192,7 @@ const BowlerPage = () => {
 
     // retrieve the new list of available teams
     onAvailableTeamsUpdate(availableTeams);
-    bowlerUpdated(data);
+    bowlerUpdatedQuietly(data);
 
     setSuccess({
       ...success,
@@ -312,7 +315,7 @@ const BowlerPage = () => {
     onFreeEntryUpdate(data);
 
     // This updates the bowler's ledger entries, so we should also refresh the bowler
-    bowlerUpdated({
+    bowlerUpdatedQuietly({
       ...bowler,
       freeEntry: data,
     });
@@ -381,12 +384,12 @@ const BowlerPage = () => {
   const convertBowlerDataForPatch = (bowlerData) => {
     const bowlerObj = {
       person_attributes: {
-        first_name: bowlerData.first_name,
-        last_name: bowlerData.last_name,
-        usbc_id: bowlerData.usbc_id,
-        birth_month: bowlerData.birth_month,
-        birth_day: bowlerData.birth_day,
-        birth_year: bowlerData.birth_year,
+        first_name: bowlerData.firstName,
+        last_name: bowlerData.lastName,
+        usbc_id: bowlerData.usbcId,
+        birth_month: bowlerData.birthMonth,
+        birth_day: bowlerData.birthDay,
+        birth_year: bowlerData.birthYear,
         nickname: bowlerData.nickname,
         phone: bowlerData.phone,
         email: bowlerData.email,
@@ -395,12 +398,15 @@ const BowlerPage = () => {
         city: bowlerData.city,
         state: bowlerData.state,
         country: bowlerData.country,
-        postal_code: bowlerData.postal_code,
+        postal_code: bowlerData.postalCode,
       },
       additional_question_responses: convertAdditionalQuestionResponsesForPatch(bowlerData),
     };
-    if (bowlerData.payment_app && bowlerData.payment_app.app_name) {
-      bowlerObj.person_attributes.payment_app = `${bowlerData.payment_app.app_name}: ${bowlerData.payment_app.account_name}`;
+    if (bowlerData.paymentApp && bowlerData.paymentAccount) {
+      bowlerObj.person_attributes.payment_app = `${bowlerData.paymentApp}: ${bowlerData.paymentAccount}`;
+    }
+    if (bowlerData.shiftIdentifier) {
+      bowlerObj.shift_identifiers = bowlerData.shiftIdentifiers;
     }
     return bowlerObj;
   }
@@ -425,7 +431,7 @@ const BowlerPage = () => {
       ...success,
       updateBowler: 'Bowler details updated.',
     });
-    bowlerUpdated(data);
+    bowlerUpdatedQuietly(data);
   }
   const bowlerUpdateFailure = (message) => {
     setLoadingParts({
@@ -471,7 +477,7 @@ const BowlerPage = () => {
       ...success,
       addLedgerEntry: 'Manual payment added',
     });
-    bowlerUpdated(bowler);
+    bowlerUpdatedQuietly(bowler);
   }
 
   const addLedgerEntryFailure = (error) => {
@@ -614,7 +620,7 @@ const BowlerPage = () => {
       ...success,
       waiveFee: 'Late fee waived',
     });
-    bowlerUpdated(bowler);
+    bowlerUpdatedQuietly(bowler);
   }
 
   const waiveFeeFailure = (error) => {
@@ -697,7 +703,7 @@ const BowlerPage = () => {
             )}
             <div className={'row'}>
               <dt className={'col-12 col-sm-4 col-md-5 text-sm-end'}>Doubles partner</dt>
-              {bowler.doublesPartner && <dd className={'col'}>{bowler.doublesPartner.name}</dd>}
+              {bowler.doublesPartner && <dd className={'col'}>{bowler.doublesPartner.fullName}</dd>}
               {!bowler.doublesPartner && <dd className={'col'}>n/a</dd>}
             </div>
           </dl>
@@ -1094,44 +1100,16 @@ const BowlerPage = () => {
     {text: 'Bowlers', path: `/director/tournaments/${identifier}/bowlers`},
   ];
 
-  // Put the additional question responses at the top level of bowler data, for the form
-  for (const questionKey in bowler.additionalQuestionResponses) {
-    bowler[questionKey] = bowler.additionalQuestionResponses[questionKey].response;
-  }
-
-  const showShifts = !bowler.team && tournament.shifts.length > 1;
-
   const bowlerFormData = {
-    first_name: bowler.firstName,
-    last_name: bowler.lastName,
+    ...bowler,
     nickname: bowler.preferredName,
-    email: bowler.email,
-    phone: bowler.phone,
-    usbc_id: bowler.usbcId,
-    birth_month: bowler.birthMonth,
-    birth_day: bowler.birthDay,
-    birth_year: bowler.birthYear,
-    address1: bowler.address1,
-    city: bowler.city,
-    state: bowler.state,
-    country: bowler.country,
-    postal_code: bowler.postalCode,
   };
   if (bowler.paymentApp) {
     const parts = bowler.paymentApp.split(': ');
-    bowlerFormData.payment_app = {
-      app_name: parts[0],
-      account_name: parts[1],
-    };
-  } else {
-    bowlerFormData.payment_app = {
-      app_name: '',
-      account_name: '',
-    };
+    bowlerFormData.paymentApp = parts[0];
+    bowlerFormData.paymentAccount = parts[1];
   }
-  if (bowler.shifts.length > 0) {
-    bowlerFormData.shift_identifier = bowler.shifts[0].identifier;
-  }
+
   tournament.additionalQuestions.forEach(aq => {
     const name = aq.name;
     const obj = bowler.additionalQuestionResponses.find(aqr => aqr.name === name);
@@ -1140,17 +1118,57 @@ const BowlerPage = () => {
     }
   });
 
+  const fieldNames = [
+    'firstName',
+    'nickname',
+    'lastName',
+    'email',
+    'phone',
+  ].concat(tournament.config['bowler_form_fields'].split(' ')).concat(tournament.additionalQuestions.map(q => q.name));
+
+  const fieldData = {
+    // shiftIdentifiers: {
+    //   choices: [],
+    // },
+  }
+
+  if (!bowler.team) {
+    const useInclusiveShifts = tournamentType === 'igbo_multi_shift' || tournamentType === 'single_event' && tournament.shifts.length > 1;
+    const useMixAndMatchShifts = tournamentType === 'igbo_mix_and_match';
+
+    fieldData.shiftIdentifier = {
+      choices: [],
+    };
+    if (useInclusiveShifts) {
+      fieldNames.unshift('shiftIdentifier');
+      fieldData.shiftIdentifier.choices = tournament.shifts.map(s => (
+        {
+          value: s.identifier,
+          disabled: s.isFull,
+          label: `${s.name} (${s.description}`,
+        }
+      ));
+      bowlerFormData.shiftIdentifier = bowler.shifts[0].identifier;
+    } else if (useMixAndMatchShifts) {
+      // figure this out next
+      // @mixAndMatchShifts
+    } else {
+      // nothing to do, right?
+    }
+  }
+
   return (
     <ErrorBoundary>
       <Breadcrumbs ladder={ladder} activeText={bowler.fullName}/>
       <Row>
         <Col md={8}>
           {bowlerSummary}
-          <BowlerForm tournament={tournament}
-                      bowlerInfoSaved={updateSubmitHandler}
-                      bowlerData={bowlerFormData}
-                      nextButtonText={'Update Bowler'}
-                      showShifts={showShifts}
+          <DumbBowlerForm tournament={tournament}
+                          bowler={bowlerFormData}
+                          submitButtonText={'Update Bowler'}
+                          onBowlerSave={updateSubmitHandler}
+                          fieldNames={fieldNames}
+                          fieldData={fieldData}
           />
           <SuccessAlert message={success.updateBowler} className={'mt-3'}/>
           <ErrorAlert message={bowlerError}/>

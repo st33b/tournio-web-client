@@ -5,7 +5,7 @@ import {Card, Button, Row, Col} from "react-bootstrap";
 import DirectorLayout from "../../../../../components/Layout/DirectorLayout/DirectorLayout";
 import Breadcrumbs from "../../../../../components/Director/Breadcrumbs/Breadcrumbs";
 import TeamDetails from "../../../../../components/Director/TeamDetails/TeamDetails";
-import {directorApiRequest, useDirectorApi, useTournament} from "../../../../../director";
+import {directorApiRequest, useModernTournament, useTeam} from "../../../../../director";
 import LoadingMessage from "../../../../../components/ui/LoadingMessage/LoadingMessage";
 import {useLoginContext} from "../../../../../store/LoginContext";
 import SuccessAlert from "../../../../../components/common/SuccessAlert";
@@ -16,12 +16,11 @@ import UrlShare from "../../../../../components/ui/UrlShare/UrlShare";
 const Page = () => {
   const router = useRouter();
   const {authToken} = useLoginContext();
-  const {identifier: tournamentId, teamId, successCode} = router.query;
+  const {successCode} = router.query;
 
-  const {loading: tournamentLoading, tournament, tournamentUpdatedQuietly} = useTournament();
-  const {loading: teamLoading, data: team, error: teamError, onDataUpdate: onTeamUpdate} = useDirectorApi({
-    uri: teamId ? `/teams/${teamId}` : null,
-  });
+  const {loading: tournamentLoading, tournament, tournamentUpdatedQuietly} = useModernTournament();
+  const {loading, team, error, teamUpdated} = useTeam();
+
 
   const [success, setSuccess] = useState({
     update: null,
@@ -74,7 +73,7 @@ const Page = () => {
     const urlObject = {
       pathname: `/director/tournaments/[identifier]/teams`,
       query: {
-        identifier: tournamentId,
+        identifier: tournament.identifier,
         success: `deleted`,
       }
     }
@@ -95,7 +94,7 @@ const Page = () => {
   const deleteSubmitHandler = (event) => {
     event.preventDefault();
     if (confirm('This will remove the team and all its bowlers. Are you sure?')) {
-      const uri = `/teams/${teamId}`;
+      const uri = `/teams/${team.identifier}`;
       const requestConfig = {
         method: 'delete',
         headers: {
@@ -125,7 +124,7 @@ const Page = () => {
       ...success,
       update: 'Changes applied',
     });
-    onTeamUpdate(data);
+    teamUpdated(data);
   }
 
   const updateTeamFailure = (data) => {
@@ -140,17 +139,15 @@ const Page = () => {
   }
 
   const formChangedHandler = (newTeamData) => {
-    // devConsoleLog("Data sent to page:", newTeamData);
     const updatedTeamData = {
       ...teamData,
       ...newTeamData,
     }
-    // devConsoleLog("Updated team data:", updatedTeamData);
     setTeamData(updatedTeamData);
   }
 
   const updateSubmitHandler = () => {
-    const uri = `/teams/${teamId}`;
+    const uri = `/teams/${team.identifier}`;
     const requestConfig = {
       method: 'patch',
       headers: {
@@ -177,18 +174,22 @@ const Page = () => {
 
   ////////////////////////////////////////////////////////////////////
 
-  if (tournamentLoading || teamLoading || !team) {
+  if (tournamentLoading || loading || !team) {
     return <LoadingMessage message={'Retrieving team details...'}/>
+  }
+
+  if (error) {
+    return <ErrorAlert message={error} className={`mt-3`}/>;
   }
 
   const ladder = [
     {text: 'Tournaments', path: '/director/tournaments'},
-    {text: tournament.name, path: `/director/tournaments/${tournamentId}`},
-    {text: 'Teams', path: `/director/tournaments/${tournamentId}/teams`},
+    {text: tournament.name, path: `/director/tournaments/${tournament.identifier}`},
+    {text: 'Teams', path: `/director/tournaments/${tournament.identifier}/teams`},
   ];
 
   const port = process.env.NODE_ENV === 'development' ? `:${window.location.port}` : '';
-  const shareUrl = `${window.location.protocol}//${window.location.hostname}${port}/teams/${teamId}`;
+  const shareUrl = `${window.location.protocol}//${window.location.hostname}${port}/teams/${team.identifier}`;
 
   return (
     <div>
@@ -217,12 +218,13 @@ const Page = () => {
           </div>
 
           <SuccessAlert message={success.update}
-                        className={`mt-3`}
+                        className={'mt-3'}
                         onClose={() => setSuccess({
                           ...success,
                           update: null,
                         })}
           />
+
           <ErrorAlert message={errors.update}
                       className={`mt-3`}
                       onClose={() => setErrors({
@@ -233,7 +235,7 @@ const Page = () => {
 
 
           <div className={'mt-4'}>
-            <UrlShare url={shareUrl}/>
+            <UrlShare url={shareUrl} admin={true}/>
           </div>
         </Col>
 

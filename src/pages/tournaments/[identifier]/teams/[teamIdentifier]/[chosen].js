@@ -1,9 +1,9 @@
 import {useRouter} from "next/router";
-import RegistrationLayout from "../../../../../components/Layout/RegistrationLayout/RegistrationLayout";
+import InformationLayout from "../../../../../components/Layout/InformationLayout/InformationLayout";
 import TournamentHeader from "../../../../../components/ui/TournamentHeader";
 import {useEffect, useState} from "react";
 import PositionChooser from "../../../../../components/common/formElements/PositionChooser/PositionChooser";
-import {updateObject, useTeam, useTournament} from "../../../../../utils";
+import {devConsoleLog, updateObject, useTeam, useTournament} from "../../../../../utils";
 import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import RegisteredBowler from "../../../../../components/Registration/RegisteredBowler/RegisteredBowler";
 import AddBowler from "../../../../../components/Registration/AddBowler/AddBowler";
@@ -14,6 +14,7 @@ import PositionUnavailable from "../../../../../components/Registration/Position
 import UrlShare from "../../../../../components/ui/UrlShare/UrlShare";
 
 const Page = () => {
+  devConsoleLog("------------ page untouched in team restoration");
   const router = useRouter();
   const {identifier, teamIdentifier, chosen, success} = router.query;
 
@@ -166,9 +167,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <RegistrationLayout>
+    <InformationLayout>
       {page}
-    </RegistrationLayout>
+    </InformationLayout>
   );
 }
 

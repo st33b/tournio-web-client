@@ -1,38 +1,38 @@
 import classes from './ProgressIndicator.module.scss';
 import {Col, Row} from "react-bootstrap";
 
-const ProgressIndicator = ({active}) => {
-  const steps = [
-    {
-      id: 'team',
-      text: 'Team',
-    },
-    {
-      id: 'bowlers',
-      text: 'Bowlers',
-    },
-    {
-      id: 'doubles',
-      text: 'Doubles',
-    },
-    {
-      id: 'review',
-      text: 'Review',
-    },
-  ];
+const ProgressIndicator = ({
+                             steps = ['team', 'bowlers', 'doubles', 'review'],
+                             completed = [],
+                             active,
+                           }) => {
+  const STEP_LABELS = {
+    team: 'Team',
+    bowlers: 'Bowlers',
+    doubles: 'Doubles',
+    bowler: 'Bowler',
+    review: 'Review',
+  };
 
+  if (!steps) {
+    return '';
+  }
 
   return (
     <Row className={classes.ProgressIndicator}>
-      {steps.map((step, i) => {
+      {steps.map((step) => {
         const containerClasses = [classes.Step];
-        if (active === step.id) {
+        if (active === step) {
           containerClasses.push(classes.Active);
+        } else if (completed.includes(step)) {
+          containerClasses.push(classes.Completed);
+        } else {
+          containerClasses.push(classes.NotYet);
         }
         return (
-          <Col className={containerClasses.join(' ')} key={i}>
+          <Col className={containerClasses.join(' ')} key={step}>
             <p className={'text-center py-2 py-sm-3 m-0'}>
-              {step.text}
+              {STEP_LABELS[step]}
             </p>
           </Col>
         )

@@ -18,14 +18,46 @@ describe ('action type: new team bowler info added', () => {
     bowler: newBowler,
   }
 
-  it ('does not add the bowler to the team roster', () => {
+  it ('adds the bowler to the team roster', () => {
     const result = registrationReducer(previousState, action);
     const index = result.team.bowlers.findIndex(b => b.name === newBowler.name);
-    expect(index).toBe(-1);
+    expect(index).toBe(0);
   });
 
-  it ('puts the bowler in state', () => {
-    const result = registrationReducer(previousState, action);
-    expect(result.bowler).toStrictEqual(newBowler);
+  describe ('adding a third bowler', () => {
+    const previousState = {
+      team: {
+        name: 'Britney Spares',
+        bowlers: [
+          {
+            position: 1,
+            average: 212,
+            name: 'Alvin',
+          },
+          {
+            position: 3,
+            average: 189,
+            name: 'Theodore',
+          },
+        ],
+      },
+    };
+
+    const newBowler = {
+      name: 'Simon',
+      average: 212,
+      position: 2,
+    }
+
+    const action = {
+      type: actionTypes.NEW_TEAM_BOWLER_INFO_ADDED,
+      bowler: newBowler,
+    }
+
+    it ('adds the bowler to the team roster, ordered by position', () => {
+      const result = registrationReducer(previousState, action);
+      const index = result.team.bowlers.findIndex(b => b.name === newBowler.name);
+      expect(index).toBe(1);
+    });
   });
 });

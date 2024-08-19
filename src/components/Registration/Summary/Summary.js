@@ -4,10 +4,11 @@ import {useRegistrationContext} from "../../../store/RegistrationContext";
 
 import classes from './Summary.module.scss';
 import {useEffect, useState} from "react";
-import {useClientReady} from "../../../utils";
+import {devConsoleLog, useClientReady} from "../../../utils";
 import ErrorBoundary from "../../common/ErrorBoundary";
 
 const Summary = ({tournament, nextStepClicked, nextStepText, buttonDisabled, enableDoublesEdit, finalStep}) => {
+  devConsoleLog("------------ component untouched in team restoration");
   const {registration} = useRegistrationContext();
 
   const [team, setTeam] = useState();

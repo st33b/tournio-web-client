@@ -1,7 +1,6 @@
 import {Row} from "react-bootstrap";
 import Image from "next/image";
 
-import {useCommerceContext} from "../../../store/CommerceContext";
 import {useThemeContext} from "../../../store/ThemeContext";
 
 import TournioLogoLight from '../../../images/tournio-logo.png';
@@ -12,32 +11,10 @@ import classes from './Navigation.module.scss';
 import {useClientReady} from "../../../utils";
 
 const Navigation = () => {
-  const {commerce} = useCommerceContext();
   const {theme} = useThemeContext();
   const ready = useClientReady();
-
   if (!ready) {
     return null;
-  }
-
-  let cartText = '';
-  if (commerce && commerce.cart) {
-    cartText = (
-      <a href={'#mobile_cart'}
-         title={'Cart'}
-         data-bs-toggle={'offcanvas'}
-         aria-controls={'mobile_cart'}
-         aria-expanded={false}
-         className={`${classes.Bag} ms-auto d-md-none`}>
-        <span className={'visually-hidden'}>Cart</span>
-        <i className={'bi-cart position-relative'} aria-hidden={true}>
-          {/*Cart*/}
-          <span className={`${classes.Badge} position-absolute top-0 start-50 badge rounded-pill bg-danger`}>
-            {commerce.cart.length}
-          </span>
-        </i>
-      </a>
-    );
   }
 
   const activeTheme = theme.active;
@@ -52,7 +29,6 @@ const Navigation = () => {
             <span className={'visually-hidden'}>Home</span>
             <i className={'bi-house'} aria-hidden={true} />
           </a>
-          {cartText}
           <a href={'/tournaments'}
              title={'To tournament listing'}
              className={`d-none d-md-inline-block ${classes.LogoLink}`}>

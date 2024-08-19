@@ -2,134 +2,107 @@ import {Row} from "react-bootstrap";
 
 import classes from './BowlerSummary.module.scss';
 
-const BowlerSummary = ({bowler, tournament, partner = null}) => {
-  if (!bowler) {
+const BowlerSummary = ({tournament, bowler, fieldNames, partner = null, labelClass = 'col-5 col-md-3'}) => {
+  if (!bowler || !tournament) {
     return '';
   }
 
-  const minimumLabels = {
-    first_name: 'First Name',
-    last_name: 'Last Name',
+  const labels = {
+    firstName: 'First Name',
+    lastName: 'Last Name',
     nickname: 'Preferred Name',
     email: 'Email',
     phone: 'Phone',
-  }
-
-  const potentialLabels = {
-    usbc_id: 'USBC ID',
-    date_of_birth: 'Date of Birth',
+    usbcId: 'USBC ID',
+    dateOfBirth: 'Date of Birth',
     address1: 'Mailing Address',
     address2: 'Unit/Apt No.',
     city: 'City',
     state: 'State',
     country: 'Country',
-    postal_code: 'Postal/ZIP Code',
-    payment_app: 'Payment App',
+    postalCode: 'Postal/ZIP Code',
+    paymentApp: 'Payment App',
+    doublesPartner: 'Doubles Partner',
+    position: 'Position',
+    shiftIdentifier: 'Shift Preference',
+    shiftIdentifiera: 'Shift Preferences',
   };
 
-  const optionalFields = tournament.config.bowler_form_fields.split(' ');
-
-  const aqLabels = {};
-
   // Get labels and responses for additional questions, if any
-  const aqResponses = {};
   tournament.additionalQuestions.forEach(aq => {
-    const key = aq.name;
-    aqLabels[key] = aq.label;
-    aqResponses[key] = bowler[key];
+    labels[aq.name] = aq.label;
   });
 
   // Solo registrations may have a shift identifier.
-  let shiftName = '';
-  if (tournament.shifts.length > 1 && bowler.shift_identifier) {
-    shiftName = tournament.shifts.find(({identifier}) => identifier === bowler.shift_identifier).name;
+  let shiftNames = '';
+  if (bowler.shiftIdentifiers && tournament.shifts.length > 1) {
+    const shifts = bowler.shiftIdentifiers.map(sId => tournament.shifts.find(({identifier}) => identifier === sId));
+    shiftNames = shifts.map(shift => `${shift.name} (${shift.description})`);
+  }
+
+  let partnerFullName;
+  if (partner) {
+    partnerFullName = (partner.nickname ? partner.nickname : partner.firstName) + ' ' + partner.lastName;
   }
 
   return (
     <div className={classes.BowlerSummary}>
       <dl>
-        {bowler.position && (
-          <Row className={classes.Position}>
-            <dt className={`col-5 pe-2 label`}>
-              Position
-            </dt>
-            <dd className={`col ps-2 value`}>
-              {bowler.position}
-            </dd>
-          </Row>
-        )}
-
-        {Object.keys(minimumLabels).map(key => {
-          let value = bowler[key];
+        {fieldNames.map((field) => {
+          let value = bowler[field];
           if (value === null || typeof value ==='undefined') {
             return null;
           }
+          // elements that should be treated differently:
+          // - dateOfBirth
+          // - paymentApp
+          const label = labels[field];
+          switch (field) {
+            case 'dateOfBirth':
+              value = `${bowler.birthMonth} / ${bowler.birthDay} / ${bowler.birthYear}`;
+              break;
+            case 'paymentApp':
+              value = bowler.paymentApp ? `${bowler.paymentAccount} (${bowler.paymentApp})` : 'n/a';
+              break;
+            default:
+              break;
+          }
           return (
-            <Row key={`${key}`}>
-              <dt className={'col-5 pe-2 label'}>
-                {minimumLabels[key]}
+            <Row key={`summary_${field}`}>
+              <dt className={labelClass}>
+                {label}
               </dt>
-              <dd className={'col ps-2 value'}>
+              <dd className={'col'}>
                 {value || 'n/a'}
               </dd>
             </Row>
           );
+
         })}
 
-        {optionalFields.map(key => {
-          let displayedValue = bowler[key];
-          if (key === 'date_of_birth') {
-            displayedValue = `${bowler.birth_month} / ${bowler.birth_day} / ${bowler.birth_year}`;
-          } else if (key === 'payment_app') {
-            displayedValue = bowler.payment_app.app_name ? `${bowler.payment_app.account_name} (${bowler.payment_app.app_name})` : 'n/a';
-          }
-          return (
-            <Row key={`${key}`}>
-              <dt className={'col-5 pe-2 label'}>
-                {potentialLabels[key]}
-              </dt>
-              <dd className={'col ps-2 value'}>
-                {displayedValue || 'n/a'}
-              </dd>
-            </Row>
-          );
-        })}
-
-        {Object.keys(aqLabels).map(key => {
-          let value = aqResponses[key];
-          if (!value) {
-            return null;
-          }
-          return (
-            <Row key={`${key}`}>
-              <dt className={'col-5 pe-2 label'}>
-                {aqLabels[key]}
-              </dt>
-              <dd className={'col ps-2 value'}>
-                {value}
-              </dd>
-            </Row>
-          );
-        })}
-
-        {partner && (
-          <Row key={`${bowler.doubles_partner}`}>
-            <dt className={'col-5 pe-2 label'}>
+        {partnerFullName && (
+          <Row>
+            <dt className={labelClass}>
               Doubles Partner
             </dt>
-            <dd className={'col ps-2 value'}>
-              {partner.full_name}
+            <dd className={'col'}>
+              {partnerFullName}
             </dd>
           </Row>
         )}
 
-        {shiftName && (
-          <Row key={'shift'}>
-            <dt className={'col-5 pe-2 label'}>
-              Shift Preference
+        {shiftNames && (
+          <Row>
+            <dt className={labelClass}>
+              {shiftNames.length === 1 && labels.shiftIdentifier}
+              {shiftNames.length > 1 && labels.shiftIdentifiers}
             </dt>
-            <dd className={'col ps-2 value'}>
-              {shiftName}
+            <dd className={'col'}>
+              {shiftNames.map(s => (
+                <span className={'d-block'} key={s}>
+                  {s}
+                </span>
+              ))}
             </dd>
           </Row>
         )}

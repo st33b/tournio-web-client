@@ -9,7 +9,7 @@ const PartnerSelectionRow = ({bowler, bowlerIndex, teammates, onPartnerSelected}
   return (
     <tr className={classes.PartnerSelectionRow}>
       <td className={classes.ChoosingBowler}>
-        {bowler.first_name} {bowler.last_name}
+        {bowler.nickname ? bowler.nickname : bowler.firstName} {bowler.lastName}
       </td>
       {teammates.map((partner, partnerIndex) => {
 
@@ -35,7 +35,7 @@ const PartnerSelectionRow = ({bowler, bowlerIndex, teammates, onPartnerSelected}
                    id={bowlerIndex + '-' + partnerIndex}
                    className={labelClasses.join(' ')}
                    onClick={() => onPartnerSelected(bowlerIndex, partnerIndex)}>
-              {partner.first_name} {partner.last_name}
+              {partner.nickname ? partner.nickname : partner.firstName} {partner.lastName}
             </label>
           </td>
         );

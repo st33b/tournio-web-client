@@ -4,8 +4,10 @@ import BowlerSummary from "./BowlerSummary";
 import classes from './ReviewEntries.module.scss';
 import {Alert, Col, Row} from "react-bootstrap";
 import {useEffect, useState} from "react";
+import {devConsoleLog} from "../../../utils";
 
 const ReviewEntries = ({editBowler, context, tournament}) => {
+  devConsoleLog("------------ component untouched in team restoration");
   const {registration} = useRegistrationContext();
 
   const [bowler, setBowler] = useState();

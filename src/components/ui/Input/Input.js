@@ -49,6 +49,17 @@ const Input = (props) => {
   const layoutClass = props.layoutClass ? props.layoutClass : 'row';
 
   switch (props.elementType) {
+    case('readonly'):
+      outerLabelClasses.push("col-form-label");
+      inputElement = <input
+        id={props.identifier}
+        name={props.identifier}
+        type={'text'}
+        readOnly={true}
+        className={`form-control-plaintext`}
+        value={props.elementConfig.value}
+      />
+      break;
     case('input'):
       outerLabelClasses.push("col-form-label");
       if (props.labelClasses) {
@@ -94,7 +105,7 @@ const Input = (props) => {
         className={`form-select`}
         onChange={props.changed}
         required={required}
-        value={props.elementConfig.value}
+        value={props.elementConfig.value || ''}
       >
         {optionText}
       </select>
@@ -103,11 +114,11 @@ const Input = (props) => {
       outerLabelClasses.push("col-form-label");
       inputElement = (
         <div className={`row g-1`}>
-          {props.elementConfig.elements.map((elem, i) => {
-            const elemIdentifier = `${props.identifier}:${elem.identifier}`;
+          {props.elementConfig.elementOrder.map(elemIdentifier => {
+            const elem = props.elementConfig.elements[elemIdentifier];
             return (
               <Input
-                key={i}
+                key={`${props.identifier}-${elemIdentifier}`}
                 identifier={elemIdentifier}
                 elementType={elem.elementType}
                 elementConfig={elem.elementConfig}
@@ -118,8 +129,6 @@ const Input = (props) => {
                 helper={''}
                 validityErrors={elem.validityErrors}
                 errorMessages={elem.errorMessages}
-                // For <select> elements, onBlur is redundant to onChange
-                blurred={false}
                 failedValidations={typeof elem.validityFailures !== 'undefined' ? elem.validityFailures : []}
                 wasValidated={elem.validated}
                 loading={false}
@@ -155,7 +164,7 @@ const Input = (props) => {
             {...props.elementConfig}
             checked={props.elementConfig.value === 'yes' || props.elementConfig.value === true}
           />
-          <label className={'form-check-label'}>
+          <label className={'form-check-label'} htmlFor={props.identifier}>
             {props.elementConfig.label}
           </label>
         </div>
@@ -164,7 +173,6 @@ const Input = (props) => {
     case('radio'):
       columnClasses.push('d-flex', 'align-items-center'); // vertically center the radio button
     case('radio-limited-set'):
-      outerLabelClasses.push("col-form-label");
       columnClasses.push(classes.LimitedSetRadio);
       inputElement = props.elementConfig.choices.map((choice, i) => (
         <div className={`form-check`} key={i}>
@@ -172,6 +180,7 @@ const Input = (props) => {
                  className={'form-check-input'}
                  required={required}
                  value={choice.value}
+                 disabled={choice.disabled}
                  onChange={props.changed}
                  checked={props.elementConfig.value === choice.value}
                  id={`${props.identifier}_${choice.value}`}
@@ -184,6 +193,8 @@ const Input = (props) => {
         </div>
       ));
       break;
+    case('none'):
+      return null;
     default:
       console.log("I don't recognize that element type: " + props.elementType);
       return null;

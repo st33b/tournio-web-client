@@ -294,14 +294,24 @@ export const useTournamentOrg = (onSuccess = () => {}) => {
 export const useTeam = (onSuccess = () => {}) => {
   const router = useRouter();
   const {teamId} = router.query;
-  const {loading, data: team, error} = useDirectorApi({
+  const {loading, data: team, error, onDataUpdate} = useDirectorApi({
     uri: teamId ? `/teams/${teamId}` : null,
     onSuccess: onSuccess,
   });
+
+  const teamUpdated = (updatedTeam) => {
+    const mutateOptions = {
+      optimisticData: updatedTeam,
+      rollbackOnError: true,
+      populateCache: true,
+    }
+    onDataUpdate(updatedTeam, mutateOptions);
+  }
 
   return {
     loading,
     error,
     team,
+    teamUpdated,
   };
 }

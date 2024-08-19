@@ -2,21 +2,29 @@ import {useRouter} from "next/router";
 
 import RegistrationLayout from "../../../components/Layout/RegistrationLayout/RegistrationLayout";
 import {useRegistrationContext} from "../../../store/RegistrationContext";
-import {submitNewTeamWithPlaceholders, useTheTournament} from "../../../utils";
-import {useEffect, useState} from "react";
+import {
+  devConsoleLog,
+  submitNewTeamRegistration,
+  useTheTournament
+} from "../../../utils";
+import React, {useEffect, useState} from "react";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import NewTeamReview from "../../../components/Registration/NewTeamReview/NewTeamReview";
 import Link from "next/link";
 import {newTeamEntryCompleted} from "../../../store/actions/registrationActions";
-import TournamentHeader from "../../../components/ui/TournamentHeader";
+import TournamentLogo from "../../../components/Registration/TournamentLogo/TournamentLogo";
+import ProgressIndicator from "../../../components/Registration/ProgressIndicator/ProgressIndicator";
+import BowlerSummary from "../../../components/Registration/ReviewEntries/BowlerSummary";
+import ErrorAlert from "../../../components/common/ErrorAlert";
 
 const Page = () => {
   const {registration, dispatch} = useRegistrationContext();
   const router = useRouter();
   const {identifier} = router.query;
 
+  const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const {loading: tournamentLoading, tournament, error: tournamentError} = useTheTournament(identifier);
+  const {loading: tournamentLoading, tournament} = useTheTournament(identifier);
 
   // If new-team registrations isn't enabled, go back to the tournament home page
   useEffect(() => {
@@ -48,87 +56,153 @@ const Page = () => {
     });
   }
 
-  const newTeamRegistrationFailure = (errorMessage) => {
+  const newTeamRegistrationFailure = (errorMsg) => {
     setProcessing(false);
-    if (errorMessage.team) {
-      // back to team info
-      router.push({
-        pathname: '/tournaments/[identifier]/new-team',
-        query: {
-          identifier: identifier,
-          message: 2,
-        }
-      });
-    } else if (errorMessage.bowler) {
-      // back to bowler info
-      router.push({
-        pathname: '/tournaments/[identifier]/new-team-first-bowler',
-        query: {
-          identifier: identifier,
-          edit: true,
-        }
-      });
-    }
-  }
-
-  const editBowlerClicked = () => {
-    router.push(`/tournaments/${identifier}/new-team-first-bowler`);
+    setError('Submission failed.');
+    devConsoleLog("Submission failed. Details:", errorMsg);
   }
 
   const saveClicked = () => {
     // Write the team to the backend, with the single bowler.
     // Upon success, redirect to the team's page, which will
     // present its options.
-    submitNewTeamWithPlaceholders({
+    submitNewTeamRegistration({
       tournament: tournament,
       team: registration.team,
-      bowler: registration.bowler,
       onSuccess: newTeamRegistrationSuccess,
       onFailure: newTeamRegistrationFailure,
     });
     setProcessing(true);
   }
 
+  if (!registration.team) {
+    return '';
+  }
+
+  const completedSteps = ['team', 'bowlers'];
+  if (tournament.events.some(({rosterType}) => rosterType === 'double')) {
+    completedSteps.push('doubles');
+  }
+
+  const fieldNames = [
+    'firstName',
+    'lastName',
+    'nickname',
+    'email',
+    'phone',
+  ].concat(tournament.config['bowler_form_fields'].split(' ')).concat(tournament.additionalQuestions.map(q => q.name));
+
+  const hasDoublesEvent = tournament.events.some(event => event.rosterType === 'double');
+  const progressSteps = ['team', 'bowlers'];
+  if (hasDoublesEvent) {
+    progressSteps.push('doubles');
+  }
+  progressSteps.push('review');
+
   return (
-    <div className={'row'}>
-      <div className={'col-12'}>
-        <TournamentHeader tournament={tournament}/>
-
-        <h3 className={`bg-primary-subtle py-3`}>
-          Initial Review
-        </h3>
-
+    <>
+      <div className={'row d-md-none'}>
+        <div className={'col-5'}>
+          <Link href={`/tournaments/${identifier}`}>
+            <TournamentLogo url={tournament.imageUrl} additionalClasses={'mb-2'}/>
+          </Link>
+        </div>
+        <p className={'col display-4'}>
+          Let&apos;s Review...
+        </p>
       </div>
 
-      <div className={'col-md-10 offset-md-1 col-lg-8 offset-lg-2'}>
-      <NewTeamReview team={registration.team}
-                       bowler={registration.bowler}
-                       tournament={tournament}
-                       onEdit={editBowlerClicked}
-                       onSave={saveClicked}/>
-
-        <hr/>
-
-        <div className={`d-flex justify-content-between`}>
-          <Link href={`/tournaments/${identifier}/new-team-first-bowler?edit=true`}
-                className={`btn btn-lg btn-outline-primary d-block ${processing && 'invisible'}`}>
-            <i className={'bi bi-chevron-double-left pe-2'}
-               aria-hidden={true}/>
-            Make Changes
-          </Link>
-
-          <button className={`btn btn-lg btn-primary`}
-                  disabled={processing}
-                  onClick={saveClicked}>
-            Save
-            <i className={'bi bi-chevron-double-right ps-2'}
-               aria-hidden={true}/>
-          </button>
+      <div className={'row'}>
+        <div className={'col-12 col-md-2'}>
+          <div className={'d-none d-md-block'}>
+            <Link href={`/tournaments/${identifier}`}>
+              <TournamentLogo url={tournament.imageUrl}/>
+            </Link>
+          </div>
         </div>
 
-        {processing && <LoadingMessage message={'Submitting registration...'}/>}
+        <div className={'col-12 col-md-10'}>
+          <ProgressIndicator completed={completedSteps} steps={progressSteps} active={'review'}/>
+          <p className={'d-none d-md-block display-5'}>
+            Let&apos;s Review...
+          </p>
+          <div className={'alert alert-warning'}>
+            Please check everything to make sure it&apos;s correct, and make any necessary changes. If everything looks
+            good, hit the big{' '}
+            <span className={'fw-bolder'}>
+              Submit Registration
+            </span>
+            {' '}button at the bottom.
+          </div>
+
+          {/* team details */}
+          <NewTeamReview tournament={tournament} team={registration.team}/>
+
+          {/* bowler details */}
+          {registration.team.bowlers.map((bowler, i) => {
+            const index = bowler.doublesPartnerIndex;
+            const partner = index >= 0 ? registration.team.bowlers[index] : null;
+            return (
+              <div key={`summary_${i}`} className={'mb-4'}>
+                <div className={'d-flex align-items-baseline'}>
+                  <h5>
+                    Bowler {bowler.position}
+                  </h5>
+                  <Link href={
+                    {
+                      pathname: '/tournaments/[identifier]/new-team-bowler',
+                      query: {
+                        identifier: identifier,
+                        edit: true,
+                        index: i,
+                      },
+                    }}
+                        className={'d-block ps-3'}>
+                    (edit)
+                  </Link>
+                </div>
+                <BowlerSummary tournament={tournament}
+                               fieldNames={fieldNames}
+                               bowler={bowler}
+                               partner={partner}/>
+              </div>
+            )
+          })}
+
+          <div className={'row'}>
+
+            {hasDoublesEvent && (
+              <div className={'col-12 col-md-6 mb-3'}>
+                <Link href={`/tournaments/${tournament.identifier}/doubles-partners?edit=true`}
+                      className={'btn btn-secondary'}>
+                  <i className="bi bi-chevron-double-left pe-1" aria-hidden="true"/>
+                  Change doubles partners
+                </Link>
+              </div>
+            )}
+
+            <div className={`col-12 text-end ${hasDoublesEvent ? 'col-md-6' : ''}`}>
+              <button className={'btn btn-lg btn-primary'}
+                      onClick={saveClicked}
+                      disabled={processing}>
+                Submit Registration
+                {!processing && (
+                  <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
+                )}
+                {processing && (
+                  <span className={`spinner-border spinner-border-sm ms-2`}
+                        aria-hidden={true}
+                        role={'status'}>
+                  </span>
+                )}
+              </button>
+            </div>
+
+            {error && <ErrorAlert message={error}/>}
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

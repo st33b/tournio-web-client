@@ -4,9 +4,8 @@ import classes from './TeamForm.module.scss';
 import ErrorBoundary from "../../common/ErrorBoundary";
 import InclusiveShiftForm from "../InclusiveShiftForm/InclusiveShiftForm";
 import MixAndMatchShiftForm from "../MixAndMatchShiftForm/MixAndMatchShiftForm";
-import {devConsoleLog} from "../../../utils";
 
-const TeamForm = ({tournament, onSubmit}) => {
+const TeamForm = ({tournament, team, onSubmit, submitButtonText}) => {
   const initialFormValues = {
     fields: {
       name: '',
@@ -20,13 +19,21 @@ const TeamForm = ({tournament, onSubmit}) => {
     if (!tournament) {
       return;
     }
-    const tournamentType = tournament.config['tournament_type'] || 'igbo_standard';
-    if (tournamentType === 'igbo_standard') {
-      const newComponentState = {...componentState };
+    const tournamentType = tournament.config.tournament_type || 'igbo_standard';
+    const newComponentState = {...componentState };
+
+    if (team) {
+      // we're editing the team, so let's populate the form with what we've been passed as a prop
+      newComponentState.fields = {
+        ...team,
+      }
+      newComponentState.valid = true;
+    } else if (tournamentType === 'igbo_standard') {
       newComponentState.fields.shiftIdentifiers = [tournament.shifts[0].identifier];
-      setComponentState(newComponentState);
     }
-  }, [tournament]);
+
+    setComponentState(newComponentState);
+  }, [tournament, team]);
 
   const formHandler = (event) => {
     event.preventDefault();
@@ -56,14 +63,22 @@ const TeamForm = ({tournament, onSubmit}) => {
   }
 
   const shiftIdentifiersUpdated = (newShiftIdentifiers) => {
-    devConsoleLog("Shift identifiers updated:", newShiftIdentifiers);
     const newFormValues = {...componentState };
     newFormValues.fields.shiftIdentifiers = newShiftIdentifiers;
     setComponentState(newFormValues);
   }
 
-  const tournamentType = tournament.config['tournament_type'];
-  const useInclusiveShifts = tournamentType === 'igbo_multi_shift' || tournament.config['tournament_type'] === 'single_event' && tournament.shifts.length > 1;
+  ///////////////////////////////
+
+  // make sure we can render; return right away if we can't
+  if (!tournament) {
+    return '';
+  }
+
+  ///////////////////////////////
+
+  const tournamentType = tournament.config.tournament_type;
+  const useInclusiveShifts = tournamentType === 'igbo_multi_shift' || tournament.config.tournament_type === 'single_event' && tournament.shifts.length > 1;
   const useMixAndMatchShifts = tournamentType === 'igbo_mix_and_match';
 
   return (
@@ -82,7 +97,6 @@ const TeamForm = ({tournament, onSubmit}) => {
                  onChange={inputChanged}
                  aria-label={'Team Name'}
                  className={`form-control form-control-lg`}
-                 placeholder={'... name ...'}
           />
         </div>
 
@@ -90,21 +104,23 @@ const TeamForm = ({tournament, onSubmit}) => {
 
         {useInclusiveShifts && (
           <InclusiveShiftForm shifts={tournament.shifts}
+                              value={team ? team.shiftIdentifiers[0] : null}
                               onUpdate={shiftIdentifiersUpdated}/>
         )}
 
         {useMixAndMatchShifts && (
           <MixAndMatchShiftForm shifts={tournament.shifts}
+                                values={team ? team.shiftIdentifiers : null}
                                 onUpdate={shiftIdentifiersUpdated}/>
         )}
 
         <div className={`${classes.Submit}`}>
-          <button className={`btn btn-lg btn-success`}
+          <button className={`btn btn-lg btn-primary`}
                   onClick={formHandler}
                   disabled={!componentState.valid}
                   role={'button'}>
-            Go
-            <i className={'bi bi-arrow-right ps-2'} aria-hidden={true}/>
+            {submitButtonText}
+            <i className="bi bi-chevron-double-right ps-1" aria-hidden="true"/>
           </button>
         </div>
       </div>
