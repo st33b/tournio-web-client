@@ -193,7 +193,7 @@ const TeamDetails = ({tournament, team, teamUpdated}) => {
 
   const maxTeamSize = parseInt(tournament.config['team_size']);
   const tournamentType = tournament.config['tournament_type'] || 'igbo_standard';
-  const hasDoublesEvent = tournament.events.some(({rosterType}) => rosterType === 'doubles');
+  const hasDoublesEvent = tournament.events.some(({rosterType}) => rosterType === 'double');
 
   const showInclusiveShifts = tournamentType === 'igbo_multi_shift' || tournamentType === 'single_event' && tournament.shifts.length > 1;
 
