@@ -430,7 +430,7 @@ const DumbBowlerForm = ({
           text: 'vegetarian / vegan / allergies / etc.',
         },
         validityErrors: [],
-        valid: !bowler,
+        valid: true,
         touched: false,
       },
       comment: {
