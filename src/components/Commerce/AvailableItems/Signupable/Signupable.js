@@ -259,11 +259,10 @@ const Signupable = ({item, disableUnpaidSignup, added, signupChanged}) => {
           {!processing && (
             item.enabled && !disableUnpaidSignup && (
                 <div className={'pb-2'}>
-                  {!!item.siblingSignedUp && disabledDisplay}
+                  {item.siblingSignedUp && disabledDisplay}
                   {item.signupStatus === 'initial' && !item.siblingSignedUp && signupAction}
                   {item.signupStatus === 'requested' && !item.siblingSignedUp && neverMindAction}
                   {item.signupStatus === 'paid' && paidDisplay}
-                  {item.signupStatus === 'inactive' && disabledDisplay}
                 </div>
               )
           )}
