@@ -14,9 +14,10 @@ import ErrorBoundary from "../../../../../components/common/ErrorBoundary";
 import SuccessAlert from "../../../../../components/common/SuccessAlert";
 import ErrorAlert from "../../../../../components/common/ErrorAlert";
 import EmailButton from "../../../../../components/Director/BowlerDetails/EmailButton";
-import {updateObject} from "../../../../../utils";
+import {apiHost, updateObject} from "../../../../../utils";
 import {format} from "date-fns";
 import DumbBowlerForm from "../../../../../components/Registration/DumbBowlerForm/DumbBowlerForm";
+import axios from "axios";
 
 const BowlerPage = () => {
   const router = useRouter();
@@ -654,6 +655,36 @@ const BowlerPage = () => {
       });
     }
   }
+
+  // @refactor This should make use of useApi, or a wrapper function, rather than making the request
+  // using Axios directly.
+  const signupableUnchecked = (e, signupIdentifier) => {
+    e.preventDefault()
+    const requestConfig = {
+      method: 'patch',
+      url: `${apiHost}/signups/${signupIdentifier}`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      data: {
+        bowler_identifier: bowler.identifier,
+        event: 'never_mind',
+      },
+      validateStatus: (status) => {
+        return status < 500
+      },
+    }
+    axios(requestConfig)
+      .then(response => {
+        if (response.status >= 200 && response.status < 300) {
+          bowlerUpdatedQuietly(bowler);
+        } else {
+        }
+      })
+      .catch(_ => {});
+  }
+
   //////////////////////////////////////////////////////////////////////
 
   if (bowlerLoading || !tournament || !bowler) {
@@ -1064,12 +1095,31 @@ const BowlerPage = () => {
       {signups.length > 0 && (
         <ListGroup variant={'flush'}>
           {signups.map(s => (
-            <ListGroup.Item key={s.identifier}>
-              {s.purchasableItem.name} ({s.status})
-              {s.purchasableItem.refinement === 'division' && (
-                <em className={'d-block small ps-2'}>
-                  Division: {s.purchasableItem.configuration.division}
-                </em>
+            <ListGroup.Item key={s.identifier} className={'d-flex'}>
+              <div className={''}>
+                {s.purchasableItem.name}
+                {s.purchasableItem.refinement === 'division' && (
+                  <em className={'d-block small ps-2'}>
+                    Division: {s.purchasableItem.configuration.division}
+                  </em>
+                )}
+              </div>
+
+              {s.status === 'paid' && (
+                <div className={'ms-1 me-auto'}>
+                  (paid)
+                </div>
+              )}
+
+              {s.status === 'requested' && (
+                <div className={'ms-auto'}>
+                  <a href={'#'}
+                     className={'link-danger'}
+                     onClick={(e) => signupableUnchecked(e, s.identifier)}>
+                    <i className={'bi-x-lg'} aria-hidden={true}/>
+                    <span className={'visually-hidden'}>remove</span>
+                  </a>
+                </div>
               )}
             </ListGroup.Item>
           ))}
