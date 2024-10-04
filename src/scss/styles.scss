@@ -2,6 +2,8 @@
 @import 'bootstrap-icons/font/bootstrap-icons.css';
 
 :root {
+  --tournio-admin-body-font-family: #{$admin-font-family-sans-serif};
+
   &[data-bs-theme="light"] {
     --tournio-bookend-bg: var(--tournio-gray-200);
   }

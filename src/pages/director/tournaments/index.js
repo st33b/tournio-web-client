@@ -2,7 +2,7 @@ import {Col, Row} from "react-bootstrap";
 import {useRouter} from "next/router";
 import Link from 'next/link';
 
-import DirectorLayout from "../../../components/Layout/DirectorLayout/DirectorLayout";
+import AdminLayout from "../../../components/Layout/AdminLayout/AdminLayout";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import TournamentListing from '../../../components/Director/TournamentListing/TournamentListing';
 import {useDirectorContext} from "../../../store/DirectorContext";
@@ -65,9 +65,9 @@ const Page = () => {
 
 Page.getLayout = function getLayout(page) {
   return (
-    <DirectorLayout>
+    <AdminLayout>
       {page}
-    </DirectorLayout>
+    </AdminLayout>
   );
 }
 

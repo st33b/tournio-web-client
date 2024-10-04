@@ -69,14 +69,6 @@ $table-variants: (
   "dark":       $dark-bg-subtle,
 );
 
-// I define a "moody" color set that, in dark mode, is between regular and bg-subtle.
-// It's intended to act as the "baseline" set of theme colors in dark mode, but is
-// currently applied only to buttons (regular and outline) and tables.
-
-// Do we want a corresponding "moody" set in light mode? Or is the regular set of
-// theme colors sufficient? For now, let's say the regular set is sufficient, since
-// the original intent of "moody" is as a baseline set of theme colors for dark mode.
-
 $font-family-sans-serif:
   Mulish,
   system-ui,
@@ -92,6 +84,17 @@ $font-family-sans-serif:
   "Segoe UI Emoji",
   "Segoe UI Symbol",
   "Noto Color Emoji";
+
+$admin-font-family-sans-serif:
+  "Arsenal SC", // Remove me and make it Libre Franklin when we're ready to release!
+  "Libre Franklin",
+  system-ui,
+  -apple-system,
+  "Segoe UI",
+  Roboto,
+  "Helvetica Neue",
+  Arial,
+  sans-serif;
 
 $alert-bg-scale: -60%;
 $alert-border-scale: -20%;

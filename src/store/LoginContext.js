@@ -1,6 +1,5 @@
 import {useLocalStorage} from "../utils";
 import {useEffect, useState, createContext, useContext} from "react";
-import {useRouter} from "next/router";
 
 const initialValue = {
   ready: false,

@@ -1,5 +1,4 @@
 import {useRouter} from "next/router";
-import DirectorLayout from '../../../components/Layout/DirectorLayout/DirectorLayout';
 import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
 import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
 import {directorApiRequest, useTournament} from "../../../director";
@@ -7,6 +6,7 @@ import {useLoginContext} from "../../../store/LoginContext";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorBoundary from "../../../components/common/ErrorBoundary";
 import ErrorAlert from "../../../components/common/ErrorAlert";
+import AdminLayout from "../../../components/Layout/AdminLayout/AdminLayout";
 
 const Tournament = () => {
   const router = useRouter();
@@ -65,9 +65,9 @@ const Tournament = () => {
 
 Tournament.getLayout = function getLayout(page) {
   return (
-    <DirectorLayout>
+    <AdminLayout>
       {page}
-    </DirectorLayout>
+    </AdminLayout>
   );
 }
 
