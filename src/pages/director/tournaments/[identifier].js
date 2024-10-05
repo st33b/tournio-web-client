@@ -1,20 +1,23 @@
 import {useRouter} from "next/router";
 import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
-import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
-import {directorApiRequest, useTournament} from "../../../director";
+import {directorApiRequest, useModernTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
 import ErrorBoundary from "../../../components/common/ErrorBoundary";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 import AdminLayout from "../../../components/Layout/AdminLayout/AdminLayout";
+import ActiveTournament from "../../../components/Director/ActiveTournament/ActiveTournament";
+import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
 
 const Tournament = () => {
   const router = useRouter();
   const {identifier, stripe} = router.query;
 
   const {authToken} = useLoginContext();
-  const {loading, tournament, error, tournamentUpdated} = useTournament();
+  // const {loading, tournament, error, tournamentUpdated} = useTournament();
+  const {loading, tournament, error, tournamentUpdated, tournamentUpdatedQuietly} = useModernTournament();
 
+  // @admin -- should this break out into distinct functions?
   const stateChangeInitiated = (stateChangeAction) => {
     const uri = `/tournaments/${identifier}/state_change`;
     const requestConfig = {
@@ -43,23 +46,23 @@ const Tournament = () => {
     return <LoadingMessage message={'Retrieving tournament details...'}/>;
   }
 
-  return (
-    <ErrorBoundary>
-      <div>
-        <ErrorAlert message={error}
-                    className={``}
-        />
+  if (!tournament) {
+    return <LoadingMessage message={'Loading tournament details...'}/>;
+  }
 
-        {tournament && (
-          (tournament.state === 'active' || tournament.state === 'closed'
-              ? <VisibleTournament closeTournament={stateChangeInitiated}/>
-              : <TournamentInPrep requestStripeStatus={stripe}
-                                  stateChangeInitiated={stateChangeInitiated}
-              />
-          )
-        )}
-      </div>
-    </ErrorBoundary>
+  return (
+    <div>
+      <ErrorAlert message={error} className={``} />
+
+      {tournament && (
+        (tournament.state === 'active' || tournament.state === 'closed'
+            ? <ActiveTournament tournament={tournament} />
+            : <TournamentInPrep requestStripeStatus={stripe}
+                                stateChangeInitiated={stateChangeInitiated}
+            />
+        )
+      )}
+    </div>
   );
 }
 

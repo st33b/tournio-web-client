@@ -1,3 +1,4 @@
+// @admin
 import {useEffect, useState} from 'react';
 import {Card} from "react-bootstrap";
 import {Map} from 'immutable';

@@ -1,3 +1,4 @@
+// @admin
 import {useRouter} from "next/router";
 import Card from "react-bootstrap/Card";
 

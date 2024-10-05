@@ -1,3 +1,4 @@
+// @admin
 import {Accordion, Card} from "react-bootstrap";
 import Link from "next/link";
 
