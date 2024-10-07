@@ -26,7 +26,7 @@ const OneShift = ({shift, unit}) => {
         </span>
       </div>
 
-      <div className="text-center">
+      <div className="text-center mt-3">
         <button type={'button'}
                 className={'btn btn-outline-primary'}
                 role={'button'}

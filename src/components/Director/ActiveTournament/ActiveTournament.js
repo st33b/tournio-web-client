@@ -1,5 +1,5 @@
 import classes from './ActiveTournament.module.scss';
-import Configuration from "./Configuration";
+import ControlPanel from "./ControlPanel";
 import RegistrationOptions from "./RegistrationOptions";
 import OptionalItems from "./OptionalItems";
 import Capacity from "../VisibleTournament/Capacity";
@@ -49,19 +49,18 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
             On XXL devices (>= 1400px wide): three columns.
         */}
         <div className={'col-12 col-md-6 col-xxl-4'}>
-          <Configuration/>
-          <RegistrationOptions/>
+          <ControlPanel configItems={tournament.configItems}/>
+          <RegistrationOptions rosterTypes={tournament.events.map(e => e.rosterType)}
+            options={tournament.registrationOptions}
+          />
           <OptionalItems/>
-          {/*  Toggles: */}
-          {/*  - Shift full (multi-shift only) */}
-          {/*  Add a shift / Edit shift details (multi-shift only) */}
-          {!hasOneShift && (
-            <MultipleShifts shifts={tournament.shifts}
-                            unit={capacityUnit}/>
-          )}
 
           {hasOneShift && (
             <OneShift shift={tournament.shifts[[0]]} unit={capacityUnit}/>
+          )}
+          {!hasOneShift && (
+            <MultipleShifts shifts={tournament.shifts}
+                            unit={capacityUnit}/>
           )}
         </div>
         <div className={'col-12 col-md-6 col-xxl-4'}>
