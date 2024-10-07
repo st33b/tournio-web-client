@@ -42,7 +42,7 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
   const hasOneShift = tournament.shifts.length === 1;
 
   return (
-    <div className={classes.Tournament}>
+    <div className={classes.ActiveTournament}>
       <div className={'row'}>
         {/* On small devices: one column.
             On devices medium-large (up to 1399px wide): two columns
@@ -61,7 +61,7 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
           )}
 
           {hasOneShift && (
-            <OneShift unit={capacityUnit}/>
+            <OneShift shift={tournament.shifts[[0]]} unit={capacityUnit}/>
           )}
         </div>
         <div className={'col-12 col-md-6 col-xxl-4'}>
