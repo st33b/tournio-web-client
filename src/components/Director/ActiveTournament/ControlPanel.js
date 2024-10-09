@@ -17,6 +17,7 @@ const ControlPanel = ({configItems}) => {
 
   // @admin
   // TODO: handle config item toggle
+  // TODO: add dev-only items
 
   return (
     <div className={classes.ControlPanel}>

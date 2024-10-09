@@ -53,7 +53,7 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
           <RegistrationOptions rosterTypes={tournament.events.map(e => e.rosterType)}
             options={tournament.registrationOptions}
           />
-          <OptionalItems/>
+          <OptionalItems purchasableItems={tournament.purchasableItems} />
 
           {hasOneShift && (
             <OneShift shift={tournament.shifts[[0]]} unit={capacityUnit}/>
