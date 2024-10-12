@@ -48,7 +48,7 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
             On devices medium-large (up to 1399px wide): two columns
             On XXL devices (>= 1400px wide): three columns.
         */}
-        <div className={'col-12 col-md-6 col-xxl-4'}>
+        <div className={'col-12 col-md-6 col-xl-4'}>
           <ControlPanel configItems={tournament.configItems}/>
           <RegistrationOptions rosterTypes={tournament.events.map(e => e.rosterType)}
             options={tournament.registrationOptions}
@@ -63,7 +63,7 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
                             unit={capacityUnit}/>
           )}
         </div>
-        <div className={'col-12 col-md-6 col-xxl-4'}>
+        <div className={'col-12 col-md-6 col-xl-4'}>
           <p>
             I am important links, data, and actions!
           </p>
@@ -103,7 +103,7 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
             </div>
           )}
         </div>
-        <div className={'col-12 offset-md-6 col-md-6 offset-xxl-0 col-xxl-4'}>
+        <div className={'col-12 offset-md-6 col-md-6 offset-xl-0 col-xl-4'}>
           <p>
             I am display data, and there will be a search input here!
           </p>

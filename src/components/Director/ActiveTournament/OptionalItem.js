@@ -27,11 +27,19 @@ const OptionalItem = ({item, onEnableToggle}) => {
     additionalText = item.configuration.note;
   }
 
+  const tooltipContent = item.enabled ? 'Disable purchase of this' : 'Enable purchase of this';
   const label = (
-    <span className={`${classes.Name}`}>
-      {item.name}
+    <span className={`${classes.Label}`}>
+      <span className={`d-block ${classes.Name}`}>
+        {item.name}
+        <i className={'bi bi-question-circle ps-2'}
+           aria-hidden={true}/>
+        <span className={'visually-hidden'}>
+          {tooltipContent}
+        </span>
+      </span>
       {additionalText && (
-        <span className={`line ${classes.Additional}`}>
+        <span className={`d-block ${classes.Additional}`}>
           {additionalText}
         </span>
       )}
@@ -42,7 +50,6 @@ const OptionalItem = ({item, onEnableToggle}) => {
     <div className={classes.Item}>
       <Toggle name={`optional-item-toggle--${item.identifier}`}
               label={label}
-              title={item.enabled ? 'Disable purchase of this' : 'Enable purchase of this'}
               id={`optional-item-toggle--${item.identifier}`}
               checked={item.enabled}
               onChange={() => {}}

@@ -7,8 +7,12 @@
   }
   .OptionalItems {
     .Item {
-      .Additional {
-
+      .Label {
+        .Name {
+          .Additional {
+            font-style: italic;
+          }
+        }
       }
       .Price {
 
