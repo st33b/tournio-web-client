@@ -51,9 +51,9 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
         <div className={'col-12 col-md-6 col-xl-4'}>
           <ControlPanel configItems={tournament.configItems}/>
           <RegistrationOptions rosterTypes={tournament.events.map(e => e.rosterType)}
-            options={tournament.registrationOptions}
+                               options={tournament.registrationOptions}
           />
-          <OptionalItems purchasableItems={tournament.purchasableItems} />
+          <OptionalItems purchasableItems={tournament.purchasableItems}/>
 
           {hasOneShift && (
             <OneShift shift={tournament.shifts[[0]]} unit={capacityUnit}/>
@@ -63,56 +63,64 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
                             unit={capacityUnit}/>
           )}
         </div>
-        <div className={'col-12 col-md-6 col-xl-4'}>
-          <p>
-            I am important links, data, and actions!
-          </p>
-          <LinksAndCounts/>
-          <Downloads/>
-          <MassActions/>
 
-          {tournament.state === 'active' && (
-            <div className="row my-3">
-              <div className={"col-12 text-center"}>
-                <button className={"btn btn-lg btn-danger ms-3"}
-                        onClick={confirmClose}>
-                  Close Registration
-                </button>
-              </div>
-            </div>
-          )}
-          {tournament.state === 'closed' && user.role === 'superuser' && (
-            <div className="row my-3">
-              <div className={"col-12 text-center"}>
-                <button className={`btn btn-lg btn-danger ms-3 ${panelState.deleteProcessing ? 'disabled' : ''}`}
-                        onClick={confirmClose}>
-                  {panelState.deleteProcessing && (
-                    <span>
+        {/* Stuff in column 2 (and 3, on XL+) */}
+        <div className={'col-12 col-md-6 col-xl-8'}>
+          <div className={'row'}>
+            <div className={'col-12 col-xl-6'}>
+              <p>
+                I am important links, data, and actions!
+              </p>
+              <LinksAndCounts/>
+              <Downloads/>
+              <MassActions/>
+
+              {tournament.state === 'active' && (
+                <div className="row my-3">
+                  <div className={"col-12 text-center"}>
+                    <button className={"btn btn-lg btn-danger ms-3"}
+                            onClick={confirmClose}>
+                      Close Registration
+                    </button>
+                  </div>
+                </div>
+              )}
+              {tournament.state === 'closed' && user.role === 'superuser' && (
+                <div className="row my-3">
+                  <div className={"col-12 text-center"}>
+                    <button className={`btn btn-lg btn-danger ms-3 ${panelState.deleteProcessing ? 'disabled' : ''}`}
+                            onClick={confirmClose}>
+                      {panelState.deleteProcessing && (
+                        <span>
                       <span className={'spinner-border spinner-border-sm me-2'}
                             role={'status'}
                             aria-hidden={true}></span>
                     </span>
-                  )}
-                  {!panelState.deleteProcessing && (
-                    <i className={'bi bi-x-lg me-2'} aria-hidden="true">
-                    </i>
-                  )}
-                  Delete Tournament
-                </button>
-              </div>
+                      )}
+                      {!panelState.deleteProcessing && (
+                        <i className={'bi bi-x-lg me-2'} aria-hidden="true">
+                        </i>
+                      )}
+                      Delete Tournament
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        <div className={'col-12 offset-md-6 col-md-6 offset-xl-0 col-xl-4'}>
-          <p>
-            I am display data, and there will be a search input here!
-          </p>
-          <Capacity/>
-          <RegistrationsWeek/>
-          <RegistrationTypesWeek/>
 
-          {/*  Transaction search input */}
+            <div className={'col'}>
+              <p>
+                I am display data, and there will be a search input here!
+              </p>
+              <Capacity/>
+              <RegistrationsWeek/>
+              <RegistrationTypesWeek/>
+
+              {/*  Transaction search input */}
+            </div>
+          </div>
         </div>
+
       </div>
     </div>
 
