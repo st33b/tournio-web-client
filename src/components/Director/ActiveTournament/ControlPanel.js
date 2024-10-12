@@ -1,6 +1,7 @@
 import classes from './ActiveTournament.module.scss';
 import {devConsoleLog} from "../../../utils";
 import Toggle from "./Toggle";
+import TooltipOverlay from "../../ui/TooltipOverlay/TooltipOverlay";
 
 const ControlPanel = ({configItems}) => {
   const panelItems = [
@@ -22,9 +23,16 @@ const ControlPanel = ({configItems}) => {
   return (
     <div className={classes.ControlPanel}>
       <div className="card mb-3">
-        <h4 className={'card-header'}>
-          Control Panel
-        </h4>
+        <div className={'card-header d-flex justify-content-between'}>
+          <h5 className={''}>
+            Control Panel
+          </h5>
+          <TooltipOverlay id={`optional-items--tooltip`}
+                          title={'Changing these takes effect immediately'}>
+            <i className={`bi bi-question-circle ps-2 h5 ${classes.TooltipIcon}`}
+               aria-hidden={true}/>
+          </TooltipOverlay>
+        </div>
         <ul className={'list-group list-group-flush'}>
           {panelItems.map(itemKey => {
             devConsoleLog("Current item:", itemKey);
@@ -40,8 +48,9 @@ const ControlPanel = ({configItems}) => {
                         label={item.label}
                         htmlId={`control_panel--${itemKey}`}
                         checked={!!item.value}
-                        onChange={() => {}}
-                        />
+                        onChange={() => {
+                        }}
+                />
               </li>
             );
           })}
