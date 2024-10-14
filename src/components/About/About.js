@@ -38,30 +38,13 @@ const about = () => (
           </p>
           <ul>
             <li>
-              <Link href={'https://www.goldengateclassic.org/'}>San Francisco Golden Gate Classic</Link>
+              <Link href="https://actbowl.org/">Alamo City Tournament (ACT)</Link>
+            </li>
+            <li>
+              <Link href={'http://beepbeepbowl.org/'}>The Albuquerque Roadrunner Tournament (TART)</Link>
             </li>
             <li>
               <Link href={'https://www.bigdclassic.com/'}>Big D Classic</Link>
-            </li>
-            <li>
-              <Link href={'https://www.lvshowgirl.net/'}>Las Vegas Showgirl</Link>
-            </li>
-            <li>
-              <Link href={'http://trotbowling.com/'}>Texas Roll-off Tournament (TROT)</Link>
-            </li>
-            <li>
-              <Link href={'https://www.okclassic.com/'}>OKClassic</Link>
-            </li>
-            <li>
-              <Link href={'http://www.houstoninvite.com/'}>Houston Invitational Tournament (HIT)</Link>
-            </li>
-            <li>
-              <Link href={'http://www.makitkc.org/'}>
-                Missouri and Kansas Invitational Tournament (MAKIT)
-              </Link>
-            </li>
-            <li>
-              <Link href={'https://www.txsuperslam.com/'}>Texas Super Slam</Link>
             </li>
             <li>
               <Link href={'https://www.damitbowling.org'}>
@@ -69,15 +52,38 @@ const about = () => (
               </Link>
             </li>
             <li>
-              <Link href={'https://showmeclassic.com/'}>Show Me St. Louis Classic</Link>
-            </li>
-            <li>
-              <Link href={'http://beepbeepbowl.org/'}>The Albuquerque Roadrunner Tournament</Link>
-            </li>
-            <li>
               <Link href={'https://bowldiglit.org/'}>
                 Denver International Gay and Lesbian Invitational Tournament (DIGLIT)
               </Link>
+            </li>
+            <li>
+              <Link href={'https://www.bowlhit.com'}>Houston Invitational Tournament (HIT)</Link>
+            </li>
+            <li>
+              IGBO Annual 2024 (Reno, NV)
+            </li>
+            <li>
+              Las Vegas Showgirl
+            </li>
+            <li>
+              <Link href={'http://www.makitkc.org/'}>
+                Missouri and Kansas Invitational Tournament (MAKIT)
+              </Link>
+            </li>
+            <li>
+              <Link href={'https://www.okclassic.com/'}>OKClassic</Link>
+            </li>
+            <li>
+              <Link href={'https://www.goldengateclassic.org/'}>San Francisco Golden Gate Classic</Link>
+            </li>
+            <li>
+              <Link href={'https://showmeclassic.com/'}>Show Me St. Louis Classic</Link>
+            </li>
+            <li>
+              <Link href={'http://trotbowling.com/'}>Texas Roll-off Tournament (TROT)</Link>
+            </li>
+            <li>
+              <Link href={'https://www.txsuperslam.com/'}>Texas Super Slam</Link>
             </li>
           </ul>
         </Accordion.Body>
@@ -88,7 +94,7 @@ const about = () => (
           Pricing
         </Accordion.Header>
         <Accordion.Body>
-          <p>
+        <p>
             While I do charge a fee for the use of this system, the fee is intended to cover the costs I incur in
             operating it, not to turn a profit. If the day should arrive when there are enough participating tournaments
             to turn a profit, then all proceeds beyond operating costs will be donated to{' '}
@@ -99,20 +105,20 @@ const about = () => (
           </p>
           <ul>
             <li>
-              I run the informational sites for a few tournaments; for them, my fee is{' '}
-              <strong>
-                $150/year
-              </strong>
-              {' '}for the website and
-              Tournio bundle.
-            </li>
-            <li>
-              For other tournaments, the fee for using Tournio is equivalent to{' '}
+              For registration only, the fee for using Tournio is equivalent to{' '}
               <strong>
                 one tournament entry fee
               </strong>
               . Of course, this varies from tournament to tournament, but it effectively makes the fee equivalent to
               the cost of a free entry.
+            </li>
+            <li>
+              I run the informational sites for a few tournaments; for them, my fee is{' '}
+              <strong>
+                $150/year
+              </strong>
+              {' '}for the domain, hosting, website and
+              Tournio bundle.
             </li>
           </ul>
         </Accordion.Body>
@@ -128,7 +134,7 @@ const about = () => (
           </p>
           <ul>
             <li>
-              Export registration information, in both spreadsheet (CSV) and IGBO-TS formats. (The IGBO-TS format is
+            Export registration information, in both spreadsheet (CSV) and IGBO-TS formats. (The IGBO-TS format is
               suitable for import into the IGBO-TS program, for tournaments that still use it.)
             </li>
             <li>
@@ -201,9 +207,9 @@ const about = () => (
                  className={'img-fluid float-end ps-3'}
           />
           <p>
-            I began bowling in IGBO leagues and tournaments in 2004, and have been a participant on some level ever
+            My name is Scott Stebleton. I began bowling in IGBO leagues and tournaments in 2004, and have been a participant on some level ever
             since. (I even threw my first&mdash;and, to date, only&mdash;perfect game at IGBO Annual in Atlanta in
-            2008.) So the IGBO community has been an important part of my life for going on two decades now!
+            2008.) So the IGBO community has been an important part of my life for two decades now!
           </p>
           <p>
             When I learned in 2015 that the operator of the excellent{' '}
@@ -233,8 +239,11 @@ const about = () => (
             directors with greater control and flexibility in how they run their tournaments.
           </p>
           <p>
-            In 2022, tinkering with this site is a way to hold on to my sanity and give myself something constructive to do
-            while I recover from a debilitating illness, when time and mental bandwidth allow.
+            These days, working on Tournio is a way to hold on to my sanity and give myself something constructive to do
+            while I work to live with{' '}
+            <Link href={'https://www.yalemedicine.org/conditions/cardiac-amyloidosis'} target={'_blank'}>
+              cardiac amyloidosis
+            </Link>, when time and mental bandwidth allow.
             As part of an effort to build a more robust payments integration&mdash;and give the site a more
             distinctive personality&mdash;I rebranded it, and so{' '}
             <code>
@@ -244,7 +253,7 @@ const about = () => (
             <code>
               tourn.io
             </code>
-            .
+            {' '}in 2022.
           </p>
         </Accordion.Body>
       </Accordion.Item>
@@ -264,6 +273,12 @@ const about = () => (
             <Link href={'https://www.mozilla.org/en-US/firefox/new/'}>
               Mozilla Firefox
             </Link>.
+          </p>
+          <p>
+            All the code in my repositories (outside of the Ruby and JavaScript libraries and frameworks) has
+            been written by me. I have used no artificial intelligence or other generative tools of any kind. (While I
+            do think there&apos;s a place for AI in our future, I firmly believe it should never come at the cost of
+            humans&apos; livelihoods or well-being.)
           </p>
           <p>
             Interested in the source code? It&apos;s in two parts, available on <i className={'bi bi-github'}/> Github:
