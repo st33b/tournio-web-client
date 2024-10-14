@@ -353,6 +353,10 @@ const DumbBowlerForm = ({
                     label: ' --',
                   },
                   {
+                    value: 'CashApp',
+                    label: 'CashApp',
+                  },
+                  {
                     value: 'PayPal',
                     label: 'PayPal',
                   },
