@@ -71,11 +71,8 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
         <div className={'col-12 col-md-6 col-xl-8'}>
           <div className={'row'}>
             <div className={'col-12 col-xl-6'}>
-              <p>
-                I am important links, data, and actions!
-              </p>
-              <LinksAndCounts/>
-              <Downloads/>
+              <LinksAndCounts tournament={tournament}/>
+              <Downloads tournament={tournament}/>
               <MassActions/>
 
               {tournament.state === 'active' && (

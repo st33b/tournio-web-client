@@ -1,53 +1,54 @@
 import Link from "next/link";
+import {useRouter} from "next/router";
+import classes from './ActiveTournament.module.scss';
 
-const LinksAndCounts = () => {
+const LinksAndCounts = ({tournament}) => {
+  const router = useRouter();
+
+  if (!tournament || !router.isReady) {
+    return '';
+  }
+
+  const hasTeamEvent = tournament.events.some(({rosterType}) => rosterType === 'team');
+
   return (
-    <div>
-      <div className="row pb-3">
-        <span className={"col me-3"}>
-          <Link href={'#'}
-                className={''}>
-            Bowlers
-          </Link>
-        </span>
-        <span className={"placeholder col-2 col-md-2 col-lg-1"}></span>
-      </div>
+    <div className={classes.LinksAndCounts}>
+      <div className={'card mb-3'}>
+        <ul className={'list-group list-group-flush'}>
+          <li className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center`}>
+            <Link href={`${router.asPath}/bowlers`}
+                  className={''}>
+              Bowlers
+            </Link>
+            <span className={''}>
+              {tournament.bowlerCount}
+            </span>
+          </li>
 
-      {/* if the tournament is less than a month away, add a link directly to
-        * a list of bowlers with outstanding payments. (Yes, it's a subset of
-        * the above list, but is probably the most useful to directors, more
-        * useful than a list of all bowlers.)
-        */}
-      <div className="row pb-3">
-        <span className={"col me-3"}>
-          <Link href={'#'}
-                className={'ms-3'}>
-            Unpaid Bowlers
-          </Link>
-        </span>
-        <span className={"placeholder col-2 col-md-2 col-lg-1"}></span>
-      </div>
+          {hasTeamEvent && (
+            <li className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center`}>
+              <Link href={`${router.asPath}/teams`}
+                    className={''}>
+                Teams
+              </Link>
+              <span className={''}>
+                {tournament.teamCount}
+              </span>
+            </li>
+          )}
 
-      {/* if the tournament has a team event... */}
-      <div className="row pb-3">
-        <span className={"col me-3"}>
-          <Link href={'#'}
-                className={''}>
-            Teams
-          </Link>
-        </span>
-        <span className={"placeholder col-2 col-md-2 col-lg-1"}></span>
-      </div>
-
-      {/* if the tournament is using free entry codes */}
-      <div className="row pb-3">
-        <span className={"col me-3"}>
-          <Link href={'#'}
-                className={''}>
-            Free Entries
-          </Link>
-        </span>
-        <span className={"placeholder col-2 col-md-2 col-lg-1"}></span>
+          {tournament.config.enable_free_entries && (
+            <li className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center`}>
+              <Link href={`${router.asPath}/free_entries`}
+                    className={''}>
+                Free Entries
+              </Link>
+              <span className={''}>
+                {tournament.freeEntryCount}
+              </span>
+            </li>
+          )}
+        </ul>
       </div>
     </div>
   );

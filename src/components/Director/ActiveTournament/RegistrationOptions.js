@@ -1,21 +1,16 @@
 import classes from "./ActiveTournament.module.scss";
 import Toggle from "./Toggle";
 import TooltipOverlay from "../../ui/TooltipOverlay/TooltipOverlay";
+import CardHeader from "./CardHeader";
 
 const RegistrationOptions = ({rosterTypes, options}) => {
 
   return (
     <div className={classes.RegistrationOptions}>
       <div className="card mb-3">
-        <div className={'card-header d-flex justify-content-between align-items-baseline'}>
-          <h5 className={''}>
-            Registration Options
-          </h5>
-          <TooltipOverlay id={`optional-items--tooltip`} title={'Enable and disable these options without closing registration entirely.'}>
-            <i className={`bi bi-question-circle ps-2 h5 ${classes.TooltipIcon}`}
-               aria-hidden={true}/>
-          </TooltipOverlay>
-        </div>
+        <CardHeader headerText={'Registration Options'}
+                    titleText={'Enable and disable these options without closing registration entirely.'}
+                    id={'registration-options--tooltip'}/>
         <ul className={'list-group list-group-flush'}>
           {rosterTypes.some(rt => rt === 'single') && (
             <li className={'list-group-item'}>
