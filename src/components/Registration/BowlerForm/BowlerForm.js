@@ -417,6 +417,10 @@ const BowlerForm = ({
                   label: ' --',
                 },
                 {
+                  value: 'CashApp',
+                  label: 'CashApp',
+                },
+                {
                   value: 'PayPal',
                   label: 'PayPal',
                 },
@@ -428,10 +432,6 @@ const BowlerForm = ({
                   value: 'Zelle',
                   label: 'Zelle',
                 },
-                // {
-                //   value: 'cashapp',
-                //   label: 'CashApp',
-                // },
                 // {
                 //   value: 'googlepay',
                 //   label: 'Google Pay',
