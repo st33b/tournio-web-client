@@ -1,7 +1,9 @@
+import classes from './ActiveTournament.module.scss';
+
 const OneShift = ({shift, unit}) => {
   // Display only capacity; hide name and details
   return (
-    <div>
+    <div className={classes.OneShift}>
       <div className="d-flex align-items-center">
         <span className="d-block">
           Capacity:

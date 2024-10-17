@@ -7,7 +7,6 @@ import RegistrationsWeek from "../VisibleTournament/Charts/RegistrationsWeek";
 import RegistrationTypesWeek from "../VisibleTournament/Charts/RegistrationTypesWeek";
 import LinksAndCounts from "./LinksAndCounts";
 import Downloads from "./Downloads";
-import MassActions from "./MassActions";
 import {useLoginContext} from "../../../store/LoginContext";
 import {updateObject} from "../../../utils";
 import {useState} from "react";
@@ -47,7 +46,7 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
         <img className={'col-2 col-xl-1 img-fluid'}
              src={tournament.imageUrl}
              alt={'Tournament logo'}/>
-        <h1 className={'display-5'}>
+        <h1 className={'ms-3 display-5'}>
           {tournament.name} ({tournament.year})
         </h1>
       </div>
@@ -58,10 +57,12 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
       */}
       <div className={'row'}>
         <div className={'col-12 col-md-6 col-xl-4'}>
+          <h4
+            className={`d-md-none py-3 text-center fw-normal ${tournament.state === 'active' ? 'text-bg-success' : 'text-bg-secondary'}`}>
+            Registration is {tournament.state === 'active' ? 'open' : 'closed'}
+          </h4>
+
           <ControlPanel configItems={tournament.configItems}/>
-          <RegistrationOptions rosterTypes={tournament.events.map(e => e.rosterType)}
-                               options={tournament.registrationOptions}
-          />
           <OptionalItems purchasableItems={tournament.purchasableItems}/>
 
           {hasOneShift && (
@@ -77,20 +78,43 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
         <div className={'col-12 col-md-6 col-xl-8'}>
           <div className={'row'}>
             <div className={'col-12 col-xl-6'}>
+              <h4
+                className={`d-none d-md-block py-3 text-center fw-normal ${tournament.state === 'active' ? 'text-bg-success' : 'text-bg-secondary'}`}>
+                Registration is {tournament.state === 'active' ? 'open' : 'closed'}
+              </h4>
+
               <LinksAndCounts tournament={tournament}/>
-              <Downloads tournament={tournament}/>
-              <MassActions/>
 
               {tournament.state === 'active' && (
-                <div className="row my-3">
-                  <div className={"col-12 text-center"}>
-                    <button className={"btn btn-lg btn-danger ms-3"}
-                            onClick={confirmClose}>
-                      Close Registration
-                    </button>
-                  </div>
+                <RegistrationOptions rosterTypes={tournament.events.map(e => e.rosterType)}
+                                     options={tournament.registrationOptions}
+                />
+              )}
+
+              <Downloads tournament={tournament}/>
+
+              <div className={'d-flex justify-content-between my-5'}>
+                <div className={''}>
+                  Payment Reminder Email
+                </div>
+                <div className={''}>
+                  <button className={"btn btn-warning disabled"}
+                          onClick={() => {
+                          }}>
+                    Send
+                  </button>
+                </div>
+              </div>
+
+              {tournament.state === 'active' && (
+                <div className={'col-12 text-center'}>
+                  <button className={'btn btn-lg btn-danger'}
+                          onClick={confirmClose}>
+                    Close Registration
+                  </button>
                 </div>
               )}
+
               {tournament.state === 'closed' && user.role === 'superuser' && (
                 <div className="row my-3">
                   <div className={"col-12 text-center"}>
