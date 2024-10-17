@@ -43,9 +43,15 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
 
   return (
     <div className={classes.ActiveTournament}>
-      <h1 className={'display-5'}>
-        {tournament.name} ({tournament.year})
-      </h1>
+      <div className={`d-flex align-items-center align-items-lg-start ${classes.Title}`}>
+        <img className={'col-2 col-xl-1 img-fluid'}
+             src={tournament.imageUrl}
+             alt={'Tournament logo'}/>
+        <h1 className={'display-5'}>
+          {tournament.name} ({tournament.year})
+        </h1>
+      </div>
+
       {/* On small devices: one column.
           On medium and large devices (up to 1199px wide): two columns
           On XL devices (>= 1200px wide): three columns.
