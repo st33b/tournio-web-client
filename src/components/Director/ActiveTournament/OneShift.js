@@ -4,7 +4,7 @@ const OneShift = ({shift, unit}) => {
   // Display only capacity; hide name and details
   return (
     <div className={classes.OneShift}>
-      <div className="d-flex align-items-center">
+      <div className="d-flex align-items-start">
         <span className="d-block">
           Capacity:
         </span>
