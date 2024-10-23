@@ -2,16 +2,19 @@ import classes from './ActiveTournament.module.scss';
 import ControlPanel from "./ControlPanel";
 import RegistrationOptions from "./RegistrationOptions";
 import OptionalItems from "./OptionalItems";
-import Capacity from "../VisibleTournament/Capacity";
-import RegistrationsWeek from "../VisibleTournament/Charts/RegistrationsWeek";
-import RegistrationTypesWeek from "../VisibleTournament/Charts/RegistrationTypesWeek";
+import Capacity from "./Capacity";
+import RegistrationsWeek from "./Charts/RegistrationsWeek";
+import RegistrationTypesWeek from "./Charts/RegistrationTypesWeek";
 import LinksAndCounts from "./LinksAndCounts";
 import Downloads from "./Downloads";
 import {useLoginContext} from "../../../store/LoginContext";
-import {updateObject} from "../../../utils";
+import {devConsoleLog, updateObject} from "../../../utils";
 import {useState} from "react";
 import OneShift from "./OneShift";
 import MultipleShifts from "./MultipleShifts";
+import DivisionItemsWeek from "./Charts/DivisionItemsWeek";
+import OptionalItemsWeek from "./Charts/OptionalItemsWeek";
+import Link from "next/link";
 
 const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
   const {user} = useLoginContext();
@@ -39,6 +42,13 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
 
   const capacityUnit = tournament.events.some(event => event.rosterType === 'team') ? 'teams' : 'bowlers';
   const hasOneShift = tournament.shifts.length === 1;
+
+  const divisionNameSet = new Set();
+  tournament.purchasableItems.filter(({refinement}) => refinement === 'division').forEach(({name}) => {
+    divisionNameSet.add(name);
+  });
+  const divisionNames = Array.from(divisionNameSet);
+  devConsoleLog("Division names:", divisionNames);
 
   return (
     <div className={classes.ActiveTournament}>
@@ -83,6 +93,13 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
                 Registration is {tournament.state === 'active' ? 'open' : 'closed'}
               </h4>
 
+              <div className={'text-center my-3'}>
+                <Link href={`/tournaments/${tournament.identifier}`} target={'_blank'}>
+                  Front Page
+                  <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
+                </Link>
+              </div>
+
               <LinksAndCounts tournament={tournament}/>
 
               {tournament.state === 'active' && (
@@ -107,7 +124,7 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
               </div>
 
               {tournament.state === 'active' && (
-                <div className={'col-12 text-center'}>
+                <div className={'col-12 text-center mb-5'}>
                   <button className={'btn btn-lg btn-danger'}
                           onClick={confirmClose}>
                     Close Registration
@@ -139,12 +156,16 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
             </div>
 
             <div className={'col'}>
-              <p>
-                I am display data, and there will be a search input here!
-              </p>
-              <Capacity/>
-              <RegistrationsWeek/>
-              <RegistrationTypesWeek/>
+              <Capacity tournament={tournament}/>
+              <RegistrationsWeek tournament={tournament}/>
+              <RegistrationTypesWeek tournament={tournament}/>
+              {divisionNames.map(name => <DivisionItemsWeek tournament={tournament} title={name} key={name}/> )}
+              <OptionalItemsWeek tournament={tournament}
+                                 title={'Optional Events'}
+                                 dataKeys={['bowling']}/>
+              <OptionalItemsWeek tournament={tournament}
+                                 title={'Extras'}
+                                 dataKeys={['banquet', 'product']}/>
 
               {/*  Transaction search input */}
             </div>
