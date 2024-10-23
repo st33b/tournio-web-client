@@ -2,13 +2,12 @@ import classes from './ActiveTournament.module.scss';
 import ControlPanel from "./ControlPanel";
 import RegistrationOptions from "./RegistrationOptions";
 import OptionalItems from "./OptionalItems";
-import Capacity from "./Capacity";
 import RegistrationsWeek from "./Charts/RegistrationsWeek";
 import RegistrationTypesWeek from "./Charts/RegistrationTypesWeek";
 import LinksAndCounts from "./LinksAndCounts";
 import Downloads from "./Downloads";
 import {useLoginContext} from "../../../store/LoginContext";
-import {devConsoleLog, updateObject} from "../../../utils";
+import {updateObject} from "../../../utils";
 import {useState} from "react";
 import OneShift from "./OneShift";
 import MultipleShifts from "./MultipleShifts";
@@ -48,7 +47,6 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
     divisionNameSet.add(name);
   });
   const divisionNames = Array.from(divisionNameSet);
-  devConsoleLog("Division names:", divisionNames);
 
   return (
     <div className={classes.ActiveTournament}>
@@ -74,14 +72,6 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
 
           <ControlPanel configItems={tournament.configItems}/>
           <OptionalItems purchasableItems={tournament.purchasableItems}/>
-
-          {hasOneShift && (
-            <OneShift shift={tournament.shifts[[0]]} unit={capacityUnit}/>
-          )}
-          {!hasOneShift && (
-            <MultipleShifts shifts={tournament.shifts}
-                            unit={capacityUnit}/>
-          )}
         </div>
 
         {/* Stuff in column 2 (and 3, on XL+) */}
@@ -132,6 +122,7 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
                 </div>
               )}
 
+              {/* delete-tournament button */}
               {tournament.state === 'closed' && user.role === 'superuser' && (
                 <div className="row my-3">
                   <div className={"col-12 text-center"}>
@@ -156,7 +147,14 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
             </div>
 
             <div className={'col'}>
-              <Capacity tournament={tournament}/>
+              {hasOneShift && (
+                <OneShift shift={tournament.shifts[[0]]} unit={capacityUnit}/>
+              )}
+              {!hasOneShift && (
+                <MultipleShifts shifts={tournament.shifts}
+                                unit={capacityUnit}/>
+              )}
+
               <RegistrationsWeek tournament={tournament}/>
               <RegistrationTypesWeek tournament={tournament}/>
               {divisionNames.map(name => <DivisionItemsWeek tournament={tournament} title={name} key={name}/> )}

@@ -1,5 +1,7 @@
 import {useState} from "react";
 import Toggle from "./Toggle";
+import ShiftCapacity from "../../common/ShiftCapacity/ShiftCapacity";
+
 import classes from './ActiveTournament.module.scss';
 
 const OneOfManyShifts = ({shift, unit}) => {
@@ -10,6 +12,7 @@ const OneOfManyShifts = ({shift, unit}) => {
       name: '',
       description: '',
       capacity: 0,
+      is_full: false,
       // properties for mix-and-match shifts to come later...
     },
   });
@@ -57,12 +60,22 @@ const OneOfManyShifts = ({shift, unit}) => {
           {/* mix-and-match shifts: list the shift's events */}
 
           <p className={classes.ShiftDetail}>
-            Capacity:
-            <span className={'h5 px-2'}>
-                  {shift.capacity}
-                </span>
-            {unit}
+            Max {unit}:
+            <strong className={'ps-2'}>
+              {shift.capacity}
+            </strong>
           </p>
+
+          <ShiftCapacity shift={shift} includeName={false}/>
+
+          <div className={`mt-3`}>
+            <Toggle label={'Open for new registrations'}
+                    name={`${shift.identifier}--toggle_full`}
+                    htmlId={`${shift.identifier}--toggle_full`}
+                    checked={!shift.isFull}
+                    onChange={() => {
+                    }}/>
+          </div>
         </div>
       )}
       {formData.formVisible && (
@@ -74,16 +87,10 @@ const OneOfManyShifts = ({shift, unit}) => {
           <p>Desc</p>
           {/* capacity */}
           <p>Capacity</p>
+          {/* open/full */}
+          <p>Open/Full toggle</p>
         </form>
       )}
-
-      <div className={classes.ShiftDetail}>
-        <Toggle label={'Full'}
-                name={`${shift.identifier}--toggle_full`}
-                htmlId={`${shift.identifier}--toggle_full`}
-                checked={shift.isFull}
-                onChange={() => {}}/>
-      </div>
     </div>
   );
 }

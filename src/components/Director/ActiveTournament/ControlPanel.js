@@ -1,7 +1,6 @@
 import classes from './ActiveTournament.module.scss';
 import {devConsoleLog} from "../../../utils";
 import Toggle from "./Toggle";
-import TooltipOverlay from "../../ui/TooltipOverlay/TooltipOverlay";
 import CardHeader from "./CardHeader";
 
 const ControlPanel = ({configItems}) => {
@@ -29,7 +28,6 @@ const ControlPanel = ({configItems}) => {
                     id={'control-panel--tooltip'}/>
         <ul className={'list-group list-group-flush'}>
           {panelItems.map(itemKey => {
-            devConsoleLog("Current item:", itemKey);
             const item = configItems.find(({key}) => key === itemKey);
             if (!item) {
               devConsoleLog('Whoops, could not find a config item:', itemKey);
