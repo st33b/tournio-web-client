@@ -14,6 +14,7 @@ import MultipleShifts from "./MultipleShifts";
 import DivisionItemsWeek from "./Charts/DivisionItemsWeek";
 import OptionalItemsWeek from "./Charts/OptionalItemsWeek";
 import Link from "next/link";
+import Contacts from "./Contacts";
 
 const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
   const {user} = useLoginContext();
@@ -99,6 +100,7 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
               )}
 
               <Downloads tournament={tournament}/>
+              <Contacts tournament={tournament}/>
 
               <div className={'d-flex justify-content-between my-5'}>
                 <div className={''}>

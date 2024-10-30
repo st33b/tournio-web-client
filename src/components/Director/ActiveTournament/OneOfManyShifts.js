@@ -3,6 +3,7 @@ import Toggle from "./Toggle";
 import ShiftCapacity from "../../common/ShiftCapacity/ShiftCapacity";
 
 import classes from './ActiveTournament.module.scss';
+import EditButton from "./EditButton";
 
 const OneOfManyShifts = ({shift, unit}) => {
   //   form data
@@ -28,19 +29,13 @@ const OneOfManyShifts = ({shift, unit}) => {
   return (
     <div className={classes.OneOfMultipleShifts}>
       {!formData.formVisible && (
-        <span className={'d-block float-end ps-2'}>
-          <a href={'#'}
-             onClick={(e) => visibilityToggled(e, true)}
-             className={""}
-             title={'Edit'}>
-            <i className="bi bi-pencil-fill" aria-hidden={true}></i>
-            <span className={'visually-hidden'}>
-              Edit
-            </span>
-          </a>
-        </span>
+        <EditButton onClick={() => {
+          setFormData({
+            formVisible: true,
+            shift: {...formData.shift}
+          });
+        }}/>
       )}
-
       {!formData.formVisible && (
         <div>
           <p className={classes.ShiftDetail}>

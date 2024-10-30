@@ -56,6 +56,7 @@ const Tournament = () => {
 
       {tournament && (
         (tournament.state === 'active' || tournament.state === 'closed'
+            // ? <VisibleTournament closeTournament={stateChangeInitiated}/>
             ? <ActiveTournament tournament={tournament} />
             : <TournamentInPrep requestStripeStatus={stripe}
                                 stateChangeInitiated={stateChangeInitiated}
