@@ -1,10 +1,7 @@
-import {useTournament} from "../../../director";
-
-// import ContactForm from "../ContactForm/ContactForm";
-
-import classes from './ActiveTournament.module.scss';
 import CardHeader from "./CardHeader";
 import ContactForm from "./ContactForm";
+
+import classes from './ActiveTournament.module.scss';
 
 const Contacts = ({tournament}) => {
   if (!tournament) {
@@ -23,6 +20,9 @@ const Contacts = ({tournament}) => {
               <ContactForm contact={contact} />
             </li>
           ))}
+          <li className={`list-group-item ${classes.Contact}`}>
+            <ContactForm newContact={true} />
+          </li>
         </ul>
       </div>
     </div>

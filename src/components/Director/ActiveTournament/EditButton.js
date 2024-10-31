@@ -1,12 +1,15 @@
-// Presents an end-floated edit button, styled as a pencil.
-const EditButton = ({onClick}) => {
+// Presents an edit button, styled as a pencil, and end-floated by default.
+// To position differently, use the classNames prop.
+const EditButton = ({onClick, ...props}) => {
   const clickHandler = (e) => {
     e.preventDefault();
     onClick();
   };
 
+  const classNames = props.className ? props.className : 'float-end ps-2';
+
   return (
-    <span className={'d-block float-end ps-2'}>
+    <span className={`d-block ${classNames}`}>
       <a href={'#'}
          onClick={clickHandler}
          className={``}

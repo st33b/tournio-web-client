@@ -1,6 +1,7 @@
 import Capacity from "./Charts/Capacity";
 import classes from './ActiveTournament.module.scss';
 import CardHeader from "./CardHeader";
+import EditButton from "./EditButton";
 
 const OneShift = ({shift, unit}) => {
   // Display only capacity; hide name and details
@@ -19,17 +20,7 @@ const OneShift = ({shift, unit}) => {
             {shift.capacity}
           </span>
 
-          <span className={"d-block ms-auto"}>
-            <a href={'#'}
-               onClick={() => {}}
-               className={""}
-               title={'Edit'}>
-              <i className="bi bi-pencil-fill" aria-hidden={true}></i>
-              <span className={'visually-hidden'}>
-                Edit
-              </span>
-            </a>
-          </span>
+          <EditButton onClick={() => {}} className={'d-block ms-auto'}/>
         </div>
 
         <div className="card-body text-center">

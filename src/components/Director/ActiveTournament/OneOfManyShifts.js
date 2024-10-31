@@ -18,8 +18,7 @@ const OneOfManyShifts = ({shift, unit}) => {
     },
   });
 
-  const visibilityToggled = (event, newVisibility) => {
-    event.preventDefault();
+  const visibilityToggled = (newVisibility) => {
     setFormData({
       formVisible: newVisibility,
       shift: {...formData.shift},
@@ -29,12 +28,7 @@ const OneOfManyShifts = ({shift, unit}) => {
   return (
     <div className={classes.OneOfMultipleShifts}>
       {!formData.formVisible && (
-        <EditButton onClick={() => {
-          setFormData({
-            formVisible: true,
-            shift: {...formData.shift}
-          });
-        }}/>
+        <EditButton onClick={() => visibilityToggled(true)} />
       )}
       {!formData.formVisible && (
         <div>
