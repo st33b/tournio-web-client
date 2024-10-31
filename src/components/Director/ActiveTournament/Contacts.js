@@ -19,7 +19,7 @@ const Contacts = ({tournament}) => {
                     id={'contacts--tooltip'}/>
         <ul className={'list-group list-group-flush'}>
           {tournament.contacts.map((contact, i) => (
-            <li className={`list-group-item ${classes.Contact}`}>
+            <li key={`contact-${i}`} className={`list-group-item ${classes.Contact}`}>
               <ContactForm contact={contact} />
             </li>
           ))}
