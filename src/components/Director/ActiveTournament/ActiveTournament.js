@@ -65,33 +65,64 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
           On XL devices (>= 1200px wide): three columns.
       */}
       <div className={'row'}>
+        {/* state, control panel, optional items */}
         <div className={'col-12 col-md-6 col-xl-4'}>
           <h4
-            className={`d-md-none py-3 text-center fw-normal ${tournament.state === 'active' ? 'text-bg-success' : 'text-bg-secondary'}`}>
+            className={`py-3 text-center fw-normal ${tournament.state === 'active' ? 'text-bg-success' : 'text-bg-secondary'}`}>
             Registration is {tournament.state === 'active' ? 'open' : 'closed'}
           </h4>
 
-          <ControlPanel configItems={tournament.configItems}/>
-          <OptionalItems purchasableItems={tournament.purchasableItems}/>
+          <div className={'text-center my-3'}>
+            <Link href={`/tournaments/${tournament.identifier}`} target={'_blank'}>
+              Front Page
+              <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
+            </Link>
+          </div>
+
+          <LinksAndCounts tournament={tournament}/>
+
+          <Downloads tournament={tournament}/>
+          <Contacts tournament={tournament}/>
+
+          {tournament.state === 'active' && (
+            <div className={'col-12 text-center mb-5'}>
+              <button className={'btn btn-lg btn-danger'}
+                      onClick={confirmClose}>
+                Close Registration
+              </button>
+            </div>
+          )}
+
+          {/* delete-tournament button */}
+          {tournament.state === 'closed' && user.role === 'superuser' && (
+            <div className="row my-3">
+              <div className={"col-12 text-center"}>
+                <button className={`btn btn-lg btn-danger ms-3 ${panelState.deleteProcessing ? 'disabled' : ''}`}
+                        onClick={confirmClose}>
+                  {panelState.deleteProcessing && (
+                    <span>
+                      <span className={'spinner-border spinner-border-sm me-2'}
+                            role={'status'}
+                            aria-hidden={true}></span>
+                    </span>
+                  )}
+                  {!panelState.deleteProcessing && (
+                    <i className={'bi bi-x-lg me-2'} aria-hidden="true">
+                    </i>
+                  )}
+                  Delete Tournament
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Stuff in column 2 (and 3, on XL+) */}
         <div className={'col-12 col-md-6 col-xl-8'}>
           <div className={'row'}>
+            {/* links, counts, downloads, contacts, actions */}
             <div className={'col-12 col-xl-6'}>
-              <h4
-                className={`d-none d-md-block py-3 text-center fw-normal ${tournament.state === 'active' ? 'text-bg-success' : 'text-bg-secondary'}`}>
-                Registration is {tournament.state === 'active' ? 'open' : 'closed'}
-              </h4>
-
-              <div className={'text-center my-3'}>
-                <Link href={`/tournaments/${tournament.identifier}`} target={'_blank'}>
-                  Front Page
-                  <i className={classes.ExternalLink + " bi-box-arrow-up-right"} aria-hidden="true"/>
-                </Link>
-              </div>
-
-              <LinksAndCounts tournament={tournament}/>
+              <ControlPanel configItems={tournament.configItems}/>
 
               {tournament.state === 'active' && (
                 <RegistrationOptions rosterTypes={tournament.events.map(e => e.rosterType)}
@@ -99,10 +130,9 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
                 />
               )}
 
-              <Downloads tournament={tournament}/>
-              <Contacts tournament={tournament}/>
+              <OptionalItems purchasableItems={tournament.purchasableItems}/>
 
-              <div className={'d-flex justify-content-between my-5'}>
+              <div className={'d-flex justify-content-between mt-4 mb-3'}>
                 <div className={''}>
                   Payment Reminder Email
                 </div>
@@ -114,40 +144,9 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
                   </button>
                 </div>
               </div>
-
-              {tournament.state === 'active' && (
-                <div className={'col-12 text-center mb-5'}>
-                  <button className={'btn btn-lg btn-danger'}
-                          onClick={confirmClose}>
-                    Close Registration
-                  </button>
-                </div>
-              )}
-
-              {/* delete-tournament button */}
-              {tournament.state === 'closed' && user.role === 'superuser' && (
-                <div className="row my-3">
-                  <div className={"col-12 text-center"}>
-                    <button className={`btn btn-lg btn-danger ms-3 ${panelState.deleteProcessing ? 'disabled' : ''}`}
-                            onClick={confirmClose}>
-                      {panelState.deleteProcessing && (
-                        <span>
-                      <span className={'spinner-border spinner-border-sm me-2'}
-                            role={'status'}
-                            aria-hidden={true}></span>
-                    </span>
-                      )}
-                      {!panelState.deleteProcessing && (
-                        <i className={'bi bi-x-lg me-2'} aria-hidden="true">
-                        </i>
-                      )}
-                      Delete Tournament
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
 
+            {/* shifts, charts */}
             <div className={'col'}>
               {hasOneShift && (
                 <OneShift shift={tournament.shifts[[0]]} unit={capacityUnit}/>

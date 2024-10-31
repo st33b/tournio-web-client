@@ -10,9 +10,7 @@ const MultipleShifts = ({shifts, unit}) => {
   return (
     <div className={classes.MultipleShifts}>
       <div className="card mb-3">
-        <CardHeader headerText={'Shifts'}
-                    titleText={''}
-                    id={'shifts--tooltip'}/>
+        <CardHeader headerText={'Shifts'}/>
 
         <ul className={'list-group list-group-flush'}>
           {shifts.map(shift => (

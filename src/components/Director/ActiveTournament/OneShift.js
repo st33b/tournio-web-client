@@ -1,16 +1,13 @@
 import Capacity from "./Charts/Capacity";
 import classes from './ActiveTournament.module.scss';
+import CardHeader from "./CardHeader";
 
 const OneShift = ({shift, unit}) => {
   // Display only capacity; hide name and details
   return (
     <div className={classes.OneShift}>
       <div className={'card mb-3'}>
-        <div className={'card-header'}>
-          <h5 className={'fw-light'}>
-            Capacity
-          </h5>
-        </div>
+        <CardHeader headerText={'Capacity'}/>
 
         <Capacity shifts={[shift]}/>
 
