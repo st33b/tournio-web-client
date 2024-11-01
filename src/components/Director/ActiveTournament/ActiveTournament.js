@@ -15,9 +15,11 @@ import DivisionItemsWeek from "./Charts/DivisionItemsWeek";
 import OptionalItemsWeek from "./Charts/OptionalItemsWeek";
 import Link from "next/link";
 import Contacts from "./Contacts";
+import Search from "./Search";
 
 const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
   const {user} = useLoginContext();
+  const ENABLE_SEARCH = false;
 
   const [panelState, setPanelState] = useState({
     deleteProcessing: false,
@@ -38,6 +40,10 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
       }));
       onDeleteClicked();
     }
+  }
+
+  const searchSubmitted = (terms) => {
+    // Send this up, and redirect to results page upon completion
   }
 
   const capacityUnit = tournament.events.some(event => event.rosterType === 'team') ? 'teams' : 'bowlers';
@@ -82,6 +88,7 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
           <LinksAndCounts tournament={tournament}/>
 
           <Downloads tournament={tournament}/>
+          {ENABLE_SEARCH && <Search onSubmit={searchSubmitted} />}
           <Contacts tournament={tournament}/>
 
           {tournament.state === 'active' && (

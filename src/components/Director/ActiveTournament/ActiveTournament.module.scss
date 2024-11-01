@@ -9,6 +9,17 @@
   .TooltipIcon {
     margin-bottom: 0;
   }
+  .Search {
+    padding-bottom: 1rem;
+
+    .Spinner {
+      width: 1rem;
+      height: 1rem;
+    }
+    .Helper {
+      text-align: right;
+    }
+  }
   .ControlPanel {
   }
   .RegistrationOptions {
@@ -49,8 +60,13 @@
   .Contacts {
     .Contact {
       .ContactForm {
+        .Detail {
+          p {
+            margin: 0;
+          }
+        }
         .ContactFormInput {
-          padding: 0.5rem 0.75rem;
+          padding: 0.5rem 0;
         }
       }
     }

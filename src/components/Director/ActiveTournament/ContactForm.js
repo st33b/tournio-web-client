@@ -4,6 +4,7 @@ import {directorApiRequest} from "../../../director";
 
 import classes from './ActiveTournament.module.scss';
 import {updateObject} from "../../../utils";
+import EditButton from "./EditButton";
 
 const ContactForm = ({contact, newContact}) => {
   const initialState = {
@@ -84,8 +85,7 @@ const ContactForm = ({contact, newContact}) => {
     })
   }
 
-  const editClicked = (event) => {
-    event.preventDefault();
+  const editClicked = () => {
     setEditing(true);
   }
 
@@ -239,25 +239,21 @@ const ContactForm = ({contact, newContact}) => {
         </form>
       }
       {!editing && !newContact &&
-        <div className={`${classes.Detail} px-3 py-2`}>
-          <a href={'#'}
-             className={'text-body text-decoration-none'}
-             onClick={editClicked}
-             title={'Edit contact details'}>
-            <p className={`fw-bold m-0 d-flex`}>
-              {formData.name}
-            </p>
-            <p className={'m-0'}>
-              {roles[formData.role]}
-            </p>
-            <p className={'small m-0'}>
-              {formData.email}
-            </p>
-            <p className={'small m-0 fst-italic'}>
-              Notifications: {chosenNotifications.join(', ') || 'none'}
-              {chosenNotifications.length > 0 && ` (${preferenceLabels[formData.notification_preference]})`}
-            </p>
-          </a>
+        <div className={`${classes.Detail}`}>
+          <EditButton onClick={editClicked} />
+          <p className={`fw-bold`}>
+            {formData.name}
+          </p>
+          <p className={''}>
+            {roles[formData.role]}
+          </p>
+          <p className={'small'}>
+            {formData.email}
+          </p>
+          <p className={'small fst-italic'}>
+            Notifications: {chosenNotifications.join(', ') || 'none'}
+            {chosenNotifications.length > 0 && ` (${preferenceLabels[formData.notification_preference]})`}
+          </p>
         </div>
       }
       {!editing && newContact &&
