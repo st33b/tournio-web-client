@@ -257,15 +257,13 @@ const ContactForm = ({contact, newContact}) => {
         </div>
       }
       {!editing && newContact &&
-        <div className={classes.InputItem}>
-          <div className={'text-center'}>
-            <button className={'btn btn-outline-primary'}
-                    type={'button'}
-                    onClick={() => setEditing((true))}>
-              <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
-              Add
-            </button>
-          </div>
+        <div className={'text-center my-2'}>
+          <button className={'btn btn-outline-primary'}
+                  type={'button'}
+                  onClick={() => setEditing((true))}>
+            <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
+            Add new contact
+          </button>
         </div>
       }
     </div>

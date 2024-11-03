@@ -30,7 +30,7 @@ const MultipleShifts = ({shifts, unit}) => {
                   role={'button'}
                   onClick={() => {
                   }}>
-            <i className={'bi-plus-lg'} aria-hidden={true}/>{' '}
+            <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
             Add new shift
           </button>
         </div>
