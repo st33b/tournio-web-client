@@ -49,6 +49,41 @@ const Tournament = () => {
     });
   }
 
+  const contactFormSubmitted = (contactData, onSuccess, onFailure) => {
+    const isNewContact = contactData.identifier.length === 0;
+    const uri = isNewContact ? `/tournaments/${tournament.identifier}/contacts` : `/contacts/${contactData.identifier}`;
+    const requestConfig = {
+      method: isNewContact ? 'post' : 'patch',
+      data: {
+        contact: {
+          name: contactData.name,
+          email: contactData.email,
+          role: contactData.role,
+          notify_on_registration: contactData.notifyOnRegistration,
+          notify_on_payment: contactData.notifyOnPayment,
+          notification_preference: contactData.notificationPreference,
+        }
+      }
+    };
+    const modifiedTournament = {...tournament};
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      authToken: authToken,
+      onSuccess: (data) => {
+        if (isNewContact) {
+          modifiedTournament.contacts = tournament.contacts.concat(data);
+        } else {
+          const index = modifiedTournament.contacts.findIndex(({identifier}) => identifier === data.identifier);
+          modifiedTournament.contacts[index] = data;
+        }
+        tournamentUpdatedQuietly(modifiedTournament);
+        onSuccess(data);
+      },
+      onFailure: onFailure,
+    });
+  }
+
   // -----------------
 
   if (loading) {
@@ -69,6 +104,7 @@ const Tournament = () => {
         // <VisibleTournament closeTournament={stateChangeInitiated}/>
         <ActiveTournament tournament={tournament}
                           onDownloadClicked={downloadClicked}
+                          onContactSubmit={contactFormSubmitted}
         />
       )}
       {!isFinalized && (

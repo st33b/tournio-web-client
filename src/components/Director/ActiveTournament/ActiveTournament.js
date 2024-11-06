@@ -21,7 +21,8 @@ const ActiveTournament = ({
                             tournament,
                             onCloseClicked,
                             onDeleteClicked,
-                            onDownloadClicked
+                            onDownloadClicked,
+                            onContactSubmit,
 }) => {
   const {user} = useLoginContext();
   const ENABLE_SEARCH = false;
@@ -94,8 +95,11 @@ const ActiveTournament = ({
 
           <Downloads tournament={tournament}
                      onDownload={onDownloadClicked}/>
+
           {ENABLE_SEARCH && <Search onSubmit={searchSubmitted} />}
-          <Contacts tournament={tournament}/>
+
+          <Contacts tournament={tournament}
+                    onFormSubmit={onContactSubmit}/>
 
           {tournament.state === 'active' && (
             <div className={'col-12 text-center mb-5'}>
@@ -178,8 +182,6 @@ const ActiveTournament = ({
               <OptionalItemsWeek tournament={tournament}
                                  title={'Extras'}
                                  dataKeys={['banquet', 'product']}/>
-
-              {/*  Transaction search input */}
             </div>
           </div>
         </div>

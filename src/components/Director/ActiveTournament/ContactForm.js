@@ -1,42 +1,45 @@
 import {useEffect, useState} from "react";
 
-import {directorApiRequest} from "../../../director";
-
 import classes from './ActiveTournament.module.scss';
-import {updateObject} from "../../../utils";
+import {devConsoleLog} from "../../../utils";
 import EditButton from "./EditButton";
+import ErrorAlert from "../../common/ErrorAlert";
 
-const ContactForm = ({contact, newContact}) => {
+const ContactForm = ({contact, onSubmit, newContact = false}) => {
   const initialState = {
     identifier: '',
     name: '',
     role: '',
     email: '',
-    notify_on_registration: false,
-    notify_on_payment: false,
-    notification_preference: 'daily_summary',
+    notifyOnRegistration: false,
+    notifyOnPayment: false,
+    notificationPreference: 'daily_summary',
 
     valid: false,
   }
 
   const [formData, setFormData] = useState(initialState);
   const [editing, setEditing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     if (contact) {
-      setFormData({...contact});
+      setFormData({
+        ...contact,
+        valid: true,
+      });
     }
   }, [contact, newContact]);
 
   const isValid = (data) => {
     return data.name.length > 0
       && data.role.length > 0
-      && ['daily_summary', 'individually'].includes(data.notification_preference);
+      && ['daily_summary', 'individually'].includes(data.notificationPreference);
   }
 
   const inputChanged = (event) => {
     const newFormData = {...formData};
-    if (event.target.name === 'notify_on_payment' || event.target.name === 'notify_on_registration') {
+    if (event.target.name === 'notifyOnPayment' || event.target.name === 'notifyOnRegistration') {
       newFormData[event.target.name] = event.target.checked;
     } else {
       newFormData[event.target.name] = event.target.value;
@@ -45,50 +48,24 @@ const ContactForm = ({contact, newContact}) => {
     setFormData(newFormData)
   }
 
-  const onSuccess = (data) => {
-    const modifiedTournament = updateObject(tournament, {
-      contacts: tournament.contacts.concat(data),
-    });
-    if (newContact) {
-      setFormData(initialState);
-      modifiedTournament.contacts = tournament.contacts.concat(data);
-    } else {
-      const index = modifiedTournament.contacts.findIndex(({identifier}) => identifier === data.identifier);
-      modifiedTournament.contacts[index] = data;
-    }
-
-    tournamentUpdatedQuietly(modifiedTournament);
+  const onSuccess = () => {
     setEditing(false);
+    setFormData({...initialState});
+  }
+
+  const onFailure = (error) => {
+    devConsoleLog(error);
+    setErrorMessage(error);
   }
 
   const formSubmitted = (event) => {
     event.preventDefault();
-    const uri = newContact ? `/tournaments/${tournament.identifier}/contacts` : `/contacts/${contact.identifier}`;
-    const requestConfig = {
-      method: newContact ? 'post' : 'patch',
-      data: {
-        contact: {
-          name: formData.name,
-          email: formData.email,
-          role: formData.role,
-          notify_on_registration: formData.notify_on_registration,
-          notify_on_payment: formData.notify_on_payment,
-          notification_preference: formData.notification_preference,
-        }
-      }
-    };
-    directorApiRequest({
-      uri: uri,
-      requestConfig: requestConfig,
-      authToken: authToken,
-      onSuccess: onSuccess,
-    })
+    onSubmit(formData, onSuccess, onFailure);
   }
 
   const editClicked = () => {
     setEditing(true);
   }
-
   ////////////////////////////////////////////////////////////////////////////////
 
   const roles = {
@@ -112,10 +89,10 @@ const ContactForm = ({contact, newContact}) => {
   }
 
   const chosenNotifications = [];
-  if (formData.notify_on_payment) {
+  if (formData.notifyOnPayment) {
     chosenNotifications.push('payments');
   }
-  if (formData.notify_on_registration) {
+  if (formData.notifyOnRegistration) {
     chosenNotifications.push('registrations');
   }
 
@@ -164,12 +141,12 @@ const ContactForm = ({contact, newContact}) => {
               <input type={'checkbox'}
                      className={'form-check-input'}
                      role={'switch'}
-                     name={'notify_on_payment'}
-                     id={'notify_on_payment'}
+                     name={'notifyOnPayment'}
+                     id={'notifyOnPayment'}
                      onChange={inputChanged}
-                     checked={formData.notify_on_payment}/>
+                     checked={formData.notifyOnPayment}/>
               <label className={'form-check-label'}
-                     htmlFor={'notify_on_payment'}>
+                     htmlFor={'notifyOnPayment'}>
                 Payment received
               </label>
             </div>
@@ -177,12 +154,12 @@ const ContactForm = ({contact, newContact}) => {
               <input type={'checkbox'}
                      className={'form-check-input'}
                      role={'switch'}
-                     name={'notify_on_registration'}
-                     id={'notify_on_registration'}
+                     name={'notifyOnRegistration'}
+                     id={'notifyOnRegistration'}
                      onChange={inputChanged}
-                     checked={formData.notify_on_registration}/>
+                     checked={formData.notifyOnRegistration}/>
               <label className={'form-check-label'}
-                     htmlFor={'notify_on_registration'}>
+                     htmlFor={'notifyOnRegistration'}>
                 Registration received
               </label>
             </div>
@@ -194,12 +171,12 @@ const ContactForm = ({contact, newContact}) => {
             <div className={'form-check ms-3'}>
               <input type={'radio'}
                      className={'form-check-input'}
-                     name={'notification_preference'}
+                     name={'notificationPreference'}
                      id={'notification_preference_daily_summary'}
                      disabled={chosenNotifications.length === 0}
                      onChange={inputChanged}
                      value={'daily_summary'}
-                     checked={formData.notification_preference === 'daily_summary'}/>
+                     checked={formData.notificationPreference === 'daily_summary'}/>
               <label className={'form-check-label'}
                      htmlFor={'notification_preference_daily_summary'}>
                 Daily Summaries
@@ -208,12 +185,12 @@ const ContactForm = ({contact, newContact}) => {
             <div className={'form-check ms-3'}>
               <input type={'radio'}
                      className={'form-check-input'}
-                     name={'notification_preference'}
+                     name={'notificationPreference'}
                      id={'notification_preference_individually'}
                      disabled={chosenNotifications.length === 0}
                      onChange={inputChanged}
                      value={'individually'}
-                     checked={formData.notification_preference === 'individually'}/>
+                     checked={formData.notificationPreference === 'individually'}/>
               <label className={'form-check-label'}
                      htmlFor={'notification_preference_individually'}>
                 Individually
@@ -236,6 +213,10 @@ const ContactForm = ({contact, newContact}) => {
               </button>
             </div>
           </div>
+
+          <ErrorAlert message={errorMessage}
+                      className={`my-3`}
+                      onClose={() => setErrorMessage(null)}/>
         </form>
       }
       {!editing && !newContact &&
@@ -252,7 +233,7 @@ const ContactForm = ({contact, newContact}) => {
           </p>
           <p className={'small fst-italic'}>
             Notifications: {chosenNotifications.join(', ') || 'none'}
-            {chosenNotifications.length > 0 && ` (${preferenceLabels[formData.notification_preference]})`}
+            {chosenNotifications.length > 0 && ` (${preferenceLabels[formData.notificationPreference]})`}
           </p>
         </div>
       }
@@ -260,7 +241,7 @@ const ContactForm = ({contact, newContact}) => {
         <div className={'text-center my-2'}>
           <button className={'btn btn-outline-primary'}
                   type={'button'}
-                  onClick={() => setEditing((true))}>
+                  onClick={() => setEditing(true)}>
             <i className={'bi-plus-lg pe-2'} aria-hidden={true}/>
             Add new contact
           </button>

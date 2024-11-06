@@ -3,7 +3,7 @@ import ContactForm from "./ContactForm";
 
 import classes from './ActiveTournament.module.scss';
 
-const Contacts = ({tournament}) => {
+const Contacts = ({tournament, onFormSubmit}) => {
   if (!tournament) {
     return '';
   }
@@ -17,11 +17,11 @@ const Contacts = ({tournament}) => {
         <ul className={'list-group list-group-flush'}>
           {tournament.contacts.map((contact, i) => (
             <li key={`contact-${i}`} className={`list-group-item ${classes.Contact}`}>
-              <ContactForm contact={contact} />
+              <ContactForm contact={contact} onSubmit={onFormSubmit} />
             </li>
           ))}
           <li className={`list-group-item ${classes.Contact}`}>
-            <ContactForm newContact={true} />
+            <ContactForm newContact={true} onSubmit={onFormSubmit} />
           </li>
         </ul>
       </div>
