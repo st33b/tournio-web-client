@@ -17,7 +17,12 @@ import Link from "next/link";
 import Contacts from "./Contacts";
 import Search from "./Search";
 
-const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
+const ActiveTournament = ({
+                            tournament,
+                            onCloseClicked,
+                            onDeleteClicked,
+                            onDownloadClicked
+}) => {
   const {user} = useLoginContext();
   const ENABLE_SEARCH = false;
 
@@ -87,7 +92,8 @@ const ActiveTournament = ({tournament, onCloseClicked, onDeleteClicked}) => {
 
           <LinksAndCounts tournament={tournament}/>
 
-          <Downloads tournament={tournament}/>
+          <Downloads tournament={tournament}
+                     onDownload={onDownloadClicked}/>
           {ENABLE_SEARCH && <Search onSubmit={searchSubmitted} />}
           <Contacts tournament={tournament}/>
 

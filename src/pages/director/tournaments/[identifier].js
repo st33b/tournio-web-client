@@ -1,9 +1,8 @@
 import {useRouter} from "next/router";
 import TournamentInPrep from '../../../components/Director/TournamentInPrep/TournamentInPrep';
-import {directorApiRequest, useModernTournament} from "../../../director";
+import {directorApiDownloadRequest, directorApiRequest, useModernTournament} from "../../../director";
 import {useLoginContext} from "../../../store/LoginContext";
 import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage";
-import ErrorBoundary from "../../../components/common/ErrorBoundary";
 import ErrorAlert from "../../../components/common/ErrorAlert";
 import AdminLayout from "../../../components/Layout/AdminLayout/AdminLayout";
 import ActiveTournament from "../../../components/Director/ActiveTournament/ActiveTournament";
@@ -40,6 +39,16 @@ const Tournament = () => {
     });
   }
 
+  const downloadClicked = (path, onSuccess, onFailure) => {
+    const uri = `/tournaments/${tournament.identifier}/${path}`;
+    directorApiDownloadRequest({
+      uri: uri,
+      authToken: authToken,
+      onSuccess: onSuccess,
+      onFailure: onFailure,
+    });
+  }
+
   // -----------------
 
   if (loading) {
@@ -50,18 +59,22 @@ const Tournament = () => {
     return <LoadingMessage message={'Loading tournament details...'}/>;
   }
 
+  const isFinalized = tournament.state === 'active' || tournament.state === 'closed';
+
   return (
     <div>
       <ErrorAlert message={error} className={``} />
 
-      {tournament && (
-        (tournament.state === 'active' || tournament.state === 'closed'
-            // ? <VisibleTournament closeTournament={stateChangeInitiated}/>
-            ? <ActiveTournament tournament={tournament} />
-            : <TournamentInPrep requestStripeStatus={stripe}
-                                stateChangeInitiated={stateChangeInitiated}
-            />
-        )
+      {isFinalized && (
+        // <VisibleTournament closeTournament={stateChangeInitiated}/>
+        <ActiveTournament tournament={tournament}
+                          onDownloadClicked={downloadClicked}
+        />
+      )}
+      {!isFinalized && (
+        <TournamentInPrep requestStripeStatus={stripe}
+                          stateChangeInitiated={stateChangeInitiated}
+        />
       )}
     </div>
   );
