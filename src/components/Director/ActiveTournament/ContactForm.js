@@ -5,7 +5,7 @@ import {devConsoleLog} from "../../../utils";
 import EditButton from "./EditButton";
 import ErrorAlert from "../../common/ErrorAlert";
 
-const ContactForm = ({contact, onSubmit, newContact = false}) => {
+const ContactForm = ({contact, onSubmit, onDelete, newContact = false}) => {
   const initialState = {
     identifier: '',
     name: '',
@@ -65,6 +65,13 @@ const ContactForm = ({contact, onSubmit, newContact = false}) => {
 
   const editClicked = () => {
     setEditing(true);
+  }
+
+  const deleteClicked = (event) => {
+    event.preventDefault();
+    if (confirm('Are you sure you wish to delete this contact?')) {
+      onDelete(contact, onSuccess, onFailure);
+    }
   }
   ////////////////////////////////////////////////////////////////////////////////
 
@@ -199,17 +206,26 @@ const ContactForm = ({contact, onSubmit, newContact = false}) => {
           </div>
           <div className={classes.ContactFormInput}>
             <div className={'d-flex justify-content-end'}>
+              {!newContact && (
+                <button type={'button'}
+                        title={'Delete'}
+                        onClick={deleteClicked}
+                        className={'btn btn-danger me-auto'}>
+                  Delete
+                </button>
+              )}
+
               <button type={'button'}
                       title={'Cancel'}
                       onClick={() => setEditing(false)}
                       className={'btn btn-secondary me-2'}>
-                  Cancel
+                Cancel
               </button>
               <button type={'submit'}
                       title={'Save'}
                       disabled={!formData.valid}
                       className={'btn btn-primary'}>
-                  Save
+                Save
               </button>
             </div>
           </div>

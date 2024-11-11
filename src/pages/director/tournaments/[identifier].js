@@ -6,7 +6,6 @@ import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage
 import ErrorAlert from "../../../components/common/ErrorAlert";
 import AdminLayout from "../../../components/Layout/AdminLayout/AdminLayout";
 import ActiveTournament from "../../../components/Director/ActiveTournament/ActiveTournament";
-import VisibleTournament from "../../../components/Director/VisibleTournament/VisibleTournament";
 
 const Tournament = () => {
   const router = useRouter();
@@ -84,6 +83,26 @@ const Tournament = () => {
     });
   }
 
+  const contactDeleted = (contactData, onSuccess, onFailure) => {
+    const uri = `/contacts/${contactData.identifier}`;
+    const requestConfig = {
+      method: 'delete',
+      data: {},
+    };
+    const modifiedTournament = {...tournament};
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      authToken: authToken,
+      onSuccess: (data) => {
+        modifiedTournament.contacts = modifiedTournament.contacts.filter(({identifier}) => identifier !== data.identifier);
+        tournamentUpdatedQuietly(modifiedTournament);
+        onSuccess(data);
+      },
+      onFailure: onFailure,
+    });
+  }
+
   // -----------------
 
   if (loading) {
@@ -105,6 +124,7 @@ const Tournament = () => {
         <ActiveTournament tournament={tournament}
                           onDownloadClicked={downloadClicked}
                           onContactSubmit={contactFormSubmitted}
+                          onContactDelete={contactDeleted}
         />
       )}
       {!isFinalized && (

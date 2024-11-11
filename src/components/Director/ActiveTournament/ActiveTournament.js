@@ -23,6 +23,7 @@ const ActiveTournament = ({
                             onDeleteClicked,
                             onDownloadClicked,
                             onContactSubmit,
+                            onContactDelete,
 }) => {
   const {user} = useLoginContext();
   const ENABLE_SEARCH = false;
@@ -99,7 +100,7 @@ const ActiveTournament = ({
           {ENABLE_SEARCH && <Search onSubmit={searchSubmitted} />}
 
           <Contacts tournament={tournament}
-                    onFormSubmit={onContactSubmit}/>
+                    onFormSubmit={onContactSubmit} onDelete={onContactDelete} />
 
           {tournament.state === 'active' && (
             <div className={'col-12 text-center mb-5'}>
@@ -115,7 +116,7 @@ const ActiveTournament = ({
             <div className="row my-3">
               <div className={"col-12 text-center"}>
                 <button className={`btn btn-lg btn-danger ms-3 ${panelState.deleteProcessing ? 'disabled' : ''}`}
-                        onClick={confirmClose}>
+                        onClick={confirmDelete}>
                   {panelState.deleteProcessing && (
                     <span>
                       <span className={'spinner-border spinner-border-sm me-2'}
