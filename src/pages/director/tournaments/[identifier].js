@@ -12,10 +12,8 @@ const Tournament = () => {
   const {identifier, stripe} = router.query;
 
   const {authToken} = useLoginContext();
-  // const {loading, tournament, error, tournamentUpdated} = useTournament();
   const {loading, tournament, error, tournamentUpdated, tournamentUpdatedQuietly} = useModernTournament();
 
-  // @admin -- should this break out into distinct functions?
   const stateChangeInitiated = (stateChangeAction) => {
     const uri = `/tournaments/${identifier}/state_change`;
     const requestConfig = {
@@ -34,6 +32,25 @@ const Tournament = () => {
       authToken: authToken,
       onSuccess: (data) => {
         tournamentUpdated(data);
+      },
+    });
+  }
+
+  const deleteTournament = () => {
+    const uri = `/tournaments/${identifier}`;
+    const requestConfig = {
+      method: 'delete',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      authToken: authToken,
+      onSuccess: () => {
+        router.push('/director/tournaments')
       },
     });
   }
@@ -122,6 +139,8 @@ const Tournament = () => {
       {isFinalized && (
         // <VisibleTournament closeTournament={stateChangeInitiated}/>
         <ActiveTournament tournament={tournament}
+                          onCloseClicked={() => stateChangeInitiated('close')}
+                          onDeleteClicked={deleteTournament}
                           onDownloadClicked={downloadClicked}
                           onContactSubmit={contactFormSubmitted}
                           onContactDelete={contactDeleted}

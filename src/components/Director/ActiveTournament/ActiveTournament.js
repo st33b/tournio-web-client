@@ -39,10 +39,9 @@ const ActiveTournament = ({
     }
   }
 
-  const confirmDelete = (event) => {
-    event.preventDefault();
+  const confirmDelete = () => {
     if (confirm('This will delete the tournament and all its data. Are you sure?')) {
-      setPanelState(updateObject({
+      setPanelState(updateObject(panelState,{
         deleteProcessing: true,
       }));
       onDeleteClicked();
