@@ -24,6 +24,7 @@ const ActiveTournament = ({
                             onDownloadClicked,
                             onContactSubmit,
                             onContactDelete,
+                            onConfigItemToggle,
 }) => {
   const {user} = useLoginContext();
   const ENABLE_SEARCH = false;
@@ -139,7 +140,9 @@ const ActiveTournament = ({
           <div className={'row'}>
             {/* links, counts, downloads, contacts, actions */}
             <div className={'col-12 col-xl-6'}>
-              <ControlPanel configItems={tournament.configItems}/>
+              <ControlPanel configItems={tournament.configItems}
+                            onChange={onConfigItemToggle}
+              />
 
               {tournament.state === 'active' && (
                 <RegistrationOptions rosterTypes={tournament.events.map(e => e.rosterType)}

@@ -1,9 +1,10 @@
 import classes from './ActiveTournament.module.scss';
-import {devConsoleLog} from "../../../utils";
+import {devConsoleLog, updateObject} from "../../../utils";
 import Toggle from "./Toggle";
 import CardHeader from "./CardHeader";
+import {useEffect, useState} from "react";
 
-const ControlPanel = ({configItems}) => {
+const ControlPanel = ({configItems, onChange}) => {
   const panelItems = [
     'enable_free_entries',
     'accept_payments',
@@ -16,9 +17,65 @@ const ControlPanel = ({configItems}) => {
     'skip_stripe',
   ];
 
+  const [configValues, setConfigValues] = useState({
+    enable_free_entries: {
+      id: '',
+      value: false,
+    },
+    accept_payments: {
+      id: '',
+      value: false,
+    },
+    enable_unpaid_signups: {
+      id: '',
+      value: false,
+    },
+    display_capacity: {
+      id: '',
+      value: false,
+    },
+    publicly_listed: {
+      id: '',
+      value: false,
+    },
+    email_in_dev: {
+      id: '',
+      value: false,
+    },
+    skip_stripe: {
+      id: '',
+      value: false,
+    },
+  });
+
+  useEffect(() => {
+    if (!configItems) {
+      return;
+    }
+    const newValues = {};
+    panelItems.forEach(itemKey => {
+      const item = configItems.find(({key}) => key === itemKey);
+      newValues[itemKey] = {
+        id: item.id,
+        value: !!item.value,
+      }
+    });
+    setConfigValues(updateObject(configValues, newValues));
+  }, [configItems]);
+
   // @admin
-  // TODO: handle config item toggle
   // TODO: add dev-only items
+
+  const toggled = (event) => {
+    const name = event.target.name.split('--')[1];
+    const changes = {};
+    changes[name] = {
+      id: configValues[name].id,
+      value: !configValues[name].value,
+    }
+    setConfigValues(configValues, changes);
+    onChange(changes[name].id, changes[name].value);
+  }
 
   return (
     <div className={classes.ControlPanel}>
@@ -39,9 +96,8 @@ const ControlPanel = ({configItems}) => {
                 <Toggle name={`control_panel--${itemKey}`}
                         label={item.label}
                         htmlId={`control_panel--${itemKey}`}
-                        checked={!!item.value}
-                        onChange={() => {
-                        }}
+                        checked={item.value}
+                        onChange={toggled}
                 />
               </li>
             );

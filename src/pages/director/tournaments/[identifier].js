@@ -120,6 +120,33 @@ const Tournament = () => {
     });
   }
 
+  const configItemToggled = (itemId, newValue) => {
+    const uri = `/config_items/${itemId}`;
+    const requestConfig = {
+      method: 'patch',
+      data: {
+        config_item: {
+          value: newValue,
+        }
+      }
+    };
+    directorApiRequest({
+      uri: uri,
+      requestConfig: requestConfig,
+      authToken: authToken,
+      onSuccess: (changedConfigItem) => {
+        const index = tournament.configItems.findIndex(({id}) => id === itemId);
+        const changedTournament = {...tournament};
+        changedTournament.configItems = [...tournament.configItems];
+        changedTournament.configItems[index] = changedConfigItem;
+        tournamentUpdatedQuietly(changedTournament);
+      },
+      // onFailure: (err) => {
+      //   setErrorMessage(err.message)
+      // },
+    });
+  }
+
   // -----------------
 
   if (loading) {
@@ -144,6 +171,7 @@ const Tournament = () => {
                           onDownloadClicked={downloadClicked}
                           onContactSubmit={contactFormSubmitted}
                           onContactDelete={contactDeleted}
+                          onConfigItemToggle={configItemToggled}
         />
       )}
       {!isFinalized && (
