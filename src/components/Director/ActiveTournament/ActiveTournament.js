@@ -7,7 +7,7 @@ import RegistrationTypesWeek from "./Charts/RegistrationTypesWeek";
 import LinksAndCounts from "./LinksAndCounts";
 import Downloads from "./Downloads";
 import {useLoginContext} from "../../../store/LoginContext";
-import {updateObject} from "../../../utils";
+import {devConsoleLog, updateObject} from "../../../utils";
 import {useState} from "react";
 import OneShift from "./OneShift";
 import MultipleShifts from "./MultipleShifts";
@@ -19,6 +19,7 @@ import Search from "./Search";
 
 const ActiveTournament = ({
                             tournament,
+                            onAttributeChange,
                             onCloseClicked,
                             onDeleteClicked,
                             onDownloadClicked,
@@ -51,6 +52,14 @@ const ActiveTournament = ({
 
   const searchSubmitted = (terms) => {
     // Send this up, and redirect to results page upon completion
+  }
+
+  const regOptionsUpdated = (newValue) => {
+    onAttributeChange({
+      details: {
+        enabled_registration_options: newValue
+      }
+    });
   }
 
   const capacityUnit = tournament.events.some(event => event.rosterType === 'team') ? 'teams' : 'bowlers';
@@ -147,6 +156,7 @@ const ActiveTournament = ({
               {tournament.state === 'active' && (
                 <RegistrationOptions rosterTypes={tournament.events.map(e => e.rosterType)}
                                      options={tournament.registrationOptions}
+                                     onChange={regOptionsUpdated}
                 />
               )}
 

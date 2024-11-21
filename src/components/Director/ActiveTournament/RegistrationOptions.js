@@ -1,9 +1,38 @@
 import classes from "./ActiveTournament.module.scss";
 import Toggle from "./Toggle";
-import TooltipOverlay from "../../ui/TooltipOverlay/TooltipOverlay";
 import CardHeader from "./CardHeader";
+import {useEffect, useState} from "react";
+import {devConsoleLog, updateObject} from "../../../utils";
 
-const RegistrationOptions = ({rosterTypes, options}) => {
+const RegistrationOptions = ({rosterTypes, options, onChange}) => {
+  const [formValues, setFormValues] = useState({
+    // new_team solo new_pair standard
+    solo: false,
+    new_team: false,
+    new_pair: false,
+    // standard: false,
+  });
+
+  useEffect(() => {
+    if (!rosterTypes || !options) {
+      return;
+    }
+    const changedFormOptions = {
+      ...formValues,
+      ...options
+    };
+    setFormValues(changedFormOptions);
+  },[rosterTypes, options])
+
+  const toggled = (event) => {
+    const name = event.target.name.split('--')[1];
+    const newValue = !formValues[name];
+    setFormValues(updateObject(formValues, {
+      ...formValues,
+      [name]: newValue,
+    }));
+
+  }
 
   return (
     <div className={classes.RegistrationOptions}>
@@ -14,21 +43,21 @@ const RegistrationOptions = ({rosterTypes, options}) => {
         <ul className={'list-group list-group-flush'}>
           {rosterTypes.some(rt => rt === 'single') && (
             <li className={'list-group-item'}>
-              <Toggle name={`registration_options--single`}
+              <Toggle name={`registration_options--solo`}
                       label={'Solo entries'}
-                      htmlId={`registration_options--single`}
-                      checked={!!options['solo']}
-                      onChange={() => {}}
+                      htmlId={`registration_options--solo`}
+                      checked={options.solo}
+                      onChange={toggled}
               />
             </li>
           )}
           {rosterTypes.some(rt => rt === 'team') && (
             <li className={'list-group-item'}>
-              <Toggle name={`registration_options--team`}
+              <Toggle name={`registration_options--new_team`}
                       label={'Team entries'}
-                      htmlId={`registration_options--team`}
-                      checked={!!options['new_team']}
-                      onChange={() => {}}
+                      htmlId={`registration_options--new_team`}
+                      checked={formValues.new_team}
+                      onChange={toggled}
               />
             </li>
           )}

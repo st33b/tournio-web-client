@@ -6,6 +6,7 @@ import LoadingMessage from "../../../components/ui/LoadingMessage/LoadingMessage
 import ErrorAlert from "../../../components/common/ErrorAlert";
 import AdminLayout from "../../../components/Layout/AdminLayout/AdminLayout";
 import ActiveTournament from "../../../components/Director/ActiveTournament/ActiveTournament";
+import {devConsoleLog} from "../../../utils";
 
 const Tournament = () => {
   const router = useRouter();
@@ -147,6 +148,23 @@ const Tournament = () => {
     });
   }
 
+  const tournamentAttributeChanged = (changeData) => {
+    directorApiRequest({
+      uri: `/tournaments/${tournament.identifier}`,
+      requestConfig: {
+        method: 'patch',
+        data: {
+          tournament: {
+            ...changeData
+          },
+        },
+      },
+      authToken: authToken,
+      onSuccess: (tournamentData) => tournamentUpdatedQuietly(tournamentData),
+      onFailure: (error) => devConsoleLog("D'oh!", error),
+    })
+  }
+
   // -----------------
 
   if (loading) {
@@ -172,6 +190,7 @@ const Tournament = () => {
                           onContactSubmit={contactFormSubmitted}
                           onContactDelete={contactDeleted}
                           onConfigItemToggle={configItemToggled}
+                          onAttributeChange={tournamentAttributeChanged}
         />
       )}
       {!isFinalized && (
