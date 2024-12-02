@@ -14,7 +14,7 @@ const InclusiveShiftForm = ({shifts, value, onUpdate}) => {
     // Default the form's preferredShift value to the first shift, unless one was passed in
     const newFormValues = {...componentState };
 
-    const availableShifts = shifts.filter(({is_full}) => !is_full)
+    const availableShifts = shifts.filter(({isFull}) => !isFull)
     newFormValues.preferredShift = value ? value : availableShifts[0].identifier;
     setComponentState(newFormValues);
     onUpdate([newFormValues.preferredShift]);
@@ -47,11 +47,11 @@ const InclusiveShiftForm = ({shifts, value, onUpdate}) => {
                        value={shift.identifier}
                        onChange={inputChanged}
                        checked={selected}
-                       disabled={!!shift.is_full}
+                       disabled={!!shift.isFull}
                        autoComplete={'off'}/>
                 <label className={`btn btn-lg btn-tournio-radio`}
                        htmlFor={`preferredShift_${i}`}>
-                  {!!shift.is_full ? '[full]' : ''} {shift.name}
+                  {!!shift.isFull ? '[full]' : ''} {shift.name}
                 </label>
               </div>
             )})}
